@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 )
@@ -162,11 +162,11 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 				tJobProps.LogoFileID,
 			).
 			SET(
-				jet.NULL,
+				mysql.NULL,
 				lastInsertID,
 			).
 			WHERE(
-				tJobProps.Job.EQ(jet.String(row.Job)),
+				tJobProps.Job.EQ(mysql.String(row.Job)),
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
@@ -271,11 +271,11 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 				tUserProps.AvatarFileID,
 			).
 			SET(
-				jet.NULL,
+				mysql.NULL,
 				lastInsertID,
 			).
 			WHERE(
-				tUserProps.UserID.EQ(jet.Int32(row.UserId)),
+				tUserProps.UserID.EQ(mysql.Int32(row.UserId)),
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
@@ -291,7 +291,11 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			continue
 		}
 
-		fmt.Printf("Updated user %d with new profile_picture file ID %d\n", row.UserId, lastInsertID)
+		fmt.Printf(
+			"Updated user %d with new profile_picture file ID %d\n",
+			row.UserId,
+			lastInsertID,
+		)
 	}
 
 	return errs
@@ -380,11 +384,11 @@ func (c *FilestoreCmd) migrateMugshots(ctx context.Context) error {
 				tUserProps.MugshotFileID,
 			).
 			SET(
-				jet.NULL,
+				mysql.NULL,
 				lastInsertID,
 			).
 			WHERE(
-				tUserProps.UserID.EQ(jet.Int32(row.UserId)),
+				tUserProps.UserID.EQ(mysql.Int32(row.UserId)),
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {

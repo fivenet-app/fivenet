@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/gosimple/slug"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -44,7 +44,7 @@ func (s *Server) ListPages(
 	tPAccess := table.FivenetWikiPagesAccess.AS("access")
 	tJobProps := table.FivenetJobProps
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 
 	if req.GetRootOnly() {
 		condition = condition.AND(tPageShort.ParentID.IS_NULL())
@@ -52,37 +52,37 @@ func (s *Server) ListPages(
 	if req.Search != nil && req.GetSearch() != "" {
 		*req.Search = strings.TrimRight(req.GetSearch(), "*") + "*"
 
-		condition = jet.OR(
-			dbutils.MATCH(tPageShort.Title, jet.String(req.GetSearch())),
-			dbutils.MATCH(tPageShort.Content, jet.String(req.GetSearch())),
+		condition = mysql.OR(
+			dbutils.MATCH(tPageShort.Title, mysql.String(req.GetSearch())),
+			dbutils.MATCH(tPageShort.Content, mysql.String(req.GetSearch())),
 		)
 	}
 
 	if !userInfo.GetSuperuser() {
-		accessExists := jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		accessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tPAccess).
-				WHERE(jet.AND(
+				WHERE(mysql.AND(
 					tPAccess.Access.IS_NOT_NULL(),
 					tPAccess.Access.GT_EQ(
-						jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-					jet.OR(
-						tPAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-						jet.AND(
-							tPAccess.Job.EQ(jet.String(userInfo.GetJob())),
-							tPAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+					mysql.OR(
+						tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						mysql.AND(
+							tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+							tPAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 						),
 					),
 				),
 				))
 
-		condition = condition.AND(jet.AND(
+		condition = condition.AND(mysql.AND(
 			tPageShort.DeletedAt.IS_NULL(),
-			jet.OR(
+			mysql.OR(
 				tPageShort.Public.IS_TRUE(),
-				tPageShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+				tPageShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 				accessExists,
 			),
 		))
@@ -92,12 +92,12 @@ SELECT(jet.Int(1)).
 		if req.GetJob() == "" {
 			*req.Job = userInfo.GetJob()
 		}
-		condition = condition.AND(tPageShort.Job.EQ(jet.String(req.GetJob())))
+		condition = condition.AND(tPageShort.Job.EQ(mysql.String(req.GetJob())))
 	}
 
 	countStmt := tPageShort.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tPageShort.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tPageShort.ID)).AS("data_count.total"),
 		).
 		FROM(tPageShort).
 		WHERE(condition)
@@ -120,7 +120,7 @@ SELECT(jet.Int(1)).
 
 	tFiles := table.FivenetFiles.AS("logo")
 
-	columns := []jet.Projection{
+	columns := mysql.ProjectionList{
 		tPageShort.Job,
 		tPageShort.ParentID,
 		tPageShort.Slug,
@@ -288,7 +288,7 @@ func (s *Server) getPage(
 	tPage := table.FivenetWikiPages.AS("page")
 	tCreator := tables.User().AS("creator")
 
-	columns := []jet.Projection{
+	columns := mysql.ProjectionList{
 		tPage.ID,
 		tPage.Job,
 		tPage.ParentID,
@@ -328,8 +328,8 @@ func (s *Server) getPage(
 					tPage.CreatorID.EQ(tCreator.ID),
 				),
 		).
-		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Int64(pageId)),
+		WHERE(mysql.AND(
+			tPage.ID.EQ(mysql.Int64(pageId)),
 		)).
 		LIMIT(1)
 
@@ -384,8 +384,8 @@ func (s *Server) CreatePage(
 				tPageShort.ID.AS("id"),
 			).
 			FROM(tPageShort).
-			WHERE(jet.AND(
-				tPageShort.Job.EQ(jet.String(userInfo.GetJob())),
+			WHERE(mysql.AND(
+				tPageShort.Job.EQ(mysql.String(userInfo.GetJob())),
 				tPageShort.DeletedAt.IS_NULL(),
 			)).
 			ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
@@ -568,8 +568,8 @@ func (s *Server) UpdatePage(
 				tPage.ID.AS("id"),
 			).
 			FROM(tPage).
-			WHERE(jet.AND(
-				tPage.Job.EQ(jet.String(userInfo.GetJob())),
+			WHERE(mysql.AND(
+				tPage.Job.EQ(mysql.String(userInfo.GetJob())),
 				tPage.DeletedAt.IS_NULL(),
 				tPage.ParentID.IS_NULL(),
 			))
@@ -692,8 +692,8 @@ func (s *Server) UpdatePage(
 			req.GetPage().GetContent(),
 			nil,
 		).
-		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Int64(req.GetPage().GetId())),
+		WHERE(mysql.AND(
+			tPage.ID.EQ(mysql.Int64(req.GetPage().GetId())),
 		)).
 		LIMIT(1)
 
@@ -884,10 +884,10 @@ func (s *Server) DeletePage(
 	// Ensure page has no children
 	countStmt := tPage.
 		SELECT(
-			jet.COUNT(tPage.ID).AS("data_count.total"),
+			mysql.COUNT(tPage.ID).AS("data_count.total"),
 		).
 		FROM(tPage).
-		WHERE(tPage.ParentID.EQ(jet.Int64(page.GetId())))
+		WHERE(tPage.ParentID.EQ(mysql.Int64(page.GetId())))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -900,9 +900,9 @@ func (s *Server) DeletePage(
 		return nil, errorswiki.ErrPageHasChildren
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if page.GetMeta() != nil && page.GetMeta().GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	stmt := tPage.
@@ -912,8 +912,8 @@ func (s *Server) DeletePage(
 		SET(
 			tPage.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tPage.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tPage.ID.EQ(mysql.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

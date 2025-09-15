@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -28,20 +28,20 @@ type JobsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 // Jobs provides access control logic for job-based permissions.
 type Jobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
 	// table is the main table for job access entries.
-	table jet.Table
+	table mysql.Table
 	// columns holds column references for the main table.
 	columns *JobAccessColumns
 	// selectTable is the table used for select queries (may be aliased).
-	selectTable jet.Table
+	selectTable mysql.Table
 	// selectColumns holds column references for select queries (may be aliased).
 	selectColumns *JobAccessColumns
 }
 
 // NewJobs creates a new Jobs instance for job-based access control.
 func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](
-	table jet.Table,
+	table mysql.Table,
 	columns *JobAccessColumns,
-	tableAlias jet.Table,
+	tableAlias mysql.Table,
 	columnsAlias *JobAccessColumns,
 ) *Jobs[U, T, V] {
 	return &Jobs[U, T, V]{
@@ -63,8 +63,8 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([]
 			a.selectColumns.MinimumGrade,
 		).
 		FROM(a.selectTable).
-		WHERE(jet.AND(
-			a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
 			a.selectColumns.Job.IS_NOT_NULL(),
 			a.selectColumns.MinimumGrade.IS_NOT_NULL(),
 		))
@@ -84,7 +84,7 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (T
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)
 
 	var dest T

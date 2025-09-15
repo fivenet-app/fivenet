@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/oauth2utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -40,9 +40,9 @@ func RetrieveOAuth2Account(
 			tOauth2.ObtainedAt,
 		).
 		FROM(tOauth2).
-		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Int64(accountId)),
-			tOauth2.Provider.EQ(jet.String(provider)),
+		WHERE(mysql.AND(
+			tOauth2.AccountID.EQ(mysql.Int64(accountId)),
+			tOauth2.Provider.EQ(mysql.String(provider)),
 		)).
 		LIMIT(1)
 
@@ -111,10 +111,10 @@ func UpdateOAuth2Account(
 			oauth2Acc.ExpiresIn,
 			oauth2Acc.ObtainedAt,
 		).
-		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Int64(accountId)),
-			tOauth2.Provider.EQ(jet.String(oauth2Acc.Provider)),
-			tOauth2.ExternalID.EQ(jet.String(oauth2Acc.ExternalID)),
+		WHERE(mysql.AND(
+			tOauth2.AccountID.EQ(mysql.Int64(accountId)),
+			tOauth2.Provider.EQ(mysql.String(oauth2Acc.Provider)),
+			tOauth2.ExternalID.EQ(mysql.String(oauth2Acc.ExternalID)),
 		)).
 		LIMIT(1)
 

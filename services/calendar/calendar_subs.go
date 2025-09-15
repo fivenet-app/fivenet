@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -88,8 +88,8 @@ func (s *Server) createOrDeleteSubscription(
 				muted,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tCalendarSubs.Confirmed.SET(jet.Bool(confirmed)),
-				tCalendarSubs.Muted.SET(jet.Bool(muted)),
+				tCalendarSubs.Confirmed.SET(mysql.Bool(confirmed)),
+				tCalendarSubs.Muted.SET(mysql.Bool(muted)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -98,9 +98,9 @@ func (s *Server) createOrDeleteSubscription(
 	} else {
 		stmt := tCalendarSubs.
 			DELETE().
-			WHERE(jet.AND(
-				tCalendarSubs.CalendarID.EQ(jet.Int64(calendarId)),
-				tCalendarSubs.UserID.EQ(jet.Int32(userId)),
+			WHERE(mysql.AND(
+				tCalendarSubs.CalendarID.EQ(mysql.Int64(calendarId)),
+				tCalendarSubs.UserID.EQ(mysql.Int32(userId)),
 			)).
 			LIMIT(1)
 
@@ -126,9 +126,9 @@ func (s *Server) getCalendarSub(
 			tCalendarSubs.Muted,
 		).
 		FROM(tCalendarSubs).
-		WHERE(jet.AND(
-			tCalendarSubs.CalendarID.EQ(jet.Int64(calendarId)),
-			tCalendarSubs.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tCalendarSubs.CalendarID.EQ(mysql.Int64(calendarId)),
+			tCalendarSubs.UserID.EQ(mysql.Int32(userId)),
 		))
 
 	var dest calendar.CalendarSub

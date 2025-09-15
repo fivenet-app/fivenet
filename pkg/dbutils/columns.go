@@ -1,7 +1,7 @@
 package dbutils
 
 import (
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 const DisableColumnName = "-"
@@ -16,27 +16,27 @@ type UserColumns struct {
 	Playtime string `default:"playtime" yaml:"playtime"`
 }
 
-func (c *UserColumns) GetVisum(alias string) jet.Projection {
+func (c *UserColumns) GetVisum(alias string) mysql.Projection {
 	if c.Visum == DisableColumnName {
 		return nil
 	}
-	return jet.RawInt(alias + "." + c.Visum).AS(alias + ".visum")
+	return mysql.RawInt(alias + "." + c.Visum).AS(alias + ".visum")
 }
 
-func (c *UserColumns) GetPlaytime(alias string) jet.Projection {
+func (c *UserColumns) GetPlaytime(alias string) mysql.Projection {
 	if c.Playtime == DisableColumnName {
 		return nil
 	}
-	return jet.RawInt(alias + "." + c.Playtime).AS(alias + ".playtime")
+	return mysql.RawInt(alias + "." + c.Playtime).AS(alias + ".playtime")
 }
 
 type VehicleColumns struct {
 	Model string `default:"model" yaml:"model"`
 }
 
-func (c *VehicleColumns) GetModel(alias string) jet.Projection {
+func (c *VehicleColumns) GetModel(alias string) mysql.Projection {
 	if c.Model == DisableColumnName {
 		return nil
 	}
-	return jet.RawInt(alias + "." + c.Model).AS(alias + ".model")
+	return mysql.RawInt(alias + "." + c.Model).AS(alias + ".model")
 }

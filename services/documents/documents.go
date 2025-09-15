@@ -20,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc/codes"
@@ -46,15 +46,15 @@ func (s *Server) ListDocuments(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 	if req.Search != nil && req.GetSearch() != "" {
 		logRequest = true
-		condition = dbutils.MATCH(tDocumentShort.Title, jet.String(req.GetSearch()))
+		condition = dbutils.MATCH(tDocumentShort.Title, mysql.String(req.GetSearch()))
 	}
 	if len(req.GetCategoryIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetCategoryIds()))
+		ids := make([]mysql.Expression, len(req.GetCategoryIds()))
 		for i := range req.GetCategoryIds() {
-			ids[i] = jet.Int64(req.GetCategoryIds()[i])
+			ids[i] = mysql.Int64(req.GetCategoryIds()[i])
 		}
 
 		condition = condition.AND(
@@ -64,9 +64,9 @@ func (s *Server) ListDocuments(
 
 	if len(req.GetCreatorIds()) > 0 {
 		logRequest = true
-		ids := make([]jet.Expression, len(req.GetCreatorIds()))
+		ids := make([]mysql.Expression, len(req.GetCreatorIds()))
 		for i := range req.GetCreatorIds() {
-			ids[i] = jet.Int32(req.GetCreatorIds()[i])
+			ids[i] = mysql.Int32(req.GetCreatorIds()[i])
 		}
 
 		condition = condition.AND(
@@ -76,26 +76,26 @@ func (s *Server) ListDocuments(
 
 	if req.GetFrom() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
-			jet.TimestampT(req.GetFrom().AsTime()),
+			mysql.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
 
 	if req.GetTo() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
-			jet.TimestampT(req.GetTo().AsTime()),
+			mysql.TimestampT(req.GetTo().AsTime()),
 		))
 	}
 
 	if req.Closed != nil {
 		condition = condition.AND(tDocumentShort.Closed.EQ(
-			jet.Bool(req.GetClosed()),
+			mysql.Bool(req.GetClosed()),
 		))
 	}
 
 	if len(req.GetDocumentIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetDocumentIds()))
+		ids := make([]mysql.Expression, len(req.GetDocumentIds()))
 		for i := range req.GetDocumentIds() {
-			ids[i] = jet.Int64(req.GetDocumentIds()[i])
+			ids[i] = mysql.Int64(req.GetDocumentIds()[i])
 		}
 
 		condition = condition.AND(
@@ -104,7 +104,7 @@ func (s *Server) ListDocuments(
 	}
 
 	if req.OnlyDrafts != nil {
-		condition = condition.AND(tDocumentShort.Draft.EQ(jet.Bool(req.GetOnlyDrafts())))
+		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(req.GetOnlyDrafts())))
 	}
 
 	if logRequest {
@@ -118,9 +118,9 @@ func (s *Server) ListDocuments(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "title":
 			column = tDocumentShort.Title
@@ -157,7 +157,7 @@ func (s *Server) ListDocuments(
 		nil,
 		nil,
 		userInfo,
-		func(stmt jet.SelectStatement) jet.SelectStatement {
+		func(stmt mysql.SelectStatement) mysql.SelectStatement {
 			return stmt.
 				ORDER_BY(orderBys...).
 				OFFSET(req.GetPagination().GetOffset()).
@@ -222,7 +222,7 @@ func (s *Server) GetDocument(
 
 	resp := &pbdocuments.GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())), userInfo, withContent)
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())), userInfo, withContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -270,7 +270,7 @@ func (s *Server) GetDocument(
 
 func (s *Server) getDocument(
 	ctx context.Context,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	withContent bool,
 ) (*documents.Document, error) {
@@ -430,7 +430,7 @@ func (s *Server) CreateDocument(
 			docContent,
 			req.GetContentType(),
 			docState,
-			jet.NULL,
+			mysql.NULL,
 			false,
 			true,
 			false,
@@ -536,7 +536,7 @@ func (s *Server) UpdateDocument(
 	}
 
 	oldDoc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -612,14 +612,14 @@ func (s *Server) UpdateDocument(
 				req.GetTitle(),
 				req.GetContent().GetSummary(DocSummaryLength),
 				req.GetContent(),
-				jet.NULL,
+				mysql.NULL,
 				req.GetState(),
 				req.GetClosed(),
 				req.GetDraft(),
 				req.GetPublic(),
 			).
 			WHERE(
-				tDocument.ID.EQ(jet.Int64(oldDoc.GetId())),
+				tDocument.ID.EQ(mysql.Int64(oldDoc.GetId())),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -697,7 +697,7 @@ func (s *Server) UpdateDocument(
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	doc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -753,7 +753,7 @@ func (s *Server) DeleteDocument(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -780,9 +780,9 @@ func (s *Server) DeleteDocument(
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if doc.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	stmt := tDocument.
@@ -793,7 +793,7 @@ func (s *Server) DeleteDocument(
 			tDocument.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+			tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -849,7 +849,7 @@ func (s *Server) ToggleDocument(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -899,7 +899,7 @@ func (s *Server) ToggleDocument(
 			req.GetClosed(),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Int64(doc.GetId())),
+			tDocument.ID.EQ(mysql.Int64(doc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -972,7 +972,7 @@ func (s *Server) ChangeDocumentOwner(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -1015,7 +1015,7 @@ func (s *Server) ChangeDocumentOwner(
 			tUsers.Dateofbirth,
 		).
 		FROM(tUsers).
-		WHERE(tUsers.ID.EQ(jet.Int32(req.GetNewUserId()))).
+		WHERE(tUsers.ID.EQ(mysql.Int32(req.GetNewUserId()))).
 		LIMIT(1)
 
 	var newOwner users.UserShort

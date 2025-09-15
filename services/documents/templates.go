@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -53,17 +53,17 @@ func (s *Server) ListTemplates(
 			tDTemplates.
 				LEFT_JOIN(tDTemplatesAccess,
 					tDTemplatesAccess.TargetID.EQ(tDTemplates.ID).
-						AND(tDTemplatesAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
+						AND(tDTemplatesAccess.Access.GT_EQ(mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-			jet.AND(
-				tDTemplatesAccess.Job.EQ(jet.String(userInfo.GetJob())),
-				tDTemplatesAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+			mysql.AND(
+				tDTemplatesAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+				tDTemplatesAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 			),
 		)).
 		ORDER_BY(
@@ -173,9 +173,9 @@ func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-			tDTemplates.ID.EQ(jet.Int64(templateId)),
+			tDTemplates.ID.EQ(mysql.Int64(templateId)),
 		)).
 		LIMIT(1)
 
@@ -265,14 +265,14 @@ func (s *Server) CreateTemplate(
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := jet.NULL
+	categoryId := mysql.NULL
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = jet.Int64(cat.GetId())
+			categoryId = mysql.Int64(cat.GetId())
 		}
 	}
 
@@ -384,14 +384,14 @@ func (s *Server) UpdateTemplate(
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
 	}
 
-	categoryId := jet.NULL
+	categoryId := mysql.NULL
 	if req.GetTemplate().GetCategory() != nil {
 		cat, err := s.getCategory(ctx, req.GetTemplate().GetCategory().GetId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if cat != nil {
-			categoryId = jet.Int64(cat.GetId())
+			categoryId = mysql.Int64(cat.GetId())
 		}
 	}
 
@@ -434,7 +434,7 @@ func (s *Server) UpdateTemplate(
 			req.GetTemplate().GetWorkflow(),
 		).
 		WHERE(
-			tDTemplates.ID.EQ(jet.Int64(req.GetTemplate().GetId())),
+			tDTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -521,11 +521,11 @@ func (s *Server) DeleteTemplate(
 			tDTemplates.DeletedAt,
 		).
 		SET(
-			tDTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
-		WHERE(jet.AND(
-			tDTemplates.CreatorJob.EQ(jet.String(userInfo.GetJob())),
-			tDTemplates.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tDTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+			tDTemplates.ID.EQ(mysql.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

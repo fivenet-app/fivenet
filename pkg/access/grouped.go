@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -27,7 +27,7 @@ type Grouped[
 	db *sql.DB
 
 	// targetTable is the main table for access checks.
-	targetTable jet.Table
+	targetTable mysql.Table
 	// targetTableColumns holds column references for the target table.
 	targetTableColumns *TargetTableColumns
 
@@ -108,7 +108,7 @@ func NewGrouped[
 	QualiU any,
 	QualiT QualificationsAccessProtoMessage[QualiU, V],
 	V protoutils.ProtoEnum,
-](db *sql.DB, targetTable jet.Table, targetTableColumns *TargetTableColumns, jobs *Jobs[JobsU, JobsT, V], users *Users[UsersU, UsersT, V], qualis *Qualifications[QualiU, QualiT, V]) *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V] {
+](db *sql.DB, targetTable mysql.Table, targetTableColumns *TargetTableColumns, jobs *Jobs[JobsU, JobsT, V], users *Users[UsersU, UsersT, V], qualis *Qualifications[QualiU, QualiT, V]) *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V] {
 	return &Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]{
 		db:                 db,
 		targetTable:        targetTable,
@@ -215,26 +215,26 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 	userInfo *pbuserinfo.UserInfo,
 	targetIds []int64,
 	access V,
-) jet.SelectStatement {
-	ids := make([]jet.Expression, len(targetIds))
+) mysql.SelectStatement {
+	ids := make([]mysql.Expression, len(targetIds))
 	for i := range targetIds {
-		ids[i] = jet.Int64(targetIds[i])
+		ids[i] = mysql.Int64(targetIds[i])
 	}
 
-	accessCheckConditions := make([]jet.BoolExpression, 0, 4)
-	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
+	accessCheckConditions := make([]mysql.BoolExpression, 0, 4)
+	orderBys := []mysql.OrderByClause{g.targetTableColumns.ID.DESC()}
 
 	// Creator-based access (keeps your nil-logic intact)
-	creatorCond := jet.Bool(false)
+	creatorCond := mysql.Bool(false)
 	if g.targetTableColumns.CreatorJob != nil {
-		creatorCond = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.GetJob()))
+		creatorCond = g.targetTableColumns.CreatorJob.EQ(mysql.String(userInfo.GetJob()))
 	}
 	if g.targetTableColumns.CreatorID != nil {
 		if g.targetTableColumns.CreatorJob == nil {
-			creatorCond = g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId()))
+			creatorCond = g.targetTableColumns.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))
 		} else {
 			creatorCond = creatorCond.AND(
-				g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+				g.targetTableColumns.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 			)
 		}
 	}
@@ -242,14 +242,14 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 
 	// Direct user access via EXISTS (if Users access table is configured)
 	if g.Users != nil {
-		userAccessExists := jet.EXISTS(
-			jet.
-				SELECT(jet.Int(1)).
+		userAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(g.Users.table).
 				WHERE(
 					g.Users.columns.TargetID.EQ(g.targetTableColumns.ID).
-						AND(g.Users.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))).
-						AND(g.Users.columns.UserId.EQ(jet.Int32(userInfo.GetUserId()))),
+						AND(g.Users.columns.Access.GT_EQ(mysql.Int32(int32(access.Number())))).
+						AND(g.Users.columns.UserId.EQ(mysql.Int32(userInfo.GetUserId()))),
 				),
 		)
 		accessCheckConditions = append(accessCheckConditions, userAccessExists)
@@ -257,18 +257,18 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 
 	// Job + grade access via EXISTS (if Jobs access table is configured)
 	if g.Jobs != nil {
-		jobAccessExists := jet.EXISTS(
-			jet.
-				SELECT(jet.Int(1)).
+		jobAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(g.Jobs.table).
 				WHERE(
 					g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
-						AND(g.Jobs.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))).
+						AND(g.Jobs.columns.Access.GT_EQ(mysql.Int32(int32(access.Number())))).
 						AND(
-							jet.AND(
-								g.Jobs.columns.Job.EQ(jet.String(userInfo.GetJob())),
+							mysql.AND(
+								g.Jobs.columns.Job.EQ(mysql.String(userInfo.GetJob())),
 								g.Jobs.columns.MinimumGrade.LT_EQ(
-									jet.Int32(userInfo.GetJobGrade()),
+									mysql.Int32(userInfo.GetJobGrade()),
 								),
 							),
 						),
@@ -279,22 +279,22 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 
 	// Qualification-based access via EXISTS (if Qualifications are configured)
 	if g.Qualifications != nil {
-		qualExists := jet.EXISTS(
-			jet.
-				SELECT(jet.Int(1)).
+		qualExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(g.Qualifications.table.
 					INNER_JOIN(tQualiResults,
 						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
 					),
 				).
 				WHERE(
-					jet.AND(
+					mysql.AND(
 						g.Qualifications.columns.QualificationId.IS_NOT_NULL(),
 						tQualiResults.DeletedAt.IS_NULL(),
 						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
-						tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						tQualiResults.Status.EQ(
-							jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+							mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
 						),
 					),
 				),
@@ -308,10 +308,10 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 		).
 		FROM(g.targetTable).
 		WHERE(
-			jet.AND(
+			mysql.AND(
 				g.targetTableColumns.ID.IN(ids...),
 				g.targetTableColumns.DeletedAt.IS_NULL(),
-				jet.OR(accessCheckConditions...),
+				mysql.OR(accessCheckConditions...),
 			),
 		).
 		ORDER_BY(orderBys...)

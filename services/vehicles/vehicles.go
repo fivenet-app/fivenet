@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -44,11 +44,11 @@ func (s *Server) ListVehicles(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
 	if req.LicensePlate != nil && req.GetLicensePlate() != "" {
 		logRequest = true
-		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(
+		condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(
 			strings.ReplaceAll(req.GetLicensePlate(), "%", "")+"%",
 		)))
 	}
@@ -57,35 +57,35 @@ func (s *Server) ListVehicles(
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
 	if modelColumn != nil && req.Model != nil && req.GetModel() != "" {
 		logRequest = true
-		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
+		condition = mysql.AND(condition, tVehicles.Model.LIKE(mysql.String(
 			strings.ReplaceAll(req.GetModel(), "%", "")+"%",
 		)))
 	}
 
 	if len(req.GetUserIds()) > 0 {
 		logRequest = true
-		userIds := []jet.Expression{}
+		userIds := []mysql.Expression{}
 		for _, v := range req.GetUserIds() {
-			userIds = append(userIds, jet.Int32(v))
+			userIds = append(userIds, mysql.Int32(v))
 		}
 
-		condition = jet.AND(condition,
+		condition = mysql.AND(condition,
 			tUsers.Identifier.EQ(tVehicles.Owner),
 			tUsers.ID.IN(userIds...),
 		)
-		userCondition = jet.AND(userCondition, tUsers.ID.IN(userIds...))
+		userCondition = mysql.AND(userCondition, tUsers.ID.IN(userIds...))
 	} else if req.Job != nil && req.GetJob() != "" && !tables.IsESXCompatEnabled() {
 		logRequest = true
-		condition = jet.AND(condition,
-			tVehicles.Job.EQ(jet.String(req.GetJob())),
+		condition = mysql.AND(condition,
+			tVehicles.Job.EQ(mysql.String(req.GetJob())),
 		)
 	}
 
 	if fields.Contains("Wanted") || userInfo.GetSuperuser() {
 		if req.Wanted != nil && req.GetWanted() {
 			logRequest = true
-			condition = jet.AND(condition,
-				tVehicleProps.Wanted.EQ(jet.Bool(req.GetWanted())),
+			condition = mysql.AND(condition,
+				tVehicleProps.Wanted.EQ(mysql.Bool(req.GetWanted())),
 			)
 		}
 	}
@@ -102,7 +102,7 @@ func (s *Server) ListVehicles(
 
 	countStmt := tVehicles.
 		SELECT(
-			jet.COUNT(tVehicles.Owner).AS("data_count.total"),
+			mysql.COUNT(tVehicles.Owner).AS("data_count.total"),
 		).
 		FROM(
 			tVehicles.
@@ -131,11 +131,11 @@ func (s *Server) ListVehicles(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{
+	orderBys := []mysql.OrderByClause{
 		tVehicles.Type.ASC(),
 	}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "model":
 			column = tVehicles.Model
@@ -156,7 +156,7 @@ func (s *Server) ListVehicles(
 
 	columns := dbutils.Columns{
 		modelColumn,
-		jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
+		mysql.REPLACE(tVehicles.Type, mysql.String("_"), mysql.String(" ")).AS("vehicle.type"),
 		tUsers.ID.AS("vehicle.owner_id"),
 		tUsers.ID,
 		tUsers.Firstname,
@@ -323,7 +323,7 @@ func (s *Server) getVehicleProps(
 		).
 		FROM(tVehicleProps).
 		WHERE(
-			tVehicleProps.Plate.EQ(jet.String(plate)),
+			tVehicleProps.Plate.EQ(mysql.String(plate)),
 		).
 		LIMIT(1)
 

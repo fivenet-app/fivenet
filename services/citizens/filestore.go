@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
@@ -38,14 +38,14 @@ func (s *Server) UploadAvatar(
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
-	meta, err := s.profile_pictureHandler.AwaitHandshake(srv)
+	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
 	meta.Namespace = "user_profile_pictures"
-	if _, err := s.profile_pictureHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
+	if _, err := s.profilePictureHandler.UploadFromMeta(ctx, meta, userInfo.GetUserId(), srv); err != nil {
 		return err
 	}
 
@@ -71,7 +71,7 @@ func (s *Server) DeleteAvatar(
 
 	stmt := tUserProps.
 		SELECT(tUserProps.AvatarFileID.AS("profile_picture_file_id")).
-		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
+		WHERE(tUserProps.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
 		LIMIT(1)
 
 	var props struct {
@@ -87,7 +87,7 @@ func (s *Server) DeleteAvatar(
 		return &pbcitizens.DeleteAvatarResponse{}, nil
 	}
 
-	if err := s.profile_pictureHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
+	if err := s.profilePictureHandler.Delete(ctx, userInfo.GetUserId(), *props.AvatarFileId); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -128,7 +128,7 @@ func (s *Server) UploadMugshot(
 		return errorscitizens.ErrPropsMugshotDenied
 	}
 
-	meta, err := s.profile_pictureHandler.AwaitHandshake(srv)
+	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
@@ -163,7 +163,7 @@ func (s *Server) UploadMugshot(
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(targetUserId))).
+		WHERE(tUser.ID.EQ(mysql.Int32(targetUserId))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
@@ -258,7 +258,7 @@ func (s *Server) DeleteMugshot(
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
+		WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
 		LIMIT(1)
 
 	if err := uStmt.QueryContext(ctx, s.db, u); err != nil {
@@ -279,7 +279,7 @@ func (s *Server) DeleteMugshot(
 
 	stmt := tUserProps.
 		SELECT(tUserProps.MugshotFileID.AS("mugshot_file_id")).
-		WHERE(tUserProps.UserID.EQ(jet.Int32(userInfo.GetUserId()))).
+		WHERE(tUserProps.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
 		LIMIT(1)
 
 	var props struct {

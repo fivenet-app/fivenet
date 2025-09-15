@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
@@ -189,9 +189,9 @@ func (p *Poller) doBatch(ctx context.Context) error {
 		return nil
 	}
 
-	userIds := []jet.Expression{}
+	userIds := []mysql.Expression{}
 	for _, req := range batch {
-		userIds = append(userIds, jet.Int32(req.GetUserId()))
+		userIds = append(userIds, mysql.Int32(req.GetUserId()))
 	}
 
 	tUser := tables.User()
@@ -211,7 +211,7 @@ func (p *Poller) doBatch(ctx context.Context) error {
 				INNER_JOIN(
 					tAccount,
 					tAccount.License.LIKE(
-						jet.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)"),
+						mysql.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)"),
 					),
 				),
 		).

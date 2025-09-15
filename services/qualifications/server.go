@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -102,8 +102,8 @@ func NewServer(p Params) *Server {
 		tQualiFiles.QualificationID,
 		tQualiFiles.FileID,
 		3<<20,
-		func(parentId int64) jet.BoolExpression {
-			return tQualiFiles.QualificationID.EQ(jet.Int64(parentId))
+		func(parentId int64) mysql.BoolExpression {
+			return tQualiFiles.QualificationID.EQ(mysql.Int64(parentId))
 		},
 		filestore.InsertJoinRow,
 		false,

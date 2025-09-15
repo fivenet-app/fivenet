@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -30,19 +30,19 @@ func (s *Server) ListDocumentPins(
 
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
-	var idCondition jet.BoolExpression
+	var idCondition mysql.BoolExpression
 	if req.Personal != nil && req.GetPersonal() {
-		idCondition = tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId()))
+		idCondition = tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	} else {
-		idCondition = jet.OR(
-			tDPins.Job.EQ(jet.String(userInfo.GetJob())),
-			tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+		idCondition = mysql.OR(
+			tDPins.Job.EQ(mysql.String(userInfo.GetJob())),
+			tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 		)
 	}
 
 	countStmt := tDPins.
 		SELECT(
-			jet.COUNT(tDPins.DocumentID).AS("data_count.total"),
+			mysql.COUNT(tDPins.DocumentID).AS("data_count.total"),
 		).
 		FROM(tDPins).
 		WHERE(idCondition).
@@ -84,9 +84,9 @@ func (s *Server) ListDocumentPins(
 		}
 	}
 
-	docIdsExpr := make([]jet.Expression, len(docPins))
+	docIdsExpr := make([]mysql.Expression, len(docPins))
 	for k, pin := range docPins {
-		docIdsExpr[k] = jet.Int64(pin.GetDocumentId())
+		docIdsExpr[k] = mysql.Int64(pin.GetDocumentId())
 	}
 	condition := tDocumentShort.ID.IN(docIdsExpr...)
 
@@ -96,7 +96,7 @@ func (s *Server) ListDocumentPins(
 		nil,
 		nil,
 		userInfo,
-		func(stmt jet.SelectStatement) jet.SelectStatement {
+		func(stmt mysql.SelectStatement) mysql.SelectStatement {
 			return stmt.ORDER_BY(
 				tDocumentShort.CreatedAt.DESC(),
 				tDocumentShort.UpdatedAt.DESC(),
@@ -182,12 +182,12 @@ func (s *Server) ToggleDocumentPin(
 	tDPins := table.FivenetDocumentsPins
 
 	if req.GetState() {
-		job := jet.NULL
-		userId := jet.NULL
+		job := mysql.NULL
+		userId := mysql.NULL
 		if req.Personal != nil && req.GetPersonal() {
-			userId = jet.Int32(userInfo.GetUserId())
+			userId = mysql.Int32(userInfo.GetUserId())
 		} else {
-			job = jet.String(userInfo.GetJob())
+			job = mysql.String(userInfo.GetJob())
 		}
 
 		stmt := tDPins.
@@ -210,15 +210,15 @@ func (s *Server) ToggleDocumentPin(
 			}
 		}
 	} else {
-		condition := tDPins.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
+		condition := tDPins.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
 		if req.Personal != nil && req.GetPersonal() {
-			condition = condition.AND(jet.AND(
-				tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+			condition = condition.AND(mysql.AND(
+				tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tDPins.Job.IS_NULL(),
 			))
 		} else {
-			condition = condition.AND(jet.AND(
-				tDPins.Job.EQ(jet.String(userInfo.GetJob())),
+			condition = condition.AND(mysql.AND(
+				tDPins.Job.EQ(mysql.String(userInfo.GetJob())),
 				tDPins.UserID.IS_NULL(),
 			))
 		}
@@ -250,15 +250,15 @@ func (s *Server) getDocumentPin(
 ) (*documents.DocumentPin, error) {
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
-	condition := jet.AND(
-		tDPins.DocumentID.EQ(jet.Int64(documentId)),
-		jet.OR(
-			jet.AND(
-				tDPins.Job.EQ(jet.String(userInfo.GetJob())),
+	condition := mysql.AND(
+		tDPins.DocumentID.EQ(mysql.Int64(documentId)),
+		mysql.OR(
+			mysql.AND(
+				tDPins.Job.EQ(mysql.String(userInfo.GetJob())),
 				tDPins.UserID.IS_NULL(),
 			),
-			jet.AND(
-				tDPins.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+			mysql.AND(
+				tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tDPins.Job.IS_NULL(),
 			),
 		),

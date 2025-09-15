@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -129,7 +129,7 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 
 	if job != "" {
 		stmt = stmt.WHERE(
-			tCentrumDispatchers.Job.EQ(jet.String(job)),
+			tCentrumDispatchers.Job.EQ(mysql.String(job)),
 		)
 	}
 
@@ -197,9 +197,9 @@ func (s *DispatchersDB) SetUserState(
 	} else {
 		stmt := tCentrumDispatchers.
 			DELETE().
-			WHERE(jet.AND(
-				tCentrumDispatchers.Job.EQ(jet.String(job)),
-				tCentrumDispatchers.UserID.EQ(jet.Int32(userId)),
+			WHERE(mysql.AND(
+				tCentrumDispatchers.Job.EQ(mysql.String(job)),
+				tCentrumDispatchers.UserID.EQ(mysql.Int32(userId)),
 			)).
 			LIMIT(1)
 

@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 var tConfig = table.FivenetConfig
@@ -81,7 +81,7 @@ func (s *Server) UpdateAppConfig(
 			req.GetConfig(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tConfig.AppConfig.SET(jet.RawString("VALUES(`app_config`)")),
+			tConfig.AppConfig.SET(mysql.RawString("VALUES(`app_config`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

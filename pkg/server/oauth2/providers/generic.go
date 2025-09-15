@@ -50,15 +50,15 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		return nil, errors.New("no username found in user info")
 	}
 
-	profile_pictureRaw, ok := dest[mapping.Avatar]
+	profilePictureRaw, ok := dest[mapping.Avatar]
 	if !ok {
 		return nil, errors.New("failed to get profile_picture from user info")
 	}
 
-	if profile_pictureRaw == nil {
-		profile_pictureRaw = p.DefaultAvatar
+	if profilePictureRaw == nil {
+		profilePictureRaw = p.DefaultAvatar
 	}
-	profile_picture, ok := profile_pictureRaw.(string)
+	profilePicture, ok := profilePictureRaw.(string)
 	if !ok {
 		return nil, errors.New("failed to get profile_picture from user info")
 	}
@@ -71,7 +71,7 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 	user := &UserInfo{
 		ID:       strconv.FormatInt(int64(subId), 10),
 		Username: username,
-		Avatar:   profile_picture,
+		Avatar:   profilePicture,
 	}
 
 	return user, nil

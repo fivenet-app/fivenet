@@ -5,7 +5,7 @@ import (
 
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEntry, error) {
@@ -44,7 +44,7 @@ func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEn
 					tCreator.ID.EQ(tConduct.CreatorID),
 				),
 		).
-		WHERE(tConduct.ID.EQ(jet.Int64(id))).
+		WHERE(tConduct.ID.EQ(mysql.Int64(id))).
 		LIMIT(1)
 
 	dest := &jobs.ConductEntry{}

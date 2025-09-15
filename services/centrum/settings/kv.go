@@ -71,7 +71,16 @@ func (s *SettingsDB) GetAccessList(
 	access := settings.GetEffectiveAccess()
 	jobs := []string{}
 	if access == nil {
-		s.calculateEffectiveAccess(settings)
+		settings.EffectiveAccess = s.calculateEffectiveAccess(
+			settings.GetJob(),
+			settings.GetOfferedAccess(),
+		)
+		access = settings.EffectiveAccess
+	}
+	if access.Dispatches == nil {
+		access.Dispatches = &centrum.EffectiveDispatchAccess{
+			Jobs: []*centrum.JobAccessEntry{},
+		}
 	}
 
 	// Add the user's own job to the access list

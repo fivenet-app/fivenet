@@ -123,7 +123,7 @@ func TestLRUCacheConcurrentAccess(t *testing.T) {
 		}(i)
 	}
 	wg.Wait()
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		v, ok := cache.Get(i)
 		if ok {
 			assert.Equal(t, i*10, v)

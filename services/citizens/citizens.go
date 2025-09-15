@@ -20,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -53,7 +53,7 @@ func (s *Server) ListCitizens(
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
@@ -77,7 +77,7 @@ func (s *Server) ListCitizens(
 					" ",
 					"",
 				) + "%"
-				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
+				condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
 			}
 
 		case "UserProps.Wanted":
@@ -98,7 +98,7 @@ func (s *Server) ListCitizens(
 			if req.TrafficInfractionPoints != nil && req.GetTrafficInfractionPoints() > 0 {
 				condition = condition.AND(
 					tUserProps.TrafficInfractionPoints.GT_EQ(
-						jet.Uint32(req.GetTrafficInfractionPoints()),
+						mysql.Uint32(req.GetTrafficInfractionPoints()),
 					),
 				)
 			}
@@ -108,7 +108,7 @@ func (s *Server) ListCitizens(
 
 			if req.OpenFines != nil && req.GetOpenFines() > 0 {
 				condition = condition.AND(
-					tUserProps.OpenFines.GT_EQ(jet.Int64(req.GetOpenFines())),
+					tUserProps.OpenFines.GT_EQ(mysql.Int64(req.GetOpenFines())),
 				)
 			}
 
@@ -134,15 +134,15 @@ func (s *Server) ListCitizens(
 	if req.GetSearch() != "" {
 		req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(
-			jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
-				LIKE(jet.String(req.GetSearch())),
+			mysql.CONCAT(tUser.Firstname, mysql.String(" "), tUser.Lastname).
+				LIKE(mysql.String(req.GetSearch())),
 		)
 	}
 
 	if req.Dateofbirth != nil && req.GetDateofbirth() != "" {
 		condition = condition.AND(
 			tUser.Dateofbirth.LIKE(
-				jet.String(strings.ReplaceAll(req.GetDateofbirth(), "%", " ") + "%"),
+				mysql.String(strings.ReplaceAll(req.GetDateofbirth(), "%", " ") + "%"),
 			),
 		)
 	}
@@ -150,9 +150,9 @@ func (s *Server) ListCitizens(
 	// Get total count of values
 	countStmt := tUser.
 		SELECT(
-			jet.COUNT(tUser.ID).AS("data_count.total"),
+			mysql.COUNT(tUser.ID).AS("data_count.total"),
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tUser.
 				LEFT_JOIN(tUserProps,
@@ -178,7 +178,7 @@ func (s *Server) ListCitizens(
 
 	// Convert proto sort to db sorting
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "trafficInfractionPoints":
 			if fields.Contains("UserProps.TrafficInfractionPoints") {
@@ -220,7 +220,7 @@ func (s *Server) ListCitizens(
 			tUser.ID,
 			selectors.Get()...,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUser.
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUser.ID),
@@ -349,7 +349,7 @@ func (s *Server) GetUser(
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
+		WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.GetUser()); err != nil {
@@ -417,7 +417,7 @@ func (s *Server) GetUser(
 					LEFT_JOIN(tLicenses,
 						tLicenses.Type.EQ(tCitizensLicenses.Type)),
 			).
-			WHERE(tUser.ID.EQ(jet.Int32(req.GetUserId()))).
+			WHERE(tUser.ID.EQ(mysql.Int32(req.GetUserId()))).
 			LIMIT(15)
 
 		if err := stmt.QueryContext(ctx, s.db, &resp.User.Licenses); err != nil {
@@ -535,7 +535,7 @@ func (s *Server) SetUserProps(
 					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
-		WHERE(tUser.ID.EQ(jet.Int32(req.GetProps().GetUserId()))).
+		WHERE(tUser.ID.EQ(mysql.Int32(req.GetProps().GetUserId()))).
 		LIMIT(1)
 
 	u := &users.User{}
@@ -719,7 +719,7 @@ func (s *Server) getUserProps(
 				),
 		).
 		WHERE(
-			tUserProps.UserID.EQ(jet.Int32(userId)),
+			tUserProps.UserID.EQ(mysql.Int32(userId)),
 		).
 		LIMIT(1)
 

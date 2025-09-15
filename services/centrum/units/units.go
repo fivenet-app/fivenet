@@ -25,7 +25,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -267,7 +267,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id int64) error {
 
 	if id > 0 {
 		condition = condition.AND(
-			tUnits.ID.EQ(jet.Int64(id)),
+			tUnits.ID.EQ(mysql.Int64(id)),
 		)
 	}
 
@@ -348,7 +348,7 @@ func (s *UnitDB) LoadUnitIDForUserID(ctx context.Context, userId int32) (int64, 
 		).
 		FROM(tUnitUser).
 		WHERE(
-			tUnitUser.UserID.EQ(jet.Int32(userId)),
+			tUnitUser.UserID.EQ(mysql.Int32(userId)),
 		).
 		LIMIT(1)
 
@@ -528,15 +528,15 @@ func (s *UnitDB) UpdateUnitAssignments(
 	defer tx.Rollback()
 
 	if len(toRemove) > 0 {
-		removeIds := make([]jet.Expression, len(toRemove))
+		removeIds := make([]mysql.Expression, len(toRemove))
 		for i := range toRemove {
-			removeIds[i] = jet.Int32(toRemove[i])
+			removeIds[i] = mysql.Int32(toRemove[i])
 		}
 
 		stmt := tUnitUser.
 			DELETE().
-			WHERE(jet.AND(
-				tUnitUser.UnitID.EQ(jet.Int64(unitId)),
+			WHERE(mysql.AND(
+				tUnitUser.UnitID.EQ(mysql.Int64(unitId)),
 				tUnitUser.UserID.IN(removeIds...),
 			))
 
@@ -582,7 +582,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 			}
 
 			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-				tUnitUser.UnitID.SET(jet.IntExp(jet.Raw("VALUES(`unit_id`)"))),
+				tUnitUser.UnitID.SET(mysql.IntExp(mysql.Raw("VALUES(`unit_id`)"))),
 			)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -814,8 +814,8 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 			unit.GetAttributes(),
 			unit.GetHomePostal(),
 		).
-		WHERE(jet.AND(
-			tUnits.ID.EQ(jet.Int64(unit.GetId())),
+		WHERE(mysql.AND(
+			tUnits.ID.EQ(mysql.Int64(unit.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -866,7 +866,7 @@ func (s *UnitDB) AddStatus(
 			tUnitStatus.CreatorJob,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
+			mysql.CURRENT_TIMESTAMP(),
 			status.GetUnitId(),
 			status.GetStatus(),
 			status.Reason,
@@ -965,7 +965,7 @@ func (s *UnitDB) GetStatusByID(
 				),
 		).
 		WHERE(
-			tUnitStatus.ID.EQ(jet.Int64(id)),
+			tUnitStatus.ID.EQ(mysql.Int64(id)),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
@@ -1038,11 +1038,11 @@ func (s *UnitDB) GetLastStatus(
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
-		WHERE(jet.AND(
-			tUnitStatus.UnitID.EQ(jet.Int64(unitId)),
+		WHERE(mysql.AND(
+			tUnitStatus.UnitID.EQ(mysql.Int64(unitId)),
 			tUnitStatus.Status.NOT_IN(
-				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
-				jet.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
+				mysql.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
+				mysql.Int32(int32(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
 			),
 		)).
 		ORDER_BY(tUnitStatus.ID.DESC()).
@@ -1065,8 +1065,8 @@ func (s *UnitDB) Delete(ctx context.Context, id int64) error {
 
 	stmt := tUnits.
 		DELETE().
-		WHERE(jet.AND(
-			tUnits.ID.EQ(jet.Int64(id)),
+		WHERE(mysql.AND(
+			tUnits.ID.EQ(mysql.Int64(id)),
 		)).
 		LIMIT(1)
 

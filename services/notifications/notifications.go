@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 )
@@ -40,15 +40,15 @@ func (s *Server) GetNotifications(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tNotifications := tNotifications.AS("notification")
-	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.GetUserId()))
+	condition := tNotifications.UserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	if req.IncludeRead != nil && !req.GetIncludeRead() {
 		condition = condition.AND(tNotifications.ReadAt.IS_NULL())
 	}
 
 	if len(req.GetCategories()) > 0 {
-		categoryIds := make([]jet.Expression, len(req.GetCategories()))
+		categoryIds := make([]mysql.Expression, len(req.GetCategories()))
 		for i := range req.GetCategories() {
-			categoryIds[i] = jet.Int32(int32(req.GetCategories()[i]))
+			categoryIds[i] = mysql.Int32(int32(req.GetCategories()[i]))
 		}
 
 		condition = condition.AND(tNotifications.Category.IN(categoryIds...))
@@ -56,7 +56,7 @@ func (s *Server) GetNotifications(
 
 	countStmt := tNotifications.
 		SELECT(
-			jet.COUNT(tNotifications.ID).AS("data_count.total"),
+			mysql.COUNT(tNotifications.ID).AS("data_count.total"),
 		).
 		FROM(tNotifications).
 		WHERE(condition)
@@ -114,25 +114,25 @@ func (s *Server) MarkNotifications(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tNotifications.UserID.EQ(
-		jet.Int32(userInfo.GetUserId())).AND(
+		mysql.Int32(userInfo.GetUserId())).AND(
 		tNotifications.ReadAt.IS_NULL(),
 	)
 
 	// If not all
 	if len(req.GetIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetIds()))
+		ids := make([]mysql.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Int64(req.GetIds()[i])
+			ids[i] = mysql.Int64(req.GetIds()[i])
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
 	} else if req.All == nil || !req.GetAll() {
 		return &pbnotifications.MarkNotificationsResponse{}, nil
 	}
 
-	readAt := jet.CURRENT_TIMESTAMP()
+	readAt := mysql.CURRENT_TIMESTAMP()
 	if req.GetUnread() {
 		// Allow users to mark notifications as unread
-		readAt = jet.TimestampExp(jet.NULL)
+		readAt = mysql.TimestampExp(mysql.NULL)
 	}
 
 	stmt := tNotifications.
@@ -178,11 +178,11 @@ func (s *Server) MarkNotifications(
 func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int64, error) {
 	stmt := tNotifications.
 		SELECT(
-			jet.COUNT(tNotifications.ID).AS("count"),
+			mysql.COUNT(tNotifications.ID).AS("count"),
 		).
 		FROM(tNotifications).
-		WHERE(jet.AND(
-			tNotifications.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tNotifications.UserID.EQ(mysql.Int32(userId)),
 			tNotifications.ReadAt.IS_NULL(),
 		)).
 		ORDER_BY(tNotifications.ID.DESC())

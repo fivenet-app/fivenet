@@ -18,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -63,11 +63,11 @@ func (s *Server) GetDocumentReferences(
 		FROM(
 			tDocRef,
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDocRef.DeletedAt.IS_NULL(),
-			jet.OR(
-				tDocRef.SourceDocumentID.EQ(jet.Int64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(jet.Int64(req.GetDocumentId())),
+			mysql.OR(
+				tDocRef.SourceDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
+				tDocRef.TargetDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
 			),
 		))
 
@@ -104,9 +104,9 @@ func (s *Server) GetDocumentReferences(
 		return resp, nil
 	}
 
-	dIds := make([]jet.Expression, len(ids))
+	dIds := make([]mysql.Expression, len(ids))
 	for i := range ids {
-		dIds[i] = jet.Int64(ids[i])
+		dIds[i] = mysql.Int64(ids[i])
 	}
 
 	tSourceDoc := tDocument.AS("source_document")
@@ -166,11 +166,11 @@ func (s *Server) GetDocumentReferences(
 					tDocRef.CreatorID.EQ(tRefCreator.ID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDocRef.DeletedAt.IS_NULL(),
-			jet.OR(
-				tDocRef.SourceDocumentID.EQ(jet.Int64(req.GetDocumentId())),
-				tDocRef.TargetDocumentID.EQ(jet.Int64(req.GetDocumentId())),
+			mysql.OR(
+				tDocRef.SourceDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
+				tDocRef.TargetDocumentID.EQ(mysql.Int64(req.GetDocumentId())),
 			),
 		)).
 		ORDER_BY(
@@ -355,7 +355,7 @@ func (s *Server) RemoveDocumentReference(
 			tDocRef.TargetDocumentID.AS("target"),
 		).
 		FROM(tDocRef).
-		WHERE(tDocRef.ID.EQ(jet.Int64(req.GetId()))).
+		WHERE(tDocRef.ID.EQ(mysql.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docIDs); err != nil {
@@ -381,10 +381,10 @@ func (s *Server) RemoveDocumentReference(
 			tDocRef.DeletedAt,
 		).
 		SET(
-			tDocRef.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocRef.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tDocRef.ID.EQ(jet.Int64(req.GetId())),
+			tDocRef.ID.EQ(mysql.Int64(req.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -483,10 +483,10 @@ func (s *Server) addDocumentRelation(
 				tDocRel.ID.AS("id"),
 			).
 			FROM(tDocRel).
-			WHERE(jet.AND(
-				tDocRel.DocumentID.EQ(jet.Int64(rel.GetDocumentId())),
-				tDocRel.Relation.EQ(jet.Int32(int32(rel.GetRelation()))),
-				tDocRel.TargetUserID.EQ(jet.Int32(rel.GetTargetUserId())),
+			WHERE(mysql.AND(
+				tDocRel.DocumentID.EQ(mysql.Int64(rel.GetDocumentId())),
+				tDocRel.Relation.EQ(mysql.Int32(int32(rel.GetRelation()))),
+				tDocRel.TargetUserID.EQ(mysql.Int32(rel.GetTargetUserId())),
 			)).
 			LIMIT(1)
 
@@ -555,7 +555,7 @@ func (s *Server) RemoveDocumentRelation(
 			tDocRel.DocumentID.AS("id"),
 		).
 		FROM(tDocRel).
-		WHERE(tDocRel.ID.EQ(jet.Int64(req.GetId()))).
+		WHERE(tDocRel.ID.EQ(mysql.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
@@ -588,10 +588,10 @@ func (s *Server) RemoveDocumentRelation(
 			tDocRel.DeletedAt,
 		).
 		SET(
-			tDocRel.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDocRel.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tDocRel.ID.EQ(jet.Int64(req.GetId())),
+			tDocRel.ID.EQ(mysql.Int64(req.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -643,7 +643,7 @@ func (s *Server) getDocumentRelation(
 			tDocRel,
 		).
 		WHERE(
-			tDocRel.ID.EQ(jet.Int64(id)),
+			tDocRel.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -717,8 +717,8 @@ func (s *Server) getDocumentRelations(
 					tTargetUser.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
-		WHERE(jet.AND(
-			tDocRel.DocumentID.EQ(jet.Int64(documentId)),
+		WHERE(mysql.AND(
+			tDocRel.DocumentID.EQ(mysql.Int64(documentId)),
 			tDocRel.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(
@@ -771,7 +771,7 @@ func (s *Server) notifyMentionedUser(
 		return nil
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Int64(documentId)), userInfo, false)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(mysql.Int64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}

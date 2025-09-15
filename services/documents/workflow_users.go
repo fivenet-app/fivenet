@@ -8,7 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -45,9 +45,9 @@ func (w *Workflow) handleDocumentsUsers(
 						AND(tDTemplates.DeletedAt.IS_NULL()),
 				),
 		).
-		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
-			tUserWorkflow.ManualReminderTime.LT_EQ(jet.TimestampT(time.Now())),
+		WHERE(mysql.AND(
+			tUserWorkflow.DocumentID.GT(mysql.Int64(data.GetLastDocId())),
+			tUserWorkflow.ManualReminderTime.LT_EQ(mysql.TimestampT(time.Now())),
 		)).
 		LIMIT(100)
 
@@ -122,14 +122,14 @@ func updateWorkflowUserState(
 	tx qrm.DB,
 	state *documents.WorkflowUserState,
 ) error {
-	reminderTime := jet.TimestampExp(jet.NULL)
+	reminderTime := mysql.TimestampExp(mysql.NULL)
 	if state.GetManualReminderTime() != nil {
-		reminderTime = jet.TimestampT(state.GetManualReminderTime().AsTime())
+		reminderTime = mysql.TimestampT(state.GetManualReminderTime().AsTime())
 	}
 
-	reminderMessage := jet.StringExp(jet.NULL)
+	reminderMessage := mysql.StringExp(mysql.NULL)
 	if state.ManualReminderMessage != nil && state.GetManualReminderMessage() != "" {
-		reminderMessage = jet.String(state.GetManualReminderMessage())
+		reminderMessage = mysql.String(state.GetManualReminderMessage())
 	}
 
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
@@ -154,8 +154,8 @@ func updateWorkflowUserState(
 		ON_DUPLICATE_KEY_UPDATE(
 			tUserWorkflow.ManualReminderTime.SET(reminderTime),
 			tUserWorkflow.ManualReminderMessage.SET(reminderMessage),
-			tUserWorkflow.ReminderCount.SET(jet.Int32(state.GetReminderCount())),
-			tUserWorkflow.MaxReminderCount.SET(jet.Int32(state.GetMaxReminderCount())),
+			tUserWorkflow.ReminderCount.SET(mysql.Int32(state.GetReminderCount())),
+			tUserWorkflow.MaxReminderCount.SET(mysql.Int32(state.GetMaxReminderCount())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -174,9 +174,9 @@ func deleteWorkflowUserState(
 
 	stmt := tUserWorkflow.
 		DELETE().
-		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId())),
-			tUserWorkflow.UserID.EQ(jet.Int32(state.GetUserId())),
+		WHERE(mysql.AND(
+			tUserWorkflow.DocumentID.EQ(mysql.Int64(state.GetDocumentId())),
+			tUserWorkflow.UserID.EQ(mysql.Int32(state.GetUserId())),
 		)).
 		LIMIT(1)
 

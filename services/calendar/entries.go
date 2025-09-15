@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/jinzhu/now"
 )
@@ -30,17 +30,17 @@ func (s *Server) ListCalendarEntries(
 		rsvpResponse = calendar.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
 
-	condition := jet.AND(
+	condition := mysql.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
-		jet.OR(
+		mysql.OR(
 			tCalendar.ID.IN(
 				tCalendarSubs.
 					SELECT(
 						tCalendarSubs.CalendarID,
 					).
 					FROM(tCalendarSubs).
-					WHERE(jet.AND(
-						tCalendarSubs.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+					WHERE(mysql.AND(
+						tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					)),
 			),
 			tCalendarEntry.ID.IN(
@@ -49,18 +49,18 @@ func (s *Server) ListCalendarEntries(
 						tCalendarRSVP.EntryID,
 					).
 					FROM(tCalendarRSVP).
-					WHERE(jet.AND(
-						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-						tCalendarRSVP.Response.GT(jet.Int32(int32(rsvpResponse))),
+					WHERE(mysql.AND(
+						tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tCalendarRSVP.Response.GT(mysql.Int32(int32(rsvpResponse))),
 					)),
 			),
-			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
 	)
 
 	if req.GetAfter() != nil {
 		condition = condition.AND(
-			tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.GetAfter().AsTime())),
+			tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())),
 		)
 	}
 
@@ -71,18 +71,18 @@ func (s *Server) ListCalendarEntries(
 	endDate := baseDate.EndOfMonth()
 
 	condition = condition.
-		AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTimeT(startDate))).
-		AND(tCalendarEntry.StartTime.LT(jet.DateTimeT(endDate)))
+		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
+		AND(tCalendarEntry.StartTime.LT(mysql.DateTimeT(endDate)))
 
 	resp := &pbcalendar.ListCalendarEntriesResponse{}
 
 	if len(req.GetCalendarIds()) > 0 {
-		ids := []jet.Expression{}
+		ids := []mysql.Expression{}
 		for i := range req.GetCalendarIds() {
 			if req.GetCalendarIds()[i] == 0 {
 				continue
 			}
-			ids = append(ids, jet.Int64(req.GetCalendarIds()[i]))
+			ids = append(ids, mysql.Int64(req.GetCalendarIds()[i]))
 		}
 
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
@@ -91,7 +91,7 @@ func (s *Server) ListCalendarEntries(
 	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
 
 	if req.GetAfter() != nil {
-		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.GetAfter().AsTime())))
+		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
 	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
@@ -120,32 +120,32 @@ func (s *Server) GetUpcomingEntries(
 		Entries: []*calendar.CalendarEntry{},
 	}
 
-	condition := jet.AND(
+	condition := mysql.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
-		jet.OR(
+		mysql.OR(
 			tCalendarEntry.ID.IN(
 				tCalendarRSVP.
 					SELECT(
 						tCalendarRSVP.EntryID,
 					).
 					FROM(tCalendarRSVP).
-					WHERE(jet.AND(
-						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+					WHERE(mysql.AND(
+						tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						// RSVP responses: Maybe and Yes
 						tCalendarRSVP.Response.GT(
-							jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_NO)),
+							mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_NO)),
 						),
 					)),
 			),
-			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+			tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 		),
 		tCalendarEntry.StartTime.LT_EQ(
 			// Now plus X seconds
-			jet.CURRENT_TIMESTAMP().ADD(jet.INTERVALd(time.Duration(req.GetSeconds())*time.Second)),
+			mysql.CURRENT_TIMESTAMP().ADD(mysql.INTERVALd(time.Duration(req.GetSeconds())*time.Second)),
 		),
 		tCalendarEntry.StartTime.GT_EQ(
 			// Now minus 1 minute
-			jet.CURRENT_TIMESTAMP().SUB(jet.INTERVALd(1*time.Minute)),
+			mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVALd(1*time.Minute)),
 		),
 	)
 
@@ -166,7 +166,7 @@ func (s *Server) GetCalendarEntry(
 ) (*pbcalendar.GetCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -233,7 +233,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	calendar, err := s.getCalendar(
 		ctx,
 		userInfo,
-		tCalendar.ID.EQ(jet.Int64(req.GetEntry().GetCalendarId())),
+		tCalendar.ID.EQ(mysql.Int64(req.GetEntry().GetCalendarId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -254,13 +254,13 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 
 	tCalendarEntry := table.FivenetCalendarEntries
 	if req.GetEntry().GetId() > 0 {
-		startTime := jet.TimestampExp(jet.NULL)
+		startTime := mysql.TimestampExp(mysql.NULL)
 		if req.GetEntry().GetStartTime() != nil {
-			startTime = jet.TimestampT(req.GetEntry().GetStartTime().AsTime())
+			startTime = mysql.TimestampT(req.GetEntry().GetStartTime().AsTime())
 		}
-		endTime := jet.TimestampExp(jet.NULL)
+		endTime := mysql.TimestampExp(mysql.NULL)
 		if req.GetEntry().GetEndTime() != nil {
-			endTime = jet.TimestampT(req.GetEntry().GetEndTime().AsTime())
+			endTime = mysql.TimestampT(req.GetEntry().GetEndTime().AsTime())
 		}
 
 		stmt := tCalendarEntry.
@@ -282,9 +282,9 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 				req.GetEntry().GetRsvpOpen(),
 				req.GetEntry().GetRecurring(),
 			).
-			WHERE(jet.AND(
-				tCalendarEntry.ID.EQ(jet.Int64(req.GetEntry().GetId())),
-				tCalendarEntry.CalendarID.EQ(jet.Int64(req.GetEntry().GetCalendarId())),
+			WHERE(mysql.AND(
+				tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
+				tCalendarEntry.CalendarID.EQ(mysql.Int64(req.GetEntry().GetCalendarId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -352,7 +352,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 	entry, err := s.getEntry(
 		ctx,
 		userInfo,
-		tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Int64(req.GetEntry().GetId())),
+		tCalendarEntry.AS("calendar_entry").ID.EQ(mysql.Int64(req.GetEntry().GetId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -384,7 +384,7 @@ func (s *Server) DeleteCalendarEntry(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -406,9 +406,9 @@ func (s *Server) DeleteCalendarEntry(
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if entry.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	stmt := tCalendarEntry.
@@ -418,9 +418,9 @@ func (s *Server) DeleteCalendarEntry(
 		SET(
 			tCalendarEntry.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tCalendarEntry.CalendarID.EQ(jet.Int64(entry.GetCalendarId())),
-			tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())),
+		WHERE(mysql.AND(
+			tCalendarEntry.CalendarID.EQ(mysql.Int64(entry.GetCalendarId())),
+			tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -435,7 +435,7 @@ func (s *Server) DeleteCalendarEntry(
 func (s *Server) getEntry(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 ) (*calendar.CalendarEntry, error) {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
@@ -490,7 +490,7 @@ func (s *Server) getEntry(
 				tUserProps.UserID.EQ(tCalendarEntry.CreatorID),
 			).
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())).
+				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
 					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
 			).
 			LEFT_JOIN(tAvatar,

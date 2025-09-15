@@ -20,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -50,11 +50,11 @@ func (s *Server) ListDocumentReqs(
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
-	condition := tDocRequest.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
+	condition := tDocRequest.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
 
 	countStmt := tDocRequest.
 		SELECT(
-			jet.COUNT(tDocRequest.ID).AS("data_count.total"),
+			mysql.COUNT(tDocRequest.ID).AS("data_count.total"),
 		).
 		FROM(
 			tDocRequest,
@@ -164,7 +164,7 @@ func (s *Server) CreateDocumentReq(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -200,8 +200,8 @@ func (s *Server) CreateDocumentReq(
 	}
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.DocumentID.EQ(jet.Int64(doc.GetId())).AND(
-			tDocRequest.RequestType.EQ(jet.Int32(int32(req.GetRequestType()))),
+		tDocRequest.DocumentID.EQ(mysql.Int64(doc.GetId())).AND(
+			tDocRequest.RequestType.EQ(mysql.Int32(int32(req.GetRequestType()))),
 		),
 	)
 	if err != nil {
@@ -309,8 +309,8 @@ func (s *Server) UpdateDocumentReq(
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Int64(req.GetRequestId())).
-			AND(tDocRequest.DocumentID.EQ(jet.Int64(req.GetDocumentId()))),
+		tDocRequest.ID.EQ(mysql.Int64(req.GetRequestId())).
+			AND(tDocRequest.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -334,7 +334,7 @@ func (s *Server) UpdateDocumentReq(
 
 	doc, err := s.getDocument(
 		ctx,
-		tDocument.ID.EQ(jet.Int64(req.GetDocumentId())),
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
 		userInfo,
 		false,
 	)
@@ -470,7 +470,7 @@ func (s *Server) DeleteDocumentReq(
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(jet.Int64(req.GetRequestId())),
+		tDocRequest.ID.EQ(mysql.Int64(req.GetRequestId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -634,7 +634,7 @@ func (s *Server) updateDocumentReq(
 			request.Accepted,
 		).
 		WHERE(
-			tDocRequest.ID.EQ(jet.Int64(id)),
+			tDocRequest.ID.EQ(mysql.Int64(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -651,13 +651,13 @@ func (s *Server) getDocumentReqById(
 	tx qrm.DB,
 	id int64,
 ) (*documents.DocRequest, error) {
-	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(jet.Int64(id)))
+	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(mysql.Int64(id)))
 }
 
 func (s *Server) getDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 ) (*documents.DocRequest, error) {
 	tCreator := tables.User().AS("creator")
 
@@ -705,7 +705,7 @@ func (s *Server) deleteDocumentReq(ctx context.Context, tx qrm.DB, id int64) err
 
 	stmt := tDocRequest.
 		DELETE().
-		WHERE(tDocRequest.ID.EQ(jet.Int64(id))).
+		WHERE(tDocRequest.ID.EQ(mysql.Int64(id))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

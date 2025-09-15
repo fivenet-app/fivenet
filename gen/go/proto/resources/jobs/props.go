@@ -9,7 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
@@ -23,7 +23,7 @@ func GetColleagueProps(
 ) (*ColleagueProps, error) {
 	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 
-	columns := []jet.Projection{
+	columns := mysql.ProjectionList{
 		tColleagueProps.Job,
 		tColleagueProps.AbsenceBegin,
 		tColleagueProps.AbsenceEnd,
@@ -48,9 +48,9 @@ func GetColleagueProps(
 			columns...,
 		).
 		FROM(tColleagueProps).
-		WHERE(jet.AND(
-			tColleagueProps.UserID.EQ(jet.Int32(userId)),
-			tColleagueProps.Job.EQ(jet.String(job)),
+		WHERE(mysql.AND(
+			tColleagueProps.UserID.EQ(mysql.Int32(userId)),
+			tColleagueProps.Job.EQ(mysql.String(job)),
 		)).
 		LIMIT(1)
 
@@ -89,9 +89,9 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*L
 					tJobLabels.ID.EQ(tUserLabels.LabelID),
 				),
 		).
-		WHERE(jet.AND(
-			tUserLabels.UserID.EQ(jet.Int32(userId)),
-			tJobLabels.Job.EQ(jet.String(job)),
+		WHERE(mysql.AND(
+			tUserLabels.UserID.EQ(mysql.Int32(userId)),
+			tJobLabels.Job.EQ(mysql.String(job)),
 			tJobLabels.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(
@@ -118,19 +118,19 @@ func (x *ColleagueProps) HandleChanges(
 	sourceUserId *int32,
 	reason string,
 ) ([]*ColleagueActivity, error) {
-	absenceBegin := jet.DateExp(jet.NULL)
-	absenceEnd := jet.DateExp(jet.NULL)
+	absenceBegin := mysql.DateExp(mysql.NULL)
+	absenceEnd := mysql.DateExp(mysql.NULL)
 	if in.GetAbsenceBegin() != nil && in.GetAbsenceEnd() != nil {
 		if in.GetAbsenceBegin().GetTimestamp() == nil {
 			in.AbsenceBegin = nil
 		} else {
-			absenceBegin = jet.DateT(in.GetAbsenceBegin().AsTime())
+			absenceBegin = mysql.DateT(in.GetAbsenceBegin().AsTime())
 		}
 
 		if in.GetAbsenceEnd().GetTimestamp() == nil {
 			in.AbsenceEnd = nil
 		} else {
-			absenceEnd = jet.DateT(in.GetAbsenceEnd().AsTime())
+			absenceEnd = mysql.DateT(in.GetAbsenceEnd().AsTime())
 		}
 	} else {
 		in.AbsenceBegin = x.GetAbsenceBegin()
@@ -139,18 +139,18 @@ func (x *ColleagueProps) HandleChanges(
 
 	tColleagueProps := table.FivenetJobColleagueProps
 
-	updateSets := []jet.ColumnAssigment{
-		tColleagueProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-		tColleagueProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+	updateSets := []mysql.ColumnAssigment{
+		tColleagueProps.AbsenceBegin.SET(mysql.DateExp(mysql.Raw("VALUES(`absence_begin`)"))),
+		tColleagueProps.AbsenceEnd.SET(mysql.DateExp(mysql.Raw("VALUES(`absence_end`)"))),
 	}
 
 	// Generate the update sets
 	if in.Note != nil {
 		// Set empty note to null
 		if in.GetNote() == "" {
-			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.StringExp(jet.NULL)))
+			updateSets = append(updateSets, tColleagueProps.Note.SET(mysql.StringExp(mysql.NULL)))
 		} else {
-			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.String(in.GetNote())))
+			updateSets = append(updateSets, tColleagueProps.Note.SET(mysql.String(in.GetNote())))
 		}
 	} else {
 		in.Note = x.Note
@@ -165,7 +165,7 @@ func (x *ColleagueProps) HandleChanges(
 			*in.NamePrefix = strings.TrimSpace(in.GetNamePrefix()) // Trim spaces
 			updateSets = append(
 				updateSets,
-				tColleagueProps.NamePrefix.SET(jet.String(in.GetNamePrefix())),
+				tColleagueProps.NamePrefix.SET(mysql.String(in.GetNamePrefix())),
 			)
 		} else {
 			in.NamePrefix = x.NamePrefix
@@ -174,7 +174,7 @@ func (x *ColleagueProps) HandleChanges(
 			*in.NameSuffix = strings.TrimSpace(in.GetNameSuffix()) // Trim spaces
 			updateSets = append(
 				updateSets,
-				tColleagueProps.NameSuffix.SET(jet.String(in.GetNameSuffix())),
+				tColleagueProps.NameSuffix.SET(mysql.String(in.GetNameSuffix())),
 			)
 		} else {
 			in.NameSuffix = x.NameSuffix
@@ -333,16 +333,16 @@ func (x *ColleagueProps) updateLabels(
 	}
 
 	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
+		ids := make([]mysql.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Int64(removed[i].GetId())
+			ids[i] = mysql.Int64(removed[i].GetId())
 		}
 
 		stmt := tUserLabels.
 			DELETE().
-			WHERE(jet.AND(
-				tUserLabels.UserID.EQ(jet.Int32(userId)),
+			WHERE(mysql.AND(
+				tUserLabels.UserID.EQ(mysql.Int32(userId)),
 				tUserLabels.LabelID.IN(ids...),
 			)).
 			LIMIT(int64(len(removed)))

@@ -12,7 +12,7 @@ import (
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 )
@@ -38,7 +38,7 @@ func (s *Server) GetAccountInfo(
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Int64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)))
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
@@ -71,7 +71,7 @@ func (s *Server) GetAccountInfo(
 			oAuth2Accounts,
 		).
 		WHERE(
-			oAuth2Accounts.AccountID.EQ(jet.Int64(acc.ID)),
+			oAuth2Accounts.AccountID.EQ(mysql.Int64(acc.ID)),
 		).
 		LIMIT(5)
 

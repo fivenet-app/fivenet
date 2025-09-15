@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -52,7 +52,7 @@ func (s *Server) ManageLabels(
 		).
 		FROM(tCitizensLabelsJob).
 		WHERE(
-			tCitizensLabelsJob.Job.EQ(jet.String(userInfo.GetJob())),
+			tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
@@ -93,8 +93,8 @@ func (s *Server) ManageLabels(
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
-					tCitizensLabelsJob.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-					tCitizensLabelsJob.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+					tCitizensLabelsJob.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
+					tCitizensLabelsJob.Color.SET(mysql.StringExp(mysql.Raw("VALUES(`color`)"))),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
@@ -110,12 +110,12 @@ func (s *Server) ManageLabels(
 						tCitizensLabelsJob.Color,
 					).
 					SET(
-						tCitizensLabelsJob.Name.SET(jet.String(attribute.GetName())),
-						tCitizensLabelsJob.Color.SET(jet.String(attribute.GetColor())),
+						tCitizensLabelsJob.Name.SET(mysql.String(attribute.GetName())),
+						tCitizensLabelsJob.Color.SET(mysql.String(attribute.GetColor())),
 					).
-					WHERE(jet.AND(
-						tCitizensLabelsJob.ID.EQ(jet.Int64(attribute.GetId())),
-						tCitizensLabelsJob.Job.EQ(jet.String(attribute.GetJob())),
+					WHERE(mysql.AND(
+						tCitizensLabelsJob.ID.EQ(mysql.Int64(attribute.GetId())),
+						tCitizensLabelsJob.Job.EQ(mysql.String(attribute.GetJob())),
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -126,17 +126,17 @@ func (s *Server) ManageLabels(
 	}
 
 	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
+		ids := make([]mysql.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Int64(removed[i].GetId())
+			ids[i] = mysql.Int64(removed[i].GetId())
 		}
 
 		deleteStmt := tCitizensLabelsJob.
 			DELETE().
-			WHERE(jet.AND(
+			WHERE(mysql.AND(
 				tCitizensLabelsJob.ID.IN(ids...),
-				tCitizensLabelsJob.Job.EQ(jet.String(userInfo.GetJob())),
+				tCitizensLabelsJob.Job.EQ(mysql.String(userInfo.GetJob())),
 			)).
 			LIMIT(int64(len(removed)))
 
@@ -180,22 +180,22 @@ func (s *Server) validateLabels(
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	jobsExp := make([]jet.Expression, len(jobs.GetStrings()))
+	jobsExp := make([]mysql.Expression, len(jobs.GetStrings()))
 	for i := range jobs.GetStrings() {
-		jobsExp[i] = jet.String(jobs.GetStrings()[i])
+		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
-	idsExp := make([]jet.Expression, len(attributes))
+	idsExp := make([]mysql.Expression, len(attributes))
 	for i := range attributes {
-		idsExp[i] = jet.Int64(attributes[i].GetId())
+		idsExp[i] = mysql.Int64(attributes[i].GetId())
 	}
 
 	stmt := tCitizensLabelsJob.
 		SELECT(
-			jet.COUNT(tCitizensLabelsJob.ID).AS("data_count.total"),
+			mysql.COUNT(tCitizensLabelsJob.ID).AS("data_count.total"),
 		).
 		FROM(tCitizensLabelsJob).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tCitizensLabelsJob.Job.IN(jobsExp...),
 			tCitizensLabelsJob.ID.IN(idsExp...),
 		)).
@@ -230,9 +230,9 @@ func (s *Server) getUserLabels(
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	jobsExp := make([]jet.Expression, jobs.Len())
+	jobsExp := make([]mysql.Expression, jobs.Len())
 	for i := range jobs.GetStrings() {
-		jobsExp[i] = jet.String(jobs.GetStrings()[i])
+		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
 	stmt := tUserLabels.
@@ -248,8 +248,8 @@ func (s *Server) getUserLabels(
 					tCitizensLabelsJob.ID.EQ(tUserLabels.LabelID),
 				),
 		).
-		WHERE(jet.AND(
-			tUserLabels.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tUserLabels.UserID.EQ(mysql.Int32(userId)),
 			tCitizensLabelsJob.Job.IN(jobsExp...),
 		)).
 		ORDER_BY(

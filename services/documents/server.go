@@ -20,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -159,8 +159,8 @@ func NewServer(p Params) *Server {
 		tDocFiles.DocumentID,
 		tDocFiles.FileID,
 		3<<20,
-		func(parentId int64) jet.BoolExpression {
-			return tDocFiles.DocumentID.EQ(jet.Int64(parentId))
+		func(parentId int64) mysql.BoolExpression {
+			return tDocFiles.DocumentID.EQ(mysql.Int64(parentId))
 		},
 		filestore.InsertJoinRow,
 		false,

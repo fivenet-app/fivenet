@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 var (
@@ -19,20 +19,20 @@ var (
 // Table represents a database table and its housekeeping-relevant columns and relationships.
 type Table struct {
 	// Table is the Jet representation of the SQL table.
-	Table jet.Table
+	Table mysql.Table
 	// JobColumn is the column used to identify jobs for this table.
-	JobColumn jet.ColumnString
+	JobColumn mysql.ColumnString
 	// DeletedAtColumn is an optional timestamp column for soft deletes.
-	DeletedAtColumn jet.ColumnTimestamp
+	DeletedAtColumn mysql.ColumnTimestamp
 	// ForeignKey is an optional foreign key column for dependent tables.
-	ForeignKey jet.ColumnInteger
+	ForeignKey mysql.ColumnInteger
 	// IDColumn is the primary key column for the table.
-	IDColumn jet.ColumnInteger
+	IDColumn mysql.ColumnInteger
 
 	// TimestampColumn is an optional timestamp column for filtering by age.
-	TimestampColumn jet.ColumnTimestamp
+	TimestampColumn mysql.ColumnTimestamp
 	// DateColumn is an optional date column for filtering by age.
-	DateColumn jet.ColumnDate
+	DateColumn mysql.ColumnDate
 	// MinDays is the minimum age in days before a row is eligible for deletion.
 	MinDays int
 

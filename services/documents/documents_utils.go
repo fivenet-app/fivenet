@@ -10,25 +10,22 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) listDocumentsQuery(
-	where jet.BoolExpression,
-	onlyColumns jet.ProjectionList,
-	additionalColumns jet.ProjectionList,
+	where mysql.BoolExpression,
+	onlyColumns mysql.ProjectionList,
+	additionalColumns mysql.ProjectionList,
 	userInfo *userinfo.UserInfo,
-	customizeFn func(stmt jet.SelectStatement) jet.SelectStatement,
-) jet.Statement {
+	customizeFn func(stmt mysql.SelectStatement) mysql.SelectStatement,
+) mysql.Statement {
 	tCreator := tables.User().AS("creator")
 
-	wheres := []jet.BoolExpression{}
+	wheres := []mysql.BoolExpression{}
 	if where != nil {
 		wheres = append(wheres, where)
-	}
-
-	if !userInfo.GetSuperuser() {
 	}
 
 	pubSel := tDocumentShort.
@@ -37,9 +34,9 @@ func (s *Server) listDocumentsQuery(
 			tDocumentShort.CreatedAt.AS("created_at"),
 		).
 		FROM(tDocumentShort).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDocumentShort.DeletedAt.IS_NULL(),
-			tDocumentShort.Public.EQ(jet.Bool(true)),
+			tDocumentShort.Public.EQ(mysql.Bool(true)),
 		))
 
 	// branch 2: created by this user + job
@@ -50,47 +47,52 @@ func (s *Server) listDocumentsQuery(
 		).
 		FROM(tDocumentShort).
 		WHERE(tDocumentShort.DeletedAt.IS_NULL().
-			AND(tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.GetUserId()))).
-			AND(tDocumentShort.CreatorJob.EQ(jet.String(userInfo.GetJob()))))
+			AND(tDocumentShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))).
+			AND(tDocumentShort.CreatorJob.EQ(mysql.String(userInfo.GetJob()))))
 
-	existsAccess := jet.EXISTS(
-		jet.
-			SELECT(jet.Int(1)).
-			FROM(tDAccess).
-			WHERE(
-				jet.AND(
-					tDAccess.TargetID.EQ(tDocumentShort.ID),
-					jet.OR(
-						// Direct user access
-						tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-						// or job + grade access
-						jet.AND(
-							tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
-							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+	var existsAccess mysql.BoolExpression
+	if !userInfo.GetSuperuser() {
+		existsAccess = mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tDAccess).
+				WHERE(
+					mysql.AND(
+						tDAccess.TargetID.EQ(tDocumentShort.ID),
+						mysql.OR(
+							// Direct user access
+							tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+							// or job + grade access
+							mysql.AND(
+								tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+								tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+							),
+						),
+						tDAccess.Access.GT_EQ(
+							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 						),
 					),
-					tDAccess.Access.GT_EQ(
-						jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
-					),
 				),
-			),
-	)
+		)
+	} else {
+		existsAccess = mysql.Bool(true)
+	}
 
 	accessSel := tDocumentShort.SELECT(
 		tDocumentShort.ID.AS("id"),
 		tDocumentShort.CreatedAt.AS("created_at"),
 	).
 		FROM(tDocumentShort).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDocumentShort.DeletedAt.IS_NULL(),
 			existsAccess,
 		))
 
-	var columns jet.ProjectionList
+	var columns mysql.ProjectionList
 	if onlyColumns != nil {
-		columns = onlyColumns
+		columns = append(columns, onlyColumns...)
 	} else {
-		columns = jet.ProjectionList{
+		columns = append(columns,
 			tDocumentShort.ID,
 			tDocumentShort.CreatedAt,
 			tDocumentShort.UpdatedAt,
@@ -122,7 +124,7 @@ func (s *Server) listDocumentsQuery(
 			tDWorkflow.DocumentID,
 			tDWorkflow.AutoCloseTime,
 			tDWorkflow.NextReminderTime,
-		}
+		)
 
 		if userInfo.GetSuperuser() {
 			columns = append(columns, tDocumentShort.DeletedAt)
@@ -140,11 +142,11 @@ func (s *Server) listDocumentsQuery(
 	}
 
 	// Union
-	docIDs := jet.CTE("doc_ids")
+	docIDs := mysql.CTE("doc_ids")
 
-	cteIDColumn := jet.IntegerColumn("id").From(docIDs)
+	cteIDColumn := mysql.IntegerColumn("id").From(docIDs)
 
-	innerStmt := jet.
+	innerStmt := mysql.
 		SELECT(
 			columns[0],
 			columns[1:],
@@ -163,7 +165,7 @@ func (s *Server) listDocumentsQuery(
 					tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			wheres...,
 		))
 
@@ -171,7 +173,7 @@ func (s *Server) listDocumentsQuery(
 		innerStmt = customizeFn(innerStmt)
 	}
 
-	return jet.WITH(
+	return mysql.WITH(
 		docIDs.AS(
 			pubSel.UNION(creatorSel).UNION(accessSel), // UNION (distinct) to dedupe
 		),
@@ -179,44 +181,44 @@ func (s *Server) listDocumentsQuery(
 }
 
 func (s *Server) getDocumentQuery(
-	where jet.BoolExpression,
-	onlyColumns jet.ProjectionList,
+	where mysql.BoolExpression,
+	onlyColumns mysql.ProjectionList,
 	userInfo *userinfo.UserInfo,
 	withContent bool,
-) jet.SelectStatement {
+) mysql.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
-	var wheres []jet.BoolExpression
+	var wheres []mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists := jet.EXISTS(
-			jet.
-				SELECT(jet.Int(1)).
+		accessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tDAccess).
 				WHERE(
-					jet.AND(
+					mysql.AND(
 						tDAccess.TargetID.EQ(tDocument.ID),
-						jet.OR(
+						mysql.OR(
 							// Direct user access
-							tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+							tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 							// or job + grade access
-							jet.AND(
-								tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
-								tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+							mysql.AND(
+								tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+								tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 							),
 						),
 						tDAccess.Access.GT_EQ(
-							jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 						),
 					),
 				),
 		)
 
-		wheres = []jet.BoolExpression{
-			jet.AND(
+		wheres = []mysql.BoolExpression{
+			mysql.AND(
 				tDocument.DeletedAt.IS_NULL(),
-				jet.OR(
+				mysql.OR(
 					tDocument.Public.IS_TRUE(),
-					tDocument.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+					tDocument.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 					accessExists,
 				),
 			),
@@ -227,11 +229,11 @@ func (s *Server) getDocumentQuery(
 		wheres = append(wheres, where)
 	}
 
-	var columns []jet.Projection
+	var columns mysql.ProjectionList
 	if onlyColumns != nil {
-		columns = onlyColumns
+		columns = append(columns, onlyColumns)
 	} else {
-		columns = jet.ProjectionList{
+		columns = append(columns,
 			tDocument.ID,
 			tDocument.CreatedAt,
 			tDocument.UpdatedAt,
@@ -268,7 +270,7 @@ func (s *Server) getDocumentQuery(
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
-		}
+		)
 
 		if withContent {
 			columns = append(columns,
@@ -309,10 +311,10 @@ func (s *Server) getDocumentQuery(
 			).
 			LEFT_JOIN(tUserWorkflow,
 				tUserWorkflow.DocumentID.EQ(tDocument.ID).
-					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+					AND(tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
 			),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			wheres...,
 		)).
 		ORDER_BY(
@@ -336,7 +338,7 @@ func (s *Server) updateDocumentOwner(
 			newOwner.GetUserId(),
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Int64(documentId)),
+			tDocument.ID.EQ(mysql.Int64(documentId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

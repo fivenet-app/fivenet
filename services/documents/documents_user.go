@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -28,44 +28,46 @@ func (s *Server) ListUserDocuments(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	userCondition := jet.Bool(true)
+	var userCondition mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		userCondition = jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		userCondition = mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tDAccess).
 				WHERE(
-					jet.AND(
+					mysql.AND(
 						tDAccess.TargetID.EQ(tDocument.ID),
-						jet.OR(
+						mysql.OR(
 							// Direct user access
-							tDAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+							tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 							// or job + grade access
-							jet.AND(
-								tDAccess.Job.EQ(jet.String(userInfo.GetJob())),
-								tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+							mysql.AND(
+								tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+								tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 							),
 						),
 						tDAccess.Access.GT_EQ(
-							jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 						),
 					),
 				),
 		)
+	} else {
+		userCondition = mysql.Bool(true)
 	}
 
-	condition := jet.AND(
-		jet.OR(
-			tDocRel.SourceUserID.EQ(jet.Int32(req.GetUserId())),
-			tDocRel.TargetUserID.EQ(jet.Int32(req.GetUserId())),
+	condition := mysql.AND(
+		mysql.OR(
+			tDocRel.SourceUserID.EQ(mysql.Int32(req.GetUserId())),
+			tDocRel.TargetUserID.EQ(mysql.Int32(req.GetUserId())),
 		),
 		tDocRel.DeletedAt.IS_NULL(),
 		tDocument.DeletedAt.IS_NULL(),
-		jet.OR(
+		mysql.OR(
 			tDocument.Public.IS_TRUE(),
-			jet.AND(
-				tDocument.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-				tDocument.CreatorJob.EQ(jet.String(userInfo.GetJob())),
+			mysql.AND(
+				tDocument.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				tDocument.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 			),
 			userCondition,
 		),
@@ -73,13 +75,13 @@ SELECT(jet.Int(1)).
 
 	if req.Closed != nil {
 		condition = condition.AND(tDocument.Closed.EQ(
-			jet.Bool(req.GetClosed()),
+			mysql.Bool(req.GetClosed()),
 		))
 	}
 	if len(req.GetRelations()) > 0 {
-		types := []jet.Expression{}
+		types := []mysql.Expression{}
 		for _, t := range req.GetRelations() {
-			types = append(types, jet.Int32(int32(*t.Enum())))
+			types = append(types, mysql.Int32(int32(*t.Enum())))
 		}
 
 		condition = condition.AND(tDocRel.Relation.IN(types...))
@@ -92,7 +94,7 @@ SELECT(jet.Int(1)).
 
 	countStmt := tDocRel.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tDocRel.DocumentID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tDocRel.DocumentID)).AS("data_count.total"),
 		).
 		FROM(
 			tDocRel.
@@ -119,9 +121,9 @@ SELECT(jet.Int(1)).
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough
@@ -202,10 +204,10 @@ SELECT(jet.Int(1)).
 		FROM(
 			docRel.
 				INNER_JOIN(tDocRel,
-					tDocRel.ID.EQ(jet.RawInt("doc_rel.id")),
+					tDocRel.ID.EQ(mysql.RawInt("doc_rel.id")),
 				).
 				INNER_JOIN(tDocument,
-					tDocument.ID.EQ(jet.RawInt("doc_rel.document_id")),
+					tDocument.ID.EQ(mysql.RawInt("doc_rel.document_id")),
 				).
 				LEFT_JOIN(tDCategory,
 					tDocument.CategoryID.EQ(tDCategory.ID).
@@ -218,7 +220,7 @@ SELECT(jet.Int(1)).
 					tASource.ID.EQ(tDocRel.SourceUserID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDocument.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(orderBys...).
@@ -255,9 +257,9 @@ func (s *Server) addUserActivity(
 	reason string,
 	data *users.UserActivityData,
 ) error {
-	reasonField := jet.NULL
+	reasonField := mysql.NULL
 	if reason != "" {
-		reasonField = jet.String(reason)
+		reasonField = mysql.String(reason)
 	}
 
 	stmt := tUserActivity.

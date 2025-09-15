@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
@@ -95,12 +95,12 @@ func (s *Server) SetJobProps(
 			req.GetJobProps().GetSettings(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.LivemapMarkerColor.SET(jet.String(req.GetJobProps().GetLivemapMarkerColor())),
-			tJobProps.RadioFrequency.SET(jet.StringExp(jet.Raw("VALUES(`radio_frequency`)"))),
-			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
-			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
-			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
-			tJobProps.Settings.SET(jet.StringExp(jet.Raw("VALUES(`settings`)"))),
+			tJobProps.LivemapMarkerColor.SET(mysql.String(req.GetJobProps().GetLivemapMarkerColor())),
+			tJobProps.RadioFrequency.SET(mysql.StringExp(mysql.Raw("VALUES(`radio_frequency`)"))),
+			tJobProps.QuickButtons.SET(mysql.StringExp(mysql.Raw("VALUES(`quick_buttons`)"))),
+			tJobProps.DiscordGuildID.SET(mysql.StringExp(mysql.Raw("VALUES(`discord_guild_id`)"))),
+			tJobProps.DiscordSyncSettings.SET(mysql.StringExp(mysql.Raw("VALUES(`discord_sync_settings`)"))),
+			tJobProps.Settings.SET(mysql.StringExp(mysql.Raw("VALUES(`settings`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

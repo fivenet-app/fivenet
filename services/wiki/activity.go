@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -44,11 +44,11 @@ func (s *Server) ListPageActivity(
 	}
 
 	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
-	condition := tPActivity.PageID.EQ(jet.Int64(req.GetPageId()))
+	condition := tPActivity.PageID.EQ(mysql.Int64(req.GetPageId()))
 
 	countStmt := tPActivity.
 		SELECT(
-			jet.COUNT(tPActivity.ID).AS("data_count.total"),
+			mysql.COUNT(tPActivity.ID).AS("data_count.total"),
 		).
 		FROM(
 			tPActivity,

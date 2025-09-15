@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -38,7 +38,7 @@ func (s *Server) ShareCalendarEntry(
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -106,9 +106,9 @@ func (s *Server) shareCalendarEntry(
 	entryId int64,
 	inUserIds []int32,
 ) ([]int32, error) {
-	userIds := make([]jet.Expression, len(inUserIds))
+	userIds := make([]mysql.Expression, len(inUserIds))
 	for i := range inUserIds {
-		userIds[i] = jet.Int32(inUserIds[i])
+		userIds[i] = mysql.Int32(inUserIds[i])
 	}
 
 	stmt := tCalendarRSVP.
@@ -116,8 +116,8 @@ func (s *Server) shareCalendarEntry(
 			tCalendarRSVP.UserID,
 		).
 		FROM(tCalendarRSVP).
-		WHERE(jet.AND(
-			tCalendarRSVP.EntryID.EQ(jet.Int64(entryId)),
+		WHERE(mysql.AND(
+			tCalendarRSVP.EntryID.EQ(mysql.Int64(entryId)),
 			tCalendarRSVP.UserID.IN(userIds...),
 		))
 
@@ -181,7 +181,7 @@ func (s *Server) sendShareNotifications(
 			tUsers,
 		).
 		WHERE(
-			tUsers.ID.EQ(jet.Int32(sourceUserId)),
+			tUsers.ID.EQ(mysql.Int32(sourceUserId)),
 		).
 		LIMIT(1)
 

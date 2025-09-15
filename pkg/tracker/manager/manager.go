@@ -25,7 +25,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -330,23 +330,23 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.PhoneNumber,
-			jet.COALESCE(
+			mysql.COALESCE(
 				tColleagueProps.UserID,
 				tFallbackColleagueProps.UserID,
 			).AS("colleague_props.userid"),
-			jet.COALESCE(
+			mysql.COALESCE(
 				tColleagueProps.Job,
 				tFallbackColleagueProps.Job,
 			).AS("colleague_props.job"),
-			jet.COALESCE(
+			mysql.COALESCE(
 				tColleagueProps.NamePrefix,
 				tFallbackColleagueProps.NamePrefix,
 			).AS("colleague_props.name_prefix"),
-			jet.COALESCE(
+			mysql.COALESCE(
 				tColleagueProps.NameSuffix,
 				tFallbackColleagueProps.NameSuffix,
 			).AS("colleague_props.name_suffix"),
-			jet.COALESCE(
+			mysql.COALESCE(
 				tJobProps.LivemapMarkerColor,
 				tFallbackJobProps.LivemapMarkerColor,
 			).AS("user_marker.color"),
@@ -371,8 +371,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 						AND(tFallbackColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
-		WHERE(jet.AND(
-			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
+		WHERE(mysql.AND(
+			tLocs.UpdatedAt.GT_EQ(mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(4, mysql.HOUR))),
 		))
 
 	var dest []*livemap.UserMarker

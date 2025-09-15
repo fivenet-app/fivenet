@@ -13,7 +13,7 @@ import (
 	pbfilestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -29,10 +29,10 @@ type ParentID interface {
 }
 
 // ParentColBoolExpFn is a function type that returns a Jet boolean expression for a given parent ID.
-type ParentColBoolExpFn[P ParentID] func(parentId P) jet.BoolExpression
+type ParentColBoolExpFn[P ParentID] func(parentId P) mysql.BoolExpression
 
 // JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
-type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID int64) error
+type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join mysql.Table, parentCol mysql.Column, fileCol mysql.ColumnInteger, parentId P, _ mysql.BoolExpression, fileID int64) error
 
 // Handler is a generic, embeddable file-upload helper.
 type Handler[P ParentID] struct {
@@ -41,11 +41,11 @@ type Handler[P ParentID] struct {
 	// db is the SQL database connection.
 	db *sql.DB
 	// joinTable is the table that joins parent and file.
-	joinTable jet.Table
+	joinTable mysql.Table
 	// parentCol is the column in joinTable for the parent (may be integer or string).
-	parentCol jet.Column
+	parentCol mysql.Column
 	// fileCol is the column in joinTable for the file ID.
-	fileCol jet.ColumnInteger
+	fileCol mysql.ColumnInteger
 	// sizeLimit is the maximum allowed file size in bytes.
 	sizeLimit int64
 
@@ -61,9 +61,9 @@ type Handler[P ParentID] struct {
 func NewHandler[P ParentID](
 	st storage.IStorage,
 	db *sql.DB,
-	join jet.Table,
-	parentCol jet.Column,
-	fileCol jet.ColumnInteger,
+	join mysql.Table,
+	parentCol mysql.Column,
+	fileCol mysql.ColumnInteger,
 	sizeLimit int64,
 	parentColBoolExp ParentColBoolExpFn[P],
 	joinRowInserter JoinRowInserterFn[P],
@@ -81,7 +81,7 @@ func NewHandler[P ParentID](
 		parentCol: parentCol,
 		fileCol:   fileCol,
 		sizeLimit: sizeLimit,
-		// parentColBoolExp is a function that converts the parent ID to a jet.BoolExpression
+		// parentColBoolExp is a function that converts the parent ID to a mysql.BoolExpression
 		parentColBoolExp:  parentColBoolExp,
 		joinRowInserter:   joinRowInserter,
 		nullOnlyParentRow: nullOnlyParentRow,
@@ -229,7 +229,7 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (int64, str
 		).
 		FROM(tFiles).
 		WHERE(
-			tFiles.FilePath.EQ(jet.String(path)),
+			tFiles.FilePath.EQ(mysql.String(path)),
 		).
 		LIMIT(1)
 
@@ -266,11 +266,11 @@ func (h *Handler[P]) deleteJoinRow(
 			).
 			SET(
 				parentID,
-				jet.NULL,
+				mysql.NULL,
 			).
-			WHERE(jet.AND(
+			WHERE(mysql.AND(
 				h.parentColBoolExp(parentID),
-				h.fileCol.EQ(jet.Int64(fileID)),
+				h.fileCol.EQ(mysql.Int64(fileID)),
 			)).
 			ExecContext(ctx, tx)
 		return err
@@ -278,9 +278,9 @@ func (h *Handler[P]) deleteJoinRow(
 
 	_, err := h.joinTable.
 		DELETE().
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			h.parentColBoolExp(parentID),
-			h.fileCol.EQ(jet.Int64(fileID)),
+			h.fileCol.EQ(mysql.Int64(fileID)),
 		)).
 		ExecContext(ctx, tx)
 	return err
@@ -307,9 +307,9 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 		Count int64
 	}
 	err = h.joinTable.
-		SELECT(jet.COUNT(h.fileCol).AS("count")).
+		SELECT(mysql.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
-		WHERE(jet.AND(h.fileCol.EQ(jet.Int64(fileID)))).
+		WHERE(mysql.AND(h.fileCol.EQ(mysql.Int64(fileID)))).
 		QueryContext(ctx, tx, &refs)
 	if err != nil {
 		return err
@@ -322,7 +322,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 		tFiles := table.FivenetFiles
 		err := tFiles.
 			SELECT(tFiles.FilePath.AS("file_path")).
-			WHERE(tFiles.ID.EQ(jet.Int64(fileID))).
+			WHERE(tFiles.ID.EQ(mysql.Int64(fileID))).
 			QueryContext(ctx, tx, &key)
 		if err != nil {
 			return err
@@ -334,8 +334,8 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID int64) error
 
 		_, err = tFiles.
 			UPDATE().
-			SET(tFiles.DeletedAt.SET(jet.CURRENT_TIMESTAMP())).
-			WHERE(tFiles.ID.EQ(jet.Int64(fileID))).
+			SET(tFiles.DeletedAt.SET(mysql.CURRENT_TIMESTAMP())).
+			WHERE(tFiles.ID.EQ(mysql.Int64(fileID))).
 			LIMIT(1).
 			ExecContext(ctx, tx)
 		if err != nil {
@@ -372,8 +372,8 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 	}
 	err := tFiles.
 		SELECT(tFiles.ID.AS("id")).
-		WHERE(tFiles.FilePath.EQ(jet.String(key))).
-		FOR(jet.UPDATE()). // ← row-lock
+		WHERE(tFiles.FilePath.EQ(mysql.String(key))).
+		FOR(mysql.UPDATE()). // ← row-lock
 		QueryContext(ctx, tx, &fileId)
 
 	switch {
@@ -386,7 +386,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 				tFiles.ContentType,
 				tFiles.Meta,
 			).
-			VALUES(key, size, ctype, jet.NULL).
+			VALUES(key, size, ctype, mysql.NULL).
 			ExecContext(ctx, tx)
 		if err != nil {
 			return 0, err
@@ -399,11 +399,11 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 		if _, err := tFiles.
 			UPDATE().
 			SET(
-				tFiles.ByteSize.SET(jet.Int64(size)),
-				tFiles.ContentType.SET(jet.String(ctype)),
-				tFiles.DeletedAt.SET(jet.TimestampExp(jet.NULL)), // Revive if file was soft-deleted
+				tFiles.ByteSize.SET(mysql.Int64(size)),
+				tFiles.ContentType.SET(mysql.String(ctype)),
+				tFiles.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)), // Revive if file was soft-deleted
 			).
-			WHERE(tFiles.ID.EQ(jet.Int64(fileId.ID))).
+			WHERE(tFiles.ID.EQ(mysql.Int64(fileId.ID))).
 			ExecContext(ctx, tx); err != nil {
 			return 0, err
 		}
@@ -418,11 +418,11 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 func InsertJoinRow[P ParentID](
 	ctx context.Context,
 	tx *sql.Tx,
-	join jet.Table,
-	parentCol jet.Column,
-	fileCol jet.ColumnInteger,
+	join mysql.Table,
+	parentCol mysql.Column,
+	fileCol mysql.ColumnInteger,
 	parentId P,
-	_ jet.BoolExpression,
+	_ mysql.BoolExpression,
 	fileID int64,
 ) error {
 	_, err := join.
@@ -442,11 +442,11 @@ func InsertJoinRow[P ParentID](
 func UpdateJoinRow[P ParentID](
 	ctx context.Context,
 	tx *sql.Tx,
-	join jet.Table,
-	_ jet.Column,
-	fileCol jet.ColumnInteger,
+	join mysql.Table,
+	_ mysql.Column,
+	fileCol mysql.ColumnInteger,
 	_ P,
-	parentIdBoolExp jet.BoolExpression,
+	parentIdBoolExp mysql.BoolExpression,
 	fileID int64,
 ) error {
 	_, err := join.
@@ -489,7 +489,7 @@ func putToStorage(
 // CountFilesForParentID returns the number of files associated with a given parent ID.
 func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int64, error) {
 	stmt := h.joinTable.
-		SELECT(jet.COUNT(h.fileCol).AS("count")).
+		SELECT(mysql.COUNT(h.fileCol).AS("count")).
 		FROM(h.joinTable).
 		WHERE(h.parentColBoolExp(parentID))
 

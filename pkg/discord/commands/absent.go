@@ -22,7 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	dateparser "github.com/markusmobius/go-dateparser"
 )
@@ -301,14 +301,14 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					jet.AND(
-						tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
-						tUsers.Job.EQ(jet.String(job)),
+					mysql.AND(
+						tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
+						tUsers.Job.EQ(mysql.String(job)),
 					)),
 		).
-		WHERE(jet.AND(
-			tAccsOauth2.Provider.EQ(jet.String("discord")),
-			tAccsOauth2.ExternalID.EQ(jet.String(discordId.String())),
+		WHERE(mysql.AND(
+			tAccsOauth2.Provider.EQ(mysql.String("discord")),
+			tAccsOauth2.ExternalID.EQ(mysql.String(discordId.String())),
 		)).
 		LIMIT(1)
 
@@ -337,9 +337,9 @@ func (c *AbsentCommand) createAbsenceForUser(
 			tColleagueProps.AbsenceEnd,
 		).
 		FROM(tColleagueProps).
-		WHERE(jet.AND(
-			tColleagueProps.UserID.EQ(jet.Int32(charId)),
-			tColleagueProps.Job.EQ(jet.String(job)),
+		WHERE(mysql.AND(
+			tColleagueProps.UserID.EQ(mysql.Int32(charId)),
+			tColleagueProps.Job.EQ(mysql.String(job)),
 		)).
 		LIMIT(1)
 
@@ -382,8 +382,8 @@ func (c *AbsentCommand) createAbsenceForUser(
 			absenceEnd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tColleagueProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-			tColleagueProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+			tColleagueProps.AbsenceBegin.SET(mysql.DateExp(mysql.Raw("VALUES(`absence_begin`)"))),
+			tColleagueProps.AbsenceEnd.SET(mysql.DateExp(mysql.Raw("VALUES(`absence_end`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, c.db); err != nil {

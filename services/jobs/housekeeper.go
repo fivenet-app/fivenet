@@ -6,7 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -86,12 +86,12 @@ func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {
 	stmt := tTimeClock.
 		UPDATE().
 		SET(
-			tTimeClock.StartTime.SET(jet.TimestampExp(jet.NULL)),
+			tTimeClock.StartTime.SET(mysql.TimestampExp(mysql.NULL)),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tTimeClock.Date.BETWEEN(
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(14, jet.DAY))),
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(2, jet.DAY))),
+				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(14, mysql.DAY))),
+				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(2, mysql.DAY))),
 			),
 			tTimeClock.StartTime.IS_NOT_NULL(),
 			tTimeClock.EndTime.IS_NULL(),

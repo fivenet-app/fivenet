@@ -18,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -127,7 +127,7 @@ func (d *Demo) Start(ctx context.Context) error {
 		).
 		FROM(tUsers).
 		WHERE(
-			tUsers.Job.EQ(jet.String(d.cfg.Demo.TargetJob)),
+			tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob)),
 		).
 		ORDER_BY(tUsers.ID.ASC()).
 		LIMIT(20)
@@ -259,7 +259,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					tLocs.Y.AS("y"),
 				).
 				FROM(tLocs).
-				WHERE(tLocs.Identifier.EQ(jet.String(user))).
+				WHERE(tLocs.Identifier.EQ(mysql.String(user))).
 				LIMIT(1)
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
@@ -317,9 +317,9 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					false,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tLocs.X.SET(jet.Float(newX)),
-					tLocs.Y.SET(jet.Float(newY)),
-					tLocs.Hidden.SET(jet.Bool(false)),
+					tLocs.X.SET(mysql.Float(newX)),
+					tLocs.Y.SET(mysql.Float(newY)),
+					tLocs.Hidden.SET(mysql.Bool(false)),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {

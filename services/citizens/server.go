@@ -21,7 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
@@ -39,8 +39,8 @@ type Server struct {
 	customDB config.CustomDB
 	notifi   notifi.INotifi
 
-	profile_pictureHandler  *filestore.Handler[int32]
-	mugshotHandler *filestore.Handler[int32]
+	profilePictureHandler *filestore.Handler[int32]
+	mugshotHandler        *filestore.Handler[int32]
 }
 
 type Params struct {
@@ -59,15 +59,15 @@ type Params struct {
 func NewServer(p Params) *Server {
 	tUserProps := table.FivenetUserProps
 
-	profile_pictureHandler := filestore.NewHandler(
+	profilePictureHandler := filestore.NewHandler(
 		p.Storage,
 		p.DB,
 		tUserProps,
 		tUserProps.UserID,
 		tUserProps.AvatarFileID,
 		3<<20,
-		func(parentId int32) jet.BoolExpression {
-			return tUserProps.UserID.EQ(jet.Int32(parentId))
+		func(parentId int32) mysql.BoolExpression {
+			return tUserProps.UserID.EQ(mysql.Int32(parentId))
 		},
 		filestore.UpdateJoinRow,
 		true,
@@ -79,8 +79,8 @@ func NewServer(p Params) *Server {
 		tUserProps.UserID,
 		tUserProps.MugshotFileID,
 		3<<20,
-		func(parentId int32) jet.BoolExpression {
-			return tUserProps.UserID.EQ(jet.Int32(parentId))
+		func(parentId int32) mysql.BoolExpression {
+			return tUserProps.UserID.EQ(mysql.Int32(parentId))
 		},
 		filestore.UpdateJoinRow,
 		true,
@@ -97,8 +97,8 @@ func NewServer(p Params) *Server {
 		customDB: p.Config.Database.Custom,
 		notifi:   p.Notifi,
 
-		profile_pictureHandler:  profile_pictureHandler,
-		mugshotHandler: mugshotHandler,
+		profilePictureHandler: profilePictureHandler,
+		mugshotHandler:        mugshotHandler,
 	}
 
 	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{
@@ -124,7 +124,7 @@ func NewServer(p Params) *Server {
 					tUser.Job,
 				).
 				FROM(tUser).
-				WHERE(tUser.ID.EQ(jet.Int32(userId))).
+				WHERE(tUser.ID.EQ(mysql.Int32(userId))).
 				LIMIT(1)
 
 			user := &users.User{}

@@ -5,35 +5,35 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) listCalendarEntriesQuery(
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 	userInfo *userinfo.UserInfo,
 	access calendar.AccessLevel,
-) jet.SelectStatement {
+) mysql.SelectStatement {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 	rsvp2 := tCalendarRSVP.AS("r2")
 
-	accessExists := jet.EXISTS(
-		jet.
-SELECT(jet.Int(1)).
+	accessExists := mysql.EXISTS(
+		mysql.
+			SELECT(mysql.Int(1)).
 			FROM(tCAccess).
-			WHERE(jet.AND(
+			WHERE(mysql.AND(
 				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
-				tCAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
 			)),
 	)
 
-	rsvpExists := jet.EXISTS(
-		jet.
-SELECT(jet.Int(1)).
+	rsvpExists := mysql.EXISTS(
+		mysql.
+			SELECT(mysql.Int(1)).
 			FROM(tCalendarRSVP.AS("r2")).
 			WHERE(
-				rsvp2.UserID.EQ(jet.Int32(userInfo.GetUserId())).
-					AND(rsvp2.Response.GT(jet.Int32(3))). // response > 3
+				rsvp2.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
+					AND(rsvp2.Response.GT(mysql.Int32(3))). // response > 3
 					AND(rsvp2.EntryID.EQ(tCalendarEntry.ID)),
 			),
 	)
@@ -86,18 +86,18 @@ SELECT(jet.Int(1)).
 				tUserProps.UserID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())).
+				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
 					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		WHERE(jet.AND(
-			jet.OR(
+		WHERE(mysql.AND(
+			mysql.OR(
 				accessExists,
 				rsvpExists,
-				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
+				tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
 			),
 			condition,
 		)).

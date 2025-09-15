@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -26,9 +26,9 @@ func RetrieveColleagueById(
 		return nil, nil
 	}
 
-	userIds := make([]jet.Expression, len(u))
+	userIds := make([]mysql.Expression, len(u))
 	for i := range u {
-		userIds[i] = jet.Int32(u[i])
+		userIds[i] = mysql.Int32(u[i])
 	}
 
 	tUsers := tables.User().AS("colleague")
@@ -153,7 +153,7 @@ func RetrieveUserById(ctx context.Context, db *sql.DB, u int32) (*users.User, er
 				),
 		).
 		WHERE(
-			tUsers.ID.EQ(jet.Int32(u)),
+			tUsers.ID.EQ(mysql.Int32(u)),
 		).
 		LIMIT(1)
 

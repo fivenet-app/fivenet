@@ -24,7 +24,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -62,12 +62,12 @@ func (s *Server) ListColleagues(
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(jet.String(userInfo.GetJob())).
+	condition := tColleague.Job.EQ(mysql.String(userInfo.GetJob())).
 		AND(s.customDB.Conditions.User.GetFilter(tColleague.Alias()))
 
-	userIds := []jet.Expression{}
+	userIds := []mysql.Expression{}
 	for _, v := range req.GetUserIds() {
-		userIds = append(userIds, jet.Int32(v))
+		userIds = append(userIds, mysql.Int32(v))
 	}
 	if len(userIds) > 0 && req.UserOnly != nil && req.GetUserOnly() {
 		condition = condition.AND(tColleague.ID.IN(userIds...))
@@ -78,19 +78,19 @@ func (s *Server) ListColleagues(
 		if search != "" {
 			search = "%" + search + "%"
 			condition = condition.AND(
-				jet.CONCAT(tColleague.Firstname, jet.String(" "), tColleague.Lastname).
-					LIKE(jet.String(search)),
+				mysql.CONCAT(tColleague.Firstname, mysql.String(" "), tColleague.Lastname).
+					LIKE(mysql.String(search)),
 			)
 		}
 	}
 
 	if req.Absent != nil && req.GetAbsent() {
 		condition = condition.AND(
-			jet.AND(
+			mysql.AND(
 				tColleagueProps.AbsenceBegin.IS_NOT_NULL(),
 				tColleagueProps.AbsenceEnd.IS_NOT_NULL(),
-				tColleagueProps.AbsenceBegin.LT_EQ(jet.CURRENT_DATE()),
-				tColleagueProps.AbsenceEnd.GT_EQ(jet.CURRENT_DATE()),
+				tColleagueProps.AbsenceBegin.LT_EQ(mysql.CURRENT_DATE()),
+				tColleagueProps.AbsenceEnd.GT_EQ(mysql.CURRENT_DATE()),
 			))
 	}
 
@@ -101,9 +101,9 @@ func (s *Server) ListColleagues(
 		if namePrefix != "" {
 			namePrefix = "%" + namePrefix + "%"
 
-			condition = condition.AND(jet.AND(
+			condition = condition.AND(mysql.AND(
 				tColleagueProps.NamePrefix.IS_NOT_NULL(),
-				tColleagueProps.NamePrefix.LIKE(jet.String(namePrefix)),
+				tColleagueProps.NamePrefix.LIKE(mysql.String(namePrefix)),
 			))
 		}
 	}
@@ -115,26 +115,26 @@ func (s *Server) ListColleagues(
 		if nameSuffix != "" {
 			nameSuffix = "%" + nameSuffix + "%"
 
-			condition = condition.AND(jet.AND(
+			condition = condition.AND(mysql.AND(
 				tColleagueProps.NameSuffix.IS_NOT_NULL(),
-				tColleagueProps.NameSuffix.LIKE(jet.String(nameSuffix)),
+				tColleagueProps.NameSuffix.LIKE(mysql.String(nameSuffix)),
 			))
 		}
 	}
 
 	if len(req.GetLabelIds()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
-		labelIDExprs := []jet.Expression{}
+		labelIDExprs := []mysql.Expression{}
 		for _, labelId := range req.GetLabelIds() {
-			labelIDExprs = append(labelIDExprs, jet.Int64(labelId))
+			labelIDExprs = append(labelIDExprs, mysql.Int64(labelId))
 		}
 
-		labelsExists := jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		labelsExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tColleagueLabels).
 				WHERE(
 					tColleagueLabels.UserID.EQ(tColleague.ID).
-						AND(tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob()))).
+						AND(tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob()))).
 						AND(tColleagueLabels.LabelID.IN(labelIDExprs...)),
 				),
 		)
@@ -145,14 +145,14 @@ SELECT(jet.Int(1)).
 	// Get total count of values
 	countStmt := tColleague.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tColleague.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tColleague.ID)).AS("data_count.total"),
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tColleague.
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob()))),
 				),
 		).
 		WHERE(condition)
@@ -174,14 +174,14 @@ SELECT(jet.Int(1)).
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if len(userIds) > 0 {
 		// Make sure to sort by the user ID if provided
 		orderBys = append(orderBys, tColleague.ID.IN(userIds...).DESC())
 	}
 
 	if req.GetSort() != nil {
-		var columns []jet.Column
+		var columns []mysql.Column
 		switch req.GetSort().GetColumn() {
 		case nameColumn:
 			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
@@ -225,7 +225,7 @@ SELECT(jet.Int(1)).
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tColleague.
 				LEFT_JOIN(tUserProps,
@@ -233,7 +233,7 @@ SELECT(jet.Int(1)).
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -251,9 +251,9 @@ SELECT(jet.Int(1)).
 	}
 
 	if len(resp.GetColleagues()) > 0 && (types.Contains("Labels") || userInfo.GetSuperuser()) {
-		userIds := []jet.Expression{}
+		userIds := []mysql.Expression{}
 		for _, colleague := range resp.GetColleagues() {
-			userIds = append(userIds, jet.Int32(colleague.GetUserId()))
+			userIds = append(userIds, mysql.Int32(colleague.GetUserId()))
 		}
 
 		labelsStmt := tColleagueLabels.
@@ -270,8 +270,8 @@ SELECT(jet.Int(1)).
 						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
 					),
 			).
-			WHERE(jet.AND(
-				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+			WHERE(mysql.AND(
+				tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 				tJobLabels.DeletedAt.IS_NULL(),
 				tColleagueLabels.UserID.IN(userIds...),
 			)).
@@ -323,11 +323,11 @@ func (s *Server) getColleague(
 	userInfo *userinfo.UserInfo,
 	job string,
 	userId int32,
-	withColumns []jet.Projection,
+	withColumns mysql.ProjectionList,
 ) (*jobs.Colleague, error) {
 	tColleague := tables.User().AS("colleague")
 
-	columns := []jet.Projection{
+	columns := mysql.ProjectionList{
 		tColleague.Firstname,
 		tColleague.Lastname,
 		tColleague.Job,
@@ -358,14 +358,14 @@ func (s *Server) getColleague(
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(jet.String(job))),
+						AND(tColleagueProps.Job.EQ(mysql.String(job))),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(
-			tColleague.ID.EQ(jet.Int32(userId)),
+			tColleague.ID.EQ(mysql.Int32(userId)),
 		).
 		LIMIT(1)
 
@@ -469,7 +469,7 @@ func (s *Server) GetColleague(
 		fields.Strings = []string{"Note"}
 	}
 
-	withColumns := []jet.Projection{}
+	withColumns := mysql.ProjectionList{}
 	for _, fType := range fields.GetStrings() {
 		switch fType {
 		case "Note":
@@ -515,7 +515,7 @@ func (s *Server) GetSelf(
 		types.Strings = append(types.Strings, "AbsenceDate", "Note")
 	}
 
-	withColumns := []jet.Projection{}
+	withColumns := mysql.ProjectionList{}
 	for _, fType := range types.GetStrings() {
 		switch fType {
 		case "Note":
@@ -755,31 +755,31 @@ func (s *Server) getConditionForColleagueAccess(
 	usersTable *tables.FivenetUserTable,
 	levels []string,
 	userInfo *userinfo.UserInfo,
-) jet.BoolExpression {
-	condition := jet.Bool(true)
+) mysql.BoolExpression {
+	condition := mysql.Bool(true)
 	if userInfo.GetSuperuser() {
 		return condition
 	}
 
 	// If no levels set, assume "Own" as a safe default
 	if len(levels) == 0 {
-		return actTable.TargetUserID.EQ(jet.Int32(userInfo.GetUserId()))
+		return actTable.TargetUserID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
 	if slices.Contains(levels, "Any") {
 		return condition
 	}
 	if slices.Contains(levels, "Lower_Rank") {
-		return usersTable.ID.LT(jet.Int32(userInfo.GetJobGrade()))
+		return usersTable.ID.LT(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, "Same_Rank") {
-		return usersTable.ID.LT_EQ(jet.Int32(userInfo.GetJobGrade()))
+		return usersTable.ID.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))
 	}
 	if slices.Contains(levels, "Own") {
-		return usersTable.ID.EQ(jet.Int32(userInfo.GetUserId()))
+		return usersTable.ID.EQ(mysql.Int32(userInfo.GetUserId()))
 	}
 
-	return jet.Bool(false)
+	return mysql.Bool(false)
 }
 
 func (s *Server) ListColleagueActivity(
@@ -805,7 +805,7 @@ func (s *Server) ListColleagueActivity(
 	tTargetColleague := tables.User().AS("target_user")
 	tSourceUser := tTargetColleague.AS("source_user")
 
-	condition := tColleagueActivity.Job.EQ(jet.String(userInfo.GetJob()))
+	condition := tColleagueActivity.Job.EQ(mysql.String(userInfo.GetJob()))
 
 	resp := &pbjobs.ListColleagueActivityResponse{
 		Pagination: &database.PaginationResponse{
@@ -831,9 +831,9 @@ func (s *Server) ListColleagueActivity(
 
 		if len(reqUserIds) >= 2 {
 			// More than 2 user ids
-			userIds := make([]jet.Expression, len(reqUserIds))
+			userIds := make([]mysql.Expression, len(reqUserIds))
 			for i := range userIds {
-				userIds[i] = jet.Int32(reqUserIds[i])
+				userIds[i] = mysql.Int32(reqUserIds[i])
 			}
 
 			condition = condition.AND(tTargetColleague.ID.IN(userIds...))
@@ -857,7 +857,7 @@ func (s *Server) ListColleagueActivity(
 			return nil, errorsjobs.ErrFailedQuery
 		}
 
-		condition = condition.AND(tColleagueActivity.TargetUserID.EQ(jet.Int32(userId)))
+		condition = condition.AND(tColleagueActivity.TargetUserID.EQ(mysql.Int32(userId)))
 	}
 
 	// Types Field Permission Check
@@ -889,9 +889,9 @@ func (s *Server) ListColleagueActivity(
 		)
 	}
 
-	condTypes := []jet.Expression{}
+	condTypes := []mysql.Expression{}
 	for _, aType := range req.GetActivityTypes() {
-		condTypes = append(condTypes, jet.Int32(int32(aType)))
+		condTypes = append(condTypes, mysql.Int32(int32(aType)))
 	}
 
 	if len(condTypes) == 0 {
@@ -903,7 +903,7 @@ func (s *Server) ListColleagueActivity(
 	// Get total count of values
 	countStmt := tColleagueActivity.
 		SELECT(
-			jet.COUNT(tColleagueActivity.ID).AS("data_count.total"),
+			mysql.COUNT(tColleagueActivity.ID).AS("data_count.total"),
 		).
 		FROM(
 			tColleagueActivity.
@@ -928,9 +928,9 @@ func (s *Server) ListColleagueActivity(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "createdAt":
 			fallthrough
@@ -1001,7 +1001,7 @@ func (s *Server) ListColleagueActivity(
 				).
 				LEFT_JOIN(tTargetColleagueProps,
 					tTargetColleagueProps.UserID.EQ(tTargetColleague.ID).
-						AND(tTargetColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tTargetColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),

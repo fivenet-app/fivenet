@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
@@ -46,7 +46,7 @@ func GetUserProps(
 				),
 		).
 		WHERE(
-			tUserProps.UserID.EQ(jet.Int32(userId)),
+			tUserProps.UserID.EQ(mysql.Int32(userId)),
 		).
 		LIMIT(1)
 
@@ -79,9 +79,9 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) 
 		return list, nil
 	}
 
-	jobsExp := make([]jet.Expression, len(jobs))
+	jobsExp := make([]mysql.Expression, len(jobs))
 	for i := range jobs {
-		jobsExp[i] = jet.String(jobs[i])
+		jobsExp[i] = mysql.String(jobs[i])
 	}
 
 	tCitizensLabelsJob := table.FivenetUserLabelsJob.AS("citizen_label")
@@ -100,8 +100,8 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) 
 					tCitizensLabelsJob.ID.EQ(tUserLabels.LabelID),
 				),
 		).
-		WHERE(jet.AND(
-			tUserLabels.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tUserLabels.UserID.EQ(mysql.Int32(userId)),
 			tCitizensLabelsJob.Job.IN(jobsExp...),
 		)).
 		ORDER_BY(
@@ -149,11 +149,11 @@ func (x *UserProps) HandleChanges(
 
 	tUserProps := table.FivenetUserProps
 
-	updateSets := []jet.ColumnAssigment{}
+	updateSets := []mysql.ColumnAssigment{}
 
 	// Generate the update sets
 	if in.Wanted != nil {
-		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(in.GetWanted())))
+		updateSets = append(updateSets, tUserProps.Wanted.SET(mysql.Bool(in.GetWanted())))
 	} else {
 		in.Wanted = x.Wanted
 	}
@@ -169,8 +169,8 @@ func (x *UserProps) HandleChanges(
 		}
 
 		updateSets = append(updateSets,
-			tUserProps.Job.SET(jet.String(in.GetJobName())),
-			tUserProps.JobGrade.SET(jet.Int32(in.GetJobGradeNumber())),
+			tUserProps.Job.SET(mysql.String(in.GetJobName())),
+			tUserProps.JobGrade.SET(mysql.Int32(in.GetJobGradeNumber())),
 		)
 	} else {
 		in.JobName = x.JobName
@@ -182,7 +182,7 @@ func (x *UserProps) HandleChanges(
 	if in.TrafficInfractionPoints != nil {
 		updateSets = append(
 			updateSets,
-			tUserProps.TrafficInfractionPoints.SET(jet.Uint32(in.GetTrafficInfractionPoints())),
+			tUserProps.TrafficInfractionPoints.SET(mysql.Uint32(in.GetTrafficInfractionPoints())),
 		)
 
 		// Update the timestamp if points are added
@@ -199,9 +199,9 @@ func (x *UserProps) HandleChanges(
 
 	if in.OpenFines != nil {
 		updateSets = append(updateSets, tUserProps.OpenFines.SET(
-			jet.IntExp(jet.Raw(
+			mysql.IntExp(mysql.Raw(
 				"CASE WHEN COALESCE(`open_fines`, 0) + $amount < 0 THEN 0 ELSE COALESCE(`open_fines`, 0) + $amount END",
-				jet.RawArgs{
+				mysql.RawArgs{
 					"$amount": in.GetOpenFines(),
 				},
 			)),
@@ -213,7 +213,7 @@ func (x *UserProps) HandleChanges(
 	if in.MugshotFileId != nil {
 		updateSets = append(
 			updateSets,
-			tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))),
+			tUserProps.MugShot.SET(mysql.StringExp(mysql.Raw("VALUES(`mug_shot`)"))),
 		)
 	} else {
 		in.MugshotFileId = x.MugshotFileId
@@ -427,16 +427,16 @@ func (s *UserProps) updateLabels(
 	}
 
 	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
+		ids := make([]mysql.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Int64(removed[i].GetId())
+			ids[i] = mysql.Int64(removed[i].GetId())
 		}
 
 		stmt := tUserLabels.
 			DELETE().
-			WHERE(jet.AND(
-				tUserLabels.UserID.EQ(jet.Int32(userId)),
+			WHERE(mysql.AND(
+				tUserLabels.UserID.EQ(mysql.Int32(userId)),
 				tUserLabels.LabelID.IN(ids...),
 			)).
 			LIMIT(int64(len(removed)))

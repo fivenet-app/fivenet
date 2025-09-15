@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -50,7 +50,7 @@ func (s *Server) GetExamInfo(
 	quali, err := s.getQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
 	)
 	if err != nil {
@@ -118,9 +118,9 @@ func (s *Server) getExamUser(
 			tExamUser.EndedAt,
 		).
 		FROM(tExamUser).
-		WHERE(jet.AND(
-			tExamUser.QualificationID.EQ(jet.Int64(qualificationId)),
-			tExamUser.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tExamUser.UserID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 
@@ -171,7 +171,7 @@ func (s *Server) TakeExam(
 	quali, err := s.getQualificationShort(
 		ctx,
 		req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		userInfo,
 	)
 	if err != nil {
@@ -220,9 +220,9 @@ func (s *Server) TakeExam(
 			VALUES(
 				req.GetQualificationId(),
 				userInfo.GetUserId(),
-				jet.CURRENT_TIMESTAMP(),
-				jet.CURRENT_TIMESTAMP().ADD(jet.INTERVALd(examTime)),
-				jet.NULL,
+				mysql.CURRENT_TIMESTAMP(),
+				mysql.CURRENT_TIMESTAMP().ADD(mysql.INTERVALd(examTime)),
+				mysql.NULL,
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -309,10 +309,10 @@ func (s *Server) SubmitExam(
 		VALUES(
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
-			jet.TimestampT(endedAt),
+			mysql.TimestampT(endedAt),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tExamUser.EndedAt.SET(jet.TimestampT(endedAt)),
+			tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -335,10 +335,10 @@ func (s *Server) SubmitExam(
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
 			req.GetResponses(),
-			jet.NULL,
+			mysql.NULL,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tExamResponses.Responses.SET(jet.RawString("VALUES(`responses`)")),
+			tExamResponses.Responses.SET(mysql.RawString("VALUES(`responses`)")),
 		)
 
 	if _, err := respStmt.ExecContext(ctx, tx); err != nil {
@@ -462,9 +462,9 @@ func (s *Server) deleteExamUser(
 
 	stmt := tExamUser.
 		DELETE().
-		WHERE(jet.AND(
-			tExamUser.QualificationID.EQ(jet.Int64(qualificationId)),
-			tExamUser.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tExamUser.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tExamUser.UserID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 

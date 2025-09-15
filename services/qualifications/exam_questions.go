@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -20,7 +20,7 @@ func (s *Server) getExamQuestions(
 	qualificationId int64,
 	withAnswers bool,
 ) (*qualifications.ExamQuestions, error) {
-	columns := []jet.Projection{
+	columns := mysql.ProjectionList{
 		tExamQuestions.QualificationID,
 		tExamQuestions.CreatedAt,
 		tExamQuestions.UpdatedAt,
@@ -40,8 +40,8 @@ func (s *Server) getExamQuestions(
 			columns...,
 		).
 		FROM(tExamQuestions).
-		WHERE(jet.AND(
-			tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
+		WHERE(mysql.AND(
+			tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId)),
 		)).
 		ORDER_BY(tExamQuestions.Order.ASC()).
 		LIMIT(100)
@@ -59,11 +59,11 @@ func (s *Server) getExamQuestions(
 func (s *Server) countExamQuestions(ctx context.Context, qualificationid int64) (int64, error) {
 	stmt := tExamQuestions.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tExamQuestions.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tExamQuestions.ID)).AS("data_count.total"),
 		).
 		FROM(tExamQuestions).
 		WHERE(
-			tExamQuestions.QualificationID.EQ(jet.Int64(qualificationid)),
+			tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationid)),
 		)
 
 	var count database.DataCount
@@ -87,7 +87,7 @@ func (s *Server) handleExamQuestionsChanges(
 	if len(questions.GetQuestions()) == 0 {
 		stmt := tExamQuestions.
 			DELETE().
-			WHERE(tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId))).
+			WHERE(tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId))).
 			LIMIT(100)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -175,9 +175,9 @@ func (s *Server) handleExamQuestionsChanges(
 				question.Points,
 				question.GetOrder(),
 			).
-			WHERE(jet.AND(
-				tExamQuestions.ID.EQ(jet.Int64(question.GetId())),
-				tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
+			WHERE(mysql.AND(
+				tExamQuestions.ID.EQ(mysql.Int64(question.GetId())),
+				tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -186,16 +186,16 @@ func (s *Server) handleExamQuestionsChanges(
 	}
 
 	if len(toDelete) > 0 {
-		questionIds := []jet.Expression{}
+		questionIds := []mysql.Expression{}
 		for _, question := range toDelete {
-			questionIds = append(questionIds, jet.Int64(question.GetId()))
+			questionIds = append(questionIds, mysql.Int64(question.GetId()))
 		}
 
 		stmt := tExamQuestions.
 			DELETE().
-			WHERE(jet.AND(
+			WHERE(mysql.AND(
 				tExamQuestions.ID.IN(questionIds...),
-				tExamQuestions.QualificationID.EQ(jet.Int64(qualificationId)),
+				tExamQuestions.QualificationID.EQ(mysql.Int64(qualificationId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -266,9 +266,9 @@ func (s *Server) getExamResponses(
 			tExamResponses.Grading,
 		).
 		FROM(tExamResponses).
-		WHERE(jet.AND(
-			tExamResponses.QualificationID.EQ(jet.Int64(qualificationId)),
-			tExamResponses.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tExamResponses.QualificationID.EQ(mysql.Int64(qualificationId)),
+			tExamResponses.UserID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 

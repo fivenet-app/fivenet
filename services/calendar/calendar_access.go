@@ -7,7 +7,7 @@ import (
 	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -51,38 +51,38 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 
 	tCreator := tables.User().AS("creator")
 
-	ids := make([]jet.Expression, len(calendarIds))
+	ids := make([]mysql.Expression, len(calendarIds))
 	for i := range calendarIds {
-		ids[i] = jet.Int64(calendarIds[i])
+		ids[i] = mysql.Int64(calendarIds[i])
 	}
 
-	condition := jet.Bool(false)
+	condition := mysql.Bool(false)
 	if publicOk {
 		condition = tCalendar.Public.IS_TRUE()
 	}
 
-	var accessExists jet.BoolExpression
+	var accessExists mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
-		accessExists = jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		accessExists = mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tCAccess).
 				WHERE(
-					jet.AND(
+					mysql.AND(
 						tCAccess.TargetID.EQ(tCalendar.ID),
-						tCAccess.Access.GT_EQ(jet.Int32(int32(access))),
-						jet.OR(
-							tCAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-							jet.AND(
-								tCAccess.Job.EQ(jet.String(userInfo.GetJob())),
-								tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+						tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
+						mysql.OR(
+							tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+							mysql.AND(
+								tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+								tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 							),
 						),
 					),
 				),
 		)
 	} else {
-		accessExists = jet.Bool(true)
+		accessExists = mysql.Bool(true)
 	}
 
 	stmt := tCalendar.
@@ -94,10 +94,10 @@ SELECT(jet.Int(1)).
 				tCalendar.CreatorID.EQ(tCreator.ID),
 			),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
-			jet.OR(
+			mysql.OR(
 				accessExists,
 				condition,
 			),

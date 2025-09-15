@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -20,7 +20,7 @@ func (a *Jobs[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id in
 		).
 		FROM(a.selectTable).
 		WHERE(
-			a.selectColumns.ID.EQ(jet.Int64(id)),
+			a.selectColumns.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -80,9 +80,9 @@ func (a *Jobs[U, T, AccessLevel]) UpdateEntry(
 			entry.GetJob(),
 			entry.GetMinimumGrade(),
 		).
-		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Int64(entry.GetId())),
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.columns.ID.EQ(mysql.Int64(entry.GetId())),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -101,9 +101,9 @@ func (a *Jobs[U, T, AccessLevel]) DeleteEntry(
 ) error {
 	stmt := a.table.
 		DELETE().
-		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Int64(id)),
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.columns.ID.EQ(mysql.Int64(id)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)).
 		LIMIT(1)
 

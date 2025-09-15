@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -45,9 +45,9 @@ type Housekeeper struct {
 // joinInfo holds information about a table that references files.
 type joinInfo struct {
 	// Table is the Jet table referencing files (e.g., table.FivenetDocumentsFiles).
-	Table jet.Table
+	Table mysql.Table
 	// FileCol is the column in the table that holds the file ID (e.g., table.FivenetDocumentsFiles.FileID).
-	FileCol jet.ColumnInteger
+	FileCol mysql.ColumnInteger
 }
 
 // Result is the output struct for dependency injection, providing the Housekeeper and cron registration.
@@ -168,7 +168,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 
 	// A) soft-deleted & expired
 	softExpired := tFiles.DeletedAt.IS_NOT_NULL().AND(
-		tFiles.DeletedAt.LT(jet.TimestampT(cutoff)),
+		tFiles.DeletedAt.LT(mysql.TimestampT(cutoff)),
 	)
 
 	// B) orphaned & not yet soft-deleted
@@ -180,16 +180,16 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 		for _, ji := range joinTables {
 			// NOT EXISTS (SELECT 1 FROM ji.table WHERE ji.fileCol = files.id)
 			orphanCond = orphanCond.AND(
-				jet.NOT(jet.EXISTS(
+				mysql.NOT(mysql.EXISTS(
 					ji.Table.
-						SELECT(jet.RawInt("1")).
+						SELECT(mysql.RawInt("1")).
 						FROM(ji.Table).
 						WHERE(ji.FileCol.EQ(tFiles.ID)),
 				)),
 			)
 		}
 
-		candidateWhere = jet.OR(softExpired, orphanCond)
+		candidateWhere = mysql.OR(softExpired, orphanCond)
 	}
 
 	for {
@@ -236,7 +236,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			// B) Delete row from fivenet_files
 			if _, err := tFiles.
 				DELETE().
-				WHERE(tFiles.ID.EQ(jet.Int64(c.GetId()))).
+				WHERE(tFiles.ID.EQ(mysql.Int64(c.GetId()))).
 				ExecContext(ctx, tx); err != nil {
 				if err := tx.Rollback(); err != nil {
 					h.logger.Error(

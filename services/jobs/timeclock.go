@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -35,8 +35,8 @@ func (s *Server) ListTimeclock(
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(jet.String(userInfo.GetJob()))
-	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.GetJob()))
+	condition := tColleague.Job.EQ(mysql.String(userInfo.GetJob()))
+	statsCondition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
 
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
@@ -54,12 +54,12 @@ func (s *Server) ListTimeclock(
 	}
 
 	if req.GetUserMode() <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
-		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
-		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.GetUserId())))
+		condition = condition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 	} else if len(req.GetUserIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetUserIds()))
+		ids := make([]mysql.Expression, len(req.GetUserIds()))
 		for i := range req.GetUserIds() {
-			ids[i] = jet.Int32(req.GetUserIds()[i])
+			ids[i] = mysql.Int32(req.GetUserIds()[i])
 		}
 
 		condition = condition.AND(
@@ -77,24 +77,24 @@ func (s *Server) ListTimeclock(
 			}
 
 			condition = condition.AND(tTimeClock.Date.EQ(
-				jet.DateT(req.GetDate().GetEnd().AsTime()),
+				mysql.DateT(req.GetDate().GetEnd().AsTime()),
 			))
 		} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
 			if req.GetDate().GetEnd() != nil {
-				condition = condition.AND(jet.BoolExp(jet.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
-					jet.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
+				condition = condition.AND(mysql.BoolExp(mysql.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+					mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
 				)),
 				)
 			}
 		} else {
 			if req.GetDate().GetStart() != nil {
 				condition = condition.AND(tTimeClock.Date.GT_EQ(
-					jet.DateT(req.GetDate().GetStart().AsTime()),
+					mysql.DateT(req.GetDate().GetStart().AsTime()),
 				))
 			}
 			if req.GetDate().GetEnd() != nil {
 				condition = condition.AND(tTimeClock.Date.LT_EQ(
-					jet.DateT(req.GetDate().GetEnd().AsTime()),
+					mysql.DateT(req.GetDate().GetEnd().AsTime()),
 				))
 			}
 		}
@@ -111,7 +111,7 @@ func (s *Server) ListTimeclock(
 		}
 	}
 
-	groupBys := []jet.GroupByClause{}
+	groupBys := []mysql.GroupByClause{}
 	if req.GetPerDay() {
 		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
 	} else {
@@ -121,7 +121,7 @@ func (s *Server) ListTimeclock(
 	// User mode doesn't change the count query
 	countStmt := tTimeClock.
 		SELECT(
-			jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
+			mysql.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
 				AS("data_count.total"),
 		).
 		FROM(
@@ -158,12 +158,12 @@ func (s *Server) ListTimeclock(
 		return resp, nil
 	}
 
-	spentTimeColumn := jet.StringColumn("timeclock_entry.spent_time")
+	spentTimeColumn := mysql.StringColumn("timeclock_entry.spent_time")
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var staticColumns []jet.OrderByClause
-		var columns []jet.Column
+		var staticColumns []mysql.OrderByClause
+		var columns []mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "date":
 			columns = append(columns, tTimeClock.Date)
@@ -206,9 +206,9 @@ func (s *Server) ListTimeclock(
 		SELECT(
 			tTimeClock.UserID.AS("agg.user_id"),
 			tTimeClock.Date.AS("agg.date"),
-			jet.MIN(tTimeClock.StartTime).AS("agg.start_time"),
-			jet.MAX(tTimeClock.EndTime).AS("agg.end_time"),
-			jet.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
+			mysql.MIN(tTimeClock.StartTime).AS("agg.start_time"),
+			mysql.MAX(tTimeClock.EndTime).AS("agg.end_time"),
+			mysql.SUM(tTimeClock.SpentTime).AS("agg.spent_time"),
 		).
 		FROM(
 			tTimeClock.INNER_JOIN(
@@ -222,11 +222,11 @@ func (s *Server) ListTimeclock(
 
 	stmt := agg.
 		SELECT(
-			jet.IntegerColumn("agg.user_id").AS("timeclock_entry.user_id"),
-			jet.DateColumn("agg.date").AS("timeclock_entry.date"),
-			jet.DateTimeColumn("agg.start_time").AS("timeclock_entry.start_time"),
-			jet.DateTimeColumn("agg.end_time").AS("timeclock_entry.end_time"),
-			jet.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
+			mysql.IntegerColumn("agg.user_id").AS("timeclock_entry.user_id"),
+			mysql.DateColumn("agg.date").AS("timeclock_entry.date"),
+			mysql.DateTimeColumn("agg.start_time").AS("timeclock_entry.start_time"),
+			mysql.DateTimeColumn("agg.end_time").AS("timeclock_entry.end_time"),
+			mysql.FloatColumn("agg.spent_time").AS("timeclock_entry.spent_time"),
 
 			tColleague.ID,
 			tColleague.Job,
@@ -247,14 +247,14 @@ func (s *Server) ListTimeclock(
 		FROM(
 			agg.
 				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(jet.IntegerColumn("agg.user_id")),
+					tColleague.ID.EQ(mysql.IntegerColumn("agg.user_id")),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -382,7 +382,7 @@ func (s *Server) ListTimeclock(
 					).
 					LEFT_JOIN(tColleagueProps,
 						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+							AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -436,8 +436,8 @@ func (s *Server) GetTimeclockStats(
 		}
 	}
 
-	condition := tTimeClock.Job.EQ(jet.String(userInfo.GetJob())).
-		AND(tTimeClock.UserID.EQ(jet.Int32(userId)))
+	condition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())).
+		AND(tTimeClock.UserID.EQ(mysql.Int32(userId)))
 
 	stats, err := s.getTimeclockStats(ctx, condition)
 	if err != nil {
@@ -463,19 +463,19 @@ func (s *Server) ListInactiveEmployees(
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := jet.AND(
-		tTimeClock.Job.EQ(jet.String(userInfo.GetJob())),
-		tColleague.Job.EQ(jet.String(userInfo.GetJob())),
-		jet.OR(
-			jet.AND(
+	condition := mysql.AND(
+		tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
+		tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+		mysql.OR(
+			mysql.AND(
 				tColleagueProps.AbsenceBegin.IS_NULL(),
 				tColleagueProps.AbsenceEnd.IS_NULL(),
 			),
 			tColleagueProps.AbsenceBegin.LT_EQ(
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
+				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
 			),
 			tColleagueProps.AbsenceEnd.LT_EQ(
-				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
+				mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
 			),
 		),
 		tTimeClock.UserID.NOT_IN(
@@ -484,10 +484,10 @@ func (s *Server) ListInactiveEmployees(
 					tTimeClock.UserID,
 				).
 				FROM(tTimeClock).
-				WHERE(jet.AND(
-					tTimeClock.Job.EQ(jet.String(userInfo.GetJob())),
+				WHERE(mysql.AND(
+					tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
 					tTimeClock.Date.GT_EQ(
-						jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.GetDays(), jet.DAY))),
+						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
 					),
 				)).
 				GROUP_BY(tTimeClock.UserID),
@@ -496,7 +496,7 @@ func (s *Server) ListInactiveEmployees(
 
 	countStmt := tTimeClock.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tTimeClock.UserID)).AS("data_count.total"),
 		).
 		FROM(
 			tTimeClock.
@@ -508,7 +508,7 @@ func (s *Server) ListInactiveEmployees(
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				),
 		).
 		WHERE(condition)
@@ -530,9 +530,9 @@ func (s *Server) ListInactiveEmployees(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var columns []jet.Column
+		var columns []mysql.Column
 		switch req.GetSort().GetColumn() {
 		case nameColumn:
 			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
@@ -582,7 +582,7 @@ func (s *Server) ListInactiveEmployees(
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

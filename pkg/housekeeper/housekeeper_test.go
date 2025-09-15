@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
@@ -26,36 +26,36 @@ func TestSoftDeleteJobData(t *testing.T) {
 
 	// Define table and job details
 	table := &Table{
-		Table:           jet.NewTable("", "calendars", ""),
-		IDColumn:        jet.IntegerColumn("id"),
-		JobColumn:       jet.StringColumn("job"),
-		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+		Table:           mysql.NewTable("", "calendars", ""),
+		IDColumn:        mysql.IntegerColumn("id"),
+		JobColumn:       mysql.StringColumn("job"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
 
 		MinDays: 30,
 
 		DependantTables: []*Table{
 			{
-				Table:           jet.NewTable("", "calendar_entries", ""),
-				IDColumn:        jet.IntegerColumn("id"),
-				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
-				ForeignKey:      jet.IntegerColumn("calendar_id"),
+				Table:           mysql.NewTable("", "calendar_entries", ""),
+				IDColumn:        mysql.IntegerColumn("id"),
+				DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
+				ForeignKey:      mysql.IntegerColumn("calendar_id"),
 
 				MinDays: 30,
 
 				DependantTables: []*Table{
 					{
-						Table:      jet.NewTable("", "calendar_rsvp", ""),
-						ForeignKey: jet.IntegerColumn("entry_id"),
+						Table:      mysql.NewTable("", "calendar_rsvp", ""),
+						ForeignKey: mysql.IntegerColumn("entry_id"),
 					},
 				},
 			},
 			{
-				Table:      jet.NewTable("", "calendar_subscriptions", ""),
-				ForeignKey: jet.IntegerColumn("calendar_id"),
+				Table:      mysql.NewTable("", "calendar_subscriptions", ""),
+				ForeignKey: mysql.IntegerColumn("calendar_id"),
 			},
 			{
-				Table:      jet.NewTable("", "calendar_subscriptions", ""),
-				ForeignKey: jet.IntegerColumn("calendar_id"),
+				Table:      mysql.NewTable("", "calendar_subscriptions", ""),
+				ForeignKey: mysql.IntegerColumn("calendar_id"),
 			},
 		},
 	}
@@ -102,32 +102,32 @@ func TestHardDelete(t *testing.T) {
 
 	// Define table details
 	table := &Table{
-		Table:           jet.NewTable("", "calendars", ""),
-		IDColumn:        jet.IntegerColumn("id"),
-		JobColumn:       jet.StringColumn("job"),
-		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+		Table:           mysql.NewTable("", "calendars", ""),
+		IDColumn:        mysql.IntegerColumn("id"),
+		JobColumn:       mysql.StringColumn("job"),
+		DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
 
 		MinDays: 30,
 
 		DependantTables: []*Table{
 			{
-				Table:           jet.NewTable("", "calendar_entries", ""),
-				IDColumn:        jet.IntegerColumn("id"),
-				ForeignKey:      jet.IntegerColumn("calendar_id"),
-				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+				Table:           mysql.NewTable("", "calendar_entries", ""),
+				IDColumn:        mysql.IntegerColumn("id"),
+				ForeignKey:      mysql.IntegerColumn("calendar_id"),
+				DeletedAtColumn: mysql.TimestampColumn("deleted_at"),
 
 				MinDays: 30,
 
 				DependantTables: []*Table{
 					{
-						Table:      jet.NewTable("", "calendar_rsvp", ""),
-						ForeignKey: jet.IntegerColumn("entry_id"),
+						Table:      mysql.NewTable("", "calendar_rsvp", ""),
+						ForeignKey: mysql.IntegerColumn("entry_id"),
 					},
 				},
 			},
 			{
-				Table:      jet.NewTable("", "calendar_subscriptions", ""),
-				ForeignKey: jet.IntegerColumn("calendar_id"),
+				Table:      mysql.NewTable("", "calendar_subscriptions", ""),
+				ForeignKey: mysql.IntegerColumn("calendar_id"),
 			},
 		},
 	}

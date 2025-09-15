@@ -7,7 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -28,20 +28,20 @@ type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 // Users provides access control logic for user-based permissions.
 type Users[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
 	// table is the main table for user access entries.
-	table jet.Table
+	table mysql.Table
 	// columns holds column references for the main table.
 	columns *UserAccessColumns
 	// selectTable is the table used for select queries (may be aliased).
-	selectTable jet.Table
+	selectTable mysql.Table
 	// selectColumns holds column references for select queries (may be aliased).
 	selectColumns *UserAccessColumns
 }
 
 // NewUsers creates a new Users instance for user-based access control.
 func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](
-	table jet.Table,
+	table mysql.Table,
 	columns *UserAccessColumns,
-	tableAlias jet.Table,
+	tableAlias mysql.Table,
 	columnsAlias *UserAccessColumns,
 ) *Users[U, T, V] {
 	return &Users[U, T, V]{
@@ -76,8 +76,8 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([
 					tUsers.ID.EQ(a.selectColumns.UserId),
 				),
 		).
-		WHERE(jet.AND(
-			a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
 			a.selectColumns.UserId.IS_NOT_NULL(),
 		))
 
@@ -96,7 +96,7 @@ func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)
 
 	var dest T

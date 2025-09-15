@@ -18,7 +18,7 @@ import (
 	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -383,7 +383,7 @@ func (g *Guild) getSyncSettings(
 		).
 		FROM(tJobProps).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(g.job)),
+			tJobProps.Job.EQ(mysql.String(g.job)),
 		).
 		LIMIT(1)
 
@@ -421,7 +421,7 @@ func (g *Guild) setLastSyncInterval(
 			pDiff,
 		).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
+			tJobProps.Job.EQ(mysql.String(job)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, g.bot.db); err != nil {

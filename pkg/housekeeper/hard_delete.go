@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
@@ -143,20 +143,20 @@ func (h *Housekeeper) deleteRows(
 	table *Table,
 	minDays int,
 ) (int64, error) {
-	var condition jet.BoolExpression
+	var condition mysql.BoolExpression
 
 	if parent != nil {
 		// If a parent is specified, only delete rows whose foreign key matches deleted/old rows in the parent.
-		condition = jet.AND(
+		condition = mysql.AND(
 			table.ForeignKey.IN(
 				parent.Table.
 					SELECT(
 						parent.IDColumn,
 					).
-					WHERE(jet.AND(
+					WHERE(mysql.AND(
 						parent.DeletedAtColumn.IS_NOT_NULL(),
 						parent.DeletedAtColumn.LT_EQ(
-							jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+							mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
 						),
 					)),
 			),
@@ -164,28 +164,28 @@ func (h *Housekeeper) deleteRows(
 	} else {
 		if table.DateColumn != nil {
 			// Use DateColumn if available for filtering.
-			condition = jet.AND(
+			condition = mysql.AND(
 				table.DateColumn.IS_NOT_NULL(),
 				table.DateColumn.LT_EQ(
-					jet.CAST(
-						jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+					mysql.CAST(
+						mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
 					).AS_DATE(),
 				),
 			)
 		} else {
 			// Otherwise, use TimestampColumn or DeletedAtColumn.
 			if table.TimestampColumn != nil {
-				condition = jet.AND(
+				condition = mysql.AND(
 					table.TimestampColumn.IS_NOT_NULL(),
 					table.TimestampColumn.LT_EQ(
-						jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(minDays, jet.DAY)),
+						mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
 					),
 				)
 			} else {
-				condition = jet.AND(
+				condition = mysql.AND(
 					table.DeletedAtColumn.IS_NOT_NULL(),
 					table.DeletedAtColumn.LT_EQ(
-						jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+						mysql.CURRENT_DATE().SUB(mysql.INTERVAL(minDays, mysql.DAY)),
 					),
 				)
 			}

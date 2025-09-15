@@ -10,7 +10,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -21,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/cache"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -260,9 +259,9 @@ func (r *Retriever) getUserInfoFromDB(
 			tAccount,
 			tUsers,
 		).
-		WHERE(jet.AND(
-			tAccount.ID.EQ(jet.Int64(accountId)),
-			tUsers.ID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tAccount.ID.EQ(mysql.Int64(accountId)),
+			tUsers.ID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 
@@ -289,8 +288,8 @@ func (r *Retriever) GetUserInfoWithoutAccountId(
 			tUsers.Group,
 		).
 		FROM(tUsers).
-		WHERE(jet.AND(
-			tUsers.ID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tUsers.ID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 
@@ -341,7 +340,7 @@ func (r *Retriever) SetUserInfo(
 			overrideJob,
 			overrideJobGrade,
 		).
-		WHERE(tAccount.ID.EQ(jet.Int64(accountId))).
+		WHERE(tAccount.ID.EQ(mysql.Int64(accountId))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, r.db); err != nil {
@@ -374,7 +373,7 @@ func (r *Retriever) SetUserInfo(
 
 	r.userCache.Put(key, ui, r.userCacheTTL)
 
-	evt := &pb.UserInfoChanged{
+	evt := &pbuserinfo.UserInfoChanged{
 		AccountId:      ui.AccountId,
 		UserId:         ui.UserId,
 		OldJob:         dest.Job,

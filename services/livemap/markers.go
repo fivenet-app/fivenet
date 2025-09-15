@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -133,9 +133,9 @@ func (s *Server) CreateOrUpdateMarker(
 				req.GetMarker().GetType(),
 				req.GetMarker().GetData(),
 			).
-			WHERE(jet.AND(
-				tMarkers.Job.EQ(jet.String(userInfo.GetJob())),
-				tMarkers.ID.EQ(jet.Int64(req.GetMarker().GetId())),
+			WHERE(mysql.AND(
+				tMarkers.Job.EQ(mysql.String(userInfo.GetJob())),
+				tMarkers.ID.EQ(mysql.Int64(req.GetMarker().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -209,10 +209,10 @@ func (s *Server) DeleteMarker(
 			tMarkers.DeletedAt,
 		).
 		SET(
-			tMarkers.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tMarkers.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tMarkers.ID.EQ(jet.Int64(req.GetId())),
+			tMarkers.ID.EQ(mysql.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -262,7 +262,7 @@ func (s *Server) getMarker(ctx context.Context, id int64) (*livemap.MarkerMarker
 				),
 		).
 		WHERE(
-			tMarkers.ID.EQ(jet.Int64(id)),
+			tMarkers.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -337,11 +337,11 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 					tMarkers.CreatorID.EQ(tUsers.ID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tMarkers.DeletedAt.IS_NULL(),
-			jet.OR(
+			mysql.OR(
 				tMarkers.ExpiresAt.IS_NULL(),
-				tMarkers.ExpiresAt.GT(jet.CURRENT_TIMESTAMP()),
+				tMarkers.ExpiresAt.GT(mysql.CURRENT_TIMESTAMP()),
 			),
 		)).
 		ORDER_BY(
@@ -395,9 +395,9 @@ func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
 		FROM(
 			tMarkers,
 		).
-		WHERE(jet.OR(
+		WHERE(mysql.OR(
 			tMarkers.DeletedAt.IS_NOT_NULL(),
-			tMarkers.ExpiresAt.LT_EQ(jet.CURRENT_TIMESTAMP()),
+			tMarkers.ExpiresAt.LT_EQ(mysql.CURRENT_TIMESTAMP()),
 		)).
 		ORDER_BY(
 			tMarkers.ID.ASC(),

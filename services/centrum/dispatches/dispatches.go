@@ -34,7 +34,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
@@ -333,23 +333,23 @@ func New(p Params) *DispatchDB {
 	return d
 }
 
-func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (int, error) {
+func (s *DispatchDB) LoadFromDB(ctx context.Context, cond mysql.BoolExpression) (int, error) {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
 
 	condition := tDispatchStatus.ID.IS_NULL().OR(
-		jet.AND(
+		mysql.AND(
 			tDispatchStatus.ID.EQ(
-				jet.RawInt(
+				mysql.RawInt(
 					"SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`",
 				),
 			).
 				// Don't load archived dispatches into cache
 				AND(tDispatchStatus.Status.NOT_IN(
-					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
-					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-					jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_DELETED)),
+					mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+					mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+					mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+					mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_DELETED)),
 				)),
 		),
 	)
@@ -532,7 +532,7 @@ func (s *DispatchDB) LoadDispatchAssignments(
 			tDispatchUnit.CreatedAt.ASC(),
 		).
 		WHERE(
-			tDispatchUnit.DispatchID.EQ(jet.Int64(dispatchId)),
+			tDispatchUnit.DispatchID.EQ(mysql.Int64(dispatchId)),
 		)
 
 	dest := []*centrum.DispatchAssignment{}
@@ -595,8 +595,8 @@ func (s *DispatchDB) Delete(ctx context.Context, id int64, removeFromDB bool) er
 
 		stmt := tDispatch.
 			DELETE().
-			WHERE(jet.AND(
-				tDispatch.ID.EQ(jet.Int64(id)),
+			WHERE(mysql.AND(
+				tDispatch.ID.EQ(mysql.Int64(id)),
 			)).
 			LIMIT(1)
 
@@ -683,7 +683,7 @@ func (s *DispatchDB) UpdateStatus(
 			tDispatchStatus.CreatorJob,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
+			mysql.CURRENT_TIMESTAMP(),
 			in.GetDispatchId(),
 			in.UnitId,
 			in.GetStatus(),
@@ -771,15 +771,15 @@ func (s *DispatchDB) UpdateAssignments(
 	defer tx.Rollback()
 
 	if len(toRemove) > 0 {
-		removeIds := make([]jet.Expression, len(toRemove))
+		removeIds := make([]mysql.Expression, len(toRemove))
 		for i := range toRemove {
-			removeIds[i] = jet.Int64(toRemove[i])
+			removeIds[i] = mysql.Int64(toRemove[i])
 		}
 
 		stmt := tDispatchUnit.
 			DELETE().
-			WHERE(jet.AND(
-				tDispatchUnit.DispatchID.EQ(jet.Int64(dspId)),
+			WHERE(mysql.AND(
+				tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
 				tDispatchUnit.UnitID.IN(removeIds...),
 			))
 
@@ -790,10 +790,10 @@ func (s *DispatchDB) UpdateAssignments(
 
 	var expiresAtTS *timestamp.Timestamp
 	// If expires at time is not zero
-	expiresAtVal := jet.NULL
+	expiresAtVal := mysql.NULL
 	if !expiresAt.IsZero() {
 		expiresAtTS = timestamp.New(expiresAt)
-		expiresAtVal = jet.TimeT(expiresAt)
+		expiresAtVal = mysql.TimeT(expiresAt)
 	}
 
 	if len(toAdd) > 0 {
@@ -842,7 +842,7 @@ func (s *DispatchDB) UpdateAssignments(
 			}
 
 			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-				tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
+				tDispatchUnit.ExpiresAt.SET(mysql.RawTimestamp("VALUES(`expires_at`)")),
 			)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -1054,7 +1054,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 			tDispatch.CreatorID,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
+			mysql.CURRENT_TIMESTAMP(),
 			dsp.GetJobs(),
 			dsp.GetMessage(),
 			dsp.Description,
@@ -1145,7 +1145,7 @@ func (s *DispatchDB) Update(
 			tDispatch.CreatorID,
 		).
 		SET(
-			jet.CURRENT_TIMESTAMP(),
+			mysql.CURRENT_TIMESTAMP(),
 			dsp.GetJobs(),
 			dsp.GetMessage(),
 			dsp.Description,
@@ -1157,8 +1157,8 @@ func (s *DispatchDB) Update(
 			dsp.GetAnon(),
 			dsp.CreatorId,
 		).
-		WHERE(jet.AND(
-			tDispatch.ID.EQ(jet.Int64(dsp.GetId())),
+		WHERE(mysql.AND(
+			tDispatch.ID.EQ(mysql.Int64(dsp.GetId())),
 		)).
 		LIMIT(1)
 
@@ -1278,7 +1278,7 @@ func (s *DispatchDB) GetStatus(
 				),
 		).
 		WHERE(
-			tDispatchStatus.ID.EQ(jet.Int64(id)),
+			tDispatchStatus.ID.EQ(mysql.Int64(id)),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		LIMIT(1)
@@ -1348,10 +1348,10 @@ func (s *DispatchDB) TakeDispatch(
 				VALUES(
 					dspId,
 					unit.GetId(),
-					jet.NULL,
+					mysql.NULL,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
+					tDispatchUnit.ExpiresAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -1362,9 +1362,9 @@ func (s *DispatchDB) TakeDispatch(
 		} else {
 			stmt := tDispatchUnit.
 				DELETE().
-				WHERE(jet.AND(
-					tDispatchUnit.DispatchID.EQ(jet.Int64(dspId)),
-					tDispatchUnit.UnitID.EQ(jet.Int64(unit.GetId())),
+				WHERE(mysql.AND(
+					tDispatchUnit.DispatchID.EQ(mysql.Int64(dspId)),
+					tDispatchUnit.UnitID.EQ(mysql.Int64(unit.GetId())),
 				)).
 				LIMIT(1)
 
