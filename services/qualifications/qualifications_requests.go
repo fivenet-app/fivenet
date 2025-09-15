@@ -135,8 +135,6 @@ func (s *Server) ListQualificationRequests(
 		).
 		WHERE(condition)
 
-	fmt.Println(countStmt.DebugSql())
-
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -235,8 +233,6 @@ func (s *Server) ListQualificationRequests(
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(limit)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

@@ -142,8 +142,6 @@ func (s *Server) ListQualificationsResults(
 		).
 		WHERE(condition)
 
-	fmt.Println(countStmt.DebugSql())
-
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
