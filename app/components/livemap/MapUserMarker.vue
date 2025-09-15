@@ -145,8 +145,8 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                         <PhoneNumberBlock
                             v-if="marker.user?.phoneNumber"
                             :number="marker.user?.phoneNumber"
-                            :hide-number="true"
-                            :show-label="true"
+                            hide-number
+                            show-label
                         />
 
                         <UButton

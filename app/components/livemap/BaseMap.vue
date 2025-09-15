@@ -274,7 +274,7 @@ onBeforeUnmount(() => {
             :max-zoom="7"
             :inertia="false"
             :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
-            :use-global-leaflet="true"
+            use-global-leaflet
             :options="mapOptions"
             @click="selectedMarker = undefined"
             @ready="onMapReady($event)"
@@ -285,8 +285,8 @@ onBeforeUnmount(() => {
                 :url="layer.url"
                 layer-type="base"
                 :name="$t(layer.label)"
-                :no-wrap="true"
-                :tms="true"
+                no-wrap
+                tms
                 :visible="livemapTileLayer === layer.key"
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"

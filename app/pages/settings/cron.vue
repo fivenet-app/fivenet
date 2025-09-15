@@ -13,7 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <CronList />
-    </UDashboardPanel>
+    <CronList />
 </template>

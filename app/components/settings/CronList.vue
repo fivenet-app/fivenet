@@ -126,105 +126,113 @@ const columns = computed(
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.settings.cron.title')">
-        <template #right>
-            <PartialsBackButton fallback-to="/settings" />
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.settings.cron.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
+                </template>
+            </UDashboardNavbar>
         </template>
-    </UDashboardNavbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.cronjob', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.cronjob', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
 
-    <UTable
-        v-else
-        class="flex-1"
-        :loading="isRequestPending(status)"
-        :columns="columns"
-        :data="cronjobs?.jobs"
-        :pagination-options="{ manualPagination: true }"
-        :sorting-options="{ manualSorting: true }"
-        :empty="$t('common.not_found', [$t('pages.settings.cron.title', 2)])"
-        :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
-        sticky
-    >
-        <template #expanded="{ row }">
-            <div class="p-2">
-                <pre v-if="!row.original.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
-                <UCard v-else>
-                    <template #header>
-                        <div class="flex items-center justify-between gap-2">
-                            <div class="flex gap-2">
-                                <UBadge
-                                    v-if="row.original.lastCompletedEvent.success"
-                                    icon="i-mdi-check-bold"
-                                    color="success"
-                                />
-                                <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
+            <UTable
+                v-else
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="cronjobs?.jobs"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                :empty="$t('common.not_found', [$t('pages.settings.cron.title', 2)])"
+                :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+                sticky
+            >
+                <template #expanded="{ row }">
+                    <div class="p-2">
+                        <pre v-if="!row.original.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
+                        <UCard v-else>
+                            <template #header>
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="flex gap-2">
+                                        <UBadge
+                                            v-if="row.original.lastCompletedEvent.success"
+                                            icon="i-mdi-check-bold"
+                                            color="success"
+                                        />
+                                        <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
 
-                                <div class="font-semibold text-highlighted">
-                                    {{ $t('common.end_date') }}:
-                                    <GenericTime :value="row.original.lastCompletedEvent.endDate" /> ({{
-                                        $t('common.duration')
-                                    }}: {{ fromDuration(row.original.lastCompletedEvent.elapsed) }}s)
-                                </div>
-                            </div>
+                                        <div class="font-semibold text-highlighted">
+                                            {{ $t('common.end_date') }}:
+                                            <GenericTime :value="row.original.lastCompletedEvent.endDate" /> ({{
+                                                $t('common.duration')
+                                            }}: {{ fromDuration(row.original.lastCompletedEvent.elapsed) }}s)
+                                        </div>
+                                    </div>
 
-                            <UButton
-                                v-if="row.original.lastCompletedEvent.data?.data"
-                                variant="link"
-                                icon="i-mdi-share"
-                                @click="
-                                    copyLinkToClipboard(
-                                        JSON.stringify(
-                                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                                '/resources.common.cron.GenericCronData',
+                                    <UButton
+                                        v-if="row.original.lastCompletedEvent.data?.data"
+                                        variant="link"
+                                        icon="i-mdi-share"
+                                        @click="
+                                            copyLinkToClipboard(
+                                                JSON.stringify(
+                                                    row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                                        '/resources.common.cron.GenericCronData',
+                                                    )
+                                                        ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
+                                                        : row.original.lastCompletedEvent.data,
+                                                ),
                                             )
-                                                ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
-                                                : row.original.lastCompletedEvent.data,
-                                        ),
-                                    )
-                                "
-                            />
-                        </div>
-                    </template>
-
-                    <pre
-                        class="line-clamp-9 hover:line-clamp-none"
-                        v-text="
-                            row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                '/resources.common.cron.GenericCronData',
-                            )
-                                ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
-                                : row.original.lastCompletedEvent.data
-                        "
-                    />
-
-                    <template #footer>
-                        <div>
-                            <span class="font-semibold">{{ $t('pages.error.error_message') }}</span>
+                                        "
+                                    />
+                                </div>
+                            </template>
 
                             <pre
-                                class="line-clamp-4 whitespace-break-spaces hover:line-clamp-none"
+                                class="line-clamp-9 hover:line-clamp-none"
                                 v-text="
-                                    row.original.lastCompletedEvent.errorMessage
-                                        ? row.original.lastCompletedEvent.errorMessage
-                                        : $t('common.none')
+                                    row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                        '/resources.common.cron.GenericCronData',
+                                    )
+                                        ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
+                                        : row.original.lastCompletedEvent.data
                                 "
                             />
-                        </div>
-                    </template>
-                </UCard>
-            </div>
-        </template>
-    </UTable>
 
-    <Pagination :status="status" :refresh="refresh" hide-text hide-buttons>
-        <p>
-            {{ $t('common.refresh_in_x', { d: remaining, unit: $t('common.time_ago.second', remaining) }) }}
-        </p>
-    </Pagination>
+                            <template #footer>
+                                <div>
+                                    <span class="font-semibold">{{ $t('pages.error.error_message') }}</span>
+
+                                    <pre
+                                        class="line-clamp-4 whitespace-break-spaces hover:line-clamp-none"
+                                        v-text="
+                                            row.original.lastCompletedEvent.errorMessage
+                                                ? row.original.lastCompletedEvent.errorMessage
+                                                : $t('common.none')
+                                        "
+                                    />
+                                </div>
+                            </template>
+                        </UCard>
+                    </div>
+                </template>
+            </UTable>
+        </template>
+
+        <template #footer>
+            <Pagination :status="status" :refresh="refresh" hide-text hide-buttons>
+                <p class="text-sm text-secondary">
+                    {{ $t('common.refresh_in_x', { d: remaining, unit: $t('common.time_ago.second', remaining) }) }}
+                </p>
+            </Pagination>
+        </template>
+    </UDashboardPanel>
 </template>

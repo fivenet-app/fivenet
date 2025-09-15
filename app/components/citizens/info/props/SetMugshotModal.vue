@@ -154,7 +154,7 @@ const formRef = useTemplateRef('formRef');
                                 v-if="user.props?.mugshot"
                                 size="3xl"
                                 :src="`${user.props?.mugshot.filePath}?date=${new Date().getTime()}`"
-                                :no-blur="true"
+                                no-blur
                             />
 
                             <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />

@@ -30,7 +30,7 @@ const selfServicePropsAbsenceDateModal = overlay.create(SelfServiceAbsenceDateMo
         <ProfilePictureImg
             :src="colleague.profilePicture"
             :name="`${colleague.firstname} ${colleague.lastname}`"
-            :enable-popup="true"
+            enable-popup
             size="3xl"
         />
 

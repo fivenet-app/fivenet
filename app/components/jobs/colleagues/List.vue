@@ -467,7 +467,7 @@ defineShortcuts({
                                 :src="row.original?.profilePicture"
                                 :name="`${row.original.firstname} ${row.original.lastname}`"
                                 size="sm"
-                                :enable-popup="true"
+                                enable-popup
                                 :alt="$t('common.profile_picture')"
                             />
 

@@ -36,7 +36,7 @@ const showRadioFrequency = ref(false);
                                 :src="jobProps.logoFile.filePath"
                                 :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"
                                 size="xl"
-                                :no-blur="true"
+                                no-blur
                             />
 
                             <div class="flex flex-col gap-2">

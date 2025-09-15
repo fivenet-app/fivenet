@@ -46,7 +46,7 @@ const response = useVModel(props, 'modelValue', emit);
 
                 <GenericImg
                     class="min-h-12 min-w-12"
-                    :enable-popup="true"
+                    enable-popup
                     :rounded="false"
                     :src="modelValue?.question!.data?.data.image?.image?.filePath"
                     :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"

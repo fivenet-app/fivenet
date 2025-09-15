@@ -17,14 +17,14 @@ withDefaults(
 
 <template>
     <li
-        class="border-default px-2 py-4 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        class="border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
                     :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
                     :name="jobsUserActivityTypeIcon(activity.activityType)"
-                    :inline="true"
+                    inline
                 />
             </div>
 
@@ -123,7 +123,7 @@ withDefaults(
 
                     <p class="inline-flex items-center gap-1 text-sm">
                         <span>{{ $t('common.created_by') }}</span>
-                        <ColleagueInfoPopover :user="activity.sourceUser" :hide-props="true" />
+                        <ColleagueInfoPopover :user="activity.sourceUser" hide-props />
                     </p>
                 </div>
             </div>

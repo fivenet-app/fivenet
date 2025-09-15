@@ -30,6 +30,10 @@ const templatesListRef = useTemplateRef('templatesListRef');
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton to="/documents" />
 

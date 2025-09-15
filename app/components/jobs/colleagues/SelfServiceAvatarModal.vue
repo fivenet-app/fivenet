@@ -122,7 +122,7 @@ const formRef = useTemplateRef('formRef');
                                 v-if="activeChar?.profilePicture"
                                 size="3xl"
                                 :src="`${activeChar.profilePicture}?date=${new Date().getTime()}`"
-                                :no-blur="true"
+                                no-blur
                             />
 
                             <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />

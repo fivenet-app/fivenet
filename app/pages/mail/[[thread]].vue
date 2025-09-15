@@ -300,7 +300,7 @@ const isMobile = breakpoints.smaller('lg');
             />
 
             <template v-else>
-                <ThreadList v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true" />
+                <ThreadList v-model="selectedThread" :threads="threads?.threads ?? []" loaded />
 
                 <Pagination v-model="page" :pagination="threads?.pagination" :status="status" :refresh="refresh" hide-text />
             </template>

@@ -50,6 +50,7 @@ const faqs = [
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
                                 {{ $t('pages.about.title') }}
                             </h2>
+
                             <p class="mt-6 text-lg leading-8">
                                 {{ $t('pages.about.subtitle') }}
                             </p>
@@ -58,6 +59,7 @@ const faqs = [
 
                     <div class="relative isolate overflow-hidden px-6 py-12 sm:py-16 lg:overflow-visible lg:px-0">
                         <div class="absolute inset-0 -z-10 overflow-hidden"></div>
+
                         <div
                             class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10"
                         >
@@ -69,15 +71,18 @@ const faqs = [
                                         <p class="text-base leading-7 font-semibold text-primary-300">
                                             {{ $t('pages.about.introduction.pre_title') }}
                                         </p>
+
                                         <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                             {{ $t('pages.about.introduction.title') }}
                                         </h1>
+
                                         <p class="mt-6 text-xl leading-8 text-toned">
                                             {{ $t('pages.about.introduction.content') }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
+
                             <div
                                 class="-mt-12 -ml-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                             >
@@ -88,6 +93,7 @@ const faqs = [
                                     loading="lazy"
                                 />
                             </div>
+
                             <div
                                 class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
                             >
@@ -103,6 +109,7 @@ const faqs = [
                                                     {{ $t('pages.about.introduction.feature_one.content') }}
                                                 </span>
                                             </li>
+
                                             <li class="flex gap-x-3">
                                                 <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-lock" />
                                                 <span>
@@ -112,6 +119,7 @@ const faqs = [
                                                     {{ $t('pages.about.introduction.feature_two.content') }}
                                                 </span>
                                             </li>
+
                                             <li class="flex gap-x-3">
                                                 <UIcon class="mt-1 size-5 flex-none text-primary-300" name="i-mdi-map" />
                                                 <span>
@@ -134,8 +142,9 @@ const faqs = [
                                 <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('pages.about.faq.title') }}
                                 </h2>
+
                                 <dl class="mt-4">
-                                    <UAccordion :items="faqs" type="multiple">
+                                    <UAccordion :items="faqs" type="multiple" :ui="{ content: 'mb-2' }">
                                         <template #content="{ item: faq }">
                                             <UContainer>
                                                 <!-- eslint-disable vue/no-v-html -->
@@ -184,20 +193,23 @@ const faqs = [
                                 <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('pages.about.questions_or_issues.title') }}
                                 </h2>
+
                                 <p class="mt-6 text-base leading-7">
                                     {{ $t('pages.about.questions_or_issues.content') }}
                                 </p>
+
                                 <div class="mt-8">
                                     <UButton
-                                        class="text-[#5865f2]"
+                                        class="border-[#5865f2] text-[#5865f2] ring-[#5865f2]/50 hover:bg-[#5865f2]/10 focus:ring-[#5865f2]/50"
+                                        variant="outline"
+                                        size="xl"
+                                        icon="i-simple-icons-discord"
+                                        block
                                         :to="discordLink"
                                         external
-                                        variant="outline"
-                                        block
-                                        icon="i-simple-icons-discord"
-                                    >
-                                        {{ $t('pages.about.join_discord') }}
-                                    </UButton>
+                                        :label="$t('pages.about.join_discord')"
+                                        :ui="{ leadingIcon: 'size-10' }"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -206,13 +218,18 @@ const faqs = [
                     <div class="relative">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl">
-                                <p class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
+                                <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {{ $t('common.licenses') }}
-                                </p>
+                                </h2>
+
                                 <div class="mt-8">
-                                    <UButton variant="outline" block icon="i-mdi-license" :to="{ name: 'about-licenses' }">
-                                        {{ $t('pages.about.licenses_list') }}
-                                    </UButton>
+                                    <UButton
+                                        variant="link"
+                                        icon="i-mdi-license"
+                                        block
+                                        to="/about/licenses"
+                                        :label="$t('pages.about.licenses_list')"
+                                    />
                                 </div>
                             </div>
                         </div>

@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { VueSignaturePad, type Signature } from '@selemondev/vue3-signature-pad';
 
-const options = ref({
-    penColor: 'rgb(0,0,0)',
-    backgroundColor: 'rgb(255, 255, 255)',
-    maxWidth: 6,
-    minWidth: 2,
-});
+const settingsStore = useSettingsStore();
+const { signature: signatureSettings } = storeToRefs(settingsStore);
+
+const modelValue = defineModel<string>({ required: true });
 
 const colors = [
     {
@@ -30,7 +28,9 @@ function handleClearCanvas() {
 }
 
 function handleSaveSignature() {
-    signature.value?.saveSignature() && alert(signature.value?.saveSignature());
+    if (!signature.value) return;
+
+    modelValue.value = signature.value.saveSignature('image/svg');
 }
 </script>
 
@@ -41,18 +41,17 @@ function handleSaveSignature() {
                 ref="signature"
                 height="400px"
                 width="950px"
-                :max-width="options.maxWidth"
-                :min-width="options.minWidth"
+                :min-width="signatureSettings.minStrokeWidth"
+                :max-width="signatureSettings.maxStrokeWidth"
                 :options="{
-                    penColor: options.penColor,
-                    backgroundColor: options.backgroundColor,
+                    penColor: signatureSettings.penColor,
+                    backgroundColor: 'rgb(255, 255, 255)',
                 }"
+                @end-stroke="handleSaveSignature"
             />
 
             <UButtonGroup class="absolute bottom-0 left-0 flex flex-row">
-                <UTooltip :text="$t('common.color')">
-                    <UButton icon="i-mdi-color" class="!cursor-default rounded-l-none" />
-                </UTooltip>
+                <UBadge icon="i-mdi-color" class="!cursor-default rounded-l-none" size="lg" />
 
                 <UButton
                     v-for="(color, idx) in colors"
@@ -60,9 +59,13 @@ function handleSaveSignature() {
                     :style="{ background: color.color }"
                     class="inline-flex w-8 items-center"
                     :class="idx === colors.length - 1 ? 'rounded-br-none' : ''"
-                    @click="options.penColor = color.color"
+                    @click="signatureSettings.penColor = color.color"
                 >
-                    <UIcon v-if="options.penColor === color.color" class="size-full text-white" name="i-mdi-check-bold" />
+                    <UIcon
+                        v-if="signatureSettings.penColor === color.color"
+                        class="size-full text-white"
+                        name="i-mdi-check-bold"
+                    />
                 </UButton>
             </UButtonGroup>
 
@@ -93,14 +96,20 @@ function handleSaveSignature() {
 
                 <template #content>
                     <div class="my-2 flex w-full flex-col space-y-4">
-                        <UFormField class="grid grid-cols-2 items-center gap-2" label="Choose minimum pen line thickness">
-                            <USlider v-model="options.minWidth" :min="1" :max="10" />
-                            <p>{{ options.minWidth }}</p>
+                        <UFormField
+                            class="grid grid-cols-2 items-center gap-2"
+                            :label="$t('components.partials.SignaturePad.min_stroke_width')"
+                        >
+                            <USlider v-model="signatureSettings.minStrokeWidth" :min="1" :max="10" />
+                            <p>{{ signatureSettings.minStrokeWidth }}</p>
                         </UFormField>
 
-                        <UFormField class="grid grid-cols-2 items-center gap-2" label="Choose maximum pen line thickness">
-                            <USlider v-model="options.maxWidth" :min="1" :max="10" />
-                            <p>{{ options.maxWidth }}</p>
+                        <UFormField
+                            class="grid grid-cols-2 items-center gap-2"
+                            :label="$t('components.partials.SignaturePad.max_stroke_width')"
+                        >
+                            <USlider v-model="signatureSettings.maxStrokeWidth" :min="1" :max="10" />
+                            <p>{{ signatureSettings.maxStrokeWidth }}</p>
                         </UFormField>
                     </div>
                 </template>

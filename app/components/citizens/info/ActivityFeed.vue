@@ -153,7 +153,7 @@ watchDebounced(query, async () => refresh(), {
                 icon="i-mdi-pulse"
             />
 
-            <div v-else class="relative m-2 flex-1">
+            <div v-else class="relative flex-1">
                 <ul class="min-w-full divide-y divide-default overflow-clip" role="list">
                     <ActivityFeedEntry v-for="activity in data?.activity" :key="activity.id" :activity="activity" />
                 </ul>

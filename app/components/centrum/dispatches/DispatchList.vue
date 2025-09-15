@@ -374,9 +374,9 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                         v-for="unit in dispatch.units"
                                         :key="unit.unitId"
                                         :unit="unit.unit"
-                                        :initials-only="true"
-                                        :badge="true"
                                         :assignment="unit"
+                                        initials-only
+                                        badge
                                     />
                                 </span>
 

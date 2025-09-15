@@ -446,7 +446,7 @@ defineShortcuts({
                             :src="row.original.props?.mugshot?.filePath"
                             :name="`${row.original.firstname} ${row.original.lastname}`"
                             :alt="$t('common.mugshot')"
-                            :enable-popup="true"
+                            enable-popup
                             size="sm"
                         />
 

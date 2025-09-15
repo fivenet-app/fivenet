@@ -143,12 +143,7 @@ watchOnce(opened, async () => {
                         :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"
                     />
 
-                    <PhoneNumberBlock
-                        v-if="user?.phoneNumber"
-                        :number="user.phoneNumber"
-                        :hide-number="true"
-                        :show-label="true"
-                    />
+                    <PhoneNumberBlock v-if="user?.phoneNumber" :number="user.phoneNumber" hide-number show-label />
 
                     <EmailBlock v-if="user?.props && user.props?.email" :email="user.props?.email" hide-email />
                 </div>

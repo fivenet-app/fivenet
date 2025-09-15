@@ -376,7 +376,7 @@ defineShortcuts({
                 </template>
 
                 <template #right>
-                    <DispatcherInfo v-if="canStream && settings?.enabled" :hide-join="true" />
+                    <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
                 </template>
             </UDashboardNavbar>
         </template>

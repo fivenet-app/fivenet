@@ -86,86 +86,101 @@ const mount = ref(false);
 </script>
 
 <template>
-    <UDashboardPanel>
-        <UDashboardNavbar :title="$t('common.dispatches')">
-            <template #right>
-                <PartialsBackButton fallback-to="/centrum" />
-            </template>
-        </UDashboardNavbar>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('common.dispatches')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-        <div class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] overflow-hidden">
-            <Splitpanes v-if="mount" class="relative">
-                <Pane :min-size="25">
-                    <ClientOnly>
-                        <BaseMap :map-options="{ zoomControl: false }">
-                            <template #default>
-                                <LazyLivemapMapTempMarker />
+                <template #right>
+                    <PartialsBackButton fallback-to="/centrum" />
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-                                <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
-                            </template>
-                        </BaseMap>
-                    </ClientOnly>
-                </Pane>
+        <template #body>
+            <div
+                class="max-h-[calc(100dvh-var(--ui-header-height))] min-h-[calc(100dvh-var(--ui-header-height))] overflow-hidden"
+            >
+                <Splitpanes v-if="mount" class="relative">
+                    <Pane :min-size="25">
+                        <ClientOnly>
+                            <BaseMap :map-options="{ zoomControl: false }">
+                                <template #default>
+                                    <LazyLivemapMapTempMarker />
 
-                <Pane :size="65">
-                    <div class="max-h-full overflow-y-auto">
-                        <div class="mb-2 px-2">
-                            <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
-                                <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
-                                    <UInput
-                                        ref="input"
-                                        v-model="query.postal"
-                                        type="text"
-                                        name="postal"
-                                        :placeholder="$t('common.postal')"
-                                        class="w-full"
-                                    >
-                                        <template #trailing>
-                                            <UKbd value="/" />
-                                        </template>
-                                    </UInput>
-                                </UFormField>
+                                    <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
+                                </template>
+                            </BaseMap>
+                        </ClientOnly>
+                    </Pane>
 
-                                <UFormField class="flex-1" name="id" :label="$t('common.id')">
-                                    <UInput
-                                        v-model="query.id"
-                                        type="text"
-                                        name="id"
-                                        :min="1"
-                                        :max="99999999999"
-                                        :placeholder="$t('common.id')"
-                                        class="w-full"
-                                    />
-                                </UFormField>
-                            </UForm>
-                        </div>
+                    <Pane :size="65">
+                        <div class="max-h-full overflow-y-auto">
+                            <div class="mb-2 px-2">
+                                <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                                    <UFormField class="flex-1" name="postal" :label="$t('common.postal')">
+                                        <UInput
+                                            ref="input"
+                                            v-model="query.postal"
+                                            type="text"
+                                            name="postal"
+                                            :placeholder="$t('common.postal')"
+                                            class="w-full"
+                                        >
+                                            <template #trailing>
+                                                <UKbd value="/" />
+                                            </template>
+                                        </UInput>
+                                    </UFormField>
 
-                        <DataPendingBlock
-                            v-if="isRequestPending(status)"
-                            :message="$t('common.loading', [$t('common.dispatches')])"
-                        />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.dispatches')])"
-                            :error="error"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+                                    <UFormField class="flex-1" name="id" :label="$t('common.id')">
+                                        <UInput
+                                            v-model="query.id"
+                                            type="text"
+                                            name="id"
+                                            :min="1"
+                                            :max="99999999999"
+                                            :placeholder="$t('common.id')"
+                                            class="w-full"
+                                        />
+                                    </UFormField>
+                                </UForm>
+                            </div>
 
-                        <div v-else class="relative overflow-x-auto">
-                            <DispatchList
-                                :show-button="false"
-                                :hide-actions="true"
-                                :always-show-day="true"
-                                :dispatches="data?.dispatches"
+                            <DataPendingBlock
+                                v-if="isRequestPending(status)"
+                                :message="$t('common.loading', [$t('common.dispatches')])"
+                            />
+                            <DataErrorBlock
+                                v-else-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                                :error="error"
+                                :retry="refresh"
+                            />
+                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+
+                            <div v-else class="relative overflow-x-auto">
+                                <DispatchList
+                                    :show-button="false"
+                                    hide-actions
+                                    always-show-day
+                                    :dispatches="data?.dispatches"
+                                />
+                            </div>
+
+                            <Pagination
+                                v-model="query.page"
+                                :pagination="data?.pagination"
+                                :status="status"
+                                :refresh="refresh"
                             />
                         </div>
-
-                        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-                    </div>
-                </Pane>
-            </Splitpanes>
-        </div>
+                    </Pane>
+                </Splitpanes>
+            </div>
+        </template>
     </UDashboardPanel>
 </template>
 

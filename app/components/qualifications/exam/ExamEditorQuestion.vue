@@ -6,7 +6,7 @@ import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlo
 import { useSettingsStore } from '~/stores/settings';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
-import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestion, ExamQuestionSeparator, ExamQuestionYesNo } from '~~/gen/ts/resources/qualifications/exam';
 import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
 import QuestionSingleChoice from './QuestionSingleChoice.vue';
 
@@ -43,7 +43,7 @@ const schema = z.object({
             }),
             z.object({
                 oneofKind: z.literal('separator'),
-                separator: z.object({}),
+                separator: z.custom<ExamQuestionSeparator>().default({}),
             }),
             z.object({
                 oneofKind: z.literal('image'),
@@ -54,7 +54,7 @@ const schema = z.object({
             }),
             z.object({
                 oneofKind: z.literal('yesno'),
-                yesno: z.object({}),
+                yesno: z.custom<ExamQuestionYesNo>().default({}),
             }),
             z.object({
                 oneofKind: z.literal('freeText'),
@@ -496,7 +496,7 @@ watch(
                         <div v-if="question.data?.data.image.image" class="flex flex-1 items-center justify-center">
                             <GenericImg
                                 class="min-h-12 min-w-12"
-                                :enable-popup="true"
+                                enable-popup
                                 :rounded="false"
                                 :src="question.data?.data.image.image.filePath"
                                 :alt="question.data?.data.image.alt"

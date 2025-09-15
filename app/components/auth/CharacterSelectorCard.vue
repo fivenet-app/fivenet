@@ -37,11 +37,7 @@ const { game } = useAppConfig();
         <template #header>
             <div class="flex flex-col">
                 <div class="mx-auto inline-flex items-center gap-2">
-                    <ProfilePictureImg
-                        :src="char.profilePicture"
-                        :name="`${char.firstname} ${char.lastname}`"
-                        :no-blur="true"
-                    />
+                    <ProfilePictureImg :src="char.profilePicture" :name="`${char.firstname} ${char.lastname}`" no-blur />
 
                     <h2 class="text-center text-2xl font-semibold" @click="selectChar">
                         {{ char.firstname }} {{ char.lastname }}

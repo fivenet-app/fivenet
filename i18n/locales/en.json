@@ -399,7 +399,7 @@
         "location": "Location | Locations",
         "units": "No Units | {n} Unit | {n} Units",
         "unit": "Unit | Units",
-        "color": "Color",
+        "color": "Color | Colors",
         "initials": "Initials",
         "updated": "Updated",
         "members": "Members",
@@ -801,6 +801,11 @@
                     }
                 },
                 "invisible_characters": "Show/Hide Invisible Characters"
+            },
+            "SignaturePad": {
+                "pen_color": "Pen Color",
+                "min_stroke_width": "Min Stroke Width",
+                "max_stroke_width": "Max Stroke Width"
             }
         },
         "clipboard": {

@@ -125,12 +125,7 @@ watchOnce(opened, async () => {
                         {{ $t('common.profile') }}
                     </UButton>
 
-                    <PhoneNumberBlock
-                        v-if="user?.phoneNumber"
-                        :number="user?.phoneNumber"
-                        :hide-number="true"
-                        :show-label="true"
-                    />
+                    <PhoneNumberBlock v-if="user?.phoneNumber" :number="user?.phoneNumber" hide-number show-label />
                 </UButtonGroup>
 
                 <div v-if="error">

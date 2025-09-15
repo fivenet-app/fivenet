@@ -635,7 +635,7 @@ const { game } = useAppConfig();
                                             <LazyJobsTimeclockStatsBlock
                                                 :weekly="data?.statsWeekly"
                                                 :stats="data?.stats"
-                                                :hide-header="true"
+                                                hide-header
                                                 :failed="!!error"
                                                 :loading="isRequestPending(status)"
                                             />

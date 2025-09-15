@@ -136,8 +136,8 @@ onBeforeMount(() => {
                                 v-for="unit in dispatch.units"
                                 :key="unit.unitId"
                                 :unit="unit.unit"
-                                :initials-only="true"
-                                :badge="true"
+                                initials-only
+                                badge
                                 :assignment="unit"
                             />
                         </span>

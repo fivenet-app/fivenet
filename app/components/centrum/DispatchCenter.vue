@@ -4,7 +4,6 @@ import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import Feed from '~/components/centrum/Feed.vue';
 import DispatchLayer from '~/components/centrum/livemap/DispatchLayer.vue';
-import MarkerList from '~/components/centrum/MarkerList.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -69,12 +68,9 @@ onBeforeRouteLeave(async (to) => {
                                 />
                             </div>
 
-                            <LivemapBase :show-unit-names="true" :show-unit-status="true">
+                            <LivemapBase show-unit-names show-unit-status>
                                 <template #default>
-                                    <DispatchLayer
-                                        v-if="can('centrum.CentrumService/Stream').value"
-                                        :show-all-dispatches="true"
-                                    />
+                                    <DispatchLayer v-if="can('centrum.CentrumService/Stream').value" show-all-dispatches />
                                 </template>
                             </LivemapBase>
                         </div>
@@ -83,14 +79,13 @@ onBeforeRouteLeave(async (to) => {
                     <Pane :min-size="40" :size="70">
                         <Splitpanes horizontal>
                             <Pane :size="58" :min-size="2">
-                                <DispatchList :show-button="true" />
+                                <DispatchList show-button />
                             </Pane>
+
                             <Pane :size="26" :min-size="2">
                                 <UnitList />
                             </Pane>
-                            <Pane :size="8" :min-size="2">
-                                <MarkerList />
-                            </Pane>
+
                             <Pane :size="8" :min-size="2">
                                 <Feed :items="feed" />
                             </Pane>

@@ -82,6 +82,12 @@ export const useSettingsStore = defineStore(
             showInvisibleCharacters: false,
         });
 
+        const signature = ref({
+            penColor: 'rgb(0, 0, 0)',
+            minStrokeWidth: 2,
+            maxStrokeWidth: 6,
+        });
+
         // Actions
         const setVersion = (newVersion: string): void => {
             version.value = newVersion;
@@ -168,6 +174,7 @@ export const useSettingsStore = defineStore(
             streamerMode,
             jobsService,
             editor,
+            signature,
 
             // Actions
             getLogger,
