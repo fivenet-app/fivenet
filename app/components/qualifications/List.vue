@@ -60,7 +60,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
-    <UCard :ui="{ body: 'p-0 sm:p-0' }">
+    <UCard :ui="{ body: 'p-0 sm:p-0', footer: 'p-0 sm:px-2' }">
         <template #header>
             <div class="flex items-center justify-between gap-1">
                 <h3 class="flex-1 text-2xl leading-6 font-semibold">
