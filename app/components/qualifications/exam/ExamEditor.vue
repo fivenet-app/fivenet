@@ -99,10 +99,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     :description="$t('components.qualifications.exam_editor.auto_grade.description')"
                     :ui="{ container: '' }"
                 >
-                    <USwitch
-                        v-model="examSettings.autoGrade"
-                        :placeholder="$t('components.qualifications.exam_editor.auto_grade')"
-                    />
+                    <USwitch v-model="examSettings.autoGrade" />
                 </UFormField>
 
                 <UFormField
