@@ -309,8 +309,6 @@ func (s *Server) ListColleagues(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetColleagues()))
-
 	for i := range resp.GetColleagues() {
 		s.enricher.EnrichJobInfo(resp.GetColleagues()[i])
 	}

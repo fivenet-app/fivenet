@@ -497,7 +497,5 @@ func (s *Server) ListUnitActivity(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetActivity()))
-
 	return resp, nil
 }

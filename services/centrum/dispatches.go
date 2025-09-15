@@ -176,10 +176,9 @@ func (s *Server) ListDispatches(
 		}
 	}
 
-	dsps := resp.GetDispatches()
-	resp.GetPagination().Update(len(dsps))
-
 	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
+
+	dsps := resp.GetDispatches()
 	for i := range dsps {
 		var err error
 		resp.Dispatches[i].Units, err = s.dispatches.LoadDispatchAssignments(
@@ -215,12 +214,12 @@ func (s *Server) ListDispatches(
 			resp.Dispatches[i].Jobs = &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
-						//nolint:staticcheck // This is a fallback for old dispatches.
+						//nolint:staticcheck // Use the old job field as the fallback for old plugins.
 						Name: dsps[i].GetJob(),
 					},
 				},
 			}
-			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
+			//nolint:staticcheck // Clear old job info. Clear the job field used by old plugins.
 			resp.Dispatches[i].Job = ""
 		}
 		for _, job := range dsps[i].GetJobs().GetJobs() {
@@ -696,8 +695,6 @@ func (s *Server) ListDispatchActivity(
 			jobInfoFn(resp.GetActivity()[i].GetUser())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	return resp, nil
 }

@@ -238,8 +238,6 @@ func (s *Server) ListCitizens(
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	resp.GetPagination().Update(len(resp.GetUsers()))
-
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetUsers() {
 		if resp.GetUsers()[i].GetProps() != nil && resp.Users[i].Props.JobName != nil {

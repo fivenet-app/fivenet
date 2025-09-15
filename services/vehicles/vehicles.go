@@ -226,8 +226,6 @@ func (s *Server) ListVehicles(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetVehicles()))
-
 	return resp, nil
 }
 

@@ -141,8 +141,6 @@ func (s *Server) ListDocumentPins(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetDocuments()))
-
 	return resp, nil
 }
 

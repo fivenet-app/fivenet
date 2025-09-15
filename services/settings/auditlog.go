@@ -168,7 +168,5 @@ func (s *Server) ViewAuditLog(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	resp.GetPagination().Update(len(resp.GetLogs()))
-
 	return resp, nil
 }

@@ -109,8 +109,6 @@ func (s *Server) ListQualifications(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetQualifications()))
-
 	return resp, nil
 }
 

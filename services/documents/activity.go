@@ -122,8 +122,6 @@ func (s *Server) ListDocumentActivity(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	resp.GetPagination().Update(len(resp.GetActivity()))
-
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {
 		if resp.GetActivity()[i].GetCreator() != nil {

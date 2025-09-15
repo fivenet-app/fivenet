@@ -243,8 +243,6 @@ func (s *Server) ListUserDocuments(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetRelations()))
-
 	return resp, nil
 }
 

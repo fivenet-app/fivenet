@@ -144,8 +144,6 @@ func (s *Server) GetComments(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	resp.GetPagination().Update(len(resp.GetComments()))
-
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetComments() {
 		if resp.GetComments()[i].GetCreator() != nil {

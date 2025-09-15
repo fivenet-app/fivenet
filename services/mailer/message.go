@@ -104,8 +104,6 @@ func (s *Server) ListThreadMessages(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetMessages()))
-
 	return resp, nil
 }
 
@@ -482,8 +480,6 @@ func (s *Server) SearchThreads(
 			jobInfoFn(resp.GetMessages()[i].GetSender())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetMessages()))
 
 	return resp, nil
 }

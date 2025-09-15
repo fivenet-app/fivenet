@@ -119,8 +119,6 @@ func (s *Server) ListDocumentReqs(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetRequests()))
-
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetRequests() {
 		if resp.GetRequests()[i].GetCreator() != nil {

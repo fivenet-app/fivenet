@@ -193,8 +193,6 @@ func (s *Server) ListThreads(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetThreads()))
-
 	return resp, nil
 }
 

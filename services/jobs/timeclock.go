@@ -487,7 +487,9 @@ func (s *Server) ListInactiveEmployees(
 				WHERE(mysql.AND(
 					tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
 					tTimeClock.Date.GT_EQ(
-						mysql.DateExp(mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY))),
+						mysql.DateExp(
+							mysql.CURRENT_DATE().SUB(mysql.INTERVAL(req.GetDays(), mysql.DAY)),
+						),
 					),
 				)).
 				GROUP_BY(tTimeClock.UserID),
@@ -604,8 +606,6 @@ func (s *Server) ListInactiveEmployees(
 	for i := range resp.GetColleagues() {
 		jobInfoFn(resp.GetColleagues()[i])
 	}
-
-	resp.GetPagination().Update(len(resp.GetColleagues()))
 
 	return resp, nil
 }

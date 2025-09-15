@@ -180,8 +180,6 @@ func (s *Server) ListCalendars(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetCalendars()))
-
 	return resp, nil
 }
 

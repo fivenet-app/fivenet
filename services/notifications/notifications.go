@@ -102,8 +102,6 @@ func (s *Server) GetNotifications(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetNotifications()))
-
 	return resp, nil
 }
 

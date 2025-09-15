@@ -216,8 +216,6 @@ func (s *Server) ListConductEntries(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetEntries()))
-
 	return resp, nil
 }
 

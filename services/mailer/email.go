@@ -62,7 +62,9 @@ func (s *Server) ListEmails(
 						tQualificationsResults.DeletedAt.IS_NULL(),
 						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
 						tQualificationsResults.Status.EQ(
-							mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+							mysql.Int32(
+								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
+							),
 						),
 					),
 				),
@@ -126,8 +128,6 @@ func (s *Server) ListEmails(
 		resp.Emails[idx] = e
 		break
 	}
-
-	resp.GetPagination().Update(len(resp.GetEmails()))
 
 	return resp, nil
 }

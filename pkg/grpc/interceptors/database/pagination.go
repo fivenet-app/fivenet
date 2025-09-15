@@ -38,7 +38,7 @@ func PaginationInterceptor(maxPageSize int64) grpc.UnaryServerInterceptor {
 			return resp, err
 		}
 
-		// POST: finalize response pagination
+		// POST: finalize response pagination by updating it with the actual item count
 		if r, ok := resp.(database.HasPaginationResponse); ok {
 			if p := r.GetPagination(); p != nil {
 				// Update() sets End = Offset + itemsLen and re-applies offset safety,

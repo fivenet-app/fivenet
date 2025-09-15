@@ -163,8 +163,6 @@ func (s *Server) ListAccounts(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetAccounts()))
-
 	return resp, nil
 }
 

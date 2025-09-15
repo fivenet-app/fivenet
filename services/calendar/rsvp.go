@@ -125,8 +125,6 @@ func (s *Server) ListCalendarEntryRSVP(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetEntries()))
-
 	return resp, nil
 }
 
