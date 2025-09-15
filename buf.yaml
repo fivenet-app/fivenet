@@ -4,7 +4,7 @@ modules:
   - path: proto
 deps:
   - buf.build/googleapis/googleapis
-  - buf.build/bufbuild/protovalidate:v0.14.2
+  - buf.build/bufbuild/protovalidate:v1.0.0
   - buf.build/srikrsna/protoc-gen-gotag
 lint:
   use:
