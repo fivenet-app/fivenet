@@ -61,7 +61,7 @@ const schema = z.object({
         roleName: z.coerce.string().max(64).optional(),
         roleFormat: z.coerce.string().max(64).optional(),
     }),
-    examMode: z.enum(QualificationExamMode),
+    examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
     examSettings: examSettings,
     exam: z.object({
         questions: z
@@ -308,15 +308,19 @@ function setFromProps(): void {
         roleName: '',
         roleFormat: '',
     };
-    state.examMode = qualification.value.examMode;
-    if (qualification.value.examSettings) {
-        state.examSettings = {
-            time: qualification.value.examSettings.time?.seconds ?? 360,
-            autoGrade: qualification.value.examSettings.autoGrade,
-            autoGradeMode: qualification.value.examSettings.autoGradeMode,
-            minimumPoints: qualification.value.examSettings.minimumPoints,
-        };
-    }
+    state.examMode =
+        qualification.value.examMode === QualificationExamMode.UNSPECIFIED
+            ? QualificationExamMode.DISABLED
+            : qualification.value.examMode;
+    state.examSettings = {
+        time: qualification.value.examSettings?.time?.seconds ?? 360,
+        autoGrade: qualification.value.examSettings?.autoGrade ?? false,
+        autoGradeMode:
+            qualification.value.examSettings?.autoGradeMode === AutoGradeMode.UNSPECIFIED
+                ? AutoGradeMode.STRICT
+                : (qualification.value.examSettings?.autoGradeMode ?? AutoGradeMode.STRICT),
+        minimumPoints: qualification.value.examSettings?.minimumPoints ?? 0,
+    };
     if (qualification.value.exam) {
         qualification.value.exam.questions.forEach((q) => {
             if (!q.data) {
