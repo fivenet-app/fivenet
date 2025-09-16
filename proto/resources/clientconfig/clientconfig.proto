@@ -18,6 +18,7 @@ message ClientConfig {
   FeatureGates feature_gates = 6 [(tagger.tags) = "json:\"featureGates\""];
   Game game = 7;
   System system = 8;
+  Display display = 9 [(tagger.tags) = "json:\"display\""];
 }
 
 message LoginConfig {
@@ -66,4 +67,11 @@ message OTLPFrontend {
   bool enabled = 1;
   string url = 2;
   map<string, string> headers = 3;
+}
+
+message Display {
+  // IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+  optional string intl_locale = 1 [(tagger.tags) = "json:\"intlLocale\""];
+  // ISO 4217 currency code (e.g. "USD", "EUR")
+  string currency_name = 2 [(tagger.tags) = "json:\"currencyName\""];
 }

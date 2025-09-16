@@ -24,6 +24,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const { display } = useAppConfig();
+
 const { can } = useAuth();
 
 const notifications = useNotificationsStore();
@@ -33,6 +35,11 @@ const lawBook = useVModel(props, 'modelValue', emit);
 const laws = useVModel(props, 'laws', emit);
 
 const overlay = useOverlay();
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 
 const settingsLawsClient = await getSettingsLawsClient();
 
@@ -207,7 +214,7 @@ const columns = computed(
             {
                 accessorKey: 'fine',
                 header: t('common.fine'),
-                cell: ({ row }) => $n(row.original.fine!, 'currency'),
+                cell: ({ row }) => formatter.format(row.original.fine ?? 0),
             },
             {
                 accessorKey: 'detentionTime',

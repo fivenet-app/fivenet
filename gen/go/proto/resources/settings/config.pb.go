@@ -89,6 +89,7 @@ type AppConfig struct {
 	UserTracker   *UserTracker           `protobuf:"bytes,6,opt,name=user_tracker,json=userTracker,proto3" json:"user_tracker,omitempty"`
 	Discord       *Discord               `protobuf:"bytes,7,opt,name=discord,proto3" json:"discord,omitempty"`
 	System        *System                `protobuf:"bytes,9,opt,name=system,proto3" json:"system,omitempty"`
+	Display       *Display               `protobuf:"bytes,10,opt,name=display,proto3" json:"display,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -182,6 +183,13 @@ func (x *AppConfig) GetDiscord() *Discord {
 func (x *AppConfig) GetSystem() *System {
 	if x != nil {
 		return x.System
+	}
+	return nil
+}
+
+func (x *AppConfig) GetDisplay() *Display {
+	if x != nil {
+		return x.Display
 	}
 	return nil
 }
@@ -817,11 +825,65 @@ func (x *System) GetBannerMessage() *BannerMessage {
 	return nil
 }
 
+type Display struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intl_locale,omitempty"`
+	// ISO 4217 currency code (e.g. "USD", "EUR")
+	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currency_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Display) Reset() {
+	*x = Display{}
+	mi := &file_resources_settings_config_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Display) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Display) ProtoMessage() {}
+
+func (x *Display) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Display.ProtoReflect.Descriptor instead.
+func (*Display) Descriptor() ([]byte, []int) {
+	return file_resources_settings_config_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *Display) GetIntlLocale() string {
+	if x != nil && x.IntlLocale != nil {
+		return *x.IntlLocale
+	}
+	return ""
+}
+
+func (x *Display) GetCurrencyName() string {
+	if x != nil {
+		return x.CurrencyName
+	}
+	return ""
+}
+
 var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\xe3\x03\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\x9a\x04\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12.\n" +
 	"\x0edefault_locale\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14R\rdefaultLocale\x12,\n" +
@@ -831,7 +893,9 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\bjob_info\x18\x05 \x01(\v2\x1b.resources.settings.JobInfoR\ajobInfo\x12B\n" +
 	"\fuser_tracker\x18\x06 \x01(\v2\x1f.resources.settings.UserTrackerR\vuserTracker\x125\n" +
 	"\adiscord\x18\a \x01(\v2\x1b.resources.settings.DiscordR\adiscord\x122\n" +
-	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06systemB\n" +
+	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06system\x125\n" +
+	"\adisplay\x18\n" +
+	" \x01(\v2\x1b.resources.settings.DisplayR\adisplayB\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
@@ -884,7 +948,12 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x04_url\"\x88\x01\n" +
 	"\x06System\x124\n" +
 	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12H\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage*\xde\x01\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"w\n" +
+	"\aDisplay\x12-\n" +
+	"\vintl_locale\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 H\x00R\n" +
+	"intlLocale\x88\x01\x01\x12-\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x98\x01\x03R\fcurrencyNameB\x0e\n" +
+	"\f_intl_locale*\xde\x01\n" +
 	"\x16DiscordBotPresenceType\x12)\n" +
 	"%DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
@@ -905,7 +974,7 @@ func file_resources_settings_config_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_resources_settings_config_proto_goTypes = []any{
 	(DiscordBotPresenceType)(0), // 0: resources.settings.DiscordBotPresenceType
 	(*AppConfig)(nil),           // 1: resources.settings.AppConfig
@@ -920,8 +989,9 @@ var file_resources_settings_config_proto_goTypes = []any{
 	(*Discord)(nil),             // 10: resources.settings.Discord
 	(*DiscordBotPresence)(nil),  // 11: resources.settings.DiscordBotPresence
 	(*System)(nil),              // 12: resources.settings.System
-	(*durationpb.Duration)(nil), // 13: google.protobuf.Duration
-	(*BannerMessage)(nil),       // 14: resources.settings.BannerMessage
+	(*Display)(nil),             // 13: resources.settings.Display
+	(*durationpb.Duration)(nil), // 14: google.protobuf.Duration
+	(*BannerMessage)(nil),       // 15: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -931,20 +1001,21 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	9,  // 4: resources.settings.AppConfig.user_tracker:type_name -> resources.settings.UserTracker
 	10, // 5: resources.settings.AppConfig.discord:type_name -> resources.settings.Discord
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
-	4,  // 7: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 8: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 9: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	13, // 10: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	13, // 11: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	13, // 12: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 13: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 14: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	14, // 15: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
+	4,  // 8: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 9: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 10: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	14, // 11: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	14, // 12: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	14, // 13: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 14: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 15: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	15, // 16: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -957,13 +1028,14 @@ func file_resources_settings_config_proto_init() {
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}
+	file_resources_settings_config_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

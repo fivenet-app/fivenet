@@ -55,6 +55,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.System system = 9
      */
     system?: System;
+    /**
+     * @generated from protobuf field: resources.settings.Display display = 10
+     */
+    display?: Display;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -246,6 +250,23 @@ export interface System {
     bannerMessage?: BannerMessage;
 }
 /**
+ * @generated from protobuf message resources.settings.Display
+ */
+export interface Display {
+    /**
+     * IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+     *
+     * @generated from protobuf field: optional string intl_locale = 1
+     */
+    intlLocale?: string;
+    /**
+     * ISO 4217 currency code (e.g. "USD", "EUR")
+     *
+     * @generated from protobuf field: string currency_name = 2
+     */
+    currencyName: string;
+}
+/**
  * @generated from protobuf enum resources.settings.DiscordBotPresenceType
  */
 export enum DiscordBotPresenceType {
@@ -282,7 +303,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 5, name: "job_info", kind: "message", T: () => JobInfo },
             { no: 6, name: "user_tracker", kind: "message", T: () => UserTracker },
             { no: 7, name: "discord", kind: "message", T: () => Discord },
-            { no: 9, name: "system", kind: "message", T: () => System }
+            { no: 9, name: "system", kind: "message", T: () => System },
+            { no: 10, name: "display", kind: "message", T: () => Display }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -324,6 +346,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.System system */ 9:
                     message.system = System.internalBinaryRead(reader, reader.uint32(), options, message.system);
                     break;
+                case /* resources.settings.Display display */ 10:
+                    message.display = Display.internalBinaryRead(reader, reader.uint32(), options, message.display);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -363,6 +388,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.System system = 9; */
         if (message.system)
             System.internalBinaryWrite(message.system, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Display display = 10; */
+        if (message.display)
+            Display.internalBinaryWrite(message.display, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1013,3 +1041,57 @@ class System$Type extends MessageType<System> {
  * @generated MessageType for protobuf message resources.settings.System
  */
 export const System = new System$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Display$Type extends MessageType<Display> {
+    constructor() {
+        super("resources.settings.Display", [
+            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<Display>): Display {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.currencyName = "";
+        if (value !== undefined)
+            reflectionMergePartial<Display>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Display): Display {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string intl_locale */ 1:
+                    message.intlLocale = reader.string();
+                    break;
+                case /* string currency_name */ 2:
+                    message.currencyName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Display, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string intl_locale = 1; */
+        if (message.intlLocale !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.intlLocale);
+        /* string currency_name = 2; */
+        if (message.currencyName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.currencyName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.Display
+ */
+export const Display = new Display$Type();

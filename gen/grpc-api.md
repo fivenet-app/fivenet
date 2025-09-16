@@ -2299,6 +2299,7 @@ Dummy - DO NOT USE!
 | `feature_gates` | [FeatureGates](#resourcesclientconfigFeatureGates) |  |  |
 | `game` | [Game](#resourcesclientconfigGame) |  |  |
 | `system` | [System](#resourcesclientconfigSystem) |  |  |
+| `display` | [Display](#resourcesclientconfigDisplay) |  |  |
 
 
 
@@ -2310,6 +2311,18 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `bot_enabled` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.clientconfig.Display
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
+| `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
 
 
 
@@ -5438,6 +5451,7 @@ User related events
 | `user_tracker` | [UserTracker](#resourcessettingsUserTracker) |  |  |
 | `discord` | [Discord](#resourcessettingsDiscord) |  |  |
 | `system` | [System](#resourcessettingsSystem) |  |  |
+| `display` | [Display](#resourcessettingsDisplay) |  |  |
 
 
 
@@ -5480,6 +5494,18 @@ User related events
 | `type` | [DiscordBotPresenceType](#resourcessettingsDiscordBotPresenceType) |  |  |
 | `status` | [string](#string) | optional | @sanitize: method=StripTags |
 | `url` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+### resources.settings.Display
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
+| `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
 
 
 

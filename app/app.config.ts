@@ -1,4 +1,12 @@
-import type { Discord, FeatureGates, Game, LoginConfig, System, Website } from '~~/gen/ts/resources/clientconfig/clientconfig';
+import type {
+    Discord,
+    Display,
+    FeatureGates,
+    Game,
+    LoginConfig,
+    System,
+    Website,
+} from '~~/gen/ts/resources/clientconfig/clientconfig';
 
 export default defineAppConfig({
     // Server provided App Config
@@ -31,6 +39,10 @@ export default defineAppConfig({
             enabled: false,
         },
     } as System,
+    display: {
+        intlLocale: 'en-US',
+        currencyName: 'USD',
+    } as Display,
 
     // File upload related config
     fileUpload: {

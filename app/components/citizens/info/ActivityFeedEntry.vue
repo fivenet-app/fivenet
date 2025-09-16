@@ -9,6 +9,13 @@ import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/a
 const props = defineProps<{
     activity: UserActivity;
 }>();
+
+const { display } = useAppConfig();
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 </script>
 
 <template>
@@ -492,7 +499,7 @@ const props = defineProps<{
                             </template>
 
                             <span>
-                                {{ $n(Math.abs(activity.data.data.fineChange.amount), 'currency') }}
+                                {{ formatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
                             </span>
                         </h3>
 

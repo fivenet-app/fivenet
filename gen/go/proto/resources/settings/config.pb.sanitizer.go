@@ -30,6 +30,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Display
+	if m.Display != nil {
+		if v, ok := any(m.GetDisplay()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: JobInfo
 	if m.JobInfo != nil {
 		if v, ok := any(m.GetJobInfo()).(interface{ Sanitize() error }); ok {
@@ -147,6 +156,14 @@ func (m *DiscordBotPresence) Sanitize() error {
 
 	if m.Url != nil {
 		*m.Url = htmlsanitizer.StripTags(*m.Url)
+	}
+
+	return nil
+}
+
+func (m *Display) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

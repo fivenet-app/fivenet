@@ -21,6 +21,15 @@ func (m *ClientConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Display
+	if m.Display != nil {
+		if v, ok := any(m.GetDisplay()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: FeatureGates
 	if m.FeatureGates != nil {
 		if v, ok := any(m.GetFeatureGates()).(interface{ Sanitize() error }); ok {
@@ -70,6 +79,14 @@ func (m *ClientConfig) Sanitize() error {
 }
 
 func (m *Discord) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *Display) Sanitize() error {
 	if m == nil {
 		return nil
 	}

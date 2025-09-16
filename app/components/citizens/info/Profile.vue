@@ -8,7 +8,14 @@ defineProps<{
     user: User;
 }>();
 
+const { display } = useAppConfig();
+
 const { attr } = useAuth();
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 </script>
 
 <template>
@@ -117,7 +124,7 @@ const { attr } = useAuth();
                                 {{ $t('common.no_open_fine') }}
                             </span>
                             <span v-else class="text-error-500">
-                                {{ $n(user?.props?.openFines ?? 0, 'currency') }}
+                                {{ formatter.format(user?.props?.openFines ?? 0) }}
                             </span>
                         </dd>
                     </div>
