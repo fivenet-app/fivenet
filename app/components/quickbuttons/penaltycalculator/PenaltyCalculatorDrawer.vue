@@ -11,10 +11,10 @@ defineEmits<{
         :close="{ onClick: () => $emit('close', false) }"
         side="bottom"
         handle-only
-        :ui="{ title: 'inline-flex w-full items-center gap-2 justify-between' }"
+        :ui="{ title: 'flex gap-2' }"
     >
         <template #title>
-            <span>{{ $t('components.penaltycalculator.title') }}</span>
+            <span class="flex-1">{{ $t('components.penaltycalculator.title') }}</span>
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 

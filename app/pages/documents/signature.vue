@@ -10,6 +10,8 @@ definePageMeta({
     requiresAuth: true,
     permission: 'TODOService/TODOMethod',
 });
+
+const signature = ref('');
 </script>
 
 <template>
@@ -23,7 +25,7 @@ definePageMeta({
         </template>
 
         <template #body>
-            <SignaturePad />
+            <SignaturePad v-model="signature" />
         </template>
     </UDashboardPanel>
 </template>

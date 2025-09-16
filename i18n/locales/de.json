@@ -702,7 +702,8 @@
         "path": "Pfad",
         "directory": "Verzeichnis | Verzeichnisse",
         "undo": "Rückgängig machen",
-        "redo": "Wiederholen"
+        "redo": "Wiederholen",
+        "sign": "Unterschreiben"
     },
     "components": {
         "partials": {

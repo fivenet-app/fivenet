@@ -147,9 +147,14 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UDrawer :title="$t('common.request', 2)" :overlay="false" :close="{ onClick: () => $emit('close', false) }">
+    <UDrawer
+        :title="$t('common.request', 2)"
+        :overlay="false"
+        :close="{ onClick: () => $emit('close', false) }"
+        :ui="{ title: 'flex flex-row gap-2' }"
+    >
         <template #title>
-            <span>{{ $t('common.request', 2) }}</span>
+            <span class="flex-1">{{ $t('common.request', 2) }}</span>
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 

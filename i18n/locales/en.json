@@ -702,7 +702,8 @@
         "path": "Path",
         "directory": "Directory | Directories",
         "undo": "Undo",
-        "redo": "Redo"
+        "redo": "Redo",
+        "sign": "Sign"
     },
     "components": {
         "partials": {

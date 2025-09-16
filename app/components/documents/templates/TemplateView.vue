@@ -2,6 +2,7 @@
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -172,7 +173,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                         <div class="mb-4">
                             <h1 class="inline-flex items-center gap-2 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                                 <UIcon
-                                    class="shrink-0"
+                                    class="shrink-0 text-primary"
                                     :class="`text-${template.color}-500 dark:text-${template.color}-400`"
                                     :name="
                                         template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'
@@ -223,6 +224,12 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     name="jobAccess"
                                     full-name
                                 />
+                            </UFormField>
+
+                            <UFormField name="color" :label="$t('common.color')">
+                                <div class="flex flex-1 gap-1">
+                                    <ColorPickerTW v-model="template.color" class="flex-1" disabled />
+                                </div>
                             </UFormField>
                         </UPageCard>
 
