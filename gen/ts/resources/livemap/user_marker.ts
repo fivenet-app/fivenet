@@ -35,14 +35,10 @@ export interface UserMarker {
      */
     updatedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string postal = 5
      */
     postal?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 6
      */
     color?: string;
@@ -80,8 +76,6 @@ export interface UserMarker {
     data?: UserMarkerData;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.livemap.UserMarkerData
  */
 export interface UserMarkerData {
@@ -106,8 +100,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 2, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 3, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
-            { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 13, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -248,7 +242,7 @@ class UserMarkerData$Type extends MessageType<UserMarkerData> {
             { no: 1, name: "is_in_vehicle", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "vehicle_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 3, name: "vehicle_updated_at", kind: "message", T: () => Timestamp }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UserMarkerData>): UserMarkerData {
         const message = globalThis.Object.create((this.messagePrototype!));

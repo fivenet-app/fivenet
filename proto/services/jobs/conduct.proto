@@ -24,7 +24,7 @@ message ListConductEntriesRequest {
 
 message ListConductEntriesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.ConductEntry entries = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.jobs.ConductEntry entries = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message CreateConductEntryRequest {

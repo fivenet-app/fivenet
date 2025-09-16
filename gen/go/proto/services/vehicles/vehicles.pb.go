@@ -9,6 +9,7 @@ package vehicles
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -215,10 +216,9 @@ func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
 }
 
 type SetVehiclePropsResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Props *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	// @sanitize
-	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -271,7 +271,7 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/vehicles/props.proto\x1a!resources/vehicles/vehicles.proto\"\x9a\x03\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/vehicles/props.proto\x1a!resources/vehicles/vehicles.proto\"\x9a\x03\n" +
 	"\x13ListVehiclesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -293,10 +293,10 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"pagination\x12=\n" +
 	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"X\n" +
 	"\x16SetVehiclePropsRequest\x12>\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\"x\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\"~\n" +
 	"\x17SetVehiclePropsResponse\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12%\n" +
-	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason2\x95\x02\n" +
 	"\x0fVehiclesService\x12{\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +

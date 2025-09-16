@@ -25,8 +25,6 @@ export interface Content {
      */
     content?: JSONNode;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string raw_content = 3
      */
     rawContent?: string;
@@ -40,28 +38,20 @@ export interface JSONNode {
      */
     type: NodeType;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string id = 2
      */
     id?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string tag = 3
      */
     tag: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: map<string, string> attrs = 4
      */
     attrs: {
         [key: string]: string;
     };
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string text = 5
      */
     text?: string;
@@ -79,8 +69,6 @@ export interface TiptapJSONDocument {
      */
     json?: Struct;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string summary = 2
      */
     summary: string;
@@ -89,8 +77,6 @@ export interface TiptapJSONDocument {
      */
     wordCount: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string first_heading = 4
      */
     firstHeading: string;
@@ -143,7 +129,7 @@ class Content$Type extends MessageType<Content> {
         super("resources.common.content.Content", [
             { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
             { no: 2, name: "content", kind: "message", T: () => JSONNode },
-            { no: 3, name: "raw_content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "2000000" } } } }
+            { no: 3, name: "raw_content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "2000000" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<Content>): Content {
@@ -202,10 +188,10 @@ class JSONNode$Type extends MessageType<JSONNode> {
     constructor() {
         super("resources.common.content.JSONNode", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.common.content.NodeType", NodeType, "NODE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 5, name: "text", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 5, name: "text", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 6, name: "content", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JSONNode }
         ]);
     }
@@ -303,9 +289,9 @@ class TiptapJSONDocument$Type extends MessageType<TiptapJSONDocument> {
     constructor() {
         super("resources.common.content.TiptapJSONDocument", [
             { no: 1, name: "json", kind: "message", T: () => Struct },
-            { no: 2, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 3, name: "word_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 4, name: "first_heading", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "first_heading", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<TiptapJSONDocument>): TiptapJSONDocument {

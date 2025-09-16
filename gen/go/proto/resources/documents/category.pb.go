@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -23,19 +24,15 @@ const (
 )
 
 type Category struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	// @sanitize
-	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize
-	Description *string `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Job         *string `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	// @sanitize: method=StripTags
-	Color *string `protobuf:"bytes,7,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	// @sanitize: method=StripTags
-	Icon          *string `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Job           *string                `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Color         *string                `protobuf:"bytes,7,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon          *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -130,19 +127,18 @@ var File_resources_documents_category_proto protoreflect.FileDescriptor
 
 const file_resources_documents_category_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/category.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\"\x97\x03\n" +
+	"\"resources/documents/category.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xc5\x03\n" +
 	"\bCategory\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
-	"\x04name\x18\x04 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x12/\n" +
-	"\vdescription\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\vdescription\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x12$\n" +
-	"\x05color\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\aH\x03R\x05color\x88\x01\x01\x12'\n" +
-	"\x04icon\x18\b \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x04R\x04icon\x88\x01\x01B\r\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12$\n" +
+	"\x04name\x18\x04 \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x125\n" +
+	"\vdescription\x18\x05 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x01R\vdescription\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x125\n" +
+	"\x05color\x18\a \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x03\x18\aH\x03R\x05color\x88\x01\x01\x128\n" +
+	"\x04icon\x18\b \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x04R\x04icon\x88\x01\x01B\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_descriptionB\x06\n" +
 	"\x04_jobB\b\n" +

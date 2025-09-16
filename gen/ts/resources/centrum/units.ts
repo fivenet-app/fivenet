@@ -40,32 +40,22 @@ export interface Unit {
      */
     jobLabel?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string initials = 6
      */
     initials: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string color = 7
      */
     color: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string icon = 16
      */
     icon?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 8
      */
     description?: string;
@@ -149,14 +139,10 @@ export interface UnitStatus {
      */
     status: StatusUnit;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 6
      */
     reason?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string code = 7
      */
     code?: string;
@@ -177,8 +163,6 @@ export interface UnitStatus {
      */
     y?: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string postal = 12
      */
     postal?: string;
@@ -241,11 +225,11 @@ class Unit$Type extends MessageType<Unit> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24" } } } },
-            { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "2", maxLen: "4" } } } },
-            { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
-            { no: 16, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
-            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "2", maxLen: "4" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 16, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment },
             { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
@@ -516,13 +500,13 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 3, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "unit", kind: "message", T: () => Unit },
             { no: 5, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 9, name: "user", kind: "message", T: () => Colleague },
             { no: 10, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 14, name: "creator", kind: "message", T: () => Colleague },
             { no: 15, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }

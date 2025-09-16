@@ -3,6 +3,12 @@
 
 package documents
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AutoCloseSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -17,9 +23,14 @@ func (m *AutoCloseSettings) Sanitize() error {
 		}
 	}
 
+	// Field: Message
+	m.Message = htmlsanitizer.Sanitize(m.Message)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Reminder) Sanitize() error {
 	if m == nil {
 		return nil
@@ -34,9 +45,14 @@ func (m *Reminder) Sanitize() error {
 		}
 	}
 
+	// Field: Message
+	m.Message = htmlsanitizer.Sanitize(m.Message)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ReminderSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -57,6 +73,8 @@ func (m *ReminderSettings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Workflow) Sanitize() error {
 	if m == nil {
 		return nil
@@ -83,6 +101,8 @@ func (m *Workflow) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *WorkflowCronData) Sanitize() error {
 	if m == nil {
 		return nil

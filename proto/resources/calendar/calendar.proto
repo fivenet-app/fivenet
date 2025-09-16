@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.calendar;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/calendar/access.proto";
 import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
@@ -17,17 +19,32 @@ message Calendar {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   optional string job = 5 [(buf.validate.field).string.max_len = 20];
-  // @sanitize: method=StripTags
-  string name = 6 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 255
-  }];
-  // @sanitize: method=StripTags
-  optional string description = 7 [(buf.validate.field).string.max_len = 512];
+  string name = 6 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string description = 7 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   bool public = 8;
   bool closed = 9;
-  // @sanitize: method=StripTags
-  string color = 10 [(buf.validate.field).string.max_len = 12];
+  string color = 10 [
+    (buf.validate.field).string.max_len = 12,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
@@ -39,17 +56,32 @@ message CalendarShort {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional string job = 5 [(buf.validate.field).string.max_len = 20];
-  // @sanitize: method=StripTags
-  string name = 6 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 255
-  }];
-  // @sanitize: method=StripTags
-  optional string description = 7 [(buf.validate.field).string.max_len = 512];
+  string name = 6 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string description = 7 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   bool public = 8;
   bool closed = 9;
-  // @sanitize: method=StripTags
-  string color = 10 [(buf.validate.field).string.max_len = 12];
+  string color = 10 [
+    (buf.validate.field).string.max_len = 12,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional CalendarSub subscription = 14;
 }
 
@@ -74,11 +106,16 @@ message CalendarEntry {
   optional string job = 7 [(buf.validate.field).string.max_len = 20];
   resources.timestamp.Timestamp start_time = 8;
   optional resources.timestamp.Timestamp end_time = 9;
-  // @sanitize: method=StripTags
-  string title = 10 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 512
-  }];
+  string title = 10 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 512
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   resources.common.content.Content content = 11;
   bool closed = 12;
   optional bool rsvp_open = 13;
@@ -89,8 +126,9 @@ message CalendarEntry {
   optional CalendarEntryRSVP rsvp = 18;
 }
 
-// @dbscanner: json
 message CalendarEntryRecurring {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   string every = 1;
   int32 count = 2;
   optional resources.timestamp.Timestamp until = 3;

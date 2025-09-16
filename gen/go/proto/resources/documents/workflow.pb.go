@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -22,7 +23,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// @dbscanner: json
 type Workflow struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Reminder          bool                   `protobuf:"varint,1,opt,name=reminder,proto3" json:"reminder,omitempty"`
@@ -295,13 +295,13 @@ var File_resources_documents_workflow_proto protoreflect.FileDescriptor
 
 const file_resources_documents_workflow_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/workflow.proto\x12\x13resources.documents\x1a\x1egoogle/protobuf/duration.proto\"\xf1\x01\n" +
+	"\"resources/documents/workflow.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a\x1egoogle/protobuf/duration.proto\"\xf9\x01\n" +
 	"\bWorkflow\x12\x1a\n" +
 	"\breminder\x18\x01 \x01(\bR\breminder\x12R\n" +
 	"\x11reminder_settings\x18\x02 \x01(\v2%.resources.documents.ReminderSettingsR\x10reminderSettings\x12\x1d\n" +
 	"\n" +
 	"auto_close\x18\x03 \x01(\bR\tautoClose\x12V\n" +
-	"\x13auto_close_settings\x18\x04 \x01(\v2&.resources.documents.AutoCloseSettingsR\x11autoCloseSettings\"\x92\x01\n" +
+	"\x13auto_close_settings\x18\x04 \x01(\v2&.resources.documents.AutoCloseSettingsR\x11autoCloseSettings:\x06\xe2\xf3\x18\x02\b\x01\"\x92\x01\n" +
 	"\x10ReminderSettings\x12E\n" +
 	"\treminders\x18\x01 \x03(\v2\x1d.resources.documents.ReminderB\b\xbaH\x05\x92\x01\x02\x10\x03R\treminders\x127\n" +
 	"\x12max_reminder_count\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +

@@ -29,14 +29,10 @@ export interface LawBook {
      */
     updatedAt?: Timestamp;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string name = 4
      */
     name: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 5
      */
     description?: string;
@@ -66,20 +62,14 @@ export interface Law {
      */
     lawbookId: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 6
      */
     description?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string hint = 7
      */
     hint?: string;
@@ -103,8 +93,8 @@ class LawBook$Type extends MessageType<LawBook> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 6, name: "laws", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Law }
         ]);
     }
@@ -188,9 +178,9 @@ class Law$Type extends MessageType<Law> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "lawbook_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
-            { no: 7, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 9, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 10, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }

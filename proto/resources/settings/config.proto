@@ -3,13 +3,19 @@ syntax = "proto3";
 package resources.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
 import "resources/settings/banner.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
 
-// @dbscanner: json,partial
 message AppConfig {
+  option (codegen.dbscanner.dbscanner) = {
+    enabled: true
+    partial: true
+  };
+
   optional string version = 1;
 
   string default_locale = 8 [(buf.validate.field).string.max_len = 20];
@@ -35,10 +41,20 @@ message Perms {
 }
 
 message Perm {
-  // @sanitize: method=StripTags
-  string category = 1 [(buf.validate.field).string.max_len = 128];
-  // @sanitize: method=StripTags
-  string name = 2 [(buf.validate.field).string.max_len = 255];
+  string category = 1 [
+    (buf.validate.field).string.max_len = 128,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  string name = 2 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message Website {
@@ -47,18 +63,38 @@ message Website {
 }
 
 message Links {
-  // @sanitize: method=StripTags
-  optional string privacy_policy = 1 [(buf.validate.field).string.max_len = 255];
-  // @sanitize: method=StripTags
-  optional string imprint = 2 [(buf.validate.field).string.max_len = 255];
+  optional string privacy_policy = 1 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string imprint = 2 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message JobInfo {
   UnemployedJob unemployed_job = 1 [(buf.validate.field).required = true];
-  // @sanitize: method=StripTags
-  repeated string public_jobs = 2 [(buf.validate.field).repeated.max_items = 100];
-  // @sanitize: method=StripTags
-  repeated string hidden_jobs = 3 [(buf.validate.field).repeated.max_items = 100];
+  repeated string public_jobs = 2 [
+    (buf.validate.field).repeated.max_items = 100,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  repeated string hidden_jobs = 3 [
+    (buf.validate.field).repeated.max_items = 100,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message UnemployedJob {
@@ -92,13 +128,28 @@ message Discord {
     },
     (buf.validate.field).required = true
   ];
-  // @sanitize: method=StripTags
-  optional string invite_url = 3 [(buf.validate.field).string.max_len = 255];
-  // @sanitize: method=StripTags
-  repeated string ignored_jobs = 4 [(buf.validate.field).repeated.max_items = 100];
+  optional string invite_url = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  repeated string ignored_jobs = 4 [
+    (buf.validate.field).repeated.max_items = 100,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional DiscordBotPresence bot_presence = 5;
-  // @sanitize: method=StripTags
-  optional string bot_id = 6 [(buf.validate.field).string.max_len = 255];
+  optional string bot_id = 6 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   int64 bot_permissions = 7;
 }
 
@@ -112,10 +163,14 @@ enum DiscordBotPresenceType {
 
 message DiscordBotPresence {
   DiscordBotPresenceType type = 1;
-  // @sanitize: method=StripTags
-  optional string status = 2;
-  // @sanitize: method=StripTags
-  optional string url = 3;
+  optional string status = 2 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  optional string url = 3 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
 }
 
 message System {
@@ -125,7 +180,19 @@ message System {
 
 message Display {
   // IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-  optional string intl_locale = 1 [(buf.validate.field).string.max_len = 32];
+  optional string intl_locale = 1 [
+    (buf.validate.field).string.max_len = 32,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   // ISO 4217 currency code (e.g. "USD", "EUR")
-  string currency_name = 2 [(buf.validate.field).string.len = 3];
+  string currency_name = 2 [
+    (buf.validate.field).string.len = 3,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }

@@ -7,6 +7,7 @@
 package mailer
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -24,22 +25,20 @@ const (
 )
 
 type Email struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Deactivated bool                   `protobuf:"varint,5,opt,name=deactivated,proto3" json:"deactivated,omitempty"`
-	Job         *string                `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	UserId      *int32                 `protobuf:"varint,7,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	User        *users.UserShort       `protobuf:"bytes,8,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	// @sanitize: method=StripTags
-	Email        string               `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`
-	EmailChanged *timestamp.Timestamp `protobuf:"bytes,10,opt,name=email_changed,json=emailChanged,proto3,oneof" json:"email_changed,omitempty"`
-	// @sanitize: method=StripTags
-	Label         *string        `protobuf:"bytes,11,opt,name=label,proto3,oneof" json:"label,omitempty"`
-	Access        *Access        `protobuf:"bytes,12,opt,name=access,proto3" json:"access,omitempty"`
-	Settings      *EmailSettings `protobuf:"bytes,13,opt,name=settings,proto3,oneof" json:"settings,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Deactivated   bool                   `protobuf:"varint,5,opt,name=deactivated,proto3" json:"deactivated,omitempty"`
+	Job           *string                `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	UserId        *int32                 `protobuf:"varint,7,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	User          *users.UserShort       `protobuf:"bytes,8,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	Email         string                 `protobuf:"bytes,9,opt,name=email,proto3" json:"email,omitempty"`
+	EmailChanged  *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=email_changed,json=emailChanged,proto3,oneof" json:"email_changed,omitempty"`
+	Label         *string                `protobuf:"bytes,11,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	Access        *Access                `protobuf:"bytes,12,opt,name=access,proto3" json:"access,omitempty"`
+	Settings      *EmailSettings         `protobuf:"bytes,13,opt,name=settings,proto3,oneof" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -169,7 +168,7 @@ var File_resources_mailer_email_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_email_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/mailer/email.proto\x12\x10resources.mailer\x1a\x1dresources/mailer/access.proto\x1a\x1fresources/mailer/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xe4\x05\n" +
+	"\x1cresources/mailer/email.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/mailer/access.proto\x1a\x1fresources/mailer/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\x86\x06\n" +
 	"\x05Email\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -181,11 +180,11 @@ const file_resources_mailer_email_proto_rawDesc = "" +
 	"\vdeactivated\x18\x05 \x01(\bR\vdeactivated\x12\x1e\n" +
 	"\x03job\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x18(H\x02R\x03job\x88\x01\x01\x12%\n" +
 	"\auser_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\x06userId\x88\x01\x01\x123\n" +
-	"\x04user\x18\b \x01(\v2\x1a.resources.users.UserShortH\x04R\x04user\x88\x01\x01\x12\x1f\n" +
-	"\x05email\x18\t \x01(\tB\t\xbaH\x06r\x04\x10\x06\x18PR\x05email\x12H\n" +
+	"\x04user\x18\b \x01(\v2\x1a.resources.users.UserShortH\x04R\x04user\x88\x01\x01\x120\n" +
+	"\x05email\x18\t \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x06\x18PR\x05email\x12H\n" +
 	"\remail_changed\x18\n" +
-	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x12#\n" +
-	"\x05label\x18\v \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x06R\x05label\x88\x01\x01\x120\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x124\n" +
+	"\x05label\x18\v \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x01H\x06R\x05label\x88\x01\x01\x120\n" +
 	"\x06access\x18\f \x01(\v2\x18.resources.mailer.AccessR\x06access\x12@\n" +
 	"\bsettings\x18\r \x01(\v2\x1f.resources.mailer.EmailSettingsH\aR\bsettings\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +

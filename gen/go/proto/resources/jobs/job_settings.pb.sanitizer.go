@@ -7,10 +7,15 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DiscordSyncChange) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Plan
+	m.Plan = htmlsanitizer.Sanitize(m.Plan)
 
 	// Field: Time
 	if m.Time != nil {
@@ -24,6 +29,8 @@ func (m *DiscordSyncChange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DiscordSyncChanges) Sanitize() error {
 	if m == nil {
 		return nil
@@ -44,6 +51,8 @@ func (m *DiscordSyncChanges) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DiscordSyncSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -67,6 +76,9 @@ func (m *DiscordSyncSettings) Sanitize() error {
 		}
 	}
 
+	// Field: QualificationsRoleFormat
+	m.QualificationsRoleFormat = htmlsanitizer.Sanitize(m.QualificationsRoleFormat)
+
 	// Field: StatusLogSettings
 	if m.StatusLogSettings != nil {
 		if v, ok := any(m.GetStatusLogSettings()).(interface{ Sanitize() error }); ok {
@@ -88,14 +100,21 @@ func (m *DiscordSyncSettings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GroupMapping) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GroupSyncSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -112,6 +131,8 @@ func (m *GroupSyncSettings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -120,26 +141,44 @@ func (m *JobSettings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobsAbsenceSettings) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: AbsenceRole
+	m.AbsenceRole = htmlsanitizer.Sanitize(m.AbsenceRole)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StatusLogSettings) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: ChannelId
+	m.ChannelId = htmlsanitizer.Sanitize(m.ChannelId)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserInfoSyncSettings) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: EmployeeRoleFormat
+	m.EmployeeRoleFormat = htmlsanitizer.Sanitize(m.EmployeeRoleFormat)
+
+	// Field: GradeRoleFormat
+	m.GradeRoleFormat = htmlsanitizer.Sanitize(m.GradeRoleFormat)
 
 	// Field: GroupMapping
 	for idx, item := range m.GroupMapping {
@@ -152,6 +191,9 @@ func (m *UserInfoSyncSettings) Sanitize() error {
 		}
 
 	}
+
+	// Field: UnemployedRoleName
+	m.UnemployedRoleName = htmlsanitizer.Sanitize(m.UnemployedRoleName)
 
 	return nil
 }

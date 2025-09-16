@@ -3,9 +3,20 @@
 
 package settings
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DBSyncStatus) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: LastDbsyncVersion
+	if m.LastDbsyncVersion != nil {
+		*m.LastDbsyncVersion = htmlsanitizer.Sanitize(*m.LastDbsyncVersion)
 	}
 
 	// Field: LastSyncedActivity
@@ -29,22 +40,40 @@ func (m *DBSyncStatus) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Database) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: DbCharset
+	m.DbCharset = htmlsanitizer.Sanitize(m.DbCharset)
+
+	// Field: DbCollation
+	m.DbCollation = htmlsanitizer.Sanitize(m.DbCollation)
+
+	// Field: Version
+	m.Version = htmlsanitizer.Sanitize(m.Version)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Nats) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Version
+	m.Version = htmlsanitizer.Sanitize(m.Version)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *NewVersionInfo) Sanitize() error {
 	if m == nil {
 		return nil
@@ -59,9 +88,17 @@ func (m *NewVersionInfo) Sanitize() error {
 		}
 	}
 
+	// Field: Url
+	m.Url = htmlsanitizer.Sanitize(m.Url)
+
+	// Field: Version
+	m.Version = htmlsanitizer.Sanitize(m.Version)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SystemStatus) Sanitize() error {
 	if m == nil {
 		return nil
@@ -106,10 +143,15 @@ func (m *SystemStatus) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *VersionStatus) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Current
+	m.Current = htmlsanitizer.Sanitize(m.Current)
 
 	// Field: NewVersion
 	if m.NewVersion != nil {

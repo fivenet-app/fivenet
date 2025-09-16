@@ -3,6 +3,8 @@
 
 package jobs
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateConductEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,6 +22,8 @@ func (m *CreateConductEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateConductEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -37,6 +41,8 @@ func (m *CreateConductEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteConductEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -45,6 +51,8 @@ func (m *DeleteConductEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteConductEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -53,6 +61,8 @@ func (m *DeleteConductEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListConductEntriesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -85,6 +95,8 @@ func (m *ListConductEntriesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListConductEntriesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -114,6 +126,8 @@ func (m *ListConductEntriesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateConductEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -131,6 +145,8 @@ func (m *UpdateConductEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateConductEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil

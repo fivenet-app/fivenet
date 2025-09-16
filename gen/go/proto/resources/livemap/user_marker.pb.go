@@ -7,6 +7,8 @@
 package livemap
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -26,23 +28,21 @@ const (
 )
 
 type UserMarker struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	UserId    int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	X         float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
-	Y         float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	// @sanitize: method=StripTags
-	Postal *string `protobuf:"bytes,5,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	// @sanitize: method=StripTags
-	Color         *string         `protobuf:"bytes,6,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Job           string          `protobuf:"bytes,7,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      string          `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
-	JobGrade      *int32          `protobuf:"varint,13,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
-	User          *jobs.Colleague `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
-	UnitId        *int64          `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
-	Unit          *centrum.Unit   `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
-	Hidden        bool            `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
-	Data          *UserMarkerData `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	X             float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Postal        *string                `protobuf:"bytes,5,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	Color         *string                `protobuf:"bytes,6,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Job           string                 `protobuf:"bytes,7,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      string                 `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
+	JobGrade      *int32                 `protobuf:"varint,13,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
+	User          *jobs.Colleague        `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
+	UnitId        *int64                 `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	Unit          *centrum.Unit          `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	Hidden        bool                   `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
+	Data          *UserMarkerData        `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -175,7 +175,6 @@ func (x *UserMarker) GetData() *UserMarkerData {
 	return nil
 }
 
-// @dbscanner: json
 type UserMarkerData struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	IsInVehicle      bool                   `protobuf:"varint,1,opt,name=is_in_vehicle,json=isInVehicle,proto3" json:"is_in_vehicle,omitempty"`
@@ -240,16 +239,16 @@ var File_resources_livemap_user_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\n" +
-	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x8f\x05\n" +
+	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb1\x05\n" +
 	"\n" +
 	"UserMarker\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
 	"\x01y\x18\x03 \x01(\x01R\x01y\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x126\n" +
-	"\x05color\x18\x06 \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x125\n" +
+	"\x06postal\x18\x05 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x12G\n" +
+	"\x05color\x18\x06 \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
 	"\tjob_label\x18\b \x01(\tR\bjobLabel\x12 \n" +
 	"\tjob_grade\x18\r \x01(\x05H\x03R\bjobGrade\x88\x01\x01\x12@\n" +
@@ -267,11 +266,11 @@ const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\n" +
 	"\b_unit_idB\a\n" +
 	"\x05_unitB\a\n" +
-	"\x05_data\"\xe3\x01\n" +
+	"\x05_data\"\xeb\x01\n" +
 	"\x0eUserMarkerData\x12\"\n" +
 	"\ris_in_vehicle\x18\x01 \x01(\bR\visInVehicle\x121\n" +
 	"\rvehicle_plate\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18 H\x00R\fvehiclePlate\x88\x01\x01\x12Q\n" +
-	"\x12vehicle_updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x10vehicleUpdatedAt\x88\x01\x01B\x10\n" +
+	"\x12vehicle_updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x10vehicleUpdatedAt\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x10\n" +
 	"\x0e_vehicle_plateB\x15\n" +
 	"\x13_vehicle_updated_atBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
 

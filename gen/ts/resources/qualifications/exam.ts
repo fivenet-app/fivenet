@@ -45,14 +45,10 @@ export interface ExamQuestion {
      */
     updatedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 5
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string description = 6
      */
     description?: string;
@@ -74,8 +70,6 @@ export interface ExamQuestion {
     order: number;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.ExamQuestionData
  */
 export interface ExamQuestionData {
@@ -163,8 +157,6 @@ export interface ExamQuestionText {
  */
 export interface ExamQuestionSingleChoice {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string choices = 1
      */
     choices: string[];
@@ -174,8 +166,6 @@ export interface ExamQuestionSingleChoice {
  */
 export interface ExamQuestionMultipleChoice {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string choices = 1
      */
     choices: string[];
@@ -185,8 +175,6 @@ export interface ExamQuestionMultipleChoice {
     limit?: number;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.ExamQuestionAnswerData
  */
 export interface ExamQuestionAnswerData {
@@ -257,8 +245,6 @@ export interface ExamUser {
     endedAt?: Timestamp;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.ExamResponses
  */
 export interface ExamResponses {
@@ -356,8 +342,6 @@ export interface ExamResponseYesNo {
  */
 export interface ExamResponseText {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string text = 1
      */
     text: string; // 0.5 Megabyte
@@ -367,8 +351,6 @@ export interface ExamResponseText {
  */
 export interface ExamResponseSingleChoice {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string choice = 1
      */
     choice: string;
@@ -378,15 +360,11 @@ export interface ExamResponseSingleChoice {
  */
 export interface ExamResponseMultipleChoice {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string choices = 1
      */
     choices: string[];
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.ExamGrading
  */
 export interface ExamGrading {
@@ -467,8 +445,8 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
             { no: 2, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
-            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "data", kind: "message", T: () => ExamQuestionData, options: { "buf.validate.field": { required: true } } },
             { no: 8, name: "answer", kind: "message", T: () => ExamQuestionAnswerData },
             { no: 9, name: "points", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
@@ -582,7 +560,7 @@ class ExamQuestionData$Type extends MessageType<ExamQuestionData> {
             { no: 3, name: "free_text", kind: "message", oneof: "data", T: () => ExamQuestionText },
             { no: 4, name: "single_choice", kind: "message", oneof: "data", T: () => ExamQuestionSingleChoice },
             { no: 5, name: "multiple_choice", kind: "message", oneof: "data", T: () => ExamQuestionMultipleChoice }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<ExamQuestionData>): ExamQuestionData {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -860,7 +838,7 @@ export const ExamQuestionText = new ExamQuestionText$Type();
 class ExamQuestionSingleChoice$Type extends MessageType<ExamQuestionSingleChoice> {
     constructor() {
         super("resources.qualifications.ExamQuestionSingleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestionSingleChoice>): ExamQuestionSingleChoice {
@@ -907,7 +885,7 @@ export const ExamQuestionSingleChoice = new ExamQuestionSingleChoice$Type();
 class ExamQuestionMultipleChoice$Type extends MessageType<ExamQuestionMultipleChoice> {
     constructor() {
         super("resources.qualifications.ExamQuestionMultipleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 2, name: "limit", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 0 } } } }
         ]);
     }
@@ -966,7 +944,7 @@ class ExamQuestionAnswerData$Type extends MessageType<ExamQuestionAnswerData> {
             { no: 5, name: "free_text", kind: "message", oneof: "answer", T: () => ExamResponseText },
             { no: 6, name: "single_choice", kind: "message", oneof: "answer", T: () => ExamResponseSingleChoice },
             { no: 7, name: "multiple_choice", kind: "message", oneof: "answer", T: () => ExamResponseMultipleChoice }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<ExamQuestionAnswerData>): ExamQuestionAnswerData {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1135,7 +1113,7 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
             { no: 1, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<ExamResponses>): ExamResponses {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1439,7 +1417,7 @@ export const ExamResponseYesNo = new ExamResponseYesNo$Type();
 class ExamResponseText$Type extends MessageType<ExamResponseText> {
     constructor() {
         super("resources.qualifications.ExamResponseText", [
-            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "500000" } } } }
+            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "500000" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseText>): ExamResponseText {
@@ -1486,7 +1464,7 @@ export const ExamResponseText = new ExamResponseText$Type();
 class ExamResponseSingleChoice$Type extends MessageType<ExamResponseSingleChoice> {
     constructor() {
         super("resources.qualifications.ExamResponseSingleChoice", [
-            { no: 1, name: "choice", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } }
+            { no: 1, name: "choice", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseSingleChoice>): ExamResponseSingleChoice {
@@ -1533,7 +1511,7 @@ export const ExamResponseSingleChoice = new ExamResponseSingleChoice$Type();
 class ExamResponseMultipleChoice$Type extends MessageType<ExamResponseMultipleChoice> {
     constructor() {
         super("resources.qualifications.ExamResponseMultipleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseMultipleChoice>): ExamResponseMultipleChoice {
@@ -1581,7 +1559,7 @@ class ExamGrading$Type extends MessageType<ExamGrading> {
     constructor() {
         super("resources.qualifications.ExamGrading", [
             { no: 1, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamGradingResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<ExamGrading>): ExamGrading {
         const message = globalThis.Object.create((this.messagePrototype!));

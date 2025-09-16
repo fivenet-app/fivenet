@@ -117,7 +117,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				mName := string(m.Name())
 				mName = strings.TrimPrefix(mName, "services.")
 
-				// check if the field option is present and true
+				// Check if the field option is present and true
 				var val permspb.FieldOptions
 				ok, err := m.Extension(permspb.E_Perms, &val)
 				if err != nil {
@@ -166,15 +166,6 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 						}
 						perm.Attrs[i].Valid += "}"
 					}
-				}
-
-				if perm == nil {
-					p.Failf(
-						"failed to parse in %s method %s",
-						f.InputPath(),
-						mName,
-					)
-					return
 				}
 
 				if perm.Name != mName {

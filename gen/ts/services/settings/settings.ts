@@ -229,14 +229,10 @@ export interface ViewAuditLogRequest {
      */
     to?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string services = 6
      */
     services: string[];
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string methods = 7
      */
     methods: string[];
@@ -1167,8 +1163,8 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "from", kind: "message", T: () => Timestamp },
             { no: 5, name: "to", kind: "message", T: () => Timestamp },
-            { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
-            { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
+            { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 9, name: "states", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventType", EventType, "EVENT_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
         ]);
@@ -1285,7 +1281,7 @@ class ViewAuditLogResponse$Type extends MessageType<ViewAuditLogResponse> {
     constructor() {
         super("services.settings.ViewAuditLogResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "logs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AuditEntry, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "logs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => AuditEntry, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogResponse>): ViewAuditLogResponse {

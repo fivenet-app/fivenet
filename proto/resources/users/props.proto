@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.users;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/file/file.proto";
 import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";
@@ -26,9 +27,14 @@ message UserProps {
   optional int64 mugshot_file_id = 12;
   optional resources.file.File mugshot = 13 [(tagger.tags) = "alias:\"mugshot\""];
   optional Labels labels = 14;
-  // @sanitize: method=StripTags
-  optional string email = 15 [(buf.validate.field).string = {
-    min_len: 6
-    max_len: 80
-  }];
+  optional string email = 15 [
+    (buf.validate.field).string = {
+      min_len: 6
+      max_len: 80
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }

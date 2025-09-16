@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.wiki;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "resources/wiki/access.proto";
@@ -34,8 +35,9 @@ message PageActivity {
   PageActivityData data = 10;
 }
 
-// @dbscanner: json
 message PageActivityData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   oneof data {
     option (buf.validate.oneof).required = true;
 

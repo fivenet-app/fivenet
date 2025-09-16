@@ -514,7 +514,7 @@ class ListQualificationsResponse$Type extends MessageType<ListQualificationsResp
     constructor() {
         super("services.qualifications.ListQualificationsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Qualification, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Qualification, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResponse>): ListQualificationsResponse {
@@ -1208,7 +1208,7 @@ class ListQualificationRequestsResponse$Type extends MessageType<ListQualificati
     constructor() {
         super("services.qualifications.ListQualificationRequestsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequest, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequest, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsResponse>): ListQualificationRequestsResponse {
@@ -1530,7 +1530,7 @@ class ListQualificationsResultsResponse$Type extends MessageType<ListQualificati
     constructor() {
         super("services.qualifications.ListQualificationsResultsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "results", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationResult, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "results", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationResult, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResultsResponse>): ListQualificationsResultsResponse {

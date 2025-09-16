@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -89,27 +90,22 @@ func (StatusUnit) EnumDescriptor() ([]byte, []int) {
 }
 
 type Unit struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel  *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	// @sanitize
-	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize
-	Initials string `protobuf:"bytes,6,opt,name=initials,proto3" json:"initials,omitempty"`
-	// @sanitize: method=StripTags
-	Color string `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
-	// @sanitize: method=StripTags
-	Icon *string `protobuf:"bytes,16,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	// @sanitize
-	Description   *string           `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Status        *UnitStatus       `protobuf:"bytes,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	Users         []*UnitAssignment `protobuf:"bytes,11,rep,name=users,proto3" json:"users,omitempty"`
-	Attributes    *UnitAttributes   `protobuf:"bytes,12,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
-	HomePostal    *string           `protobuf:"bytes,13,opt,name=home_postal,json=homePostal,proto3,oneof" json:"home_postal,omitempty"`
-	Access        *UnitAccess       `protobuf:"bytes,14,opt,name=access,proto3" json:"access,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Initials      string                 `protobuf:"bytes,6,opt,name=initials,proto3" json:"initials,omitempty"`
+	Color         string                 `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
+	Icon          *string                `protobuf:"bytes,16,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Description   *string                `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Status        *UnitStatus            `protobuf:"bytes,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Users         []*UnitAssignment      `protobuf:"bytes,11,rep,name=users,proto3" json:"users,omitempty"`
+	Attributes    *UnitAttributes        `protobuf:"bytes,12,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
+	HomePostal    *string                `protobuf:"bytes,13,opt,name=home_postal,json=homePostal,proto3,oneof" json:"home_postal,omitempty"`
+	Access        *UnitAccess            `protobuf:"bytes,14,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -370,25 +366,22 @@ func (x *UnitAssignment) GetUser() *jobs.Colleague {
 }
 
 type UnitStatus struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UnitId    int64                  `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	Unit      *Unit                  `protobuf:"bytes,4,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
-	Status    StatusUnit             `protobuf:"varint,5,opt,name=status,proto3,enum=resources.centrum.StatusUnit" json:"status,omitempty"`
-	// @sanitize
-	Reason *string `protobuf:"bytes,6,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	// @sanitize
-	Code   *string         `protobuf:"bytes,7,opt,name=code,proto3,oneof" json:"code,omitempty"`
-	UserId *int32          `protobuf:"varint,8,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	User   *jobs.Colleague `protobuf:"bytes,9,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	X      *float64        `protobuf:"fixed64,10,opt,name=x,proto3,oneof" json:"x,omitempty"`
-	Y      *float64        `protobuf:"fixed64,11,opt,name=y,proto3,oneof" json:"y,omitempty"`
-	// @sanitize
-	Postal        *string         `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	CreatorId     *int32          `protobuf:"varint,13,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *jobs.Colleague `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	CreatorJob    *string         `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UnitId        int64                  `protobuf:"varint,3,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	Unit          *Unit                  `protobuf:"bytes,4,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	Status        StatusUnit             `protobuf:"varint,5,opt,name=status,proto3,enum=resources.centrum.StatusUnit" json:"status,omitempty"`
+	Reason        *string                `protobuf:"bytes,6,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Code          *string                `protobuf:"bytes,7,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	UserId        *int32                 `protobuf:"varint,8,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	User          *jobs.Colleague        `protobuf:"bytes,9,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	X             *float64               `protobuf:"fixed64,10,opt,name=x,proto3,oneof" json:"x,omitempty"`
+	Y             *float64               `protobuf:"fixed64,11,opt,name=y,proto3,oneof" json:"y,omitempty"`
+	Postal        *string                `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	CreatorId     *int32                 `protobuf:"varint,13,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator       *jobs.Colleague        `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	CreatorJob    *string                `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -532,7 +525,7 @@ var File_resources_centrum_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xec\x06\n" +
+	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa0\a\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -540,12 +533,12 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12\x1d\n" +
-	"\x04name\x18\x05 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x18R\x04name\x12%\n" +
-	"\binitials\x18\x06 \x01(\tB\t\xbaH\x06r\x04\x10\x02\x18\x04R\binitials\x121\n" +
-	"\x05color\x18\a \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12'\n" +
-	"\x04icon\x18\x10 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12/\n" +
-	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x04R\vdescription\x88\x01\x01\x12:\n" +
+	"\tjob_label\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12#\n" +
+	"\x04name\x18\x05 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04\x10\x03\x18\x18R\x04name\x12+\n" +
+	"\binitials\x18\x06 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04\x10\x02\x18\x04R\binitials\x12B\n" +
+	"\x05color\x18\a \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x128\n" +
+	"\x04icon\x18\x10 \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x125\n" +
+	"\vdescription\x18\b \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x04R\vdescription\x88\x01\x01\x12:\n" +
 	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x05R\x06status\x88\x01\x01\x127\n" +
 	"\x05users\x18\v \x03(\v2!.resources.centrum.UnitAssignmentR\x05users\x12F\n" +
 	"\n" +
@@ -571,7 +564,7 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\aunit_id\x18\x01 \x01(\x03B&\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"unit_id\"R\x06unitId\x12F\n" +
 	"\auser_id\x18\x02 \x01(\x05B-\x9a\x84\x9e\x03!sql:\"primary_key\" alias:\"user_id\"\xbaH\x04\x1a\x02(\x00R\x06userId\x122\n" +
 	"\x04user\x18\x03 \x01(\v2\x19.resources.jobs.ColleagueH\x00R\x04user\x88\x01\x01B\a\n" +
-	"\x05_user\"\x98\x06\n" +
+	"\x05_user\"\xaa\x06\n" +
 	"\n" +
 	"UnitStatus\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
@@ -579,15 +572,15 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
 	"\aunit_id\x18\x03 \x01(\x03R\x06unitId\x120\n" +
 	"\x04unit\x18\x04 \x01(\v2\x17.resources.centrum.UnitH\x01R\x04unit\x88\x01\x01\x12?\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x1d.resources.centrum.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
-	"\x06reason\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x02R\x06reason\x88\x01\x01\x12 \n" +
-	"\x04code\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x04code\x88\x01\x01\x12%\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x1d.resources.centrum.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\x06 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x02R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\a \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x14H\x03R\x04code\x88\x01\x01\x12%\n" +
 	"\auser_id\x18\b \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\x06userId\x88\x01\x01\x122\n" +
 	"\x04user\x18\t \x01(\v2\x19.resources.jobs.ColleagueH\x05R\x04user\x88\x01\x01\x12\x11\n" +
 	"\x01x\x18\n" +
 	" \x01(\x01H\x06R\x01x\x88\x01\x01\x12\x11\n" +
-	"\x01y\x18\v \x01(\x01H\aR\x01y\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\f \x01(\tB\a\xbaH\x04r\x02\x180H\bR\x06postal\x88\x01\x01\x12+\n" +
+	"\x01y\x18\v \x01(\x01H\aR\x01y\x88\x01\x01\x12*\n" +
+	"\x06postal\x18\f \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x180H\bR\x06postal\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\r \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\tR\tcreatorId\x88\x01\x01\x128\n" +
 	"\acreator\x18\x0e \x01(\v2\x19.resources.jobs.ColleagueH\n" +

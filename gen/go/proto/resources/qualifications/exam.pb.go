@@ -7,6 +7,8 @@
 package qualifications
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -68,21 +70,19 @@ func (x *ExamQuestions) GetQuestions() []*ExamQuestion {
 }
 
 type ExamQuestion struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	QualificationId int64                  `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
-	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	// @sanitize: method=StripTags
-	Title string `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize: method=StripTags
-	Description   *string                 `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Data          *ExamQuestionData       `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
-	Answer        *ExamQuestionAnswerData `protobuf:"bytes,8,opt,name=answer,proto3,oneof" json:"answer,omitempty"`
-	Points        *int32                  `protobuf:"varint,9,opt,name=points,proto3,oneof" json:"points,omitempty"`
-	Order         int32                   `protobuf:"varint,10,opt,name=order,proto3" json:"order,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState  `protogen:"open.v1"`
+	Id              int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	QualificationId int64                   `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	CreatedAt       *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Title           string                  `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	Description     *string                 `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Data            *ExamQuestionData       `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
+	Answer          *ExamQuestionAnswerData `protobuf:"bytes,8,opt,name=answer,proto3,oneof" json:"answer,omitempty"`
+	Points          *int32                  `protobuf:"varint,9,opt,name=points,proto3,oneof" json:"points,omitempty"`
+	Order           int32                   `protobuf:"varint,10,opt,name=order,proto3" json:"order,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ExamQuestion) Reset() {
@@ -185,7 +185,6 @@ func (x *ExamQuestion) GetOrder() int32 {
 	return 0
 }
 
-// @dbscanner: json
 type ExamQuestionData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -509,9 +508,8 @@ func (x *ExamQuestionText) GetMaxLength() int32 {
 }
 
 type ExamQuestionSingleChoice struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Choices       []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -554,10 +552,9 @@ func (x *ExamQuestionSingleChoice) GetChoices() []string {
 }
 
 type ExamQuestionMultipleChoice struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Choices       []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
-	Limit         *int32   `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
+	Limit         *int32                 `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -606,7 +603,6 @@ func (x *ExamQuestionMultipleChoice) GetLimit() int32 {
 	return 0
 }
 
-// @dbscanner: json
 type ExamQuestionAnswerData struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	AnswerKey string                 `protobuf:"bytes,1,opt,name=answer_key,json=answerKey,proto3" json:"answer_key,omitempty"`
@@ -813,7 +809,6 @@ func (x *ExamUser) GetEndedAt() *timestamp.Timestamp {
 	return nil
 }
 
-// @dbscanner: json
 type ExamResponses struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	QualificationId int64                  `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
@@ -1153,9 +1148,8 @@ func (x *ExamResponseYesNo) GetValue() bool {
 }
 
 type ExamResponseText struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Text          string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"` // 0.5 Megabyte
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"` // 0.5 Megabyte
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1198,9 +1192,8 @@ func (x *ExamResponseText) GetText() string {
 }
 
 type ExamResponseSingleChoice struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Choice        string `protobuf:"bytes,1,opt,name=choice,proto3" json:"choice,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Choice        string                 `protobuf:"bytes,1,opt,name=choice,proto3" json:"choice,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1243,9 +1236,8 @@ func (x *ExamResponseSingleChoice) GetChoice() string {
 }
 
 type ExamResponseMultipleChoice struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Choices       []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Choices       []string               `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1287,7 +1279,6 @@ func (x *ExamResponseMultipleChoice) GetChoices() []string {
 	return nil
 }
 
-// @dbscanner: json
 type ExamGrading struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Responses     []*ExamGradingResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`
@@ -1396,18 +1387,18 @@ var File_resources_qualifications_exam_proto protoreflect.FileDescriptor
 
 const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\n" +
-	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"_\n" +
+	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"_\n" +
 	"\rExamQuestions\x12N\n" +
-	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xc5\x04\n" +
+	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xe7\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x03R\x0fqualificationId\x12B\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1e\n" +
-	"\x05title\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04R\x05title\x12/\n" +
-	"\vdescription\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12F\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12/\n" +
+	"\x05title\x18\x05 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04R\x05title\x12@\n" +
+	"\vdescription\x18\x06 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12F\n" +
 	"\x04data\x18\a \x01(\v2*.resources.qualifications.ExamQuestionDataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12M\n" +
 	"\x06answer\x18\b \x01(\v20.resources.qualifications.ExamQuestionAnswerDataH\x03R\x06answer\x88\x01\x01\x12$\n" +
 	"\x06points\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x04R\x06points\x88\x01\x01\x12 \n" +
@@ -1418,14 +1409,14 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\v_updated_atB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_answerB\t\n" +
-	"\a_points\"\x83\x04\n" +
+	"\a_points\"\x8b\x04\n" +
 	"\x10ExamQuestionData\x12O\n" +
 	"\tseparator\x18\x01 \x01(\v2/.resources.qualifications.ExamQuestionSeparatorH\x00R\tseparator\x12C\n" +
 	"\x05image\x18\x06 \x01(\v2+.resources.qualifications.ExamQuestionImageH\x00R\x05image\x12C\n" +
 	"\x05yesno\x18\x02 \x01(\v2+.resources.qualifications.ExamQuestionYesNoH\x00R\x05yesno\x12I\n" +
 	"\tfree_text\x18\x03 \x01(\v2*.resources.qualifications.ExamQuestionTextH\x00R\bfreeText\x12Y\n" +
 	"\rsingle_choice\x18\x04 \x01(\v22.resources.qualifications.ExamQuestionSingleChoiceH\x00R\fsingleChoice\x12_\n" +
-	"\x0fmultiple_choice\x18\x05 \x01(\v24.resources.qualifications.ExamQuestionMultipleChoiceH\x00R\x0emultipleChoiceB\r\n" +
+	"\x0fmultiple_choice\x18\x05 \x01(\v24.resources.qualifications.ExamQuestionMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\x17\n" +
 	"\x15ExamQuestionSeparator\"h\n" +
 	"\x11ExamQuestionImage\x12*\n" +
@@ -1437,23 +1428,23 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\n" +
 	"min_length\x18\x01 \x01(\x05R\tminLength\x12\x1d\n" +
 	"\n" +
-	"max_length\x18\x02 \x01(\x05R\tmaxLength\">\n" +
-	"\x18ExamQuestionSingleChoice\x12\"\n" +
-	"\achoices\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\achoices\"p\n" +
-	"\x1aExamQuestionMultipleChoice\x12\"\n" +
-	"\achoices\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\n" +
+	"max_length\x18\x02 \x01(\x05R\tmaxLength\"O\n" +
+	"\x18ExamQuestionSingleChoice\x123\n" +
+	"\achoices\x18\x01 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\achoices\"\x81\x01\n" +
+	"\x1aExamQuestionMultipleChoice\x123\n" +
+	"\achoices\x18\x01 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\achoices\x12$\n" +
 	"\x05limit\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
 	"(\x00H\x00R\x05limit\x88\x01\x01B\b\n" +
-	"\x06_limit\"\x97\x03\n" +
+	"\x06_limit\"\x9f\x03\n" +
 	"\x16ExamQuestionAnswerData\x12'\n" +
 	"\n" +
 	"answer_key\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bR\tanswerKey\x12C\n" +
 	"\x05yesno\x18\x04 \x01(\v2+.resources.qualifications.ExamResponseYesNoH\x00R\x05yesno\x12I\n" +
 	"\tfree_text\x18\x05 \x01(\v2*.resources.qualifications.ExamResponseTextH\x00R\bfreeText\x12Y\n" +
 	"\rsingle_choice\x18\x06 \x01(\v22.resources.qualifications.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12_\n" +
-	"\x0fmultiple_choice\x18\a \x01(\v24.resources.qualifications.ExamResponseMultipleChoiceH\x00R\x0emultipleChoiceB\b\n" +
+	"\x0fmultiple_choice\x18\a \x01(\v24.resources.qualifications.ExamResponseMultipleChoiceH\x00R\x0emultipleChoice:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
 	"\x06answer\"\x8b\x03\n" +
 	"\bExamUser\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
@@ -1468,11 +1459,11 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\v_started_atB\n" +
 	"\n" +
 	"\b_ends_atB\v\n" +
-	"\t_ended_at\"\xa3\x01\n" +
+	"\t_ended_at\"\xab\x01\n" +
 	"\rExamResponses\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x03R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12N\n" +
-	"\tresponses\x18\x03 \x03(\v2&.resources.qualifications.ExamResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\xd4\x01\n" +
+	"\tresponses\x18\x03 \x03(\v2&.resources.qualifications.ExamResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\xd4\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12\x17\n" +
@@ -1488,16 +1479,16 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\bresponse\x12\x05\xbaH\x02\b\x01\"\x17\n" +
 	"\x15ExamResponseSeparator\")\n" +
 	"\x11ExamResponseYesNo\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\bR\x05value\"1\n" +
-	"\x10ExamResponseText\x12\x1d\n" +
-	"\x04text\x18\x01 \x01(\tB\t\xbaH\x06r\x04(\xa0\xc2\x1eR\x04text\"<\n" +
-	"\x18ExamResponseSingleChoice\x12 \n" +
-	"\x06choice\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04R\x06choice\"@\n" +
-	"\x1aExamResponseMultipleChoice\x12\"\n" +
-	"\achoices\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\achoices\"d\n" +
+	"\x05value\x18\x01 \x01(\bR\x05value\"B\n" +
+	"\x10ExamResponseText\x12.\n" +
+	"\x04text\x18\x01 \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04(\xa0\xc2\x1eR\x04text\"M\n" +
+	"\x18ExamResponseSingleChoice\x121\n" +
+	"\x06choice\x18\x01 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04R\x06choice\"Q\n" +
+	"\x1aExamResponseMultipleChoice\x123\n" +
+	"\achoices\x18\x01 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\achoices\"l\n" +
 	"\vExamGrading\x12U\n" +
-	"\tresponses\x18\x01 \x03(\v2-.resources.qualifications.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\x8a\x01\n" +
+	"\tresponses\x18\x01 \x03(\v2-.resources.qualifications.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses:\x06\xe2\xf3\x18\x02\b\x01\"\x8a\x01\n" +
 	"\x13ExamGradingResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x03R\n" +
 	"questionId\x12'\n" +

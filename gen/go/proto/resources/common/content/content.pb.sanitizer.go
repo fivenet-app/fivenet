@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Content) Sanitize() error {
 	if m == nil {
 		return nil
@@ -22,14 +24,20 @@ func (m *Content) Sanitize() error {
 	}
 
 	// Field: RawContent
-
 	if m.RawContent != nil {
 		*m.RawContent = htmlsanitizer.Sanitize(*m.RawContent)
+	}
+
+	// Field: Version
+	if m.Version != nil {
+		*m.Version = htmlsanitizer.Sanitize(*m.Version)
 	}
 
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JSONNode) Sanitize() error {
 	if m == nil {
 		return nil
@@ -56,7 +64,6 @@ func (m *JSONNode) Sanitize() error {
 	}
 
 	// Field: Id
-
 	if m.Id != nil {
 		*m.Id = htmlsanitizer.StripTags(*m.Id)
 	}
@@ -65,7 +72,6 @@ func (m *JSONNode) Sanitize() error {
 	m.Tag = htmlsanitizer.StripTags(m.Tag)
 
 	// Field: Text
-
 	if m.Text != nil {
 		*m.Text = htmlsanitizer.StripTags(*m.Text)
 	}
@@ -73,6 +79,8 @@ func (m *JSONNode) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TiptapJSONDocument) Sanitize() error {
 	if m == nil {
 		return nil

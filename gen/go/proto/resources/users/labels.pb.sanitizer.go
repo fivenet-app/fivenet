@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Label) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,12 +17,19 @@ func (m *Label) Sanitize() error {
 	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
 
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+	}
+
 	// Field: Name
 	m.Name = htmlsanitizer.StripTags(m.Name)
 
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Labels) Sanitize() error {
 	if m == nil {
 		return nil

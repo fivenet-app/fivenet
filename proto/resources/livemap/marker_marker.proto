@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.livemap;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "tagger/tagger.proto";
@@ -24,20 +26,34 @@ message MarkerMarker {
   optional resources.timestamp.Timestamp updated_at = 5;
   optional resources.timestamp.Timestamp expires_at = 6;
   optional resources.timestamp.Timestamp deleted_at = 7;
-  // @sanitize
-  string name = 8 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 255
-  }];
-  // @sanitize
-  optional string description = 9 [(buf.validate.field).string.max_len = 1024];
-  // @sanitize: method=StripTags
-  optional string postal = 10 [(buf.validate.field).string.max_len = 48];
-  // @sanitize: method=StripTags
-  optional string color = 11 [(buf.validate.field).string = {
-    len: 7
-    pattern: "^#[A-Fa-f0-9]{6}$"
-  }];
+  string name = 8 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 9 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string postal = 10 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string color = 11 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string job = 12 [(buf.validate.field).string.max_len = 20];
   string job_label = 13;
 
@@ -48,8 +64,12 @@ message MarkerMarker {
   optional resources.users.UserShort creator = 17;
 }
 
-// @dbscanner
 message MarkerData {
+  option (codegen.dbscanner.dbscanner) = {
+    enabled: true
+    not_json: true
+  };
+
   oneof data {
     option (buf.validate.oneof).required = true;
 
@@ -67,9 +87,14 @@ message CircleMarker {
 }
 
 message IconMarker {
-  // @sanitize: method=StripTags
-  string icon = 1 [(buf.validate.field).string = {
-    max_len: 128
-    suffix: "Icon"
-  }];
+  string icon = 1 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }

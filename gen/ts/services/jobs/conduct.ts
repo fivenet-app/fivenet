@@ -226,7 +226,7 @@ class ListConductEntriesResponse$Type extends MessageType<ListConductEntriesResp
     constructor() {
         super("services.jobs.ListConductEntriesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ConductEntry, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ConductEntry, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesResponse>): ListConductEntriesResponse {

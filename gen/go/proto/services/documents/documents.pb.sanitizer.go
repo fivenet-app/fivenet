@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddDocumentReferenceRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -24,6 +26,8 @@ func (m *AddDocumentReferenceRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddDocumentReferenceResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -32,6 +36,8 @@ func (m *AddDocumentReferenceResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddDocumentRelationRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -49,6 +55,8 @@ func (m *AddDocumentRelationRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AddDocumentRelationResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -57,6 +65,8 @@ func (m *AddDocumentRelationResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ChangeDocumentOwnerRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -65,6 +75,8 @@ func (m *ChangeDocumentOwnerRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ChangeDocumentOwnerResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -73,6 +85,8 @@ func (m *ChangeDocumentOwnerResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateDocumentReqRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -88,7 +102,6 @@ func (m *CreateDocumentReqRequest) Sanitize() error {
 	}
 
 	// Field: Reason
-
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
 	}
@@ -96,6 +109,8 @@ func (m *CreateDocumentReqRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateDocumentReqResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -113,6 +128,8 @@ func (m *CreateDocumentReqResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -130,6 +147,8 @@ func (m *CreateDocumentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -138,6 +157,8 @@ func (m *CreateDocumentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateCategoryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -155,6 +176,8 @@ func (m *CreateOrUpdateCategoryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateCategoryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -172,6 +195,8 @@ func (m *CreateOrUpdateCategoryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateTemplateRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -189,6 +214,8 @@ func (m *CreateTemplateRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateTemplateResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -197,6 +224,8 @@ func (m *CreateTemplateResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCategoryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -205,6 +234,8 @@ func (m *DeleteCategoryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCategoryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -213,6 +244,8 @@ func (m *DeleteCategoryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCommentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -221,6 +254,8 @@ func (m *DeleteCommentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCommentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -229,6 +264,8 @@ func (m *DeleteCommentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDocumentReqRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -237,6 +274,8 @@ func (m *DeleteDocumentReqRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDocumentReqResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -245,13 +284,14 @@ func (m *DeleteDocumentReqResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Reason
-
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.StripTags(*m.Reason)
 	}
@@ -259,6 +299,8 @@ func (m *DeleteDocumentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -267,6 +309,8 @@ func (m *DeleteDocumentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteTemplateRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -275,6 +319,8 @@ func (m *DeleteTemplateRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteTemplateResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -283,6 +329,8 @@ func (m *DeleteTemplateResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *EditCommentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -300,6 +348,8 @@ func (m *EditCommentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *EditCommentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -317,6 +367,8 @@ func (m *EditCommentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCommentsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -334,6 +386,8 @@ func (m *GetCommentsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCommentsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -363,6 +417,8 @@ func (m *GetCommentsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentAccessRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -371,6 +427,8 @@ func (m *GetDocumentAccessRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentAccessResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -388,6 +446,8 @@ func (m *GetDocumentAccessResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentReferencesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -396,6 +456,8 @@ func (m *GetDocumentReferencesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentReferencesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -416,6 +478,8 @@ func (m *GetDocumentReferencesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentRelationsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -424,6 +488,8 @@ func (m *GetDocumentRelationsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentRelationsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -444,6 +510,8 @@ func (m *GetDocumentRelationsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -452,6 +520,8 @@ func (m *GetDocumentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -478,6 +548,8 @@ func (m *GetDocumentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetTemplateRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -495,6 +567,8 @@ func (m *GetTemplateRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetTemplateResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -512,6 +586,8 @@ func (m *GetTemplateResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCategoriesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -520,6 +596,8 @@ func (m *ListCategoriesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCategoriesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -540,6 +618,8 @@ func (m *ListCategoriesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -563,6 +643,8 @@ func (m *ListDocumentActivityRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentActivityResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -592,6 +674,8 @@ func (m *ListDocumentActivityResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentPinsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -609,6 +693,8 @@ func (m *ListDocumentPinsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentPinsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -638,6 +724,8 @@ func (m *ListDocumentPinsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentReqsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -655,6 +743,8 @@ func (m *ListDocumentReqsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentReqsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -684,6 +774,8 @@ func (m *ListDocumentReqsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -707,6 +799,11 @@ func (m *ListDocumentsRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+	}
+
 	// Field: Sort
 	if m.Sort != nil {
 		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
@@ -728,6 +825,8 @@ func (m *ListDocumentsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDocumentsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -757,6 +856,8 @@ func (m *ListDocumentsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListTemplatesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -765,6 +866,8 @@ func (m *ListTemplatesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListTemplatesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -785,6 +888,8 @@ func (m *ListTemplatesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListUserDocumentsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -817,6 +922,8 @@ func (m *ListUserDocumentsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListUserDocumentsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -846,6 +953,8 @@ func (m *ListUserDocumentsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PostCommentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -863,6 +972,8 @@ func (m *PostCommentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PostCommentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -880,6 +991,8 @@ func (m *PostCommentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RemoveDocumentReferenceRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -888,6 +1001,8 @@ func (m *RemoveDocumentReferenceRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RemoveDocumentReferenceResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -896,6 +1011,8 @@ func (m *RemoveDocumentReferenceResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RemoveDocumentRelationRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -904,6 +1021,8 @@ func (m *RemoveDocumentRelationRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RemoveDocumentRelationResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -912,6 +1031,8 @@ func (m *RemoveDocumentRelationResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetDocumentAccessRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -929,6 +1050,8 @@ func (m *SetDocumentAccessRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetDocumentAccessResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -937,13 +1060,14 @@ func (m *SetDocumentAccessResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetDocumentReminderRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Message
-
 	if m.Message != nil {
 		*m.Message = htmlsanitizer.StripTags(*m.Message)
 	}
@@ -960,6 +1084,8 @@ func (m *SetDocumentReminderRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetDocumentReminderResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -968,6 +1094,8 @@ func (m *SetDocumentReminderResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ToggleDocumentPinRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -976,6 +1104,8 @@ func (m *ToggleDocumentPinRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ToggleDocumentPinResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -993,6 +1123,8 @@ func (m *ToggleDocumentPinResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ToggleDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1001,6 +1133,8 @@ func (m *ToggleDocumentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ToggleDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1009,6 +1143,8 @@ func (m *ToggleDocumentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateDocumentReqRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1024,7 +1160,6 @@ func (m *UpdateDocumentReqRequest) Sanitize() error {
 	}
 
 	// Field: Reason
-
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
 	}
@@ -1032,6 +1167,8 @@ func (m *UpdateDocumentReqRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateDocumentReqResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1049,6 +1186,8 @@ func (m *UpdateDocumentReqResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateDocumentRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1072,6 +1211,11 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Data
+	if m.Data != nil {
+		*m.Data = htmlsanitizer.Sanitize(*m.Data)
+	}
+
 	// Field: Files
 	for idx, item := range m.Files {
 		_, _ = idx, item
@@ -1093,6 +1237,8 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1110,6 +1256,8 @@ func (m *UpdateDocumentResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateTemplateRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -1127,6 +1275,8 @@ func (m *UpdateTemplateRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateTemplateResponse) Sanitize() error {
 	if m == nil {
 		return nil

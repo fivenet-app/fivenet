@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Calendar) Sanitize() error {
 	if m == nil {
 		return nil
@@ -42,6 +44,9 @@ func (m *Calendar) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
@@ -52,9 +57,13 @@ func (m *Calendar) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	// Field: Name
@@ -81,6 +90,8 @@ func (m *Calendar) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarEntry) Sanitize() error {
 	if m == nil {
 		return nil
@@ -122,6 +133,9 @@ func (m *CalendarEntry) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
@@ -138,6 +152,11 @@ func (m *CalendarEntry) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	// Field: Recurring
@@ -182,6 +201,8 @@ func (m *CalendarEntry) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarEntryRSVP) Sanitize() error {
 	if m == nil {
 		return nil
@@ -208,10 +229,15 @@ func (m *CalendarEntryRSVP) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarEntryRecurring) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Every
+	m.Every = htmlsanitizer.Sanitize(m.Every)
 
 	// Field: Until
 	if m.Until != nil {
@@ -225,6 +251,8 @@ func (m *CalendarEntryRecurring) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -243,9 +271,13 @@ func (m *CalendarShort) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	// Field: Name
@@ -263,6 +295,8 @@ func (m *CalendarShort) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarSub) Sanitize() error {
 	if m == nil {
 		return nil

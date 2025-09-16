@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
 import "resources/centrum/access.proto";
 import "tagger/tagger.proto";
@@ -38,26 +40,38 @@ message Settings {
   optional EffectiveAccess effective_access = 11;
 }
 
-// @dbscanner: json
 message PredefinedStatus {
-  // @sanitize: method=StripTags
-  repeated string unit_status = 1 [(buf.validate.field).repeated = {
-    max_items: 20
-    items: {
-      string: {max_len: 64}
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated string unit_status = 1 [
+    (buf.validate.field).repeated = {
+      max_items: 20
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
-  // @sanitize: method=StripTags
-  repeated string dispatch_status = 2 [(buf.validate.field).repeated = {
-    max_items: 20
-    items: {
-      string: {max_len: 64}
+  ];
+  repeated string dispatch_status = 2 [
+    (buf.validate.field).repeated = {
+      max_items: 20
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
+  ];
 }
 
-// @dbscanner: json
 message Timings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   int64 dispatch_max_wait = 1 [(buf.validate.field).int64 = {
     gt: 30
     lt: 6000
@@ -69,8 +83,9 @@ message Timings {
   }];
 }
 
-// @dbscanner: json
 message Configuration {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   bool deduplication_enabled = 1;
   int64 deduplication_radius = 2 [(buf.validate.field).int64 = {
     gt: 5

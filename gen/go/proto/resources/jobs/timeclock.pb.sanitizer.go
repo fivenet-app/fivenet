@@ -3,6 +3,12 @@
 
 package jobs
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockEntry) Sanitize() error {
 	if m == nil {
 		return nil
@@ -26,6 +32,9 @@ func (m *TimeclockEntry) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	// Field: StartTime
 	if m.StartTime != nil {
 		if v, ok := any(m.GetStartTime()).(interface{ Sanitize() error }); ok {
@@ -47,14 +56,21 @@ func (m *TimeclockEntry) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockStats) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockWeeklyStats) Sanitize() error {
 	if m == nil {
 		return nil

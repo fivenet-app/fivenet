@@ -13,8 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.CentrumAccess
  */
 export interface CentrumAccess {
@@ -112,7 +110,7 @@ class CentrumAccess$Type extends MessageType<CentrumAccess> {
     constructor() {
         super("resources.centrum.CentrumAccess", [
             { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CentrumJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "tagger.tags": "alias:\"job_access\"" } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<CentrumAccess>): CentrumAccess {
         const message = globalThis.Object.create((this.messagePrototype!));

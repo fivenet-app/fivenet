@@ -7,6 +7,8 @@
 package mailer
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -25,21 +27,19 @@ const (
 )
 
 type Message struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	ThreadId  int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
-	SenderId  int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
-	Sender    *Email                 `protobuf:"bytes,4,opt,name=sender,proto3,oneof" json:"sender,omitempty" alias:"sender"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	// @sanitize: method=StripTags
-	Title string `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize
-	Content       *content.Content `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	Data          *MessageData     `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	CreatorId     *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	CreatorJob    *string          `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	ThreadId      int64                  `protobuf:"varint,2,opt,name=thread_id,json=threadId,proto3" json:"thread_id,omitempty"`
+	SenderId      int64                  `protobuf:"varint,3,opt,name=sender_id,json=senderId,proto3" json:"sender_id,omitempty"`
+	Sender        *Email                 `protobuf:"bytes,4,opt,name=sender,proto3,oneof" json:"sender,omitempty" alias:"sender"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Title         string                 `protobuf:"bytes,8,opt,name=title,proto3" json:"title,omitempty"`
+	Content       *content.Content       `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	Data          *MessageData           `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	CreatorId     *int32                 `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	CreatorJob    *string                `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -158,7 +158,6 @@ func (x *Message) GetCreatorJob() string {
 	return ""
 }
 
-// @dbscanner: json
 type MessageData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Attachments   []*MessageAttachment   `protobuf:"bytes,1,rep,name=attachments,proto3" json:"attachments,omitempty"`
@@ -325,7 +324,7 @@ var File_resources_mailer_message_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_message_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/mailer/message.proto\x12\x10resources.mailer\x1a&resources/common/content/content.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x97\x05\n" +
+	"\x1eresources/mailer/message.proto\x12\x10resources.mailer\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb0\x05\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1b\n" +
@@ -336,10 +335,9 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12 \n" +
-	"\x05title\x18\b \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x126\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x121\n" +
+	"\x05title\x18\b \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12C\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x06\xda\xf3\x18\x02\b\x01R\acontent\x126\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2\x1d.resources.mailer.MessageDataH\x03R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -351,9 +349,9 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\v_deleted_atB\a\n" +
 	"\x05_dataB\r\n" +
 	"\v_creator_idB\x0e\n" +
-	"\f_creator_job\"^\n" +
+	"\f_creator_job\"f\n" +
 	"\vMessageData\x12O\n" +
-	"\vattachments\x18\x01 \x03(\v2#.resources.mailer.MessageAttachmentB\b\xbaH\x05\x92\x01\x02\x10\x03R\vattachments\"m\n" +
+	"\vattachments\x18\x01 \x03(\v2#.resources.mailer.MessageAttachmentB\b\xbaH\x05\x92\x01\x02\x10\x03R\vattachments:\x06\xe2\xf3\x18\x02\b\x01\"m\n" +
 	"\x11MessageAttachment\x12I\n" +
 	"\bdocument\x18\x01 \x01(\v2+.resources.mailer.MessageAttachmentDocumentH\x00R\bdocumentB\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"Z\n" +

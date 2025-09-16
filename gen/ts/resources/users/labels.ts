@@ -12,8 +12,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.users.Labels
  */
 export interface Labels {
@@ -35,14 +33,10 @@ export interface Label {
      */
     job?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string name = 3
      */
     name: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string color = 4
      */
     color: string;
@@ -52,7 +46,7 @@ class Labels$Type extends MessageType<Labels> {
     constructor() {
         super("resources.users.Labels", [
             { no: 1, name: "list", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<Labels>): Labels {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -100,8 +94,8 @@ class Label$Type extends MessageType<Label> {
         super("resources.users.Label", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
-            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {

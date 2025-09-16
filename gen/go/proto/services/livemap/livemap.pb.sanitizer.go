@@ -3,6 +3,12 @@
 
 package livemap
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateMarkerRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,6 +26,8 @@ func (m *CreateOrUpdateMarkerRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateMarkerResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -37,6 +45,8 @@ func (m *CreateOrUpdateMarkerResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteMarkerRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -45,6 +55,8 @@ func (m *DeleteMarkerRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteMarkerResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -53,6 +65,8 @@ func (m *DeleteMarkerResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobsList) Sanitize() error {
 	if m == nil {
 		return nil
@@ -85,6 +99,8 @@ func (m *JobsList) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MarkerMarkersUpdates) Sanitize() error {
 	if m == nil {
 		return nil
@@ -105,6 +121,8 @@ func (m *MarkerMarkersUpdates) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Snapshot) Sanitize() error {
 	if m == nil {
 		return nil
@@ -125,6 +143,8 @@ func (m *Snapshot) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -133,6 +153,8 @@ func (m *StreamRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StreamResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -185,14 +207,21 @@ func (m *StreamResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserDelete) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserDeletes) Sanitize() error {
 	if m == nil {
 		return nil
@@ -213,6 +242,8 @@ func (m *UserDeletes) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserUpdates) Sanitize() error {
 	if m == nil {
 		return nil

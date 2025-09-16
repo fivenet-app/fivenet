@@ -7,6 +7,7 @@
 package wiki
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -202,7 +203,6 @@ func (x *PageActivity) GetData() *PageActivityData {
 	return nil
 }
 
-// @dbscanner: json
 type PageActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -581,7 +581,7 @@ var File_resources_wiki_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/wiki/activity.proto\x12\x0eresources.wiki\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	"\x1dresources/wiki/activity.proto\x12\x0eresources.wiki\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -601,10 +601,10 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xa6\x01\n" +
+	"\a_reason\"\xae\x01\n" +
 	"\x10PageActivityData\x127\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1b.resources.wiki.PageUpdatedH\x00R\aupdated\x12J\n" +
-	"\x0eaccess_updated\x18\x02 \x01(\v2!.resources.wiki.PageAccessUpdatedH\x00R\raccessUpdatedB\r\n" +
+	"\x0eaccess_updated\x18\x02 \x01(\v2!.resources.wiki.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\x98\x02\n" +
 	"\vPageUpdated\x12\"\n" +
 	"\n" +

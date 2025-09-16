@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Configuration) Sanitize() error {
 	if m == nil {
 		return nil
@@ -24,6 +26,8 @@ func (m *Configuration) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *EffectiveAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -41,6 +45,8 @@ func (m *EffectiveAccess) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *EffectiveDispatchAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -61,14 +67,26 @@ func (m *EffectiveDispatchAccess) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobAccessEntry) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PredefinedStatus) Sanitize() error {
 	if m == nil {
 		return nil
@@ -93,6 +111,8 @@ func (m *PredefinedStatus) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Settings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -125,6 +145,9 @@ func (m *Settings) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	// Field: OfferedAccess
 	if m.OfferedAccess != nil {
 		if v, ok := any(m.GetOfferedAccess()).(interface{ Sanitize() error }); ok {
@@ -155,6 +178,8 @@ func (m *Settings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Timings) Sanitize() error {
 	if m == nil {
 		return nil

@@ -7,6 +7,8 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -220,17 +222,14 @@ type Dispatch struct {
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	// Deprecated: Marked as deprecated in resources/centrum/dispatches.proto.
-	Job    string          `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Jobs   *JobList        `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
-	Status *DispatchStatus `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	// @sanitize
-	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	// @sanitize
-	Description *string             `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Attributes  *DispatchAttributes `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
-	X           float64             `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
-	Y           float64             `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
-	// @sanitize
+	Job           string                `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	Jobs          *JobList              `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	Status        *DispatchStatus       `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Message       string                `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
+	Description   *string               `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Attributes    *DispatchAttributes   `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
+	X             float64               `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64               `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
 	Postal        *string               `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
 	Anon          bool                  `protobuf:"varint,13,opt,name=anon,proto3" json:"anon,omitempty"`
 	CreatorId     *int32                `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
@@ -624,24 +623,21 @@ func (x *DispatchAssignment) GetExpiresAt() *timestamp.Timestamp {
 }
 
 type DispatchStatus struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	DispatchId int64                  `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
-	UnitId     *int64                 `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
-	Unit       *Unit                  `protobuf:"bytes,5,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
-	Status     StatusDispatch         `protobuf:"varint,6,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
-	// @sanitize
-	Reason *string `protobuf:"bytes,7,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	// @sanitize
-	Code   *string         `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`
-	UserId *int32          `protobuf:"varint,9,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	User   *jobs.Colleague `protobuf:"bytes,10,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	X      *float64        `protobuf:"fixed64,11,opt,name=x,proto3,oneof" json:"x,omitempty"`
-	Y      *float64        `protobuf:"fixed64,12,opt,name=y,proto3,oneof" json:"y,omitempty"`
-	// @sanitize
-	Postal        *string `protobuf:"bytes,13,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	CreatorJob    *string `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	DispatchId    int64                  `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	UnitId        *int64                 `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	Unit          *Unit                  `protobuf:"bytes,5,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	Status        StatusDispatch         `protobuf:"varint,6,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
+	Reason        *string                `protobuf:"bytes,7,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Code          *string                `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	UserId        *int32                 `protobuf:"varint,9,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	User          *jobs.Colleague        `protobuf:"bytes,10,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	X             *float64               `protobuf:"fixed64,11,opt,name=x,proto3,oneof" json:"x,omitempty"`
+	Y             *float64               `protobuf:"fixed64,12,opt,name=y,proto3,oneof" json:"y,omitempty"`
+	Postal        *string                `protobuf:"bytes,13,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	CreatorJob    *string                `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -774,7 +770,6 @@ func (x *DispatchStatus) GetCreatorJob() string {
 	return ""
 }
 
-// @dbscanner: json
 type DispatchReferences struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	References    []*DispatchReference   `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty"`
@@ -875,7 +870,7 @@ var File_resources_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xb2\a\n" +
+	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc4\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -884,16 +879,16 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
 	"\x03job\x18\x04 \x01(\tB\t\x18\x01\xbaH\x04r\x02\x18\x14R\x03job\x12.\n" +
 	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12>\n" +
-	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12\"\n" +
-	"\amessage\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\amessage\x12/\n" +
-	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x03R\vdescription\x88\x01\x01\x12J\n" +
+	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12(\n" +
+	"\amessage\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\amessage\x125\n" +
+	"\vdescription\x18\b \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x03R\vdescription\x88\x01\x01\x12J\n" +
 	"\n" +
 	"attributes\x18\t \x01(\v2%.resources.centrum.DispatchAttributesH\x04R\n" +
 	"attributes\x88\x01\x01\x12\f\n" +
 	"\x01x\x18\n" +
 	" \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\v \x01(\x01R\x01y\x12$\n" +
-	"\x06postal\x18\f \x01(\tB\a\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12\x12\n" +
+	"\x01y\x18\v \x01(\x01R\x01y\x12*\n" +
+	"\x06postal\x18\f \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12\x12\n" +
 	"\x04anon\x18\r \x01(\bR\x04anon\x12+\n" +
 	"\n" +
 	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x06R\tcreatorId\x88\x01\x01\x124\n" +
@@ -935,7 +930,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_unitB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_expires_at\"\xd0\x05\n" +
+	"\v_expires_at\"\xe2\x05\n" +
 	"\x0eDispatchStatus\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -944,15 +939,15 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"dispatchId\x12\x1c\n" +
 	"\aunit_id\x18\x04 \x01(\x03H\x01R\x06unitId\x88\x01\x01\x120\n" +
 	"\x04unit\x18\x05 \x01(\v2\x17.resources.centrum.UnitH\x02R\x04unit\x88\x01\x01\x12C\n" +
-	"\x06status\x18\x06 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
-	"\x06reason\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12 \n" +
-	"\x04code\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x04R\x04code\x88\x01\x01\x12%\n" +
+	"\x06status\x18\x06 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\b \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x14H\x04R\x04code\x88\x01\x01\x12%\n" +
 	"\auser_id\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x05R\x06userId\x88\x01\x01\x122\n" +
 	"\x04user\x18\n" +
 	" \x01(\v2\x19.resources.jobs.ColleagueH\x06R\x04user\x88\x01\x01\x12\x11\n" +
 	"\x01x\x18\v \x01(\x01H\aR\x01x\x88\x01\x01\x12\x11\n" +
-	"\x01y\x18\f \x01(\x01H\bR\x01y\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\r \x01(\tB\a\xbaH\x04r\x02\x180H\tR\x06postal\x88\x01\x01\x12-\n" +
+	"\x01y\x18\f \x01(\x01H\bR\x01y\x88\x01\x01\x12*\n" +
+	"\x06postal\x18\r \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x180H\tR\x06postal\x88\x01\x01\x12-\n" +
 	"\vcreator_job\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x18\x14H\n" +
 	"R\n" +
 	"creatorJob\x88\x01\x01B\r\n" +
@@ -968,11 +963,11 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\x02_xB\x04\n" +
 	"\x02_yB\t\n" +
 	"\a_postalB\x0e\n" +
-	"\f_creator_job\"Z\n" +
+	"\f_creator_job\"b\n" +
 	"\x12DispatchReferences\x12D\n" +
 	"\n" +
 	"references\x18\x01 \x03(\v2$.resources.centrum.DispatchReferenceR\n" +
-	"references\"\x9c\x01\n" +
+	"references:\x06\xe2\xf3\x18\x02\b\x01\"\x9c\x01\n" +
 	"\x11DispatchReference\x12,\n" +
 	"\x12target_dispatch_id\x18\x01 \x01(\x03R\x10targetDispatchId\x12Y\n" +
 	"\x0ereference_type\x18\x02 \x01(\x0e2(.resources.centrum.DispatchReferenceTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\rreferenceType*\xef\x03\n" +

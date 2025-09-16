@@ -45,26 +45,18 @@ export interface Template {
      */
     weight: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 6
      */
     title: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string description = 7
      */
     description: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 8
      */
     color?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string icon = 9
      */
     icon?: string;
@@ -130,26 +122,18 @@ export interface TemplateShort {
      */
     weight: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 6
      */
     title: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string description = 7
      */
     description: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 8
      */
     color?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string icon = 9
      */
     icon?: string;
@@ -171,8 +155,6 @@ export interface TemplateShort {
     workflow?: Workflow;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.documents.TemplateSchema
  */
 export interface TemplateSchema {
@@ -289,10 +271,10 @@ class Template$Type extends MessageType<Template> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
             { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } } } },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } } } },
-            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
+            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 10, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxBytes: "10240" } }, "tagger.tags": "alias:\"content_title\"" } },
             { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "0", maxBytes: "2000000" } }, "tagger.tags": "alias:\"content\"" } },
             { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "tagger.tags": "alias:\"state\"" } },
@@ -463,10 +445,10 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
             { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lt: 4294967295 } } } },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } } } },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } } } },
-            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
+            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 10, name: "schema", kind: "message", T: () => TemplateSchema, options: { "tagger.tags": "alias:\"schema\"" } },
             { no: 11, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 12, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
@@ -594,7 +576,7 @@ class TemplateSchema$Type extends MessageType<TemplateSchema> {
     constructor() {
         super("resources.documents.TemplateSchema", [
             { no: 1, name: "requirements", kind: "message", T: () => TemplateRequirements }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<TemplateSchema>): TemplateSchema {
         const message = globalThis.Object.create((this.messagePrototype!));

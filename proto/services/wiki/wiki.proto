@@ -24,7 +24,7 @@ message ListPagesRequest {
 
 message ListPagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.wiki.PageShort pages = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.wiki.PageShort pages = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetPageRequest {
@@ -66,7 +66,7 @@ message ListPageActivityRequest {
 
 message ListPageActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.wiki.PageActivity activity = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.wiki.PageActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service WikiService {

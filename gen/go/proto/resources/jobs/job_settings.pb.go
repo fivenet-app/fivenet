@@ -7,6 +7,8 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -71,7 +73,6 @@ func (UserInfoSyncUnemployedMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_jobs_job_settings_proto_rawDescGZIP(), []int{0}
 }
 
-// @dbscanner: json
 type DiscordSyncSettings struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	DryRun                   bool                   `protobuf:"varint,1,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
@@ -180,7 +181,6 @@ func (x *DiscordSyncSettings) GetQualificationsRoleFormat() string {
 	return ""
 }
 
-// @dbscanner: json
 type DiscordSyncChanges struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Changes       []*DiscordSyncChange   `protobuf:"bytes,1,rep,name=changes,proto3" json:"changes,omitempty"`
@@ -526,9 +526,8 @@ func (x *JobsAbsenceSettings) GetAbsenceRole() string {
 }
 
 type GroupSyncSettings struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	IgnoredRoleIds []string `protobuf:"bytes,1,rep,name=ignored_role_ids,json=ignoredRoleIds,proto3" json:"ignored_role_ids,omitempty"`
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	IgnoredRoleIds []string               `protobuf:"bytes,1,rep,name=ignored_role_ids,json=ignoredRoleIds,proto3" json:"ignored_role_ids,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -570,7 +569,6 @@ func (x *GroupSyncSettings) GetIgnoredRoleIds() []string {
 	return nil
 }
 
-// @dbscanner: json
 type JobSettings struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	AbsencePastDays   int32                  `protobuf:"varint,1,opt,name=absence_past_days,json=absencePastDays,proto3" json:"absence_past_days,omitempty"`
@@ -627,7 +625,7 @@ var File_resources_jobs_job_settings_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_job_settings_proto_rawDesc = "" +
 	"\n" +
-	"!resources/jobs/job_settings.proto\x12\x0eresources.jobs\x1a#resources/timestamp/timestamp.proto\"\xb9\x04\n" +
+	"!resources/jobs/job_settings.proto\x12\x0eresources.jobs\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xc1\x04\n" +
 	"\x13DiscordSyncSettings\x12\x17\n" +
 	"\adry_run\x18\x01 \x01(\bR\x06dryRun\x12$\n" +
 	"\x0euser_info_sync\x18\x02 \x01(\bR\fuserInfoSync\x12[\n" +
@@ -638,9 +636,9 @@ const file_resources_jobs_job_settings_proto_rawDesc = "" +
 	"\fjobs_absence\x18\x06 \x01(\bR\vjobsAbsence\x12W\n" +
 	"\x15jobs_absence_settings\x18\a \x01(\v2#.resources.jobs.JobsAbsenceSettingsR\x13jobsAbsenceSettings\x12Q\n" +
 	"\x13group_sync_settings\x18\b \x01(\v2!.resources.jobs.GroupSyncSettingsR\x11groupSyncSettings\x12E\n" +
-	"\x1aqualifications_role_format\x18\t \x01(\tB\a\xbaH\x04r\x02\x18@R\x18qualificationsRoleFormat\"Q\n" +
+	"\x1aqualifications_role_format\x18\t \x01(\tB\a\xbaH\x04r\x02\x18@R\x18qualificationsRoleFormat:\x06\xe2\xf3\x18\x02\b\x01\"Y\n" +
 	"\x12DiscordSyncChanges\x12;\n" +
-	"\achanges\x18\x01 \x03(\v2!.resources.jobs.DiscordSyncChangeR\achanges\"[\n" +
+	"\achanges\x18\x01 \x03(\v2!.resources.jobs.DiscordSyncChangeR\achanges:\x06\xe2\xf3\x18\x02\b\x01\"[\n" +
 	"\x11DiscordSyncChange\x122\n" +
 	"\x04time\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x04time\x12\x12\n" +
 	"\x04plan\x18\x02 \x01(\tR\x04plan\"\xed\x03\n" +
@@ -662,13 +660,13 @@ const file_resources_jobs_job_settings_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\tR\tchannelId\"A\n" +
 	"\x13JobsAbsenceSettings\x12*\n" +
-	"\fabsence_role\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\vabsenceRole\"M\n" +
-	"\x11GroupSyncSettings\x128\n" +
-	"\x10ignored_role_ids\x18\x01 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x19\"\x04r\x02\x18\x18R\x0eignoredRoleIds\"\x80\x01\n" +
+	"\fabsence_role\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\vabsenceRole\"^\n" +
+	"\x11GroupSyncSettings\x12I\n" +
+	"\x10ignored_role_ids\x18\x01 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\x19\"\x04r\x02\x18\x18R\x0eignoredRoleIds\"\x88\x01\n" +
 	"\vJobSettings\x125\n" +
 	"\x11absence_past_days\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x1f(\x00R\x0fabsencePastDays\x12:\n" +
 	"\x13absence_future_days\x18\x02 \x01(\x05B\n" +
-	"\xbaH\a\x1a\x05\x18\xba\x01(\x03R\x11absenceFutureDays*\xa3\x01\n" +
+	"\xbaH\a\x1a\x05\x18\xba\x01(\x03R\x11absenceFutureDays:\x06\xe2\xf3\x18\x02\b\x01*\xa3\x01\n" +
 	"\x1aUserInfoSyncUnemployedMode\x12.\n" +
 	"*USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED\x10\x00\x12,\n" +
 	"(USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE\x10\x01\x12'\n" +

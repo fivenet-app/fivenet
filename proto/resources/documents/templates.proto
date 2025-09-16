@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/documents/access.proto";
 import "resources/documents/category.proto";
 import "resources/documents/documents.proto";
@@ -20,20 +22,34 @@ message Template {
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
   uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
-  // @sanitize
-  string title = 6 [(buf.validate.field).string.min_len = 3];
-  // @sanitize
-  string description = 7 [(buf.validate.field).string.max_len = 255];
-  // @sanitize: method=StripTags
-  optional string color = 8 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 7
-  }];
-  // @sanitize: method=StripTags
-  optional string icon = 9 [(buf.validate.field).string = {
-    max_len: 128
-    suffix: "Icon"
-  }];
+  string title = 6 [
+    (buf.validate.field).string.min_len = 3,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string description = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string color = 8 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 7
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string icon = 9 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string content_title = 10 [
     (buf.validate.field).string = {
       min_len: 3
@@ -66,28 +82,43 @@ message TemplateShort {
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
   uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
-  // @sanitize
-  string title = 6 [(buf.validate.field).string.min_len = 3];
-  // @sanitize
-  string description = 7 [(buf.validate.field).string.max_len = 255];
-  // @sanitize: method=StripTags
-  optional string color = 8 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 7
-  }];
-  // @sanitize: method=StripTags
-  optional string icon = 9 [(buf.validate.field).string = {
-    max_len: 128
-    suffix: "Icon"
-  }];
+  string title = 6 [
+    (buf.validate.field).string.min_len = 3,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string description = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string color = 8 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 7
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string icon = 9 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   resources.documents.TemplateSchema schema = 10 [(tagger.tags) = "alias:\"schema\""];
   string creator_job = 11 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 12 [(buf.validate.field).string.max_len = 50];
   optional resources.documents.Workflow workflow = 18;
 }
 
-// @dbscanner: json
 message TemplateSchema {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   TemplateRequirements requirements = 1;
 }
 

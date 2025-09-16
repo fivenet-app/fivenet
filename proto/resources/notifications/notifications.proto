@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.notifications;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/i18n.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -29,18 +31,17 @@ message Notification {
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp read_at = 3;
   int32 user_id = 4 [(buf.validate.field).int32.gte = 0];
-  // @sanitize
-  resources.common.I18NItem title = 5;
+  resources.common.I18NItem title = 5 [(codegen.sanitizer.sanitizer) = {enabled: true}];
   NotificationType type = 6 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  resources.common.I18NItem content = 7;
+  resources.common.I18NItem content = 7 [(codegen.sanitizer.sanitizer) = {enabled: true}];
   NotificationCategory category = 8 [(buf.validate.field).enum.defined_only = true];
   optional Data data = 9;
   optional bool starred = 10;
 }
 
-// @dbscanner: json
 message Data {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   optional Link link = 1;
   optional resources.users.UserShort caused_by = 2;
   optional CalendarData calendar = 3;

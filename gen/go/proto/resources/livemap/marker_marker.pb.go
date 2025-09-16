@@ -7,6 +7,8 @@
 package livemap
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -77,28 +79,24 @@ func (MarkerType) EnumDescriptor() ([]byte, []int) {
 }
 
 type MarkerMarker struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	X         float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
-	Y         float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	ExpiresAt *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	// @sanitize
-	Name string `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize
-	Description *string `protobuf:"bytes,9,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// @sanitize: method=StripTags
-	Postal *string `protobuf:"bytes,10,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	// @sanitize: method=StripTags
-	Color         *string          `protobuf:"bytes,11,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Job           string           `protobuf:"bytes,12,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      string           `protobuf:"bytes,13,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
-	Type          MarkerType       `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.MarkerType" json:"type,omitempty" alias:"markerType"`
-	Data          *MarkerData      `protobuf:"bytes,15,opt,name=data,proto3" json:"data,omitempty" alias:"markerData"`
-	CreatorId     *int32           `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort `protobuf:"bytes,17,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	X             float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
+	Y             float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Name          string                 `protobuf:"bytes,8,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,9,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Postal        *string                `protobuf:"bytes,10,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	Color         *string                `protobuf:"bytes,11,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Job           string                 `protobuf:"bytes,12,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      string                 `protobuf:"bytes,13,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
+	Type          MarkerType             `protobuf:"varint,14,opt,name=type,proto3,enum=resources.livemap.MarkerType" json:"type,omitempty" alias:"markerType"`
+	Data          *MarkerData            `protobuf:"bytes,15,opt,name=data,proto3" json:"data,omitempty" alias:"markerData"`
+	CreatorId     *int32                 `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator       *users.UserShort       `protobuf:"bytes,17,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,7 +250,6 @@ func (x *MarkerMarker) GetCreator() *users.UserShort {
 	return nil
 }
 
-// @dbscanner
 type MarkerData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -388,9 +385,8 @@ func (x *CircleMarker) GetOpacity() float32 {
 }
 
 type IconMarker struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Icon          string `protobuf:"bytes,1,opt,name=icon,proto3" json:"icon,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Icon          string                 `protobuf:"bytes,1,opt,name=icon,proto3" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -436,7 +432,7 @@ var File_resources_livemap_marker_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xad\a\n" +
+	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xdb\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -448,13 +444,12 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
-	"\x04name\x18\b \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x01\x18\xff\x01R\x04name\x12/\n" +
-	"\vdescription\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x12$\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12$\n" +
+	"\x04name\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x01\x18\xff\x01R\x04name\x125\n" +
+	"\vdescription\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x125\n" +
 	"\x06postal\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x126\n" +
-	"\x05color\x18\v \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
+	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12G\n" +
+	"\x05color\x18\v \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
 	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12J\n" +
 	"\x04type\x18\x0e \x01(\x0e2\x1d.resources.livemap.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12J\n" +
@@ -471,11 +466,11 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\x06_colorB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator\"\x8b\x01\n" +
+	"\b_creator\"\x95\x01\n" +
 	"\n" +
 	"MarkerData\x129\n" +
 	"\x06circle\x18\x03 \x01(\v2\x1f.resources.livemap.CircleMarkerH\x00R\x06circle\x123\n" +
-	"\x04icon\x18\x04 \x01(\v2\x1d.resources.livemap.IconMarkerH\x00R\x04iconB\r\n" +
+	"\x04icon\x18\x04 \x01(\v2\x1d.resources.livemap.IconMarkerH\x00R\x04icon:\b\xe2\xf3\x18\x04\b\x01\x10\x01B\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"b\n" +
 	"\fCircleMarker\x12\x16\n" +
 	"\x06radius\x18\x01 \x01(\x05R\x06radius\x12.\n" +
@@ -483,10 +478,10 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity\"0\n" +
+	"\b_opacity\"A\n" +
 	"\n" +
-	"IconMarker\x12\"\n" +
-	"\x04icon\x18\x01 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconR\x04icon*l\n" +
+	"IconMarker\x123\n" +
+	"\x04icon\x18\x01 \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconR\x04icon*l\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

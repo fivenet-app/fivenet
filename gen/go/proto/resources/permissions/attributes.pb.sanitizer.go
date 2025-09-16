@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AttributeValues) Sanitize() error {
 	if m == nil {
 		return nil
@@ -43,6 +45,8 @@ func (m *AttributeValues) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobGradeList) Sanitize() error {
 	if m == nil {
 		return nil
@@ -69,6 +73,8 @@ func (m *JobGradeList) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobGrades) Sanitize() error {
 	if m == nil {
 		return nil
@@ -77,10 +83,15 @@ func (m *JobGrades) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RoleAttribute) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Category
+	m.Category = htmlsanitizer.Sanitize(m.Category)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -91,6 +102,9 @@ func (m *RoleAttribute) Sanitize() error {
 		}
 	}
 
+	// Field: Key
+	m.Key = htmlsanitizer.Sanitize(m.Key)
+
 	// Field: MaxValues
 	if m.MaxValues != nil {
 		if v, ok := any(m.GetMaxValues()).(interface{ Sanitize() error }); ok {
@@ -99,6 +113,12 @@ func (m *RoleAttribute) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: Type
+	m.Type = htmlsanitizer.Sanitize(m.Type)
 
 	// Field: ValidValues
 	if m.ValidValues != nil {
@@ -121,6 +141,8 @@ func (m *RoleAttribute) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StringList) Sanitize() error {
 	if m == nil {
 		return nil

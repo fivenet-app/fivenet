@@ -3,6 +3,12 @@
 
 package sync
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CitizenLocations) Sanitize() error {
 	if m == nil {
 		return nil
@@ -17,9 +23,17 @@ func (m *CitizenLocations) Sanitize() error {
 		}
 	}
 
+	// Field: Identifier
+	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataJobs) Sanitize() error {
 	if m == nil {
 		return nil
@@ -40,6 +54,8 @@ func (m *DataJobs) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataLicenses) Sanitize() error {
 	if m == nil {
 		return nil
@@ -60,6 +76,8 @@ func (m *DataLicenses) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataStatus) Sanitize() error {
 	if m == nil {
 		return nil
@@ -68,6 +86,8 @@ func (m *DataStatus) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataUserLocations) Sanitize() error {
 	if m == nil {
 		return nil
@@ -88,6 +108,8 @@ func (m *DataUserLocations) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataUsers) Sanitize() error {
 	if m == nil {
 		return nil
@@ -108,6 +130,8 @@ func (m *DataUsers) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DataVehicles) Sanitize() error {
 	if m == nil {
 		return nil
@@ -128,6 +152,8 @@ func (m *DataVehicles) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteUsers) Sanitize() error {
 	if m == nil {
 		return nil
@@ -136,18 +162,33 @@ func (m *DeleteUsers) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteVehicles) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Plates
+	for idx, item := range m.Plates {
+		_, _ = idx, item
+
+		m.Plates[idx] = htmlsanitizer.Sanitize(m.Plates[idx])
+
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *LastCharID) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Identifier
+	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
 
 	return nil
 }

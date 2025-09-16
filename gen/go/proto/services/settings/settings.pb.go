@@ -9,6 +9,7 @@ package settings
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	discord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
@@ -852,15 +853,13 @@ type ViewAuditLogRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserIds []int32              `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	From    *timestamp.Timestamp `protobuf:"bytes,4,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To      *timestamp.Timestamp `protobuf:"bytes,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
-	// @sanitize: method=StripTags
-	Services []string `protobuf:"bytes,6,rep,name=services,proto3" json:"services,omitempty"`
-	// @sanitize: method=StripTags
-	Methods       []string          `protobuf:"bytes,7,rep,name=methods,proto3" json:"methods,omitempty"`
-	Search        *string           `protobuf:"bytes,8,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	States        []audit.EventType `protobuf:"varint,9,rep,packed,name=states,proto3,enum=resources.audit.EventType" json:"states,omitempty"`
+	UserIds       []int32              `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	From          *timestamp.Timestamp `protobuf:"bytes,4,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To            *timestamp.Timestamp `protobuf:"bytes,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	Services      []string             `protobuf:"bytes,6,rep,name=services,proto3" json:"services,omitempty"`
+	Methods       []string             `protobuf:"bytes,7,rep,name=methods,proto3" json:"methods,omitempty"`
+	Search        *string              `protobuf:"bytes,8,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	States        []audit.EventType    `protobuf:"varint,9,rep,packed,name=states,proto3,enum=resources.audit.EventType" json:"states,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1246,7 +1245,7 @@ var File_services_settings_settings_proto protoreflect.FileDescriptor
 
 const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
+	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
 	"\x12GetJobPropsRequest\"L\n" +
 	"\x13GetJobPropsResponse\x125\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"K\n" +
@@ -1293,7 +1292,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x03 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"\x93\x04\n" +
+	"attributes\"\xb5\x04\n" +
 	"\x13ViewAuditLogRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1301,10 +1300,10 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x127\n" +
 	"\x04from\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
-	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12*\n" +
-	"\bservices\x18\x06 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04r\x02\x18@R\bservices\x12(\n" +
-	"\amethods\x18\a \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\n" +
+	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12;\n" +
+	"\bservices\x18\x06 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
+	"\"\x04r\x02\x18@R\bservices\x129\n" +
+	"\amethods\x18\a \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
 	"\"\x04r\x02\x18@R\amethods\x12$\n" +
 	"\x06search\x18\b \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\x06search\x88\x01\x01\x12C\n" +
 	"\x06states\x18\t \x03(\x0e2\x1a.resources.audit.EventTypeB\x0f\xbaH\f\x92\x01\t\x10\n" +

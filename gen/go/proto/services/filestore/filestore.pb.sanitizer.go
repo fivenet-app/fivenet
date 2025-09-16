@@ -3,14 +3,25 @@
 
 package filestore
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFileByPathRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Path
+	m.Path = htmlsanitizer.Sanitize(m.Path)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFileByPathResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -19,6 +30,8 @@ func (m *DeleteFileByPathResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListFilesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -33,9 +46,16 @@ func (m *ListFilesRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Path
+	if m.Path != nil {
+		*m.Path = htmlsanitizer.Sanitize(*m.Path)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListFilesResponse) Sanitize() error {
 	if m == nil {
 		return nil

@@ -3,12 +3,15 @@ syntax = "proto3";
 package resources.jobs;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
-// @dbscanner: json
 message DiscordSyncSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   bool dry_run = 1;
 
   bool user_info_sync = 2;
@@ -25,8 +28,9 @@ message DiscordSyncSettings {
   string qualifications_role_format = 9 [(buf.validate.field).string.max_len = 64];
 }
 
-// @dbscanner: json
 message DiscordSyncChanges {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated DiscordSyncChange changes = 1;
 }
 
@@ -70,17 +74,23 @@ message JobsAbsenceSettings {
 }
 
 message GroupSyncSettings {
-  // @sanitize: method=StripTags
-  repeated string ignored_role_ids = 1 [(buf.validate.field).repeated = {
-    items: {
-      string: {max_len: 24}
+  repeated string ignored_role_ids = 1 [
+    (buf.validate.field).repeated = {
+      items: {
+        string: {max_len: 24}
+      }
+      max_items: 25
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-    max_items: 25
-  }];
+  ];
 }
 
-// @dbscanner: json
 message JobSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   int32 absence_past_days = 1 [(buf.validate.field).int32 = {
     gte: 0
     lte: 31

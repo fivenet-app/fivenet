@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ObjectSpecs) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,6 +17,8 @@ func (m *ObjectSpecs) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Template) Sanitize() error {
 	if m == nil {
 		return nil
@@ -30,10 +34,12 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: Color
-
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
+
+	// Field: Content
+	m.Content = htmlsanitizer.Sanitize(m.Content)
 
 	// Field: ContentAccess
 	if m.ContentAccess != nil {
@@ -44,6 +50,9 @@ func (m *Template) Sanitize() error {
 		}
 	}
 
+	// Field: ContentTitle
+	m.ContentTitle = htmlsanitizer.Sanitize(m.ContentTitle)
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -53,11 +62,18 @@ func (m *Template) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
 	// Field: Description
 	m.Description = htmlsanitizer.Sanitize(m.Description)
 
 	// Field: Icon
-
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
@@ -83,6 +99,9 @@ func (m *Template) Sanitize() error {
 		}
 	}
 
+	// Field: State
+	m.State = htmlsanitizer.Sanitize(m.State)
+
 	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 
@@ -107,6 +126,8 @@ func (m *Template) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -160,6 +181,8 @@ func (m *TemplateData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateJobAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -174,9 +197,24 @@ func (m *TemplateJobAccess) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateRequirements) Sanitize() error {
 	if m == nil {
 		return nil
@@ -212,6 +250,8 @@ func (m *TemplateRequirements) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateSchema) Sanitize() error {
 	if m == nil {
 		return nil
@@ -229,6 +269,8 @@ func (m *TemplateSchema) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -244,7 +286,6 @@ func (m *TemplateShort) Sanitize() error {
 	}
 
 	// Field: Color
-
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
@@ -258,11 +299,18 @@ func (m *TemplateShort) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
 	// Field: Description
 	m.Description = htmlsanitizer.Sanitize(m.Description)
 
 	// Field: Icon
-
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
@@ -300,6 +348,8 @@ func (m *TemplateShort) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TemplateUserAccess) Sanitize() error {
 	if m == nil {
 		return nil

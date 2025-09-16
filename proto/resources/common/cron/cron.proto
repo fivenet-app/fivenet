@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.common.cron;
 
+import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
@@ -84,6 +85,8 @@ message CronjobCompletedEvent {
 }
 
 message GenericCronData {
-  // @sanitize: method=StripTags
-  map<string, string> attributes = 1;
+  map<string, string> attributes = 1 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
 }

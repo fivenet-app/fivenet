@@ -9,6 +9,7 @@ package jobs
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -484,10 +485,9 @@ func (x *ListColleagueActivityResponse) GetActivity() []*jobs.ColleagueActivity 
 }
 
 type SetColleaguePropsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Props *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	// @sanitize
-	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -925,9 +925,8 @@ func (x *GetMOTDResponse) GetMotd() string {
 }
 
 type SetMOTDRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Motd          string `protobuf:"bytes,1,opt,name=motd,proto3" json:"motd,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Motd          string                 `protobuf:"bytes,1,opt,name=motd,proto3" json:"motd,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1017,7 +1016,7 @@ var File_services_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xed\x03\n" +
+	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xed\x03\n" +
 	"\x15ListColleaguesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1068,10 +1067,10 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12C\n" +
-	"\bactivity\x18\x02 \x03(\v2!.resources.jobs.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"w\n" +
+	"\bactivity\x18\x02 \x03(\v2!.resources.jobs.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"}\n" +
 	"\x18SetColleaguePropsRequest\x124\n" +
-	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12%\n" +
-	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"Q\n" +
 	"\x19SetColleaguePropsResponse\x124\n" +
 	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\"L\n" +
@@ -1090,9 +1089,9 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x05count\x18\x01 \x03(\v2\x1a.resources.jobs.LabelCountR\x05count\"\x10\n" +
 	"\x0eGetMOTDRequest\"%\n" +
 	"\x0fGetMOTDResponse\x12\x12\n" +
-	"\x04motd\x18\x01 \x01(\tR\x04motd\".\n" +
-	"\x0eSetMOTDRequest\x12\x1c\n" +
-	"\x04motd\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bR\x04motd\"%\n" +
+	"\x04motd\x18\x01 \x01(\tR\x04motd\"?\n" +
+	"\x0eSetMOTDRequest\x12-\n" +
+	"\x04motd\x18\x01 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\bR\x04motd\"%\n" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
 	"\x04motd\x18\x01 \x01(\tR\x04motd2\xaf\n" +
 	"\n" +

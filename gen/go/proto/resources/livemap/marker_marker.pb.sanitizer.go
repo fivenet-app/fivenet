@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CircleMarker) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,6 +17,8 @@ func (m *CircleMarker) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *IconMarker) Sanitize() error {
 	if m == nil {
 		return nil
@@ -26,6 +30,8 @@ func (m *IconMarker) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MarkerData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -54,13 +60,14 @@ func (m *MarkerData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MarkerMarker) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Color
-
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
@@ -102,7 +109,6 @@ func (m *MarkerMarker) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
@@ -116,11 +122,16 @@ func (m *MarkerMarker) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	m.JobLabel = htmlsanitizer.Sanitize(m.JobLabel)
+
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	// Field: Postal
-
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.StripTags(*m.Postal)
 	}

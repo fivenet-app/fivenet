@@ -7,6 +7,8 @@
 package qualifications
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -242,21 +244,18 @@ func (ResultStatus) EnumDescriptor() ([]byte, []int) {
 }
 
 type Qualification struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
-	Weight    uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
-	Closed    bool                   `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft     bool                   `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public    bool                   `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
-	// @sanitize: method=StripTags
-	Abbreviation string `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
-	// @sanitize
-	Title string `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize: method=StripTags
+	state              protoimpl.MessageState        `protogen:"open.v1"`
+	Id                 int64                         `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt          *timestamp.Timestamp          `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt          *timestamp.Timestamp          `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt          *timestamp.Timestamp          `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Job                string                        `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
+	Weight             uint32                        `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
+	Closed             bool                          `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft              bool                          `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public             bool                          `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
+	Abbreviation       string                        `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
+	Title              string                        `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
 	Description        *string                       `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Content            *content.Content              `protobuf:"bytes,13,opt,name=content,proto3" json:"content,omitempty"`
 	CreatorId          *int32                        `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
@@ -272,11 +271,10 @@ type Qualification struct {
 	Result             *QualificationResult          `protobuf:"bytes,24,opt,name=result,proto3,oneof" json:"result,omitempty"`
 	Request            *QualificationRequest         `protobuf:"bytes,25,opt,name=request,proto3,oneof" json:"request,omitempty"`
 	LabelSyncEnabled   bool                          `protobuf:"varint,26,opt,name=label_sync_enabled,json=labelSyncEnabled,proto3" json:"label_sync_enabled,omitempty"`
-	// @sanitize: method=StripTags
-	LabelSyncFormat *string      `protobuf:"bytes,27,opt,name=label_sync_format,json=labelSyncFormat,proto3,oneof" json:"label_sync_format,omitempty"`
-	Files           []*file.File `protobuf:"bytes,28,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	LabelSyncFormat    *string                       `protobuf:"bytes,27,opt,name=label_sync_format,json=labelSyncFormat,proto3,oneof" json:"label_sync_format,omitempty"`
+	Files              []*file.File                  `protobuf:"bytes,28,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Qualification) Reset() {
@@ -506,21 +504,18 @@ func (x *Qualification) GetFiles() []*file.File {
 }
 
 type QualificationShort struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
-	Weight    uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
-	Closed    bool                   `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft     bool                   `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public    bool                   `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
-	// @sanitize: method=StripTags
-	Abbreviation string `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
-	// @sanitize
-	Title string `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize: method=StripTags
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Id            int64                       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp        `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp        `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp        `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Job           string                      `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
+	Weight        uint32                      `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
+	Closed        bool                        `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft         bool                        `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public        bool                        `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
+	Abbreviation  string                      `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
+	Title         string                      `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
 	Description   *string                     `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	CreatorId     *int32                      `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator       *users.UserShort            `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
@@ -772,7 +767,6 @@ func (x *QualificationRequirement) GetTargetQualification() *QualificationShort 
 	return nil
 }
 
-// @dbscanner: json
 type QualificationDiscordSettings struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RoleName      *string                `protobuf:"bytes,1,opt,name=role_name,json=roleName,proto3,oneof" json:"role_name,omitempty"`
@@ -825,7 +819,6 @@ func (x *QualificationDiscordSettings) GetRoleFormat() string {
 	return ""
 }
 
-// @dbscanner: json
 type QualificationExamSettings struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Time          *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
@@ -902,15 +895,13 @@ type QualificationRequest struct {
 	Qualification   *QualificationShort    `protobuf:"bytes,4,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	UserId          int32                  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"`
 	User            *users.UserShort       `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
-	// @sanitize: method=StripTags
-	UserComment *string              `protobuf:"bytes,7,opt,name=user_comment,json=userComment,proto3,oneof" json:"user_comment,omitempty"`
-	Status      *RequestStatus       `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.RequestStatus,oneof" json:"status,omitempty"`
-	ApprovedAt  *timestamp.Timestamp `protobuf:"bytes,9,opt,name=approved_at,json=approvedAt,proto3,oneof" json:"approved_at,omitempty"`
-	// @sanitize: method=StripTags
-	ApproverComment *string          `protobuf:"bytes,10,opt,name=approver_comment,json=approverComment,proto3,oneof" json:"approver_comment,omitempty"`
-	ApproverId      *int32           `protobuf:"varint,11,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
-	Approver        *users.UserShort `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty" alias:"approver"`
-	ApproverJob     *string          `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
+	UserComment     *string                `protobuf:"bytes,7,opt,name=user_comment,json=userComment,proto3,oneof" json:"user_comment,omitempty"`
+	Status          *RequestStatus         `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.RequestStatus,oneof" json:"status,omitempty"`
+	ApprovedAt      *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=approved_at,json=approvedAt,proto3,oneof" json:"approved_at,omitempty"`
+	ApproverComment *string                `protobuf:"bytes,10,opt,name=approver_comment,json=approverComment,proto3,oneof" json:"approver_comment,omitempty"`
+	ApproverId      *int32                 `protobuf:"varint,11,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
+	Approver        *users.UserShort       `protobuf:"bytes,12,opt,name=approver,proto3,oneof" json:"approver,omitempty" alias:"approver"`
+	ApproverJob     *string                `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1047,13 +1038,12 @@ type QualificationResult struct {
 	User            *users.UserShort       `protobuf:"bytes,7,opt,name=user,proto3" json:"user,omitempty" alias:"user"`
 	Status          ResultStatus           `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.ResultStatus" json:"status,omitempty"`
 	Score           *float32               `protobuf:"fixed32,9,opt,name=score,proto3,oneof" json:"score,omitempty"`
-	// @sanitize: method=StripTags
-	Summary       string           `protobuf:"bytes,10,opt,name=summary,proto3" json:"summary,omitempty"`
-	CreatorId     int32            `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator       *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty" alias:"creator"`
-	CreatorJob    string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Summary         string                 `protobuf:"bytes,10,opt,name=summary,proto3" json:"summary,omitempty"`
+	CreatorId       int32                  `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3" json:"creator,omitempty" alias:"creator"`
+	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *QualificationResult) Reset() {
@@ -1181,7 +1171,7 @@ var File_resources_qualifications_qualifications_proto protoreflect.FileDescript
 
 const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xa4\x0e\n" +
+	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xdd\x0e\n" +
 	"\rQualification\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1194,12 +1184,11 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x06weight\x18\x06 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
 	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\t \x01(\bR\x06public\x12+\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x12<\n" +
 	"\fabbreviation\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
-	"\x05title\x18\v \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x12/\n" +
-	"\vdescription\x18\f \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12;\n" +
+	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18\x14R\fabbreviation\x12&\n" +
+	"\x05title\x18\v \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x12@\n" +
+	"\vdescription\x18\f \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12;\n" +
 	"\acontent\x18\r \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
 	"\n" +
 	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12O\n" +
@@ -1216,8 +1205,8 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x06result\x18\x18 \x01(\v2-.resources.qualifications.QualificationResultH\tR\x06result\x88\x01\x01\x12M\n" +
 	"\arequest\x18\x19 \x01(\v2..resources.qualifications.QualificationRequestH\n" +
 	"R\arequest\x88\x01\x01\x12,\n" +
-	"\x12label_sync_enabled\x18\x1a \x01(\bR\x10labelSyncEnabled\x129\n" +
-	"\x11label_sync_format\x18\x1b \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\vR\x0flabelSyncFormat\x88\x01\x01\x12>\n" +
+	"\x12label_sync_enabled\x18\x1a \x01(\bR\x10labelSyncEnabled\x12J\n" +
+	"\x11label_sync_format\x18\x1b \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x01H\vR\x0flabelSyncFormat\x88\x01\x01\x12>\n" +
 	"\x05files\x18\x1c \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
@@ -1232,7 +1221,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\a_resultB\n" +
 	"\n" +
 	"\b_requestB\x14\n" +
-	"\x12_label_sync_format\"\x91\t\n" +
+	"\x12_label_sync_format\"\xb9\t\n" +
 	"\x12QualificationShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1245,12 +1234,11 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x06weight\x18\x06 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
 	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\t \x01(\bR\x06public\x12+\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x12<\n" +
 	"\fabbreviation\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
-	"\x05title\x18\v \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x12/\n" +
-	"\vdescription\x18\f \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12+\n" +
+	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18\x14R\fabbreviation\x12&\n" +
+	"\x05title\x18\v \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x12@\n" +
+	"\vdescription\x18\f \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12O\n" +
 	"\acreator\x18\x0f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12(\n" +
@@ -1277,20 +1265,20 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x17target_qualification_id\x18\x04 \x01(\x03R\x15targetQualificationId\x12\x86\x01\n" +
 	"\x14target_qualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortB \x9a\x84\x9e\x03\x1balias:\"targetqualification\"H\x01R\x13targetQualification\x88\x01\x01B\r\n" +
 	"\v_created_atB\x17\n" +
-	"\x15_target_qualification\"\x96\x01\n" +
+	"\x15_target_qualification\"\x9e\x01\n" +
 	"\x1cQualificationDiscordSettings\x12)\n" +
 	"\trole_name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@H\x00R\broleName\x88\x01\x01\x12-\n" +
 	"\vrole_format\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\n" +
-	"roleFormat\x88\x01\x01B\f\n" +
+	"roleFormat\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\f\n" +
 	"\n" +
 	"_role_nameB\x0e\n" +
-	"\f_role_format\"\x81\x02\n" +
+	"\f_role_format\"\x89\x02\n" +
 	"\x19QualificationExamSettings\x12C\n" +
 	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\x11\xc8\x01\x01\xaa\x01\v\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\x12\x1d\n" +
 	"\n" +
 	"auto_grade\x18\x02 \x01(\bR\tautoGrade\x12Y\n" +
 	"\x0fauto_grade_mode\x18\x03 \x01(\x0e2'.resources.qualifications.AutoGradeModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\rautoGradeMode\x12%\n" +
-	"\x0eminimum_points\x18\x04 \x01(\x05R\rminimumPoints\"\x9a\b\n" +
+	"\x0eminimum_points\x18\x04 \x01(\x05R\rminimumPoints:\x06\xe2\xf3\x18\x02\b\x01\"\xbc\b\n" +
 	"\x14QualificationRequest\x12B\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -1299,13 +1287,13 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x10qualification_id\x18\x03 \x01(\x03B/\x9a\x84\x9e\x03*sql:\"primary_key\" alias:\"qualification_id\"R\x0fqualificationId\x12W\n" +
 	"\rqualification\x18\x04 \x01(\v2,.resources.qualifications.QualificationShortH\x02R\rqualification\x88\x01\x01\x126\n" +
 	"\auser_id\x18\x05 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02(\x00R\x06userId\x12A\n" +
-	"\x04user\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x120\n" +
-	"\fuser_comment\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x03R\vuserComment\x88\x01\x01\x12N\n" +
+	"\x04user\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04user\x12A\n" +
+	"\fuser_comment\x18\a \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x03R\vuserComment\x88\x01\x01\x12N\n" +
 	"\x06status\x18\b \x01(\x0e2'.resources.qualifications.RequestStatusB\b\xbaH\x05\x82\x01\x02\x10\x01H\x04R\x06status\x88\x01\x01\x12D\n" +
 	"\vapproved_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\n" +
-	"approvedAt\x88\x01\x01\x128\n" +
+	"approvedAt\x88\x01\x01\x12I\n" +
 	"\x10approver_comment\x18\n" +
-	" \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x06R\x0fapproverComment\x88\x01\x01\x12-\n" +
+	" \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x06R\x0fapproverComment\x88\x01\x01\x12-\n" +
 	"\vapprover_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\n" +
 	"approverId\x88\x01\x01\x12R\n" +
 	"\bapprover\x18\f \x01(\v2\x1a.resources.users.UserShortB\x15\x9a\x84\x9e\x03\x10alias:\"approver\"H\bR\bapprover\x88\x01\x01\x12&\n" +
@@ -1319,7 +1307,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x11_approver_commentB\x0e\n" +
 	"\f_approver_idB\v\n" +
 	"\t_approverB\x0f\n" +
-	"\r_approver_job\"\xab\x06\n" +
+	"\r_approver_job\"\xbc\x06\n" +
 	"\x13QualificationResult\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -1333,9 +1321,9 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x06status\x18\b \x01(\x0e2&.resources.qualifications.ResultStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12*\n" +
 	"\x05score\x18\t \x01(\x02B\x0f\xbaH\f\n" +
 	"\n" +
-	"\x1d\x00\x00zD-\x00\x00\x00\x00H\x03R\x05score\x88\x01\x01\x12\"\n" +
+	"\x1d\x00\x00zD-\x00\x00\x00\x00H\x03R\x05score\x88\x01\x01\x123\n" +
 	"\asummary\x18\n" +
-	" \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04R\asummary\x12&\n" +
+	" \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04R\asummary\x12&\n" +
 	"\n" +
 	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\tcreatorId\x12J\n" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"R\acreator\x12(\n" +

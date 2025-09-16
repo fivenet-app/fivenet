@@ -3,14 +3,31 @@
 
 package discord
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Channel) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: GuildId
+	m.GuildId = htmlsanitizer.Sanitize(m.GuildId)
+
+	// Field: Id
+	m.Id = htmlsanitizer.Sanitize(m.Id)
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Guild) Sanitize() error {
 	if m == nil {
 		return nil
@@ -24,6 +41,15 @@ func (m *Guild) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Icon
+	m.Icon = htmlsanitizer.Sanitize(m.Icon)
+
+	// Field: Id
+	m.Id = htmlsanitizer.Sanitize(m.Id)
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	return nil
 }

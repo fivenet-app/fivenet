@@ -8,5 +8,5 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/i
 
 // Marks a repeated field for which we want to generate an ItemsLen() method.
 extend google.protobuf.FieldOptions {
-  bool items_len = 51001;
+  bool enabled = 51001;
 }

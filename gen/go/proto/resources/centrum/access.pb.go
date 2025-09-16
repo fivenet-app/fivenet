@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -78,7 +79,6 @@ func (CentrumAccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{0}
 }
 
-// @dbscanner: json
 type CentrumAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*CentrumJobAccess    `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
@@ -317,10 +317,10 @@ var File_resources_centrum_access_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_access_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"i\n" +
+	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"q\n" +
 	"\rCentrumAccess\x12X\n" +
 	"\x04jobs\x18\x01 \x03(\v2#.resources.centrum.CentrumJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x04jobs\"\xa5\x04\n" +
+	"R\x04jobs:\x06\xe2\xf3\x18\x02\b\x01\"\xa5\x04\n" +
 	"\x10CentrumJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +

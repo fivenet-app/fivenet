@@ -83,8 +83,6 @@ export interface SetVehiclePropsResponse {
      */
     props?: VehicleProps;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
@@ -191,7 +189,7 @@ class ListVehiclesResponse$Type extends MessageType<ListVehiclesResponse> {
     constructor() {
         super("services.vehicles.ListVehiclesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "vehicles", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Vehicle, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesResponse>): ListVehiclesResponse {
@@ -291,7 +289,7 @@ class SetVehiclePropsResponse$Type extends MessageType<SetVehiclePropsResponse> 
     constructor() {
         super("services.vehicles.SetVehiclePropsResponse", [
             { no: 1, name: "props", kind: "message", T: () => VehicleProps },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<SetVehiclePropsResponse>): SetVehiclePropsResponse {

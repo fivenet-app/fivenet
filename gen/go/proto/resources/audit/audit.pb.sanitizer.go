@@ -3,6 +3,12 @@
 
 package audit
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AuditEntry) Sanitize() error {
 	if m == nil {
 		return nil
@@ -17,6 +23,17 @@ func (m *AuditEntry) Sanitize() error {
 		}
 	}
 
+	// Field: Data
+	if m.Data != nil {
+		*m.Data = htmlsanitizer.Sanitize(*m.Data)
+	}
+
+	// Field: Method
+	m.Method = htmlsanitizer.Sanitize(m.Method)
+
+	// Field: Service
+	m.Service = htmlsanitizer.Sanitize(m.Service)
+
 	// Field: TargetUser
 	if m.TargetUser != nil {
 		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
@@ -24,6 +41,11 @@ func (m *AuditEntry) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: TargetUserJob
+	if m.TargetUserJob != nil {
+		*m.TargetUserJob = htmlsanitizer.Sanitize(*m.TargetUserJob)
 	}
 
 	// Field: User
@@ -34,6 +56,9 @@ func (m *AuditEntry) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: UserJob
+	m.UserJob = htmlsanitizer.Sanitize(m.UserJob)
 
 	return nil
 }

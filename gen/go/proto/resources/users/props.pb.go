@@ -7,6 +7,7 @@
 package users
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -41,10 +42,9 @@ type UserProps struct {
 	MugshotFileId                    *int64                 `protobuf:"varint,12,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof" json:"mugshot_file_id,omitempty"`
 	Mugshot                          *file.File             `protobuf:"bytes,13,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty" alias:"mugshot"`
 	Labels                           *Labels                `protobuf:"bytes,14,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
-	// @sanitize: method=StripTags
-	Email         *string `protobuf:"bytes,15,opt,name=email,proto3,oneof" json:"email,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Email                            *string                `protobuf:"bytes,15,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	unknownFields                    protoimpl.UnknownFields
+	sizeCache                        protoimpl.SizeCache
 }
 
 func (x *UserProps) Reset() {
@@ -186,7 +186,7 @@ var File_resources_users_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x13tagger/tagger.proto\"\xad\b\n" +
+	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x13tagger/tagger.proto\"\xbe\b\n" +
 	"\tUserProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12B\n" +
 	"\n" +
@@ -206,8 +206,8 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\x0fmugshot_file_id\x18\f \x01(\x03H\n" +
 	"R\rmugshotFileId\x88\x01\x01\x12I\n" +
 	"\amugshot\x18\r \x01(\v2\x14.resources.file.FileB\x14\x9a\x84\x9e\x03\x0falias:\"mugshot\"H\vR\amugshot\x88\x01\x01\x124\n" +
-	"\x06labels\x18\x0e \x01(\v2\x17.resources.users.LabelsH\fR\x06labels\x88\x01\x01\x12$\n" +
-	"\x05email\x18\x0f \x01(\tB\t\xbaH\x06r\x04\x10\x06\x18PH\rR\x05email\x88\x01\x01B\r\n" +
+	"\x06labels\x18\x0e \x01(\v2\x17.resources.users.LabelsH\fR\x06labels\x88\x01\x01\x125\n" +
+	"\x05email\x18\x0f \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x06\x18PH\rR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\v\n" +
 	"\t_job_nameB\x06\n" +

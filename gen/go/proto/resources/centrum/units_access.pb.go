@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -73,7 +74,6 @@ func (UnitAccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{0}
 }
 
-// @dbscanner: json
 type UnitAccess struct {
 	state          protoimpl.MessageState     `protogen:"open.v1"`
 	Jobs           []*UnitJobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
@@ -350,11 +350,11 @@ var File_resources_centrum_units_access_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_access_proto_rawDesc = "" +
 	"\n" +
-	"$resources/centrum/units_access.proto\x12\x11resources.centrum\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xe2\x01\n" +
+	"$resources/centrum/units_access.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xea\x01\n" +
 	"\n" +
 	"UnitAccess\x12U\n" +
 	"\x04jobs\x18\x01 \x03(\v2 .resources.centrum.UnitJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x04jobs\x12}\n" +
-	"\x0equalifications\x18\x03 \x03(\v2*.resources.centrum.UnitQualificationAccessB)\x9a\x84\x9e\x03\x1calias:\"qualification_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x0equalifications\"\xa1\x03\n" +
+	"\x0equalifications\x18\x03 \x03(\v2*.resources.centrum.UnitQualificationAccessB)\x9a\x84\x9e\x03\x1calias:\"qualification_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x0equalifications:\x06\xe2\xf3\x18\x02\b\x01\"\xa1\x03\n" +
 	"\rUnitJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +

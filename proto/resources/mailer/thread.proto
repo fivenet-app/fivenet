@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.mailer;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/mailer/email.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -19,11 +20,16 @@ message Thread {
   optional resources.mailer.Email creator_email = 6;
   optional int32 creator_id = 7 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 8 [(tagger.tags) = "alias:\"creator\""];
-  // @sanitize: method=StripTags
-  string title = 9 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 255
-  }];
+  string title = 9 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   repeated ThreadRecipientEmail recipients = 10 [(buf.validate.field).repeated.max_items = 20];
   optional ThreadState state = 11 [(tagger.tags) = "alias:\"thread_state\""];
 }

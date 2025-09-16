@@ -3,6 +3,12 @@
 
 package permissions
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PermItem) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,10 +17,15 @@ func (m *PermItem) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Permission) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Category
+	m.Category = htmlsanitizer.Sanitize(m.Category)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -25,9 +36,17 @@ func (m *Permission) Sanitize() error {
 		}
 	}
 
+	// Field: GuardName
+	m.GuardName = htmlsanitizer.Sanitize(m.GuardName)
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Role) Sanitize() error {
 	if m == nil {
 		return nil
@@ -52,6 +71,19 @@ func (m *Role) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
 	}
 
 	// Field: Permissions

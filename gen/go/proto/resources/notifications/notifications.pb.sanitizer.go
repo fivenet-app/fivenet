@@ -3,6 +3,12 @@
 
 package notifications
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,6 +17,8 @@ func (m *CalendarData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Data) Sanitize() error {
 	if m == nil {
 		return nil
@@ -46,14 +54,26 @@ func (m *Data) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Link) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Title
+	if m.Title != nil {
+		*m.Title = htmlsanitizer.Sanitize(*m.Title)
+	}
+
+	// Field: To
+	m.To = htmlsanitizer.Sanitize(m.To)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Notification) Sanitize() error {
 	if m == nil {
 		return nil

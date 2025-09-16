@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -134,35 +135,32 @@ func (DocRelation) EnumDescriptor() ([]byte, []int) {
 }
 
 type Document struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CategoryId *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Category   *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
-	// @sanitize
-	Title       string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Content     *content.Content    `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	// @sanitize
-	Data            *string          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
-	CreatorId       *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob      string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string          `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	// @sanitize
-	State         string             `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
-	Closed        bool               `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft         bool               `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public        bool               `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
-	TemplateId    *int64             `protobuf:"varint,19,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	Pin           *DocumentPin       `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
-	WorkflowState *WorkflowState     `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser  *WorkflowUserState `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
-	Files         []*file.File       `protobuf:"bytes,23,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	CategoryId      *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	Category        *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
+	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	ContentType     content.ContentType    `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	Content         *content.Content       `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	Data            *string                `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
+	CreatorId       *int32                 `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
+	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public          bool                   `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
+	TemplateId      *int64                 `protobuf:"varint,19,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
+	Pin             *DocumentPin           `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	WorkflowState   *WorkflowState         `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	Files           []*file.File           `protobuf:"bytes,23,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Document) Reset() {
@@ -357,31 +355,29 @@ func (x *Document) GetFiles() []*file.File {
 }
 
 type DocumentShort struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CategoryId *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Category   *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
-	// @sanitize
-	Title           string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	ContentType     content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Content         *content.Content    `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorId       *int32              `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *users.UserShort    `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob      string              `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string             `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	// @sanitize
-	State         string             `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
-	Closed        bool               `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft         bool               `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public        bool               `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
-	Pin           *DocumentPin       `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
-	WorkflowState *WorkflowState     `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser  *WorkflowUserState `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	CategoryId      *int64                 `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	Category        *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`
+	Title           string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	ContentType     content.ContentType    `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	Content         *content.Content       `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	CreatorId       *int32                 `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
+	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public          bool                   `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
+	Pin             *DocumentPin           `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	WorkflowState   *WorkflowState         `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *DocumentShort) Reset() {
@@ -966,7 +962,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x92\v\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xa4\v\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -977,20 +973,19 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12U\n" +
-	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12 \n" +
-	"\x05title\x18\a \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12R\n" +
+	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12&\n" +
+	"\x05title\x18\a \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12R\n" +
 	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12;\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x123\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x129\n" +
 	"\x04data\x18\n" +
-	" \x01(\tB\x1a\x9a\x84\x9e\x03\falias:\"data\"\xbaH\x06r\x04(\xc0\x84=H\x04R\x04data\x88\x01\x01\x12+\n" +
+	" \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\falias:\"data\"\xbaH\x06r\x04(\xc0\x84=H\x04R\x04data\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x05R\tcreatorId\x88\x01\x01\x12O\n" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12(\n" +
 	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\aR\x0fcreatorJobLabel\x88\x01\x01\x12\x1d\n" +
-	"\x05state\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\aR\x0fcreatorJobLabel\x88\x01\x01\x12#\n" +
+	"\x05state\x18\x0f \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
 	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
 	"\x06public\x18\x12 \x01(\bR\x06public\x12$\n" +
@@ -1013,7 +1008,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xe3\t\n" +
+	"\x0e_workflow_user\"\xef\t\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1024,9 +1019,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12U\n" +
-	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12 \n" +
-	"\x05title\x18\a \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12R\n" +
+	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12&\n" +
+	"\x05title\x18\a \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12R\n" +
 	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12;\n" +
 	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
 	"\n" +
@@ -1034,8 +1028,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12(\n" +
 	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\x06R\x0fcreatorJobLabel\x88\x01\x01\x12\x1d\n" +
-	"\x05state\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\x06R\x0fcreatorJobLabel\x88\x01\x01\x12#\n" +
+	"\x05state\x18\x0f \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
 	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
 	"\x06public\x18\x12 \x01(\bR\x06public\x12I\n" +

@@ -336,6 +336,12 @@ const items = [
         value: 'details',
     },
     {
+        slot: 'workflow' as const,
+        label: t('common.workflow'),
+        icon: 'i-mdi-workflow',
+        value: 'workflow',
+    },
+    {
         slot: 'content' as const,
         label: t('common.content'),
         icon: 'i-mdi-file-edit',
@@ -483,8 +489,6 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard :title="`${$t('common.template')} ${$t('common.access')}`">
-                            <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-
                             <AccessManager
                                 v-model:jobs="state.jobAccess"
                                 :target-id="templateId ?? 0"
@@ -502,7 +506,9 @@ const formRef = useTemplateRef('formRef');
                         <UPageCard :title="$t('common.requirements', 2)">
                             <TemplateSchemaEditor v-model="schemaEditor" />
                         </UPageCard>
+                    </template>
 
+                    <template #workflow>
                         <TemplateWorkflowEditor v-model="state.workflow" />
                     </template>
 

@@ -3,6 +3,12 @@
 
 package database
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DateRange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -29,6 +35,8 @@ func (m *DateRange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PaginationRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -37,6 +45,8 @@ func (m *PaginationRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PaginationResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -45,6 +55,8 @@ func (m *PaginationResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Sort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -65,10 +77,15 @@ func (m *Sort) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SortByColumn) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Id
+	m.Id = htmlsanitizer.Sanitize(m.Id)
 
 	return nil
 }

@@ -5,6 +5,7 @@ package services.mailer;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/email.proto";
 import "resources/mailer/message.proto";
@@ -25,7 +26,7 @@ message ListEmailsRequest {
 
 message ListEmailsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Email emails = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.mailer.Email emails = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetEmailRequest {
@@ -113,7 +114,7 @@ message ListThreadsRequest {
 
 message ListThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Thread threads = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.mailer.Thread threads = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetThreadRequest {
@@ -128,17 +129,22 @@ message GetThreadResponse {
 message CreateThreadRequest {
   resources.mailer.Thread thread = 1 [(buf.validate.field).required = true];
   resources.mailer.Message message = 2 [(buf.validate.field).required = true];
-  // @sanitize: method=StripTags
-  repeated string recipients = 3 [(buf.validate.field).repeated = {
-    min_items: 1
-    max_items: 15
-    items: {
-      string: {
-        min_len: 6
-        max_len: 80
+  repeated string recipients = 3 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 15
+      items: {
+        string: {
+          min_len: 6
+          max_len: 80
+        }
       }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
+  ];
 }
 
 message CreateThreadResponse {
@@ -195,7 +201,7 @@ message SearchThreadsRequest {
 
 message SearchThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListThreadMessagesRequest {
@@ -207,21 +213,26 @@ message ListThreadMessagesRequest {
 
 message ListThreadMessagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message PostMessageRequest {
   resources.mailer.Message message = 1 [(buf.validate.field).required = true];
-  // @sanitize: method=StripTags
-  repeated string recipients = 2 [(buf.validate.field).repeated = {
-    max_items: 10
-    items: {
-      string: {
-        min_len: 6
-        max_len: 80
+  repeated string recipients = 2 [
+    (buf.validate.field).repeated = {
+      max_items: 10
+      items: {
+        string: {
+          min_len: 6
+          max_len: 80
+        }
       }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
+  ];
 }
 
 message PostMessageResponse {

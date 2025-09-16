@@ -7,6 +7,8 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -146,11 +148,10 @@ type DocActivity struct {
 	Creator         *users.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,8,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	// @sanitize
-	Reason        *string          `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Data          *DocActivityData `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Data            *DocActivityData       `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *DocActivity) Reset() {
@@ -253,7 +254,6 @@ func (x *DocActivity) GetData() *DocActivityData {
 	return nil
 }
 
-// @dbscanner: json
 type DocActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -828,7 +828,7 @@ var File_resources_documents_activity_proto protoreflect.FileDescriptor
 
 const file_resources_documents_activity_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc7\x04\n" +
+	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcd\x04\n" +
 	"\vDocActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -841,21 +841,21 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12(\n" +
 	"\vcreator_job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\x0fcreatorJobLabel\x88\x01\x01\x12%\n" +
-	"\x06reason\x18\t \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x128\n" +
+	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\x0fcreatorJobLabel\x88\x01\x01\x12+\n" +
+	"\x06reason\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x128\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2$.resources.documents.DocActivityDataR\x04dataB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xaa\x03\n" +
+	"\a_reason\"\xb2\x03\n" +
 	"\x0fDocActivityData\x12;\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1f.resources.documents.DocUpdatedH\x00R\aupdated\x12K\n" +
 	"\rowner_changed\x18\x02 \x01(\v2$.resources.documents.DocOwnerChangedH\x00R\fownerChanged\x12N\n" +
 	"\x0eaccess_updated\x18\x04 \x01(\v2%.resources.documents.DocAccessUpdatedH\x00R\raccessUpdated\x12T\n" +
 	"\x10access_requested\x18\x05 \x01(\v2'.resources.documents.DocAccessRequestedH\x00R\x0faccessRequested\x12X\n" +
-	"\x12sign_off_requested\x18\x06 \x01(\v2(.resources.documents.DocSignOffRequestedH\x00R\x10signOffRequestedB\r\n" +
+	"\x12sign_off_requested\x18\x06 \x01(\v2(.resources.documents.DocSignOffRequestedH\x00R\x10signOffRequested:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\x89\x02\n" +
 	"\n" +
 	"DocUpdated\x12\"\n" +

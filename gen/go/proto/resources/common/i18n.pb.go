@@ -7,6 +7,8 @@
 package common
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,13 +24,10 @@ const (
 )
 
 // Wrapped translated message for the client
-// @dbscanner: json
 type I18NItem struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	// @sanitize: method=StripTags
-	Parameters    map[string]string `protobuf:"bytes,2,rep,name=parameters,proto3" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Parameters    map[string]string      `protobuf:"bytes,2,rep,name=parameters,proto3" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -81,15 +80,15 @@ var File_resources_common_i18n_proto protoreflect.FileDescriptor
 
 const file_resources_common_i18n_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/common/i18n.proto\x12\x10resources.common\"\xa7\x01\n" +
-	"\bI18NItem\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12J\n" +
+	"\x1bresources/common/i18n.proto\x12\x10resources.common\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\"\xd5\x01\n" +
+	"\bI18NItem\x12#\n" +
+	"\x03key\x18\x01 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x03key\x12]\n" +
 	"\n" +
-	"parameters\x18\x02 \x03(\v2*.resources.common.I18NItem.ParametersEntryR\n" +
+	"parameters\x18\x02 \x03(\v2*.resources.common.I18NItem.ParametersEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\n" +
 	"parameters\x1a=\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_i18n_proto_rawDescOnce sync.Once

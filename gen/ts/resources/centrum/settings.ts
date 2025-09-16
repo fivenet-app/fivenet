@@ -68,27 +68,19 @@ export interface Settings {
     effectiveAccess?: EffectiveAccess;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.PredefinedStatus
  */
 export interface PredefinedStatus {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string unit_status = 1
      */
     unitStatus: string[];
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string dispatch_status = 2
      */
     dispatchStatus: string[];
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.Timings
  */
 export interface Timings {
@@ -106,8 +98,6 @@ export interface Timings {
     requireUnitReminderSeconds: number;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.Configuration
  */
 export interface Configuration {
@@ -334,9 +324,9 @@ export const Settings = new Settings$Type();
 class PredefinedStatus$Type extends MessageType<PredefinedStatus> {
     constructor() {
         super("resources.centrum.PredefinedStatus", [
-            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } } } },
-            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } } } }
-        ]);
+            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<PredefinedStatus>): PredefinedStatus {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -392,7 +382,7 @@ class Timings$Type extends MessageType<Timings> {
             { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "6000", gt: "30" } } } },
             { no: 2, name: "require_unit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "require_unit_reminder_seconds", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "6000", gt: "30" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<Timings>): Timings {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -455,7 +445,7 @@ class Configuration$Type extends MessageType<Configuration> {
             { no: 1, name: "deduplication_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "deduplication_radius", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "1000000", gt: "5" } } } },
             { no: 3, name: "deduplication_duration", kind: "message", T: () => Duration }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<Configuration>): Configuration {
         const message = globalThis.Object.create((this.messagePrototype!));

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package codegen.sanitizer;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer;sanitizer";
+
+extend google.protobuf.FieldOptions {
+  FieldOptions sanitizer = 51003;
+}
+
+message FieldOptions {
+  bool enabled = 1;
+  optional string method = 2;
+}

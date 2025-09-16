@@ -3,6 +3,8 @@
 
 package settings
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AttrsUpdate) Sanitize() error {
 	if m == nil {
 		return nil
@@ -35,6 +37,8 @@ func (m *AttrsUpdate) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PermsUpdate) Sanitize() error {
 	if m == nil {
 		return nil

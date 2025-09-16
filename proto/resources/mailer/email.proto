@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.mailer;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/mailer/access.proto";
 import "resources/mailer/settings.proto";
 import "resources/timestamp/timestamp.proto";
@@ -19,14 +20,24 @@ message Email {
   optional string job = 6 [(buf.validate.field).string.max_len = 40];
   optional int32 user_id = 7 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort user = 8;
-  // @sanitize: method=StripTags
-  string email = 9 [(buf.validate.field).string = {
-    min_len: 6
-    max_len: 80
-  }];
+  string email = 9 [
+    (buf.validate.field).string = {
+      min_len: 6
+      max_len: 80
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional resources.timestamp.Timestamp email_changed = 10;
-  // @sanitize: method=StripTags
-  optional string label = 11 [(buf.validate.field).string.max_len = 128];
+  optional string label = 11 [
+    (buf.validate.field).string.max_len = 128,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   Access access = 12;
   optional EmailSettings settings = 13;
 }

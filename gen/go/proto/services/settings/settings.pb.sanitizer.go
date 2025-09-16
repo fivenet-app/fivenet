@@ -7,14 +7,21 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateRoleRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateRoleResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -32,6 +39,8 @@ func (m *CreateRoleResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteJobLogoRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -40,6 +49,8 @@ func (m *DeleteJobLogoRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteJobLogoResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -48,6 +59,8 @@ func (m *DeleteJobLogoResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteRoleRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -56,6 +69,8 @@ func (m *DeleteRoleRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteRoleResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -64,6 +79,8 @@ func (m *DeleteRoleResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetEffectivePermissionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -72,6 +89,8 @@ func (m *GetEffectivePermissionsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetEffectivePermissionsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -113,6 +132,8 @@ func (m *GetEffectivePermissionsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetJobPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -121,6 +142,8 @@ func (m *GetJobPropsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetJobPropsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -138,6 +161,8 @@ func (m *GetJobPropsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetPermissionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -146,6 +171,8 @@ func (m *GetPermissionsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetPermissionsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -178,6 +205,8 @@ func (m *GetPermissionsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetRoleRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -186,6 +215,8 @@ func (m *GetRoleRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetRoleResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -203,6 +234,8 @@ func (m *GetRoleResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetRolesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -211,6 +244,8 @@ func (m *GetRolesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetRolesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -231,6 +266,8 @@ func (m *GetRolesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDiscordChannelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -239,6 +276,8 @@ func (m *ListDiscordChannelsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListDiscordChannelsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -259,6 +298,8 @@ func (m *ListDiscordChannelsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListUserGuildsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -267,6 +308,8 @@ func (m *ListUserGuildsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListUserGuildsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -287,6 +330,8 @@ func (m *ListUserGuildsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetJobPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -304,6 +349,8 @@ func (m *SetJobPropsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetJobPropsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -321,6 +368,8 @@ func (m *SetJobPropsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateRolePermsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -347,6 +396,8 @@ func (m *UpdateRolePermsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateRolePermsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -355,6 +406,8 @@ func (m *UpdateRolePermsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ViewAuditLogRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -384,6 +437,11 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.Sanitize(*m.Search)
 	}
 
 	// Field: Services
@@ -421,6 +479,8 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ViewAuditLogResponse) Sanitize() error {
 	if m == nil {
 		return nil

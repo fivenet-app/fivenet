@@ -26,30 +26,30 @@ var file_codegen_itemslen_itemslen_proto_extTypes = []protoimpl.ExtensionInfo{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
 		ExtensionType: (*bool)(nil),
 		Field:         51001,
-		Name:          "codegen.itemslen.items_len",
-		Tag:           "varint,51001,opt,name=items_len",
+		Name:          "codegen.itemslen.enabled",
+		Tag:           "varint,51001,opt,name=enabled",
 		Filename:      "codegen/itemslen/itemslen.proto",
 	},
 }
 
 // Extension fields to descriptorpb.FieldOptions.
 var (
-	// optional bool items_len = 51001;
-	E_ItemsLen = &file_codegen_itemslen_itemslen_proto_extTypes[0]
+	// optional bool enabled = 51001;
+	E_Enabled = &file_codegen_itemslen_itemslen_proto_extTypes[0]
 )
 
 var File_codegen_itemslen_itemslen_proto protoreflect.FileDescriptor
 
 const file_codegen_itemslen_itemslen_proto_rawDesc = "" +
 	"\n" +
-	"\x1fcodegen/itemslen/itemslen.proto\x12\x10codegen.itemslen\x1a google/protobuf/descriptor.proto:<\n" +
-	"\titems_len\x12\x1d.google.protobuf.FieldOptions\x18\xb9\x8e\x03 \x01(\bR\bitemsLenBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen;itemslenb\x06proto3"
+	"\x1fcodegen/itemslen/itemslen.proto\x12\x10codegen.itemslen\x1a google/protobuf/descriptor.proto:9\n" +
+	"\aenabled\x12\x1d.google.protobuf.FieldOptions\x18\xb9\x8e\x03 \x01(\bR\aenabledBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen;itemslenb\x06proto3"
 
 var file_codegen_itemslen_itemslen_proto_goTypes = []any{
 	(*descriptorpb.FieldOptions)(nil), // 0: google.protobuf.FieldOptions
 }
 var file_codegen_itemslen_itemslen_proto_depIdxs = []int32{
-	0, // 0: codegen.itemslen.items_len:extendee -> google.protobuf.FieldOptions
+	0, // 0: codegen.itemslen.enabled:extendee -> google.protobuf.FieldOptions
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

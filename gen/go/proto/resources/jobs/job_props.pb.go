@@ -7,6 +7,7 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -172,7 +173,6 @@ func (x *JobProps) GetSettings() *JobSettings {
 	return nil
 }
 
-// @dbscanner: json
 type QuickButtons struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	PenaltyCalculator bool                   `protobuf:"varint,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
@@ -229,7 +229,7 @@ var File_resources_jobs_job_props_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/jobs/job_props.proto\x12\x0eresources.jobs\x1a\x19resources/file/file.proto\x1a!resources/jobs/job_settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x81\b\n" +
+	"\x1eresources/jobs/job_props.proto\x12\x0eresources.jobs\x1a!codegen/dbscanner/dbscanner.proto\x1a\x19resources/file/file.proto\x1a!resources/jobs/job_settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x81\b\n" +
 	"\bJobProps\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12B\n" +
@@ -258,10 +258,10 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x05_motdB\x0f\n" +
 	"\r_logo_file_idB\f\n" +
 	"\n" +
-	"_logo_file\"l\n" +
+	"_logo_file\"t\n" +
 	"\fQuickButtons\x12-\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12'\n" +
-	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorJ\x04\b\x02\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculator:\x06\xe2\xf3\x18\x02\b\x01J\x04\b\x02\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_job_props_proto_rawDescOnce sync.Once

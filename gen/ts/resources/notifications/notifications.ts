@@ -35,8 +35,6 @@ export interface Notification {
      */
     userId: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.I18NItem title = 5
      */
     title?: I18NItem;
@@ -45,8 +43,6 @@ export interface Notification {
      */
     type: NotificationType;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.I18NItem content = 7
      */
     content?: I18NItem;
@@ -64,8 +60,6 @@ export interface Notification {
     starred?: boolean;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.notifications.Data
  */
 export interface Data {
@@ -166,9 +160,9 @@ class Notification$Type extends MessageType<Notification> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 5, name: "title", kind: "message", T: () => I18NItem },
+            { no: 5, name: "title", kind: "message", T: () => I18NItem, options: { "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 6, name: "type", kind: "enum", T: () => ["resources.notifications.NotificationType", NotificationType, "NOTIFICATION_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "content", kind: "message", T: () => I18NItem },
+            { no: 7, name: "content", kind: "message", T: () => I18NItem, options: { "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data },
             { no: 10, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
@@ -278,7 +272,7 @@ class Data$Type extends MessageType<Data> {
             { no: 1, name: "link", kind: "message", T: () => Link },
             { no: 2, name: "caused_by", kind: "message", T: () => UserShort },
             { no: 3, name: "calendar", kind: "message", T: () => CalendarData }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<Data>): Data {
         const message = globalThis.Object.create((this.messagePrototype!));

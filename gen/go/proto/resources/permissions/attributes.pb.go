@@ -7,6 +7,8 @@
 package permissions
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -198,7 +200,6 @@ func (x *RoleAttribute) GetMaxValues() *AttributeValues {
 	return nil
 }
 
-// @dbscanner: json
 type AttributeValues struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ValidValues:
@@ -298,9 +299,8 @@ func (*AttributeValues_JobList) isAttributeValues_ValidValues() {}
 func (*AttributeValues_JobGradeList) isAttributeValues_ValidValues() {}
 
 type StringList struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Strings       []string `protobuf:"bytes,1,rep,name=strings,proto3" json:"strings,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Strings       []string               `protobuf:"bytes,1,rep,name=strings,proto3" json:"strings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -450,7 +450,7 @@ var File_resources_permissions_attributes_proto protoreflect.FileDescriptor
 
 const file_resources_permissions_attributes_proto_rawDesc = "" +
 	"\n" +
-	"&resources/permissions/attributes.proto\x12\x15resources.permissions\x1a#resources/timestamp/timestamp.proto\"\x9b\x04\n" +
+	"&resources/permissions/attributes.proto\x12\x15resources.permissions\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\x9b\x04\n" +
 	"\rRoleAttribute\x12\x17\n" +
 	"\arole_id\x18\x01 \x01(\x03R\x06roleId\x12B\n" +
 	"\n" +
@@ -467,16 +467,16 @@ const file_resources_permissions_attributes_proto_rawDesc = "" +
 	"\n" +
 	"max_values\x18\v \x01(\v2&.resources.permissions.AttributeValuesH\x01R\tmaxValues\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_max_values\"\xfb\x01\n" +
+	"\v_max_values\"\x83\x02\n" +
 	"\x0fAttributeValues\x12D\n" +
 	"\vstring_list\x18\x01 \x01(\v2!.resources.permissions.StringListH\x00R\n" +
 	"stringList\x12>\n" +
 	"\bjob_list\x18\x02 \x01(\v2!.resources.permissions.StringListH\x00R\ajobList\x12K\n" +
-	"\x0ejob_grade_list\x18\x03 \x01(\v2#.resources.permissions.JobGradeListH\x00R\fjobGradeListB\x15\n" +
-	"\fvalid_values\x12\x05\xbaH\x02\b\x01\"&\n" +
+	"\x0ejob_grade_list\x18\x03 \x01(\v2#.resources.permissions.JobGradeListH\x00R\fjobGradeList:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
+	"\fvalid_values\x12\x05\xbaH\x02\b\x01\"9\n" +
 	"\n" +
-	"StringList\x12\x18\n" +
-	"\astrings\x18\x01 \x03(\tR\astrings\"\xd3\x02\n" +
+	"StringList\x12+\n" +
+	"\astrings\x18\x01 \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\astrings\"\xd3\x02\n" +
 	"\fJobGradeList\x12!\n" +
 	"\ffine_grained\x18\x02 \x01(\bR\vfineGrained\x12A\n" +
 	"\x04jobs\x18\x01 \x03(\v2-.resources.permissions.JobGradeList.JobsEntryR\x04jobs\x12G\n" +

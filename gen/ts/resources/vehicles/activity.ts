@@ -50,8 +50,6 @@ export interface VehicleActivity {
      */
     creatorJobLabel?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 9
      */
     reason?: string;
@@ -61,8 +59,6 @@ export interface VehicleActivity {
     data?: VehicleActivityData;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.vehicles.VehicleActivityData
  */
 export interface VehicleActivityData {
@@ -94,7 +90,7 @@ class VehicleActivity$Type extends MessageType<VehicleActivity> {
             { no: 6, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user_activity.reason\"" } },
+            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"user_activity.reason\"" } },
             { no: 10, name: "data", kind: "message", T: () => VehicleActivityData }
         ]);
     }
@@ -198,7 +194,7 @@ export const VehicleActivity = new VehicleActivity$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class VehicleActivityData$Type extends MessageType<VehicleActivityData> {
     constructor() {
-        super("resources.vehicles.VehicleActivityData", []);
+        super("resources.vehicles.VehicleActivityData", [], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<VehicleActivityData>): VehicleActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));

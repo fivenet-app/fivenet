@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "tagger/tagger.proto";
@@ -19,8 +20,9 @@ enum AccessLevel {
   ACCESS_LEVEL_EDIT = 6;
 }
 
-// @dbscanner: json
 message DocumentAccess {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated DocumentJobAccess jobs = 1 [
     (buf.validate.field).repeated.max_items = 20,
     (tagger.tags) = "alias:\"job_access\""

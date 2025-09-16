@@ -3,10 +3,19 @@
 
 package vehicles
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *VehicleProps) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Plate
+	m.Plate = htmlsanitizer.Sanitize(m.Plate)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -15,6 +24,11 @@ func (m *VehicleProps) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: WantedReason
+	if m.WantedReason != nil {
+		*m.WantedReason = htmlsanitizer.Sanitize(*m.WantedReason)
 	}
 
 	return nil

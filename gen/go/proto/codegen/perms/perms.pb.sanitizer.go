@@ -3,14 +3,36 @@
 
 package perms
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Attr) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Key
+	m.Key = htmlsanitizer.Sanitize(m.Key)
+
+	// Field: ValidStringList
+	for idx, item := range m.ValidStringList {
+		_, _ = idx, item
+
+		m.ValidStringList[idx] = htmlsanitizer.Sanitize(m.ValidStringList[idx])
+
+	}
+
+	// Field: Value
+	m.Value = htmlsanitizer.Sanitize(m.Value)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *FieldOptions) Sanitize() error {
 	if m == nil {
 		return nil
@@ -26,6 +48,16 @@ func (m *FieldOptions) Sanitize() error {
 			}
 		}
 
+	}
+
+	// Field: Name
+	if m.Name != nil {
+		*m.Name = htmlsanitizer.Sanitize(*m.Name)
+	}
+
+	// Field: Service
+	if m.Service != nil {
+		*m.Service = htmlsanitizer.Sanitize(*m.Service)
 	}
 
 	return nil

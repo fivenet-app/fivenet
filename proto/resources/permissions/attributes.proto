@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.permissions;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissions";
@@ -28,8 +30,9 @@ message RoleAttribute {
   optional AttributeValues max_values = 11;
 }
 
-// @dbscanner: json
 message AttributeValues {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   oneof valid_values {
     option (buf.validate.oneof).required = true;
 
@@ -40,8 +43,10 @@ message AttributeValues {
 }
 
 message StringList {
-  // @sanitize: method=StripTags
-  repeated string strings = 1;
+  repeated string strings = 1 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
 }
 
 message JobGradeList {

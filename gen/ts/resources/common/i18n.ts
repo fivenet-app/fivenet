@@ -13,20 +13,15 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
  * Wrapped translated message for the client
- * @dbscanner: json
  *
  * @generated from protobuf message resources.common.I18NItem
  */
 export interface I18NItem {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string key = 1
      */
     key: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: map<string, string> parameters = 2
      */
     parameters: {
@@ -37,9 +32,9 @@ export interface I18NItem {
 class I18NItem$Type extends MessageType<I18NItem> {
     constructor() {
         super("resources.common.I18NItem", [
-            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
-        ]);
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<I18NItem>): I18NItem {
         const message = globalThis.Object.create((this.messagePrototype!));

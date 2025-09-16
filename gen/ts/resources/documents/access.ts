@@ -14,8 +14,6 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.documents.DocumentAccess
  */
 export interface DocumentAccess {
@@ -141,7 +139,7 @@ class DocumentAccess$Type extends MessageType<DocumentAccess> {
         super("resources.documents.DocumentAccess", [
             { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } },
             { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"user_access\"" } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DocumentAccess>): DocumentAccess {
         const message = globalThis.Object.create((this.messagePrototype!));

@@ -17,26 +17,18 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface BannerMessage {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string id = 1
      */
     id: string;
     /**
-     * @sanitize: method
-     *
      * @generated from protobuf field: string title = 2
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string icon = 3
      */
     icon?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 4
      */
     color?: string;
@@ -53,10 +45,10 @@ export interface BannerMessage {
 class BannerMessage$Type extends MessageType<BannerMessage> {
     constructor() {
         super("resources.settings.BannerMessage", [
-            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "512" } } } },
-            { no: 3, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
-            { no: 4, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 3, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "json:\"createdAt\"" } },
             { no: 6, name: "expires_at", kind: "message", T: () => Timestamp, options: { "tagger.tags": "json:\"expiresAt\"" } }
         ]);

@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Page) Sanitize() error {
 	if m == nil {
 		return nil
@@ -45,6 +47,11 @@ func (m *Page) Sanitize() error {
 	// Field: Job
 	m.Job = htmlsanitizer.StripTags(m.Job)
 
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	// Field: Meta
 	if m.Meta != nil {
 		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
@@ -57,6 +64,8 @@ func (m *Page) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageMeta) Sanitize() error {
 	if m == nil {
 		return nil
@@ -93,7 +102,6 @@ func (m *PageMeta) Sanitize() error {
 	m.Description = htmlsanitizer.StripTags(m.Description)
 
 	// Field: Slug
-
 	if m.Slug != nil {
 		*m.Slug = htmlsanitizer.StripTags(*m.Slug)
 	}
@@ -121,6 +129,8 @@ func (m *PageMeta) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageRootInfo) Sanitize() error {
 	if m == nil {
 		return nil
@@ -138,6 +148,8 @@ func (m *PageRootInfo) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -164,6 +176,17 @@ func (m *PageShort) Sanitize() error {
 		}
 	}
 
+	// Field: Description
+	m.Description = htmlsanitizer.Sanitize(m.Description)
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	// Field: RootInfo
 	if m.RootInfo != nil {
 		if v, ok := any(m.GetRootInfo()).(interface{ Sanitize() error }); ok {
@@ -174,10 +197,12 @@ func (m *PageShort) Sanitize() error {
 	}
 
 	// Field: Slug
-
 	if m.Slug != nil {
 		*m.Slug = htmlsanitizer.StripTags(*m.Slug)
 	}
+
+	// Field: Title
+	m.Title = htmlsanitizer.Sanitize(m.Title)
 
 	return nil
 }

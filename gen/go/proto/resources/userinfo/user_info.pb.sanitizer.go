@@ -3,6 +3,12 @@
 
 package userinfo
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PollReq) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,14 +17,32 @@ func (m *PollReq) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserInfo) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Group
+	m.Group = htmlsanitizer.Sanitize(m.Group)
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: License
+	m.License = htmlsanitizer.Sanitize(m.License)
+
+	// Field: OverrideJob
+	if m.OverrideJob != nil {
+		*m.OverrideJob = htmlsanitizer.Sanitize(*m.OverrideJob)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserInfoChanged) Sanitize() error {
 	if m == nil {
 		return nil
@@ -32,6 +56,24 @@ func (m *UserInfoChanged) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: NewJob
+	if m.NewJob != nil {
+		*m.NewJob = htmlsanitizer.Sanitize(*m.NewJob)
+	}
+
+	// Field: NewJobGradeLabel
+	if m.NewJobGradeLabel != nil {
+		*m.NewJobGradeLabel = htmlsanitizer.Sanitize(*m.NewJobGradeLabel)
+	}
+
+	// Field: NewJobLabel
+	if m.NewJobLabel != nil {
+		*m.NewJobLabel = htmlsanitizer.Sanitize(*m.NewJobLabel)
+	}
+
+	// Field: OldJob
+	m.OldJob = htmlsanitizer.Sanitize(m.OldJob)
 
 	return nil
 }

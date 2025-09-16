@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bufio"
 	"slices"
 	"strings"
 	"text/template"
 
+	dbscannerpb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
@@ -76,41 +76,32 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 			mName := string(m.Name())
 			mName = strings.TrimPrefix(mName, "services.")
 
-			comment := m.SourceCodeInfo().LeadingComments()
-			comment = strings.TrimSpace(comment)
-			if !strings.Contains(comment, "@dbscanner") {
+			// Check if the field option is present and true
+			var val dbscannerpb.MessageOptions
+			ok, err := f.Extension(dbscannerpb.E_Dbscanner, &val)
+			if err != nil {
+				p.Fail("error reading dbscanner extension: %v", err)
+			}
+
+			if !ok {
 				continue
 			}
 
-			// Find comment in multiline comment
-			sc := bufio.NewScanner(strings.NewReader(comment))
-			for sc.Scan() {
-				text := strings.TrimSpace(sc.Text())
-				if strings.HasPrefix(text, "@dbscanner") {
-					comment = text
-					break
-				}
+			if !val.Enabled {
+				continue
 			}
 
-			dbscanner, err := p.parseComment(mName, comment)
-			if err != nil {
-				p.Failf(
-					"failed to parse comment for %s message in file %s (comment: '%s'), error. %w",
-					mName,
-					f.InputPath(),
-					comment,
-					err,
-				)
-				return
+			dbscanner := &DBScannerInfo{
+				Unmarshal: "protojson.Unmarshal",
+				Marshal:   "protoutils.MarshalToJSON",
 			}
-			if dbscanner == nil {
-				p.Failf(
-					"failed to parse comment for %s message in file %s (comment: '%s')",
-					mName,
-					f.InputPath(),
-					comment,
-				)
-				return
+
+			if val.Partial != nil && *val.Partial {
+				dbscanner.Unmarshal = "protoutils.UnmarshalPartialJSON"
+				dbscanner.Marshal = "protoutils.MarshalToJSON"
+			} else if val.NotJson != nil && *val.NotJson {
+				dbscanner.Unmarshal = "proto.Unmarshal"
+				dbscanner.Marshal = "proto.Marshal"
 			}
 
 			data.Messages[mName] = dbscanner
@@ -123,40 +114,6 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 		name := p.ctx.OutputPath(f).SetExt(".dbscanner.go")
 		p.AddGeneratorTemplateFile(name.String(), p.tpl, data)
 	}
-}
-
-func (p *DBScannerModule) parseComment(_ string, comment string) (*DBScannerInfo, error) {
-	comment = strings.TrimPrefix(comment, "@dbscanner: ")
-	comment = strings.TrimPrefix(comment, "@dbscanner")
-
-	perm := &DBScannerInfo{
-		Unmarshal: "proto.Unmarshal",
-		Marshal:   "proto.Marshal",
-	}
-
-	if comment == "" {
-		return perm, nil
-	}
-
-	split := strings.Split(comment, ",")
-
-	for i := range split {
-		k, _, _ := strings.Cut(split[i], "=")
-
-		switch strings.ToLower(k) {
-		case "json":
-			perm.Unmarshal = "protojson.Unmarshal"
-			perm.Marshal = "protoutils.MarshalToJSON"
-			continue
-
-		case "partial":
-			perm.Unmarshal = "protoutils.UnmarshalPartialJSON"
-			perm.Marshal = "protoutils.MarshalToJSON"
-			continue
-		}
-	}
-
-	return perm, nil
 }
 
 type DBScannerInfo struct {

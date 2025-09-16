@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.file;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/file/file.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;file";
@@ -22,13 +23,13 @@ message UploadMeta {
   string content_type = 4; // optional - server re-validates
   int64 size = 5 [(buf.validate.field).int64.gt = 0]; // Size in bytes
 
-  // @sanitize
   string reason = 6 [
     (buf.validate.field).string = {
       min_len: 3
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 }
 

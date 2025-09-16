@@ -7,6 +7,7 @@
 package mailer
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,12 +23,10 @@ const (
 )
 
 type EmailSettings struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	EmailId int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	// @sanitize
-	Signature *string `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
-	// @sanitize: method=StripTags
-	BlockedEmails []string `protobuf:"bytes,3,rep,name=blocked_emails,json=blockedEmails,proto3" json:"blocked_emails,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	Signature     *string                `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
+	BlockedEmails []string               `protobuf:"bytes,3,rep,name=blocked_emails,json=blockedEmails,proto3" json:"blocked_emails,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -87,11 +86,11 @@ var File_resources_mailer_settings_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/mailer/settings.proto\x12\x10resources.mailer\"\x96\x01\n" +
+	"\x1fresources/mailer/settings.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\"\xad\x01\n" +
 	"\rEmailSettings\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12+\n" +
-	"\tsignature\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x00R\tsignature\x88\x01\x01\x12/\n" +
-	"\x0eblocked_emails\x18\x03 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\x19R\rblockedEmailsB\f\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x121\n" +
+	"\tsignature\x18\x02 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x00R\tsignature\x88\x01\x01\x12@\n" +
+	"\x0eblocked_emails\x18\x03 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10\x19R\rblockedEmailsB\f\n" +
 	"\n" +
 	"_signatureBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 

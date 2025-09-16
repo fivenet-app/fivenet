@@ -3,10 +3,53 @@
 
 package users
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *User) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Dateofbirth
+	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
+
+	// Field: Firstname
+	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+
+	// Field: Group
+	if m.Group != nil {
+		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+	}
+
+	// Field: Height
+	if m.Height != nil {
+		*m.Height = htmlsanitizer.Sanitize(*m.Height)
+	}
+
+	// Field: Identifier
+	if m.Identifier != nil {
+		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: Lastname
+	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
 
 	// Field: Licenses
 	for idx, item := range m.Licenses {
@@ -20,6 +63,16 @@ func (m *User) Sanitize() error {
 
 	}
 
+	// Field: PhoneNumber
+	if m.PhoneNumber != nil {
+		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+	}
+
+	// Field: ProfilePicture
+	if m.ProfilePicture != nil {
+		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
+	}
+
 	// Field: Props
 	if m.Props != nil {
 		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
@@ -29,12 +82,56 @@ func (m *User) Sanitize() error {
 		}
 	}
 
+	// Field: Sex
+	if m.Sex != nil {
+		*m.Sex = htmlsanitizer.Sanitize(*m.Sex)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserShort) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Dateofbirth
+	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
+
+	// Field: Firstname
+	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+
+	// Field: Identifier
+	if m.Identifier != nil {
+		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: Lastname
+	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+
+	// Field: PhoneNumber
+	if m.PhoneNumber != nil {
+		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+	}
+
+	// Field: ProfilePicture
+	if m.ProfilePicture != nil {
+		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
 	}
 
 	return nil

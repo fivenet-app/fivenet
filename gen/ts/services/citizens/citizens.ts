@@ -141,8 +141,6 @@ export interface SetUserPropsRequest {
      */
     props?: UserProps;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
@@ -175,8 +173,6 @@ export interface DeleteMugshotRequest {
      */
     userId: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
@@ -305,7 +301,7 @@ class ListCitizensResponse$Type extends MessageType<ListCitizensResponse> {
     constructor() {
         super("services.citizens.ListCitizensResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => User, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => User, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListCitizensResponse>): ListCitizensResponse {
@@ -536,7 +532,7 @@ class ListUserActivityResponse$Type extends MessageType<ListUserActivityResponse
     constructor() {
         super("services.citizens.ListUserActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserActivity, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserActivity, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityResponse>): ListUserActivityResponse {
@@ -590,7 +586,7 @@ class SetUserPropsRequest$Type extends MessageType<SetUserPropsRequest> {
     constructor() {
         super("services.citizens.SetUserPropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => UserProps, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<SetUserPropsRequest>): SetUserPropsRequest {
@@ -766,7 +762,7 @@ class DeleteMugshotRequest$Type extends MessageType<DeleteMugshotRequest> {
     constructor() {
         super("services.citizens.DeleteMugshotRequest", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<DeleteMugshotRequest>): DeleteMugshotRequest {

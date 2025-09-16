@@ -3,6 +3,8 @@
 
 package jobs
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetTimeclockStatsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,6 +13,8 @@ func (m *GetTimeclockStatsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetTimeclockStatsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -40,6 +44,8 @@ func (m *GetTimeclockStatsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListInactiveEmployeesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -66,6 +72,8 @@ func (m *ListInactiveEmployeesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListInactiveEmployeesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -95,6 +103,8 @@ func (m *ListInactiveEmployeesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListTimeclockRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -130,6 +140,8 @@ func (m *ListTimeclockRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListTimeclockResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -204,6 +216,8 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockDay) Sanitize() error {
 	if m == nil {
 		return nil
@@ -233,6 +247,8 @@ func (m *TimeclockDay) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockRange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -262,6 +278,8 @@ func (m *TimeclockRange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockWeekly) Sanitize() error {
 	if m == nil {
 		return nil

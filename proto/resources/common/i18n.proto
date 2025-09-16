@@ -2,13 +2,21 @@ syntax = "proto3";
 
 package resources.common;
 
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;common";
 
 // Wrapped translated message for the client
-// @dbscanner: json
 message I18NItem {
-  // @sanitize: method=StripTags
-  string key = 1;
-  // @sanitize: method=StripTags
-  map<string, string> parameters = 2;
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  string key = 1 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  map<string, string> parameters = 2 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
 }

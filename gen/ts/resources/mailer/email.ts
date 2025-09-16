@@ -52,8 +52,6 @@ export interface Email {
      */
     user?: UserShort;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string email = 9
      */
     email: string;
@@ -62,8 +60,6 @@ export interface Email {
      */
     emailChanged?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string label = 11
      */
     label?: string;
@@ -88,9 +84,9 @@ class Email$Type extends MessageType<Email> {
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "40" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } } } },
+            { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 10, name: "email_changed", kind: "message", T: () => Timestamp },
-            { no: 11, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 11, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 12, name: "access", kind: "message", T: () => Access },
             { no: 13, name: "settings", kind: "message", T: () => EmailSettings }
         ]);

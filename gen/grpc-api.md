@@ -5,6 +5,38 @@ description: Documentation for GRPC Protobuf files.
 
 
 
+## codegen/dbscanner/dbscanner.proto
+
+
+### codegen.dbscanner.MessageOptions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `not_json` | [bool](#bool) | optional |  |
+| `partial` | [bool](#bool) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `dbscanner` | MessageOptions | .google.protobuf.MessageOptions | 51004 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## codegen/itemslen/itemslen.proto
 
  <!-- end messages -->
@@ -16,7 +48,38 @@ description: Documentation for GRPC Protobuf files.
 
 | Extension | Type | Base | Number | Description |
 | --------- | ---- | ---- | ------ | ----------- |
-| `items_len` | bool | .google.protobuf.FieldOptions | 51001 |  |
+| `enabled` | bool | .google.protobuf.FieldOptions | 51001 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## codegen/sanitizer/sanitizer.proto
+
+
+### codegen.sanitizer.FieldOptions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `method` | [string](#string) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `sanitizer` | FieldOptions | .google.protobuf.FieldOptions | 51003 |  |
 
  <!-- end HasExtensions -->
 
@@ -53,8 +116,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 ### resources.permissions.AttributeValues
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -141,7 +202,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `strings` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `strings` | [string](#string) | repeated |  |
 
 
 
@@ -298,8 +359,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 ### resources.file.FileMeta
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -409,16 +468,14 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  | @sanitize: method=StripTags |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `name` | [string](#string) |  |  |
+| `color` | [string](#string) |  |  |
 
 
 
 
 
 ### resources.users.Labels
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -460,7 +517,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `mugshot_file_id` | [int64](#int64) | optional |  |
 | `mugshot` | [resources.file.File](#resourcesfileFile) | optional |  |
 | `labels` | [Labels](#resourcesusersLabels) | optional |  |
-| `email` | [string](#string) | optional | @sanitize: method=StripTags |
+| `email` | [string](#string) | optional |  |
 
 
 
@@ -709,7 +766,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) | optional |  |
 | `content` | [JSONNode](#resourcescommoncontentJSONNode) | optional |  |
-| `raw_content` | [string](#string) | optional | @sanitize |
+| `raw_content` | [string](#string) | optional |  |
 
 
 
@@ -721,10 +778,10 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `type` | [NodeType](#resourcescommoncontentNodeType) |  |  |
-| `id` | [string](#string) | optional | @sanitize: method=StripTags |
-| `tag` | [string](#string) |  | @sanitize: method=StripTags |
-| `attrs` | [JSONNode.AttrsEntry](#resourcescommoncontentJSONNodeAttrsEntry) | repeated | @sanitize: method=StripTags |
-| `text` | [string](#string) | optional | @sanitize: method=StripTags |
+| `id` | [string](#string) | optional |  |
+| `tag` | [string](#string) |  |  |
+| `attrs` | [JSONNode.AttrsEntry](#resourcescommoncontentJSONNodeAttrsEntry) | repeated |  |
+| `text` | [string](#string) | optional |  |
 | `content` | [JSONNode](#resourcescommoncontentJSONNode) | repeated |  |
 
 
@@ -749,9 +806,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  |  |
-| `summary` | [string](#string) |  | @sanitize: method=StripTags |
+| `summary` | [string](#string) |  |  |
 | `word_count` | [uint32](#uint32) |  |  |
-| `first_heading` | [string](#string) |  | @sanitize: method=StripTags |
+| `first_heading` | [string](#string) |  |  |
 
 
 
@@ -801,11 +858,11 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  | @sanitize: method=StripTags |
-| `description` | [string](#string) | optional | @sanitize: method=StripTags |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `public` | [bool](#bool) |  |  |
 | `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `color` | [string](#string) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
@@ -830,7 +887,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job` | [string](#string) | optional |  |
 | `start_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `end_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `rsvp_open` | [bool](#bool) | optional |  |
@@ -860,8 +917,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 ### resources.calendar.CalendarEntryRecurring
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -882,11 +937,11 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  | @sanitize: method=StripTags |
-| `description` | [string](#string) | optional | @sanitize: method=StripTags |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `public` | [bool](#bool) |  |  |
 | `closed` | [bool](#bool) |  |  |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `color` | [string](#string) |  |  |
 | `subscription` | [CalendarSub](#resourcescalendarCalendarSub) | optional |  |
 
 
@@ -935,8 +990,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 ### resources.centrum.CentrumAccess
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1008,8 +1061,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.DispatchAttributes
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1021,8 +1072,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.UnitAttributes
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1076,7 +1125,7 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `name` | [string](#string) |  |  |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `color` | [string](#string) |  |  |
 | `order` | [int32](#int32) |  |  |
 
 
@@ -1136,7 +1185,7 @@ Dummy - DO NOT USE!
 | `profile_picture_file_id` | [int64](#int64) | optional |  |
 | `profile_picture` | [string](#string) | optional |  |
 | `props` | [ColleagueProps](#resourcesjobsColleagueProps) |  |  |
-| `email` | [string](#string) | optional | @sanitize: method=StripTags |
+| `email` | [string](#string) | optional |  |
 
 
 
@@ -1152,7 +1201,7 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `absence_begin` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `absence_end` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `note` | [string](#string) | optional | @sanitize: method=StripTags |
+| `note` | [string](#string) | optional |  |
 | `labels` | [Labels](#resourcesjobsLabels) | optional |  |
 | `name_prefix` | [string](#string) | optional |  |
 | `name_suffix` | [string](#string) | optional |  |
@@ -1273,8 +1322,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.ExamGrading
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1307,8 +1354,8 @@ Dummy - DO NOT USE!
 | `qualification_id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
-| `description` | [string](#string) | optional | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `data` | [ExamQuestionData](#resourcesqualificationsExamQuestionData) |  |  |
 | `answer` | [ExamQuestionAnswerData](#resourcesqualificationsExamQuestionAnswerData) | optional |  |
 | `points` | [int32](#int32) | optional |  |
@@ -1319,8 +1366,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.ExamQuestionAnswerData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1336,8 +1381,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.ExamQuestionData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1370,7 +1413,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `choices` | [string](#string) | repeated |  |
 | `limit` | [int32](#int32) | optional |  |
 
 
@@ -1388,7 +1431,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `choices` | [string](#string) | repeated |  |
 
 
 
@@ -1457,7 +1500,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `choices` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `choices` | [string](#string) | repeated |  |
 
 
 
@@ -1474,7 +1517,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `choice` | [string](#string) |  | @sanitize: method=StripTags |
+| `choice` | [string](#string) |  |  |
 
 
 
@@ -1485,7 +1528,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `text` | [string](#string) |  | @sanitize: method=StripTags<br/><br/>0.5 Megabyte |
+| `text` | [string](#string) |  | 0.5 Megabyte |
 
 
 
@@ -1503,8 +1546,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.ExamResponses
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1559,9 +1600,9 @@ Dummy - DO NOT USE!
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize: method=StripTags |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -1576,7 +1617,7 @@ Dummy - DO NOT USE!
 | `result` | [QualificationResult](#resourcesqualificationsQualificationResult) | optional |  |
 | `request` | [QualificationRequest](#resourcesqualificationsQualificationRequest) | optional |  |
 | `label_sync_enabled` | [bool](#bool) |  |  |
-| `label_sync_format` | [string](#string) | optional | @sanitize: method=StripTags |
+| `label_sync_format` | [string](#string) | optional |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 
 
@@ -1584,8 +1625,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.QualificationDiscordSettings
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1598,8 +1637,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.qualifications.QualificationExamSettings
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1624,10 +1661,10 @@ Dummy - DO NOT USE!
 | `qualification` | [QualificationShort](#resourcesqualificationsQualificationShort) | optional |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
-| `user_comment` | [string](#string) | optional | @sanitize: method=StripTags |
+| `user_comment` | [string](#string) | optional |  |
 | `status` | [RequestStatus](#resourcesqualificationsRequestStatus) | optional |  |
 | `approved_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `approver_comment` | [string](#string) | optional | @sanitize: method=StripTags |
+| `approver_comment` | [string](#string) | optional |  |
 | `approver_id` | [int32](#int32) | optional |  |
 | `approver` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `approver_job` | [string](#string) | optional |  |
@@ -1665,7 +1702,7 @@ Dummy - DO NOT USE!
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
 | `status` | [ResultStatus](#resourcesqualificationsResultStatus) |  |  |
 | `score` | [float](#float) | optional |  |
-| `summary` | [string](#string) |  | @sanitize: method=StripTags |
+| `summary` | [string](#string) |  |  |
 | `creator_id` | [int32](#int32) |  |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) |  |  |
 | `creator_job` | [string](#string) |  |  |
@@ -1688,9 +1725,9 @@ Dummy - DO NOT USE!
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
-| `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize: method=StripTags |
+| `abbreviation` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
@@ -1762,8 +1799,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.UnitAccess
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -1847,11 +1882,11 @@ Dummy - DO NOT USE!
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `name` | [string](#string) |  | @sanitize |
-| `initials` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `description` | [string](#string) | optional | @sanitize |
+| `name` | [string](#string) |  |  |
+| `initials` | [string](#string) |  |  |
+| `color` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
+| `description` | [string](#string) | optional |  |
 | `status` | [UnitStatus](#resourcescentrumUnitStatus) | optional |  |
 | `users` | [UnitAssignment](#resourcescentrumUnitAssignment) | repeated |  |
 | `attributes` | [UnitAttributes](#resourcescentrumUnitAttributes) | optional |  |
@@ -1898,13 +1933,13 @@ Dummy - DO NOT USE!
 | `unit_id` | [int64](#int64) |  |  |
 | `unit` | [Unit](#resourcescentrumUnit) | optional |  |
 | `status` | [StatusUnit](#resourcescentrumStatusUnit) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `code` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
+| `code` | [string](#string) | optional |  |
 | `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.jobs.Colleague](#resourcesjobsColleague) | optional |  |
 | `x` | [double](#double) | optional |  |
 | `y` | [double](#double) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize |
+| `postal` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.jobs.Colleague](#resourcesjobsColleague) | optional |  |
 | `creator_job` | [string](#string) | optional |  |
@@ -1951,12 +1986,12 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) |  | **Deprecated.**  |
 | `jobs` | [JobList](#resourcescentrumJobList) |  |  |
 | `status` | [DispatchStatus](#resourcescentrumDispatchStatus) | optional |  |
-| `message` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
+| `message` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `attributes` | [DispatchAttributes](#resourcescentrumDispatchAttributes) | optional |  |
 | `x` | [double](#double) |  |  |
 | `y` | [double](#double) |  |  |
-| `postal` | [string](#string) | optional | @sanitize |
+| `postal` | [string](#string) | optional |  |
 | `anon` | [bool](#bool) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.User](#resourcesusersUser) | optional |  |
@@ -2008,8 +2043,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.DispatchReferences
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -2031,13 +2064,13 @@ Dummy - DO NOT USE!
 | `unit_id` | [int64](#int64) | optional |  |
 | `unit` | [Unit](#resourcescentrumUnit) | optional |  |
 | `status` | [StatusDispatch](#resourcescentrumStatusDispatch) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `code` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
+| `code` | [string](#string) | optional |  |
 | `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.jobs.Colleague](#resourcesjobsColleague) | optional |  |
 | `x` | [double](#double) | optional |  |
 | `y` | [double](#double) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize |
+| `postal` | [string](#string) | optional |  |
 | `creator_job` | [string](#string) | optional |  |
 
 
@@ -2124,8 +2157,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.Configuration
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -2174,14 +2205,12 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.PredefinedStatus
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `unit_status` | [string](#string) | repeated |  |
+| `dispatch_status` | [string](#string) | repeated |  |
 
 
 
@@ -2210,8 +2239,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.centrum.Timings
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -2263,10 +2290,10 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [string](#string) |  | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize: method |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `id` | [string](#string) |  |  |
+| `title` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
@@ -2671,7 +2698,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `attributes` | [GenericCronData.AttributesEntry](#resourcescommoncronGenericCronDataAttributesEntry) | repeated | @sanitize: method=StripTags |
+| `attributes` | [GenericCronData.AttributesEntry](#resourcescommoncronGenericCronDataAttributesEntry) | repeated |  |
 
 
 
@@ -2796,14 +2823,14 @@ SortByColumn sort by column and direction
 
 
 ### resources.common.I18NItem
-Wrapped translated message for the client @dbscanner: json
+Wrapped translated message for the client
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  | @sanitize: method=StripTags |
-| `parameters` | [I18NItem.ParametersEntry](#resourcescommonI18NItemParametersEntry) | repeated | @sanitize: method=StripTags |
+| `key` | [string](#string) |  |  |
+| `parameters` | [I18NItem.ParametersEntry](#resourcescommonI18NItemParametersEntry) | repeated |  |
 
 
 
@@ -3096,8 +3123,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 ### resources.documents.DocumentAccess
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -3233,7 +3258,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `reason` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
 | `data` | [DocActivityData](#resourcesdocumentsDocActivityData) |  |  |
 
 
@@ -3241,8 +3266,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 ### resources.documents.DocActivityData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -3357,11 +3380,11 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `job` | [string](#string) | optional |  |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional |  |
+| `icon` | [string](#string) | optional |  |
 
 
 
@@ -3475,8 +3498,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 ### resources.documents.Workflow
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -3524,15 +3545,15 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
-| `title` | [string](#string) |  | @sanitize |
+| `title` | [string](#string) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `data` | [string](#string) | optional | @sanitize |
+| `data` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `state` | [string](#string) |  | @sanitize |
+| `state` | [string](#string) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
@@ -3595,14 +3616,14 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
-| `title` | [string](#string) |  | @sanitize |
+| `title` | [string](#string) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `state` | [string](#string) |  | @sanitize |
+| `state` | [string](#string) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
@@ -3839,10 +3860,10 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `color` | [string](#string) | optional |  |
+| `icon` | [string](#string) | optional |  |
 | `content_title` | [string](#string) |  |  |
 | `content` | [string](#string) |  |  |
 | `state` | [string](#string) |  |  |
@@ -3903,8 +3924,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 ### resources.documents.TemplateSchema
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -3925,10 +3944,10 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `color` | [string](#string) | optional |  |
+| `icon` | [string](#string) | optional |  |
 | `schema` | [TemplateSchema](#resourcesdocumentsTemplateSchema) |  |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
@@ -4011,7 +4030,7 @@ Dummy - DO NOT USE!
 | `original_name` | [string](#string) |  |  |
 | `content_type` | [string](#string) |  | optional - server re-validates |
 | `size` | [int64](#int64) |  | Size in bytes |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 
 
 
@@ -4054,7 +4073,7 @@ Dummy - DO NOT USE!
 | `target_user_id` | [int32](#int32) |  |  |
 | `target_user` | [Colleague](#resourcesjobsColleague) |  |  |
 | `activity_type` | [ColleagueActivityType](#resourcesjobsColleagueActivityType) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 | `data` | [ColleagueActivityData](#resourcesjobsColleagueActivityData) |  |  |
 
 
@@ -4062,8 +4081,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.jobs.ColleagueActivityData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4152,7 +4169,7 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `type` | [ConductType](#resourcesjobsConductType) |  |  |
-| `message` | [string](#string) |  | @sanitize |
+| `message` | [string](#string) |  |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_user_id` | [int32](#int32) |  |  |
 | `target_user` | [Colleague](#resourcesjobsColleague) | optional |  |
@@ -4202,8 +4219,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.jobs.DiscordSyncChanges
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4215,8 +4230,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.jobs.DiscordSyncSettings
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4253,15 +4266,13 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `ignored_role_ids` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `ignored_role_ids` | [string](#string) | repeated |  |
 
 
 
 
 
 ### resources.jobs.JobSettings
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4360,8 +4371,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.jobs.QuickButtons
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4474,9 +4483,9 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `lawbook_id` | [int64](#int64) |  |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
-| `hint` | [string](#string) | optional | @sanitize |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `hint` | [string](#string) | optional |  |
 | `fine` | [uint32](#uint32) | optional |  |
 | `detention_time` | [uint32](#uint32) | optional |  |
 | `stvo_points` | [uint32](#uint32) | optional |  |
@@ -4493,8 +4502,8 @@ Dummy - DO NOT USE!
 | `id` | [int64](#int64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
 | `laws` | [Law](#resourceslawsLaw) | repeated |  |
 
 
@@ -4579,15 +4588,13 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `icon` | [string](#string) |  | @sanitize: method=StripTags |
+| `icon` | [string](#string) |  |  |
 
 
 
 
 
 ### resources.livemap.MarkerData
-@dbscanner
-
 
 
 | Field | Type | Label | Description |
@@ -4611,10 +4618,10 @@ Dummy - DO NOT USE!
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
-| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `name` | [string](#string) |  |  |
+| `description` | [string](#string) | optional |  |
+| `postal` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) |  |  |
 | `type` | [MarkerType](#resourceslivemapMarkerType) |  |  |
@@ -4658,8 +4665,8 @@ Dummy - DO NOT USE!
 | `x` | [double](#double) |  |  |
 | `y` | [double](#double) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `postal` | [string](#string) | optional |  |
+| `color` | [string](#string) | optional |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) |  |  |
 | `job_grade` | [int32](#int32) | optional |  |
@@ -4674,8 +4681,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.livemap.UserMarkerData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4793,8 +4798,8 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `email_id` | [int64](#int64) |  |  |
-| `signature` | [string](#string) | optional | @sanitize |
-| `blocked_emails` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `signature` | [string](#string) | optional |  |
+| `blocked_emails` | [string](#string) | repeated |  |
 
 
 
@@ -4825,9 +4830,9 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) | optional |  |
 | `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `email` | [string](#string) |  | @sanitize: method=StripTags |
+| `email` | [string](#string) |  |  |
 | `email_changed` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `label` | [string](#string) | optional | @sanitize: method=StripTags |
+| `label` | [string](#string) | optional |  |
 | `access` | [Access](#resourcesmailerAccess) |  |  |
 | `settings` | [EmailSettings](#resourcesmailerEmailSettings) | optional |  |
 
@@ -4859,8 +4864,8 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
-| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  | @sanitize |
+| `title` | [string](#string) |  |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `data` | [MessageData](#resourcesmailerMessageData) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator_job` | [string](#string) | optional |  |
@@ -4893,8 +4898,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.mailer.MessageData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -4930,7 +4933,7 @@ Dummy - DO NOT USE!
 | `creator_email` | [Email](#resourcesmailerEmail) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
 | `recipients` | [ThreadRecipientEmail](#resourcesmailerThreadRecipientEmail) | repeated |  |
 | `state` | [ThreadState](#resourcesmailerThreadState) | optional |  |
 
@@ -5023,8 +5026,8 @@ Dummy - DO NOT USE!
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `email_id` | [int64](#int64) |  |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
-| `content` | [string](#string) |  | @sanitize |
+| `title` | [string](#string) |  |  |
+| `content` | [string](#string) |  |  |
 | `creator_job` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 
@@ -5120,8 +5123,6 @@ Dummy - DO NOT USE!
 
 
 ### resources.notifications.Data
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -5156,9 +5157,9 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `read_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `user_id` | [int32](#int32) |  |  |
-| `title` | [resources.common.I18NItem](#resourcescommonI18NItem) |  | @sanitize |
+| `title` | [resources.common.I18NItem](#resourcescommonI18NItem) |  |  |
 | `type` | [NotificationType](#resourcesnotificationsNotificationType) |  |  |
-| `content` | [resources.common.I18NItem](#resourcescommonI18NItem) |  | @sanitize |
+| `content` | [resources.common.I18NItem](#resourcescommonI18NItem) |  |  |
 | `category` | [NotificationCategory](#resourcesnotificationsNotificationCategory) |  |  |
 | `data` | [Data](#resourcesnotificationsData) | optional |  |
 | `starred` | [bool](#bool) | optional |  |
@@ -5436,8 +5437,6 @@ User related events
 
 
 ### resources.settings.AppConfig
-@dbscanner: json,partial
-
 
 
 | Field | Type | Label | Description |
@@ -5476,10 +5475,10 @@ User related events
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
 | `sync_interval` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-| `invite_url` | [string](#string) | optional | @sanitize: method=StripTags |
-| `ignored_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `invite_url` | [string](#string) | optional |  |
+| `ignored_jobs` | [string](#string) | repeated |  |
 | `bot_presence` | [DiscordBotPresence](#resourcessettingsDiscordBotPresence) | optional |  |
-| `bot_id` | [string](#string) | optional | @sanitize: method=StripTags |
+| `bot_id` | [string](#string) | optional |  |
 | `bot_permissions` | [int64](#int64) |  |  |
 
 
@@ -5492,8 +5491,8 @@ User related events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `type` | [DiscordBotPresenceType](#resourcessettingsDiscordBotPresenceType) |  |  |
-| `status` | [string](#string) | optional | @sanitize: method=StripTags |
-| `url` | [string](#string) | optional | @sanitize: method=StripTags |
+| `status` | [string](#string) | optional |  |
+| `url` | [string](#string) | optional |  |
 
 
 
@@ -5517,8 +5516,8 @@ User related events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `unemployed_job` | [UnemployedJob](#resourcessettingsUnemployedJob) |  |  |
-| `public_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `hidden_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `public_jobs` | [string](#string) | repeated |  |
+| `hidden_jobs` | [string](#string) | repeated |  |
 
 
 
@@ -5529,8 +5528,8 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `privacy_policy` | [string](#string) | optional | @sanitize: method=StripTags |
-| `imprint` | [string](#string) | optional | @sanitize: method=StripTags |
+| `privacy_policy` | [string](#string) | optional |  |
+| `imprint` | [string](#string) | optional |  |
 
 
 
@@ -5541,8 +5540,8 @@ User related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `category` | [string](#string) |  | @sanitize: method=StripTags |
-| `name` | [string](#string) |  | @sanitize: method=StripTags |
+| `category` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
 
 
 
@@ -6142,8 +6141,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `source_user` | [UserShort](#resourcesusersUserShort) | optional |  |
 | `target_user_id` | [int32](#int32) |  |  |
 | `target_user` | [UserShort](#resourcesusersUserShort) |  |  |
-| `key` | [string](#string) |  | @sanitize |
-| `reason` | [string](#string) |  | @sanitize |
+| `key` | [string](#string) |  |  |
+| `reason` | [string](#string) |  |  |
 | `data` | [UserActivityData](#resourcesusersUserActivityData) | optional |  |
 | `old_value` | [string](#string) |  |  |
 | `new_value` | [string](#string) |  |  |
@@ -6153,8 +6152,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 ### resources.users.UserActivityData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -6228,7 +6225,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `reason` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
 | `data` | [VehicleActivityData](#resourcesvehiclesVehicleActivityData) |  |  |
 
 
@@ -6236,8 +6233,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 ### resources.vehicles.VehicleActivityData
-@dbscanner: json
-
 
 
 
@@ -6393,8 +6388,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 ### resources.wiki.PageActivityData
-@dbscanner: json
-
 
 
 | Field | Type | Label | Description |
@@ -6464,7 +6457,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `parent_id` | [int64](#int64) | optional |  |
 | `meta` | [PageMeta](#resourceswikiPageMeta) |  |  |
@@ -6484,13 +6477,13 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize: method=StripTags |
+| `slug` | [string](#string) | optional |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
-| `tags` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `tags` | [string](#string) | repeated |  |
 | `toc` | [bool](#bool) | optional |  |
 | `public` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
@@ -6521,7 +6514,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `job_label` | [string](#string) | optional |  |
 | `parent_id` | [int64](#int64) | optional |  |
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
+| `slug` | [string](#string) | optional |  |
 | `title` | [string](#string) |  |  |
 | `description` | [string](#string) |  |  |
 | `children` | [PageShort](#resourceswikiPageShort) | repeated |  |
@@ -7566,7 +7559,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `dispatch_ids` | [int64](#int64) | repeated |  |
 | `resp` | [resources.centrum.TakeDispatchResp](#resourcescentrumTakeDispatchResp) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
 
 
 
@@ -7607,8 +7600,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `dispatch_id` | [int64](#int64) |  |  |
 | `status` | [resources.centrum.StatusDispatch](#resourcescentrumStatusDispatch) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `code` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
+| `code` | [string](#string) | optional |  |
 
 
 
@@ -7671,8 +7664,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `unit_id` | [int64](#int64) |  |  |
 | `status` | [resources.centrum.StatusUnit](#resourcescentrumStatusUnit) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `code` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
+| `code` | [string](#string) | optional |  |
 
 
 
@@ -7743,7 +7736,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 
 
 
@@ -7862,7 +7855,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.users.UserProps](#resourcesusersUserProps) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 
 
 
@@ -8128,7 +8121,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `request_type` | [resources.documents.DocActivityType](#resourcesdocumentsDocActivityType) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
 | `data` | [resources.documents.DocActivityData](#resourcesdocumentsDocActivityData) | optional |  |
 
 
@@ -8271,7 +8264,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `reason` | [string](#string) | optional | @sanitize: method=StripTags |
+| `reason` | [string](#string) | optional |  |
 
 
 
@@ -8708,7 +8701,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `reminder_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `message` | [string](#string) | optional | @sanitize: method=StripTags |
+| `message` | [string](#string) | optional |  |
 | `max_reminder_count` | [int32](#int32) |  |  |
 
 
@@ -8770,7 +8763,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `request_id` | [int64](#int64) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
+| `reason` | [string](#string) | optional |  |
 | `data` | [resources.documents.DocActivityData](#resourcesdocumentsDocActivityData) | optional |  |
 | `accepted` | [bool](#bool) |  |  |
 
@@ -8796,11 +8789,11 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `category_id` | [int64](#int64) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `data` | [string](#string) | optional |  |
-| `state` | [string](#string) |  | @sanitize |
+| `state` | [string](#string) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
@@ -9259,7 +9252,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.jobs.ColleagueProps](#resourcesjobsColleagueProps) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 
 
 
@@ -9281,7 +9274,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `motd` | [string](#string) |  | @sanitize: method=StripTags |
+| `motd` | [string](#string) |  |  |
 
 
 
@@ -9673,7 +9666,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----- | ---- | ----- | ----------- |
 | `thread` | [resources.mailer.Thread](#resourcesmailerThread) |  |  |
 | `message` | [resources.mailer.Message](#resourcesmailerMessage) |  |  |
-| `recipients` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `recipients` | [string](#string) | repeated |  |
 
 
 
@@ -10004,7 +9997,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `message` | [resources.mailer.Message](#resourcesmailerMessage) |  |  |
-| `recipients` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `recipients` | [string](#string) | repeated |  |
 
 
 
@@ -11191,8 +11184,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `user_ids` | [int32](#int32) | repeated | Search params |
 | `from` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `to` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `services` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `methods` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `services` | [string](#string) | repeated |  |
+| `methods` | [string](#string) | repeated |  |
 | `search` | [string](#string) | optional |  |
 | `states` | [resources.audit.EventType](#resourcesauditEventType) | repeated |  |
 
@@ -11649,7 +11642,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `props` | [resources.vehicles.VehicleProps](#resourcesvehiclesVehicleProps) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
+| `reason` | [string](#string) |  |  |
 
 
 

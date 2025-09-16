@@ -7,15 +7,53 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Colleague) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Email
+	// Field: Dateofbirth
+	m.Dateofbirth = htmlsanitizer.Sanitize(m.Dateofbirth)
 
+	// Field: Email
 	if m.Email != nil {
 		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	// Field: Firstname
+	m.Firstname = htmlsanitizer.Sanitize(m.Firstname)
+
+	// Field: Identifier
+	if m.Identifier != nil {
+		*m.Identifier = htmlsanitizer.Sanitize(*m.Identifier)
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: Lastname
+	m.Lastname = htmlsanitizer.Sanitize(m.Lastname)
+
+	// Field: PhoneNumber
+	if m.PhoneNumber != nil {
+		*m.PhoneNumber = htmlsanitizer.Sanitize(*m.PhoneNumber)
+	}
+
+	// Field: ProfilePicture
+	if m.ProfilePicture != nil {
+		*m.ProfilePicture = htmlsanitizer.Sanitize(*m.ProfilePicture)
 	}
 
 	// Field: Props
@@ -30,6 +68,8 @@ func (m *Colleague) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ColleagueProps) Sanitize() error {
 	if m == nil {
 		return nil
@@ -62,6 +102,9 @@ func (m *ColleagueProps) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	// Field: Labels
 	if m.Labels != nil {
 		if v, ok := any(m.GetLabels()).(interface{ Sanitize() error }); ok {
@@ -71,8 +114,17 @@ func (m *ColleagueProps) Sanitize() error {
 		}
 	}
 
-	// Field: Note
+	// Field: NamePrefix
+	if m.NamePrefix != nil {
+		*m.NamePrefix = htmlsanitizer.Sanitize(*m.NamePrefix)
+	}
 
+	// Field: NameSuffix
+	if m.NameSuffix != nil {
+		*m.NameSuffix = htmlsanitizer.Sanitize(*m.NameSuffix)
+	}
+
+	// Field: Note
 	if m.Note != nil {
 		*m.Note = htmlsanitizer.StripTags(*m.Note)
 	}

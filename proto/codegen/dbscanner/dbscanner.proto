@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package codegen.dbscanner;
+
+import "google/protobuf/descriptor.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner;dbscanner";
+
+extend google.protobuf.MessageOptions {
+  MessageOptions dbscanner = 51004;
+}
+
+message MessageOptions {
+  bool enabled = 1;
+  optional bool not_json = 2;
+  optional bool partial = 3;
+}

@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Dispatch) Sanitize() error {
 	if m == nil {
 		return nil
@@ -40,10 +42,12 @@ func (m *Dispatch) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Jobs
 	if m.Jobs != nil {
@@ -58,7 +62,6 @@ func (m *Dispatch) Sanitize() error {
 	m.Message = htmlsanitizer.Sanitize(m.Message)
 
 	// Field: Postal
-
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
 	}
@@ -105,6 +108,8 @@ func (m *Dispatch) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchAssignment) Sanitize() error {
 	if m == nil {
 		return nil
@@ -140,10 +145,15 @@ func (m *DispatchAssignment) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchAssignments) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Units
 	for idx, item := range m.Units {
@@ -160,6 +170,8 @@ func (m *DispatchAssignments) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchReference) Sanitize() error {
 	if m == nil {
 		return nil
@@ -168,6 +180,8 @@ func (m *DispatchReference) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchReferences) Sanitize() error {
 	if m == nil {
 		return nil
@@ -188,13 +202,14 @@ func (m *DispatchReferences) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DispatchStatus) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Code
-
 	if m.Code != nil {
 		*m.Code = htmlsanitizer.Sanitize(*m.Code)
 	}
@@ -208,14 +223,17 @@ func (m *DispatchStatus) Sanitize() error {
 		}
 	}
 
-	// Field: Postal
+	// Field: CreatorJob
+	if m.CreatorJob != nil {
+		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+	}
 
+	// Field: Postal
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
 	}
 
 	// Field: Reason
-
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
 	}
@@ -241,6 +259,8 @@ func (m *DispatchStatus) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobList) Sanitize() error {
 	if m == nil {
 		return nil
@@ -261,10 +281,20 @@ func (m *JobList) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobListEntry) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.Sanitize(*m.Label)
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	return nil
 }

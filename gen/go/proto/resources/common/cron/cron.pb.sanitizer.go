@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Cronjob) Sanitize() error {
 	if m == nil {
 		return nil
@@ -39,6 +41,9 @@ func (m *Cronjob) Sanitize() error {
 		}
 	}
 
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	// Field: NextScheduleTime
 	if m.NextScheduleTime != nil {
 		if v, ok := any(m.GetNextScheduleTime()).(interface{ Sanitize() error }); ok {
@@ -47,6 +52,9 @@ func (m *Cronjob) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Schedule
+	m.Schedule = htmlsanitizer.Sanitize(m.Schedule)
 
 	// Field: StartedTime
 	if m.StartedTime != nil {
@@ -69,6 +77,8 @@ func (m *Cronjob) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CronjobCompletedEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -101,9 +111,22 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 		}
 	}
 
+	// Field: ErrorMessage
+	if m.ErrorMessage != nil {
+		*m.ErrorMessage = htmlsanitizer.Sanitize(*m.ErrorMessage)
+	}
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: NodeName
+	m.NodeName = htmlsanitizer.Sanitize(m.NodeName)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CronjobData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -130,10 +153,15 @@ func (m *CronjobData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CronjobLockOwnerState) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Hostname
+	m.Hostname = htmlsanitizer.Sanitize(m.Hostname)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -147,6 +175,8 @@ func (m *CronjobLockOwnerState) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CronjobSchedulerEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -164,6 +194,8 @@ func (m *CronjobSchedulerEvent) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GenericCronData) Sanitize() error {
 	if m == nil {
 		return nil

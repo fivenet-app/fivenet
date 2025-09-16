@@ -7,6 +7,7 @@
 package file
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -21,7 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// @dbscanner: json
 type FileMeta struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Meta:
@@ -144,9 +144,9 @@ var File_resources_file_meta_proto protoreflect.FileDescriptor
 
 const file_resources_file_meta_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/file/meta.proto\x12\x0eresources.file\"E\n" +
+	"\x19resources/file/meta.proto\x12\x0eresources.file\x1a!codegen/dbscanner/dbscanner.proto\"M\n" +
 	"\bFileMeta\x121\n" +
-	"\x05image\x18\x01 \x01(\v2\x19.resources.file.ImageMetaH\x00R\x05imageB\x06\n" +
+	"\x05image\x18\x01 \x01(\v2\x19.resources.file.ImageMetaH\x00R\x05image:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
 	"\x04meta\"9\n" +
 	"\tImageMeta\x12\x14\n" +
 	"\x05width\x18\x01 \x01(\x03R\x05width\x12\x16\n" +

@@ -3,6 +3,8 @@
 
 package settings
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCronjobsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,6 +13,8 @@ func (m *ListCronjobsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCronjobsResponse) Sanitize() error {
 	if m == nil {
 		return nil

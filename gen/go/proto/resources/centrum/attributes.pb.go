@@ -7,6 +7,7 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -125,7 +126,6 @@ func (DispatchAttribute) EnumDescriptor() ([]byte, []int) {
 	return file_resources_centrum_attributes_proto_rawDescGZIP(), []int{1}
 }
 
-// @dbscanner: json
 type UnitAttributes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	List          []UnitAttribute        `protobuf:"varint,1,rep,packed,name=list,proto3,enum=resources.centrum.UnitAttribute" json:"list,omitempty"`
@@ -170,7 +170,6 @@ func (x *UnitAttributes) GetList() []UnitAttribute {
 	return nil
 }
 
-// @dbscanner: json
 type DispatchAttributes struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	List          []DispatchAttribute    `protobuf:"varint,1,rep,packed,name=list,proto3,enum=resources.centrum.DispatchAttribute" json:"list,omitempty"`
@@ -219,13 +218,13 @@ var File_resources_centrum_attributes_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_attributes_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/attributes.proto\x12\x11resources.centrum\"U\n" +
+	"\"resources/centrum/attributes.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\"]\n" +
 	"\x0eUnitAttributes\x12C\n" +
 	"\x04list\x18\x01 \x03(\x0e2 .resources.centrum.UnitAttributeB\r\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x04list\"]\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x04list:\x06\xe2\xf3\x18\x02\b\x01\"e\n" +
 	"\x12DispatchAttributes\x12G\n" +
 	"\x04list\x18\x01 \x03(\x0e2$.resources.centrum.DispatchAttributeB\r\xbaH\n" +
-	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x04list*v\n" +
+	"\x92\x01\a\"\x05\x82\x01\x02\x10\x01R\x04list:\x06\xe2\xf3\x18\x02\b\x01*v\n" +
 	"\rUnitAttribute\x12\x1e\n" +
 	"\x1aUNIT_ATTRIBUTE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15UNIT_ATTRIBUTE_STATIC\x10\x01\x12*\n" +

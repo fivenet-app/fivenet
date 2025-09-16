@@ -3,6 +3,12 @@
 
 package jobs
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobProps) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,6 +21,11 @@ func (m *JobProps) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: DiscordGuildId
+	if m.DiscordGuildId != nil {
+		*m.DiscordGuildId = htmlsanitizer.Sanitize(*m.DiscordGuildId)
 	}
 
 	// Field: DiscordLastSync
@@ -44,6 +55,17 @@ func (m *JobProps) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: LivemapMarkerColor
+	m.LivemapMarkerColor = htmlsanitizer.Sanitize(m.LivemapMarkerColor)
+
 	// Field: LogoFile
 	if m.LogoFile != nil {
 		if v, ok := any(m.GetLogoFile()).(interface{ Sanitize() error }); ok {
@@ -53,6 +75,11 @@ func (m *JobProps) Sanitize() error {
 		}
 	}
 
+	// Field: Motd
+	if m.Motd != nil {
+		*m.Motd = htmlsanitizer.Sanitize(*m.Motd)
+	}
+
 	// Field: QuickButtons
 	if m.QuickButtons != nil {
 		if v, ok := any(m.GetQuickButtons()).(interface{ Sanitize() error }); ok {
@@ -60,6 +87,11 @@ func (m *JobProps) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: RadioFrequency
+	if m.RadioFrequency != nil {
+		*m.RadioFrequency = htmlsanitizer.Sanitize(*m.RadioFrequency)
 	}
 
 	// Field: Settings
@@ -74,6 +106,8 @@ func (m *JobProps) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QuickButtons) Sanitize() error {
 	if m == nil {
 		return nil

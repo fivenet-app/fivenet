@@ -7,6 +7,8 @@
 package centrum
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -259,13 +261,10 @@ func (x *Settings) GetEffectiveAccess() *EffectiveAccess {
 	return nil
 }
 
-// @dbscanner: json
 type PredefinedStatus struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	UnitStatus []string `protobuf:"bytes,1,rep,name=unit_status,json=unitStatus,proto3" json:"unit_status,omitempty"`
-	// @sanitize: method=StripTags
-	DispatchStatus []string `protobuf:"bytes,2,rep,name=dispatch_status,json=dispatchStatus,proto3" json:"dispatch_status,omitempty"`
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UnitStatus     []string               `protobuf:"bytes,1,rep,name=unit_status,json=unitStatus,proto3" json:"unit_status,omitempty"`
+	DispatchStatus []string               `protobuf:"bytes,2,rep,name=dispatch_status,json=dispatchStatus,proto3" json:"dispatch_status,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -314,7 +313,6 @@ func (x *PredefinedStatus) GetDispatchStatus() []string {
 	return nil
 }
 
-// @dbscanner: json
 type Timings struct {
 	state                      protoimpl.MessageState `protogen:"open.v1"`
 	DispatchMaxWait            int64                  `protobuf:"varint,1,opt,name=dispatch_max_wait,json=dispatchMaxWait,proto3" json:"dispatch_max_wait,omitempty"`
@@ -375,7 +373,6 @@ func (x *Timings) GetRequireUnitReminderSeconds() int64 {
 	return 0
 }
 
-// @dbscanner: json
 type Configuration struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	DeduplicationEnabled  bool                   `protobuf:"varint,1,opt,name=deduplication_enabled,json=deduplicationEnabled,proto3" json:"deduplication_enabled,omitempty"`
@@ -588,7 +585,7 @@ var File_resources_centrum_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\n" +
-	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1egoogle/protobuf/duration.proto\x1a\x1eresources/centrum/access.proto\x1a\x13tagger/tagger.proto\"\xa1\x06\n" +
+	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1eresources/centrum/access.proto\x1a\x13tagger/tagger.proto\"\xa1\x06\n" +
 	"\bSettings\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x18\n" +
 	"\aenabled\x18\x02 \x01(\bR\aenabled\x12<\n" +
@@ -606,21 +603,21 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\x12_predefined_statusB\t\n" +
 	"\a_accessB\x11\n" +
 	"\x0f_offered_accessB\x13\n" +
-	"\x11_effective_access\"|\n" +
-	"\x10PredefinedStatus\x12/\n" +
-	"\vunit_status\x18\x01 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
-	"unitStatus\x127\n" +
-	"\x0fdispatch_status\x18\x02 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\x0edispatchStatus\"\xb3\x01\n" +
+	"\x11_effective_access\"\xa6\x01\n" +
+	"\x10PredefinedStatus\x12@\n" +
+	"\vunit_status\x18\x01 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
+	"unitStatus\x12H\n" +
+	"\x0fdispatch_status\x18\x02 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\x0edispatchStatus:\x06\xe2\xf3\x18\x02\b\x01\"\xbb\x01\n" +
 	"\aTimings\x126\n" +
 	"\x11dispatch_max_wait\x18\x01 \x01(\x03B\n" +
 	"\xbaH\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +
 	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12M\n" +
 	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03B\n" +
-	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"\xf6\x01\n" +
+	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds:\x06\xe2\xf3\x18\x02\b\x01\"\xfe\x01\n" +
 	"\rConfiguration\x123\n" +
 	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x12>\n" +
 	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x05R\x13deduplicationRadius\x12U\n" +
-	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01B\x19\n" +
+	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\x19\n" +
 	"\x17_deduplication_duration\"]\n" +
 	"\x0fEffectiveAccess\x12J\n" +
 	"\n" +

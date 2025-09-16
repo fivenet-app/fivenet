@@ -61,8 +61,6 @@ export interface PageActivity {
     data?: PageActivityData;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.wiki.PageActivityData
  */
 export interface PageActivityData {
@@ -320,7 +318,7 @@ class PageActivityData$Type extends MessageType<PageActivityData> {
         super("resources.wiki.PageActivityData", [
             { no: 1, name: "updated", kind: "message", oneof: "data", T: () => PageUpdated },
             { no: 2, name: "access_updated", kind: "message", oneof: "data", T: () => PageAccessUpdated }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<PageActivityData>): PageActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));

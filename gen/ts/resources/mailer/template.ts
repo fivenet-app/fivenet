@@ -37,14 +37,10 @@ export interface Template {
      */
     emailId: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 7
      */
     title: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string content = 8
      */
     content: string;
@@ -66,8 +62,8 @@ class Template$Type extends MessageType<Template> {
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "10240" } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "10240" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "40" } } } },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);

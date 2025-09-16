@@ -3,6 +3,12 @@
 
 package centrum
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Dispatchers) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,9 +26,19 @@ func (m *Dispatchers) Sanitize() error {
 
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobDispatchers) Sanitize() error {
 	if m == nil {
 		return nil

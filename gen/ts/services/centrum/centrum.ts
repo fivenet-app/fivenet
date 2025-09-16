@@ -157,14 +157,10 @@ export interface UpdateUnitStatusRequest {
      */
     status: StatusUnit;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string code = 4
      */
     code?: string;
@@ -394,14 +390,10 @@ export interface UpdateDispatchStatusRequest {
      */
     status: StatusDispatch;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string code = 4
      */
     code?: string;
@@ -481,8 +473,6 @@ export interface TakeDispatchRequest {
      */
     resp: TakeDispatchResp;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
@@ -964,7 +954,7 @@ export const ListUnitsRequest = new ListUnitsRequest$Type();
 class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
     constructor() {
         super("services.centrum.ListUnitsResponse", [
-            { no: 1, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit, options: { "codegen.itemslen.items_len": true } }
+            { no: 1, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListUnitsResponse>): ListUnitsResponse {
@@ -1190,8 +1180,8 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<UpdateUnitStatusRequest>): UpdateUnitStatusRequest {
@@ -1607,7 +1597,7 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
     constructor() {
         super("services.centrum.ListUnitActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitStatus, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListUnitActivityResponse>): ListUnitActivityResponse {
@@ -1847,7 +1837,7 @@ class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
     constructor() {
         super("services.centrum.ListDispatchesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchesResponse>): ListDispatchesResponse {
@@ -2300,7 +2290,7 @@ export const ListDispatchTargetJobsRequest = new ListDispatchTargetJobsRequest$T
 class ListDispatchTargetJobsResponse$Type extends MessageType<ListDispatchTargetJobsResponse> {
     constructor() {
         super("services.centrum.ListDispatchTargetJobsResponse", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "codegen.itemslen.items_len": true } }
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchTargetJobsResponse>): ListDispatchTargetJobsResponse {
@@ -2349,8 +2339,8 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         super("services.centrum.UpdateDispatchStatusRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<UpdateDispatchStatusRequest>): UpdateDispatchStatusRequest {
@@ -2579,7 +2569,7 @@ class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivity
     constructor() {
         super("services.centrum.ListDispatchActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchStatus, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchStatus, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDispatchActivityResponse>): ListDispatchActivityResponse {
@@ -2726,7 +2716,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
         super("services.centrum.TakeDispatchRequest", [
             { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<TakeDispatchRequest>): TakeDispatchRequest {
