@@ -228,7 +228,7 @@ func (r *Retriever) GetUserInfo(
 	// Set superuser status and override job/grade if applicable
 	r.checkAndSetSuperuser(dest)
 
-	r.userCache.Put(key, dest, r.userCacheTTL)
+	r.userCache.Put(key, proto.Clone(dest).(*pbuserinfo.UserInfo), r.userCacheTTL)
 
 	return dest, nil
 }
