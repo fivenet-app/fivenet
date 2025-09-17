@@ -3287,7 +3287,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `owner_changed` | [DocOwnerChanged](#resourcesdocumentsDocOwnerChanged) |  |  |
 | `access_updated` | [DocAccessUpdated](#resourcesdocumentsDocAccessUpdated) |  |  |
 | `access_requested` | [DocAccessRequested](#resourcesdocumentsDocAccessRequested) |  |  |
-| `sign_off_requested` | [DocSignOffRequested](#resourcesdocumentsDocSignOffRequested) |  |  |
+| `signing_requested` | [DocSigningRequested](#resourcesdocumentsDocSigningRequested) |  |  |
 
 
 
@@ -3317,7 +3317,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
-### resources.documents.DocSignOffRequested
+### resources.documents.DocSigningRequested
 
 
 | Field | Type | Label | Description |
@@ -3360,8 +3360,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_OWNER_CHANGED` | 8 |  |
 | `DOC_ACTIVITY_TYPE_DELETED` | 9 |  |
 | `DOC_ACTIVITY_TYPE_DRAFT_TOGGLED` | 19 |  |
-| `DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED` | 21 |  |
-| `DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED` | 22 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_ADDED` | 10 | Comments |
 | `DOC_ACTIVITY_TYPE_COMMENT_UPDATED` | 11 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_DELETED` | 12 |  |
@@ -3371,7 +3369,208 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_REQUESTED_UPDATE` | 16 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE` | 17 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_DELETION` | 18 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF` | 20 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL` | 20 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_SIGNING` | 21 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_APPROVED` | 22 | Approval |
+| `DOC_ACTIVITY_TYPE_APPROVAL_DECLINED` | 23 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_CANCELLED` | 24 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_EXPIRED` | 25 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_CREATED` | 26 | Signing |
+| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 27 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 28 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/approval.proto
+
+
+### resources.documents.ApprovalPolicyApplied
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
+| `stages` | [ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | Materialized stages |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.documents.ApprovalStage
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `name` | [string](#string) |  |  |
+| `order` | [int32](#int32) |  | 1..N; same order => parallel |
+| `selector` | [PartySelector](#resourcesdocumentsPartySelector) |  |  |
+| `require_all` | [RequireAll](#resourcesdocumentsRequireAll) |  |  |
+| `quorum_any` | [QuorumAny](#resourcesdocumentsQuorumAny) |  |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `assigned_count` | [int32](#int32) |  | Optional cached aggregates (service maintained) |
+| `approved_count` | [int32](#int32) |  |  |
+| `declined_count` | [int32](#int32) |  |  |
+| `pending_count` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.documents.ApprovalTask
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `stage_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `creator_id` | [int32](#int32) |  |  |
+| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `creator_job` | [string](#string) |  | Snapshot of why this user was assigned (for audit stability) |
+| `job_label` | [string](#string) | optional |  |
+| `creator_job_grade` | [int32](#int32) |  |  |
+| `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
+| `comment` | [string](#string) |  | Optional comment on approve/decline |
+| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.documents.JobGradeSelector
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) | optional |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [PartyAccessLevel](#resourcesdocumentsPartyAccessLevel) |  |  |
+
+
+
+
+
+### resources.documents.PartySelector
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `who` | [Selector](#resourcesdocumentsSelector) | repeated | Primary targets |
+| `exclusions` | [Selector](#resourcesdocumentsSelector) | repeated | Optional exclusions |
+| `fallbacks` | [Selector](#resourcesdocumentsSelector) | repeated | Optional fallbacks if who resolves to 0 |
+
+
+
+
+
+### resources.documents.QuorumAny
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `count` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.documents.RequireAll
+Stages & tasks
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `value` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.documents.Selector
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user` | [UserSelector](#resourcesdocumentsUserSelector) |  |  |
+| `job` | [JobGradeSelector](#resourcesdocumentsJobGradeSelector) |  |  |
+| `job_grade` | [JobGradeSelector](#resourcesdocumentsJobGradeSelector) |  |  |
+
+
+
+
+
+### resources.documents.UserSelector
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `access` | [PartyAccessLevel](#resourcesdocumentsPartyAccessLevel) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.documents.ApprovalTaskStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_TASK_STATUS_UNSPECIFIED` | 0 |  |
+| `APPROVAL_TASK_STATUS_PENDING` | 1 |  |
+| `APPROVAL_TASK_STATUS_APPROVED` | 2 |  |
+| `APPROVAL_TASK_STATUS_DECLINED` | 3 |  |
+| `APPROVAL_TASK_STATUS_EXPIRED` | 4 |  |
+| `APPROVAL_TASK_STATUS_CANCELLED` | 5 |  |
+
+
+
+### resources.documents.OnEditBehavior
+Policy snapshot applied to a specific version
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ON_EDIT_BEHAVIOR_UNSPECIFIED` | 0 |  |
+| `ON_EDIT_BEHAVIOR_RESET` | 1 | Reset review on content edits |
+| `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 2 | Keep approvals where possible |
+
+
+
+### resources.documents.PartyAccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `PARTY_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `PARTY_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `PARTY_ACCESS_LEVEL_VIEW` | 2 |  |
+| `PARTY_ACCESS_LEVEL_PERFORM` | 3 |  |
 
 
  <!-- end enums -->
@@ -3566,6 +3765,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
+| `status` | [DocumentStatus](#resourcesdocumentsDocumentStatus) |  |  |
 | `state` | [string](#string) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
@@ -3636,6 +3836,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
+| `status` | [DocumentStatus](#resourcesdocumentsDocumentStatus) |  |  |
 | `state` | [string](#string) |  |  |
 | `closed` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
@@ -3707,6 +3908,21 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_RELATION_CAUSED` | 3 |  |
 
 
+
+### resources.documents.DocumentStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DOCUMENT_STATUS_UNSPECIFIED` | 0 |  |
+| `DOCUMENT_STATUS_DRAFT` | 1 |  |
+| `DOCUMENT_STATUS_REVIEWING` | 2 |  |
+| `DOCUMENT_STATUS_APPROVED` | 3 |  |
+| `DOCUMENT_STATUS_SIGNING` | 4 |  |
+| `DOCUMENT_STATUS_SIGNED` | 5 |  |
+| `DOCUMENT_STATUS_AMENDED` | 6 |  |
+| `DOCUMENT_STATUS_ARCHIVED` | 7 |  |
+
+
  <!-- end enums -->
 
  <!-- end HasExtensions -->
@@ -3749,15 +3965,115 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
-## resources/documents/signoff.proto
+## resources/documents/signing.proto
 
 
-### resources.documents.SignoffState
+### resources.documents.Signature
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `version_signed_on` | [string](#string) |  | version_id whose hash was shown |
+| `requirement_id` | [int64](#int64) |  | Null/Empty for optional acknowledgements |
+| `user_id` | [int32](#int32) |  |  |
+| `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
+| `payload_json` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
+| `stamp_id` | [int64](#int64) |  | if type == STAMP |
+| `snapshot_hash` | [string](#string) |  | Hash at sign time |
+| `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
+| `reason` | [string](#string) |  | Revoke/Invalid reason |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.documents.SignatureRequirement
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `sequence_order` | [int32](#int32) |  | NULL/0 => any-order |
+| `required` | [bool](#bool) |  |  |
+| `label` | [string](#string) |  | "Leader", "Counterparty Rep" |
+| `selector` | [PartySelector](#resourcesdocumentsPartySelector) |  |  |
+| `binding_mode` | [BindingMode](#resourcesdocumentsBindingMode) |  |  |
+| `allowed_types` | [SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
+
+
+
+
+
+### resources.documents.Stamp
+Stamps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `owner_id` | [int32](#int32) |  |  |
+| `svg_template` | [string](#string) |  | Parameterized SVG with slots |
+| `variants_json` | [string](#string) |  | Sizes/styles |
+| `policy_json` | [string](#string) |  | Who may use |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 
 
 
 
  <!-- end messages -->
+
+
+### resources.documents.BindingMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `BINDING_MODE_UNSPECIFIED` | 0 |  |
+| `BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
+| `BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
+
+
+
+### resources.documents.OwnerType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `OWNER_TYPE_UNSPECIFIED` | 0 |  |
+| `OWNER_TYPE_USER` | 1 |  |
+| `OWNER_TYPE_ROLE` | 2 |  |
+| `OWNER_TYPE_FACTION` | 3 |  |
+| `OWNER_TYPE_ORG` | 4 |  |
+
+
+
+### resources.documents.SignatureStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_STATUS_VALID` | 1 |  |
+| `SIGNATURE_STATUS_REVOKED` | 2 |  |
+| `SIGNATURE_STATUS_INVALID_PRIOR_VERSION` | 3 |  |
+
+
+
+### resources.documents.SignatureType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_TYPE_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_TYPE_FREEHAND` | 1 |  |
+| `SIGNATURE_TYPE_TYPED` | 2 |  |
+| `SIGNATURE_TYPE_STAMP` | 3 |  |
+
 
  <!-- end enums -->
 
@@ -8044,6 +8360,218 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+## services/documents/approval.proto
+
+
+### services.documents.AddReviewersRequest
+Leader UX: add or cancel reviewer tasks on the fly
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `selector` | [resources.documents.PartySelector](#resourcesdocumentsPartySelector) |  | Who to add |
+| `quorum_any` | [int32](#int32) |  | Optional: convert to a parallel stage if needed |
+| `stage_id` | [int64](#int64) |  | Optional: attach to existing stage |
+
+
+
+
+
+### services.documents.AddReviewersResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `created_tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.ApprovalPanelSnapshot
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `current_order` | [int32](#int32) |  | Smallest incomplete order |
+| `stages` | [resources.documents.ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | With aggregates |
+| `pending_tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+| `all_required_stages_satisfied` | [bool](#bool) |  |  |
+| `any_declined` | [bool](#bool) |  |  |
+
+
+
+
+
+### services.documents.CancelReviewTasksRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `task_ids` | [string](#string) | repeated |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.CancelReviewTasksResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `cancelled` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.DecideApprovalTaskRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `task_id` | [string](#string) |  |  |
+| `approve` | [DecisionApprove](#servicesdocumentsDecisionApprove) |  |  |
+| `decline` | [DecisionDecline](#servicesdocumentsDecisionDecline) |  |  |
+
+
+
+
+
+### services.documents.DecideApprovalTaskResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
+| `stage_completed` | [bool](#bool) |  |  |
+| `document_now_approved` | [bool](#bool) |  |  |
+| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  | Updated snapshot for optimistic UI |
+
+
+
+
+
+### services.documents.DecisionApprove
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.DecisionDecline
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.GetApprovalPanelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.GetApprovalPanelResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.ListMyApprovalTasksRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated | Default: PENDING |
+
+
+
+
+
+### services.documents.ListMyApprovalTasksResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+
+
+
+
+
+### services.documents.StartReviewRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [string](#string) |  |  |
+| `on_edit_behavior` | [resources.documents.OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  | Optional override |
+
+
+
+
+
+### services.documents.StartReviewResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `policy_id` | [string](#string) |  |  |
+| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.ApprovalService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `StartReview` | [StartReviewRequest](#servicesdocumentsStartReviewRequest) | [StartReviewResponse](#servicesdocumentsStartReviewResponse) | |
+| `GetApprovalPanel` | [GetApprovalPanelRequest](#servicesdocumentsGetApprovalPanelRequest) | [GetApprovalPanelResponse](#servicesdocumentsGetApprovalPanelResponse) | |
+| `ListMyApprovalTasks` | [ListMyApprovalTasksRequest](#servicesdocumentsListMyApprovalTasksRequest) | [ListMyApprovalTasksResponse](#servicesdocumentsListMyApprovalTasksResponse) | |
+| `DecideApprovalTask` | [DecideApprovalTaskRequest](#servicesdocumentsDecideApprovalTaskRequest) | [DecideApprovalTaskResponse](#servicesdocumentsDecideApprovalTaskResponse) | |
+| `AddReviewers` | [AddReviewersRequest](#servicesdocumentsAddReviewersRequest) | [AddReviewersResponse](#servicesdocumentsAddReviewersResponse) |Light-weight mutations leaders will need: |
+| `CancelReviewTasks` | [CancelReviewTasksRequest](#servicesdocumentsCancelReviewTasksRequest) | [CancelReviewTasksResponse](#servicesdocumentsCancelReviewTasksResponse) | |
+
+ <!-- end services -->
+
+
+
 ## services/documents/collab.proto
 
  <!-- end messages -->
@@ -8898,6 +9426,192 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) | |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) | |
 | `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/documents/signing.proto
+
+
+### services.documents.ApplySignatureRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `requirement_id` | [int64](#int64) |  | empty => optional/ack |
+| `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
+| `payload_json` | [string](#string) |  |  |
+| `stamp_id` | [int64](#int64) |  | If STAMP |
+| `snapshot_hash` | [string](#string) |  | Client-computed from snapshot_json |
+
+
+
+
+
+### services.documents.ApplySignatureResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
+| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.GetSignaturePanelRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetSignaturePanelResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.ListUsableStampsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.ListUsableStampsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `stamps` | [resources.documents.Stamp](#resourcesdocumentsStamp) | repeated |  |
+
+
+
+
+
+### services.documents.PrepareSignatureRequirementsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.PrepareSignatureRequirementsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
+
+
+
+
+
+### services.documents.RequestSignaturesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `selector` | [resources.documents.PartySelector](#resourcesdocumentsPartySelector) |  | Who to ask |
+| `required` | [bool](#bool) |  | Signature is required |
+| `binding_mode` | [resources.documents.BindingMode](#resourcesdocumentsBindingMode) |  | For created requirements |
+| `allowed_types` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
+| `sequence_order` | [int32](#int32) |  | Optional ordering |
+
+
+
+
+
+### services.documents.RequestSignaturesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
+| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.RevokeSignatureRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signature_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.RevokeSignatureResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
+| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+
+
+
+
+
+### services.documents.SignaturePanelSnapshot
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
+| `collected` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated | Includes optional acknowledgements |
+| `all_required_collected` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.SigningService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `PrepareSignatureRequirements` | [PrepareSignatureRequirementsRequest](#servicesdocumentsPrepareSignatureRequirementsRequest) | [PrepareSignatureRequirementsResponse](#servicesdocumentsPrepareSignatureRequirementsResponse) | |
+| `GetSignaturePanel` | [GetSignaturePanelRequest](#servicesdocumentsGetSignaturePanelRequest) | [GetSignaturePanelResponse](#servicesdocumentsGetSignaturePanelResponse) | |
+| `ApplySignature` | [ApplySignatureRequest](#servicesdocumentsApplySignatureRequest) | [ApplySignatureResponse](#servicesdocumentsApplySignatureResponse) | |
+| `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
+| `RequestSignatures` | [RequestSignaturesRequest](#servicesdocumentsRequestSignaturesRequest) | [RequestSignaturesResponse](#servicesdocumentsRequestSignaturesResponse) |Convenience for “request signatures” UX |
+| `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |List stamps the caller can use on this doc/version |
 
  <!-- end services -->
 

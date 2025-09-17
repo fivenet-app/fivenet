@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "buf/validate/validate.proto";
+import "resources/documents/approval.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+
+enum BindingMode {
+  BINDING_MODE_UNSPECIFIED = 0;
+  // Invalidates on content edits
+  BINDING_MODE_BINDING = 1;
+  // Stays but marked 'signed on vX'
+  BINDING_MODE_NONBINDING = 2;
+}
+
+message SignatureRequirement {
+  int64 id = 1;
+  int64 document_id = 2;
+
+  resources.timestamp.Timestamp created_at = 3;
+
+  // NULL/0 => any-order
+  int32 sequence_order = 4;
+  bool required = 5;
+  // "Leader", "Counterparty Rep"
+  string label = 6;
+
+  resources.documents.PartySelector selector = 7;
+  BindingMode binding_mode = 8 [(buf.validate.field).enum.defined_only = true];
+  repeated SignatureType allowed_types = 9 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
+}
+
+enum SignatureType {
+  SIGNATURE_TYPE_UNSPECIFIED = 0;
+  SIGNATURE_TYPE_FREEHAND = 1;
+  SIGNATURE_TYPE_TYPED = 2;
+  SIGNATURE_TYPE_STAMP = 3;
+}
+
+enum SignatureStatus {
+  SIGNATURE_STATUS_UNSPECIFIED = 0;
+  SIGNATURE_STATUS_VALID = 1;
+  SIGNATURE_STATUS_REVOKED = 2;
+  SIGNATURE_STATUS_INVALID_PRIOR_VERSION = 3;
+}
+
+message Signature {
+  int64 id = 1;
+  int64 document_id = 2;
+  // version_id whose hash was shown
+  string version_signed_on = 3;
+  // Null/Empty for optional acknowledgements
+  int64 requirement_id = 4;
+  int32 user_id = 5;
+
+  SignatureType type = 6 [(buf.validate.field).enum.defined_only = true];
+  // SVG path, typed preview, stamp fill, etc.
+  string payload_json = 7;
+  // if type == STAMP
+  int64 stamp_id = 8;
+
+  // Hash at sign time
+  string snapshot_hash = 9;
+  SignatureStatus status = 10 [(buf.validate.field).enum.defined_only = true];
+  // Revoke/Invalid reason
+  string reason = 11;
+
+  resources.timestamp.Timestamp created_at = 12;
+  optional resources.timestamp.Timestamp revoked_at = 13;
+}
+
+enum OwnerType {
+  OWNER_TYPE_UNSPECIFIED = 0;
+  OWNER_TYPE_USER = 1;
+  OWNER_TYPE_ROLE = 2;
+  OWNER_TYPE_FACTION = 3;
+  OWNER_TYPE_ORG = 4;
+}
+
+// Stamps
+message Stamp {
+  int64 id = 1;
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 3;
+  int32 owner_id = 4;
+
+  // Parameterized SVG with slots
+  string svg_template = 5;
+  // Sizes/styles
+  string variants_json = 6;
+  // Who may use
+  string policy_json = 7;
+
+  resources.timestamp.Timestamp created_at = 8;
+}

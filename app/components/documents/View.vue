@@ -26,8 +26,10 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
+import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderModal from './ReminderModal.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
+import SigningDrawer from './signing/SigningDrawer.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -134,6 +136,9 @@ async function toggleDocument(): Promise<void> {
 
     doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
 }
+
+const approvalDrawer = overlay.create(ApprovalDrawer);
+const signingDrawer = overlay.create(SigningDrawer);
 
 const accordionItems = computed(() =>
     [
@@ -355,6 +360,40 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 icon="i-mdi-frequently-asked-questions"
                                 :label="$t('common.request', 2)"
                                 @click="openRequestsModal"
+                            />
+                        </UTooltip>
+
+                        <UTooltip v-if="can('TODOService/TODOMethod').value" class="flex-1" :text="$t('common.approve')">
+                            <UButton
+                                block
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-approval"
+                                :label="$t('common.approve')"
+                                @click="
+                                    () => {
+                                        approvalDrawer.open({
+                                            documentId: documentId,
+                                        });
+                                    }
+                                "
+                            />
+                        </UTooltip>
+
+                        <UTooltip v-if="can('TODOService/TODOMethod').value" class="flex-1" :text="$t('common.sign')">
+                            <UButton
+                                block
+                                color="neutral"
+                                variant="ghost"
+                                icon="i-mdi-signature"
+                                :label="$t('common.sign')"
+                                @click="
+                                    () => {
+                                        signingDrawer.open({
+                                            documentId: documentId,
+                                        });
+                                    }
+                                "
                             />
                         </UTooltip>
 

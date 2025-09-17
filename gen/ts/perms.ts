@@ -4,8 +4,10 @@
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
 // source: services/completor/completor.proto
+// source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/signing.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto

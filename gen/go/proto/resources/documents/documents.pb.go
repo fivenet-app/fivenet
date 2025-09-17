@@ -27,6 +27,70 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type DocumentStatus int32
+
+const (
+	DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED DocumentStatus = 0
+	DocumentStatus_DOCUMENT_STATUS_DRAFT       DocumentStatus = 1
+	DocumentStatus_DOCUMENT_STATUS_REVIEWING   DocumentStatus = 2
+	DocumentStatus_DOCUMENT_STATUS_APPROVED    DocumentStatus = 3
+	DocumentStatus_DOCUMENT_STATUS_SIGNING     DocumentStatus = 4
+	DocumentStatus_DOCUMENT_STATUS_SIGNED      DocumentStatus = 5
+	DocumentStatus_DOCUMENT_STATUS_AMENDED     DocumentStatus = 6
+	DocumentStatus_DOCUMENT_STATUS_ARCHIVED    DocumentStatus = 7
+)
+
+// Enum value maps for DocumentStatus.
+var (
+	DocumentStatus_name = map[int32]string{
+		0: "DOCUMENT_STATUS_UNSPECIFIED",
+		1: "DOCUMENT_STATUS_DRAFT",
+		2: "DOCUMENT_STATUS_REVIEWING",
+		3: "DOCUMENT_STATUS_APPROVED",
+		4: "DOCUMENT_STATUS_SIGNING",
+		5: "DOCUMENT_STATUS_SIGNED",
+		6: "DOCUMENT_STATUS_AMENDED",
+		7: "DOCUMENT_STATUS_ARCHIVED",
+	}
+	DocumentStatus_value = map[string]int32{
+		"DOCUMENT_STATUS_UNSPECIFIED": 0,
+		"DOCUMENT_STATUS_DRAFT":       1,
+		"DOCUMENT_STATUS_REVIEWING":   2,
+		"DOCUMENT_STATUS_APPROVED":    3,
+		"DOCUMENT_STATUS_SIGNING":     4,
+		"DOCUMENT_STATUS_SIGNED":      5,
+		"DOCUMENT_STATUS_AMENDED":     6,
+		"DOCUMENT_STATUS_ARCHIVED":    7,
+	}
+)
+
+func (x DocumentStatus) Enum() *DocumentStatus {
+	p := new(DocumentStatus)
+	*p = x
+	return p
+}
+
+func (x DocumentStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DocumentStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_documents_proto_enumTypes[0].Descriptor()
+}
+
+func (DocumentStatus) Type() protoreflect.EnumType {
+	return &file_resources_documents_documents_proto_enumTypes[0]
+}
+
+func (x DocumentStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DocumentStatus.Descriptor instead.
+func (DocumentStatus) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{0}
+}
+
 type DocReference int32
 
 const (
@@ -66,11 +130,11 @@ func (x DocReference) String() string {
 }
 
 func (DocReference) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_documents_proto_enumTypes[0].Descriptor()
+	return file_resources_documents_documents_proto_enumTypes[1].Descriptor()
 }
 
 func (DocReference) Type() protoreflect.EnumType {
-	return &file_resources_documents_documents_proto_enumTypes[0]
+	return &file_resources_documents_documents_proto_enumTypes[1]
 }
 
 func (x DocReference) Number() protoreflect.EnumNumber {
@@ -79,7 +143,7 @@ func (x DocReference) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DocReference.Descriptor instead.
 func (DocReference) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{0}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{1}
 }
 
 type DocRelation int32
@@ -118,11 +182,11 @@ func (x DocRelation) String() string {
 }
 
 func (DocRelation) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_documents_proto_enumTypes[1].Descriptor()
+	return file_resources_documents_documents_proto_enumTypes[2].Descriptor()
 }
 
 func (DocRelation) Type() protoreflect.EnumType {
-	return &file_resources_documents_documents_proto_enumTypes[1]
+	return &file_resources_documents_documents_proto_enumTypes[2]
 }
 
 func (x DocRelation) Number() protoreflect.EnumNumber {
@@ -131,7 +195,7 @@ func (x DocRelation) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DocRelation.Descriptor instead.
 func (DocRelation) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{1}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{2}
 }
 
 type Document struct {
@@ -150,6 +214,7 @@ type Document struct {
 	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Status          DocumentStatus         `protobuf:"varint,24,opt,name=status,proto3,enum=resources.documents.DocumentStatus" json:"status,omitempty"`
 	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
 	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
 	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
@@ -291,6 +356,13 @@ func (x *Document) GetCreatorJobLabel() string {
 	return ""
 }
 
+func (x *Document) GetStatus() DocumentStatus {
+	if x != nil {
+		return x.Status
+	}
+	return DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED
+}
+
 func (x *Document) GetState() string {
 	if x != nil {
 		return x.State
@@ -369,6 +441,7 @@ type DocumentShort struct {
 	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Status          DocumentStatus         `protobuf:"varint,24,opt,name=status,proto3,enum=resources.documents.DocumentStatus" json:"status,omitempty"`
 	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
 	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
 	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
@@ -499,6 +572,13 @@ func (x *DocumentShort) GetCreatorJobLabel() string {
 		return *x.CreatorJobLabel
 	}
 	return ""
+}
+
+func (x *DocumentShort) GetStatus() DocumentStatus {
+	if x != nil {
+		return x.Status
+	}
+	return DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED
 }
 
 func (x *DocumentShort) GetState() string {
@@ -962,8 +1042,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe5\n" +
-	"\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xa2\v\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -985,7 +1064,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tH\aR\x0fcreatorJobLabel\x88\x01\x01\x12\x1c\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\aR\x0fcreatorJobLabel\x88\x01\x01\x12;\n" +
+	"\x06status\x18\x18 \x01(\x0e2#.resources.documents.DocumentStatusR\x06status\x12\x1c\n" +
 	"\x05state\x18\x0f \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
 	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
@@ -1009,7 +1089,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xb9\t\n" +
+	"\x0e_workflow_user\"\xf6\t\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1029,7 +1109,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tH\x06R\x0fcreatorJobLabel\x88\x01\x01\x12\x1c\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\x06R\x0fcreatorJobLabel\x88\x01\x01\x12;\n" +
+	"\x06status\x18\x18 \x01(\x0e2#.resources.documents.DocumentStatusR\x06status\x12\x1c\n" +
 	"\x05state\x18\x0f \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
 	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
@@ -1113,7 +1194,16 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x15_manual_reminder_timeB\x1a\n" +
 	"\x18_manual_reminder_messageB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_document*\x99\x01\n" +
+	"\t_document*\xfd\x01\n" +
+	"\x0eDocumentStatus\x12\x1f\n" +
+	"\x1bDOCUMENT_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
+	"\x15DOCUMENT_STATUS_DRAFT\x10\x01\x12\x1d\n" +
+	"\x19DOCUMENT_STATUS_REVIEWING\x10\x02\x12\x1c\n" +
+	"\x18DOCUMENT_STATUS_APPROVED\x10\x03\x12\x1b\n" +
+	"\x17DOCUMENT_STATUS_SIGNING\x10\x04\x12\x1a\n" +
+	"\x16DOCUMENT_STATUS_SIGNED\x10\x05\x12\x1b\n" +
+	"\x17DOCUMENT_STATUS_AMENDED\x10\x06\x12\x1c\n" +
+	"\x18DOCUMENT_STATUS_ARCHIVED\x10\a*\x99\x01\n" +
 	"\fDocReference\x12\x1d\n" +
 	"\x19DOC_REFERENCE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14DOC_REFERENCE_LINKED\x10\x01\x12\x18\n" +
@@ -1138,70 +1228,73 @@ func file_resources_documents_documents_proto_rawDescGZIP() []byte {
 	return file_resources_documents_documents_proto_rawDescData
 }
 
-var file_resources_documents_documents_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_documents_documents_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_documents_documents_proto_goTypes = []any{
-	(DocReference)(0),           // 0: resources.documents.DocReference
-	(DocRelation)(0),            // 1: resources.documents.DocRelation
-	(*Document)(nil),            // 2: resources.documents.Document
-	(*DocumentShort)(nil),       // 3: resources.documents.DocumentShort
-	(*DocumentReference)(nil),   // 4: resources.documents.DocumentReference
-	(*DocumentRelation)(nil),    // 5: resources.documents.DocumentRelation
-	(*WorkflowState)(nil),       // 6: resources.documents.WorkflowState
-	(*WorkflowUserState)(nil),   // 7: resources.documents.WorkflowUserState
-	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
-	(*Category)(nil),            // 9: resources.documents.Category
-	(content.ContentType)(0),    // 10: resources.common.content.ContentType
-	(*content.Content)(nil),     // 11: resources.common.content.Content
-	(*users.UserShort)(nil),     // 12: resources.users.UserShort
-	(*DocumentPin)(nil),         // 13: resources.documents.DocumentPin
-	(*file.File)(nil),           // 14: resources.file.File
-	(*Workflow)(nil),            // 15: resources.documents.Workflow
+	(DocumentStatus)(0),         // 0: resources.documents.DocumentStatus
+	(DocReference)(0),           // 1: resources.documents.DocReference
+	(DocRelation)(0),            // 2: resources.documents.DocRelation
+	(*Document)(nil),            // 3: resources.documents.Document
+	(*DocumentShort)(nil),       // 4: resources.documents.DocumentShort
+	(*DocumentReference)(nil),   // 5: resources.documents.DocumentReference
+	(*DocumentRelation)(nil),    // 6: resources.documents.DocumentRelation
+	(*WorkflowState)(nil),       // 7: resources.documents.WorkflowState
+	(*WorkflowUserState)(nil),   // 8: resources.documents.WorkflowUserState
+	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
+	(*Category)(nil),            // 10: resources.documents.Category
+	(content.ContentType)(0),    // 11: resources.common.content.ContentType
+	(*content.Content)(nil),     // 12: resources.common.content.Content
+	(*users.UserShort)(nil),     // 13: resources.users.UserShort
+	(*DocumentPin)(nil),         // 14: resources.documents.DocumentPin
+	(*file.File)(nil),           // 15: resources.file.File
+	(*Workflow)(nil),            // 16: resources.documents.Workflow
 }
 var file_resources_documents_documents_proto_depIdxs = []int32{
-	8,  // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 1: resources.documents.Document.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 2: resources.documents.Document.deleted_at:type_name -> resources.timestamp.Timestamp
-	9,  // 3: resources.documents.Document.category:type_name -> resources.documents.Category
-	10, // 4: resources.documents.Document.content_type:type_name -> resources.common.content.ContentType
-	11, // 5: resources.documents.Document.content:type_name -> resources.common.content.Content
-	12, // 6: resources.documents.Document.creator:type_name -> resources.users.UserShort
-	13, // 7: resources.documents.Document.pin:type_name -> resources.documents.DocumentPin
-	6,  // 8: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
-	7,  // 9: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
-	14, // 10: resources.documents.Document.files:type_name -> resources.file.File
-	8,  // 11: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 12: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 13: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	9,  // 14: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
-	10, // 15: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
-	11, // 16: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
-	12, // 17: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
-	13, // 18: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
-	6,  // 19: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
-	7,  // 20: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
-	8,  // 21: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 22: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
-	0,  // 23: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
-	3,  // 24: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
-	12, // 25: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
-	8,  // 26: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 27: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
-	12, // 28: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
-	1,  // 29: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
-	12, // 30: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
-	8,  // 31: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
-	8,  // 32: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
-	15, // 33: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
-	3,  // 34: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
-	8,  // 35: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
-	15, // 36: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
-	3,  // 37: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
-	38, // [38:38] is the sub-list for method output_type
-	38, // [38:38] is the sub-list for method input_type
-	38, // [38:38] is the sub-list for extension type_name
-	38, // [38:38] is the sub-list for extension extendee
-	0,  // [0:38] is the sub-list for field type_name
+	9,  // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 1: resources.documents.Document.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 2: resources.documents.Document.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 3: resources.documents.Document.category:type_name -> resources.documents.Category
+	11, // 4: resources.documents.Document.content_type:type_name -> resources.common.content.ContentType
+	12, // 5: resources.documents.Document.content:type_name -> resources.common.content.Content
+	13, // 6: resources.documents.Document.creator:type_name -> resources.users.UserShort
+	0,  // 7: resources.documents.Document.status:type_name -> resources.documents.DocumentStatus
+	14, // 8: resources.documents.Document.pin:type_name -> resources.documents.DocumentPin
+	7,  // 9: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
+	8,  // 10: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
+	15, // 11: resources.documents.Document.files:type_name -> resources.file.File
+	9,  // 12: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 13: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 14: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 15: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
+	11, // 16: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
+	12, // 17: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
+	13, // 18: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
+	0,  // 19: resources.documents.DocumentShort.status:type_name -> resources.documents.DocumentStatus
+	14, // 20: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
+	7,  // 21: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
+	8,  // 22: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
+	9,  // 23: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 24: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
+	1,  // 25: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
+	4,  // 26: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
+	13, // 27: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
+	9,  // 28: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 29: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
+	13, // 30: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
+	2,  // 31: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
+	13, // 32: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
+	9,  // 33: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
+	9,  // 34: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
+	16, // 35: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
+	4,  // 36: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
+	9,  // 37: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
+	16, // 38: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
+	4,  // 39: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
+	40, // [40:40] is the sub-list for method output_type
+	40, // [40:40] is the sub-list for method input_type
+	40, // [40:40] is the sub-list for extension type_name
+	40, // [40:40] is the sub-list for extension extendee
+	0,  // [0:40] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_documents_proto_init() }
@@ -1223,7 +1316,7 @@ func file_resources_documents_documents_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_documents_proto_rawDesc), len(file_resources_documents_documents_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,

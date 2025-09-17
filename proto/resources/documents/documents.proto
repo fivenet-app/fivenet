@@ -15,6 +15,17 @@ import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
+enum DocumentStatus {
+  DOCUMENT_STATUS_UNSPECIFIED = 0;
+  DOCUMENT_STATUS_DRAFT = 1;
+  DOCUMENT_STATUS_REVIEWING = 2;
+  DOCUMENT_STATUS_APPROVED = 3;
+  DOCUMENT_STATUS_SIGNING = 4;
+  DOCUMENT_STATUS_SIGNED = 5;
+  DOCUMENT_STATUS_AMENDED = 6;
+  DOCUMENT_STATUS_ARCHIVED = 7;
+}
+
 message Document {
   int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
@@ -40,6 +51,7 @@ message Document {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
+  DocumentStatus status = 24 [(buf.validate.field).enum.defined_only = true];
   string state = 15 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
@@ -74,6 +86,7 @@ message DocumentShort {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
+  DocumentStatus status = 24 [(buf.validate.field).enum.defined_only = true];
   string state = 15 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
