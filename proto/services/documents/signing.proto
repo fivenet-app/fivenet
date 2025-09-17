@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "resources/common/database/database.proto";
+import "resources/documents/approval.proto";
+import "resources/documents/signing.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message SignaturePanelSnapshot {
+  int64 document_id = 1;
+
+  repeated resources.documents.SignatureRequirement requirements = 2;
+  // Includes optional acknowledgements
+  repeated resources.documents.Signature collected = 3;
+
+  bool all_required_collected = 4;
+}
+
+message PrepareSignatureRequirementsRequest {
+  int64 document_id = 1;
+}
+
+message PrepareSignatureRequirementsResponse {
+  repeated resources.documents.SignatureRequirement requirements = 1;
+}
+
+message GetSignaturePanelRequest {
+  int64 document_id = 1;
+}
+
+message GetSignaturePanelResponse {
+  SignaturePanelSnapshot panel = 1;
+}
+
+message ApplySignatureRequest {
+  int64 document_id = 1;
+  // empty => optional/ack
+  int64 requirement_id = 2;
+  resources.documents.SignatureType type = 3;
+  string payload_json = 4;
+  // If STAMP
+  int64 stamp_id = 5;
+  // Client-computed from snapshot_json
+  string snapshot_hash = 6;
+}
+
+message ApplySignatureResponse {
+  resources.documents.Signature signature = 1;
+  SignaturePanelSnapshot panel = 2;
+}
+
+message RevokeSignatureRequest {
+  int64 signature_id = 1;
+  string reason = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message RevokeSignatureResponse {
+  resources.documents.Signature signature = 1;
+  SignaturePanelSnapshot panel = 2;
+}
+
+message RequestSignaturesRequest {
+  int64 document_id = 1;
+  // Who to ask
+  resources.documents.PartySelector selector = 2;
+  // Signature is required
+  bool required = 3;
+  // For created requirements
+  resources.documents.BindingMode binding_mode = 4;
+  repeated resources.documents.SignatureType allowed_types = 5;
+  // Optional ordering
+  int32 sequence_order = 6;
+}
+
+message RequestSignaturesResponse {
+  repeated resources.documents.SignatureRequirement requirements = 1;
+  SignaturePanelSnapshot panel = 2;
+}
+
+message ListUsableStampsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 document_id = 2;
+}
+message ListUsableStampsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.Stamp stamps = 2;
+}
+
+service SigningService {
+  rpc PrepareSignatureRequirements(PrepareSignatureRequirementsRequest) returns (PrepareSignatureRequirementsResponse);
+
+  rpc GetSignaturePanel(GetSignaturePanelRequest) returns (GetSignaturePanelResponse);
+
+  rpc ApplySignature(ApplySignatureRequest) returns (ApplySignatureResponse);
+  rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse);
+
+  // Convenience for “request signatures” UX
+  rpc RequestSignatures(RequestSignaturesRequest) returns (RequestSignaturesResponse);
+
+  // List stamps the caller can use on this doc/version
+  rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse);
+}

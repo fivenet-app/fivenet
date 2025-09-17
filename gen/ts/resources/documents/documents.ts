@@ -80,6 +80,10 @@ export interface Document {
      */
     creatorJobLabel?: string;
     /**
+     * @generated from protobuf field: resources.documents.DocumentStatus status = 24
+     */
+    status: DocumentStatus;
+    /**
      * @generated from protobuf field: string state = 15
      */
     state: string;
@@ -172,6 +176,10 @@ export interface DocumentShort {
      * @generated from protobuf field: optional string creator_job_label = 14
      */
     creatorJobLabel?: string;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentStatus status = 24
+     */
+    status: DocumentStatus;
     /**
      * @generated from protobuf field: string state = 15
      */
@@ -354,6 +362,43 @@ export interface WorkflowUserState {
     document?: DocumentShort;
 }
 /**
+ * @generated from protobuf enum resources.documents.DocumentStatus
+ */
+export enum DocumentStatus {
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_DRAFT = 1;
+     */
+    DRAFT = 1,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_REVIEWING = 2;
+     */
+    REVIEWING = 2,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_APPROVED = 3;
+     */
+    APPROVED = 3,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_SIGNING = 4;
+     */
+    SIGNING = 4,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_SIGNED = 5;
+     */
+    SIGNED = 5,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_AMENDED = 6;
+     */
+    AMENDED = 6,
+    /**
+     * @generated from protobuf enum value: DOCUMENT_STATUS_ARCHIVED = 7;
+     */
+    ARCHIVED = 7
+}
+/**
  * @generated from protobuf enum resources.documents.DocReference
  */
 export enum DocReference {
@@ -417,6 +462,7 @@ class Document$Type extends MessageType<Document> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 24, name: "status", kind: "enum", T: () => ["resources.documents.DocumentStatus", DocumentStatus, "DOCUMENT_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -434,6 +480,7 @@ class Document$Type extends MessageType<Document> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
+        message.status = 0;
         message.state = "";
         message.closed = false;
         message.draft = false;
@@ -489,6 +536,9 @@ class Document$Type extends MessageType<Document> {
                     break;
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
+                    break;
+                case /* resources.documents.DocumentStatus status */ 24:
+                    message.status = reader.int32();
                     break;
                 case /* string state */ 15:
                     message.state = reader.string();
@@ -598,6 +648,9 @@ class Document$Type extends MessageType<Document> {
         /* repeated resources.file.File files = 23; */
         for (let i = 0; i < message.files.length; i++)
             File.internalBinaryWrite(message.files[i], writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentStatus status = 24; */
+        if (message.status !== 0)
+            writer.tag(24, WireType.Varint).int32(message.status);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -625,6 +678,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 24, name: "status", kind: "enum", T: () => ["resources.documents.DocumentStatus", DocumentStatus, "DOCUMENT_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -640,6 +694,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
+        message.status = 0;
         message.state = "";
         message.closed = false;
         message.draft = false;
@@ -691,6 +746,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                     break;
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
+                    break;
+                case /* resources.documents.DocumentStatus status */ 24:
+                    message.status = reader.int32();
                     break;
                 case /* string state */ 15:
                     message.state = reader.string();
@@ -785,6 +843,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional resources.documents.WorkflowUserState workflow_user = 22; */
         if (message.workflowUser)
             WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentStatus status = 24; */
+        if (message.status !== 0)
+            writer.tag(24, WireType.Varint).int32(message.status);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

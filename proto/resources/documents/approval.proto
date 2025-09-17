@@ -1,0 +1,134 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+
+enum PartyAccessLevel {
+  PARTY_ACCESS_LEVEL_UNSPECIFIED = 0;
+  PARTY_ACCESS_LEVEL_BLOCKED = 1;
+  PARTY_ACCESS_LEVEL_VIEW = 2;
+  PARTY_ACCESS_LEVEL_PERFORM = 3;
+}
+
+message PartySelector {
+  // Primary targets
+  repeated Selector who = 1;
+  // Optional exclusions
+  repeated Selector exclusions = 2;
+  // Optional fallbacks if who resolves to 0
+  repeated Selector fallbacks = 3;
+}
+
+message UserSelector {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  int32 user_id = 4 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort user = 5;
+  PartyAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}
+
+message JobGradeSelector {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  optional int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  PartyAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}
+
+message Selector {
+  oneof target {
+    UserSelector user = 1;
+    JobGradeSelector job = 2;
+    JobGradeSelector job_grade = 3;
+  }
+}
+
+// Policy snapshot applied to a specific version
+enum OnEditBehavior {
+  ON_EDIT_BEHAVIOR_UNSPECIFIED = 0;
+  // Reset review on content edits
+  ON_EDIT_BEHAVIOR_RESET = 1;
+  // Keep approvals where possible
+  ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
+}
+
+message ApprovalPolicyApplied {
+  int64 id = 1;
+  int64 document_id = 2;
+  OnEditBehavior on_edit_behavior = 3 [(buf.validate.field).enum.defined_only = true];
+
+  // Materialized stages
+  repeated ApprovalStage stages = 4;
+  resources.timestamp.Timestamp created_at = 5;
+}
+
+// Stages & tasks
+message RequireAll {
+  bool value = 1;
+} // value=true
+
+message QuorumAny {
+  int32 count = 1;
+} // e.g., any 2
+
+message ApprovalStage {
+  int64 id = 1;
+  int64 document_id = 2;
+  resources.timestamp.Timestamp created_at = 3;
+
+  string name = 4;
+  // 1..N; same order => parallel
+  int32 order = 5;
+  PartySelector selector = 6;
+
+  oneof rule {
+    RequireAll require_all = 7;
+    QuorumAny quorum_any = 8;
+  }
+
+  optional resources.timestamp.Timestamp due_at = 9;
+
+  // Optional cached aggregates (service maintained)
+  int32 assigned_count = 10;
+  int32 approved_count = 11;
+  int32 declined_count = 12;
+  int32 pending_count = 13;
+}
+
+enum ApprovalTaskStatus {
+  APPROVAL_TASK_STATUS_UNSPECIFIED = 0;
+  APPROVAL_TASK_STATUS_PENDING = 1;
+  APPROVAL_TASK_STATUS_APPROVED = 2;
+  APPROVAL_TASK_STATUS_DECLINED = 3;
+  APPROVAL_TASK_STATUS_EXPIRED = 4;
+  APPROVAL_TASK_STATUS_CANCELLED = 5;
+}
+
+message ApprovalTask {
+  int64 id = 1;
+  int64 stage_id = 2;
+  int64 document_id = 3;
+  resources.timestamp.Timestamp created_at = 4;
+
+  int32 creator_id = 5;
+  optional resources.users.UserShort creator = 6;
+  // Snapshot of why this user was assigned (for audit stability)
+  string creator_job = 7;
+  optional string job_label = 8;
+  int32 creator_job_grade = 9;
+
+  ApprovalTaskStatus status = 10 [(buf.validate.field).enum.defined_only = true];
+  // Optional comment on approve/decline
+  string comment = 11 [(buf.validate.field).string.max_len = 255];
+  optional resources.timestamp.Timestamp decided_at = 12;
+  optional resources.timestamp.Timestamp due_at = 13;
+}

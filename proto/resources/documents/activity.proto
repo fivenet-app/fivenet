@@ -25,8 +25,6 @@ enum DocActivityType {
   DOC_ACTIVITY_TYPE_OWNER_CHANGED = 8;
   DOC_ACTIVITY_TYPE_DELETED = 9;
   DOC_ACTIVITY_TYPE_DRAFT_TOGGLED = 19;
-  DOC_ACTIVITY_TYPE_SIGN_OFF_APPROVED = 21;
-  DOC_ACTIVITY_TYPE_SIGN_OFF_REJECTED = 22;
   // Comments
   DOC_ACTIVITY_TYPE_COMMENT_ADDED = 10;
   DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 11;
@@ -38,7 +36,17 @@ enum DocActivityType {
   DOC_ACTIVITY_TYPE_REQUESTED_UPDATE = 16;
   DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE = 17;
   DOC_ACTIVITY_TYPE_REQUESTED_DELETION = 18;
-  DOC_ACTIVITY_TYPE_REQUESTED_SIGN_OFF = 20;
+  DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL = 20;
+  DOC_ACTIVITY_TYPE_REQUESTED_SIGNING = 21;
+  // Approval
+  DOC_ACTIVITY_TYPE_APPROVAL_APPROVED = 22;
+  DOC_ACTIVITY_TYPE_APPROVAL_DECLINED = 23;
+  DOC_ACTIVITY_TYPE_APPROVAL_CANCELLED = 24;
+  DOC_ACTIVITY_TYPE_APPROVAL_EXPIRED = 25;
+  // Signing
+  DOC_ACTIVITY_TYPE_SIGNING_CREATED = 26;
+  DOC_ACTIVITY_TYPE_SIGNING_REVOKED = 27;
+  DOC_ACTIVITY_TYPE_SIGNING_REMOVED = 28;
 }
 
 message DocActivity {
@@ -67,7 +75,7 @@ message DocActivityData {
     DocOwnerChanged owner_changed = 2;
     DocAccessUpdated access_updated = 4;
     DocAccessRequested access_requested = 5;
-    DocSignOffRequested sign_off_requested = 6;
+    DocSigningRequested signing_requested = 6;
   }
 }
 
@@ -109,7 +117,7 @@ message DocAccessUsersDiff {
   repeated DocumentUserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
-message DocSignOffRequested {
+message DocSigningRequested {
   optional resources.timestamp.Timestamp deadline = 1;
   repeated resources.users.UserShort approvers = 2 [(buf.validate.field).repeated.max_items = 8];
 }

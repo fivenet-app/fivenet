@@ -44,27 +44,27 @@ export interface JobAccess {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: int64 target_id = 4
+     * @generated from protobuf field: int64 target_id = 3
      */
     targetId: number;
     /**
-     * @generated from protobuf field: string job = 5
+     * @generated from protobuf field: string job = 4
      */
     job: string;
     /**
-     * @generated from protobuf field: optional string job_label = 6
+     * @generated from protobuf field: optional string job_label = 5
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: int32 minimum_grade = 7
+     * @generated from protobuf field: int32 minimum_grade = 6
      */
     minimumGrade: number;
     /**
-     * @generated from protobuf field: optional string job_grade_label = 8
+     * @generated from protobuf field: optional string job_grade_label = 7
      */
     jobGradeLabel?: string;
     /**
-     * @generated from protobuf field: resources.mailer.AccessLevel access = 9
+     * @generated from protobuf field: resources.mailer.AccessLevel access = 8
      */
     access: AccessLevel;
 }
@@ -220,12 +220,12 @@ class JobAccess$Type extends MessageType<JobAccess> {
         super("resources.mailer.JobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<JobAccess>): JobAccess {
@@ -250,22 +250,22 @@ class JobAccess$Type extends MessageType<JobAccess> {
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* int64 target_id */ 4:
+                case /* int64 target_id */ 3:
                     message.targetId = reader.int64().toNumber();
                     break;
-                case /* string job */ 5:
+                case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* optional string job_label */ 6:
+                case /* optional string job_label */ 5:
                     message.jobLabel = reader.string();
                     break;
-                case /* int32 minimum_grade */ 7:
+                case /* int32 minimum_grade */ 6:
                     message.minimumGrade = reader.int32();
                     break;
-                case /* optional string job_grade_label */ 8:
+                case /* optional string job_grade_label */ 7:
                     message.jobGradeLabel = reader.string();
                     break;
-                case /* resources.mailer.AccessLevel access */ 9:
+                case /* resources.mailer.AccessLevel access */ 8:
                     message.access = reader.int32();
                     break;
                 default:
@@ -286,24 +286,24 @@ class JobAccess$Type extends MessageType<JobAccess> {
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 target_id = 4; */
+        /* int64 target_id = 3; */
         if (message.targetId !== 0)
-            writer.tag(4, WireType.Varint).int64(message.targetId);
-        /* string job = 5; */
+            writer.tag(3, WireType.Varint).int64(message.targetId);
+        /* string job = 4; */
         if (message.job !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 6; */
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 5; */
         if (message.jobLabel !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 7; */
+            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 minimum_grade = 6; */
         if (message.minimumGrade !== 0)
-            writer.tag(7, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 8; */
+            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
+        /* optional string job_grade_label = 7; */
         if (message.jobGradeLabel !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.mailer.AccessLevel access = 9; */
+            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
+        /* resources.mailer.AccessLevel access = 8; */
         if (message.access !== 0)
-            writer.tag(9, WireType.Varint).int32(message.access);
+            writer.tag(8, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

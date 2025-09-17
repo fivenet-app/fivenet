@@ -220,8 +220,8 @@ func (m *DocActivityData) Sanitize() error {
 			}
 		}
 
-		// Field: SignOffRequested
-	case *DocActivityData_SignOffRequested:
+		// Field: SigningRequested
+	case *DocActivityData_SigningRequested:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -272,7 +272,7 @@ func (m *DocOwnerChanged) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DocSignOffRequested) Sanitize() error {
+func (m *DocSigningRequested) Sanitize() error {
 	if m == nil {
 		return nil
 	}

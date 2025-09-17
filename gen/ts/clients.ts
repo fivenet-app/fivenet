@@ -32,6 +32,12 @@ export async function getCompletorCompletorClient() {
     return new CompletorServiceClient(useGRPCTransport());
 }
 
+// Factory for documents.approval client.
+export async function getDocumentsApprovalClient() {
+    const { ApprovalServiceClient } = await import('~~/gen/ts/services/documents/approval.client');
+    return new ApprovalServiceClient(useGRPCTransport());
+}
+
 // Factory for documents.collab client.
 export async function getDocumentsCollabClient() {
     const { CollabServiceClient } = await import('~~/gen/ts/services/documents/collab.client');
@@ -42,6 +48,12 @@ export async function getDocumentsCollabClient() {
 export async function getDocumentsDocumentsClient() {
     const { DocumentsServiceClient } = await import('~~/gen/ts/services/documents/documents.client');
     return new DocumentsServiceClient(useGRPCTransport());
+}
+
+// Factory for documents.signing client.
+export async function getDocumentsSigningClient() {
+    const { SigningServiceClient } = await import('~~/gen/ts/services/documents/signing.client');
+    return new SigningServiceClient(useGRPCTransport());
 }
 
 // Factory for filestore.filestore client.
