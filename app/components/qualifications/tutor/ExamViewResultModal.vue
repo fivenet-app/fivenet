@@ -103,7 +103,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
             <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
             <ExamViewResult v-else-if="data.responses" :qualification-id="qualificationId" :responses="data.responses">
-                <template #question-after="{ question, disabled }">
+                <template #question-after="{ question }">
                     <div
                         v-if="
                             question.question.question?.data?.data.oneofKind !== 'separator' &&
@@ -118,7 +118,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                                         v-model="
                                             data.grading!.responses[getGradingIndex(question.question.questionId)]!.checked
                                         "
-                                        :disabled="disabled"
+                                        :disabled="viewOnly"
                                     />
                                 </div>
                             </UFormField>
@@ -130,6 +130,7 @@ const correctCount = computed(() => data.value?.grading?.responses.filter((a) =>
                                     :step="0.5"
                                     :min="0"
                                     :max="question.question.question?.points"
+                                    :disabled="viewOnly"
                                 />
                             </UFormField>
                         </div>

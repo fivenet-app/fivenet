@@ -29,7 +29,13 @@ func (s *Server) GetQualificationAccess(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check {
-		return nil, errorsqualifications.ErrFailedQuery
+		quali, err := s.getQualification(ctx, req.GetQualificationId(), nil, userInfo, false)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if quali == nil || !quali.Public {
+			return nil, errorsqualifications.ErrFailedQuery
+		}
 	}
 
 	access, err := s.access.Jobs.List(ctx, s.db, req.GetQualificationId())

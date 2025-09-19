@@ -527,7 +527,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                     <UDashboardToolbar v-if="qualification" :ui="{ root: 'border-b-0' }">
                                         <UAccordion :items="accordionItems" type="multiple" class="p-2 sm:p-2">
                                             <template v-if="qualification.result" #result>
-                                                <UContainer>
+                                                <UContainer class="mb-2">
                                                     <div class="flex flex-col gap-1">
                                                         <div class="inline-flex gap-1">
                                                             <span class="font-semibold">{{ $t('common.result') }}:</span>
@@ -563,7 +563,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                             </template>
 
                                             <template v-if="qualification.request" #request>
-                                                <UContainer>
+                                                <UContainer class="mb-2">
                                                     <div class="flex flex-col gap-1">
                                                         <div class="inline-flex gap-1">
                                                             <span class="font-semibold">{{ $t('common.status') }}:</span>
@@ -608,7 +608,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                             </template>
 
                                             <template #access>
-                                                <UContainer>
+                                                <UContainer class="mb-2">
                                                     <DataNoDataBlock
                                                         v-if="!qualification.access || qualification.access?.jobs.length === 0"
                                                         icon="i-mdi-file-search"

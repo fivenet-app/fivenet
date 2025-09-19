@@ -132,6 +132,7 @@ watch(data, async () => {
                             {{ $t('components.qualifications.exam_view.times_up') }}
                         </h3>
                     </UAlert>
+
                     <UButton
                         v-else-if="!data?.examUser?.endedAt"
                         class="w-full"

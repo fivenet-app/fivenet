@@ -306,7 +306,7 @@ func (s *Server) getQualificationRequirements(
 
 	stmt := tQReqs.
 		SELECT(
-			tQReqs.ID.AS("qualification_requirement.qualification_id"),
+			tQReqs.ID,
 			tQReqs.CreatedAt,
 			tQReqs.TargetQualificationID,
 			tQuali.ID,
@@ -529,7 +529,11 @@ func (s *Server) compareQualificationRequirements(
 	}
 
 	if len(current) == 0 {
-		toCreate = in
+		if len(in) == 0 {
+			toDelete = current
+		} else {
+			toCreate = in
+		}
 	} else {
 		foundTracker := []int{}
 		for _, cq := range current {

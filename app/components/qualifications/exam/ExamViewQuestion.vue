@@ -73,11 +73,7 @@ const response = useVModel(props, 'modelValue', emit);
                 <UButtonGroup>
                     <UButton
                         class="w-20"
-                        :variant="
-                            response.response?.response.oneofKind === 'yesno' && response.response?.response.yesno.value
-                                ? 'solid'
-                                : 'outline'
-                        "
+                        :variant="response.response?.response.yesno.value ? 'solid' : 'outline'"
                         color="green"
                         :label="$t('common.yes')"
                         block
@@ -86,11 +82,7 @@ const response = useVModel(props, 'modelValue', emit);
                     />
                     <UButton
                         class="w-20"
-                        :variant="
-                            response.response?.response.oneofKind === 'yesno' && !response.response?.response.yesno.value
-                                ? 'solid'
-                                : 'outline'
-                        "
+                        :variant="!response.response?.response.yesno.value ? 'solid' : 'outline'"
                         color="error"
                         :label="$t('common.no')"
                         block
@@ -152,7 +144,7 @@ const response = useVModel(props, 'modelValue', emit);
                     </div>
                 </div>
 
-                <UFormField class="flex-1" name="data.data.singleChoice.choices" :label="$t('common.option', 2)" required>
+                <UFormField class="flex-1" name="data.data.singleChoice.choices" :label="$t('common.option', 2)">
                     <URadioGroup
                         v-model="response.response.response.singleChoice.choice"
                         :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"
@@ -192,12 +184,13 @@ const response = useVModel(props, 'modelValue', emit);
                     </UBadge>
                 </div>
 
-                <UFormField class="flex-1" :label="$t('common.option', 2)" required>
+                <UFormField class="flex-1" :label="$t('common.option', 2)">
                     <div class="flex flex-1 flex-col gap-2">
                         <UCheckboxGroup
                             v-model="response.response.response.multipleChoice.choices"
                             name="data.data.multipleChoice.choices"
                             :disabled="disabled"
+                            :items="modelValue.question.data.data.multipleChoice.choices"
                         />
                     </div>
                 </UFormField>

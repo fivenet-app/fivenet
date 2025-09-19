@@ -609,11 +609,13 @@ func (s *Server) updateRequestStatus(
 	tQualiRequests := table.FivenetQualificationsRequests
 	stmt := tQualiRequests.
 		INSERT(
+			tQualiResults.DeletedAt,
 			tQualiRequests.QualificationID,
 			tQualiRequests.UserID,
 			tQualiRequests.Status,
 		).
 		VALUES(
+			mysql.NULL,
 			qualificationId,
 			userId,
 			status,

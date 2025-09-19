@@ -25,7 +25,6 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
             class="flex-1"
             :name="`exam.questions.${index}.data.data.singleChoice.choices`"
             :label="$t('common.option', 2)"
-            required
         >
             <VueDraggable
                 v-model="question.data!.data.singleChoice.choices"
