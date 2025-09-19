@@ -230,8 +230,8 @@ github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20250810224743-7034b404356b h1:7
 github.com/galexrt/go-grpc-middleware/v2 v2.0.0-20250810224743-7034b404356b/go.mod h1:NbCUVmiS4foBGBHOYlCT25+YmGpJ32dZPi75pGEUpj4=
 github.com/galexrt/iconify-go v0.2.0 h1:rDKwBae5NhPeYWIRYhaf3CWiiVzwhksI77BJao8hEoU=
 github.com/galexrt/iconify-go v0.2.0/go.mod h1:9eTfR2BKse3S3LvVD0CeoAOpezTBju5siYMFfJdcixM=
-github.com/galexrt/orb v0.0.0-20250616102655-267a700ff290 h1:X64mwMn54Kz7zb62q+b2r0fFk3TeTTslOYvCI9fqH2E=
-github.com/galexrt/orb v0.0.0-20250616102655-267a700ff290/go.mod h1:5mULz1xQfs3bmQm63QEJA6lNGujuRafwA5S/EnuLaLU=
+github.com/galexrt/orb v0.0.0-20250919105122-906492304271 h1:3A8sQWegyvdg2EBbEweBnzIWmkTgY6PwGehA7T4GImI=
+github.com/galexrt/orb v0.0.0-20250919105122-906492304271/go.mod h1:5mULz1xQfs3bmQm63QEJA6lNGujuRafwA5S/EnuLaLU=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/gin-contrib/cors v1.7.6 h1:3gQ8GMzs1Ylpf70y8bMw4fVpycXIeX1ZemuSQIsnQQY=
 github.com/gin-contrib/cors v1.7.6/go.mod h1:Ulcl+xN4jel9t1Ry8vqph23a60FwH9xVLd+3ykmTjOk=
