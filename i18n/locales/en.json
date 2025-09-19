@@ -2667,7 +2667,7 @@
                 "options": {
                     "start-date": {
                         "name": "start-date",
-                        "desc": "Absence start date in form of either `today`, or `DD.MM.YYYY` or `YYYY-MM-DD` format (e.g., 12.10.2024, 2024-10-12)."
+                        "desc": "Date in form of `today`, `DD.MM.YYYY` or `YYYY-MM-DD` format (e.g., 12.10.2024, 2024-10-12)."
                     },
                     "days": {
                         "name": "days",

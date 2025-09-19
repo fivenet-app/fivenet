@@ -2667,7 +2667,7 @@
                 "options": {
                     "start-date": {
                         "name": "start-datum",
-                        "desc": "Beginn der Ab­we­sen­heit in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
+                        "desc": "Datum in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
                     },
                     "days": {
                         "name": "tage",
