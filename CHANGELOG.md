@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.9.1] - 2025-09-19
+
+### 🐛 Bug Fixes
+
+- Update channels.json stable appVersion
+- Qualifications access check in list queries
+- Id badge showing 0 in qualification view on error
+- New EXISTS based access checks
+- Remove debug output from list qualifications method
+- Adjust calendar list buttons
+- Qualification requirements not being deleted and exam issues
+- Discord absent command register issue
+- Documents request drawer being full width and not constrained
+- Dispatch list padding
+- Center time and status badge in dispatch table
+- Increase badge size in dispatch list
+
 ## [2025.9.0] - 2025-09-19
 
 ### 🚀 Features
