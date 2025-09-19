@@ -170,7 +170,7 @@ const columns = [
                 value: row.original.createdAt,
                 type: 'compact',
                 badge: true,
-                size: 'xs',
+                size: 'sm',
                 updateCallback: () =>
                     dispatchTimeToBadge(
                         row.original.createdAt,
@@ -187,7 +187,7 @@ const columns = [
                 td: 'h-full text-center',
             },
         },
-        cell: ({ row }) => h(DispatchStatusBadge, { status: row.original.status?.status }),
+        cell: ({ row }) => h(DispatchStatusBadge, { size: 'sm', status: row.original.status?.status }),
     },
     {
         accessorKey: 'postal',
