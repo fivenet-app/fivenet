@@ -150,11 +150,21 @@ const columns = [
     {
         accessorKey: 'id',
         header: t('common.id'),
+        meta: {
+            class: {
+                td: 'h-full text-left',
+            },
+        },
         cell: ({ row }) => h(IDCopyBadge, { id: row.original.id, prefix: 'DSP', disableTooltip: true, variant: 'link' }),
     },
     {
         accessorKey: 'createdAt',
         header: t('common.created'),
+        meta: {
+            class: {
+                td: 'h-full text-center',
+            },
+        },
         cell: ({ row }) =>
             h(GenericTime, {
                 value: row.original.createdAt,
@@ -172,11 +182,21 @@ const columns = [
     {
         accessorKey: 'status',
         header: t('common.status'),
+        meta: {
+            class: {
+                td: 'h-full text-center',
+            },
+        },
         cell: ({ row }) => h(DispatchStatusBadge, { status: row.original.status?.status }),
     },
     {
         accessorKey: 'postal',
         header: t('common.postal'),
+        meta: {
+            class: {
+                td: 'h-full text-center',
+            },
+        },
         cell: ({ row }) => h('span', {}, row.original.postal ?? t('common.na')),
     },
     {
