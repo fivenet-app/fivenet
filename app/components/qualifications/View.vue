@@ -202,7 +202,7 @@ const requestUserModal = overlay.create(RequestUserModal);
 
                     <UButtonGroup class="inline-flex">
                         <IDCopyBadge
-                            :id="qualification?.id ?? 0"
+                            :id="qualification?.id ?? qualificationId ?? 0"
                             prefix="QUAL"
                             size="md"
                             :title="{ key: 'notifications.qualifications.copy_qualification.title', parameters: {} }"
