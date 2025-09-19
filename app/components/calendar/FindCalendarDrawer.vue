@@ -101,7 +101,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                         class="flex flex-initial items-center justify-between gap-1 border-default py-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                     >
                         <div class="inline-flex gap-1">
-                            <UBadge :color="calendar.color as BadgeProps['color']" size="lg" />
+                            <UBadge :color="calendar.color as BadgeProps['color']" size="lg" label="&nbsp;" />
 
                             <span>{{ calendar.name }}</span>
                             <span v-if="calendar.description" class="hidden sm:block"

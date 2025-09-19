@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonProps } from '@nuxt/ui';
+import type { BadgeProps, ButtonProps } from '@nuxt/ui';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
@@ -579,7 +579,7 @@ const viewOptions = [
                     />
 
                     <div v-else class="grid grid-cols-1 gap-2">
-                        <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2 truncate">
+                        <div v-for="calendar in calendars" :key="calendar.id" class="flex items-center gap-2 truncate">
                             <USwitch
                                 :model-value="activeCalendarIds.includes(calendar.id)"
                                 @update:model-value="($event) => calendarIdChange(calendar.id, $event as boolean)"
@@ -587,12 +587,16 @@ const viewOptions = [
 
                             <UButton
                                 :color="calendar.color as ButtonProps['color']"
-                                variant="solid"
+                                variant="link"
                                 size="sm"
                                 truncate
-                                :label="calendar.name"
+                                class="px-0.5 py-0"
                                 @click="calendarViewSlideover.open({ calendarId: calendar.id })"
-                            />
+                            >
+                                <UBadge :color="calendar.color as BadgeProps['color']" size="md" label="&nbsp;" />
+
+                                <span>{{ calendar.name }}</span>
+                            </UButton>
                         </div>
                     </div>
                 </div>
