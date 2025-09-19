@@ -114,7 +114,7 @@
         "@types/leaflet": "1.9.20",
         "@types/leaflet-contextmenu": "1.4.4",
         "@types/leaflet.heat": "0.2.5",
-        "@types/node": "24.5.1",
+        "@types/node": "24.5.2",
         "@types/pica": "9.0.5",
         "@types/splitpanes": "2.2.6",
         "@types/zxcvbn": "4.4.5",
@@ -137,11 +137,11 @@
         "postcss-preset-env": "10.3.1",
         "prettier": "3.6.2",
         "prettier-plugin-organize-attributes": "1.0.0",
-        "prettier-plugin-organize-imports": "4.2.0",
+        "prettier-plugin-organize-imports": "4.3.0",
         "prettier-plugin-tailwindcss": "0.6.14",
         "protoc": "32.1.0",
         "protoc-gen-js": "3.21.4-4",
-        "release-it": "19.0.4",
+        "release-it": "19.0.5",
         "sass": "1.92.1",
         "tailwindcss": "4.1.13",
         "typescript": "5.9.2",
@@ -156,7 +156,7 @@
         "@tiptap/pm": "3.4.4",
         "@tiptap/vue-3": "3.4.4"
     },
-    "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+    "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef",
     "pnpm": {
         "onlyBuiltDependencies": [
             "@tailwindcss/oxide",
