@@ -3,6 +3,7 @@ package qualifications
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -97,6 +98,8 @@ func (s *Server) ListQualifications(
 		OFFSET(req.GetPagination().GetOffset()).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
+
+	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

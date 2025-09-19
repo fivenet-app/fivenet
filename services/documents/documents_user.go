@@ -34,22 +34,21 @@ func (s *Server) ListUserDocuments(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tDAccess).
-				WHERE(
-					mysql.AND(
-						tDAccess.TargetID.EQ(tDocument.ID),
-						mysql.OR(
-							// Direct user access
-							tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							// or job + grade access
-							mysql.AND(
-								tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-								tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-							),
-						),
-						tDAccess.Access.GT_EQ(
-							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+				WHERE(mysql.AND(
+					tDAccess.TargetID.EQ(tDocument.ID),
+					mysql.OR(
+						// Direct user access
+						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						// or job + grade access
+						mysql.AND(
+							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 						),
 					),
+					tDAccess.Access.GT_EQ(
+						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+				),
 				),
 		)
 	} else {

@@ -64,10 +64,12 @@ func (s *Server) ListPages(
 				SELECT(mysql.Int(1)).
 				FROM(tPAccess).
 				WHERE(mysql.AND(
+					tPAccess.TargetID.EQ(tPageShort.ID),
 					tPAccess.Access.IS_NOT_NULL(),
 					tPAccess.Access.GT_EQ(
 						mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
+
 					mysql.OR(
 						tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						mysql.AND(

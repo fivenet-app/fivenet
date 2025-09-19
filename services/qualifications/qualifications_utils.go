@@ -35,6 +35,7 @@ func (s *Server) listQualificationsQuery(
 				SELECT(mysql.Int(1)).
 				FROM(tQAccess).
 				WHERE(mysql.AND(
+					tQAccess.TargetID.EQ(tQuali.ID),
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
 						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
@@ -165,6 +166,7 @@ func (s *Server) getQualificationQuery(
 				SELECT(mysql.Int(1)).
 				FROM(tQAccess).
 				WHERE(mysql.AND(
+					tQAccess.TargetID.EQ(tQuali.ID),
 					tQAccess.Access.IS_NOT_NULL(),
 					tQAccess.Access.GT_EQ(
 						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),

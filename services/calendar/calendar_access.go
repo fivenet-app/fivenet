@@ -67,18 +67,17 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tCAccess).
-				WHERE(
-					mysql.AND(
-						tCAccess.TargetID.EQ(tCalendar.ID),
-						tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
-						mysql.OR(
-							tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-							mysql.AND(
-								tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-								tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-							),
+				WHERE(mysql.AND(
+					tCAccess.TargetID.EQ(tCalendar.ID),
+					tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
+					mysql.OR(
+						tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						mysql.AND(
+							tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 						),
 					),
+				),
 				),
 		)
 	} else {

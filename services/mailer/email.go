@@ -180,31 +180,30 @@ func ListUserEmails(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess.AS("ea")).
-				WHERE(
-					mysql.AND(
-						ea.TargetID.EQ(tEmails.ID),
-						ea.Access.GT_EQ(mysql.Int32(access)),
-						ea.QualificationID.IS_NOT_NULL(),
-						mysql.EXISTS(
-							mysql.
-								SELECT(mysql.Int(1)).
-								FROM(tQualificationsResults.AS("qr")).
-								WHERE(
-									mysql.AND(
-										qr.QualificationID.EQ(ea.QualificationID),
-										qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-										qr.DeletedAt.IS_NULL(),
-										qr.Status.EQ(
-											mysql.Int32(
-												int32(
-													qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
-												),
+				WHERE(mysql.AND(
+					ea.TargetID.EQ(tEmails.ID),
+					ea.Access.GT_EQ(mysql.Int32(access)),
+					ea.QualificationID.IS_NOT_NULL(),
+					mysql.EXISTS(
+						mysql.
+							SELECT(mysql.Int(1)).
+							FROM(tQualificationsResults.AS("qr")).
+							WHERE(
+								mysql.AND(
+									qr.QualificationID.EQ(ea.QualificationID),
+									qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+									qr.DeletedAt.IS_NULL(),
+									qr.Status.EQ(
+										mysql.Int32(
+											int32(
+												qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
 											),
 										),
 									),
 								),
-						),
+							),
 					),
+				),
 				),
 		)
 

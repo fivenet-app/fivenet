@@ -74,17 +74,17 @@ func (s *Server) ListQualificationsResults(
 		accessExists := mysql.EXISTS(
 			mysql.SELECT(mysql.Int(1)).
 				FROM(tQAccess).
-				WHERE(
-					tQAccess.TargetID.EQ(tQualiResults.QualificationID).
-						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))).
-						AND(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))).
-								OR(
-									tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
-										AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
-								),
-						),
+				WHERE(mysql.AND(
+					tQAccess.TargetID.EQ(tQualiResults.QualificationID),
+					tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+
+					mysql.OR(
+						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
+							AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+					),
+				),
 				),
 		)
 

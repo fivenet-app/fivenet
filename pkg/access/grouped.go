@@ -261,17 +261,16 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(g.Jobs.table).
-				WHERE(
-					g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
-						AND(g.Jobs.columns.Access.GT_EQ(mysql.Int32(int32(access.Number())))).
-						AND(
-							mysql.AND(
-								g.Jobs.columns.Job.EQ(mysql.String(userInfo.GetJob())),
-								g.Jobs.columns.MinimumGrade.LT_EQ(
-									mysql.Int32(userInfo.GetJobGrade()),
-								),
-							),
+				WHERE(mysql.AND(
+					g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID),
+					g.Jobs.columns.Access.GT_EQ(mysql.Int32(int32(access.Number()))),
+					mysql.AND(
+						g.Jobs.columns.Job.EQ(mysql.String(userInfo.GetJob())),
+						g.Jobs.columns.MinimumGrade.LT_EQ(
+							mysql.Int32(userInfo.GetJobGrade()),
 						),
+					),
+				),
 				),
 		)
 		accessCheckConditions = append(accessCheckConditions, jobAccessExists)
@@ -294,7 +293,9 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
 						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						tQualiResults.Status.EQ(
-							mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+							mysql.Int32(
+								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
+							),
 						),
 					),
 				),

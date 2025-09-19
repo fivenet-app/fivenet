@@ -24,6 +24,13 @@ func (s *Server) listCalendarEntriesQuery(
 			WHERE(mysql.AND(
 				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID),
 				tCAccess.Access.GT_EQ(mysql.Int32(int32(access))),
+				mysql.OR(
+					tCAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					mysql.AND(
+						tCAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+					),
+				),
 			)),
 	)
 
