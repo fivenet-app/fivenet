@@ -159,7 +159,13 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UForm
+                ref="formRef"
+                :schema="schema"
+                :state="state"
+                class="mx-auto w-full max-w-(--breakpoint-xl)"
+                @submit="onSubmitThrottle"
+            >
                 <div v-if="canDo.create" class="flex flex-row gap-2 md:flex-col">
                     <UFormField class="flex-1" name="requestsType" :label="$t('common.type', 2)" required>
                         <ClientOnly>
