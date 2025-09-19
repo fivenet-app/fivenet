@@ -39,11 +39,9 @@ func (s *Server) listQualificationsQuery(
 					tQAccess.Access.GT_EQ(
 						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-					mysql.OR(
-						mysql.AND(
-							tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
+					mysql.AND(
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
 				),
 				),
@@ -171,11 +169,9 @@ func (s *Server) getQualificationQuery(
 					tQAccess.Access.GT_EQ(
 						mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-					mysql.OR(
-						mysql.AND(
-							tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-							tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
-						),
+					mysql.AND(
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
 				),
 				),

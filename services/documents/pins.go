@@ -256,8 +256,8 @@ func (s *Server) getDocumentPin(
 				tDPins.UserID.IS_NULL(),
 			),
 			mysql.AND(
-				tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tDPins.Job.IS_NULL(),
+				tDPins.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			),
 		),
 	)
