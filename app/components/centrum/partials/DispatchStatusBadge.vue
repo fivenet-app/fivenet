@@ -1,15 +1,15 @@
 <script lang="ts" setup>
+import type { BadgeProps } from '@nuxt/ui';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBadgeColor } from '../helpers';
 
-withDefaults(
-    defineProps<{
-        status?: StatusDispatch | undefined;
-    }>(),
-    {
-        status: StatusDispatch.UNSPECIFIED,
-    },
-);
+interface Props extends /* @vue-ignore */ BadgeProps {
+    status?: StatusDispatch | undefined;
+}
+
+withDefaults(defineProps<Props>(), {
+    status: StatusDispatch.UNSPECIFIED,
+});
 </script>
 
 <template>
@@ -19,5 +19,6 @@ withDefaults(
         :color="dispatchStatusToBadgeColor(status)"
         size="xs"
         :label="$t(`enums.centrum.StatusDispatch.${StatusDispatch[status ?? 0]}`)"
+        v-bind="$attrs"
     />
 </template>

@@ -69,6 +69,11 @@ const grouped = computedAsync(async () => {
 const columns = [
     {
         id: 'actions',
+        meta: {
+            class: {
+                td: 'py-px',
+            },
+        },
         cell: ({ row }) =>
             h('div', { class: 'flex items-center' }, [
                 h(
@@ -81,6 +86,7 @@ const columns = [
                         h(UButton, {
                             variant: 'link',
                             icon: 'i-mdi-account-multiple-plus',
+                            ui: { base: 'px-0.5 py-1' },
                             disabled: !checkDispatchAccess(row.original.jobs, CentrumAccessLevel.DISPATCH),
                             onClick: () => {
                                 dispatchAssignModal.open({
@@ -220,8 +226,8 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
 </script>
 
 <template>
-    <div class="flex h-full flex-1 grow flex-col px-1">
-        <div class="flex justify-between">
+    <div class="flex h-full flex-1 grow flex-col">
+        <div class="flex justify-between px-1">
             <h2 class="inline-flex flex-1 items-center text-base leading-6 font-semibold">
                 {{ $t('common.dispatches') }}
 
@@ -257,8 +263,14 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                     :pagination-options="{ manualPagination: true }"
                 />
 
-                <div v-else class="grid grid-cols-1 gap-2">
-                    <UCard v-for="dispatch in group.dispatches" :key="dispatch.id" :title="dispatch.message" class="px-px">
+                <div v-else class="grid grid-cols-1 gap-1 p-1">
+                    <UCard
+                        v-for="dispatch in group.dispatches"
+                        :key="dispatch.id"
+                        :title="dispatch.message"
+                        class="px-px"
+                        :ui="{ header: 'p-1 sm:px-1', body: 'p-1 sm:p-1', footer: 'p-1 sm:px-1' }"
+                    >
                         <template #header>
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-1 items-center gap-2">
@@ -267,6 +279,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                             <UButton
                                                 variant="link"
                                                 icon="i-mdi-account-multiple-plus"
+                                                :ui="{ base: 'px-0.5 py-1' }"
                                                 @click="
                                                     () => {
                                                         dispatchAssignModal.open({
@@ -289,6 +302,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                             <UButton
                                                 variant="link"
                                                 icon="i-mdi-refresh"
+                                                :ui="{ base: 'px-0.5 py-1' }"
                                                 @click="
                                                     () => {
                                                         dispatchStatusUpdateModal.open({
@@ -303,6 +317,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                             <UButton
                                                 variant="link"
                                                 icon="i-mdi-dots-vertical"
+                                                :ui="{ base: 'px-0.5 py-1' }"
                                                 @click="
                                                     () => {
                                                         dispatchDetailsSlideover.open({
@@ -315,27 +330,28 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                     </div>
 
                                     <div class="flex flex-1 items-center justify-center gap-2">
-                                        <span class="text-highlighted">
-                                            <GenericTime
-                                                :value="dispatch.createdAt"
-                                                type="compact"
-                                                badge
-                                                size="sm"
-                                                :update-callback="
-                                                    () =>
-                                                        dispatchTimeToBadge(
-                                                            dispatch.createdAt,
-                                                            dispatch.status?.status,
-                                                            settings?.timings?.dispatchMaxWait,
-                                                        )
-                                                "
-                                            />
-                                        </span>
+                                        <GenericTime
+                                            :value="dispatch.createdAt"
+                                            type="compact"
+                                            badge
+                                            size="sm"
+                                            class="text-highlighted"
+                                            :update-callback="
+                                                () =>
+                                                    dispatchTimeToBadge(
+                                                        dispatch.createdAt,
+                                                        dispatch.status?.status,
+                                                        settings?.timings?.dispatchMaxWait,
+                                                    )
+                                            "
+                                        />
 
-                                        <DispatchStatusBadge :status="dispatch.status?.status" />
+                                        <DispatchStatusBadge :status="dispatch.status?.status" size="sm" />
                                     </div>
 
-                                    <span> {{ $t('common.postal') }}: {{ dispatch.postal ?? $t('common.na') }} </span>
+                                    <span class="text-sm">
+                                        {{ $t('common.postal') }}: {{ dispatch.postal ?? $t('common.na') }}
+                                    </span>
 
                                     <IDCopyBadge :id="dispatch.id" prefix="DSP" disable-tooltip variant="link" />
                                 </div>
