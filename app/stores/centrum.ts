@@ -177,9 +177,7 @@ export const useCentrumStore = defineStore(
         };
 
         const updateUnitStatus = (status: UnitStatus | undefined): void => {
-            if (!status) {
-                return;
-            }
+            if (!status) return;
             const u = units.value.get(status.unitId);
             if (!u) {
                 logger.warn('Processed Unit Status for unknown unit:', status.unitId);
@@ -192,9 +190,7 @@ export const useCentrumStore = defineStore(
                 u.status = status;
             } else {
                 // User added / removed
-                if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) {
-                    return;
-                }
+                if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) return;
 
                 // Normal status update
                 u.status.id = status.id;
@@ -268,9 +264,7 @@ export const useCentrumStore = defineStore(
         };
 
         const updateDispatchStatus = (status: DispatchStatus | undefined): void => {
-            if (!status) {
-                return;
-            }
+            if (!status) return;
             const disp = dispatches.value.get(status.dispatchId);
             if (!disp) {
                 logger.warn('Processed Dispatch Status for unknown dispatch:', status.dispatchId, status);
@@ -316,15 +310,11 @@ export const useCentrumStore = defineStore(
         };
 
         const handleDispatchAssignment = (dsp: Dispatch): void => {
-            if (!ownUnitId.value) {
-                return;
-            }
+            if (!ownUnitId.value) return;
             const assignment = dsp.units.find((ua) => ua.unitId === ownUnitId.value);
             if (!assignment) {
                 // If not assigned, remove from pending/own if present
-                if (!pendingDispatches.value.includes(dsp.id) && !ownDispatches.value.includes(dsp.id)) {
-                    return;
-                }
+                if (!pendingDispatches.value.includes(dsp.id) && !ownDispatches.value.includes(dsp.id)) return;
                 removePendingDispatch(dsp.id);
                 removeOwnDispatch(dsp.id);
             } else {
@@ -669,9 +659,7 @@ export const useCentrumStore = defineStore(
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value.signal.aborted) {
-                return;
-            }
+            if (!abort.value || abort.value.signal.aborted) return;
 
             if (reconnectBackoffTime.value > maxBackOffTime) {
                 reconnectBackoffTime.value = initialReconnectBackoffTime;

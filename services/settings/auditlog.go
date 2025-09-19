@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -35,61 +35,61 @@ func (s *Server) ViewAuditLog(
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 	if !userInfo.GetSuperuser() {
-		condition = jet.AND(
-			tAuditLog.UserJob.EQ(jet.String(userInfo.GetJob())).
-				OR(tAuditLog.TargetUserJob.EQ(jet.String(userInfo.GetJob()))),
+		condition = mysql.AND(
+			tAuditLog.UserJob.EQ(mysql.String(userInfo.GetJob())).
+				OR(tAuditLog.TargetUserJob.EQ(mysql.String(userInfo.GetJob()))),
 		)
 	}
 
 	if len(req.GetUserIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetUserIds()))
+		ids := make([]mysql.Expression, len(req.GetUserIds()))
 		for i := range req.GetUserIds() {
-			ids[i] = jet.Int32(req.GetUserIds()[i])
+			ids[i] = mysql.Int32(req.GetUserIds()[i])
 		}
 		condition = condition.AND(tAuditLog.UserID.IN(ids...))
 	}
 	if req.GetFrom() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.GT_EQ(
-			jet.TimestampT(req.GetFrom().AsTime()),
+			mysql.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
 	if req.GetTo() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(
-			jet.TimestampT(req.GetTo().AsTime()),
+			mysql.TimestampT(req.GetTo().AsTime()),
 		))
 	}
 	if len(req.GetServices()) > 0 {
-		svcs := make([]jet.Expression, len(req.GetServices()))
+		svcs := make([]mysql.Expression, len(req.GetServices()))
 		for i := range req.GetServices() {
-			svcs[i] = jet.String(req.GetServices()[i])
+			svcs[i] = mysql.String(req.GetServices()[i])
 		}
 		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}
 	if len(req.GetMethods()) > 0 {
-		methods := make([]jet.Expression, len(req.GetMethods()))
+		methods := make([]mysql.Expression, len(req.GetMethods()))
 		for i := range req.GetMethods() {
-			methods[i] = jet.String(req.GetMethods()[i])
+			methods[i] = mysql.String(req.GetMethods()[i])
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
 	if len(req.GetStates()) > 0 {
-		states := make([]jet.Expression, len(req.GetStates()))
+		states := make([]mysql.Expression, len(req.GetStates()))
 		for i := range req.GetStates() {
-			states[i] = jet.Int32(int32(req.GetStates()[i]))
+			states[i] = mysql.Int32(int32(req.GetStates()[i]))
 		}
 		condition = condition.AND(tAuditLog.State.IN(states...))
 	}
 	if req.Search != nil && req.GetSearch() != "" {
 		condition = condition.AND(
-			dbutils.MATCH(tAuditLog.Data, jet.String(req.GetSearch())),
+			dbutils.MATCH(tAuditLog.Data, mysql.String(req.GetSearch())),
 		)
 	}
 
 	countStmt := tAuditLog.
 		SELECT(
-			jet.COUNT(tAuditLog.ID).AS("data_count.total"),
+			mysql.COUNT(tAuditLog.ID).AS("data_count.total"),
 		).
 		FROM(tAuditLog).
 		WHERE(condition)
@@ -110,9 +110,9 @@ func (s *Server) ViewAuditLog(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "service":
 			column = tAuditLog.Service
@@ -167,8 +167,6 @@ func (s *Server) ViewAuditLog(
 	if err := stmt.QueryContext(ctx, s.db, &resp.Logs); err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
-
-	resp.GetPagination().Update(len(resp.GetLogs()))
 
 	return resp, nil
 }

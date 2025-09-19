@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.qualifications;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 
@@ -19,10 +21,20 @@ message ExamQuestion {
   int64 qualification_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
-  // @sanitize: method=StripTags
-  string title = 5 [(buf.validate.field).string.max_len = 512];
-  // @sanitize: method=StripTags
-  optional string description = 6 [(buf.validate.field).string.max_len = 1024];
+  string title = 5 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string description = 6 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   ExamQuestionData data = 7 [(buf.validate.field).required = true];
   optional ExamQuestionAnswerData answer = 8;
   optional int32 points = 9 [(buf.validate.field).int32.gte = 0];
@@ -32,8 +44,9 @@ message ExamQuestion {
   }];
 }
 
-// @dbscanner: json
 message ExamQuestionData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   oneof data {
     option (buf.validate.oneof).required = true;
 
@@ -61,21 +74,32 @@ message ExamQuestionText {
 }
 
 message ExamQuestionSingleChoice {
-  // @sanitize: method=StripTags
-  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message ExamQuestionMultipleChoice {
-  // @sanitize: method=StripTags
-  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional int32 limit = 2 [(buf.validate.field).int32 = {
     gte: 0
     lte: 10
   }];
 }
 
-// @dbscanner: json
 message ExamQuestionAnswerData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   string answer_key = 1 [(buf.validate.field).string.max_len = 1024];
 
   oneof answer {
@@ -97,8 +121,9 @@ message ExamUser {
   optional resources.timestamp.Timestamp ended_at = 6;
 }
 
-// @dbscanner: json
 message ExamResponses {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   int64 qualification_id = 1;
   int32 user_id = 2;
   repeated ExamResponse responses = 3 [(buf.validate.field).repeated.max_items = 100];
@@ -131,22 +156,38 @@ message ExamResponseYesNo {
 }
 
 message ExamResponseText {
-  // @sanitize: method=StripTags
-  string text = 1 [(buf.validate.field).string.max_bytes = 500000]; // 0.5 Megabyte
+  string text = 1 [
+    (buf.validate.field).string.max_bytes = 500000,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ]; // 0.5 Megabyte
 }
 
 message ExamResponseSingleChoice {
-  // @sanitize: method=StripTags
-  string choice = 1 [(buf.validate.field).string.max_len = 512];
+  string choice = 1 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message ExamResponseMultipleChoice {
-  // @sanitize: method=StripTags
-  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
-// @dbscanner: json
 message ExamGrading {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated ExamGradingResponse responses = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 

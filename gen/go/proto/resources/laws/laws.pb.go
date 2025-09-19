@@ -7,6 +7,7 @@
 package laws
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -24,15 +25,13 @@ const (
 )
 
 type LawBook struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	// @sanitize
-	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize
-	Description   *string `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Laws          []*Law  `protobuf:"bytes,6,rep,name=laws,proto3" json:"laws,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Laws          []*Law                 `protobuf:"bytes,6,rep,name=laws,proto3" json:"laws,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -110,20 +109,17 @@ func (x *LawBook) GetLaws() []*Law {
 }
 
 type Law struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"law.id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	LawbookId int64                  `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
-	// @sanitize
-	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize
-	Description *string `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	// @sanitize
-	Hint          *string `protobuf:"bytes,7,opt,name=hint,proto3,oneof" json:"hint,omitempty"`
-	Fine          *uint32 `protobuf:"varint,8,opt,name=fine,proto3,oneof" json:"fine,omitempty"`
-	DetentionTime *uint32 `protobuf:"varint,9,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detention_time,omitempty"`
-	StvoPoints    *uint32 `protobuf:"varint,10,opt,name=stvo_points,json=stvoPoints,proto3,oneof" json:"stvo_points,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"law.id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	LawbookId     int64                  `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
+	Name          string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Hint          *string                `protobuf:"bytes,7,opt,name=hint,proto3,oneof" json:"hint,omitempty"`
+	Fine          *uint32                `protobuf:"varint,8,opt,name=fine,proto3,oneof" json:"fine,omitempty"`
+	DetentionTime *uint32                `protobuf:"varint,9,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detention_time,omitempty"`
+	StvoPoints    *uint32                `protobuf:"varint,10,opt,name=stvo_points,json=stvoPoints,proto3,oneof" json:"stvo_points,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -232,20 +228,19 @@ var File_resources_laws_laws_proto protoreflect.FileDescriptor
 
 const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xec\x02\n" +
+	"\x19resources/laws/laws.proto\x12\x0eresources.laws\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf8\x02\n" +
 	"\aLawBook\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1e\n" +
-	"\x04name\x18\x04 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x12/\n" +
-	"\vdescription\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x02R\vdescription\x88\x01\x01\x12'\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12$\n" +
+	"\x04name\x18\x04 \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x125\n" +
+	"\vdescription\x18\x05 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x02R\vdescription\x88\x01\x01\x12'\n" +
 	"\x04laws\x18\x06 \x03(\v2\x13.resources.laws.LawR\x04lawsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\x0e\n" +
-	"\f_description\"\xa5\x04\n" +
+	"\f_description\"\xb7\x04\n" +
 	"\x03Law\x125\n" +
 	"\x02id\x18\x01 \x01(\x03B%\x9a\x84\x9e\x03 sql:\"primary_key\" alias:\"law.id\"R\x02id\x12B\n" +
 	"\n" +
@@ -253,11 +248,10 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"lawbook_id\x18\x04 \x01(\x03R\tlawbookId\x12\x1e\n" +
-	"\x04name\x18\x05 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x12/\n" +
-	"\vdescription\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12!\n" +
-	"\x04hint\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x03R\x04hint\x88\x01\x01\x12\x17\n" +
+	"lawbook_id\x18\x04 \x01(\x03R\tlawbookId\x12$\n" +
+	"\x04name\x18\x05 \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x01R\x04name\x125\n" +
+	"\vdescription\x18\x06 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12'\n" +
+	"\x04hint\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\x04H\x03R\x04hint\x88\x01\x01\x12\x17\n" +
 	"\x04fine\x18\b \x01(\rH\x04R\x04fine\x88\x01\x01\x12*\n" +
 	"\x0edetention_time\x18\t \x01(\rH\x05R\rdetentionTime\x88\x01\x01\x12$\n" +
 	"\vstvo_points\x18\n" +

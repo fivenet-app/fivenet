@@ -20,7 +20,18 @@ const schema = z.object({
 </script>
 
 <template>
-    <UDrawer :title="$t('common.setting', 2)" :overlay="false" handle-only>
+    <UDrawer
+        :title="$t('common.setting', 2)"
+        :overlay="false"
+        handle-only
+        :close="{ onClick: () => $emit('close', false) }"
+        :ui="{ title: 'flex flex-row gap-2' }"
+    >
+        <template #title>
+            <span class="flex-1">{{ $t('common.setting', 2) }}</span>
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+        </template>
+
         <template #body>
             <UContainer class="max-w-xl">
                 <UForm :schema="schema" :state="livemap">

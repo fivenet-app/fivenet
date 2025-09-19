@@ -18,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -58,7 +58,7 @@ func (s *Server) GetColleagueLabels(
 		}
 	}
 
-	condition := tJobLabels.Job.EQ(jet.String(userInfo.GetJob())).
+	condition := tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())).
 		AND(tJobLabels.DeletedAt.IS_NULL())
 
 	if req.Search != nil && req.GetSearch() != "" {
@@ -66,8 +66,8 @@ func (s *Server) GetColleagueLabels(
 		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
 		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 		*req.Search = "%" + req.GetSearch() + "%"
-		condition = condition.AND(jet.OR(
-			tJobLabels.Name.LIKE(jet.String(req.GetSearch())),
+		condition = condition.AND(mysql.OR(
+			tJobLabels.Name.LIKE(mysql.String(req.GetSearch())),
 		))
 	}
 
@@ -121,8 +121,8 @@ func (s *Server) ManageLabels(
 			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
-		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+		WHERE(mysql.AND(
+			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 		))
 
 	labels := []*jobs.Label{}
@@ -167,10 +167,10 @@ func (s *Server) ManageLabels(
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
-					tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-					tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
-					tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
-					tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
+					tJobLabels.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
+					tJobLabels.Color.SET(mysql.StringExp(mysql.Raw("VALUES(`color`)"))),
+					tJobLabels.Order.SET(mysql.IntExp(mysql.Raw("VALUES(`order`)"))),
+					tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
@@ -187,14 +187,14 @@ func (s *Server) ManageLabels(
 						tJobLabels.Order,
 					).
 					SET(
-						tJobLabels.Name.SET(jet.String(label.GetName())),
-						tJobLabels.Color.SET(jet.String(label.GetColor())),
-						tJobLabels.Order.SET(jet.Int32(label.GetOrder())),
-						tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
+						tJobLabels.Name.SET(mysql.String(label.GetName())),
+						tJobLabels.Color.SET(mysql.String(label.GetColor())),
+						tJobLabels.Order.SET(mysql.Int32(label.GetOrder())),
+						tJobLabels.DeletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 					).
-					WHERE(jet.AND(
-						tJobLabels.ID.EQ(jet.Int64(label.GetId())),
-						tJobLabels.Job.EQ(jet.String(label.GetJob())),
+					WHERE(mysql.AND(
+						tJobLabels.ID.EQ(mysql.Int64(label.GetId())),
+						tJobLabels.Job.EQ(mysql.String(label.GetJob())),
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -205,20 +205,20 @@ func (s *Server) ManageLabels(
 	}
 
 	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
+		ids := make([]mysql.Expression, len(removed))
 
 		for i := range removed {
-			ids[i] = jet.Int64(removed[i].GetId())
+			ids[i] = mysql.Int64(removed[i].GetId())
 		}
 
 		deleteStmt := tJobLabels.
 			UPDATE().
 			SET(
-				tJobLabels.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+				tJobLabels.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 			).
-			WHERE(jet.AND(
+			WHERE(mysql.AND(
 				tJobLabels.ID.IN(ids...),
-				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+				tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 			)).
 			LIMIT(int64(len(removed)))
 
@@ -250,18 +250,18 @@ func (s *Server) validateLabels(
 		return true, nil
 	}
 
-	idsExp := make([]jet.Expression, len(labels))
+	idsExp := make([]mysql.Expression, len(labels))
 	for i := range labels {
-		idsExp[i] = jet.Int64(labels[i].GetId())
+		idsExp[i] = mysql.Int64(labels[i].GetId())
 	}
 
 	stmt := tJobLabels.
 		SELECT(
-			jet.COUNT(tJobLabels.ID).AS("data_count.total"),
+			mysql.COUNT(tJobLabels.ID).AS("data_count.total"),
 		).
 		FROM(tJobLabels).
-		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+		WHERE(mysql.AND(
+			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
 			tJobLabels.ID.IN(idsExp...),
 		)).
@@ -298,9 +298,9 @@ func (s *Server) getUserLabels(
 					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
 				),
 		).
-		WHERE(jet.AND(
-			tColleagueLabels.UserID.EQ(jet.Int32(userId)),
-			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+		WHERE(mysql.AND(
+			tColleagueLabels.UserID.EQ(mysql.Int32(userId)),
+			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(tJobLabels.Order.ASC())
@@ -345,7 +345,7 @@ func (s *Server) GetColleagueLabelsStats(
 
 	stmt := tColleagueLabels.
 		SELECT(
-			jet.COUNT(tColleagueLabels.LabelID).AS("label_count.count"),
+			mysql.COUNT(tColleagueLabels.LabelID).AS("label_count.count"),
 			tJobLabels.ID,
 			tJobLabels.Job,
 			tJobLabels.Name,
@@ -360,11 +360,11 @@ func (s *Server) GetColleagueLabelsStats(
 					tColleague.ID.EQ(tColleagueLabels.UserID),
 				),
 		).
-		WHERE(jet.AND(
-			tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
+		WHERE(mysql.AND(
+			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 			tJobLabels.DeletedAt.IS_NULL(),
-			tColleagueLabels.Job.EQ(jet.String(userInfo.GetJob())),
-			tColleague.Job.EQ(jet.String(userInfo.GetJob())),
+			tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob())),
+			tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
 		)).
 		GROUP_BY(tJobLabels.ID).
 		ORDER_BY(

@@ -8,7 +8,14 @@ defineProps<{
     user: User;
 }>();
 
+const { display } = useAppConfig();
+
 const { attr } = useAuth();
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 </script>
 
 <template>
@@ -117,7 +124,7 @@ const { attr } = useAuth();
                                 {{ $t('common.no_open_fine') }}
                             </span>
                             <span v-else class="text-error-500">
-                                {{ $n(user?.props?.openFines ?? 0, 'currency') }}
+                                {{ formatter.format(user?.props?.openFines ?? 0) }}
                             </span>
                         </dd>
                     </div>
@@ -139,7 +146,7 @@ const { attr } = useAuth();
                                         v-for="label in user.props?.labels?.list"
                                         :key="label.name"
                                         class="justify-between gap-2"
-                                        :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                        :class="isColorBright(hexToRgb(label.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                         :style="{ backgroundColor: label.color }"
                                         size="md"
                                     >
@@ -173,7 +180,7 @@ const { attr } = useAuth();
                             <span v-if="user?.licenses.length === 0">
                                 {{ $t('common.no_licenses') }}
                             </span>
-                            <ul v-else class="divide-base-200 border-base-200 w-full divide-y rounded-md border" role="list">
+                            <ul v-else class="w-full divide-y divide-default rounded-md border border-default" role="list">
                                 <li
                                     v-for="license in user?.licenses"
                                     :key="license.type"

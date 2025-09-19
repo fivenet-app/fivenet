@@ -210,9 +210,7 @@ export class GrpcWSTransport implements RpcTransport {
                     defStatus.rejectPending(err);
                     defTrailer.rejectPending(err);
 
-                    if (defMessage.state === DeferredState.RESOLVED) {
-                        return;
-                    }
+                    if (defMessage.state === DeferredState.RESOLVED) return;
                     defMessage.rejectPending(err);
                 },
                 onHeaders(headers: Metadata, _: number): void {

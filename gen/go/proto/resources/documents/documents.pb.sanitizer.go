@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Document) Sanitize() error {
 	if m == nil {
 		return nil
@@ -48,8 +50,15 @@ func (m *Document) Sanitize() error {
 		}
 	}
 
-	// Field: Data
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
 
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
+	// Field: Data
 	if m.Data != nil {
 		*m.Data = htmlsanitizer.Sanitize(*m.Data)
 	}
@@ -120,6 +129,8 @@ func (m *Document) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DocumentReference) Sanitize() error {
 	if m == nil {
 		return nil
@@ -164,6 +175,8 @@ func (m *DocumentReference) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DocumentRelation) Sanitize() error {
 	if m == nil {
 		return nil
@@ -208,6 +221,8 @@ func (m *DocumentRelation) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DocumentShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -247,6 +262,14 @@ func (m *DocumentShort) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
 	}
 
 	// Field: DeletedAt
@@ -303,6 +326,8 @@ func (m *DocumentShort) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *WorkflowState) Sanitize() error {
 	if m == nil {
 		return nil
@@ -347,6 +372,8 @@ func (m *WorkflowState) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *WorkflowUserState) Sanitize() error {
 	if m == nil {
 		return nil
@@ -359,6 +386,11 @@ func (m *WorkflowUserState) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: ManualReminderMessage
+	if m.ManualReminderMessage != nil {
+		*m.ManualReminderMessage = htmlsanitizer.Sanitize(*m.ManualReminderMessage)
 	}
 
 	// Field: ManualReminderTime

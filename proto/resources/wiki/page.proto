@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.wiki;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
@@ -14,8 +15,13 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 message Page {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
-  // @sanitize: method=StripTags
-  string job = 2 [(buf.validate.field).string.max_len = 50];
+  string job = 2 [
+    (buf.validate.field).string.max_len = 50,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional string job_label = 3 [(buf.validate.field).string.max_len = 50];
   optional int64 parent_id = 4;
   PageMeta meta = 5 [(buf.validate.field).required = true];
@@ -28,20 +34,34 @@ message PageMeta {
   resources.timestamp.Timestamp created_at = 1;
   optional resources.timestamp.Timestamp updated_at = 2;
   optional resources.timestamp.Timestamp deleted_at = 3;
-  // @sanitize: method=StripTags
-  optional string slug = 4 [(buf.validate.field).string.max_len = 100];
-  // @sanitize
-  string title = 5 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 1024
-  }];
-  // @sanitize: method=StripTags
-  string description = 6 [(buf.validate.field).string.max_len = 128];
+  optional string slug = 4 [
+    (buf.validate.field).string.max_len = 100,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  string title = 5 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 1024
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string description = 6 [
+    (buf.validate.field).string.max_len = 128,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional int32 creator_id = 7 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 8 [(tagger.tags) = "alias:\"creator\""];
   resources.common.content.ContentType content_type = 9 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize: method=StripTags
-  repeated string tags = 10;
+  repeated string tags = 10 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
   optional bool toc = 11;
   bool public = 12;
   bool draft = 13;
@@ -53,8 +73,13 @@ message PageShort {
   optional string job_label = 3 [(buf.validate.field).string.max_len = 50];
   optional int64 parent_id = 4;
   optional resources.timestamp.Timestamp deleted_at = 5;
-  // @sanitize: method=StripTags
-  optional string slug = 6 [(buf.validate.field).string.max_len = 100];
+  optional string slug = 6 [
+    (buf.validate.field).string.max_len = 100,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string title = 7;
   string description = 8;
   repeated PageShort children = 9;

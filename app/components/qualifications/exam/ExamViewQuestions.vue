@@ -69,9 +69,7 @@ async function submitExam(values: Schema): Promise<SubmitExamResponse> {
 onBeforeMount(() =>
     props.exam.questions.forEach((q) => {
         // Question already in state? Skip it
-        if (state.value.responses.find((r) => r.questionId === q.id)) {
-            return;
-        }
+        if (state.value.responses.find((r) => r.questionId === q.id)) return;
 
         switch (q.data?.data.oneofKind ?? 'separator') {
             case 'separator':

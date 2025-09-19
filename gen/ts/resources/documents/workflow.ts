@@ -13,8 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.documents.Workflow
  */
 export interface Workflow {
@@ -91,7 +89,7 @@ class Workflow$Type extends MessageType<Workflow> {
             { no: 2, name: "reminder_settings", kind: "message", T: () => ReminderSettings },
             { no: 3, name: "auto_close", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "auto_close_settings", kind: "message", T: () => AutoCloseSettings }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<Workflow>): Workflow {
         const message = globalThis.Object.create((this.messagePrototype!));

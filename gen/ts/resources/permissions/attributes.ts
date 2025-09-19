@@ -62,8 +62,6 @@ export interface RoleAttribute {
     maxValues?: AttributeValues;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.permissions.AttributeValues
  */
 export interface AttributeValues {
@@ -97,8 +95,6 @@ export interface AttributeValues {
  */
 export interface StringList {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string strings = 1
      */
     strings: string[];
@@ -284,7 +280,7 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
             { no: 1, name: "string_list", kind: "message", oneof: "validValues", T: () => StringList },
             { no: 2, name: "job_list", kind: "message", oneof: "validValues", T: () => StringList },
             { no: 3, name: "job_grade_list", kind: "message", oneof: "validValues", T: () => JobGradeList }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<AttributeValues>): AttributeValues {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -351,7 +347,7 @@ export const AttributeValues = new AttributeValues$Type();
 class StringList$Type extends MessageType<StringList> {
     constructor() {
         super("resources.permissions.StringList", [
-            { no: 1, name: "strings", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "strings", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<StringList>): StringList {

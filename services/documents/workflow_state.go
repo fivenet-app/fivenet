@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -145,7 +145,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 }
 
 func (w *Workflow) handleDocuments(ctx context.Context, data *documents.WorkflowCronData) error {
-	nowTs := jet.TimestampT(time.Now())
+	nowTs := mysql.TimestampT(time.Now())
 
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
 
@@ -174,11 +174,11 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 							AND(tDTemplates.DeletedAt.IS_NULL()),
 					),
 			).
-			WHERE(jet.AND(
-				tDWorkflow.DocumentID.GT(jet.Int64(data.GetLastDocId())),
-				jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
+			WHERE(mysql.AND(
+				tDWorkflow.DocumentID.GT(mysql.Int64(data.GetLastDocId())),
+				mysql.AND( // Only auto close and auto remind docs that aren't closed and have an owner
 					tDocumentShort.Closed.IS_FALSE(),
-					jet.OR(
+					mysql.OR(
 						tDWorkflow.NextReminderTime.LT_EQ(nowTs),
 						tDWorkflow.AutoCloseTime.LT_EQ(nowTs),
 					),
@@ -360,7 +360,7 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 			state.GetAutoCloseTime(),
 			state.GetReminderCount(),
 		).
-		WHERE(tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId()))).
+		WHERE(tWorkflow.DocumentID.EQ(mysql.Int64(state.GetDocumentId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
@@ -375,7 +375,7 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 
 	stmt := tWorkflow.
 		DELETE().
-		WHERE(tWorkflow.DocumentID.EQ(jet.Int64(state.GetDocumentId()))).
+		WHERE(tWorkflow.DocumentID.EQ(mysql.Int64(state.GetDocumentId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
@@ -402,10 +402,10 @@ func (w *Workflow) autoCloseDocument(
 	stmt := tDocument.
 		UPDATE().
 		SET(
-			tDocument.Closed.SET(jet.Bool(true)),
+			tDocument.Closed.SET(mysql.Bool(true)),
 		).
-		WHERE(jet.AND(
-			tDocument.ID.EQ(jet.Int64(state.GetDocumentId())),
+		WHERE(mysql.AND(
+			tDocument.ID.EQ(mysql.Int64(state.GetDocumentId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

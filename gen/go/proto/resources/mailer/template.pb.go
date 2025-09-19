@@ -7,6 +7,7 @@
 package mailer
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -23,18 +24,16 @@ const (
 )
 
 type Template struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	EmailId   int64                  `protobuf:"varint,6,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	// @sanitize: method=StripTags
-	Title string `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize
-	Content       string  `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorJob    *string `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
-	CreatorId     *int32  `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	EmailId       int64                  `protobuf:"varint,6,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	Title         string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	Content       string                 `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty"`
+	CreatorJob    *string                `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
+	CreatorId     *int32                 `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -136,7 +135,7 @@ var File_resources_mailer_template_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_template_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a#resources/timestamp/timestamp.proto\"\xdd\x03\n" +
+	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xf4\x03\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -145,11 +144,9 @@ const file_resources_mailer_template_proto_rawDesc = "" +
 	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x19\n" +
-	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x12 \n" +
-	"\x05title\x18\a \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12$\n" +
-	"\acontent\x18\b \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80PR\acontent\x12-\n" +
+	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x121\n" +
+	"\x05title\x18\a \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12*\n" +
+	"\acontent\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80PR\acontent\x12-\n" +
 	"\vcreator_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18(H\x02R\n" +
 	"creatorJob\x88\x01\x01\x12+\n" +
 	"\n" +

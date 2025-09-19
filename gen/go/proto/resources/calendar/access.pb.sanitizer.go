@@ -3,6 +3,12 @@
 
 package calendar
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -35,6 +41,8 @@ func (m *CalendarAccess) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarJobAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -49,9 +57,24 @@ func (m *CalendarJobAccess) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CalendarUserAccess) Sanitize() error {
 	if m == nil {
 		return nil

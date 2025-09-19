@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/users"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/nats-io/nats.go/jetstream"
@@ -52,48 +52,48 @@ func (s *Server) ListDispatches(
 	}
 	jobsOut, _ := json.Marshal(jobs)
 
-	condition := jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))).
+	condition := mysql.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut))))).
 		AND(
 			tDispatchStatus.ID.IS_NULL().OR(
 				tDispatchStatus.ID.EQ(
-					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+					mysql.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 				),
 			),
 		)
 
 	if len(req.GetStatus()) > 0 {
-		statuses := make([]jet.Expression, len(req.GetStatus()))
+		statuses := make([]mysql.Expression, len(req.GetStatus()))
 		for i := range req.GetStatus() {
-			statuses[i] = jet.Int32(int32(*req.GetStatus()[i].Enum()))
+			statuses[i] = mysql.Int32(int32(*req.GetStatus()[i].Enum()))
 		}
 
 		condition = condition.AND(tDispatchStatus.Status.IN(statuses...))
 	}
 	if len(req.GetNotStatus()) > 0 {
-		statuses := make([]jet.Expression, len(req.GetNotStatus()))
+		statuses := make([]mysql.Expression, len(req.GetNotStatus()))
 		for i := range req.GetNotStatus() {
-			statuses[i] = jet.Int32(int32(*req.GetNotStatus()[i].Enum()))
+			statuses[i] = mysql.Int32(int32(*req.GetNotStatus()[i].Enum()))
 		}
 
 		condition = condition.AND(tDispatchStatus.Status.NOT_IN(statuses...))
 	}
 
 	if len(req.GetIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetIds()))
+		ids := make([]mysql.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Int64(req.GetIds()[i])
+			ids[i] = mysql.Int64(req.GetIds()[i])
 		}
 
 		condition = condition.AND(tDispatch.ID.IN(ids...))
 	}
 
 	if req.Postal != nil && req.GetPostal() != "" {
-		condition = condition.AND(tDispatch.Postal.EQ(jet.String(req.GetPostal())))
+		condition = condition.AND(tDispatch.Postal.EQ(mysql.String(req.GetPostal())))
 	}
 
 	countStmt := tDispatch.
 		SELECT(
-			jet.COUNT(tDispatch.ID).AS("data_count.total"),
+			mysql.COUNT(tDispatch.ID).AS("data_count.total"),
 		).
 		FROM(
 			tDispatch.
@@ -176,10 +176,9 @@ func (s *Server) ListDispatches(
 		}
 	}
 
-	dsps := resp.GetDispatches()
-	resp.GetPagination().Update(len(dsps))
-
 	publicJobs := s.appCfg.Get().JobInfo.GetPublicJobs()
+
+	dsps := resp.GetDispatches()
 	for i := range dsps {
 		var err error
 		resp.Dispatches[i].Units, err = s.dispatches.LoadDispatchAssignments(
@@ -215,12 +214,12 @@ func (s *Server) ListDispatches(
 			resp.Dispatches[i].Jobs = &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
-						//nolint:staticcheck // This is a fallback for old dispatches.
+						//nolint:staticcheck // Use the old job field as the fallback for old plugins.
 						Name: dsps[i].GetJob(),
 					},
 				},
 			}
-			//nolint:staticcheck // Clear old job info. This is a fallback for old dispatches.
+			//nolint:staticcheck // Clear old job info. Clear the job field used by old plugins.
 			resp.Dispatches[i].Job = ""
 		}
 		for _, job := range dsps[i].GetJobs().GetJobs() {
@@ -258,11 +257,11 @@ func (s *Server) GetDispatch(
 
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+			mysql.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 		),
 	).
-		AND(tDispatch.ID.EQ(jet.Int64(req.GetId()))).
-		AND(jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))))
+		AND(tDispatch.ID.EQ(mysql.Int64(req.GetId()))).
+		AND(mysql.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut))))))
 
 	resp := &pbcentrum.GetDispatchResponse{
 		Dispatch: &centrum.Dispatch{},
@@ -594,7 +593,7 @@ func (s *Server) ListDispatchActivity(
 
 	countStmt := tDispatchStatus.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tDispatchStatus.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tDispatchStatus.
@@ -602,8 +601,8 @@ func (s *Server) ListDispatchActivity(
 					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
-		WHERE(jet.AND(
-			tDispatchStatus.DispatchID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tDispatchStatus.DispatchID.EQ(mysql.Int64(req.GetId())),
 		))
 
 	var count database.DataCount
@@ -659,7 +658,7 @@ func (s *Server) ListDispatchActivity(
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tDispatchStatus.UserID).
-						AND(tUsers.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tUsers.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
@@ -670,7 +669,7 @@ func (s *Server) ListDispatchActivity(
 				),
 		).
 		WHERE(
-			tDispatchStatus.DispatchID.EQ(jet.Int64(req.GetId())),
+			tDispatchStatus.DispatchID.EQ(mysql.Int64(req.GetId())),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -696,8 +695,6 @@ func (s *Server) ListDispatchActivity(
 			jobInfoFn(resp.GetActivity()[i].GetUser())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	return resp, nil
 }

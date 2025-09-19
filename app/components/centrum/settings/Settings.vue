@@ -48,10 +48,10 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
 
 const schema = z.object({
     enabled: z.coerce.boolean().default(false),
-    type: z.nativeEnum(CentrumType).default(CentrumType.DISPATCH),
+    type: z.enum(CentrumType).default(CentrumType.DISPATCH),
     public: z.coerce.boolean(),
-    mode: z.nativeEnum(CentrumMode).default(CentrumMode.MANUAL),
-    fallbackMode: z.nativeEnum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
+    mode: z.enum(CentrumMode).default(CentrumMode.MANUAL),
+    fallbackMode: z.enum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
     predefinedStatus: z.object({
         unitStatus: z.coerce.string().array().max(20).default([]),
         dispatchStatus: z.coerce.string().array().max(20).default([]),
@@ -153,9 +153,7 @@ async function updateSettings(values: Schema): Promise<void> {
 }
 
 function setSettingsValues(): void {
-    if (!settings.value) {
-        return;
-    }
+    if (!settings.value) return;
 
     state.enabled = settings.value.enabled;
     state.mode = settings.value.mode;
@@ -223,9 +221,7 @@ const selectedTab = computed({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

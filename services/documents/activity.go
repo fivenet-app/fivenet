@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -49,18 +49,18 @@ func (s *Server) ListDocumentActivity(
 
 	tDocActivity := table.FivenetDocumentsActivity.AS("doc_activity")
 
-	condition := tDocActivity.DocumentID.EQ(jet.Int64(req.GetDocumentId()))
+	condition := tDocActivity.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
 	if len(req.GetActivityTypes()) > 0 {
-		ids := make([]jet.Expression, len(req.GetActivityTypes()))
+		ids := make([]mysql.Expression, len(req.GetActivityTypes()))
 		for i := range req.GetActivityTypes() {
-			ids[i] = jet.Int32(int32(*req.GetActivityTypes()[i].Enum()))
+			ids[i] = mysql.Int32(int32(*req.GetActivityTypes()[i].Enum()))
 		}
 		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
 	}
 
 	countStmt := tDocActivity.
 		SELECT(
-			jet.COUNT(tDocActivity.ID).AS("data_count.total"),
+			mysql.COUNT(tDocActivity.ID).AS("data_count.total"),
 		).
 		FROM(
 			tDocActivity,
@@ -121,8 +121,6 @@ func (s *Server) ListDocumentActivity(
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetActivity() {

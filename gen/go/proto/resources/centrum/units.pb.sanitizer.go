@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Unit) Sanitize() error {
 	if m == nil {
 		return nil
@@ -43,19 +45,30 @@ func (m *Unit) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
-	// Field: Icon
+	// Field: HomePostal
+	if m.HomePostal != nil {
+		*m.HomePostal = htmlsanitizer.Sanitize(*m.HomePostal)
+	}
 
+	// Field: Icon
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
 
 	// Field: Initials
 	m.Initials = htmlsanitizer.Sanitize(m.Initials)
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
 
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
@@ -93,6 +106,8 @@ func (m *Unit) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UnitAssignment) Sanitize() error {
 	if m == nil {
 		return nil
@@ -110,10 +125,15 @@ func (m *UnitAssignment) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UnitAssignments) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Users
 	for idx, item := range m.Users {
@@ -130,13 +150,14 @@ func (m *UnitAssignments) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UnitStatus) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Code
-
 	if m.Code != nil {
 		*m.Code = htmlsanitizer.Sanitize(*m.Code)
 	}
@@ -159,14 +180,17 @@ func (m *UnitStatus) Sanitize() error {
 		}
 	}
 
-	// Field: Postal
+	// Field: CreatorJob
+	if m.CreatorJob != nil {
+		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
+	}
 
+	// Field: Postal
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
 	}
 
 	// Field: Reason
-
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
 	}

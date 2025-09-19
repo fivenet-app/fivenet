@@ -7,7 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) GetStatus(
@@ -24,7 +24,7 @@ func (s *Server) GetStatus(
 	// Jobs
 	jobsStmt := tJobs.
 		SELECT(
-			jet.COUNT(tJobs.Name),
+			mysql.COUNT(tJobs.Name),
 		).
 		FROM(tJobs)
 
@@ -39,7 +39,7 @@ func (s *Server) GetStatus(
 	// Users
 	usersStmt := tUsers.
 		SELECT(
-			jet.COUNT(tUsers.ID),
+			mysql.COUNT(tUsers.ID),
 		).
 		FROM(tUsers)
 
@@ -54,7 +54,7 @@ func (s *Server) GetStatus(
 	// Vehicles
 	vehiclesStmt := tVehicles.
 		SELECT(
-			jet.COUNT(tVehicles.Plate),
+			mysql.COUNT(tVehicles.Plate),
 		).
 		FROM(tVehicles)
 
@@ -69,7 +69,7 @@ func (s *Server) GetStatus(
 	// Licenses
 	licensesStmt := tLicenses.
 		SELECT(
-			jet.COUNT(tLicenses.Type),
+			mysql.COUNT(tLicenses.Type),
 		).
 		FROM(tLicenses)
 

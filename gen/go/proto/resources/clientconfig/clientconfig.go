@@ -41,12 +41,15 @@ func BuildClientConfig(
 		},
 		System: &System{
 			BannerMessageEnabled: appCfg.System.GetBannerMessageEnabled(),
-			BannerMessage:        appCfg.System.GetBannerMessage(),
 			Otlp: &OTLPFrontend{
 				Enabled: cfg.OTLP.Enabled,
 				Url:     cfg.OTLP.Frontend.URL,
 				Headers: cfg.OTLP.Frontend.Headers,
 			},
+		},
+		Display: &Display{
+			IntlLocale:   appCfg.Display.IntlLocale,
+			CurrencyName: appCfg.Display.CurrencyName,
 		},
 	}
 

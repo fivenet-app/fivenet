@@ -10,6 +10,8 @@ import { useCompletorStore } from '~/stores/completor';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { display } = useAppConfig();
+
 const completorStore = useCompletorStore();
 const notifications = useNotificationsStore();
 
@@ -29,6 +31,11 @@ export type PenaltiesSummary = {
     stvoPoints: number;
     count: number;
 };
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 
 const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
@@ -120,7 +127,7 @@ async function copySummary(): Promise<void> {
         `)
 
 ${t('common.fine')}: ${n(state.value.fine, 'currency')}${
-            leeway.value > 0 && state.value.fine > 0 ? ` ($-${(state.value.fine * leeway.value).toFixed(0)})` : ''
+            leeway.value > 0 && state.value.fine > 0 ? ` ${formatter.format(-Math.abs(state.value.fine * leeway.value))}` : ''
         }
 ${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime)}${
             leeway.value > 0 && state.value.detentionTime > 0
@@ -185,7 +192,7 @@ const columns = computed(
             {
                 accessorKey: 'fine',
                 header: t('common.fine'),
-                cell: ({ row }) => $n(row.original.fine ?? 0, 'currency'),
+                cell: ({ row }) => formatter.format(row.original.fine ?? 0),
             },
             {
                 accessorKey: 'detentionTime',

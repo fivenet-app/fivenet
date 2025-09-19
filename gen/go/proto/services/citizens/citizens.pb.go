@@ -9,6 +9,7 @@ package citizens
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -397,10 +398,9 @@ func (x *ListUserActivityResponse) GetActivity() []*users.UserActivity {
 }
 
 type SetUserPropsRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Props *users.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	// @sanitize
-	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         *users.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -566,10 +566,9 @@ func (*DeleteAvatarResponse) Descriptor() ([]byte, []int) {
 }
 
 type DeleteMugshotRequest struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// @sanitize
-	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -746,7 +745,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
 	"\x13ListCitizensRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -790,18 +789,18 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12?\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"v\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"|\n" +
 	"\x13SetUserPropsRequest\x128\n" +
-	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\x12%\n" +
-	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"H\n" +
 	"\x14SetUserPropsResponse\x120\n" +
 	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\"\x15\n" +
 	"\x13DeleteAvatarRequest\"\x16\n" +
-	"\x14DeleteAvatarResponse\"_\n" +
+	"\x14DeleteAvatarResponse\"e\n" +
 	"\x14DeleteMugshotRequest\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12%\n" +
-	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"\x17\n" +
 	"\x15DeleteMugshotResponse\"E\n" +
 	"\x13ManageLabelsRequest\x12.\n" +

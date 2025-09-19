@@ -3,14 +3,25 @@
 
 package settings
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFactionRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFactionResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -19,14 +30,21 @@ func (m *DeleteFactionResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetAllPermissionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetAllPermissionsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -59,14 +77,21 @@ func (m *GetAllPermissionsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetJobLimitsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetJobLimitsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -84,6 +109,14 @@ func (m *GetJobLimitsResponse) Sanitize() error {
 
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	// Field: Permissions
 	for idx, item := range m.Permissions {
 		_, _ = idx, item
@@ -99,6 +132,8 @@ func (m *GetJobLimitsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetStatusRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -107,6 +142,8 @@ func (m *GetStatusRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetStatusResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -124,6 +161,8 @@ func (m *GetStatusResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateJobLimitsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -138,6 +177,9 @@ func (m *UpdateJobLimitsRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	// Field: Perms
 	if m.Perms != nil {
 		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
@@ -150,6 +192,8 @@ func (m *UpdateJobLimitsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateJobLimitsResponse) Sanitize() error {
 	if m == nil {
 		return nil

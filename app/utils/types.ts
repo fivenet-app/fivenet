@@ -18,10 +18,6 @@ export type CardElement = {
 
 export type CardElements = CardElement[];
 
-export function isNumber(value?: string | number): boolean {
-    return value !== undefined && value !== null && value !== '' && !isNaN(Number(value.toString()));
-}
-
 export type ToggleItem = { id: number; label: string; value: boolean | undefined };
 
 export type ClassProp = undefined | string | Record<string, boolean> | (string | Record<string, boolean>)[];

@@ -16,7 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -118,9 +118,9 @@ func (g *GroupSync) planUsers(
 	users := discordtypes.Users{}
 	logs := []discord.Embed{}
 
-	serverGroups := []jet.Expression{}
+	serverGroups := []mysql.Expression{}
 	for sGroup := range g.cfg.GroupSync.Mapping {
-		serverGroups = append(serverGroups, jet.String(sGroup))
+		serverGroups = append(serverGroups, mysql.String(sGroup))
 	}
 
 	tUsers := tables.User().AS("users")
@@ -137,11 +137,11 @@ func (g *GroupSync) planUsers(
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
+					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
 				),
 		).
-		WHERE(jet.AND(
-			tAccsOauth2.Provider.EQ(jet.String("discord")),
+		WHERE(mysql.AND(
+			tAccsOauth2.Provider.EQ(mysql.String("discord")),
 			tUsers.Group.IN(serverGroups...),
 		))
 
@@ -231,9 +231,9 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 			tUsers.ID.AS("id"),
 		).
 		FROM(tUsers).
-		WHERE(jet.AND(
-			tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), jet.String(identifier))),
-			tUsers.Job.EQ(jet.String(job)),
+		WHERE(mysql.AND(
+			tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), mysql.String(identifier))),
+			tUsers.Job.EQ(mysql.String(job)),
 		))
 
 	var dest []int32

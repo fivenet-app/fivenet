@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/maruel/natural"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -136,7 +136,7 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 
 	if lawBookId > 0 {
 		stmt = stmt.WHERE(
-			tLawBooks.ID.EQ(jet.Int64(lawBookId)),
+			tLawBooks.ID.EQ(mysql.Int64(lawBookId)),
 		)
 	}
 

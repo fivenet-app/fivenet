@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/nats-io/nats.go/jetstream"
@@ -387,7 +387,7 @@ func (s *Server) ListUnitActivity(
 
 	countStmt := tUnitStatus.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tUnitStatus.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tUnitStatus.
@@ -395,9 +395,9 @@ func (s *Server) ListUnitActivity(
 					tUnits.ID.EQ(tUnitStatus.UnitID),
 				),
 		).
-		WHERE(jet.AND(
-			tUnitStatus.UnitID.EQ(jet.Int64(req.GetId())),
-			tUnits.Job.EQ(jet.String(userInfo.GetJob())),
+		WHERE(mysql.AND(
+			tUnitStatus.UnitID.EQ(mysql.Int64(req.GetId())),
+			tUnits.Job.EQ(mysql.String(userInfo.GetJob())),
 		))
 
 	var count database.DataCount
@@ -454,7 +454,7 @@ func (s *Server) ListUnitActivity(
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
@@ -465,7 +465,7 @@ func (s *Server) ListUnitActivity(
 				),
 		).
 		WHERE(
-			tUnitStatus.UnitID.EQ(jet.Int64(req.GetId())),
+			tUnitStatus.UnitID.EQ(mysql.Int64(req.GetId())),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -496,8 +496,6 @@ func (s *Server) ListUnitActivity(
 			jobInfoFn(resp.GetActivity()[i].GetUser())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetActivity()))
 
 	return resp, nil
 }

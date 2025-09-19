@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -51,9 +51,9 @@ func (s *Server) checkIfEmailIdPartOfThread(
 			tThreadsRecipients.ID.AS("id"),
 		).
 		FROM(tThreadsRecipients).
-		WHERE(jet.AND(
-			tThreadsRecipients.ThreadID.EQ(jet.Int64(threadId)),
-			tThreadsRecipients.EmailID.EQ(jet.Int64(emailId)),
+		WHERE(mysql.AND(
+			tThreadsRecipients.ThreadID.EQ(mysql.Int64(threadId)),
+			tThreadsRecipients.EmailID.EQ(mysql.Int64(emailId)),
 		))
 
 	dest := &canAccessIdsHelper{}

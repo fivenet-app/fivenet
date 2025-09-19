@@ -9,7 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -67,8 +67,8 @@ func (s *Server) getThreadRecipients(
 						AND(tEmails.Deactivated.IS_FALSE()),
 				),
 		).
-		WHERE(jet.AND(
-			tThreadsRecipients.ThreadID.EQ(jet.Int64(threadId)),
+		WHERE(mysql.AND(
+			tThreadsRecipients.ThreadID.EQ(mysql.Int64(threadId)),
 			tEmails.DeletedAt.IS_NULL(),
 		))
 
@@ -91,9 +91,9 @@ func (s *Server) retrieveRecipientsToEmails(
 		return nil, errorsmailer.ErrRecipientMinium
 	}
 
-	emails := make([]jet.Expression, len(recipients))
+	emails := make([]mysql.Expression, len(recipients))
 	for idx := range recipients {
-		emails[idx] = jet.String(recipients[idx])
+		emails[idx] = mysql.String(recipients[idx])
 	}
 
 	stmt := tEmails.
@@ -103,7 +103,7 @@ func (s *Server) retrieveRecipientsToEmails(
 			tEmails.Deactivated,
 		).
 		FROM(tEmails).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tEmails.Email.IN(emails...),
 			tEmails.DeletedAt.IS_NULL(),
 		)).

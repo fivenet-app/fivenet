@@ -54,7 +54,7 @@ const schema = z.object({
             employeeRoleFormat: z.coerce.string().max(64),
             gradeRoleFormat: z.coerce.string().max(64),
             unemployedEnabled: z.coerce.boolean(),
-            unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
+            unemployedMode: z.enum(UserInfoSyncUnemployedMode),
             unemployedRoleName: z.coerce.string().max(64),
             syncNicknames: z.coerce.boolean(),
             groupMapping: z
@@ -143,9 +143,7 @@ async function getJobProps(): Promise<JobProps> {
 const { data: jobProps, status, refresh, error } = useLazyAsyncData(`settings-jobprops`, () => getJobProps());
 
 async function setJobProps(values: Schema): Promise<void> {
-    if (!jobProps.value) {
-        return;
-    }
+    if (!jobProps.value) return;
 
     jobProps.value.livemapMarkerColor = values.livemapMarkerColor;
     jobProps.value.quickButtons = values.quickButtons;
@@ -183,9 +181,7 @@ async function setJobProps(values: Schema): Promise<void> {
 }
 
 function setSettingsValues(): void {
-    if (!jobProps.value) {
-        return;
-    }
+    if (!jobProps.value) return;
 
     if (jobProps.value.livemapMarkerColor) {
         state.livemapMarkerColor = jobProps.value.livemapMarkerColor;
@@ -321,9 +317,7 @@ const formRef = useTemplateRef('formRef');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await setJobProps(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

@@ -76,7 +76,7 @@ message ListInactiveEmployeesRequest {
 
 message ListInactiveEmployeesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.jobs.Colleague colleagues = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.jobs.Colleague colleagues = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service TimeclockService {

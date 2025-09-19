@@ -13,7 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <JobProps />
-    </UDashboardPanel>
+    <JobProps />
 </template>

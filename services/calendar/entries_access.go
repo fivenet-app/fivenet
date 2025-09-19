@@ -6,7 +6,7 @@ import (
 
 	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -52,12 +52,12 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 		return dest, nil
 	}
 
-	ids := make([]jet.Expression, len(entryIds))
+	ids := make([]mysql.Expression, len(entryIds))
 	for i := range entryIds {
-		ids[i] = jet.Int64(entryIds[i])
+		ids[i] = mysql.Int64(entryIds[i])
 	}
 
-	condition := jet.Bool(false)
+	condition := mysql.Bool(false)
 	if publicOk {
 		condition = tCalendar.Public.IS_TRUE()
 	}
@@ -69,20 +69,20 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 		).
 		FROM(tCalendarEntry.
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			).
 			INNER_JOIN(tCalendar,
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
 					AND(tCalendar.DeletedAt.IS_NULL()),
 			),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tCalendarEntry.DeletedAt.IS_NULL(),
 			tCalendarRSVP.EntryID.IN(ids...),
-			jet.OR(
-				jet.AND(
-					tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-					tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.GetJob())),
+			mysql.OR(
+				mysql.AND(
+					tCalendarEntry.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarEntry.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 				),
 				tCalendarRSVP.EntryID.IS_NOT_NULL(),
 				condition,

@@ -7,6 +7,8 @@
 package notifications
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	common "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -132,19 +134,17 @@ func (NotificationCategory) EnumDescriptor() ([]byte, []int) {
 }
 
 type Notification struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ReadAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
-	UserId    int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	// @sanitize
-	Title *common.I18NItem `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	Type  NotificationType `protobuf:"varint,6,opt,name=type,proto3,enum=resources.notifications.NotificationType" json:"type,omitempty"`
-	// @sanitize
-	Content       *common.I18NItem     `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
-	Category      NotificationCategory `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
-	Data          *Data                `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	Starred       *bool                `protobuf:"varint,10,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ReadAt        *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
+	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Title         *common.I18NItem       `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	Type          NotificationType       `protobuf:"varint,6,opt,name=type,proto3,enum=resources.notifications.NotificationType" json:"type,omitempty"`
+	Content       *common.I18NItem       `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
+	Category      NotificationCategory   `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
+	Data          *Data                  `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Starred       *bool                  `protobuf:"varint,10,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -249,7 +249,6 @@ func (x *Notification) GetStarred() bool {
 	return false
 }
 
-// @dbscanner: json
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Link          *Link                  `protobuf:"bytes,1,opt,name=link,proto3,oneof" json:"link,omitempty"`
@@ -426,27 +425,27 @@ var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xaa\x04\n" +
+	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xba\x04\n" +
 	"\fNotification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x127\n" +
 	"\aread_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\x06readAt\x12 \n" +
-	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x120\n" +
-	"\x05title\x18\x05 \x01(\v2\x1a.resources.common.I18NItemR\x05title\x12G\n" +
-	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x124\n" +
-	"\acontent\x18\a \x01(\v2\x1a.resources.common.I18NItemR\acontent\x12S\n" +
+	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x128\n" +
+	"\x05title\x18\x05 \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12G\n" +
+	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12<\n" +
+	"\acontent\x18\a \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\acontent\x12S\n" +
 	"\bcategory\x18\b \x01(\x0e2-.resources.notifications.NotificationCategoryB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcategory\x126\n" +
 	"\x04data\x18\t \x01(\v2\x1d.resources.notifications.DataH\x00R\x04data\x88\x01\x01\x12\x1d\n" +
 	"\astarred\x18\n" +
 	" \x01(\bH\x01R\astarred\x88\x01\x01B\a\n" +
 	"\x05_dataB\n" +
 	"\n" +
-	"\b_starred\"\xe8\x01\n" +
+	"\b_starred\"\xf0\x01\n" +
 	"\x04Data\x126\n" +
 	"\x04link\x18\x01 \x01(\v2\x1d.resources.notifications.LinkH\x00R\x04link\x88\x01\x01\x12<\n" +
 	"\tcaused_by\x18\x02 \x01(\v2\x1a.resources.users.UserShortH\x01R\bcausedBy\x88\x01\x01\x12F\n" +
-	"\bcalendar\x18\x03 \x01(\v2%.resources.notifications.CalendarDataH\x02R\bcalendar\x88\x01\x01B\a\n" +
+	"\bcalendar\x18\x03 \x01(\v2%.resources.notifications.CalendarDataH\x02R\bcalendar\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\a\n" +
 	"\x05_linkB\f\n" +
 	"\n" +
 	"_caused_byB\v\n" +

@@ -14,6 +14,8 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { display } = useAppConfig();
+
 const notifications = useNotificationsStore();
 
 const settingsLawsClient = await getSettingsLawsClient();
@@ -105,7 +107,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     :step="1000"
                     :format-options="{
                         style: 'currency',
-                        currency: 'USD',
+                        currency: display.currencyName,
                         currencyDisplay: 'code',
                         currencySign: 'accounting',
                     }"

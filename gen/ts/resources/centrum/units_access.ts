@@ -14,8 +14,6 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { QualificationShort } from "../qualifications/qualifications";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.UnitAccess
  */
 export interface UnitAccess {
@@ -122,7 +120,7 @@ class UnitAccess$Type extends MessageType<UnitAccess> {
         super("resources.centrum.UnitAccess", [
             { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } },
             { no: 3, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitQualificationAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"qualification_access\"" } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UnitAccess>): UnitAccess {
         const message = globalThis.Object.create((this.messagePrototype!));

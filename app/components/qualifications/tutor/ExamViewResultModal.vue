@@ -58,9 +58,7 @@ async function getUserExam(): Promise<GetUserExamResponse> {
     }
     response.responses?.responses.forEach((q) => {
         // Check if there is already a grading response
-        if (response.grading?.responses.find((r) => r.questionId === q.questionId)) {
-            return;
-        }
+        if (response.grading?.responses.find((r) => r.questionId === q.questionId)) return;
 
         response.grading?.responses.push({
             questionId: q.questionId,

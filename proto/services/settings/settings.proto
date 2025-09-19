@@ -5,6 +5,7 @@ package services.settings;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/audit/audit.proto";
 import "resources/common/database/database.proto";
 import "resources/discord/discord.proto";
@@ -96,20 +97,30 @@ message ViewAuditLogRequest {
   repeated int32 user_ids = 3;
   optional resources.timestamp.Timestamp from = 4;
   optional resources.timestamp.Timestamp to = 5;
-  // @sanitize: method=StripTags
-  repeated string services = 6 [(buf.validate.field).repeated = {
-    max_items: 10
-    items: {
-      string: {max_len: 64}
+  repeated string services = 6 [
+    (buf.validate.field).repeated = {
+      max_items: 10
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
-  // @sanitize: method=StripTags
-  repeated string methods = 7 [(buf.validate.field).repeated = {
-    max_items: 10
-    items: {
-      string: {max_len: 64}
+  ];
+  repeated string methods = 7 [
+    (buf.validate.field).repeated = {
+      max_items: 10
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
-  }];
+  ];
   optional string search = 8 [(buf.validate.field).string.max_len = 64];
   repeated resources.audit.EventType states = 9 [(buf.validate.field).repeated = {
     max_items: 10
@@ -121,7 +132,7 @@ message ViewAuditLogRequest {
 
 message ViewAuditLogResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.audit.AuditEntry logs = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.audit.AuditEntry logs = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListDiscordChannelsRequest {}

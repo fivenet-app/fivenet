@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import TimeclockStatsChart from '~/components/jobs/timeclock/TimeclockStatsChart.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 
 const props = withDefaults(
@@ -44,9 +43,7 @@ const statsData = ref<{
 });
 
 async function updateStats(): Promise<void> {
-    if (!props.stats) {
-        return;
-    }
+    if (!props.stats) return;
 
     statsData.value.sum.value = parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2));
     statsData.value.avg.value = parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2));
@@ -89,7 +86,6 @@ onBeforeMount(async () => updateStats());
             </h3>
 
             <DataErrorBlock v-if="error" :error="error" :retry="async () => $emit('refresh')" />
-            <DataNoDataBlock v-else-if="weekly === undefined" />
 
             <ClientOnly v-else>
                 <TimeclockStatsChart :stats="weekly" :loading="loading" />

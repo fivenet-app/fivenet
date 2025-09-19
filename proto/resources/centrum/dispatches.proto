@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/attributes.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";
@@ -22,15 +24,21 @@ message Dispatch {
   ];
   JobList jobs = 18;
   optional DispatchStatus status = 5;
-  // @sanitize
-  string message = 7 [(buf.validate.field).string.max_len = 255];
-  // @sanitize
-  optional string description = 8 [(buf.validate.field).string.max_len = 1024];
+  string message = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 8 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional DispatchAttributes attributes = 9;
   double x = 10;
   double y = 11;
-  // @sanitize
-  optional string postal = 12 [(buf.validate.field).string.max_len = 48];
+  optional string postal = 12 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   bool anon = 13;
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.User creator = 15;
@@ -86,16 +94,22 @@ message DispatchStatus {
   optional int64 unit_id = 4;
   optional resources.centrum.Unit unit = 5;
   StatusDispatch status = 6 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  optional string reason = 7 [(buf.validate.field).string.max_len = 255];
-  // @sanitize
-  optional string code = 8 [(buf.validate.field).string.max_len = 20];
+  optional string reason = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 8 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional int32 user_id = 9 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague user = 10;
   optional double x = 11;
   optional double y = 12;
-  // @sanitize
-  optional string postal = 13 [(buf.validate.field).string.max_len = 48];
+  optional string postal = 13 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional string creator_job = 14 [(buf.validate.field).string.max_len = 20];
 }
 
@@ -106,8 +120,9 @@ enum TakeDispatchResp {
   TAKE_DISPATCH_RESP_DECLINED = 3;
 }
 
-// @dbscanner: json
 message DispatchReferences {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated DispatchReference references = 1;
 }
 

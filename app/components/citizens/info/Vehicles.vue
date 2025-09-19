@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <List :user-id="userId" :hide-owner="true" :hide-citizen-link="true" />
+    <List :user-id="userId" hide-owner hide-citizen-link />
 </template>

@@ -71,7 +71,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -101,7 +101,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -131,7 +131,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -161,7 +161,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -191,7 +191,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -221,7 +221,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -250,7 +250,7 @@ const { goto } = useLivemapStore();
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -280,7 +280,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -310,7 +310,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -340,7 +340,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -370,7 +370,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">
@@ -400,7 +400,7 @@ const { goto } = useLivemapStore();
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
-                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" initials-only badge />
                 </span>
 
                 <span class="inline-flex items-center text-xs">

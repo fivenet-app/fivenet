@@ -7,7 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -112,7 +112,7 @@ func (p *Perms) loadRoles(ctx context.Context, id int64) error {
 
 	if id != 0 {
 		stmt = stmt.
-			WHERE(tRoles.ID.EQ(jet.Int64(id)))
+			WHERE(tRoles.ID.EQ(mysql.Int64(id)))
 	}
 
 	var dest []*permissions.Role
@@ -156,7 +156,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId int64) error {
 
 	if roleId != 0 {
 		stmt = stmt.WHERE(
-			tRoles.ID.EQ(jet.Int64(roleId)),
+			tRoles.ID.EQ(mysql.Int64(roleId)),
 		)
 	}
 
@@ -226,7 +226,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 
 	if roleId != 0 {
 		stmt = stmt.WHERE(
-			tRoleAttrs.RoleID.EQ(jet.Int64(roleId)),
+			tRoleAttrs.RoleID.EQ(mysql.Int64(roleId)),
 		)
 	}
 

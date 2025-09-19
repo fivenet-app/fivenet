@@ -3,14 +3,25 @@
 
 package completor
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteCitizenLabelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Search
+	m.Search = htmlsanitizer.Sanitize(m.Search)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteCitizenLabelsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -31,14 +42,21 @@ func (m *CompleteCitizenLabelsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteCitizensRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Search
+	m.Search = htmlsanitizer.Sanitize(m.Search)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteCitizensResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -59,14 +77,21 @@ func (m *CompleteCitizensResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteDocumentCategoriesRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Search
+	m.Search = htmlsanitizer.Sanitize(m.Search)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteDocumentCategoriesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -87,14 +112,23 @@ func (m *CompleteDocumentCategoriesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteJobsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.Sanitize(*m.Search)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CompleteJobsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -115,6 +149,8 @@ func (m *CompleteJobsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListLawBooksRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -123,6 +159,8 @@ func (m *ListLawBooksRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListLawBooksResponse) Sanitize() error {
 	if m == nil {
 		return nil

@@ -430,50 +430,17 @@ defineShortcuts({
 
             <ul
                 v-else-if="data?.documents || isRequestPending(status)"
-                class="min-w-full divide-y divide-default overflow-clip"
-                :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
+                class="min-w-full divide-y divide-default"
+                :class="[
+                    design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : '',
+                    isRequestPending(status) ? 'overflow-y-hidden' : 'overflow-clip',
+                ]"
                 role="list"
             >
                 <template v-if="isRequestPending(status)">
-                    <li v-for="idx in 8" :key="idx" class="flex-initial p-1">
+                    <li v-for="idx in 10" :key="idx" class="flex-initial p-1">
                         <div class="m-2 flex flex-col gap-1">
-                            <div class="flex flex-row gap-2 truncate">
-                                <div class="flex flex-1 flex-row items-center justify-start">
-                                    <USkeleton class="h-7 w-full max-w-[125px]" />
-                                </div>
-
-                                <USkeleton class="h-7 w-full max-w-[125px]" />
-
-                                <div class="flex flex-1 flex-row items-center justify-end gap-1">
-                                    <USkeleton class="h-7 w-full max-w-[125px]" />
-                                </div>
-                            </div>
-
-                            <div class="flex flex-row gap-2 truncate">
-                                <div class="inline-flex items-center gap-1 truncate">
-                                    <h2 class="truncate py-2 pr-3 text-xl font-medium">
-                                        <USkeleton class="h-7 w-full max-w-[650px]" />
-                                    </h2>
-                                </div>
-
-                                <div class="flex flex-1 flex-row items-center justify-end">
-                                    <USkeleton class="h-6 w-full max-w-[250px]" />
-                                </div>
-                            </div>
-
-                            <div class="flex flex-row gap-2">
-                                <div class="flex flex-1 flex-row items-center justify-start">
-                                    <USkeleton class="h-6 w-full max-w-[150px]" />
-                                </div>
-
-                                <div class="flex flex-1 flex-row items-center justify-center">
-                                    <USkeleton class="h-6 w-full max-w-[150px]" />
-                                </div>
-
-                                <div class="flex flex-1 flex-row items-center justify-end">
-                                    <USkeleton class="h-6 w-full max-w-[250px]" />
-                                </div>
-                            </div>
+                            <USkeleton class="h-[129px] w-full" />
                         </div>
                     </li>
                 </template>

@@ -9,8 +9,13 @@ const { audio, calendar } = storeToRefs(settings);
 const notificationSound = useSounds('/sounds/notification.mp3');
 
 const calendarReminderTimes = [
-    { label: t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.start'), value: 0 },
-    ...reminderTimes.map((n) => ({ label: `${n / 60} ${t('common.time_ago.minute', n / 60)}`, value: n })),
+    ...reminderTimes.map((n) => ({
+        label:
+            n === 0
+                ? t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.start')
+                : `${n / 60} ${t('common.time_ago.minute', n / 60)}`,
+        value: n,
+    })),
 ];
 </script>
 

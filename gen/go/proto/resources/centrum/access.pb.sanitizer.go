@@ -3,6 +3,12 @@
 
 package centrum
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CentrumAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -23,6 +29,8 @@ func (m *CentrumAccess) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CentrumJobAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -46,9 +54,27 @@ func (m *CentrumJobAccess) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: SourceJob
+	m.SourceJob = htmlsanitizer.Sanitize(m.SourceJob)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CentrumQualificationAccess) Sanitize() error {
 	if m == nil {
 		return nil
@@ -57,6 +83,8 @@ func (m *CentrumQualificationAccess) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CentrumUserAccess) Sanitize() error {
 	if m == nil {
 		return nil

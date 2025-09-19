@@ -3,10 +3,19 @@
 
 package file
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *File) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: ContentType
+	m.ContentType = htmlsanitizer.Sanitize(m.ContentType)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -16,6 +25,9 @@ func (m *File) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: FilePath
+	m.FilePath = htmlsanitizer.Sanitize(m.FilePath)
 
 	// Field: Meta
 	if m.Meta != nil {

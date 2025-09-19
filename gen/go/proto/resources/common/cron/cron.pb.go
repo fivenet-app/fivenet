@@ -7,6 +7,7 @@
 package cron
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -456,9 +457,8 @@ func (x *CronjobCompletedEvent) GetErrorMessage() string {
 }
 
 type GenericCronData struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Attributes    map[string]string `protobuf:"bytes,1,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Attributes    map[string]string      `protobuf:"bytes,1,rep,name=attributes,proto3" json:"attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -504,7 +504,7 @@ var File_resources_common_cron_cron_proto protoreflect.FileDescriptor
 
 const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\n" +
-	" resources/common/cron/cron.proto\x12\x15resources.common.cron\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xfe\x04\n" +
+	" resources/common/cron/cron.proto\x12\x15resources.common.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xfe\x04\n" +
 	"\aCronjob\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bschedule\x18\x02 \x01(\tR\bschedule\x129\n" +
@@ -541,10 +541,10 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\tnode_name\x18\x06 \x01(\tR\bnodeName\x12(\n" +
 	"\rerror_message\x18\b \x01(\tH\x01R\ferrorMessage\x88\x01\x01B\a\n" +
 	"\x05_dataB\x10\n" +
-	"\x0e_error_message\"\xa8\x01\n" +
-	"\x0fGenericCronData\x12V\n" +
+	"\x0e_error_message\"\xbb\x01\n" +
+	"\x0fGenericCronData\x12i\n" +
 	"\n" +
-	"attributes\x18\x01 \x03(\v26.resources.common.cron.GenericCronData.AttributesEntryR\n" +
+	"attributes\x18\x01 \x03(\v26.resources.common.cron.GenericCronData.AttributesEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\n" +
 	"attributes\x1a=\n" +
 	"\x0fAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +

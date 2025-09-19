@@ -1,4 +1,3 @@
-// extensions/EnhancedImage.ts
 import { Node, mergeAttributes } from '@tiptap/core';
 import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import EnhancedImageView from '~/components/partials/editor/EnhancedImageView.vue';

@@ -16,9 +16,7 @@ definePageMeta({
 const { can } = useAuth();
 
 async function selected(t: TemplateShort | undefined): Promise<void> {
-    if (!t) {
-        return;
-    }
+    if (!t) return;
 
     await navigateTo({ name: 'documents-templates-id', params: { id: t.id } });
 }
@@ -30,6 +28,10 @@ const templatesListRef = useTemplateRef('templatesListRef');
     <UDashboardPanel>
         <template #header>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+
                 <template #right>
                     <PartialsBackButton to="/documents" />
 

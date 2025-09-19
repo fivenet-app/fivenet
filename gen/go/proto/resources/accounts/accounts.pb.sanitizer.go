@@ -3,6 +3,12 @@
 
 package accounts
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Account) Sanitize() error {
 	if m == nil {
 		return nil
@@ -16,6 +22,9 @@ func (m *Account) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: License
+	m.License = htmlsanitizer.Sanitize(m.License)
 
 	// Field: Oauth2Accounts
 	for idx, item := range m.Oauth2Accounts {
@@ -38,9 +47,14 @@ func (m *Account) Sanitize() error {
 		}
 	}
 
+	// Field: Username
+	m.Username = htmlsanitizer.Sanitize(m.Username)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Character) Sanitize() error {
 	if m == nil {
 		return nil
@@ -54,6 +68,9 @@ func (m *Character) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Group
+	m.Group = htmlsanitizer.Sanitize(m.Group)
 
 	return nil
 }

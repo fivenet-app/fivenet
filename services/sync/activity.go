@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -102,7 +102,7 @@ func (s *Server) handleUserOauth2(
 			tAccounts.ID,
 		).
 		FROM(tAccounts).
-		WHERE(tAccounts.License.EQ(jet.String(data.UserOauth2.GetIdentifier()))).
+		WHERE(tAccounts.License.EQ(mysql.String(data.UserOauth2.GetIdentifier()))).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
@@ -270,9 +270,9 @@ func (s *Server) handleTimeclockEntry(
 				tTimeClock.EndTime,
 			).
 			FROM(tTimeClock).
-			WHERE(jet.AND(
-				tTimeClock.Job.EQ(jet.String(d.GetJob())),
-				tTimeClock.UserID.EQ(jet.Int32(d.GetUserId())),
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(mysql.String(d.GetJob())),
+				tTimeClock.UserID.EQ(mysql.Int32(d.GetUserId())),
 			)).
 			ORDER_BY(tTimeClock.Date.DESC()).
 			LIMIT(1)
@@ -298,7 +298,7 @@ func (s *Server) handleTimeclockEntry(
 			VALUES(
 				d.GetJob(),
 				d.GetUserId(),
-				jet.CURRENT_DATE(),
+				mysql.CURRENT_DATE(),
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -310,12 +310,12 @@ func (s *Server) handleTimeclockEntry(
 		stmt := tTimeClock.
 			UPDATE().
 			SET(
-				tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))"))),
-				tTimeClock.EndTime.SET(jet.CURRENT_TIMESTAMP()),
+				tTimeClock.SpentTime.SET(mysql.FloatExp(mysql.Raw("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))"))),
+				tTimeClock.EndTime.SET(mysql.CURRENT_TIMESTAMP()),
 			).
-			WHERE(jet.AND(
-				tTimeClock.Job.EQ(jet.String(d.GetJob())),
-				tTimeClock.UserID.EQ(jet.Int32(d.GetUserId())),
+			WHERE(mysql.AND(
+				tTimeClock.Job.EQ(mysql.String(d.GetJob())),
+				tTimeClock.UserID.EQ(mysql.Int32(d.GetUserId())),
 				tTimeClock.StartTime.IS_NOT_NULL(),
 				tTimeClock.EndTime.IS_NULL(),
 			))
@@ -341,7 +341,7 @@ func (s *Server) handleUserUpdate(
 			tUser.ID,
 		).
 		FROM(tUser).
-		WHERE(tUser.ID.EQ(jet.Int32(d.GetUserId()))).
+		WHERE(tUser.ID.EQ(mysql.Int32(d.GetUserId()))).
 		LIMIT(1)
 
 	user := &users.User{}
@@ -353,29 +353,29 @@ func (s *Server) handleUserUpdate(
 		return nil
 	}
 
-	updateSets := []jet.ColumnAssigment{}
+	updateSets := []mysql.ColumnAssigment{}
 	if d.Group != nil {
-		updateSets = append(updateSets, tUser.Group.SET(jet.String(d.GetGroup())))
+		updateSets = append(updateSets, tUser.Group.SET(mysql.String(d.GetGroup())))
 	}
 	if d.Job != nil {
-		updateSets = append(updateSets, tUser.Job.SET(jet.String(d.GetJob())))
+		updateSets = append(updateSets, tUser.Job.SET(mysql.String(d.GetJob())))
 	}
 	if d.JobGrade != nil {
 		updateSets = append(
 			updateSets,
-			tUser.JobGrade.SET(jet.Int32(d.GetJobGrade())),
+			tUser.JobGrade.SET(mysql.Int32(d.GetJobGrade())),
 		)
 	}
 	if d.Firstname != nil {
 		updateSets = append(
 			updateSets,
-			tUser.Firstname.SET(jet.String(d.GetFirstname())),
+			tUser.Firstname.SET(mysql.String(d.GetFirstname())),
 		)
 	}
 	if d.Lastname != nil {
 		updateSets = append(
 			updateSets,
-			tUser.Lastname.SET(jet.String(d.GetLastname())),
+			tUser.Lastname.SET(mysql.String(d.GetLastname())),
 		)
 	}
 
@@ -383,7 +383,7 @@ func (s *Server) handleUserUpdate(
 		stmt := tUser.
 			UPDATE().
 			SET(updateSets[0]).
-			WHERE(tUser.ID.EQ(jet.Int32(d.GetUserId())))
+			WHERE(tUser.ID.EQ(mysql.Int32(d.GetUserId())))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return fmt.Errorf("failed to update user. %w", err)

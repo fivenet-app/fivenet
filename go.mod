@@ -3,16 +3,14 @@ module github.com/fivenet-app/fivenet/v2025
 go 1.25.1
 
 require (
-	buf.build/go/protovalidate v0.14.0
-	github.com/Code-Hex/go-generics-cache v1.5.1
+	buf.build/go/protovalidate v1.0.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/DeRuina/timberjack v1.3.5
+	github.com/DeRuina/timberjack v1.3.7
 	github.com/HugoSmits86/nativewebp v1.2.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.40.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.12.1
-	github.com/andyburri/iconify-go v0.1.0
 	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/blevesearch/bleve/v2 v2.5.3
 	github.com/cespare/xxhash/v2 v2.3.0
@@ -22,6 +20,7 @@ require (
 	github.com/diamondburned/arikawa/v3 v3.6.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/fsnotify/fsnotify v1.9.0
+	github.com/galexrt/iconify-go v0.2.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/pprof v1.5.3
 	github.com/gin-contrib/sessions v1.0.4
@@ -48,10 +47,10 @@ require (
 	github.com/nats-io/nats-server/v2 v2.11.9
 	github.com/nats-io/nats.go v1.45.0
 	github.com/ory/dockertest/v3 v3.12.0
-	github.com/paulmach/orb v0.11.1
+	github.com/paulmach/orb v0.12.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.23.2
-	github.com/puzpuzpuz/xsync/v4 v4.1.0
+	github.com/puzpuzpuz/xsync/v4 v4.2.0
 	github.com/rs/cors v1.11.1
 	github.com/sethvargo/go-retry v0.3.0
 	github.com/spf13/viper v1.21.0
@@ -89,7 +88,7 @@ require (
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250717185734-6c6e0d3c608e.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.9-20250912141014-52f32327d4b0.1 // indirect
 	cel.dev/expr v0.24.0 // indirect
 	cloud.google.com/go/compute/metadata v0.7.0 // indirect
 	dario.cat/mergo v1.0.2 // indirect
@@ -101,7 +100,7 @@ require (
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/RoaringBitmap/roaring/v2 v2.4.5 // indirect
 	github.com/antithesishq/antithesis-sdk-go v0.4.3-default-no-op // indirect
-	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
+	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.22.0 // indirect
@@ -150,7 +149,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
-	github.com/google/cel-go v0.25.0 // indirect
+	github.com/google/cel-go v0.26.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-tpm v0.9.5 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
@@ -212,7 +211,7 @@ require (
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/stoewer/go-strcase v1.3.0 // indirect
+	github.com/stoewer/go-strcase v1.3.1 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect

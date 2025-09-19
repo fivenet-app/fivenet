@@ -3,6 +3,12 @@
 
 package wiki
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageAccessJobsDiff) Sanitize() error {
 	if m == nil {
 		return nil
@@ -47,6 +53,8 @@ func (m *PageAccessJobsDiff) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageAccessUpdated) Sanitize() error {
 	if m == nil {
 		return nil
@@ -73,6 +81,8 @@ func (m *PageAccessUpdated) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageAccessUsersDiff) Sanitize() error {
 	if m == nil {
 		return nil
@@ -117,6 +127,8 @@ func (m *PageAccessUsersDiff) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageActivity) Sanitize() error {
 	if m == nil {
 		return nil
@@ -140,6 +152,14 @@ func (m *PageActivity) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
 	// Field: Data
 	if m.Data != nil {
 		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
@@ -149,9 +169,16 @@ func (m *PageActivity) Sanitize() error {
 		}
 	}
 
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageActivityData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -180,6 +207,8 @@ func (m *PageActivityData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageFilesChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -188,9 +217,21 @@ func (m *PageFilesChange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *PageUpdated) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: ContentDiff
+	if m.ContentDiff != nil {
+		*m.ContentDiff = htmlsanitizer.Sanitize(*m.ContentDiff)
+	}
+
+	// Field: DescriptionDiff
+	if m.DescriptionDiff != nil {
+		*m.DescriptionDiff = htmlsanitizer.Sanitize(*m.DescriptionDiff)
 	}
 
 	// Field: FilesChange
@@ -200,6 +241,11 @@ func (m *PageUpdated) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: TitleDiff
+	if m.TitleDiff != nil {
+		*m.TitleDiff = htmlsanitizer.Sanitize(*m.TitleDiff)
 	}
 
 	return nil

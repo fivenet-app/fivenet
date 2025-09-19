@@ -9,6 +9,7 @@ package centrum
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
@@ -565,13 +566,11 @@ func (*DeleteUnitResponse) Descriptor() ([]byte, []int) {
 }
 
 type UpdateUnitStatusRequest struct {
-	state  protoimpl.MessageState `protogen:"open.v1"`
-	UnitId int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	Status centrum.StatusUnit     `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.StatusUnit" json:"status,omitempty"`
-	// @sanitize
-	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	// @sanitize
-	Code          *string `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UnitId        int64                  `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	Status        centrum.StatusUnit     `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.StatusUnit" json:"status,omitempty"`
+	Reason        *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Code          *string                `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1627,13 +1626,11 @@ func (x *ListDispatchTargetJobsResponse) GetJobs() []*jobs.Job {
 }
 
 type UpdateDispatchStatusRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DispatchId int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
-	Status     centrum.StatusDispatch `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
-	// @sanitize
-	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	// @sanitize
-	Code          *string `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DispatchId    int64                  `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	Status        centrum.StatusDispatch `protobuf:"varint,2,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
+	Reason        *string                `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Code          *string                `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1977,11 +1974,10 @@ func (x *JoinUnitResponse) GetUnit() *centrum.Unit {
 }
 
 type TakeDispatchRequest struct {
-	state       protoimpl.MessageState   `protogen:"open.v1"`
-	DispatchIds []int64                  `protobuf:"varint,1,rep,packed,name=dispatch_ids,json=dispatchIds,proto3" json:"dispatch_ids,omitempty"`
-	Resp        centrum.TakeDispatchResp `protobuf:"varint,2,opt,name=resp,proto3,enum=resources.centrum.TakeDispatchResp" json:"resp,omitempty"`
-	// @sanitize
-	Reason        *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	DispatchIds   []int64                  `protobuf:"varint,1,rep,packed,name=dispatch_ids,json=dispatchIds,proto3" json:"dispatch_ids,omitempty"`
+	Resp          centrum.TakeDispatchResp `protobuf:"varint,2,opt,name=resp,proto3,enum=resources.centrum.TakeDispatchResp" json:"resp,omitempty"`
+	Reason        *string                  `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2468,7 +2464,7 @@ var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\"\x83\x01\n" +
 	"\x1bListDispatchActivityRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2498,12 +2494,12 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x04unit\x18\x01 \x01(\v2\x17.resources.centrum.UnitR\x04unit\",\n" +
 	"\x11DeleteUnitRequest\x12\x17\n" +
 	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\"\x14\n" +
-	"\x12DeleteUnitResponse\"\xd0\x01\n" +
+	"\x12DeleteUnitResponse\"\xdc\x01\n" +
 	"\x17UpdateUnitStatusRequest\x12\x17\n" +
 	"\aunit_id\x18\x01 \x01(\x03R\x06unitId\x12?\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x1d.resources.centrum.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12 \n" +
-	"\x04code\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x01R\x04code\x88\x01\x01B\t\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x1d.resources.centrum.StatusUnitB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\x04 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x14H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_code\"\x1a\n" +
 	"\x18UpdateUnitStatusResponse\"`\n" +
@@ -2567,13 +2563,13 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x16DeleteDispatchResponse\"\x1f\n" +
 	"\x1dListDispatchTargetJobsRequest\"O\n" +
 	"\x1eListDispatchTargetJobsResponse\x12-\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xd7\x01\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\x04\xc8\xf3\x18\x01R\x04jobs\"\xec\x01\n" +
 	"\x1bUpdateDispatchStatusRequest\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
 	"dispatchId\x12C\n" +
-	"\x06status\x18\x02 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12\x17\n" +
-	"\x04code\x18\x04 \x01(\tH\x01R\x04code\x88\x01\x01B\t\n" +
+	"\x06status\x18\x02 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\x04 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x18H\x01R\x04code\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_code\"\x1e\n" +
 	"\x1cUpdateDispatchStatusResponse\"\x94\x01\n" +
@@ -2595,11 +2591,11 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
 	"\b_unit_id\"?\n" +
 	"\x10JoinUnitResponse\x12+\n" +
-	"\x04unit\x18\x01 \x01(\v2\x17.resources.centrum.UnitR\x04unit\"\xb7\x01\n" +
+	"\x04unit\x18\x01 \x01(\v2\x17.resources.centrum.UnitR\x04unit\"\xbd\x01\n" +
 	"\x13TakeDispatchRequest\x12+\n" +
 	"\fdispatch_ids\x18\x01 \x03(\x03B\b\xbaH\x05\x92\x01\x02\b\x01R\vdispatchIds\x12A\n" +
-	"\x04resp\x18\x02 \x01(\x0e2#.resources.centrum.TakeDispatchRespB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04resp\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\x04resp\x18\x02 \x01(\x0e2#.resources.centrum.TakeDispatchRespB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04resp\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x16\n" +
 	"\x14TakeDispatchResponse\"\xc7\x01\n" +
 	"\x0fStreamHandshake\x12?\n" +

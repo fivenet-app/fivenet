@@ -16,13 +16,13 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
+import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
-import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import TemplateEditorButtons from './TemplateEditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
@@ -100,9 +100,7 @@ const state = reactive<Schema>({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -302,9 +300,7 @@ onBeforeMount(async () => {
             const { response } = await call;
 
             const tpl = response.template;
-            if (!tpl) {
-                return;
-            }
+            if (!tpl) return;
 
             setValuesFromTemplate(tpl);
 
@@ -338,6 +334,12 @@ const items = [
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
         value: 'details',
+    },
+    {
+        slot: 'workflow' as const,
+        label: t('common.workflow'),
+        icon: 'i-mdi-workflow',
+        value: 'workflow',
     },
     {
         slot: 'content' as const,
@@ -487,8 +489,6 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard :title="`${$t('common.template')} ${$t('common.access')}`">
-                            <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-
                             <AccessManager
                                 v-model:jobs="state.jobAccess"
                                 :target-id="templateId ?? 0"
@@ -506,7 +506,9 @@ const formRef = useTemplateRef('formRef');
                         <UPageCard :title="$t('common.requirements', 2)">
                             <TemplateSchemaEditor v-model="schemaEditor" />
                         </UPageCard>
+                    </template>
 
+                    <template #workflow>
                         <TemplateWorkflowEditor v-model="state.workflow" />
                     </template>
 

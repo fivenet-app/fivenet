@@ -204,7 +204,7 @@ class ListAccountsResponse$Type extends MessageType<ListAccountsResponse> {
     constructor() {
         super("services.settings.ListAccountsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Account, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "accounts", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Account, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListAccountsResponse>): ListAccountsResponse {

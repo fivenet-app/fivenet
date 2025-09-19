@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -48,8 +48,8 @@ func (s *Server) ListTemplates(
 			tTemplates.Content,
 		).
 		FROM(tTemplates).
-		WHERE(jet.AND(
-			tTemplates.EmailID.EQ(jet.Int64(req.GetEmailId())),
+		WHERE(mysql.AND(
+			tTemplates.EmailID.EQ(mysql.Int64(req.GetEmailId())),
 		)).
 		LIMIT(25)
 
@@ -68,15 +68,15 @@ func (s *Server) getTemplate(
 	id int64,
 	emailId *int64,
 ) (*mailer.Template, error) {
-	condition := tTemplates.ID.EQ(jet.Int64(id))
+	condition := tTemplates.ID.EQ(mysql.Int64(id))
 
 	if emailId == nil || *emailId <= 0 {
 		condition = condition.AND(
-			tTemplates.EmailID.EQ(jet.IntExp(jet.NULL)),
+			tTemplates.EmailID.EQ(mysql.IntExp(mysql.NULL)),
 		)
 	} else {
 		condition = condition.AND(
-			tTemplates.EmailID.EQ(jet.Int64(*emailId)),
+			tTemplates.EmailID.EQ(mysql.Int64(*emailId)),
 		)
 	}
 
@@ -181,11 +181,11 @@ func (s *Server) CreateOrUpdateTemplate(
 	if req.GetTemplate().GetId() <= 0 {
 		countStmt := tTemplates.
 			SELECT(
-				jet.COUNT(tTemplates.ID).AS("data_count.total"),
+				mysql.COUNT(tTemplates.ID).AS("data_count.total"),
 			).
 			FROM(tTemplates).
 			WHERE(
-				tTemplates.CreatorJob.EQ(jet.String(userInfo.GetJob())),
+				tTemplates.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
 			)
 
 		var count database.DataCount
@@ -245,11 +245,11 @@ func (s *Server) CreateOrUpdateTemplate(
 		stmt := tTemplates.
 			UPDATE().
 			SET(
-				tTemplates.Title.SET(jet.String(req.GetTemplate().GetTitle())),
-				tTemplates.Content.SET(jet.String(req.GetTemplate().GetContent())),
+				tTemplates.Title.SET(mysql.String(req.GetTemplate().GetTitle())),
+				tTemplates.Content.SET(mysql.String(req.GetTemplate().GetContent())),
 			).
-			WHERE(jet.AND(
-				tTemplates.ID.EQ(jet.Int64(req.GetTemplate().GetId())),
+			WHERE(mysql.AND(
+				tTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -300,10 +300,10 @@ func (s *Server) DeleteTemplate(
 	stmt := tTemplates.
 		UPDATE().
 		SET(
-			tTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tTemplates.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
-		WHERE(jet.AND(
-			tTemplates.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tTemplates.ID.EQ(mysql.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

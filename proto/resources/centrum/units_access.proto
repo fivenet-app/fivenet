@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
@@ -15,10 +16,17 @@ enum UnitAccessLevel {
   UNIT_ACCESS_LEVEL_JOIN = 2;
 }
 
-// @dbscanner: json
 message UnitAccess {
-  repeated UnitJobAccess jobs = 1 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"job_access\""];
-  repeated UnitQualificationAccess qualifications = 3 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"qualification_access\""];
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated UnitJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+  repeated UnitQualificationAccess qualifications = 3 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"qualification_access\""
+  ];
 }
 
 message UnitJobAccess {

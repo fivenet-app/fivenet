@@ -73,7 +73,7 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <div class="flex flex-1 flex-col justify-between gap-2">
-                    <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
+                    <div class="divide-y divide-default px-2 sm:px-6">
                         <UFormField class="flex-1" name="users" :label="$t('common.colleague', 2)">
                             <SelectMenu
                                 v-model="state.users"
@@ -103,10 +103,7 @@ const formRef = useTemplateRef('formRef');
                         </UFormField>
 
                         <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-neutral-900">
-                            <ul
-                                class="divide-y divide-gray-100 text-sm font-medium text-toned dark:divide-gray-800"
-                                role="list"
-                            >
+                            <ul class="divide-y divide-default text-sm font-medium text-toned" role="list">
                                 <li v-for="user in state.users" :key="user.userId" class="inline-flex items-center px-4 py-2">
                                     <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
                                 </li>

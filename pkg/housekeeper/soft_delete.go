@@ -8,7 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -21,9 +21,9 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	// Query jobs that are marked for deletion
 	stmt := tJobProps.
 		SELECT(tJobProps.Job).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tJobProps.DeletedAt.IS_NOT_NULL(),
-			tJobProps.DeletedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(1, jet.DAY))),
+			tJobProps.DeletedAt.LT_EQ(mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(1, mysql.DAY))),
 		)).
 		ORDER_BY(tJobProps.Job.ASC())
 
@@ -85,20 +85,17 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	if rowsAffected < DefaultDeleteLimit {
 		// If we've reached the end of the table list, delete the job prop
 		if currentIdx+1 >= len(keys) {
-			if !h.dryRun {
-				delStmt := tJobProps.
-					DELETE().
-					WHERE(tJobProps.Job.EQ(jet.String(jobName))).
-					LIMIT(1)
+			delStmt := tJobProps.
+				DELETE().
+				WHERE(tJobProps.Job.EQ(mysql.String(jobName))).
+				LIMIT(1)
 
+			if !h.dryRun {
 				if _, err := delStmt.ExecContext(ctx, h.db); err != nil {
 					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
 				}
 			} else {
-				h.logger.Debug("dry run: delete job props", zap.String("query", tJobProps.DELETE().
-					WHERE(tJobProps.Job.EQ(jet.String(jobName))).
-					LIMIT(1).
-					DebugSql()))
+				h.logger.Debug("dry run: delete job props", zap.String("query", delStmt.DebugSql()))
 			}
 			// Clear progress
 			data.SetAttribute(lastJobName, "")
@@ -214,15 +211,15 @@ func (h *Housekeeper) markRowsAsDeletedInJob(
 	table *Table,
 	jobName string,
 ) (int64, error) {
-	condition := jet.AND(
-		table.JobColumn.EQ(jet.String(jobName)),
+	condition := mysql.AND(
+		table.JobColumn.EQ(mysql.String(jobName)),
 		table.DeletedAtColumn.IS_NULL(),
 	)
 
 	stmt := table.Table.
 		UPDATE().
 		SET(
-			table.DeletedAtColumn.SET(jet.CURRENT_TIMESTAMP()),
+			table.DeletedAtColumn.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
@@ -258,20 +255,20 @@ func (h *Housekeeper) markRowsAsDeleted(
 	table *Table,
 	jobName string,
 ) (int64, error) {
-	var condition jet.BoolExpression
+	var condition mysql.BoolExpression
 	if table.JobColumn != nil {
-		condition = table.JobColumn.EQ(jet.String(jobName))
+		condition = table.JobColumn.EQ(mysql.String(jobName))
 	} else {
-		condition = parentTable.JobColumn.EQ(jet.String(jobName))
+		condition = parentTable.JobColumn.EQ(mysql.String(jobName))
 	}
 
-	condition = condition.AND(jet.AND(
+	condition = condition.AND(mysql.AND(
 		table.DeletedAtColumn.IS_NULL(),
 		table.ForeignKey.IN(
 			parentTable.Table.
 				SELECT(parentTable.IDColumn).
-				WHERE(jet.AND(
-					parentTable.JobColumn.EQ(jet.String(jobName)),
+				WHERE(mysql.AND(
+					parentTable.JobColumn.EQ(mysql.String(jobName)),
 					parentTable.DeletedAtColumn.IS_NULL(),
 				)),
 		),
@@ -280,7 +277,7 @@ func (h *Housekeeper) markRowsAsDeleted(
 	stmt := table.Table.
 		UPDATE().
 		SET(
-			table.DeletedAtColumn.SET(jet.CURRENT_TIMESTAMP()),
+			table.DeletedAtColumn.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)

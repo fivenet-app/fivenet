@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -16,8 +17,9 @@ enum CentrumAccessLevel {
   CENTRUM_ACCESS_LEVEL_DISPATCH = 4;
 }
 
-// @dbscanner: json
 message CentrumAccess {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated CentrumJobAccess jobs = 1 [
     (buf.validate.field).repeated.max_items = 10,
     (tagger.tags) = "alias:\"job_access\""

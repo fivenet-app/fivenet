@@ -1,6 +1,5 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
-import type { Coordinate } from '~/types/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
@@ -8,6 +7,7 @@ import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { StreamRequest } from '~~/gen/ts/services/centrum/centrum';
 import type { StreamResponse } from '~~/gen/ts/services/livemap/livemap';
+import type { Coordinate } from '~~/shared/types/types';
 import { useSettingsStore } from './settings';
 
 const logger = useLogger('🗺️ Livemap');
@@ -218,9 +218,7 @@ export const useLivemapStore = defineStore(
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value.signal.aborted) {
-                return;
-            }
+            if (!abort.value || abort.value.signal.aborted) return;
 
             // Reset back off time if it exceeds max
             if (reconnectBackoffTime.value > maxBackOffTime) {

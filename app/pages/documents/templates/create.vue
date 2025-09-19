@@ -13,7 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPanel>
-        <TemplateEditor />
-    </UDashboardPanel>
+    <TemplateEditor />
 </template>

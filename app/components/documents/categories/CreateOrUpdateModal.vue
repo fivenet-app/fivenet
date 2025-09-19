@@ -113,9 +113,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 function setFromProps(): void {
-    if (!props.category) {
-        return;
-    }
+    if (!props.category) return;
 
     state.name = props.category.name;
     state.description = props.category.description;

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -34,7 +34,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id i
 				),
 		).
 		WHERE(
-			a.selectColumns.ID.EQ(jet.Int64(id)),
+			a.selectColumns.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -90,9 +90,9 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(
 			entry.GetAccess(),
 			entry.GetUserId(),
 		).
-		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Int64(entry.GetId())),
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.columns.ID.EQ(mysql.Int64(entry.GetId())),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -111,9 +111,9 @@ func (a *Users[U, T, AccessLevel]) DeleteEntry(
 ) error {
 	stmt := a.table.
 		DELETE().
-		WHERE(jet.AND(
-			a.columns.ID.EQ(jet.Int64(id)),
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+		WHERE(mysql.AND(
+			a.columns.ID.EQ(mysql.Int64(id)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)).
 		LIMIT(1)
 
@@ -130,14 +130,14 @@ func (a *Users[U, T, AccessLevel]) DeleteEntry(
 func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(
 	ctx context.Context,
 	tx qrm.DB,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 	targetId int64,
 ) error {
 	stmt := a.table.
 		DELETE().
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			condition,
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)).
 		LIMIT(1)
 

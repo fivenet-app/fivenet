@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFileRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,6 +17,8 @@ func (m *DeleteFileRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteFileResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -23,6 +27,8 @@ func (m *DeleteFileResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UploadFileRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -51,6 +57,8 @@ func (m *UploadFileRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UploadFileResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -65,13 +73,27 @@ func (m *UploadFileResponse) Sanitize() error {
 		}
 	}
 
+	// Field: Url
+	m.Url = htmlsanitizer.Sanitize(m.Url)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UploadMeta) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: ContentType
+	m.ContentType = htmlsanitizer.Sanitize(m.ContentType)
+
+	// Field: Namespace
+	m.Namespace = htmlsanitizer.Sanitize(m.Namespace)
+
+	// Field: OriginalName
+	m.OriginalName = htmlsanitizer.Sanitize(m.OriginalName)
 
 	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)

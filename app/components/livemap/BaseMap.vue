@@ -42,9 +42,7 @@ const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
 let map: L.Map | undefined;
 
 function mapResize(): void {
-    if (map === undefined) {
-        return;
-    }
+    if (map === undefined) return;
 
     map.invalidateSize();
 }
@@ -130,9 +128,7 @@ const isMoving = ref<boolean>(false);
 watchDebounced(
     isMoving,
     async () => {
-        if (map === undefined || isMoving.value) {
-            return;
-        }
+        if (map === undefined || isMoving.value) return;
 
         const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
         if (currentLocationQuery.value !== newHash) {
@@ -274,7 +270,7 @@ onBeforeUnmount(() => {
             :max-zoom="7"
             :inertia="false"
             :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
-            :use-global-leaflet="true"
+            use-global-leaflet
             :options="mapOptions"
             @click="selectedMarker = undefined"
             @ready="onMapReady($event)"
@@ -285,8 +281,8 @@ onBeforeUnmount(() => {
                 :url="layer.url"
                 layer-type="base"
                 :name="$t(layer.label)"
-                :no-wrap="true"
-                :tms="true"
+                no-wrap
+                tms
                 :visible="livemapTileLayer === layer.key"
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
@@ -297,9 +293,12 @@ onBeforeUnmount(() => {
 
             <LayerControls>
                 <div v-if="can('centrum.CentrumService/TakeControl').value">
-                    <div class="mt-1 inline-flex gap-1 overflow-y-hidden px-1">
-                        <USwitch v-model="livemapSettings.showHeatmap" />
-                        <span class="truncate hover:line-clamp-2">{{ $t('common.heatmap') }}</span>
+                    <div class="mt-1 overflow-y-hidden px-1">
+                        <USwitch
+                            v-model="livemapSettings.showHeatmap"
+                            :label="$t('common.heatmap')"
+                            :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                        />
                     </div>
                 </div>
 

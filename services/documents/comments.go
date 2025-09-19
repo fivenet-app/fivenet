@@ -21,7 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -55,21 +55,21 @@ func (s *Server) GetComments(
 	}
 
 	tDComments := tDComments.AS("comment")
-	var condition jet.BoolExpression
+	var condition mysql.BoolExpression
 	if userInfo.GetSuperuser() {
-		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Int64(req.GetDocumentId())),
+		condition = mysql.AND(
+			tDComments.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
 		)
 	} else {
-		condition = jet.AND(
-			tDComments.DocumentID.EQ(jet.Int64(req.GetDocumentId())),
+		condition = mysql.AND(
+			tDComments.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		)
 	}
 
 	countStmt := tDComments.
 		SELECT(
-			jet.COUNT(tDComments.ID).AS("data_count.total"),
+			mysql.COUNT(tDComments.ID).AS("data_count.total"),
 		).
 		FROM(
 			tDComments,
@@ -95,7 +95,7 @@ func (s *Server) GetComments(
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
-	columns := jet.ProjectionList{
+	columns := mysql.ProjectionList{
 		tDComments.ID,
 		tDComments.DocumentID,
 		tDComments.CreatedAt,
@@ -143,8 +143,6 @@ func (s *Server) GetComments(
 	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	resp.GetPagination().Update(len(resp.GetComments()))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := range resp.GetComments() {
@@ -310,10 +308,10 @@ func (s *Server) EditComment(
 			tDComments.Comment,
 		).
 		SET(
-			tDComments.Comment.SET(jet.String(req.GetComment().GetContent().GetRawContent())),
+			tDComments.Comment.SET(mysql.String(req.GetComment().GetContent().GetRawContent())),
 		).
-		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Int64(req.GetComment().GetId())),
+		WHERE(mysql.AND(
+			tDComments.ID.EQ(mysql.Int64(req.GetComment().GetId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -379,7 +377,7 @@ func (s *Server) getComment(
 				),
 		).
 		WHERE(
-			tDComments.ID.EQ(jet.Int64(id)),
+			tDComments.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -457,10 +455,10 @@ func (s *Server) DeleteComment(
 			tDComments.DeletedAt,
 		).
 		SET(
-			tDComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tDComments.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
-		WHERE(jet.AND(
-			tDComments.ID.EQ(jet.Int64(req.GetCommentId())),
+		WHERE(mysql.AND(
+			tDComments.ID.EQ(mysql.Int64(req.GetCommentId())),
 			tDComments.DeletedAt.IS_NULL(),
 		))
 
@@ -493,7 +491,7 @@ func (s *Server) notifyUsersNewComment(
 		return err
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Int64(documentId)), userInfo, false)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(mysql.Int64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}
@@ -504,12 +502,12 @@ func (s *Server) notifyUsersNewComment(
 	lastPerCreator := tDComments.
 		SELECT(
 			tDComments.CreatorID.AS("creator_id"),
-			jet.MAX(tDComments.CreatedAt).AS("last_at"),
+			mysql.MAX(tDComments.CreatedAt).AS("last_at"),
 		).
 		FROM(tDComments).
 		WHERE(
-			tDComments.DocumentID.EQ(jet.Int64(documentId)).
-				AND(tDComments.CreatorID.NOT_EQ(jet.Int32(sourceUserId))),
+			tDComments.DocumentID.EQ(mysql.Int64(documentId)).
+				AND(tDComments.CreatorID.NOT_EQ(mysql.Int32(sourceUserId))),
 		).
 		GROUP_BY(tDComments.CreatorID).
 		AsTable("dc")
@@ -517,11 +515,11 @@ func (s *Server) notifyUsersNewComment(
 	// Get the last 3 commentors to send them a notification
 	stmt := lastPerCreator.
 		SELECT(
-			jet.RawInt("creator_id"),
+			mysql.RawInt("creator_id"),
 		).
 		FROM(lastPerCreator).
 		ORDER_BY(
-			jet.RawTimestamp("last_at").DESC(),
+			mysql.RawTimestamp("last_at").DESC(),
 		).
 		LIMIT(3)
 

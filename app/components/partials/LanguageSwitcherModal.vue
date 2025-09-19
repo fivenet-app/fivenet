@@ -18,9 +18,7 @@ const languages = ref<LocaleObject[]>([]);
 
 onBeforeMount(async () => {
     locales.value.forEach((lang) => {
-        if (typeof lang === 'string') {
-            return;
-        }
+        if (typeof lang === 'string') return;
 
         languages.value.push({
             code: lang.code,
@@ -34,9 +32,7 @@ onBeforeMount(async () => {
 const preventClose = ref(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
-    if (locale.value === lang.code) {
-        return;
-    }
+    if (locale.value === lang.code) return;
 
     preventClose.value = true;
     useLogger('⚙️ Settings').info('Switching language to:', lang.code);

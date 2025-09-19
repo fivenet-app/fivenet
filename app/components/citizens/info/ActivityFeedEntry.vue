@@ -9,11 +9,18 @@ import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/a
 const props = defineProps<{
     activity: UserActivity;
 }>();
+
+const { display } = useAppConfig();
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 </script>
 
 <template>
     <li
-        class="flex-initial border-default p-1 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
+        class="flex-initial border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
     >
         <template v-if="activity.type === UserActivityType.NAME && activity.data?.data.oneofKind === 'nameChange'">
             <div class="flex space-x-3">
@@ -333,7 +340,7 @@ const props = defineProps<{
                                     v-for="attribute in activity.data.data.labelsChange.removed"
                                     :key="attribute.name"
                                     class="justify-between gap-2 line-through"
-                                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
                                 >
                                     {{ attribute.name }}
@@ -343,7 +350,7 @@ const props = defineProps<{
                                     v-for="attribute in activity.data.data.labelsChange.added"
                                     :key="attribute.name"
                                     class="justify-between gap-2"
-                                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
+                                    :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                                     :style="{ backgroundColor: attribute.color }"
                                 >
                                     {{ attribute.name }}
@@ -492,7 +499,7 @@ const props = defineProps<{
                             </template>
 
                             <span>
-                                {{ $n(Math.abs(activity.data.data.fineChange.amount), 'currency') }}
+                                {{ formatter.format(Math.abs(activity.data.data.fineChange.amount)) }}
                             </span>
                         </h3>
 

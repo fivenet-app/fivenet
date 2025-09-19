@@ -46,14 +46,10 @@ export interface Dispatch {
      */
     status?: DispatchStatus;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string message = 7
      */
     message: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 8
      */
     description?: string;
@@ -70,8 +66,6 @@ export interface Dispatch {
      */
     y: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string postal = 12
      */
     postal?: string;
@@ -189,14 +183,10 @@ export interface DispatchStatus {
      */
     status: StatusDispatch;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 7
      */
     reason?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string code = 8
      */
     code?: string;
@@ -217,8 +207,6 @@ export interface DispatchStatus {
      */
     y?: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string postal = 13
      */
     postal?: string;
@@ -228,8 +216,6 @@ export interface DispatchStatus {
     creatorJob?: string;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.DispatchReferences
  */
 export interface DispatchReferences {
@@ -368,12 +354,12 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 18, name: "jobs", kind: "message", T: () => JobList },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
-            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
+            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "attributes", kind: "message", T: () => DispatchAttributes },
             { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 13, name: "anon", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => User },
@@ -773,13 +759,13 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 10, name: "user", kind: "message", T: () => Colleague },
             { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
+            { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 14, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }
         ]);
     }
@@ -908,7 +894,7 @@ class DispatchReferences$Type extends MessageType<DispatchReferences> {
     constructor() {
         super("resources.centrum.DispatchReferences", [
             { no: 1, name: "references", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DispatchReference }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DispatchReferences>): DispatchReferences {
         const message = globalThis.Object.create((this.messagePrototype!));

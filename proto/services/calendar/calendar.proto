@@ -23,7 +23,7 @@ message ListCalendarsRequest {
 
 message ListCalendarsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.Calendar calendars = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.calendar.Calendar calendars = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetCalendarRequest {
@@ -120,7 +120,7 @@ message ListCalendarEntryRSVPRequest {
 
 message ListCalendarEntryRSVPResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.CalendarEntryRSVP entries = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.calendar.CalendarEntryRSVP entries = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message RSVPCalendarEntryRequest {
@@ -141,7 +141,7 @@ message ListSubscriptionsRequest {
 
 message ListSubscriptionsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.CalendarSub subs = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.calendar.CalendarSub subs = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message SubscribeToCalendarRequest {

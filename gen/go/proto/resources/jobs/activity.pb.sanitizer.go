@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AbsenceDateChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -33,6 +35,8 @@ func (m *AbsenceDateChange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ColleagueActivity) Sanitize() error {
 	if m == nil {
 		return nil
@@ -55,6 +59,9 @@ func (m *ColleagueActivity) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
@@ -80,6 +87,8 @@ func (m *ColleagueActivity) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ColleagueActivityData) Sanitize() error {
 	if m == nil {
 		return nil
@@ -124,14 +133,21 @@ func (m *ColleagueActivityData) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GradeChange) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: GradeLabel
+	m.GradeLabel = htmlsanitizer.Sanitize(m.GradeLabel)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *LabelsChange) Sanitize() error {
 	if m == nil {
 		return nil
@@ -164,9 +180,21 @@ func (m *LabelsChange) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *NameChange) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Prefix
+	if m.Prefix != nil {
+		*m.Prefix = htmlsanitizer.Sanitize(*m.Prefix)
+	}
+
+	// Field: Suffix
+	if m.Suffix != nil {
+		*m.Suffix = htmlsanitizer.Sanitize(*m.Suffix)
 	}
 
 	return nil

@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -85,7 +86,6 @@ func (AccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_access_proto_rawDescGZIP(), []int{0}
 }
 
-// @dbscanner: json
 type DocumentAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*DocumentJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
@@ -342,10 +342,10 @@ var File_resources_documents_access_proto protoreflect.FileDescriptor
 
 const file_resources_documents_access_proto_rawDesc = "" +
 	"\n" +
-	" resources/documents/access.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xce\x01\n" +
+	" resources/documents/access.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xd6\x01\n" +
 	"\x0eDocumentAccess\x12[\n" +
 	"\x04jobs\x18\x01 \x03(\v2&.resources.documents.DocumentJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x04jobs\x12_\n" +
-	"\x05users\x18\x02 \x03(\v2'.resources.documents.DocumentUserAccessB \x9a\x84\x9e\x03\x13alias:\"user_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x05users\"\xd1\x03\n" +
+	"\x05users\x18\x02 \x03(\v2'.resources.documents.DocumentUserAccessB \x9a\x84\x9e\x03\x13alias:\"user_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x05users:\x06\xe2\xf3\x18\x02\b\x01\"\xd1\x03\n" +
 	"\x11DocumentJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +

@@ -5,9 +5,9 @@ import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import type { Coordinate } from '~/types/livemap';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
+import type { Coordinate } from '~~/shared/types/types';
 import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const props = defineProps<{
@@ -35,7 +35,7 @@ const schema = z.object({
     description: z.union([z.coerce.string().min(3).max(1024), z.coerce.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.coerce.string().length(7),
-    markerType: z.nativeEnum(MarkerType),
+    markerType: z.enum(MarkerType),
     circleRadius: z.coerce.number().gte(5).lte(250),
     circleOpacity: z.coerce.number().gte(1).lte(75).optional(),
     icon: z.coerce.string().max(128).optional(),

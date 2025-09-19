@@ -155,7 +155,5 @@ func (s *Server) ListUserActivity(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetActivity()))
-
 	return resp, nil
 }

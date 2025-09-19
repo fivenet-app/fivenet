@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -89,17 +89,17 @@ func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
 	tUsers := tables.User()
-	queries := map[string]jet.Statement{
-		"users_registered": tAccounts.SELECT(jet.COUNT(tAccounts.ID).AS("value")).
+	queries := map[string]mysql.Statement{
+		"users_registered": tAccounts.SELECT(mysql.COUNT(tAccounts.ID).AS("value")).
 			WHERE(tAccounts.Enabled.IS_TRUE()),
-		"documents_created": tDocuments.SELECT(jet.COUNT(tDocuments.ID).AS("value")).
+		"documents_created": tDocuments.SELECT(mysql.COUNT(tDocuments.ID).AS("value")).
 			WHERE(tDocuments.DeletedAt.IS_NULL()),
-		"dispatches_created": tDispatches.SELECT(jet.MAX(tDispatches.ID).AS("value")),
-		"citizen_activity":   tCitizenActivity.SELECT(jet.COUNT(tCitizenActivity.ID).AS("value")),
+		"dispatches_created": tDispatches.SELECT(mysql.MAX(tDispatches.ID).AS("value")),
+		"citizen_activity":   tCitizenActivity.SELECT(mysql.COUNT(tCitizenActivity.ID).AS("value")),
 		"timeclock_tracked": tJobUserTimeclock.SELECT(
-			jet.CAST(jet.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value"),
+			mysql.CAST(mysql.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value"),
 		),
-		"citizens_total": tUsers.SELECT(jet.COUNT(tUsers.ID).AS("value")),
+		"citizens_total": tUsers.SELECT(mysql.COUNT(tUsers.ID).AS("value")),
 	}
 
 	errs := multierr.Combine()

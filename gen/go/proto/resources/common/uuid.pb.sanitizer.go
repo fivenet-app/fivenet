@@ -3,10 +3,19 @@
 
 package common
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UUID) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Uuid
+	m.Uuid = htmlsanitizer.Sanitize(m.Uuid)
 
 	return nil
 }

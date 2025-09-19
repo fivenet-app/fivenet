@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -44,35 +44,35 @@ func (s *Server) SetThreadState(
 		return nil, err
 	}
 
-	updateSets := []jet.ColumnAssigment{}
+	updateSets := []mysql.ColumnAssigment{}
 	if req.State.Unread != nil {
-		updateSets = append(updateSets, tThreadsState.Unread.SET(jet.RawBool("VALUES(`unread`)")))
+		updateSets = append(updateSets, tThreadsState.Unread.SET(mysql.RawBool("VALUES(`unread`)")))
 	}
 	if req.GetState().GetLastRead() != nil {
 		updateSets = append(
 			updateSets,
-			tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")),
+			tThreadsState.LastRead.SET(mysql.RawTimestamp("VALUES(`last_read`)")),
 		)
 	}
 	if req.State.Important != nil {
 		updateSets = append(
 			updateSets,
-			tThreadsState.Important.SET(jet.RawBool("VALUES(`important`)")),
+			tThreadsState.Important.SET(mysql.RawBool("VALUES(`important`)")),
 		)
 	}
 	if req.State.Favorite != nil {
 		updateSets = append(
 			updateSets,
-			tThreadsState.Favorite.SET(jet.RawBool("VALUES(`favorite`)")),
+			tThreadsState.Favorite.SET(mysql.RawBool("VALUES(`favorite`)")),
 		)
 	}
 	if req.State.Muted != nil {
-		updateSets = append(updateSets, tThreadsState.Muted.SET(jet.RawBool("VALUES(`muted`)")))
+		updateSets = append(updateSets, tThreadsState.Muted.SET(mysql.RawBool("VALUES(`muted`)")))
 	}
 	if req.State.Archived != nil {
 		updateSets = append(
 			updateSets,
-			tThreadsState.Archived.SET(jet.RawBool("VALUES(`archived`)")),
+			tThreadsState.Archived.SET(mysql.RawBool("VALUES(`archived`)")),
 		)
 	}
 
@@ -139,9 +139,9 @@ func (s *Server) getThreadState(
 			tThreadsState.Archived,
 		).
 		FROM(tThreadsState).
-		WHERE(jet.AND(
-			tThreadsState.ThreadID.EQ(jet.Int64(threadId)),
-			tThreadsState.EmailID.EQ(jet.Int64(emaildId)),
+		WHERE(mysql.AND(
+			tThreadsState.ThreadID.EQ(mysql.Int64(threadId)),
+			tThreadsState.EmailID.EQ(mysql.Int64(emaildId)),
 		))
 
 	dest := &mailer.ThreadState{}
@@ -186,7 +186,7 @@ func (s *Server) setUnreadState(
 	}
 
 	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
-		tThreadsUserState.Unread.SET(jet.RawBool("VALUES(`unread`)")),
+		tThreadsUserState.Unread.SET(mysql.RawBool("VALUES(`unread`)")),
 	)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

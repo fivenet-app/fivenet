@@ -14,8 +14,6 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "./banner";
 import { Duration } from "../../google/protobuf/duration";
 /**
- * @dbscanner: json,partial
- *
  * @generated from protobuf message resources.settings.AppConfig
  */
 export interface AppConfig {
@@ -55,6 +53,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.System system = 9
      */
     system?: System;
+    /**
+     * @generated from protobuf field: resources.settings.Display display = 10
+     */
+    display?: Display;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -83,14 +85,10 @@ export interface Perms {
  */
 export interface Perm {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string category = 1
      */
     category: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string name = 2
      */
     name: string;
@@ -113,14 +111,10 @@ export interface Website {
  */
 export interface Links {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string privacy_policy = 1
      */
     privacyPolicy?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string imprint = 2
      */
     imprint?: string;
@@ -134,14 +128,10 @@ export interface JobInfo {
      */
     unemployedJob?: UnemployedJob;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string public_jobs = 2
      */
     publicJobs: string[];
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string hidden_jobs = 3
      */
     hiddenJobs: string[];
@@ -185,14 +175,10 @@ export interface Discord {
      */
     syncInterval?: Duration;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string invite_url = 3
      */
     inviteUrl?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string ignored_jobs = 4
      */
     ignoredJobs: string[];
@@ -201,8 +187,6 @@ export interface Discord {
      */
     botPresence?: DiscordBotPresence;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string bot_id = 6
      */
     botId?: string;
@@ -220,14 +204,10 @@ export interface DiscordBotPresence {
      */
     type: DiscordBotPresenceType;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string status = 2
      */
     status?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string url = 3
      */
     url?: string;
@@ -244,6 +224,23 @@ export interface System {
      * @generated from protobuf field: resources.settings.BannerMessage banner_message = 2
      */
     bannerMessage?: BannerMessage;
+}
+/**
+ * @generated from protobuf message resources.settings.Display
+ */
+export interface Display {
+    /**
+     * IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+     *
+     * @generated from protobuf field: optional string intl_locale = 1
+     */
+    intlLocale?: string;
+    /**
+     * ISO 4217 currency code (e.g. "USD", "EUR")
+     *
+     * @generated from protobuf field: string currency_name = 2
+     */
+    currencyName: string;
 }
 /**
  * @generated from protobuf enum resources.settings.DiscordBotPresenceType
@@ -282,8 +279,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 5, name: "job_info", kind: "message", T: () => JobInfo },
             { no: 6, name: "user_tracker", kind: "message", T: () => UserTracker },
             { no: 7, name: "discord", kind: "message", T: () => Discord },
-            { no: 9, name: "system", kind: "message", T: () => System }
-        ]);
+            { no: 9, name: "system", kind: "message", T: () => System },
+            { no: 10, name: "display", kind: "message", T: () => Display }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -324,6 +322,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.System system */ 9:
                     message.system = System.internalBinaryRead(reader, reader.uint32(), options, message.system);
                     break;
+                case /* resources.settings.Display display */ 10:
+                    message.display = Display.internalBinaryRead(reader, reader.uint32(), options, message.display);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -363,6 +364,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.System system = 9; */
         if (message.system)
             System.internalBinaryWrite(message.system, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Display display = 10; */
+        if (message.display)
+            Display.internalBinaryWrite(message.display, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -479,8 +483,8 @@ export const Perms = new Perms$Type();
 class Perm$Type extends MessageType<Perm> {
     constructor() {
         super("resources.settings.Perm", [
-            { no: 1, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 1, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<Perm>): Perm {
@@ -588,8 +592,8 @@ export const Website = new Website$Type();
 class Links$Type extends MessageType<Links> {
     constructor() {
         super("resources.settings.Links", [
-            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<Links>): Links {
@@ -642,8 +646,8 @@ class JobInfo$Type extends MessageType<JobInfo> {
     constructor() {
         super("resources.settings.JobInfo", [
             { no: 1, name: "unemployed_job", kind: "message", T: () => UnemployedJob, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } },
-            { no: 3, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
+            { no: 2, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 3, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<JobInfo>): JobInfo {
@@ -813,10 +817,10 @@ class Discord$Type extends MessageType<Discord> {
         super("resources.settings.Discord", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "sync_interval", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "180000000" }, gte: { seconds: "60" } } } } },
-            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } },
+            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 5, name: "bot_presence", kind: "message", T: () => DiscordBotPresence },
-            { no: 6, name: "bot_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 6, name: "bot_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "bot_permissions", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
@@ -903,8 +907,8 @@ class DiscordBotPresence$Type extends MessageType<DiscordBotPresence> {
     constructor() {
         super("resources.settings.DiscordBotPresence", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.settings.DiscordBotPresenceType", DiscordBotPresenceType, "DISCORD_BOT_PRESENCE_TYPE_"] },
-            { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<DiscordBotPresence>): DiscordBotPresence {
@@ -1013,3 +1017,57 @@ class System$Type extends MessageType<System> {
  * @generated MessageType for protobuf message resources.settings.System
  */
 export const System = new System$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Display$Type extends MessageType<Display> {
+    constructor() {
+        super("resources.settings.Display", [
+            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+        ]);
+    }
+    create(value?: PartialMessage<Display>): Display {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.currencyName = "";
+        if (value !== undefined)
+            reflectionMergePartial<Display>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Display): Display {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string intl_locale */ 1:
+                    message.intlLocale = reader.string();
+                    break;
+                case /* string currency_name */ 2:
+                    message.currencyName = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Display, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string intl_locale = 1; */
+        if (message.intlLocale !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.intlLocale);
+        /* string currency_name = 2; */
+        if (message.currencyName !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.currencyName);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.Display
+ */
+export const Display = new Display$Type();

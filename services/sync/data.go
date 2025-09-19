@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
@@ -105,8 +105,8 @@ func (s *Server) handleJobsData(
 			tJobs.Label,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobs.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-			tJobs.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+			tJobs.Name.SET(mysql.StringExp(mysql.Raw("VALUES(`name`)"))),
+			tJobs.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
 		)
 
 	for _, job := range data.Jobs.GetJobs() {
@@ -158,7 +158,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 		ORDER_BY(
 			tJobsGrades.Grade.ASC(),
 		).
-		WHERE(tJobsGrades.JobName.EQ(jet.String(job.GetName())))
+		WHERE(tJobsGrades.JobName.EQ(mysql.String(job.GetName())))
 
 	currentGrades := []*jobs.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
@@ -227,9 +227,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 				tJobsGrades.Label,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tJobsGrades.JobName.SET(jet.StringExp(jet.Raw("VALUES(`job_name`)"))),
-				tJobsGrades.Grade.SET(jet.IntExp(jet.Raw("VALUES(`grade`)"))),
-				tJobsGrades.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+				tJobsGrades.JobName.SET(mysql.StringExp(mysql.Raw("VALUES(`job_name`)"))),
+				tJobsGrades.Grade.SET(mysql.IntExp(mysql.Raw("VALUES(`grade`)"))),
+				tJobsGrades.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
 			)
 
 		for _, grade := range toCreate {
@@ -265,9 +265,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 					grade.GetGrade(),
 					grade.GetLabel(),
 				).
-				WHERE(jet.AND(
-					tJobsGrades.JobName.EQ(jet.String(job.GetName())),
-					tJobsGrades.Grade.EQ(jet.Int32(grade.GetGrade())),
+				WHERE(mysql.AND(
+					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
+					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),
 				))
 
 			res, err := stmt.ExecContext(ctx, s.db)
@@ -294,9 +294,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, err
 		for _, grade := range toDelete {
 			stmt := tJobsGrades.
 				DELETE().
-				WHERE(jet.AND(
-					tJobsGrades.JobName.EQ(jet.String(job.GetName())),
-					tJobsGrades.Grade.EQ(jet.Int32(grade.GetGrade())),
+				WHERE(mysql.AND(
+					tJobsGrades.JobName.EQ(mysql.String(job.GetName())),
+					tJobsGrades.Grade.EQ(mysql.Int32(grade.GetGrade())),
 				)).
 				LIMIT(1)
 
@@ -339,7 +339,7 @@ func (s *Server) handleLicensesData(
 			tLicenses.Label,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tLicenses.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+			tLicenses.Label.SET(mysql.StringExp(mysql.Raw("VALUES(`label`)"))),
 		)
 
 	for _, license := range data.Licenses.GetLicenses() {
@@ -369,9 +369,9 @@ func (s *Server) handleUsersData(
 
 	defaultUserGroup := defaultUserGroupFallback
 
-	userIds := []jet.Expression{}
+	userIds := []mysql.Expression{}
 	for _, user := range data.Users.GetUsers() {
-		userIds = append(userIds, jet.Int32(user.GetUserId()))
+		userIds = append(userIds, mysql.Int32(user.GetUserId()))
 
 		if user.Group == nil {
 			user.Group = &defaultUserGroup
@@ -447,17 +447,17 @@ func (s *Server) handleUsersData(
 					user.Playtime,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tUsers.Group.SET(jet.StringExp(jet.Raw("VALUES(`group`)"))),
-					tUsers.Firstname.SET(jet.StringExp(jet.Raw("VALUES(`firstname`)"))),
-					tUsers.Lastname.SET(jet.StringExp(jet.Raw("VALUES(`lastname`)"))),
-					tUsers.Dateofbirth.SET(jet.StringExp(jet.Raw("VALUES(`dateofbirth`)"))),
-					tUsers.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-					tUsers.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
-					tUsers.Sex.SET(jet.StringExp(jet.Raw("VALUES(`sex`)"))),
-					tUsers.PhoneNumber.SET(jet.StringExp(jet.Raw("VALUES(`phone_number`)"))),
-					tUsers.Height.SET(jet.StringExp(jet.Raw("VALUES(`height`)"))),
-					tUsers.Visum.SET(jet.IntExp(jet.Raw("VALUES(`visum`)"))),
-					tUsers.Playtime.SET(jet.IntExp(jet.Raw("VALUES(`playtime`)"))),
+					tUsers.Group.SET(mysql.StringExp(mysql.Raw("VALUES(`group`)"))),
+					tUsers.Firstname.SET(mysql.StringExp(mysql.Raw("VALUES(`firstname`)"))),
+					tUsers.Lastname.SET(mysql.StringExp(mysql.Raw("VALUES(`lastname`)"))),
+					tUsers.Dateofbirth.SET(mysql.StringExp(mysql.Raw("VALUES(`dateofbirth`)"))),
+					tUsers.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+					tUsers.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
+					tUsers.Sex.SET(mysql.StringExp(mysql.Raw("VALUES(`sex`)"))),
+					tUsers.PhoneNumber.SET(mysql.StringExp(mysql.Raw("VALUES(`phone_number`)"))),
+					tUsers.Height.SET(mysql.StringExp(mysql.Raw("VALUES(`height`)"))),
+					tUsers.Visum.SET(mysql.IntExp(mysql.Raw("VALUES(`visum`)"))),
+					tUsers.Playtime.SET(mysql.IntExp(mysql.Raw("VALUES(`playtime`)"))),
 				)
 
 			res, err := insertStmt.ExecContext(ctx, s.db)
@@ -513,7 +513,7 @@ func (s *Server) handleUsersData(
 					user.Playtime,
 				).
 				WHERE(
-					tUsers.ID.EQ(jet.Int32(user.GetUserId())),
+					tUsers.ID.EQ(mysql.Int32(user.GetUserId())),
 				)
 
 			res, err := stmt.ExecContext(ctx, s.db)
@@ -543,7 +543,7 @@ func (s *Server) handleCitizensLicenses(
 		// User has no licenses? Delete all user licenses from the database.
 		stmt := tCitizensLicenses.
 			DELETE().
-			WHERE(tCitizensLicenses.Owner.EQ(jet.String(identifier))).
+			WHERE(tCitizensLicenses.Owner.EQ(mysql.String(identifier))).
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -558,7 +558,7 @@ func (s *Server) handleCitizensLicenses(
 			tCitizensLicenses.Type,
 		).
 		FROM(tCitizensLicenses).
-		WHERE(tCitizensLicenses.Owner.EQ(jet.String(identifier)))
+		WHERE(tCitizensLicenses.Owner.EQ(mysql.String(identifier)))
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
@@ -585,7 +585,7 @@ func (s *Server) handleCitizensLicenses(
 				tCitizensLicenses.Type,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tCitizensLicenses.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+				tCitizensLicenses.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
 			)
 
 		for _, t := range toAdd {
@@ -602,15 +602,15 @@ func (s *Server) handleCitizensLicenses(
 	}
 
 	if len(toRemove) > 0 {
-		types := []jet.Expression{}
+		types := []mysql.Expression{}
 		for _, t := range toRemove {
-			types = append(types, jet.String(t))
+			types = append(types, mysql.String(t))
 		}
 
 		stmt := tCitizensLicenses.
 			DELETE().
-			WHERE(jet.AND(
-				tCitizensLicenses.Owner.EQ(jet.String(identifier)),
+			WHERE(mysql.AND(
+				tCitizensLicenses.Owner.EQ(mysql.String(identifier)),
 				tCitizensLicenses.Type.IN(types...),
 			)).
 			LIMIT(25)
@@ -633,7 +633,7 @@ func (s *Server) handleVehiclesData(
 
 	tVehicles := tables.OwnedVehicles()
 
-	var stmt jet.InsertStatement
+	var stmt mysql.InsertStatement
 	if !tables.IsESXCompatEnabled() {
 		stmt = tVehicles.
 			INSERT(
@@ -655,11 +655,11 @@ func (s *Server) handleVehiclesData(
 	}
 
 	for _, vehicle := range data.Vehicles.GetVehicles() {
-		var ownerId jet.Expression
+		var ownerId mysql.Expression
 		if vehicle.OwnerIdentifier != nil && vehicle.GetOwnerIdentifier() != "" {
-			ownerId = jet.String(vehicle.GetOwnerIdentifier())
+			ownerId = mysql.String(vehicle.GetOwnerIdentifier())
 		} else if vehicle.OwnerId != nil {
-			ownerId = jet.Int32(vehicle.GetOwnerId())
+			ownerId = mysql.Int32(vehicle.GetOwnerId())
 		}
 
 		if !tables.IsESXCompatEnabled() {
@@ -669,7 +669,7 @@ func (s *Server) handleVehiclesData(
 				vehicle.Model,
 				vehicle.GetType(),
 				vehicle.Job,
-				jet.NULL,
+				mysql.NULL,
 			)
 		} else {
 			stmt = stmt.VALUES(
@@ -681,17 +681,17 @@ func (s *Server) handleVehiclesData(
 		}
 	}
 
-	assignments := []jet.ColumnAssigment{
-		tVehicles.Owner.SET(jet.StringExp(jet.Raw("VALUES(`owner`)"))),
-		tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
-		tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
-		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+	assignments := []mysql.ColumnAssigment{
+		tVehicles.Owner.SET(mysql.StringExp(mysql.Raw("VALUES(`owner`)"))),
+		tVehicles.Plate.SET(mysql.StringExp(mysql.Raw("VALUES(`plate`)"))),
+		tVehicles.Model.SET(mysql.StringExp(mysql.Raw("VALUES(`model`)"))),
+		tVehicles.Type.SET(mysql.StringExp(mysql.Raw("VALUES(`type`)"))),
 	}
 
 	if !tables.IsESXCompatEnabled() {
 		assignments = append(assignments,
-			tVehicles.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tVehicles.Data.SET(jet.StringExp(jet.Raw("VALUES(`data`)"))),
+			tVehicles.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+			tVehicles.Data.SET(mysql.StringExp(mysql.Raw("VALUES(`data`)"))),
 		)
 	}
 
@@ -760,11 +760,11 @@ func (s *Server) handleUserLocations(
 
 	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
-			tLocations.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tLocations.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
-			tLocations.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
-			tLocations.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
-			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
+			tLocations.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+			tLocations.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
+			tLocations.X.SET(mysql.FloatExp(mysql.Raw("VALUES(`x`)"))),
+			tLocations.Y.SET(mysql.FloatExp(mysql.Raw("VALUES(`y`)"))),
+			tLocations.Hidden.SET(mysql.BoolExp(mysql.Raw("VALUES(`hidden`)"))),
 		)
 
 	rowsAffected := int64(0)
@@ -790,9 +790,9 @@ func (s *Server) handleUserLocations(
 
 	// Delete any user locations that have been marked for removal
 	if len(toDelete) > 0 {
-		identifiers := []jet.Expression{}
+		identifiers := []mysql.Expression{}
 		for _, identifier := range toDelete {
-			identifiers = append(identifiers, jet.String(identifier))
+			identifiers = append(identifiers, mysql.String(identifier))
 		}
 
 		delStmt := tLocations.
@@ -837,10 +837,10 @@ func (s *Server) handleLastCharId(
 			tAccounts.LastChar,
 		).
 		SET(
-			tAccounts.LastChar.SET(jet.Int32(data.LastCharId.GetLastCharId())),
+			tAccounts.LastChar.SET(mysql.Int32(data.LastCharId.GetLastCharId())),
 		).
 		WHERE(
-			tAccounts.License.EQ(jet.String(data.LastCharId.GetIdentifier())),
+			tAccounts.License.EQ(mysql.String(data.LastCharId.GetIdentifier())),
 		).
 		LIMIT(1)
 
@@ -868,9 +868,9 @@ func (s *Server) DeleteData(
 
 	switch d := req.GetData().(type) {
 	case *pbsync.DeleteDataRequest_Users:
-		userIds := []jet.Expression{}
+		userIds := []mysql.Expression{}
 		for _, identifier := range d.Users.GetUserIds() {
-			userIds = append(userIds, jet.Int32(identifier))
+			userIds = append(userIds, mysql.Int32(identifier))
 		}
 
 		tUsers := tables.User()
@@ -892,9 +892,9 @@ func (s *Server) DeleteData(
 		rowsAffected += rows
 
 	case *pbsync.DeleteDataRequest_Vehicles:
-		plates := []jet.Expression{}
+		plates := []mysql.Expression{}
 		for _, plate := range d.Vehicles.GetPlates() {
-			plates = append(plates, jet.String(plate))
+			plates = append(plates, mysql.String(plate))
 		}
 
 		tVehicles := tables.OwnedVehicles()

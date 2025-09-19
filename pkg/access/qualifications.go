@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -36,20 +36,20 @@ type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 // Qualifications provides access control logic for qualification-based permissions.
 type Qualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
 	// table is the main table for qualification access entries.
-	table jet.Table
+	table mysql.Table
 	// columns holds column references for the main table.
 	columns *QualificationAccessColumns
 	// selectTable is the table used for select queries (may be aliased).
-	selectTable jet.Table
+	selectTable mysql.Table
 	// selectColumns holds column references for select queries (may be aliased).
 	selectColumns *QualificationAccessColumns
 }
 
 // NewQualifications creates a new Qualifications instance for qualification-based access control.
 func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum](
-	table jet.Table,
+	table mysql.Table,
 	columns *QualificationAccessColumns,
-	tableAlias jet.Table,
+	tableAlias mysql.Table,
 	columnsAlias *QualificationAccessColumns,
 ) *Qualifications[U, T, V] {
 	return &Qualifications[U, T, V]{
@@ -69,7 +69,7 @@ func (a *Qualifications[U, T, V]) List(
 ) ([]T, error) {
 	tQualiResults := tQualiResults.AS("qualification_result")
 
-	var stmt jet.SelectStatement
+	var stmt mysql.SelectStatement
 
 	userInfo, ok := auth.GetUserInfoFromContext(ctx)
 	if ok {
@@ -96,12 +96,12 @@ func (a *Qualifications[U, T, V]) List(
 						tQualiResults.QualificationID.EQ(a.selectColumns.QualificationId),
 					),
 			).
-			WHERE(jet.AND(
-				a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
+			WHERE(mysql.AND(
+				a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
 				a.selectColumns.QualificationId.IS_NOT_NULL(),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualiResults.DeletedAt.IS_NULL(),
-				tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+				tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			))
 	} else {
 		stmt = a.selectTable.
@@ -121,8 +121,8 @@ func (a *Qualifications[U, T, V]) List(
 						tQualifications.ID.EQ(a.selectColumns.QualificationId),
 					),
 			).
-			WHERE(jet.AND(
-				a.selectColumns.TargetID.EQ(jet.Int64(targetId)),
+			WHERE(mysql.AND(
+				a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
 				tQualifications.DeletedAt.IS_NULL(),
 			))
 	}
@@ -146,7 +146,7 @@ func (a *Qualifications[U, T, V]) Clear(
 	stmt := a.table.
 		DELETE().
 		WHERE(
-			a.columns.TargetID.EQ(jet.Int64(targetId)),
+			a.columns.TargetID.EQ(mysql.Int64(targetId)),
 		)
 
 	var dest T

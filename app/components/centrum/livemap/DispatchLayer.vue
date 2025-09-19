@@ -42,9 +42,7 @@ const dispatchesFiltered = computedAsync(async () =>
 );
 
 watch(settings, () => {
-    if (!settings.value?.enabled) {
-        return;
-    }
+    if (!settings.value?.enabled) return;
 
     removeLivemapLayer('dispatches_all');
 
@@ -82,7 +80,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
 </script>
 
 <template>
-    <LLayerGroup key="dispatches_own" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
+    <LLayerGroup key="dispatches_own" :name="$t('common.your_dispatches')" layer-type="overlay" visible>
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :key="dispatch"
@@ -96,7 +94,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         />
     </LLayerGroup>
 
-    <LLayerGroup key="dispatches_all" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="true">
+    <LLayerGroup key="dispatches_all" :name="$t('common.dispatch', 2)" layer-type="overlay" visible>
         <DispatchMarker
             v-for="dispatch in dispatchesFiltered"
             :key="dispatch.id"

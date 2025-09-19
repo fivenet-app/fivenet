@@ -3,7 +3,6 @@ package qualifications
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -19,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -37,22 +36,22 @@ func (s *Server) ListQualifications(
 ) (*pbqualifications.ListQualificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 
 	if req.Search != nil && req.GetSearch() != "" {
 		*req.Search = strings.TrimSpace(req.GetSearch())
 		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
 		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 		*req.Search = "%" + req.GetSearch() + "%"
-		condition = condition.AND(jet.OR(
-			tQuali.Abbreviation.LIKE(jet.String(req.GetSearch())),
-			tQuali.Title.LIKE(jet.String(req.GetSearch())),
+		condition = condition.AND(mysql.OR(
+			tQuali.Abbreviation.LIKE(mysql.String(req.GetSearch())),
+			tQuali.Title.LIKE(mysql.String(req.GetSearch())),
 		))
 	}
 
 	countStmt := s.listQualificationsQuery(
 		condition,
-		jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("data_count.total")},
+		mysql.ProjectionList{mysql.COUNT(mysql.DISTINCT(tQuali.ID)).AS("data_count.total")},
 		userInfo,
 	)
 
@@ -73,9 +72,9 @@ func (s *Server) ListQualifications(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{tQuali.Draft.ASC()}
+	orderBys := []mysql.OrderByClause{tQuali.Draft.ASC()}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "abbreviation":
 			column = tQuali.Abbreviation
@@ -99,8 +98,6 @@ func (s *Server) ListQualifications(
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
-	fmt.Println(stmt.DebugSql())
-
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -111,8 +108,6 @@ func (s *Server) ListQualifications(
 			jobInfoFn(resp.GetQualifications()[i].GetCreator())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetQualifications()))
 
 	return resp, nil
 }
@@ -201,7 +196,7 @@ func (s *Server) GetQualification(
 
 	resp := &pbqualifications.GetQualificationResponse{}
 	resp.Qualification, err = s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())), userInfo, canContent)
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, canContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -387,7 +382,7 @@ func (s *Server) UpdateQualification(
 	}
 
 	oldQuali, err := s.getQualification(ctx, req.GetQualification().GetId(),
-		tQuali.ID.EQ(jet.Int64(req.GetQualification().GetId())),
+		tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
 		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -492,7 +487,7 @@ func (s *Server) UpdateQualification(
 			req.GetQualification().LabelSyncFormat,
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Int64(req.GetQualification().GetId())),
+			tQuali.ID.EQ(mysql.Int64(req.GetQualification().GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -576,7 +571,7 @@ func (s *Server) DeleteQualification(
 	}
 
 	quali, err := s.getQualification(ctx, req.GetQualificationId(),
-		tQuali.ID.EQ(jet.Int64(req.GetQualificationId())), userInfo, true)
+		tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())), userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -595,9 +590,9 @@ func (s *Server) DeleteQualification(
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if quali.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tQuali := table.FivenetQualifications
@@ -609,7 +604,7 @@ func (s *Server) DeleteQualification(
 			tQuali.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tQuali.ID.EQ(jet.Int64(req.GetQualificationId())),
+			tQuali.ID.EQ(mysql.Int64(req.GetQualificationId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -22,7 +22,7 @@ message ListAccountsRequest {
 
 message ListAccountsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.accounts.Account accounts = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.accounts.Account accounts = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message UpdateAccountRequest {

@@ -41,9 +41,7 @@ const items = computed<CardElements>(
 const categoryCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 
 function categorySelected(idx: number): void {
-    if (!categories.value) {
-        return;
-    }
+    if (!categories.value) return;
 
     categoryCreateOrUpdateModal.open({
         category: categories.value[idx],

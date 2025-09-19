@@ -3,23 +3,36 @@ syntax = "proto3";
 package resources.users;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
-// @dbscanner: json
 message Labels {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated Label list = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message Label {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional string job = 2 [(buf.validate.field).string.max_len = 20];
-  // @sanitize: method=StripTags
-  string name = 3 [(buf.validate.field).string.max_len = 48];
-  // @sanitize: method=StripTags
-  string color = 4 [(buf.validate.field).string = {
-    len: 7
-    pattern: "^#[A-Fa-f0-9]{6}$"
-  }];
+  string name = 3 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  string color = 4 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }

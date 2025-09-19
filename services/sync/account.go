@@ -9,7 +9,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -26,8 +26,8 @@ func (s *Server) getAccount(
 			tAccounts.RegToken.AS("reg_token"),
 		).
 		FROM(tAccounts).
-		WHERE(jet.AND(
-			tAccounts.License.EQ(jet.String(identifier)),
+		WHERE(mysql.AND(
+			tAccounts.License.EQ(mysql.String(identifier)),
 		)).
 		LIMIT(1)
 
@@ -72,7 +72,7 @@ func (s *Server) RegisterAccount(
 		return nil, fmt.Errorf("failed to generate registration token. %w", err)
 	}
 
-	var stmt jet.Statement
+	var stmt mysql.Statement
 
 	tAccounts := table.FivenetAccounts
 
@@ -96,13 +96,13 @@ func (s *Server) RegisterAccount(
 		stmt = tAccounts.
 			UPDATE().
 			SET(
-				tAccounts.Password.SET(jet.StringExp(jet.NULL)),
-				tAccounts.RegToken.SET(jet.String(regToken)),
+				tAccounts.Password.SET(mysql.StringExp(mysql.NULL)),
+				tAccounts.RegToken.SET(mysql.String(regToken)),
 			).
-			WHERE(jet.AND(
-				tAccounts.ID.EQ(jet.Int64(acc.GetId())),
+			WHERE(mysql.AND(
+				tAccounts.ID.EQ(mysql.Int64(acc.GetId())),
 				// Make sure the license is (still) the same
-				tAccounts.License.EQ(jet.String(req.GetIdentifier())),
+				tAccounts.License.EQ(mysql.String(req.GetIdentifier())),
 			))
 	}
 
@@ -143,7 +143,7 @@ func (s *Server) TransferAccount(
 	// Delete new account
 	delStmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Int64(acc.GetId()))).
+		WHERE(tAccounts.ID.EQ(mysql.Int64(acc.GetId()))).
 		LIMIT(1)
 
 	if _, err := delStmt.ExecContext(ctx, s.db); err != nil {
@@ -156,10 +156,10 @@ func (s *Server) TransferAccount(
 			tAccounts.License,
 		).
 		SET(
-			tAccounts.License.SET(jet.String(req.GetNewLicense())),
+			tAccounts.License.SET(mysql.String(req.GetNewLicense())),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Int64(acc.GetId())),
+			tAccounts.ID.EQ(mysql.Int64(acc.GetId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -141,11 +141,11 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 					tUsers.Identifier.EQ(tGksPhoneSettings.Identifier),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(
-				jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]"),
+				mysql.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]"),
 			),
-			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
+			tGksPhoneJMsg.Owner.EQ(mysql.Int32(0)),
 		)).
 		LIMIT(15)
 
@@ -227,10 +227,10 @@ func (s *Converter) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
 			tGksPhoneJMsg.Owner,
 		).
 		SET(
-			tGksPhoneJMsg.Owner.SET(jet.Int32(1)),
+			tGksPhoneJMsg.Owner.SET(mysql.Int32(1)),
 		).
 		WHERE(
-			tGksPhoneJMsg.ID.EQ(jet.Int32(id)),
+			tGksPhoneJMsg.ID.EQ(mysql.Int32(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -265,9 +265,9 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 					tUsers.Identifier.EQ(tPhonePhones.OwnerID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tPhoneServicesChannels.Company.REGEXP_LIKE(
-				jet.String("\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]"),
+				mysql.String("\\[\"(" + strings.Join(s.convertJobs, "|") + ")\"\\]"),
 			),
 		)).
 		LIMIT(15)
@@ -335,7 +335,7 @@ func (s *Converter) closeLBPhoneJobMsg(ctx context.Context, id int32) error {
 	stmt := tPhoneServicesChannels.
 		DELETE().
 		WHERE(
-			tPhoneServicesChannels.ID.EQ(jet.Int32(id)),
+			tPhoneServicesChannels.ID.EQ(mysql.Int32(id)),
 		).
 		LIMIT(1)
 

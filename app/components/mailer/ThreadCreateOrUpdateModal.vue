@@ -35,9 +35,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 async function createThread(values: Schema): Promise<void> {
-    if (!selectedEmail.value?.id) {
-        return;
-    }
+    if (!selectedEmail.value?.id) return;
 
     await mailerStore.createThread({
         thread: {
@@ -88,9 +86,7 @@ async function createThread(values: Schema): Promise<void> {
 }
 
 function onCreate(item: string): void {
-    if (state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.toLowerCase()) !== -1) {
-        return;
-    }
+    if (state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.toLowerCase()) !== -1) return;
 
     state.value.recipients.push({ label: item });
 }

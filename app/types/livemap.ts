@@ -1,5 +1,3 @@
-export type Coordinate = { x: number; y: number };
-
 export const backgroundColorList = {
     postal: '#74aace',
     satelite: '#133e6b',
@@ -24,7 +22,7 @@ export const tileLayers = [
             maxZoom: 7,
         },
     },
-];
+] as const;
 
 export type Postal = {
     x: number;

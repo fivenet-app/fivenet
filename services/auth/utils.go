@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"golang.org/x/crypto/bcrypt"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -63,8 +63,8 @@ func (s *Server) getAccountFromClaims(
 	ctx context.Context,
 	claims *auth.CitizenInfoClaims,
 ) (*model.FivenetAccounts, error) {
-	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Int64(claims.AccID)).
-		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
+	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)).
+		AND(tAccounts.Username.EQ(mysql.String(claims.Username))))
 }
 
 // Helper for password hashing.

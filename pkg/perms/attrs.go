@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -61,9 +61,9 @@ func (p *Perms) GetAttributeByIDs(
 	ctx context.Context,
 	attrIds ...int64,
 ) ([]*permissions.RoleAttribute, error) {
-	ids := make([]jet.Expression, len(attrIds))
+	ids := make([]mysql.Expression, len(attrIds))
 	for i := range attrIds {
-		ids[i] = jet.Int64(attrIds[i])
+		ids[i] = mysql.Int64(attrIds[i])
 	}
 
 	tAttrs := table.FivenetRbacAttrs.AS("role_attribute")
@@ -77,7 +77,7 @@ func (p *Perms) GetAttributeByIDs(
 			tAttrs.ValidValues,
 		).
 		FROM(tAttrs).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tAttrs.ID.IN(ids...),
 		)).
 		LIMIT(1)
@@ -117,9 +117,9 @@ func (p *Perms) getAttributeFromDatabase(
 			tAttrs.ValidValues,
 		).
 		FROM(tAttrs).
-		WHERE(jet.AND(
-			tAttrs.PermissionID.EQ(jet.Int64(permId)),
-			tAttrs.Key.EQ(jet.String(string(key))),
+		WHERE(mysql.AND(
+			tAttrs.PermissionID.EQ(mysql.Int64(permId)),
+			tAttrs.Key.EQ(mysql.String(string(key))),
 		)).
 		LIMIT(1)
 
@@ -244,7 +244,7 @@ func (p *Perms) UpdateAttribute(
 			validValues,
 		).
 		WHERE(
-			tAttrs.ID.EQ(jet.Int64(attrId)),
+			tAttrs.ID.EQ(mysql.Int64(attrId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -298,9 +298,9 @@ func (p *Perms) GetJobAttributeValue(
 		FROM(
 			tJobAttrs,
 		).
-		WHERE(jet.AND(
-			tJobAttrs.Job.EQ(jet.String(job)),
-			tJobAttrs.AttrID.EQ(jet.Int64(attrId)),
+		WHERE(mysql.AND(
+			tJobAttrs.Job.EQ(mysql.String(job)),
+			tJobAttrs.AttrID.EQ(mysql.Int64(attrId)),
 		)).
 		LIMIT(1)
 
@@ -343,7 +343,7 @@ func (p *Perms) GetJobAttributes(
 					tPerms.ID.EQ(tAttrs.PermissionID),
 				),
 		).
-		WHERE(tJobAttrs.Job.EQ(jet.String(job)))
+		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
 
 	dest := []*permissions.RoleAttribute{}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -848,7 +848,7 @@ func (p *Perms) addOrUpdateAttributesToRole(
 				attrs[i].GetValue(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("VALUES(`value`)"))),
+				tRoleAttrs.Value.SET(mysql.StringExp(mysql.Raw("VALUES(`value`)"))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -872,15 +872,15 @@ func (p *Perms) RemoveAttributesFromRole(
 		return nil
 	}
 
-	ids := make([]jet.Expression, len(attrs))
+	ids := make([]mysql.Expression, len(attrs))
 	for i := range attrs {
-		ids[i] = jet.Int64(attrs[i].GetAttrId())
+		ids[i] = mysql.Int64(attrs[i].GetAttrId())
 	}
 
 	stmt := tRoleAttrs.
 		DELETE().
-		WHERE(jet.AND(
-			tRoleAttrs.RoleID.EQ(jet.Int64(roleId)),
+		WHERE(mysql.AND(
+			tRoleAttrs.RoleID.EQ(mysql.Int64(roleId)),
 			tRoleAttrs.AttrID.IN(ids...),
 		))
 
@@ -951,7 +951,7 @@ func (p *Perms) UpdateJobAttributes(
 			)
 		}
 
-		maxVal := jet.NULL
+		maxVal := mysql.NULL
 		if attr.GetMaxValues() != nil {
 			attr.GetMaxValues().Default(a.Type)
 
@@ -960,7 +960,7 @@ func (p *Perms) UpdateJobAttributes(
 				return fmt.Errorf("failed to marshal max values. %w", err)
 			}
 
-			maxVal = jet.String(string(out))
+			maxVal = mysql.String(string(out))
 		}
 
 		stmt := tJobAttrs.
@@ -975,7 +975,7 @@ func (p *Perms) UpdateJobAttributes(
 				maxVal,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tJobAttrs.MaxValues.SET(jet.StringExp(jet.Raw("VALUES(`max_values`)"))),
+				tJobAttrs.MaxValues.SET(mysql.StringExp(mysql.Raw("VALUES(`max_values`)"))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -991,7 +991,7 @@ func (p *Perms) UpdateJobAttributes(
 func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 	stmt := tJobAttrs.
 		DELETE().
-		WHERE(tJobAttrs.Job.EQ(jet.String(job)))
+		WHERE(tJobAttrs.Job.EQ(mysql.String(job)))
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for job attributes. %w", err)

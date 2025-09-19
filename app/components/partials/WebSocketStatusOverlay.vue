@@ -29,9 +29,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             duration: timeouts.notification,
         });
     } else if (previousStatus === 'CONNECTING' && status === 'CLOSED') {
-        if (notificationId.value !== undefined) {
-            return;
-        }
+        if (notificationId.value !== undefined) return;
 
         notificationId.value = uuidv4();
         toast.add({

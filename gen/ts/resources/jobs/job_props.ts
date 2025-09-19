@@ -78,8 +78,6 @@ export interface JobProps {
     settings?: JobSettings;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.jobs.QuickButtons
  */
 export interface QuickButtons {
@@ -237,7 +235,7 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
         super("resources.jobs.QuickButtons", [
             { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "math_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<QuickButtons>): QuickButtons {
         const message = globalThis.Object.create((this.messagePrototype!));

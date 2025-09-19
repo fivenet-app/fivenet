@@ -9,6 +9,7 @@ package documents
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
@@ -1671,10 +1672,9 @@ func (x *UpdateDocumentResponse) GetDocument() *documents.Document {
 }
 
 type DeleteDocumentRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
-	// @sanitize: method=StripTags
-	Reason        *string `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
+	Reason        *string                `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2040,15 +2040,13 @@ func (x *CreateDocumentResponse) GetId() int64 {
 }
 
 type UpdateDocumentRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
-	CategoryId *int64                 `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	// @sanitize: method=StripTags
-	Title       string              `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
-	Content     *content.Content    `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	ContentType content.ContentType `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Data        *string             `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	// @sanitize
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
+	CategoryId    *int64                    `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	Title         string                    `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
+	Content       *content.Content          `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	ContentType   content.ContentType       `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	Data          *string                   `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	State         string                    `protobuf:"bytes,7,opt,name=state,proto3" json:"state,omitempty"`
 	Closed        bool                      `protobuf:"varint,8,opt,name=closed,proto3" json:"closed,omitempty"`
 	Draft         bool                      `protobuf:"varint,9,opt,name=draft,proto3" json:"draft,omitempty"`
@@ -2391,10 +2389,9 @@ func (x *ListDocumentReqsResponse) GetRequests() []*documents.DocRequest {
 }
 
 type CreateDocumentReqRequest struct {
-	state       protoimpl.MessageState    `protogen:"open.v1"`
-	DocumentId  int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	RequestType documents.DocActivityType `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.DocActivityType" json:"request_type,omitempty"`
-	// @sanitize
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	DocumentId    int64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RequestType   documents.DocActivityType  `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.DocActivityType" json:"request_type,omitempty"`
 	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	Data          *documents.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2504,10 +2501,9 @@ func (x *CreateDocumentReqResponse) GetRequest() *documents.DocRequest {
 }
 
 type UpdateDocumentReqRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	RequestId  int64                  `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	// @sanitize
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	DocumentId    int64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RequestId     int64                      `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
 	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	Data          *documents.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Accepted      bool                       `protobuf:"varint,5,opt,name=accepted,proto3" json:"accepted,omitempty"`
@@ -3468,12 +3464,11 @@ func (x *ToggleDocumentPinResponse) GetPin() *documents.DocumentPin {
 }
 
 type SetDocumentReminderRequest struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	ReminderTime *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=reminder_time,json=reminderTime,proto3,oneof" json:"reminder_time,omitempty"`
-	// @sanitize: method=StripTags
-	Message          *string `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
-	MaxReminderCount int32   `protobuf:"varint,4,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId       int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	ReminderTime     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=reminder_time,json=reminderTime,proto3,oneof" json:"reminder_time,omitempty"`
+	Message          *string                `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message,omitempty"`
+	MaxReminderCount int32                  `protobuf:"varint,4,opt,name=max_reminder_count,json=maxReminderCount,proto3" json:"max_reminder_count,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -3576,7 +3571,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"Y\n" +
 	"\x15ListTemplatesResponse\x12@\n" +
 	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
@@ -3687,12 +3682,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
 	"\x15DeleteCommentResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x80\x01\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x91\x01\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
-	"documentId\x12*\n" +
-	"\x06reason\x18\x02 \x01(\tB\r\xbaH\n" +
+	"documentId\x12;\n" +
+	"\x06reason\x18\x02 \x01(\tB\x1e\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x00\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x18\n" +
 	"\x16DeleteDocumentResponse\"P\n" +
@@ -3715,18 +3710,18 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xe3\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xfa\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
 	"documentId\x12$\n" +
 	"\vcategory_id\x18\x02 \x01(\x03H\x00R\n" +
-	"categoryId\x88\x01\x01\x122\n" +
-	"\x05title\x18\x03 \x01(\tB\x1c\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
+	"categoryId\x88\x01\x01\x12C\n" +
+	"\x05title\x18\x03 \x01(\tB-\xda\xf3\x18\r\b\x01\x12\tStripTags\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
 	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12R\n" +
 	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\"\n" +
-	"\x04data\x18\x06 \x01(\tB\t\xbaH\x06r\x04(\xc0\x84=H\x01R\x04data\x88\x01\x01\x12\x1d\n" +
-	"\x05state\x18\a \x01(\tB\a\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
+	"\x04data\x18\x06 \x01(\tB\t\xbaH\x06r\x04(\xc0\x84=H\x01R\x04data\x88\x01\x01\x12#\n" +
+	"\x05state\x18\a \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x16\n" +
 	"\x06closed\x18\b \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\t \x01(\bR\x05draft\x12\x16\n" +
 	"\x06public\x18\n" +
@@ -3759,23 +3754,23 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12A\n" +
-	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\x92\x02\n" +
+	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\x98\x02\n" +
 	"\x18CreateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12[\n" +
-	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeB\x12\xbaH\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
+	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeB\x12\xbaH\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_data\"V\n" +
 	"\x19CreateDocumentReqResponse\x129\n" +
-	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xf0\x01\n" +
+	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xf6\x01\n" +
 	"\x18UpdateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\x03R\trequestId\x12%\n" +
-	"\x06reason\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
+	"request_id\x18\x02 \x01(\x03R\trequestId\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01\x12\x1a\n" +
 	"\baccepted\x18\x05 \x01(\bR\bacceptedB\t\n" +
 	"\a_reasonB\a\n" +
@@ -3842,12 +3837,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\t_personal\"n\n" +
 	"\x19ToggleDocumentPinResponse\x12I\n" +
 	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
-	"\x04_pin\"\x87\x02\n" +
+	"\x04_pin\"\x98\x02\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
-	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x12'\n" +
-	"\amessage\x18\x03 \x01(\tB\b\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
+	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x128\n" +
+	"\amessage\x18\x03 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
 	"\x12max_reminder_count\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
 	"(\x01R\x10maxReminderCountB\x10\n" +
 	"\x0e_reminder_timeB\n" +

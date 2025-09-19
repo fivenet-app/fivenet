@@ -3,6 +3,12 @@
 
 package wiki
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreatePageRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,14 +17,21 @@ func (m *CreatePageRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreatePageResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeletePageRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -27,6 +40,8 @@ func (m *DeletePageRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeletePageResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -35,6 +50,8 @@ func (m *DeletePageResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetPageRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -43,6 +60,8 @@ func (m *GetPageRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetPageResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -60,6 +79,8 @@ func (m *GetPageResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListPageActivityRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -77,6 +98,8 @@ func (m *ListPageActivityRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListPageActivityResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -106,9 +129,16 @@ func (m *ListPageActivityResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListPagesRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	// Field: Pagination
@@ -118,6 +148,11 @@ func (m *ListPagesRequest) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Search
+	if m.Search != nil {
+		*m.Search = htmlsanitizer.Sanitize(*m.Search)
 	}
 
 	// Field: Sort
@@ -132,6 +167,8 @@ func (m *ListPagesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListPagesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -161,6 +198,8 @@ func (m *ListPagesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdatePageRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -178,6 +217,8 @@ func (m *UpdatePageRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdatePageResponse) Sanitize() error {
 	if m == nil {
 		return nil

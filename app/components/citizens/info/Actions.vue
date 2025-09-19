@@ -43,9 +43,7 @@ const setTrafficPointsModal = overlay.create(SetTrafficPointsModal);
 const setMugshotModal = overlay.create(SetMugshotModal);
 
 function openTemplates(): void {
-    if (!props.user) {
-        return;
-    }
+    if (!props.user) return;
 
     clipboardStore.addUser(props.user, true);
 
@@ -65,9 +63,7 @@ function copyLinkToClipboard(): void {
 
 defineShortcuts({
     'c-w': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) {
-            return;
-        }
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) return;
 
         setWantedModal.open({
             user: props.user,
@@ -75,9 +71,7 @@ defineShortcuts({
         });
     },
     'c-j': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) {
-            return;
-        }
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) return;
 
         setJobModal.open({
             user: props.user,
@@ -85,9 +79,7 @@ defineShortcuts({
         });
     },
     'c-p': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
-            return;
-        }
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) return;
 
         setTrafficPointsModal.open({
             user: props.user,
@@ -95,9 +87,7 @@ defineShortcuts({
         });
     },
     'c-m': () => {
-        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) {
-            return;
-        }
+        if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) return;
 
         setMugshotModal.open({
             user: props.user,
@@ -105,9 +95,7 @@ defineShortcuts({
         });
     },
     'c-d': () => {
-        if (!can('documents.DocumentsService/UpdateDocument').value) {
-            return;
-        }
+        if (!can('documents.DocumentsService/UpdateDocument').value) return;
 
         openTemplates();
     },

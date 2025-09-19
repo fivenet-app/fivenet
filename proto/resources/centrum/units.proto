@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/attributes.proto";
 import "resources/centrum/units_access.proto";
 import "resources/jobs/colleagues.proto";
@@ -17,28 +18,44 @@ message Unit {
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 15 [(buf.validate.field).string.max_len = 50];
-  // @sanitize
-  string name = 5 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 24
-  }];
-  // @sanitize
-  string initials = 6 [(buf.validate.field).string = {
-    min_len: 2
-    max_len: 4
-  }];
-  // @sanitize: method=StripTags
-  string color = 7 [(buf.validate.field).string = {
-    len: 7
-    pattern: "^#[A-Fa-f0-9]{6}$"
-  }];
-  // @sanitize: method=StripTags
-  optional string icon = 16 [(buf.validate.field).string = {
-    max_len: 128
-    suffix: "Icon"
-  }];
-  // @sanitize
-  optional string description = 8 [(buf.validate.field).string.max_len = 255];
+  string name = 5 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 24
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string initials = 6 [
+    (buf.validate.field).string = {
+      min_len: 2
+      max_len: 4
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string color = 7 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string icon = 16 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string description = 8 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional UnitStatus status = 9;
   repeated UnitAssignment users = 11;
   optional UnitAttributes attributes = 12;
@@ -78,16 +95,22 @@ message UnitStatus {
   int64 unit_id = 3;
   optional resources.centrum.Unit unit = 4;
   StatusUnit status = 5 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  optional string reason = 6 [(buf.validate.field).string.max_len = 255];
-  // @sanitize
-  optional string code = 7 [(buf.validate.field).string.max_len = 20];
+  optional string reason = 6 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 7 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional int32 user_id = 8 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague user = 9;
   optional double x = 10;
   optional double y = 11;
-  // @sanitize
-  optional string postal = 12 [(buf.validate.field).string.max_len = 48];
+  optional string postal = 12 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional int32 creator_id = 13 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague creator = 14;
   optional string creator_job = 15 [(buf.validate.field).string.max_len = 20];

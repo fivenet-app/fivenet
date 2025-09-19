@@ -21,7 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	syncservice "github.com/fivenet-app/fivenet/v2025/services/sync"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -103,8 +103,8 @@ func NewServer(p Params) *Server {
 		tJobProps.Job,
 		tJobProps.LogoFileID,
 		2<<20,
-		func(parentID string) jet.BoolExpression {
-			return tJobProps.Job.EQ(jet.String(parentID))
+		func(parentID string) mysql.BoolExpression {
+			return tJobProps.Job.EQ(mysql.String(parentID))
 		},
 		filestore.UpdateJoinRow,
 		true,

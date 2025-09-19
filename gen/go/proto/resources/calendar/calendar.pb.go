@@ -7,6 +7,8 @@
 package calendar
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -84,25 +86,22 @@ func (RsvpResponses) EnumDescriptor() ([]byte, []int) {
 }
 
 type Calendar struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Job       *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	// @sanitize: method=StripTags
-	Name string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize: method=StripTags
-	Description *string `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Public      bool    `protobuf:"varint,8,opt,name=public,proto3" json:"public,omitempty"`
-	Closed      bool    `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
-	// @sanitize: method=StripTags
-	Color         string           `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
-	CreatorId     *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob    string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Subscription  *CalendarSub     `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
-	Access        *CalendarAccess  `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Public        bool                   `protobuf:"varint,8,opt,name=public,proto3" json:"public,omitempty"`
+	Closed        bool                   `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
+	Color         string                 `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
+	CreatorId     *int32                 `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator       *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	CreatorJob    string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	Subscription  *CalendarSub           `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
+	Access        *CalendarAccess        `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -243,19 +242,16 @@ func (x *Calendar) GetAccess() *CalendarAccess {
 }
 
 type CalendarShort struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	Job       *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	// @sanitize: method=StripTags
-	Name string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize: method=StripTags
-	Description *string `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Public      bool    `protobuf:"varint,8,opt,name=public,proto3" json:"public,omitempty"`
-	Closed      bool    `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
-	// @sanitize: method=StripTags
-	Color         string       `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
-	Subscription  *CalendarSub `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Name          string                 `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Public        bool                   `protobuf:"varint,8,opt,name=public,proto3" json:"public,omitempty"`
+	Closed        bool                   `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
+	Color         string                 `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
+	Subscription  *CalendarSub           `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -438,17 +434,16 @@ func (x *CalendarSub) GetMuted() bool {
 }
 
 type CalendarEntry struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CalendarId int64                  `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
-	Calendar   *Calendar              `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
-	Job        *string                `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	StartTime  *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime    *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
-	// @sanitize: method=StripTags
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	CalendarId    int64                   `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
+	Calendar      *Calendar               `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
+	Job           *string                 `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	StartTime     *timestamp.Timestamp    `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       *timestamp.Timestamp    `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
 	Title         string                  `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
 	Content       *content.Content        `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
 	Closed        bool                    `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
@@ -618,7 +613,6 @@ func (x *CalendarEntry) GetRsvp() *CalendarEntryRSVP {
 	return nil
 }
 
-// @dbscanner: json
 type CalendarEntryRecurring struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Every         string                 `protobuf:"bytes,1,opt,name=every,proto3" json:"every,omitempty"`
@@ -759,7 +753,7 @@ var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a\x1fresources/calendar/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe8\x06\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/calendar/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x9b\a\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -768,14 +762,13 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01\x12\x1e\n" +
-	"\x04name\x18\x06 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x04R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01\x12/\n" +
+	"\x04name\x18\x06 \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12@\n" +
+	"\vdescription\x18\a \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x04R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
-	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1d\n" +
+	"\x06closed\x18\t \x01(\bR\x06closed\x12.\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x18\fR\x05color\x12+\n" +
+	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18\fR\x05color\x12+\n" +
 	"\n" +
 	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x05R\tcreatorId\x88\x01\x01\x12O\n" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12(\n" +
@@ -791,19 +784,18 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x0f\n" +
-	"\r_subscription\"\xc8\x03\n" +
+	"\r_subscription\"\xfb\x03\n" +
 	"\rCalendarShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x01R\x03job\x88\x01\x01\x12\x1e\n" +
-	"\x04name\x18\x06 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12/\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04H\x02R\vdescription\x88\x01\x01\x12\x16\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x01R\x03job\x88\x01\x01\x12/\n" +
+	"\x04name\x18\x06 \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x04name\x12@\n" +
+	"\vdescription\x18\a \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x04H\x02R\vdescription\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\b \x01(\bR\x06public\x12\x16\n" +
-	"\x06closed\x18\t \x01(\bR\x06closed\x12\x1d\n" +
+	"\x06closed\x18\t \x01(\bR\x06closed\x12.\n" +
 	"\x05color\x18\n" +
-	" \x01(\tB\a\xbaH\x04r\x02\x18\fR\x05color\x12H\n" +
+	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18\fR\x05color\x12H\n" +
 	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\x03R\fsubscription\x88\x01\x01B\r\n" +
 	"\v_created_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
@@ -819,7 +811,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\tconfirmed\x18\x05 \x01(\bR\tconfirmed\x12\x14\n" +
 	"\x05muted\x18\x06 \x01(\bR\x05mutedB\a\n" +
 	"\x05_userB\r\n" +
-	"\v_created_at\"\xec\b\n" +
+	"\v_created_at\"\xfd\b\n" +
 	"\rCalendarEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -834,10 +826,9 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x04R\x03job\x88\x01\x01\x12=\n" +
 	"\n" +
 	"start_time\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tstartTime\x12>\n" +
-	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12 \n" +
+	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x121\n" +
 	"\x05title\x18\n" +
-	" \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12;\n" +
+	" \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12;\n" +
 	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +
 	"\x06closed\x18\f \x01(\bR\x06closed\x12 \n" +
 	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12+\n" +
@@ -862,11 +853,11 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\b_creatorB\f\n" +
 	"\n" +
 	"_recurringB\a\n" +
-	"\x05_rsvp\"\x89\x01\n" +
+	"\x05_rsvp\"\x91\x01\n" +
 	"\x16CalendarEntryRecurring\x12\x14\n" +
 	"\x05every\x18\x01 \x01(\tR\x05every\x12\x14\n" +
 	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
-	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01B\b\n" +
+	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
 	"\x06_until\"\xaa\x02\n" +
 	"\x11CalendarEntryRSVP\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12B\n" +

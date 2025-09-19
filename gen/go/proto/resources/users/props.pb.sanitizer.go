@@ -7,13 +7,19 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserProps) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Email
+	// Field: BloodType
+	if m.BloodType != nil {
+		*m.BloodType = htmlsanitizer.Sanitize(*m.BloodType)
+	}
 
+	// Field: Email
 	if m.Email != nil {
 		*m.Email = htmlsanitizer.StripTags(*m.Email)
 	}
@@ -34,6 +40,11 @@ func (m *UserProps) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: JobName
+	if m.JobName != nil {
+		*m.JobName = htmlsanitizer.Sanitize(*m.JobName)
 	}
 
 	// Field: Labels

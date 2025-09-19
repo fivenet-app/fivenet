@@ -39,9 +39,7 @@ const state = reactive({
 const categories = ['jobassets'];
 
 async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
-    if (!values.file) {
-        return;
-    }
+    if (!values.file) return;
 
     try {
         const call = filestoreFilestoreClient.upload({

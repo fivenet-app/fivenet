@@ -20,14 +20,10 @@ export interface EmailSettings {
      */
     emailId: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string signature = 2
      */
     signature?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string blocked_emails = 3
      */
     blockedEmails: string[];
@@ -37,8 +33,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
     constructor() {
         super("resources.mailer.EmailSettings", [
             { no: 1, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
-            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } } } }
+            { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<EmailSettings>): EmailSettings {

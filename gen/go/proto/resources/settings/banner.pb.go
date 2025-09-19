@@ -7,6 +7,7 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -24,17 +25,13 @@ const (
 )
 
 type BannerMessage struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// @sanitize: method
-	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize: method=StripTags
-	Icon *string `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	// @sanitize: method=StripTags
-	Color         *string              `protobuf:"bytes,4,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"createdAt"`
-	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expiresAt"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Icon          *string                `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Color         *string                `protobuf:"bytes,4,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"createdAt"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expiresAt"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -115,13 +112,13 @@ var File_resources_settings_banner_proto protoreflect.FileDescriptor
 
 const file_resources_settings_banner_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xed\x02\n" +
-	"\rBannerMessage\x12\x17\n" +
-	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x02id\x12#\n" +
-	"\x05title\x18\x02 \x01(\tB\r\xbaH\n" +
-	"\xd8\x01\x01r\x05\x10\x03\x18\x80\x04R\x05title\x12'\n" +
-	"\x04icon\x18\x03 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x00R\x04icon\x88\x01\x01\x12\"\n" +
-	"\x05color\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x01R\x05color\x88\x01\x01\x12T\n" +
+	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa6\x03\n" +
+	"\rBannerMessage\x12(\n" +
+	"\x02id\x18\x01 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18@R\x02id\x12)\n" +
+	"\x05title\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\x80\x04R\x05title\x128\n" +
+	"\x04icon\x18\x03 \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x00R\x04icon\x88\x01\x01\x123\n" +
+	"\x05color\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18\fH\x01R\x05color\x88\x01\x01\x12T\n" +
 	"\n" +
 	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampB\x15\x9a\x84\x9e\x03\x10json:\"createdAt\"R\tcreatedAt\x12Y\n" +
 	"\n" +

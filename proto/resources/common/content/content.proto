@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.common.content;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/struct.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;content";
@@ -16,8 +17,10 @@ enum ContentType {
 message Content {
   optional string version = 1 [(buf.validate.field).string.max_len = 24];
   optional JSONNode content = 2;
-  // @sanitize
-  optional string raw_content = 3 [(buf.validate.field).string = {max_bytes: 2000000}];
+  optional string raw_content = 3 [
+    (buf.validate.field).string = {max_bytes: 2000000},
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 }
 
 enum NodeType {
@@ -32,23 +35,35 @@ enum NodeType {
 
 message JSONNode {
   NodeType type = 1 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize: method=StripTags
-  optional string id = 2;
-  // @sanitize: method=StripTags
-  string tag = 3;
-  // @sanitize: method=StripTags
-  map<string, string> attrs = 4;
-  // @sanitize: method=StripTags
-  optional string text = 5;
+  optional string id = 2 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  string tag = 3 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  map<string, string> attrs = 4 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  optional string text = 5 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
   repeated JSONNode content = 6;
 }
 
 message TiptapJSONDocument {
   google.protobuf.Struct json = 1;
 
-  // @sanitize: method=StripTags
-  string summary = 2;
+  string summary = 2 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
   uint32 word_count = 3;
-  // @sanitize: method=StripTags
-  string first_heading = 4;
+  string first_heading = 4 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
 }

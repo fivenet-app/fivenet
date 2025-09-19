@@ -3,6 +3,12 @@
 
 package jobs
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Job) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,13 +26,29 @@ func (m *Job) Sanitize() error {
 
 	}
 
+	// Field: Label
+	m.Label = htmlsanitizer.Sanitize(m.Label)
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobGrade) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: JobName
+	if m.JobName != nil {
+		*m.JobName = htmlsanitizer.Sanitize(*m.JobName)
+	}
+
+	// Field: Label
+	m.Label = htmlsanitizer.Sanitize(m.Label)
 
 	return nil
 }

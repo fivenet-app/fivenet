@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.qualifications;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/file/file.proto";
@@ -24,15 +26,27 @@ message Qualification {
   bool closed = 7;
   bool draft = 8;
   bool public = 9;
-  // @sanitize: method=StripTags
-  string abbreviation = 10 [(buf.validate.field).string.max_len = 20];
-  // @sanitize
-  string title = 11 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 1024
-  }];
-  // @sanitize: method=StripTags
-  optional string description = 12 [(buf.validate.field).string.max_len = 512];
+  string abbreviation = 10 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  string title = 11 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 1024
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 12 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   resources.common.content.Content content = 13;
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
@@ -47,8 +61,13 @@ message Qualification {
   optional QualificationResult result = 24;
   optional QualificationRequest request = 25;
   bool label_sync_enabled = 26;
-  // @sanitize: method=StripTags
-  optional string label_sync_format = 27 [(buf.validate.field).string.max_len = 128];
+  optional string label_sync_format = 27 [
+    (buf.validate.field).string.max_len = 128,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   repeated resources.file.File files = 28 [(tagger.tags) = "alias:\"files\""];
 }
 
@@ -62,15 +81,27 @@ message QualificationShort {
   bool closed = 7;
   bool draft = 8;
   bool public = 9;
-  // @sanitize: method=StripTags
-  string abbreviation = 10 [(buf.validate.field).string.max_len = 20];
-  // @sanitize
-  string title = 11 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 1024
-  }];
-  // @sanitize: method=StripTags
-  optional string description = 12 [(buf.validate.field).string.max_len = 512];
+  string abbreviation = 10 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  string title = 11 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 1024
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 12 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 15 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 16 [(buf.validate.field).string.max_len = 20];
@@ -88,8 +119,9 @@ message QualificationRequirement {
   optional QualificationShort target_qualification = 5 [(tagger.tags) = "alias:\"targetqualification\""];
 }
 
-// @dbscanner: json
 message QualificationDiscordSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   optional string role_name = 1 [(buf.validate.field).string.max_len = 64];
   optional string role_format = 2 [(buf.validate.field).string.max_len = 64];
 }
@@ -101,8 +133,9 @@ enum QualificationExamMode {
   QUALIFICATION_EXAM_MODE_ENABLED = 3;
 }
 
-// @dbscanner: json
 message QualificationExamSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   google.protobuf.Duration time = 1 [
     (buf.validate.field).duration = {
       lt: {seconds: 1036800} /* 24 hours */
@@ -141,12 +174,22 @@ message QualificationRequest {
     (tagger.tags) = "sql:\"primary_key\""
   ];
   resources.users.UserShort user = 6 [(tagger.tags) = "alias:\"user\""];
-  // @sanitize: method=StripTags
-  optional string user_comment = 7 [(buf.validate.field).string = {max_len: 512}];
+  optional string user_comment = 7 [
+    (buf.validate.field).string = {max_len: 512},
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional RequestStatus status = 8 [(buf.validate.field).enum.defined_only = true];
   optional resources.timestamp.Timestamp approved_at = 9;
-  // @sanitize: method=StripTags
-  optional string approver_comment = 10 [(buf.validate.field).string = {max_len: 512}];
+  optional string approver_comment = 10 [
+    (buf.validate.field).string = {max_len: 512},
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   optional int32 approver_id = 11 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort approver = 12 [(tagger.tags) = "alias:\"approver\""];
   optional string approver_job = 13;
@@ -172,8 +215,13 @@ message QualificationResult {
     gte: 0
     lte: 1000
   }];
-  // @sanitize: method=StripTags
-  string summary = 10 [(buf.validate.field).string.max_len = 512];
+  string summary = 10 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
   resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];

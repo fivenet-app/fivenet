@@ -282,8 +282,6 @@ export interface CreateThreadRequest {
      */
     message?: Message;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string recipients = 3
      */
     recipients: string[];
@@ -464,8 +462,6 @@ export interface PostMessageRequest {
      */
     message?: Message;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string recipients = 2
      */
     recipients: string[];
@@ -559,7 +555,7 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
     constructor() {
         super("services.mailer.ListEmailsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "emails", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Email, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "emails", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Email, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListEmailsResponse>): ListEmailsResponse {
@@ -1455,7 +1451,7 @@ class ListThreadsResponse$Type extends MessageType<ListThreadsResponse> {
     constructor() {
         super("services.mailer.ListThreadsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "threads", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Thread, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "threads", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Thread, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListThreadsResponse>): ListThreadsResponse {
@@ -1611,7 +1607,7 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         super("services.mailer.CreateThreadRequest", [
             { no: 1, name: "thread", kind: "message", T: () => Thread, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "message", kind: "message", T: () => Message, options: { "buf.validate.field": { required: true } } },
-            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "15", items: { string: { minLen: "6", maxLen: "80" } } } } } }
+            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "15", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<CreateThreadRequest>): CreateThreadRequest {
@@ -2242,7 +2238,7 @@ class SearchThreadsResponse$Type extends MessageType<SearchThreadsResponse> {
     constructor() {
         super("services.mailer.SearchThreadsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<SearchThreadsResponse>): SearchThreadsResponse {
@@ -2365,7 +2361,7 @@ class ListThreadMessagesResponse$Type extends MessageType<ListThreadMessagesResp
     constructor() {
         super("services.mailer.ListThreadMessagesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "messages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Message, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListThreadMessagesResponse>): ListThreadMessagesResponse {
@@ -2419,7 +2415,7 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
     constructor() {
         super("services.mailer.PostMessageRequest", [
             { no: 1, name: "message", kind: "message", T: () => Message, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { minLen: "6", maxLen: "80" } } } } } }
+            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<PostMessageRequest>): PostMessageRequest {

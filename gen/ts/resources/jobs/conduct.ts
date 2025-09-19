@@ -42,8 +42,6 @@ export interface ConductEntry {
      */
     type: ConductType;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string message = 7
      */
     message: string;
@@ -111,7 +109,7 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "type", kind: "enum", T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "2048" } } } },
+            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "2048" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 9, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 10, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },

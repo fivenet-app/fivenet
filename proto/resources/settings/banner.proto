@@ -3,29 +3,45 @@ syntax = "proto3";
 package resources.settings;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
 
 message BannerMessage {
-  // @sanitize: method=StripTags
-  string id = 1 [(buf.validate.field).string.max_len = 64];
-  // @sanitize: method
+  string id = 1 [
+    (buf.validate.field).string.max_len = 64,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string title = 2 [
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (buf.validate.field).string = {
       min_len: 3
       max_len: 512
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string icon = 3 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
     }
   ];
-  // @sanitize: method=StripTags
-  optional string icon = 3 [(buf.validate.field).string = {
-    max_len: 128
-    suffix: "Icon"
-  }];
-  // @sanitize: method=StripTags
-  optional string color = 4 [(buf.validate.field).string.max_len = 12];
+  optional string color = 4 [
+    (buf.validate.field).string.max_len = 12,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   resources.timestamp.Timestamp created_at = 5 [(tagger.tags) = "json:\"createdAt\""];
   optional resources.timestamp.Timestamp expires_at = 6 [(tagger.tags) = "json:\"expiresAt\""];
 }

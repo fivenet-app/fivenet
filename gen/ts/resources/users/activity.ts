@@ -48,14 +48,10 @@ export interface UserActivity {
      */
     targetUser?: UserShort;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string key = 8
      */
     key: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string reason = 9
      */
     reason: string;
@@ -73,8 +69,6 @@ export interface UserActivity {
     newValue: string;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.users.UserActivityData
  */
 export interface UserActivityData {
@@ -349,8 +343,8 @@ class UserActivity$Type extends MessageType<UserActivity> {
             { no: 5, name: "source_user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"source_user\"" } },
             { no: 6, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "alias:\"target_user_id\"" } },
             { no: 7, name: "target_user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"target_user\"" } },
-            { no: 8, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } }, "tagger.tags": "alias:\"user_activity.key\"" } },
-            { no: 9, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user_activity.reason\"" } },
+            { no: 8, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"user_activity.key\"" } },
+            { no: 9, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"user_activity.reason\"" } },
             { no: 10, name: "data", kind: "message", T: () => UserActivityData, options: { "tagger.tags": "alias:\"user_activity.data\"" } },
             { no: 11, name: "old_value", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user_activity.old_value\"" } },
             { no: 12, name: "new_value", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "tagger.tags": "alias:\"user_activity.new_value\"" } }
@@ -482,7 +476,7 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
             { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => CitizenDocumentRelation },
             { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => JailChange },
             { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => FineChange }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UserActivityData>): UserActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));

@@ -48,8 +48,6 @@ export interface Document {
      */
     category?: Category;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 7
      */
     title: string;
@@ -62,8 +60,6 @@ export interface Document {
      */
     content?: Content;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string data = 10
      */
     data?: string;
@@ -84,8 +80,6 @@ export interface Document {
      */
     creatorJobLabel?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string state = 15
      */
     state: string;
@@ -151,8 +145,6 @@ export interface DocumentShort {
      */
     category?: Category;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 7
      */
     title: string;
@@ -181,8 +173,6 @@ export interface DocumentShort {
      */
     creatorJobLabel?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string state = 15
      */
     state: string;
@@ -419,15 +409,15 @@ class Document$Type extends MessageType<Document> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
-            { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } }, "tagger.tags": "alias:\"data\"" } },
+            { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"data\"" } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -628,14 +618,14 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },

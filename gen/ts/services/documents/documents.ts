@@ -422,8 +422,6 @@ export interface DeleteDocumentRequest {
      */
     documentId: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string reason = 2
      */
     reason?: string;
@@ -508,8 +506,6 @@ export interface UpdateDocumentRequest {
      */
     categoryId?: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 3
      */
     title: string;
@@ -526,8 +522,6 @@ export interface UpdateDocumentRequest {
      */
     data?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string state = 7
      */
     state: string;
@@ -625,8 +619,6 @@ export interface CreateDocumentReqRequest {
      */
     requestType: DocActivityType;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
@@ -657,8 +649,6 @@ export interface UpdateDocumentReqRequest {
      */
     requestId: number;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 3
      */
     reason?: string;
@@ -892,8 +882,6 @@ export interface SetDocumentReminderRequest {
      */
     reminderTime?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string message = 3
      */
     message?: string;
@@ -1518,7 +1506,7 @@ class ListDocumentsResponse$Type extends MessageType<ListDocumentsResponse> {
     constructor() {
         super("services.documents.ListDocumentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentsResponse>): ListDocumentsResponse {
@@ -2277,7 +2265,7 @@ class GetCommentsResponse$Type extends MessageType<GetCommentsResponse> {
     constructor() {
         super("services.documents.GetCommentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "comments", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Comment, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "comments", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Comment, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<GetCommentsResponse>): GetCommentsResponse {
@@ -2646,7 +2634,7 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.documents.DeleteDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDocumentRequest>): DeleteDocumentRequest {
@@ -3032,11 +3020,11 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         super("services.documents.UpdateDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "tagger.tags": "alias:\"title\"" } },
+            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" }, "tagger.tags": "alias:\"title\"" } },
             { no: 4, name: "content", kind: "message", T: () => Content },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } } } },
-            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
+            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -3232,7 +3220,7 @@ class ListDocumentActivityResponse$Type extends MessageType<ListDocumentActivity
     constructor() {
         super("services.documents.ListDocumentActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocActivity, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocActivity, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentActivityResponse>): ListDocumentActivityResponse {
@@ -3340,7 +3328,7 @@ class ListDocumentReqsResponse$Type extends MessageType<ListDocumentReqsResponse
     constructor() {
         super("services.documents.ListDocumentReqsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocRequest, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "requests", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocRequest, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentReqsResponse>): ListDocumentReqsResponse {
@@ -3395,7 +3383,7 @@ class CreateDocumentReqRequest$Type extends MessageType<CreateDocumentReqRequest
         super("services.documents.CreateDocumentReqRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "buf.validate.field": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "data", kind: "message", T: () => DocActivityData }
         ]);
     }
@@ -3510,7 +3498,7 @@ class UpdateDocumentReqRequest$Type extends MessageType<UpdateDocumentReqRequest
         super("services.documents.UpdateDocumentReqRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "request_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "data", kind: "message", T: () => DocActivityData },
             { no: 5, name: "accepted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -3986,7 +3974,7 @@ class ListUserDocumentsResponse$Type extends MessageType<ListUserDocumentsRespon
     constructor() {
         super("services.documents.ListUserDocumentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "relations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentRelation, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "relations", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentRelation, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListUserDocumentsResponse>): ListUserDocumentsResponse {
@@ -4355,7 +4343,7 @@ class ListDocumentPinsResponse$Type extends MessageType<ListDocumentPinsResponse
     constructor() {
         super("services.documents.ListDocumentPinsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "documents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DocumentShort, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentPinsResponse>): ListDocumentPinsResponse {
@@ -4518,7 +4506,7 @@ class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderReq
         super("services.documents.SetDocumentReminderRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "reminder_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } } } },
+            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 4, name: "max_reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } }
         ]);
     }

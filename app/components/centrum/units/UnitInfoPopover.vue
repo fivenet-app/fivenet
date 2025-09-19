@@ -76,7 +76,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                     <ul v-else class="inline-flex flex-col text-xs font-normal">
                         <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center gap-1">
                             <span>{{ user.user?.firstname }} {{ user.user?.lastname }}</span>
-                            <PhoneNumberBlock :number="user.user?.phoneNumber" :hide-number="true" />
+                            <PhoneNumberBlock :number="user.user?.phoneNumber" hide-number />
                         </li>
                     </ul>
                 </div>

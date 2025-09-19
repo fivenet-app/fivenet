@@ -174,8 +174,6 @@ export interface CronjobCompletedEvent {
  */
 export interface GenericCronData {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: map<string, string> attributes = 1
      */
     attributes: {
@@ -566,7 +564,7 @@ export const CronjobCompletedEvent = new CronjobCompletedEvent$Type();
 class GenericCronData$Type extends MessageType<GenericCronData> {
     constructor() {
         super("resources.common.cron.GenericCronData", [
-            { no: 1, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+            { no: 1, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<GenericCronData>): GenericCronData {

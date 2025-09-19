@@ -8,7 +8,7 @@ import (
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -32,9 +32,9 @@ func (s *Server) DeleteOAuth2Connection(
 
 	stmt := tOAuth2Accs.
 		DELETE().
-		WHERE(jet.AND(
-			tOAuth2Accs.AccountID.EQ(jet.Int64(claims.AccID)),
-			tOAuth2Accs.Provider.EQ(jet.String(req.GetProvider())),
+		WHERE(mysql.AND(
+			tOAuth2Accs.AccountID.EQ(mysql.Int64(claims.AccID)),
+			tOAuth2Accs.Provider.EQ(mysql.String(req.GetProvider())),
 		)).
 		LIMIT(1)
 

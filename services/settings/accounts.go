@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -36,24 +36,24 @@ func (s *Server) ListAccounts(
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
-	var t jet.ReadableTable = tAccounts
-	condition := jet.Bool(true)
+	var t mysql.ReadableTable = tAccounts
+	condition := mysql.Bool(true)
 	if req.License != nil && req.GetLicense() != "" {
 		condition = condition.AND(
-			tAccounts.License.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
+			tAccounts.License.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetLicense()))),
 		)
 	}
 	if req.Enabled != nil {
-		condition = condition.AND(tAccounts.Enabled.EQ(jet.Bool(req.GetEnabled())))
+		condition = condition.AND(tAccounts.Enabled.EQ(mysql.Bool(req.GetEnabled())))
 	}
 	if req.Username != nil && req.GetUsername() != "" {
 		condition = condition.AND(
-			tAccounts.Username.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetUsername()))),
+			tAccounts.Username.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetUsername()))),
 		)
 	}
 	if req.ExternalId != nil && req.GetExternalId() != "" {
 		condition = condition.AND(
-			tOauth2.ExternalID.LIKE(jet.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
+			tOauth2.ExternalID.LIKE(mysql.String(fmt.Sprintf("%%%s%%", req.GetExternalId()))),
 		)
 		t = t.INNER_JOIN(tOauth2,
 			tOauth2.AccountID.EQ(tAccounts.ID),
@@ -62,7 +62,7 @@ func (s *Server) ListAccounts(
 
 	countStmt := tAccounts.
 		SELECT(
-			jet.COUNT(tAccounts.ID).AS("data_count.total"),
+			mysql.COUNT(tAccounts.ID).AS("data_count.total"),
 		).
 		FROM(t).
 		WHERE(condition)
@@ -83,9 +83,9 @@ func (s *Server) ListAccounts(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "license":
 			column = tAccounts.License
@@ -127,9 +127,9 @@ func (s *Server) ListAccounts(
 		return resp, nil
 	}
 
-	ids := make([]jet.Expression, len(accountIDs))
+	ids := make([]mysql.Expression, len(accountIDs))
 	for i, id := range accountIDs {
-		ids[i] = jet.Int64(id)
+		ids[i] = mysql.Int64(id)
 	}
 
 	// Now, fetch all accounts and their oauth2 connections for these IDs
@@ -163,8 +163,6 @@ func (s *Server) ListAccounts(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetAccounts()))
-
 	return resp, nil
 }
 
@@ -181,7 +179,7 @@ func (s *Server) getAccount(ctx context.Context, id int64) (*accounts.Account, e
 		).
 		FROM(tAccounts).
 		WHERE(
-			tAccounts.ID.EQ(jet.Int64(id)),
+			tAccounts.ID.EQ(mysql.Int64(id)),
 		)
 
 	var account accounts.Account
@@ -218,11 +216,11 @@ func (s *Server) UpdateAccount(
 	updateSets := []interface{}{}
 
 	if req.Enabled != nil {
-		updateSets = append(updateSets, tAccounts.Enabled.SET(jet.Bool(req.GetEnabled())))
+		updateSets = append(updateSets, tAccounts.Enabled.SET(mysql.Bool(req.GetEnabled())))
 	}
 
 	if req.LastChar != nil && req.GetLastChar() > 0 {
-		updateSets = append(updateSets, tAccounts.LastChar.SET(jet.Int32(req.GetLastChar())))
+		updateSets = append(updateSets, tAccounts.LastChar.SET(mysql.Int32(req.GetLastChar())))
 	}
 
 	if len(updateSets) > 0 {
@@ -236,7 +234,7 @@ func (s *Server) UpdateAccount(
 
 		stmt = stmt.
 			WHERE(
-				tAccounts.ID.EQ(jet.Int64(req.GetId())),
+				tAccounts.ID.EQ(mysql.Int64(req.GetId())),
 			)
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
@@ -274,9 +272,9 @@ func (s *Server) DisconnectOAuth2Connection(
 
 	stmt := tOauth2.
 		DELETE().
-		WHERE(jet.AND(
-			tOauth2.AccountID.EQ(jet.Int64(req.GetId())),
-			tOauth2.Provider.EQ(jet.String(req.GetProviderName())),
+		WHERE(mysql.AND(
+			tOauth2.AccountID.EQ(mysql.Int64(req.GetId())),
+			tOauth2.Provider.EQ(mysql.String(req.GetProviderName())),
 		)).
 		LIMIT(1)
 
@@ -308,7 +306,7 @@ func (s *Server) DeleteAccount(
 
 	stmt := tAccounts.
 		DELETE().
-		WHERE(tAccounts.ID.EQ(jet.Int64(req.GetId()))).
+		WHERE(tAccounts.ID.EQ(mysql.Int64(req.GetId()))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -74,9 +74,9 @@ func (m *ItemsLenModule) generate(fs []pgs.File) {
 					continue
 				}
 
-				// check if the field option is present and true
+				// Check if the field option is present and true
 				var val bool
-				ok, err := fld.Extension(itemslenpb.E_ItemsLen, &val)
+				ok, err := fld.Extension(itemslenpb.E_Enabled, &val)
 				if ok && err == nil && val {
 					// This field is annotated for ItemsLen
 					fields = append(fields, fld.Name().UpperCamelCase().String())

@@ -184,18 +184,14 @@ export const useMailerStore = defineStore(
                     return;
                 }
 
-                if (data.senderId === selectedEmail.value?.id) {
-                    return;
-                }
+                if (data.senderId === selectedEmail.value?.id) return;
 
                 // Only set unread state when message isn't from same email and the user isn't active on that thread
                 const state = await setThreadState({
                     threadId: data.threadId,
                     unread: data.threadId !== selectedThread.value?.id,
                 });
-                if (state?.muted) {
-                    return;
-                }
+                if (state?.muted) return;
 
                 notifications.add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
@@ -232,9 +228,7 @@ export const useMailerStore = defineStore(
                     }
                 }
 
-                if (selectedEmail.value?.id !== newState.emailId) {
-                    return;
-                }
+                if (selectedEmail.value?.id !== newState.emailId) return;
 
                 if (selectedThread.value?.id === newState.threadId) {
                     selectedThread.value.state = newState;
@@ -258,15 +252,11 @@ export const useMailerStore = defineStore(
                 }
 
                 // Still no email addresses? Return here.
-                if (emails.value.length === 0) {
-                    return;
-                }
+                if (emails.value.length === 0) return;
 
                 const { isSuperuser } = useAuth();
                 // If is superuser and doesn't have a private email to check
-                if (isSuperuser.value && getPrivateEmail.value === undefined) {
-                    return;
-                }
+                if (isSuperuser.value && getPrivateEmail.value === undefined) return;
 
                 const emailIds = isSuperuser.value ? [getPrivateEmail.value!.id] : emails.value.map((e) => e.id);
                 // Truncate email ids to 10 if needed
@@ -482,9 +472,7 @@ export const useMailerStore = defineStore(
         };
 
         const getThread = async (threadId: number): Promise<Thread | undefined> => {
-            if (!selectedEmail.value) {
-                return;
-            }
+            if (!selectedEmail.value) return;
 
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -590,9 +578,7 @@ export const useMailerStore = defineStore(
             state: Partial<ThreadState>,
             notify: boolean = false,
         ): Promise<ThreadState | undefined> => {
-            if (!selectedEmail.value) {
-                return;
-            }
+            if (!selectedEmail.value) return;
 
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -643,9 +629,7 @@ export const useMailerStore = defineStore(
 
         // Messages
         const listThreadMessages = async (req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> => {
-            if (!selectedEmail.value) {
-                return;
-            }
+            if (!selectedEmail.value) return;
 
             const mailerMailerClient = await getMailerMailerClient();
 

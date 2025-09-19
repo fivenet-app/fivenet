@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -24,11 +24,11 @@ func (s *Server) ListCategories(
 ) (*pbdocuments.ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tDCategory.Job.EQ(jet.String(userInfo.GetJob()))
+	condition := tDCategory.Job.EQ(mysql.String(userInfo.GetJob()))
 	if !userInfo.GetSuperuser() {
-		condition = jet.AND(
+		condition = mysql.AND(
 			tDCategory.DeletedAt.IS_NULL(),
-			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
+			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
 		)
 	}
 
@@ -78,9 +78,9 @@ func (s *Server) getCategory(ctx context.Context, id int64) (*documents.Category
 		FROM(
 			tDCategory,
 		).
-		WHERE(jet.AND(
-			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(jet.Int64(id)),
+		WHERE(mysql.AND(
+			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
+			tDCategory.ID.EQ(mysql.Int64(id)),
 		)).
 		LIMIT(1)
 
@@ -159,9 +159,9 @@ func (s *Server) CreateOrUpdateCategory(
 				req.GetCategory().Color,
 				req.GetCategory().Icon,
 			).
-			WHERE(jet.AND(
-				tDCategory.ID.EQ(jet.Int64(req.GetCategory().GetId())),
-				tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
+			WHERE(mysql.AND(
+				tDCategory.ID.EQ(mysql.Int64(req.GetCategory().GetId())),
+				tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -203,9 +203,9 @@ func (s *Server) DeleteCategory(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if category.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tDCategory := table.FivenetDocumentsCategories
@@ -216,9 +216,9 @@ func (s *Server) DeleteCategory(
 		SET(
 			tDCategory.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tDCategory.Job.EQ(jet.String(userInfo.GetJob())),
-			tDCategory.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tDCategory.Job.EQ(mysql.String(userInfo.GetJob())),
+			tDCategory.ID.EQ(mysql.Int64(req.GetId())),
 		)).
 		LIMIT(1)
 

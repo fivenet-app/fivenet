@@ -281,9 +281,7 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
 
     if (parsed.attrList) {
         parsed.attrList?.forEach((a) => {
-            if (a.value?.validValues.oneofKind === undefined) {
-                return;
-            }
+            if (a.value?.validValues.oneofKind === undefined) return;
 
             const at = attrList.value.find((at) => at.attrId === a.attrId);
             if (at) {

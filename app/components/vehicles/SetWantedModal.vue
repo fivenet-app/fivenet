@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
 }>();
 
 const vehicleProps = defineModel<VehicleProps>('vehicleProps');
@@ -50,7 +50,7 @@ async function setWantedState(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emits('close');
+        emits('close', false);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -78,7 +78,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close')" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     class="flex-1"

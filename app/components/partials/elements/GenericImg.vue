@@ -34,9 +34,7 @@ const { streamerMode } = storeToRefs(settings);
 const visible = ref(props.noBlur || !streamerMode.value);
 
 function toggleBlur(): void {
-    if (props.disableBlurToggle || !streamerMode.value) {
-        return;
-    }
+    if (props.disableBlurToggle || !streamerMode.value) return;
 
     if ((streamerMode.value && props.noBlur === undefined) || props.noBlur === false) {
         visible.value = !visible.value;

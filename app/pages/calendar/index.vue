@@ -221,9 +221,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
 const findCalendarsDrawer = overlay.create(FindCalendarDrawer);
 
 watch(entryIdQuery, () => {
-    if (!entryIdQuery.value) {
-        return;
-    }
+    if (!entryIdQuery.value) return;
 
     entryViewSlideover.open({
         entryId: entryIdQuery.value,

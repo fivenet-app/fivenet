@@ -3,6 +3,12 @@
 
 package accounts
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *OAuth2Account) Sanitize() error {
 	if m == nil {
 		return nil
@@ -17,6 +23,12 @@ func (m *OAuth2Account) Sanitize() error {
 		}
 	}
 
+	// Field: ExternalId
+	m.ExternalId = htmlsanitizer.Sanitize(m.ExternalId)
+
+	// Field: ProfilePicture
+	m.ProfilePicture = htmlsanitizer.Sanitize(m.ProfilePicture)
+
 	// Field: Provider
 	if m.Provider != nil {
 		if v, ok := any(m.GetProvider()).(interface{ Sanitize() error }); ok {
@@ -26,13 +38,35 @@ func (m *OAuth2Account) Sanitize() error {
 		}
 	}
 
+	// Field: ProviderName
+	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
+
+	// Field: Username
+	m.Username = htmlsanitizer.Sanitize(m.Username)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *OAuth2Provider) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: Homepage
+	m.Homepage = htmlsanitizer.Sanitize(m.Homepage)
+
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+	}
+
+	// Field: Label
+	m.Label = htmlsanitizer.Sanitize(m.Label)
+
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	return nil
 }

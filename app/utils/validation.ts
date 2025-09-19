@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export const pageNumberSchema = z.coerce.number().int().nonnegative().min(1).max(999_999_999).prefault(1);
 
@@ -39,3 +40,29 @@ export const zodDurationSchema = z
             return;
         }
     });
+
+export const userAccessEntry = z.object({
+    id: z.coerce.number(),
+    targetId: z.coerce.number(),
+    userId: z.coerce.number(),
+    user: z.custom<UserShort>().optional(),
+    access: z.coerce.number().nonnegative(),
+    required: z.coerce.boolean().optional(),
+});
+
+export const jobAccessEntry = z.object({
+    id: z.coerce.number(),
+    targetId: z.coerce.number(),
+    job: z.coerce.string().nonempty(),
+    minimumGrade: z.coerce.number().nonnegative(),
+    access: z.coerce.number().nonnegative(),
+    required: z.coerce.boolean().optional(),
+});
+
+export const qualificationAccessEntry = z.object({
+    id: z.coerce.number(),
+    targetId: z.coerce.number(),
+    qualificationId: z.coerce.number(),
+    access: z.coerce.number().nonnegative(),
+    required: z.coerce.boolean().optional(),
+});

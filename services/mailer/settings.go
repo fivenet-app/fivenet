@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -71,7 +71,7 @@ func (s *Server) getEmailSettings(
 				),
 		).
 		WHERE(
-			tSettings.EmailID.EQ(jet.Int64(emailId)),
+			tSettings.EmailID.EQ(mysql.Int64(emailId)),
 		).
 		LIMIT(25)
 
@@ -120,9 +120,9 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	signature := jet.StringExp(jet.NULL)
+	signature := mysql.StringExp(mysql.NULL)
 	if req.Settings.Signature != nil && *req.Settings.Signature != "" {
-		signature = jet.String(req.GetSettings().GetSignature())
+		signature = mysql.String(req.GetSettings().GetSignature())
 	}
 
 	// Make all emails lowercase, remove own email, and remove duplicates
@@ -172,7 +172,7 @@ func (s *Server) SetEmailSettings(
 		if len(settings.GetBlockedEmails()) > 0 {
 			stmt := tSettingsBlocks.
 				DELETE().
-				WHERE(tSettingsBlocks.EmailID.EQ(jet.Int32(userInfo.GetUserId())))
+				WHERE(tSettingsBlocks.EmailID.EQ(mysql.Int32(userInfo.GetUserId())))
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -219,12 +219,12 @@ func (s *Server) SetEmailSettings(
 		}
 
 		if len(toDelete) > 0 {
-			targets := []jet.Expression{}
+			targets := []mysql.Expression{}
 
 			stmt := tSettingsBlocks.
 				DELETE().
-				WHERE(jet.AND(
-					tSettingsBlocks.EmailID.EQ(jet.Int64(req.GetSettings().GetEmailId())),
+				WHERE(mysql.AND(
+					tSettingsBlocks.EmailID.EQ(mysql.Int64(req.GetSettings().GetEmailId())),
 					tSettingsBlocks.TargetEmail.IN(targets...),
 				))
 

@@ -5,20 +5,20 @@ import (
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *VehicleProps) error {
 	tUserProps := table.FivenetVehiclesProps
 
-	updateSets := []jet.ColumnAssigment{}
+	updateSets := []mysql.ColumnAssigment{}
 
 	// Generate the update sets
 	if in.Wanted != nil {
-		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(in.GetWanted())))
+		updateSets = append(updateSets, tUserProps.Wanted.SET(mysql.Bool(in.GetWanted())))
 		updateSets = append(
 			updateSets,
-			tUserProps.WantedReason.SET(jet.String(in.GetWantedReason())),
+			tUserProps.WantedReason.SET(mysql.String(in.GetWantedReason())),
 		)
 	} else {
 		in.Wanted = x.Wanted
@@ -35,7 +35,7 @@ func (x *VehicleProps) HandleChanges(ctx context.Context, tx *sql.Tx, in *Vehicl
 			).
 			VALUES(
 				in.GetPlate(),
-				jet.CURRENT_TIMESTAMP(),
+				mysql.CURRENT_TIMESTAMP(),
 				in.Wanted,
 				in.WantedReason,
 			).

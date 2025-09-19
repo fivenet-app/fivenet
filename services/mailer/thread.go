@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -49,38 +49,38 @@ func (s *Server) ListThreads(
 		}, nil
 	}
 
-	emailIDExprs := []jet.Expression{}
+	emailIDExprs := []mysql.Expression{}
 	for _, emailId := range emailIds {
-		emailIDExprs = append(emailIDExprs, jet.Int64(emailId))
+		emailIDExprs = append(emailIDExprs, mysql.Int64(emailId))
 	}
 
-	wheres := []jet.BoolExpression{jet.Bool(true)}
+	wheres := []mysql.BoolExpression{mysql.Bool(true)}
 	if !userInfo.GetSuperuser() {
-		wheres = []jet.BoolExpression{tThreads.DeletedAt.IS_NULL()}
+		wheres = []mysql.BoolExpression{tThreads.DeletedAt.IS_NULL()}
 	}
 
 	if req.Unread != nil {
 		wheres = append(
 			wheres,
 			tThreadsState.Unread.IS_NOT_NULL().
-				AND(tThreadsState.Unread.EQ(jet.Bool(req.GetUnread()))),
+				AND(tThreadsState.Unread.EQ(mysql.Bool(req.GetUnread()))),
 		)
 	}
 	if req.Archived != nil {
 		wheres = append(
 			wheres,
 			tThreadsState.Archived.IS_NOT_NULL().
-				AND(tThreadsState.Archived.EQ(jet.Bool(req.GetArchived()))),
+				AND(tThreadsState.Archived.EQ(mysql.Bool(req.GetArchived()))),
 		)
 	} else {
 		// Skip archived emails by default
-		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(jet.Bool(false))))
+		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(mysql.Bool(false))))
 	}
 
 	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
-	recipExists := jet.EXISTS(
-		jet.
-SELECT(jet.Int(1)).
+	recipExists := mysql.EXISTS(
+		mysql.
+			SELECT(mysql.Int(1)).
 			FROM(tThreadsRecipients).
 			WHERE(
 				tThreadsRecipients.ThreadID.EQ(tThreads.ID).
@@ -90,18 +90,18 @@ SELECT(jet.Int(1)).
 
 	countStmt := tThreads.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tThreads.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tThreads.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
+						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
 				),
 		).
 		WHERE(
-			jet.AND(
-				jet.AND(wheres...),
+			mysql.AND(
+				mysql.AND(wheres...),
 				recipExists,
 			),
 		)
@@ -127,17 +127,17 @@ SELECT(jet.Int(1)).
 			tThreads.
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
+						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
 				),
 		).
 		WHERE(
-			jet.AND(
-				jet.AND(wheres...),
+			mysql.AND(
+				mysql.AND(wheres...),
 				recipExists,
 			),
 		).
 		ORDER_BY(
-			jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
+			mysql.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
 			tThreads.ID.DESC(),
 		).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -168,15 +168,15 @@ SELECT(jet.Int(1)).
 		FROM(
 			page.
 				INNER_JOIN(tThreads,
-					tThreads.ID.EQ(jet.RawInt("page.id")),
+					tThreads.ID.EQ(mysql.RawInt("page.id")),
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Int64(req.GetEmailIds()[0]))),
+						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
 				),
 		).
 		ORDER_BY(
-			jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
+			mysql.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
 			tThreads.ID.DESC(),
 		)
 
@@ -192,8 +192,6 @@ SELECT(jet.Int(1)).
 			jobInfoFn(resp.GetThreads()[i].GetCreator())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetThreads()))
 
 	return resp, nil
 }
@@ -228,11 +226,11 @@ func (s *Server) getThread(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Int64(emailId))),
+						AND(tThreadsState.EmailID.EQ(mysql.Int64(emailId))),
 				),
 		).
-		WHERE(jet.AND(
-			tThreads.ID.EQ(jet.Int64(threadId)),
+		WHERE(mysql.AND(
+			tThreads.ID.EQ(mysql.Int64(threadId)),
 		)).
 		LIMIT(1)
 
@@ -441,10 +439,10 @@ func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId int64
 			tThreads.UpdatedAt,
 		).
 		SET(
-			tThreads.UpdatedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tThreads.UpdatedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tThreads.ID.EQ(jet.Int64(threadId)),
+			tThreads.ID.EQ(mysql.Int64(threadId)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -480,9 +478,9 @@ func (s *Server) DeleteThread(
 		return nil, err
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if thread != nil && thread.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tThreads := table.FivenetMailerThreads
@@ -494,7 +492,7 @@ func (s *Server) DeleteThread(
 			tThreads.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
-			tThreads.ID.EQ(jet.Int64(req.GetThreadId())),
+			tThreads.ID.EQ(mysql.Int64(req.GetThreadId())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

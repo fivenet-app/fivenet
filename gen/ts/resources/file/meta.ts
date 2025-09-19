@@ -12,8 +12,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.file.FileMeta
  */
 export interface FileMeta {
@@ -48,7 +46,7 @@ class FileMeta$Type extends MessageType<FileMeta> {
     constructor() {
         super("resources.file.FileMeta", [
             { no: 1, name: "image", kind: "message", oneof: "meta", T: () => ImageMeta }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<FileMeta>): FileMeta {
         const message = globalThis.Object.create((this.messagePrototype!));

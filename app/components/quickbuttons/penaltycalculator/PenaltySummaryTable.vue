@@ -14,11 +14,18 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { display } = useAppConfig();
+
 function getNameForLawBookId(id: number): string | undefined {
     return props.lawBooks?.filter((b) => b.id === id)[0]?.name;
 }
 
 const leeway = computed(() => props.reduction / 100);
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+});
 
 const columns = computed(
     () =>
@@ -43,17 +50,18 @@ const columns = computed(
             {
                 accessorKey: 'fine',
                 header: t('common.fine'),
-                cell: ({ row }) =>
-                    h('span', null, [
-                        `$${row.original.law.fine ? row.original.law.fine * row.original.count : 0}`,
+                cell: ({ row }) => {
+                    return h('span', null, [
+                        formatter.format(row.original.law.fine ? row.original.law.fine * row.original.count : 0),
                         (row.original.law.fine ?? 0) * row.original.count > 0 && leeway.value > 0
                             ? h(
                                   'span',
                                   null,
-                                  ` ($-${((row.original.law.fine ?? 0) * row.original.count * leeway.value).toFixed(0)})`,
+                                  ` (${formatter.format(-Math.abs(row.original.law.fine ?? 0) * row.original.count * leeway.value)})`,
                               )
                             : null,
-                    ]),
+                    ]);
+                },
             },
             {
                 accessorKey: 'detentionTime',
@@ -116,7 +124,7 @@ const columns = computed(
 
     <UTable
         v-else
-        class="divide-base-600 max-w-full divide-y"
+        class="max-w-full divide-y divide-default"
         :columns="columns"
         :data="selectedLaws"
         :empty="$t('common.none_selected', [`${$t('common.crime')}`])"

@@ -59,20 +59,14 @@ export interface Qualification {
      */
     public: boolean;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string abbreviation = 10
      */
     abbreviation: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 11
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string description = 12
      */
     description?: string;
@@ -133,8 +127,6 @@ export interface Qualification {
      */
     labelSyncEnabled: boolean;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string label_sync_format = 27
      */
     labelSyncFormat?: string;
@@ -184,20 +176,14 @@ export interface QualificationShort {
      */
     public: boolean;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string abbreviation = 10
      */
     abbreviation: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 11
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string description = 12
      */
     description?: string;
@@ -256,8 +242,6 @@ export interface QualificationRequirement {
     targetQualification?: QualificationShort;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.QualificationDiscordSettings
  */
 export interface QualificationDiscordSettings {
@@ -271,8 +255,6 @@ export interface QualificationDiscordSettings {
     roleFormat?: string;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.qualifications.QualificationExamSettings
  */
 export interface QualificationExamSettings {
@@ -322,8 +304,6 @@ export interface QualificationRequest {
      */
     user?: UserShort;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string user_comment = 7
      */
     userComment?: string;
@@ -336,8 +316,6 @@ export interface QualificationRequest {
      */
     approvedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string approver_comment = 10
      */
     approverComment?: string;
@@ -395,8 +373,6 @@ export interface QualificationResult {
      */
     score?: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string summary = 10
      */
     summary: string;
@@ -518,9 +494,9 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 11, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 12, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 10, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 11, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 12, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 13, name: "content", kind: "message", T: () => Content },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
@@ -535,7 +511,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 24, name: "result", kind: "message", T: () => QualificationResult },
             { no: 25, name: "request", kind: "message", T: () => QualificationRequest },
             { no: 26, name: "label_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 27, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 27, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 28, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
         ]);
     }
@@ -767,9 +743,9 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 11, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 12, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 10, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 11, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 12, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 15, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -1020,7 +996,7 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
         super("resources.qualifications.QualificationDiscordSettings", [
             { no: 1, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<QualificationDiscordSettings>): QualificationDiscordSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1075,7 +1051,7 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
             { no: 2, name: "auto_grade", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "auto_grade_mode", kind: "enum", T: () => ["resources.qualifications.AutoGradeMode", AutoGradeMode, "AUTO_GRADE_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "minimum_points", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1147,10 +1123,10 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
             { no: 4, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } }, "tagger.tags": "sql:\"primary_key\"" } },
             { no: 6, name: "user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"user\"" } },
-            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "approver", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"approver\"" } },
             { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -1282,7 +1258,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 7, name: "user", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"user\"" } },
             { no: 8, name: "status", kind: "enum", T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "score", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "buf.validate.field": { float: { lte: 1000, gte: 0 } } } },
-            { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } }

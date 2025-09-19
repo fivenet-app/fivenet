@@ -7,7 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
 )
@@ -68,9 +68,9 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 			tPerms.GuardName,
 		).
 		FROM(tPerms).
-		WHERE(jet.AND(
-			tPerms.Category.EQ(jet.String(string(category))),
-			tPerms.Name.EQ(jet.String(string(name))),
+		WHERE(mysql.AND(
+			tPerms.Category.EQ(mysql.String(string(category))),
+			tPerms.Name.EQ(mysql.String(string(name))),
 		)).
 		LIMIT(1)
 
@@ -104,12 +104,12 @@ func (p *Perms) UpdatePermission(
 			tPerms.GuardName,
 		).
 		SET(
-			tPerms.Category.SET(jet.String(string(category))),
-			tPerms.Name.SET(jet.String(string(name))),
-			tPerms.GuardName.SET(jet.String(guard)),
+			tPerms.Category.SET(mysql.String(string(category))),
+			tPerms.Name.SET(mysql.String(string(name))),
+			tPerms.GuardName.SET(mysql.String(guard)),
 		).
 		WHERE(
-			tPerms.ID.EQ(jet.Int64(id)),
+			tPerms.ID.EQ(mysql.Int64(id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -150,9 +150,9 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error 
 		return nil
 	}
 
-	wIds := make([]jet.Expression, len(ids))
+	wIds := make([]mysql.Expression, len(ids))
 	for i := range ids {
-		wIds[i] = jet.Int64(ids[i])
+		wIds[i] = mysql.Int64(ids[i])
 	}
 
 	stmt := tPerms.
@@ -177,9 +177,9 @@ func (p *Perms) GetPermissionsByIDs(
 		return nil, nil
 	}
 
-	wIds := make([]jet.Expression, len(ids))
+	wIds := make([]mysql.Expression, len(ids))
 	for i := range ids {
-		wIds[i] = jet.Int64(ids[i])
+		wIds[i] = mysql.Int64(ids[i])
 	}
 
 	tPerms := tPerms.AS("permission")
@@ -226,9 +226,9 @@ func (p *Perms) GetPermission(
 			tPerms.GuardName,
 		).
 		FROM(tPerms).
-		WHERE(jet.AND(
-			tPerms.Category.EQ(jet.String(string(category))),
-			tPerms.Name.EQ(jet.String(string(name))),
+		WHERE(mysql.AND(
+			tPerms.Category.EQ(mysql.String(string(category))),
+			tPerms.Name.EQ(mysql.String(string(name))),
 		)).
 		LIMIT(1)
 

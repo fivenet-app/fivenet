@@ -13,8 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.jobs.DiscordSyncSettings
  */
 export interface DiscordSyncSettings {
@@ -56,8 +54,6 @@ export interface DiscordSyncSettings {
     qualificationsRoleFormat: string;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.jobs.DiscordSyncChanges
  */
 export interface DiscordSyncChanges {
@@ -156,15 +152,11 @@ export interface JobsAbsenceSettings {
  */
 export interface GroupSyncSettings {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string ignored_role_ids = 1
      */
     ignoredRoleIds: string[];
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.jobs.JobSettings
  */
 export interface JobSettings {
@@ -207,7 +199,7 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
             { no: 7, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings },
             { no: 8, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings },
             { no: 9, name: "qualifications_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DiscordSyncSettings>): DiscordSyncSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -306,7 +298,7 @@ class DiscordSyncChanges$Type extends MessageType<DiscordSyncChanges> {
     constructor() {
         super("resources.jobs.DiscordSyncChanges", [
             { no: 1, name: "changes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => DiscordSyncChange }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DiscordSyncChanges>): DiscordSyncChanges {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -666,7 +658,7 @@ export const JobsAbsenceSettings = new JobsAbsenceSettings$Type();
 class GroupSyncSettings$Type extends MessageType<GroupSyncSettings> {
     constructor() {
         super("resources.jobs.GroupSyncSettings", [
-            { no: 1, name: "ignored_role_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25", items: { string: { maxLen: "24" } } } } } }
+            { no: 1, name: "ignored_role_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25", items: { string: { maxLen: "24" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<GroupSyncSettings>): GroupSyncSettings {
@@ -715,7 +707,7 @@ class JobSettings$Type extends MessageType<JobSettings> {
         super("resources.jobs.JobSettings", [
             { no: 1, name: "absence_past_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 31, gte: 0 } } } },
             { no: 2, name: "absence_future_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 186, gte: 3 } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<JobSettings>): JobSettings {
         const message = globalThis.Object.create((this.messagePrototype!));

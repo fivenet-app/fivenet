@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/puzpuzpuz/xsync/v4"
 )
@@ -42,7 +42,7 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 		).
 		FROM(tRoles).
 		WHERE(
-			tRoles.Job.EQ(jet.String(job)),
+			tRoles.Job.EQ(mysql.String(job)),
 		).
 		ORDER_BY(
 			tRoles.Job.ASC(),
@@ -72,9 +72,9 @@ func (p *Perms) GetJobRolesUpTo(
 			tRoles.Grade,
 		).
 		FROM(tRoles).
-		WHERE(jet.AND(
-			tRoles.Job.EQ(jet.String(job)),
-			tRoles.Grade.LT_EQ(jet.Int32(grade)),
+		WHERE(mysql.AND(
+			tRoles.Job.EQ(mysql.String(job)),
+			tRoles.Grade.LT_EQ(mysql.Int32(grade)),
 		)).
 		ORDER_BY(
 			tRoles.Job.ASC(),
@@ -111,7 +111,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 		)
 
 	if excludeSystem {
-		stmt = stmt.WHERE(tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)))
+		stmt = stmt.WHERE(tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)))
 	}
 
 	var dest collections.Roles
@@ -137,9 +137,9 @@ func (p *Perms) GetClosestJobRole(
 			tRoles.Grade,
 		).
 		FROM(tRoles).
-		WHERE(jet.AND(
-			tRoles.Job.EQ(jet.String(job)),
-			tRoles.Grade.LT_EQ(jet.Int32(grade)),
+		WHERE(mysql.AND(
+			tRoles.Job.EQ(mysql.String(job)),
+			tRoles.Grade.LT_EQ(mysql.Int32(grade)),
 		)).
 		LIMIT(1)
 
@@ -161,11 +161,11 @@ func (p *Perms) GetClosestJobRole(
 func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error) {
 	stmt := tRoles.
 		SELECT(
-			jet.COUNT(tRoles.ID).AS("data_count.total"),
+			mysql.COUNT(tRoles.ID).AS("data_count.total"),
 		).
 		FROM(tRoles).
 		WHERE(
-			tRoles.Job.EQ(jet.String(job)),
+			tRoles.Job.EQ(mysql.String(job)),
 		)
 
 	var dest database.DataCount
@@ -188,7 +188,7 @@ func (p *Perms) GetRole(ctx context.Context, id int64) (*permissions.Role, error
 		).
 		FROM(tRoles).
 		WHERE(
-			tRoles.ID.EQ(jet.Int64(id)),
+			tRoles.ID.EQ(mysql.Int64(id)),
 		).
 		LIMIT(1)
 
@@ -288,7 +288,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id int64) error {
 	stmt := tRoles.
 		DELETE().
 		WHERE(
-			tRoles.ID.EQ(jet.Int64(id)),
+			tRoles.ID.EQ(mysql.Int64(id)),
 		).LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -336,9 +336,9 @@ func (p *Perms) GetRoleByJobAndGrade(
 			tRoles.Grade,
 		).
 		FROM(tRoles).
-		WHERE(jet.AND(
-			tRoles.Job.EQ(jet.String(job)),
-			tRoles.Grade.EQ(jet.Int32(grade)),
+		WHERE(mysql.AND(
+			tRoles.Job.EQ(mysql.String(job)),
+			tRoles.Grade.EQ(mysql.Int32(grade)),
 		)).
 		LIMIT(1)
 
@@ -376,7 +376,7 @@ func (p *Perms) GetRolePermissions(
 				),
 		).
 		WHERE(
-			tRolePerms.RoleID.EQ(jet.Int64(id)),
+			tRolePerms.RoleID.EQ(mysql.Int64(id)),
 		).
 		ORDER_BY(
 			tPerms.ID.ASC(),
@@ -483,7 +483,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId int64, perms .
 		).
 		MODELS(rolePerms).
 		ON_DUPLICATE_KEY_UPDATE(
-			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("VALUES(`val`)"))),
+			tRolePerms.Val.SET(mysql.BoolExp(mysql.Raw("VALUES(`val`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -517,15 +517,15 @@ func (p *Perms) RemovePermissionsFromRole(
 	roleId int64,
 	perms ...int64,
 ) error {
-	ids := make([]jet.Expression, len(perms))
+	ids := make([]mysql.Expression, len(perms))
 	for i := range perms {
-		ids[i] = jet.Int64(perms[i])
+		ids[i] = mysql.Int64(perms[i])
 	}
 
 	stmt := tRolePerms.
 		DELETE().
-		WHERE(jet.AND(
-			tRolePerms.RoleID.EQ(jet.Int64(roleId)),
+		WHERE(mysql.AND(
+			tRolePerms.RoleID.EQ(mysql.Int64(roleId)),
 			tRolePerms.PermissionID.IN(ids...),
 		)).
 		LIMIT(int64(len(ids)))
@@ -574,7 +574,7 @@ func (p *Perms) GetJobPermissions(
 				),
 		).
 		WHERE(
-			tJobPerms.Job.EQ(jet.String(job)),
+			tJobPerms.Job.EQ(mysql.String(job)),
 		)
 
 	var dest []*permissions.Permission
@@ -605,7 +605,7 @@ func (p *Perms) UpdateJobPermissions(
 				ps.GetVal(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tJobPerms.Val.SET(jet.RawBool("VALUES(`val`)")),
+				tJobPerms.Val.SET(mysql.RawBool("VALUES(`val`)")),
 			)
 
 		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -627,7 +627,7 @@ func (p *Perms) ClearJobPermissions(ctx context.Context, job string) error {
 	stmt := tJobPerms.
 		DELETE().
 		WHERE(
-			tJobPerms.Job.EQ(jet.String(job)),
+			tJobPerms.Job.EQ(mysql.String(job)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {

@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.livemap;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
@@ -15,13 +17,23 @@ message UserMarker {
   double x = 2;
   double y = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
-  // @sanitize: method=StripTags
-  optional string postal = 5 [(buf.validate.field).string.max_len = 48];
-  // @sanitize: method=StripTags
-  optional string color = 6 [(buf.validate.field).string = {
-    len: 7
-    pattern: "^#[A-Fa-f0-9]{6}$"
-  }];
+  optional string postal = 5 [
+    (buf.validate.field).string.max_len = 48,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+  optional string color = 6 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string job = 7 [(buf.validate.field).string.max_len = 20];
   string job_label = 8;
   optional int32 job_grade = 13;
@@ -35,8 +47,9 @@ message UserMarker {
   optional UserMarkerData data = 14 [(tagger.tags) = "alias:\"data\""];
 }
 
-// @dbscanner: json
 message UserMarkerData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   bool is_in_vehicle = 1;
   optional string vehicle_plate = 2 [(buf.validate.field).string.max_len = 32];
   optional resources.timestamp.Timestamp vehicle_updated_at = 3;

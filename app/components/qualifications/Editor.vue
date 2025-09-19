@@ -7,11 +7,12 @@ import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { Content } from '~/types/history';
+import { jobAccessEntry } from '~/utils/validation';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestionSeparator, ExamQuestionYesNo } from '~~/gen/ts/resources/qualifications/exam';
 import {
     type Qualification,
     type QualificationRequirement,
@@ -20,7 +21,6 @@ import {
     QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { jobAccessEntry } from '~~/shared/types/validation';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -61,10 +61,104 @@ const schema = z.object({
         roleName: z.coerce.string().max(64).optional(),
         roleFormat: z.coerce.string().max(64).optional(),
     }),
-    examMode: z.nativeEnum(QualificationExamMode),
+    examMode: z.enum(QualificationExamMode).default(QualificationExamMode.DISABLED),
     examSettings: examSettings,
     exam: z.object({
-        questions: z.custom<ExamQuestion>().array().max(100).default([]),
+        questions: z
+            .object({
+                id: z.coerce.number(),
+                qualificationId: z.coerce.number().default(props.qualificationId),
+                title: z.coerce.string().min(0).max(512),
+                description: z.coerce.string().max(1024).optional(),
+                data: z
+                    .object({
+                        data: z.union([
+                            z.object({
+                                oneofKind: z.literal(undefined),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('separator'),
+                                separator: z.custom<ExamQuestionSeparator>().default({}),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('image'),
+                                image: z.object({
+                                    image: z.custom<File>().optional(),
+                                    alt: z.coerce.string().max(128).optional(),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('yesno'),
+                                yesno: z.custom<ExamQuestionYesNo>().default({}),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('freeText'),
+                                freeText: z.object({
+                                    minLength: z.coerce.number().nonnegative(),
+                                    maxLength: z.coerce.number().nonnegative(),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('singleChoice'),
+                                singleChoice: z.object({
+                                    choices: z.coerce.string().max(255).array().max(10).default([]),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('multipleChoice'),
+                                multipleChoice: z.object({
+                                    choices: z.coerce.string().max(255).array().max(10).default([]),
+                                    limit: z.coerce.number().positive().min(0).max(10).default(10).optional(),
+                                }),
+                            }),
+                        ]),
+                    })
+                    .default({ data: { oneofKind: undefined } })
+                    .optional(),
+                answer: z
+                    .object({
+                        answerKey: z.coerce.string().max(1024),
+                        answer: z.union([
+                            z.object({
+                                oneofKind: z.literal(undefined),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('yesno'),
+                                yesno: z.object({
+                                    value: z.coerce.boolean().default(false),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('freeText'),
+                                freeText: z.object({
+                                    text: z.coerce.string().max(2048).default(''),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('singleChoice'),
+                                singleChoice: z.object({
+                                    choice: z.coerce.string().max(255).default(''),
+                                }),
+                            }),
+                            z.object({
+                                oneofKind: z.literal('multipleChoice'),
+                                multipleChoice: z.object({
+                                    choices: z.coerce.string().max(255).array().max(10).default([]),
+                                }),
+                            }),
+                        ]),
+                    })
+                    .default({
+                        answerKey: '',
+                        answer: { oneofKind: undefined },
+                    })
+                    .optional(),
+                points: z.coerce.number().min(0).max(99999).optional(),
+                order: z.coerce.number().min(1).max(99999).default(0),
+            })
+            .array()
+            .max(100)
+            .default([]),
     }),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
@@ -118,15 +212,11 @@ let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'qualification'): Promise<void> {
-    if (saving.value) {
-        return;
-    }
+    if (saving.value) return;
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-        return;
-    }
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
@@ -156,9 +246,7 @@ watchDebounced(
         if (changed.value) {
             const now = Date.now();
             // Skip if identical to last saved or if within MIN_GAP
-            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-                return;
-            }
+            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
             saveHistory(state);
 
@@ -220,27 +308,34 @@ function setFromProps(): void {
         roleName: '',
         roleFormat: '',
     };
-    state.examMode = qualification.value.examMode;
-    if (qualification.value.examSettings) {
-        state.examSettings = {
-            time: qualification.value.examSettings.time?.seconds ?? 360,
-            autoGrade: qualification.value.examSettings.autoGrade,
-            autoGradeMode: qualification.value.examSettings.autoGradeMode,
-            minimumPoints: qualification.value.examSettings.minimumPoints,
-        };
-    }
+    state.examMode =
+        qualification.value.examMode === QualificationExamMode.UNSPECIFIED
+            ? QualificationExamMode.DISABLED
+            : qualification.value.examMode;
+    state.examSettings = {
+        time: qualification.value.examSettings?.time?.seconds ?? 360,
+        autoGrade: qualification.value.examSettings?.autoGrade ?? false,
+        autoGradeMode:
+            qualification.value.examSettings?.autoGradeMode === AutoGradeMode.UNSPECIFIED
+                ? AutoGradeMode.STRICT
+                : (qualification.value.examSettings?.autoGradeMode ?? AutoGradeMode.STRICT),
+        minimumPoints: qualification.value.examSettings?.minimumPoints ?? 0,
+    };
     if (qualification.value.exam) {
         qualification.value.exam.questions.forEach((q) => {
-            if (q.answer === undefined) {
+            if (!q.data) {
+                q.data = { data: { oneofKind: undefined } };
+            }
+
+            if (!q.answer)
                 q.answer = {
                     answerKey: '',
                     answer: {
                         oneofKind: undefined,
                     },
                 };
-            }
         });
-        state.exam = qualification.value.exam;
+        state.exam = qualification.value.exam ?? { questions: [] };
     }
     if (qualification.value.access) {
         state.access = qualification.value.access;
@@ -317,9 +412,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (event.submitter?.getAttribute('role') === 'tab') {
-        return;
-    }
+    if (event.submitter?.getAttribute('role') === 'tab') return;
 
     canSubmit.value = false;
     await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -328,9 +421,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const accessTypes: AccessType[] = [{ label: t('common.job', 2), value: 'job' }];
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
-    if (!qualification || !state.requirements[idx]) {
-        return;
-    }
+    if (!qualification || !state.requirements[idx]) return;
 
     state.requirements[idx]!.qualificationId = props.qualificationId ?? 0;
     state.requirements[idx]!.targetQualificationId = qualification.id;

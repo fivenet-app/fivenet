@@ -12,9 +12,7 @@ export function createGrpcStatus(metaData: Metadata): RpcStatus {
 export function createGrpcTrailers(metaData: Metadata): RpcMetadata {
     const trailers = new Metadata();
     metaData.forEach((k, v) => {
-        if (!k.startsWith('trailer+')) {
-            return;
-        }
+        if (!k.startsWith('trailer+')) return;
 
         trailers.append(k, v);
     });

@@ -40,14 +40,10 @@ export interface Calendar {
      */
     job?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string name = 6
      */
     name: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string description = 7
      */
     description?: string;
@@ -60,8 +56,6 @@ export interface Calendar {
      */
     closed: boolean;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string color = 10
      */
     color: string;
@@ -103,14 +97,10 @@ export interface CalendarShort {
      */
     job?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string name = 6
      */
     name: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string description = 7
      */
     description?: string;
@@ -123,8 +113,6 @@ export interface CalendarShort {
      */
     closed: boolean;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string color = 10
      */
     color: string;
@@ -205,8 +193,6 @@ export interface CalendarEntry {
      */
     endTime?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 10
      */
     title: string;
@@ -244,8 +230,6 @@ export interface CalendarEntry {
     rsvp?: CalendarEntryRSVP;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.calendar.CalendarEntryRecurring
  */
 export interface CalendarEntryRecurring {
@@ -325,11 +309,11 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
+            { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -473,11 +457,11 @@ class CalendarShort$Type extends MessageType<CalendarShort> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
+            { no: 10, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 14, name: "subscription", kind: "message", T: () => CalendarSub }
         ]);
     }
@@ -671,7 +655,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 7, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "end_time", kind: "message", T: () => Timestamp },
-            { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "content", kind: "message", T: () => Content },
             { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 13, name: "rsvp_open", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
@@ -835,7 +819,7 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
             { no: 1, name: "every", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "until", kind: "message", T: () => Timestamp }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<CalendarEntryRecurring>): CalendarEntryRecurring {
         const message = globalThis.Object.create((this.messagePrototype!));

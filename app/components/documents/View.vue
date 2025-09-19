@@ -7,7 +7,6 @@ import { checkDocAccess } from '~/components/documents/helpers';
 import References from '~/components/documents/References.vue';
 import Relations from '~/components/documents/Relations.vue';
 import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
-import RequestModal from '~/components/documents/requests/RequestModal.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -28,6 +27,7 @@ import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/doc
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ReminderModal from './ReminderModal.vue';
+import RequestDrawer from './requests/RequestDrawer.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -83,13 +83,11 @@ if (hash.value !== undefined && hash.value !== null) {
     }
 }
 
-const documentRequestModal = overlay.create(RequestModal);
+const requestDrawer = overlay.create(RequestDrawer);
 function openRequestsModal(): void {
-    if (doc.value?.access === undefined || doc.value?.document === undefined) {
-        return;
-    }
+    if (doc.value?.access === undefined || doc.value?.document === undefined) return;
 
-    documentRequestModal.open({
+    requestDrawer.open({
         access: doc.value.access,
         doc: doc.value.document,
         onRefresh: () => refresh(),
@@ -117,9 +115,7 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
 }
 
 function updateReminderTime(reminderTime?: Timestamp): void {
-    if (!doc.value?.document) {
-        return;
-    }
+    if (!doc.value?.document) return;
 
     if (!doc.value.document.workflowUser) {
         doc.value.document.workflowUser = {
@@ -134,9 +130,7 @@ function updateReminderTime(reminderTime?: Timestamp): void {
 }
 
 async function toggleDocument(): Promise<void> {
-    if (!doc.value?.document) {
-        return;
-    }
+    if (!doc.value?.document) return;
 
     doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
 }

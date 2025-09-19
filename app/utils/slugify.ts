@@ -7,6 +7,7 @@ slugify.extend({
     '“': '-',
     '„': '-',
     '⹂': '-',
+    "'": '-',
 });
 
 export default function slug(input: string): string {

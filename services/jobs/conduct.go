@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -27,7 +27,7 @@ func (s *Server) ListConductEntries(
 ) (*pbjobs.ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tConduct.Job.EQ(jet.String(userInfo.GetJob()))
+	condition := tConduct.Job.EQ(mysql.String(userInfo.GetJob()))
 
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
@@ -43,39 +43,39 @@ func (s *Server) ListConductEntries(
 	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
 	if fields.Contains("All") {
 	} else if fields.Len() == 0 || fields.Contains("Own") {
-		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.GetUserId())))
+		condition = condition.AND(tConduct.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())))
 	} else {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if len(req.GetIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetIds()))
+		ids := make([]mysql.Expression, len(req.GetIds()))
 		for i := range req.GetIds() {
-			ids[i] = jet.Int64(req.GetIds()[i])
+			ids[i] = mysql.Int64(req.GetIds()[i])
 		}
 
 		condition = condition.AND(tConduct.ID.IN(ids...))
 	}
 	if len(req.GetTypes()) > 0 {
-		ts := make([]jet.Expression, len(req.GetTypes()))
+		ts := make([]mysql.Expression, len(req.GetTypes()))
 		for i := range req.GetTypes() {
-			ts[i] = jet.Int32(int32(req.GetTypes()[i].Number()))
+			ts[i] = mysql.Int32(int32(req.GetTypes()[i].Number()))
 		}
 
 		condition = condition.AND(tConduct.Type.IN(ts...))
 	}
 	if len(req.GetIds()) == 0 && (req.ShowExpired == nil || !req.GetShowExpired()) {
-		condition = condition.AND(jet.OR(
+		condition = condition.AND(mysql.OR(
 			tConduct.ExpiresAt.IS_NULL(),
 			tConduct.ExpiresAt.GT_EQ(
-				jet.CURRENT_DATE(),
+				mysql.CURRENT_DATE(),
 			),
 		))
 	}
 	if len(req.GetUserIds()) > 0 {
-		ids := make([]jet.Expression, len(req.GetUserIds()))
+		ids := make([]mysql.Expression, len(req.GetUserIds()))
 		for i := range req.GetUserIds() {
-			ids[i] = jet.Int32(req.GetUserIds()[i])
+			ids[i] = mysql.Int32(req.GetUserIds()[i])
 		}
 
 		condition = condition.AND(
@@ -84,7 +84,7 @@ func (s *Server) ListConductEntries(
 	}
 
 	countStmt := tConduct.
-		SELECT(jet.COUNT(tConduct.ID).AS("data_count.total")).
+		SELECT(mysql.COUNT(tConduct.ID).AS("data_count.total")).
 		FROM(tConduct).
 		WHERE(condition)
 
@@ -104,9 +104,9 @@ func (s *Server) ListConductEntries(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var columns []jet.Column
+		var columns []mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "type":
 			columns = append(columns, tConduct.Type, tConduct.ID)
@@ -180,7 +180,7 @@ func (s *Server) ListConductEntries(
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tConduct.TargetUserID).
-						AND(tColleague.Job.EQ(jet.String(userInfo.GetJob()))),
+						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),
@@ -215,8 +215,6 @@ func (s *Server) ListConductEntries(
 			jobInfoFn(resp.GetEntries()[i].GetCreator())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetEntries()))
 
 	return resp, nil
 }
@@ -328,9 +326,9 @@ func (s *Server) UpdateConductEntry(
 			req.GetEntry().GetExpiresAt(),
 			req.GetEntry().GetTargetUserId(),
 		).
-		WHERE(jet.AND(
-			tConduct.Job.EQ(jet.String(req.GetEntry().GetJob())),
-			tConduct.ID.EQ(jet.Int64(req.GetEntry().GetId())),
+		WHERE(mysql.AND(
+			tConduct.Job.EQ(mysql.String(req.GetEntry().GetJob())),
+			tConduct.ID.EQ(mysql.Int64(req.GetEntry().GetId())),
 		)).
 		LIMIT(1)
 
@@ -381,9 +379,9 @@ func (s *Server) DeleteConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if entry != nil && entry.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tConduct := table.FivenetJobConduct
@@ -394,9 +392,9 @@ func (s *Server) DeleteConductEntry(
 		SET(
 			tConduct.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tConduct.Job.EQ(jet.String(userInfo.GetJob())),
-			tConduct.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tConduct.Job.EQ(mysql.String(userInfo.GetJob())),
+			tConduct.ID.EQ(mysql.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

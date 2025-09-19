@@ -115,9 +115,7 @@ async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
 
 async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
-        if (!getOwnUnit.value) {
-            return;
-        }
+        if (!getOwnUnit.value) return;
 
         unitStatusUpdateModal.open({
             unit: getOwnUnit.value,
@@ -213,9 +211,7 @@ function ensureOwnDispatchSelected(): void {
         getSortedOwnDispatches.value.find((dispatchId) => dispatchId === selectedDispatch.value) !== undefined
     ) {
         const dispatch = dispatches.value.get(selectedDispatch.value);
-        if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
-            return;
-        }
+        if (!isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) return;
     }
 
     // otherwise select that current first one
@@ -262,9 +258,7 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
 });
 
 watch(settings, () => {
-    if (!settings.value?.enabled) {
-        return;
-    }
+    if (!settings.value?.enabled) return;
 
     useIntervalFn(() => checkup(), 1 * 60 * 1000);
     toggleSidebarBasedOnUnit();
@@ -272,9 +266,7 @@ watch(settings, () => {
 });
 
 onBeforeMount(async () => {
-    if (!canStream.value) {
-        return;
-    }
+    if (!canStream.value) return;
 
     useTimeoutFn(async () => {
         try {
@@ -308,26 +300,19 @@ const lastCheckupNotification = ref<Date | undefined>();
 async function checkup(): Promise<void> {
     logger.debug('Centrum: Sidebar - Running checkup');
     const ownUnit = getOwnUnit.value;
-    if (ownUnit === undefined || ownUnit.status === undefined) {
-        return;
-    }
+    if (ownUnit === undefined || ownUnit.status === undefined) return;
 
-    if (ownUnit.status.status === StatusUnit.AVAILABLE || ownUnit.status.status === StatusUnit.UNAVAILABLE) {
-        return;
-    }
+    if (ownUnit.status.status === StatusUnit.AVAILABLE || ownUnit.status.status === StatusUnit.UNAVAILABLE) return;
 
     const now = new Date();
     // If unit status is younger than time X, ignore and continue
-    if (now.getTime() - toDate(ownUnit.status.createdAt, timeCorrection.value).getTime() <= unitCheckupStatusAge) {
-        return;
-    }
+    if (now.getTime() - toDate(ownUnit.status.createdAt, timeCorrection.value).getTime() <= unitCheckupStatusAge) return;
 
     if (
         lastCheckupNotification.value !== undefined &&
         now.getTime() - lastCheckupNotification.value.getTime() <= unitCheckupStatusReping
-    ) {
+    )
         return;
-    }
 
     notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
@@ -341,9 +326,7 @@ async function checkup(): Promise<void> {
 }
 
 function sendRequireUnitNotification(): void {
-    if (!userOnDuty.value) {
-        return;
-    }
+    if (!userOnDuty.value) return;
 
     notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
@@ -376,7 +359,7 @@ defineShortcuts({
                 </template>
 
                 <template #right>
-                    <DispatcherInfo v-if="canStream && settings?.enabled" :hide-join="true" />
+                    <DispatcherInfo v-if="canStream && settings?.enabled" hide-join />
                 </template>
             </UDashboardNavbar>
         </template>
@@ -399,7 +382,7 @@ defineShortcuts({
                                 position="top-left"
                             >
                                 <UButton
-                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
                                     size="xs"
                                     :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
                                     :color="!getOwnUnit ? 'primary' : 'neutral'"

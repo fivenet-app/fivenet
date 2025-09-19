@@ -22,7 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -378,7 +378,7 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) ([]*jobGuild, error) {
 			tJobProps.DiscordLastSync.AS("jobguild.last_sync"),
 		).
 		FROM(tJobProps).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
 		))
 

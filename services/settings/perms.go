@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/multierr"
@@ -605,10 +605,10 @@ func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) erro
 	stmt := tJobProps.
 		UPDATE().
 		SET(
-			tJobProps.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tJobProps.DeletedAt.SET(mysql.CURRENT_TIMESTAMP()),
 		).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
+			tJobProps.Job.EQ(mysql.String(job)),
 		).
 		LIMIT(1)
 

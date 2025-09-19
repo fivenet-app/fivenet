@@ -24,7 +24,6 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 var Module = fx.Module("dbsync",
@@ -136,7 +135,7 @@ func New(p Params) (*Sync, error) {
 func (s *Sync) createGRPCClient() error {
 	// Create GRPC client for sync if destination is given
 	if s.cfg.Load().Destination.URL != "" {
-		transportCreds := insecure.NewCredentials()
+		transportCreds := auth.NewCredentials()
 		if !s.cfg.Load().Destination.Insecure {
 			//nolint:gosec // G402: TLS MinVersion is set to TLS 1.1 for compatibility (gameservers may not support TLS 1.2 and higher)
 			transportCreds = credentials.NewTLS(&tls.Config{

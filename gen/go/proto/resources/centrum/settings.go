@@ -39,10 +39,8 @@ func (x *Settings) Default(job string) {
 			DeduplicationRadius:   45,
 			DeduplicationDuration: durationpb.New(defaultDeduplicationDuration),
 		}
-	} else {
-		if x.GetConfiguration().GetDeduplicationDuration() == nil {
-			x.Configuration.DeduplicationDuration = durationpb.New(defaultDeduplicationDuration)
-		}
+	} else if x.GetConfiguration().GetDeduplicationDuration() == nil {
+		x.Configuration.DeduplicationDuration = durationpb.New(defaultDeduplicationDuration)
 	}
 }
 

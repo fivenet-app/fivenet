@@ -12,8 +12,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.UnitAttributes
  */
 export interface UnitAttributes {
@@ -23,8 +21,6 @@ export interface UnitAttributes {
     list: UnitAttribute[];
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.centrum.DispatchAttributes
  */
 export interface DispatchAttributes {
@@ -80,7 +76,7 @@ class UnitAttributes$Type extends MessageType<UnitAttributes> {
     constructor() {
         super("resources.centrum.UnitAttributes", [
             { no: 1, name: "list", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.UnitAttribute", UnitAttribute, "UNIT_ATTRIBUTE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<UnitAttributes>): UnitAttributes {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -135,7 +131,7 @@ class DispatchAttributes$Type extends MessageType<DispatchAttributes> {
     constructor() {
         super("resources.centrum.DispatchAttributes", [
             { no: 1, name: "list", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.DispatchAttribute", DispatchAttribute, "DISPATCH_ATTRIBUTE_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DispatchAttributes>): DispatchAttributes {
         const message = globalThis.Object.create((this.messagePrototype!));

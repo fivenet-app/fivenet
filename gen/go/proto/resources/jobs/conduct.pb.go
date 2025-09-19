@@ -7,6 +7,7 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -85,20 +86,19 @@ func (ConductType) EnumDescriptor() ([]byte, []int) {
 }
 
 type ConductEntry struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
-	Type      ConductType            `protobuf:"varint,6,opt,name=type,proto3,enum=resources.jobs.ConductType" json:"type,omitempty"`
-	// @sanitize
-	Message       string               `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	TargetUserId  int32                `protobuf:"varint,9,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *Colleague           `protobuf:"bytes,10,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
-	CreatorId     int32                `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator       *Colleague           `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Job           string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
+	Type          ConductType            `protobuf:"varint,6,opt,name=type,proto3,enum=resources.jobs.ConductType" json:"type,omitempty"`
+	Message       string                 `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	TargetUserId  int32                  `protobuf:"varint,9,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	TargetUser    *Colleague             `protobuf:"bytes,10,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
+	CreatorId     int32                  `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator       *Colleague             `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,7 +221,7 @@ var File_resources_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa7\x06\n" +
+	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xad\x06\n" +
 	"\fConductEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -231,9 +231,8 @@ const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x129\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12$\n" +
-	"\amessage\x18\a \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x10R\amessage\x12B\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12*\n" +
+	"\amessage\x18\a \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x10R\amessage\x12B\n" +
 	"\n" +
 	"expires_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12-\n" +
 	"\x0etarget_user_id\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12Y\n" +

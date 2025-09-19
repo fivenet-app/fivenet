@@ -23,6 +23,8 @@ const { attr, can } = useAuth();
 
 const overlay = useOverlay();
 
+const { display } = useAppConfig();
+
 const citizensCitizensClient = await getCitizensCitizensClient();
 
 const schema = z.object({
@@ -222,7 +224,10 @@ const columns = computed(() =>
                       sortable: true,
                       cell: ({ row }) =>
                           row.original.props?.openFines !== undefined && row.original.props?.openFines > 0
-                              ? $n(row.original.props?.openFines, 'currency')
+                              ? new Intl.NumberFormat(display.intlLocale, {
+                                    style: 'currency',
+                                    currency: display.currencyName,
+                                }).format(row.original.props?.openFines)
                               : '',
                   }
                 : undefined,
@@ -407,7 +412,7 @@ defineShortcuts({
                                         class="w-full"
                                         :format-options="{
                                             style: 'currency',
-                                            currency: 'USD',
+                                            currency: display.currencyName,
                                             currencyDisplay: 'code',
                                             currencySign: 'accounting',
                                         }"
@@ -446,7 +451,7 @@ defineShortcuts({
                             :src="row.original.props?.mugshot?.filePath"
                             :name="`${row.original.firstname} ${row.original.lastname}`"
                             :alt="$t('common.mugshot')"
-                            :enable-popup="true"
+                            enable-popup
                             size="sm"
                         />
 

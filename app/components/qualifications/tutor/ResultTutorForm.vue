@@ -30,7 +30,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
@@ -51,7 +51,7 @@ const availableStatus = [
 const selectedUser = ref<undefined | UserShort>(undefined);
 
 const schema = z.object({
-    status: z.nativeEnum(ResultStatus),
+    status: z.enum(ResultStatus),
     score: z.coerce.number().min(0).max(1000),
     summary: z.coerce.string().max(255),
 });
@@ -91,7 +91,7 @@ async function createOrUpdateQualificationResult(
         });
 
         emit('refresh');
-        emit('close');
+        emit('close', false);
 
         return response;
     } catch (e) {
@@ -124,7 +124,7 @@ const formRef = useTemplateRef('formRef');
                     {{ $t('components.qualifications.result_modal.title') }}
                 </h3>
 
-                <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
+                <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" @click="$emit('close', false)" />
             </div>
         </template>
 
@@ -221,7 +221,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close')" />
+                <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
                     v-if="!viewOnly"

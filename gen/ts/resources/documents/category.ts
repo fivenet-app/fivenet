@@ -29,14 +29,10 @@ export interface Category {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string name = 4
      */
     name: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 5
      */
     description?: string;
@@ -45,14 +41,10 @@ export interface Category {
      */
     job?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 7
      */
     color?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string icon = 8
      */
     icon?: string;
@@ -64,11 +56,11 @@ class Category$Type extends MessageType<Category> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } } } },
-            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } }
+            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "7" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<Category>): Category {

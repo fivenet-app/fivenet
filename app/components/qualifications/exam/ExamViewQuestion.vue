@@ -46,7 +46,7 @@ const response = useVModel(props, 'modelValue', emit);
 
                 <GenericImg
                     class="min-h-12 min-w-12"
-                    :enable-popup="true"
+                    enable-popup
                     :rounded="false"
                     :src="modelValue?.question!.data?.data.image?.image?.filePath"
                     :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
@@ -152,7 +152,7 @@ const response = useVModel(props, 'modelValue', emit);
                     </div>
                 </div>
 
-                <UFormField class="flex-1" name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required>
+                <UFormField class="flex-1" name="data.data.singleChoice.choices" :label="$t('common.option', 2)" required>
                     <URadioGroup
                         v-model="response.response.response.singleChoice.choice"
                         :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"

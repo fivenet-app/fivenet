@@ -3,6 +3,8 @@
 
 package notifications
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetNotificationsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -26,6 +28,8 @@ func (m *GetNotificationsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetNotificationsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -55,6 +59,8 @@ func (m *GetNotificationsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MarkNotificationsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -63,6 +69,8 @@ func (m *MarkNotificationsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MarkNotificationsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -71,6 +79,8 @@ func (m *MarkNotificationsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -91,6 +101,8 @@ func (m *StreamRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *StreamResponse) Sanitize() error {
 	if m == nil {
 		return nil

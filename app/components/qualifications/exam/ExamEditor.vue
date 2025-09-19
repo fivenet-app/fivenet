@@ -39,7 +39,7 @@ const { moveUp, moveDown } = useListReorder(toRef(exam.value.questions));
 export const examSettings = z.object({
     time: zodDurationSchema,
     autoGrade: z.coerce.boolean().default(false),
-    autoGradeMode: z.nativeEnum(AutoGradeMode).default(AutoGradeMode.STRICT),
+    autoGradeMode: z.enum(AutoGradeMode).default(AutoGradeMode.STRICT),
     minimumPoints: z.coerce.number().min(0).default(0),
 });
 
@@ -99,10 +99,7 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     :description="$t('components.qualifications.exam_editor.auto_grade.description')"
                     :ui="{ container: '' }"
                 >
-                    <USwitch
-                        v-model="examSettings.autoGrade"
-                        :placeholder="$t('components.qualifications.exam_editor.auto_grade')"
-                    />
+                    <USwitch v-model="examSettings.autoGrade" />
                 </UFormField>
 
                 <UFormField
@@ -148,8 +145,8 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                 </UFormField>
             </UPageCard>
 
-            <div class="my-4">
-                <UPageCard :ui="{ title: 'inline-flex flex-1', body: 'flex w-full' }">
+            <div class="mb-4">
+                <UPageCard class="mb-4" :ui="{ title: 'inline-flex flex-1', body: 'flex w-full' }">
                     <template #title>
                         <h2>{{ $t('common.question', 2) }}</h2>
                         <div class="flex-1" />

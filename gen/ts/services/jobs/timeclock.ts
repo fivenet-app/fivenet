@@ -750,7 +750,7 @@ class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmploye
     constructor() {
         super("services.jobs.ListInactiveEmployeesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesResponse>): ListInactiveEmployeesResponse {

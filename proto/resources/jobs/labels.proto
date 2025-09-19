@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.jobs;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -17,11 +18,16 @@ message Label {
   optional string job = 2 [(buf.validate.field).string.max_len = 20];
   optional resources.timestamp.Timestamp deleted_at = 3;
   string name = 4 [(buf.validate.field).string.max_len = 48];
-  // @sanitize: method=StripTags
-  string color = 5 [(buf.validate.field).string = {
-    len: 7
-    pattern: "^#[A-Fa-f0-9]{6}$"
-  }];
+  string color = 5 [
+    (buf.validate.field).string = {
+      len: 7
+      pattern: "^#[A-Fa-f0-9]{6}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   int32 order = 6;
 }
 

@@ -39,7 +39,7 @@ const schema = z.object({
         .optional(),
     services: z.coerce.string().max(64).array().max(10).default([]),
     methods: z.coerce.string().max(64).array().max(10).default([]),
-    states: z.nativeEnum(EventType).array().max(10).default([]),
+    states: z.enum(EventType).array().max(10).default([]),
     search: z.coerce.string().max(64).default(''),
     sorting: z
         .object({
@@ -252,193 +252,215 @@ const tomorrow = addDays(today, 1);
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <template #default>
-            <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-1 flex-row gap-2">
-                    <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
-                        <InputDateRangePopover
-                            v-model="query.date"
-                            class="w-full"
-                            :max-value="new CalendarDate(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate())"
-                            time
-                            clearable
-                        />
-                    </UFormField>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
+        <template #header>
+            <UDashboardNavbar :title="$t('common.audit_log')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                    <UFormField class="flex-1" name="user" :label="$t('common.user')">
-                        <SelectMenu
-                            v-model="query.users"
-                            multiple
-                            :searchable="
-                                async (q: string) =>
-                                    await completorStore.completeCitizens({
-                                        search: q,
-                                        userIds: query.users,
-                                    })
-                            "
-                            searchable-key="completor-citizens"
-                            :search-input="{ placeholder: $t('common.search_field') }"
-                            :filter-fields="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.user', 2)"
-                            trailing
-                            value-key="userId"
-                            class="w-full"
-                        >
-                            <template #item-label="{ item }">
-                                {{ userToLabel(item) }}
-                            </template>
+                <template #right>
+                    <PartialsBackButton fallback-to="/settings" />
+                </template>
+            </UDashboardNavbar>
 
-                            <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                        </SelectMenu>
-                    </UFormField>
-
-                    <UFormField class="flex-1" name="data" :label="$t('common.data')">
-                        <UInput
-                            v-model="query.search"
-                            type="text"
-                            name="data"
-                            block
-                            :placeholder="$t('common.search')"
-                            leading-icon="i-mdi-search"
-                            class="w-full"
-                            :ui="{ trailing: 'pe-1' }"
-                        >
-                            <template #trailing>
-                                <UButton
-                                    v-if="query.search !== ''"
-                                    color="neutral"
-                                    variant="link"
-                                    icon="i-mdi-close"
-                                    :aria-label="query.search ? 'Hide search' : 'Show search'"
-                                    :aria-pressed="query.search"
-                                    aria-controls="search"
-                                    @click="query.search = ''"
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm class="my-2 flex w-full flex-1 flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
+                        <div class="flex flex-1 flex-row gap-2">
+                            <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
+                                <InputDateRangePopover
+                                    v-model="query.date"
+                                    class="w-full"
+                                    :max-value="
+                                        new CalendarDate(tomorrow.getFullYear(), tomorrow.getMonth() + 1, tomorrow.getDate())
+                                    "
+                                    time
+                                    clearable
                                 />
-                            </template>
-                        </UInput>
-                    </UFormField>
-                </div>
-
-                <UCollapsible>
-                    <UButton
-                        class="group"
-                        color="neutral"
-                        variant="ghost"
-                        trailing-icon="i-mdi-chevron-down"
-                        :label="$t('common.advanced_search')"
-                        :ui="{
-                            trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
-                        }"
-                        block
-                    />
-
-                    <template #content>
-                        <div class="flex flex-row flex-wrap gap-1">
-                            <UFormField class="flex-1" name="service" :label="$t('common.service')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.services"
-                                        multiple
-                                        name="service"
-                                        :placeholder="$t('common.service')"
-                                        :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
-                                        class="w-full"
-                                    >
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.service')]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
                             </UFormField>
 
-                            <UFormField class="flex-1" name="method" :label="$t('common.method')">
-                                <USelectMenu
-                                    v-model="query.methods"
+                            <UFormField class="flex-1" name="user" :label="$t('common.user')">
+                                <SelectMenu
+                                    v-model="query.users"
                                     multiple
-                                    name="method"
-                                    :placeholder="$t('common.method')"
-                                    :items="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                    :searchable="
+                                        async (q: string) =>
+                                            await completorStore.completeCitizens({
+                                                search: q,
+                                                userIds: query.users,
+                                            })
+                                    "
+                                    searchable-key="completor-citizens"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.user', 2)"
+                                    trailing
+                                    value-key="userId"
                                     class="w-full"
                                 >
                                     <template #item-label="{ item }">
-                                        {{ item.split('/').pop() }}
+                                        {{ userToLabel(item) }}
                                     </template>
 
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.method')]) }}
-                                    </template>
-                                </USelectMenu>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                </SelectMenu>
                             </UFormField>
 
-                            <UFormField class="flex-1" name="states" :label="$t('common.state')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.states"
-                                        multiple
-                                        name="states"
-                                        :placeholder="$t('common.state')"
-                                        :items="statesOptions"
-                                        value-key="eventType"
-                                        class="w-full"
-                                    >
-                                        <template #default>
-                                            {{ statesToLabel(query.states) }}
-                                        </template>
-
-                                        <template #item-label="{ item }">
-                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
-                                        </template>
-
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.state')]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
+                            <UFormField class="flex-1" name="data" :label="$t('common.data')">
+                                <UInput
+                                    v-model="query.search"
+                                    type="text"
+                                    name="data"
+                                    block
+                                    :placeholder="$t('common.search')"
+                                    leading-icon="i-mdi-search"
+                                    class="w-full"
+                                    :ui="{ trailing: 'pe-1' }"
+                                >
+                                    <template #trailing>
+                                        <UButton
+                                            v-if="query.search !== ''"
+                                            color="neutral"
+                                            variant="link"
+                                            icon="i-mdi-close"
+                                            :aria-label="query.search ? 'Hide search' : 'Show search'"
+                                            :aria-pressed="query.search"
+                                            aria-controls="search"
+                                            @click="query.search = ''"
+                                        />
+                                    </template>
+                                </UInput>
                             </UFormField>
                         </div>
-                    </template>
-                </UCollapsible>
-            </UForm>
-        </template>
-    </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
+                        <UCollapsible>
+                            <UButton
+                                class="group"
+                                color="neutral"
+                                variant="ghost"
+                                trailing-icon="i-mdi-chevron-down"
+                                :label="$t('common.advanced_search')"
+                                :ui="{
+                                    trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                                }"
+                                block
+                            />
 
-    <UTable
-        v-else
-        v-model:sorting="query.sorting.columns"
-        class="flex-1"
-        :loading="isRequestPending(status)"
-        :columns="columns"
-        :data="data?.logs"
-        :pagination-options="{ manualPagination: true }"
-        :sorting-options="{ manualSorting: true }"
-        :empty="$t('common.not_found', [$t('common.entry', 2)])"
-        :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
-        sticky
-    >
-        <template #expanded="{ row }">
-            <div class="px-2 py-1">
-                <span v-if="!row.original.data">{{ $t('common.na') }}</span>
-                <template v-else>
-                    <VueJsonPretty
-                        :data="JSON.parse(row.original.data!) as JSONDataType"
-                        :show-icon="true"
-                        :show-length="true"
-                        :virtual="true"
-                        :height="240"
-                    />
+                            <template #content>
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UFormField class="flex-1" name="service" :label="$t('common.service')">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="query.services"
+                                                multiple
+                                                name="service"
+                                                :placeholder="$t('common.service')"
+                                                :items="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                                class="w-full"
+                                            >
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.service')]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormField>
+
+                                    <UFormField class="flex-1" name="method" :label="$t('common.method')">
+                                        <USelectMenu
+                                            v-model="query.methods"
+                                            multiple
+                                            name="method"
+                                            :placeholder="$t('common.method')"
+                                            :items="
+                                                grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))
+                                            "
+                                            class="w-full"
+                                        >
+                                            <template #item-label="{ item }">
+                                                {{ item.split('/').pop() }}
+                                            </template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.method')]) }}
+                                            </template>
+                                        </USelectMenu>
+                                    </UFormField>
+
+                                    <UFormField class="flex-1" name="states" :label="$t('common.state')">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="query.states"
+                                                multiple
+                                                name="states"
+                                                :placeholder="$t('common.state')"
+                                                :items="statesOptions"
+                                                value-key="eventType"
+                                                class="w-full"
+                                            >
+                                                <template #default>
+                                                    {{ statesToLabel(query.states) }}
+                                                </template>
+
+                                                <template #item-label="{ item }">
+                                                    {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
+                                                </template>
+
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.state')]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormField>
+                                </div>
+                            </template>
+                        </UCollapsible>
+                    </UForm>
                 </template>
-            </div>
+            </UDashboardToolbar>
         </template>
-    </UTable>
 
-    <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+
+            <UTable
+                v-else
+                v-model:sorting="query.sorting.columns"
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="data?.logs"
+                :pagination-options="{ manualPagination: true }"
+                :sorting-options="{ manualSorting: true }"
+                :empty="$t('common.not_found', [$t('common.entry', 2)])"
+                :ui="{ tr: 'data-[expanded=true]:bg-elevated/50' }"
+                sticky
+            >
+                <template #expanded="{ row }">
+                    <div class="px-2 py-1">
+                        <span v-if="!row.original.data">{{ $t('common.na') }}</span>
+                        <template v-else>
+                            <VueJsonPretty
+                                :data="JSON.parse(row.original.data!) as JSONDataType"
+                                show-icon
+                                show-length
+                                virtual
+                                :height="240"
+                            />
+                        </template>
+                    </div>
+                </template>
+            </UTable>
+        </template>
+
+        <template #footer>
+            <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

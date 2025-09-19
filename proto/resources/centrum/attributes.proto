@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
@@ -20,12 +21,14 @@ enum DispatchAttribute {
   DISPATCH_ATTRIBUTE_AUTOMATIC = 4;
 }
 
-// @dbscanner: json
 message UnitAttributes {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated UnitAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }
 
-// @dbscanner: json
 message DispatchAttributes {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   repeated DispatchAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }

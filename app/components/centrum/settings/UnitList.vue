@@ -171,7 +171,7 @@ const columns = [
     },
     {
         accessorKey: 'attributes',
-        header: t('common.attributes'),
+        header: t('common.attributes', 2),
         cell: ({ row }) => h(UnitAttributes, { attributes: row.original.attributes }),
     },
     {

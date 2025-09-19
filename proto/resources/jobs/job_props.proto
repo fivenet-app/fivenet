@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.jobs;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/file/file.proto";
 import "resources/jobs/job_settings.proto";
 import "resources/timestamp/timestamp.proto";
@@ -30,8 +31,9 @@ message JobProps {
   JobSettings settings = 14;
 }
 
-// @dbscanner: json
 message QuickButtons {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   reserved 2;
 
   bool penalty_calculator = 1;

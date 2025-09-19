@@ -7,9 +7,26 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehiclesRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+	}
+
+	// Field: LicensePlate
+	if m.LicensePlate != nil {
+		*m.LicensePlate = htmlsanitizer.Sanitize(*m.LicensePlate)
+	}
+
+	// Field: Model
+	if m.Model != nil {
+		*m.Model = htmlsanitizer.Sanitize(*m.Model)
 	}
 
 	// Field: Pagination
@@ -33,6 +50,8 @@ func (m *ListVehiclesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListVehiclesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -62,6 +81,8 @@ func (m *ListVehiclesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetVehiclePropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -79,6 +100,8 @@ func (m *SetVehiclePropsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SetVehiclePropsResponse) Sanitize() error {
 	if m == nil {
 		return nil

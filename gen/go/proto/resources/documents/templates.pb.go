@@ -7,6 +7,8 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
@@ -26,29 +28,25 @@ const (
 )
 
 type Template struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category  *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight    uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
-	// @sanitize
-	Title string `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize
-	Description string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	// @sanitize: method=StripTags
-	Color *string `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	// @sanitize: method=StripTags
-	Icon            *string              `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	ContentTitle    string               `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"`
-	Content         string               `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty" alias:"content"`
-	State           string               `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`
-	Schema          *TemplateSchema      `protobuf:"bytes,13,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
-	CreatorJob      string               `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string              `protobuf:"bytes,15,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	JobAccess       []*TemplateJobAccess `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
-	ContentAccess   *DocumentAccess      `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
-	Workflow        *Workflow            `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Category        *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
+	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
+	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	ContentTitle    string                 `protobuf:"bytes,10,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"`
+	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty" alias:"content"`
+	State           string                 `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`
+	Schema          *TemplateSchema        `protobuf:"bytes,13,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	CreatorJob      string                 `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,15,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	JobAccess       []*TemplateJobAccess   `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
+	ContentAccess   *DocumentAccess        `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
+	Workflow        *Workflow              `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -210,24 +208,20 @@ func (x *Template) GetWorkflow() *Workflow {
 }
 
 type TemplateShort struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
-	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category  *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
-	Weight    uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
-	// @sanitize
-	Title string `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
-	// @sanitize
-	Description string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	// @sanitize: method=StripTags
-	Color *string `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	// @sanitize: method=StripTags
-	Icon            *string         `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
-	Schema          *TemplateSchema `protobuf:"bytes,10,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
-	CreatorJob      string          `protobuf:"bytes,11,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string         `protobuf:"bytes,12,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Workflow        *Workflow       `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	CreatedAt       *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Category        *Category              `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`
+	Weight          uint32                 `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty"`
+	Title           string                 `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty"`
+	Description     string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Color           *string                `protobuf:"bytes,8,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Icon            *string                `protobuf:"bytes,9,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Schema          *TemplateSchema        `protobuf:"bytes,10,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`
+	CreatorJob      string                 `protobuf:"bytes,11,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string                `protobuf:"bytes,12,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Workflow        *Workflow              `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -353,7 +347,6 @@ func (x *TemplateShort) GetWorkflow() *Workflow {
 	return nil
 }
 
-// @dbscanner: json
 type TemplateSchema struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Requirements  *TemplateRequirements  `protobuf:"bytes,1,opt,name=requirements,proto3" json:"requirements,omitempty"`
@@ -727,7 +720,7 @@ var File_resources_documents_templates_proto protoreflect.FileDescriptor
 
 const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/templates.proto\x12\x13resources.documents\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xf8\b\n" +
+	"#resources/documents/templates.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xa6\t\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -736,11 +729,11 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12P\n" +
 	"\bcategory\x18\x04 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12#\n" +
-	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x1d\n" +
-	"\x05title\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x10\x03R\x05title\x12*\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12$\n" +
-	"\x05color\x18\b \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x12'\n" +
-	"\x04icon\x18\t \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12I\n" +
+	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12#\n" +
+	"\x05title\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x10\x03R\x05title\x120\n" +
+	"\vdescription\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\vdescription\x125\n" +
+	"\x05color\x18\b \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x128\n" +
+	"\x04icon\x18\t \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12I\n" +
 	"\rcontent_title\x18\n" +
 	" \x01(\tB$\x9a\x84\x9e\x03\x15alias:\"content_title\"\xbaH\ar\x05\x10\x03(\x80PR\fcontentTitle\x129\n" +
 	"\acontent\x18\v \x01(\tB\x1f\x9a\x84\x9e\x03\x0falias:\"content\"\xbaH\br\x06\x10\x00(\x80\x89zR\acontent\x120\n" +
@@ -758,7 +751,7 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_workflow\"\x93\x06\n" +
+	"\t_workflow\"\xc1\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -767,11 +760,11 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12P\n" +
 	"\bcategory\x18\x04 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"R\bcategory\x12#\n" +
-	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x1d\n" +
-	"\x05title\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x10\x03R\x05title\x12*\n" +
-	"\vdescription\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\vdescription\x12$\n" +
-	"\x05color\x18\b \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x12'\n" +
-	"\x04icon\x18\t \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12P\n" +
+	"\x06weight\x18\x05 \x01(\rB\v\xbaH\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12#\n" +
+	"\x05title\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x10\x03R\x05title\x120\n" +
+	"\vdescription\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\vdescription\x125\n" +
+	"\x05color\x18\b \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x128\n" +
+	"\x04icon\x18\t \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12P\n" +
 	"\x06schema\x18\n" +
 	" \x01(\v2#.resources.documents.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12(\n" +
 	"\vcreator_job\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
@@ -783,9 +776,9 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_workflow\"_\n" +
+	"\t_workflow\"g\n" +
 	"\x0eTemplateSchema\x12M\n" +
-	"\frequirements\x18\x01 \x01(\v2).resources.documents.TemplateRequirementsR\frequirements\"\x80\x02\n" +
+	"\frequirements\x18\x01 \x01(\v2).resources.documents.TemplateRequirementsR\frequirements:\x06\xe2\xf3\x18\x02\b\x01\"\x80\x02\n" +
 	"\x14TemplateRequirements\x12C\n" +
 	"\tdocuments\x18\x01 \x01(\v2 .resources.documents.ObjectSpecsH\x00R\tdocuments\x88\x01\x01\x12;\n" +
 	"\x05users\x18\x02 \x01(\v2 .resources.documents.ObjectSpecsH\x01R\x05users\x88\x01\x01\x12A\n" +

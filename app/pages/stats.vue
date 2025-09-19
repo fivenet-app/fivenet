@@ -10,7 +10,6 @@ useHead({
 
 definePageMeta({
     title: 'pages.stats.title',
-    layout: 'landing',
     requiresAuth: true,
     authTokenOnly: true,
     showCookieOptions: true,
@@ -90,9 +89,7 @@ async function getStats(): Promise<Stats> {
 const { website } = useAppConfig();
 
 onBeforeMount(async () => {
-    if (website.statsPage) {
-        return;
-    }
+    if (website.statsPage) return;
 
     if (activeChar.value === null) {
         await navigateTo('/');
@@ -103,61 +100,60 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <UPage>
-        <UDashboardPanel>
-            <template #body>
-                <div class="flex flex-col justify-between">
-                    <div>
-                        <div class="relative isolate px-6 py-20 lg:px-8">
-                            <div
-                                class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]"
-                            />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('pages.stats.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
 
-                            <div class="mx-auto max-w-2xl text-center">
-                                <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
-                                    {{ $t('pages.stats.title') }}
-                                </h2>
-                                <p class="mt-6 text-lg leading-8">
-                                    {{ $t('pages.stats.subtitle') }}
-                                </p>
-                            </div>
+            <div class="flex flex-col justify-between">
+                <div>
+                    <div class="relative isolate px-6 py-20 lg:px-8">
+                        <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
+
+                        <div class="mx-auto max-w-2xl text-center">
+                            <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
+                                {{ $t('pages.stats.title') }}
+                            </h2>
+
+                            <p class="mt-6 text-lg leading-8">
+                                {{ $t('pages.stats.subtitle') }}
+                            </p>
                         </div>
-
-                        <UPageSection>
-                            <UPageGrid>
-                                <UPageCard
-                                    v-for="(stat, key) in stats?.stats"
-                                    :key="key"
-                                    :title="$t(`pages.stats.stats.${key}`)"
-                                    :icon="stat?.icon"
-                                >
-                                    <template #description>
-                                        <p
-                                            class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-highlighted"
-                                        >
-                                            <USkeleton
-                                                v-if="isRequestPending(status) || stat?.value === undefined"
-                                                class="h-8 w-[175px]"
-                                            />
-                                            <ClientOnly v-else>
-                                                <CountUp
-                                                    :start-val="0"
-                                                    :end-val="stat.value"
-                                                    :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
-                                                />
-
-                                                <span v-if="stat.unit !== undefined">
-                                                    {{ $t(stat.unit ?? 'common.time_ago.week', 2) }}
-                                                </span>
-                                            </ClientOnly>
-                                        </p>
-                                    </template>
-                                </UPageCard>
-                            </UPageGrid>
-                        </UPageSection>
                     </div>
                 </div>
-            </template>
-        </UDashboardPanel>
-    </UPage>
+            </div>
+        </template>
+
+        <template #body>
+            <UPageGrid>
+                <UPageCard
+                    v-for="(stat, key) in stats?.stats"
+                    :key="key"
+                    :title="$t(`pages.stats.stats.${key}`)"
+                    :icon="stat?.icon"
+                    :ui="{ leadingIcon: 'size-8' }"
+                >
+                    <template #description>
+                        <p class="flex w-full items-center gap-x-1 text-2xl font-semibold tracking-tight text-highlighted">
+                            <USkeleton v-if="isRequestPending(status) || stat?.value === undefined" class="h-8 w-[175px]" />
+                            <ClientOnly v-else>
+                                <CountUp
+                                    :start-val="0"
+                                    :end-val="stat.value"
+                                    :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
+                                />
+
+                                <span v-if="stat.unit !== undefined">
+                                    {{ $t(stat.unit ?? 'common.time_ago.week', 2) }}
+                                </span>
+                            </ClientOnly>
+                        </p>
+                    </template>
+                </UPageCard>
+            </UPageGrid>
+        </template>
+    </UDashboardPanel>
 </template>

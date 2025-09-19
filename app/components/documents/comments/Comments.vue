@@ -86,15 +86,11 @@ let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document_comments'): Promise<void> {
-    if (saving.value) {
-        return;
-    }
+    if (saving.value) return;
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-        return;
-    }
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
@@ -134,9 +130,7 @@ watchDebounced(
 );
 
 async function addComment(documentId: number, values: Schema): Promise<void> {
-    if (data.value === null) {
-        return;
-    }
+    if (data.value === null) return;
 
     const comment: Comment = {
         id: 0,
@@ -171,9 +165,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
 }
 
 async function removeComment(id: number): Promise<void> {
-    if (!data.value) {
-        return;
-    }
+    if (!data.value) return;
 
     const idx = data.value.comments.findIndex((c) => {
         return c.id === id;

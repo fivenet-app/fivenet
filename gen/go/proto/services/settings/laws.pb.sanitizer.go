@@ -3,6 +3,8 @@
 
 package settings
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateLawBookRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,6 +22,8 @@ func (m *CreateOrUpdateLawBookRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateLawBookResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -37,6 +41,8 @@ func (m *CreateOrUpdateLawBookResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateLawRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -54,6 +60,8 @@ func (m *CreateOrUpdateLawRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateLawResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -71,6 +79,8 @@ func (m *CreateOrUpdateLawResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteLawBookRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -79,6 +89,8 @@ func (m *DeleteLawBookRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteLawBookResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -87,6 +99,8 @@ func (m *DeleteLawBookResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteLawRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -95,6 +109,8 @@ func (m *DeleteLawRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteLawResponse) Sanitize() error {
 	if m == nil {
 		return nil

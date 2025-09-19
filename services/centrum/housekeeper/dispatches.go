@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
@@ -79,9 +79,9 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 					tUnits.ID.EQ(tDispatchUnit.UnitID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDispatchUnit.ExpiresAt.IS_NOT_NULL(),
-			tDispatchUnit.ExpiresAt.LT_EQ(jet.CURRENT_TIMESTAMP()),
+			tDispatchUnit.ExpiresAt.LT_EQ(mysql.CURRENT_TIMESTAMP()),
 		))
 
 	var dest []*struct {
@@ -151,19 +151,19 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 				),
 		).
 		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDispatchStatus.ID.EQ(
-				jet.RawInt(
+				mysql.RawInt(
 					"SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`",
 				),
 			),
 			tDispatchStatus.Status.NOT_IN(
-				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-				jet.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				mysql.Int32(int32(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 			),
 			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
+				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(60, mysql.MINUTE)),
 			),
 		)).
 		ORDER_BY(
@@ -249,9 +249,9 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		FROM(
 			tDispatch,
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteDispatchDays, jet.DAY)),
+				mysql.CURRENT_TIMESTAMP().SUB(mysql.INTERVAL(DeleteDispatchDays, mysql.DAY)),
 			),
 		)).
 		// Get 75 at a time

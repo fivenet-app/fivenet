@@ -7,6 +7,7 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -68,14 +69,13 @@ func (x *Labels) GetList() []*Label {
 }
 
 type Label struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Id        int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	Job       *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	Name      string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	// @sanitize: method=StripTags
-	Color         string `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
-	Order         int32  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Color         string                 `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
+	Order         int32                  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -208,17 +208,17 @@ var File_resources_jobs_labels_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/jobs/labels.proto\x12\x0eresources.jobs\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"=\n" +
+	"\x1bresources/jobs/labels.proto\x12\x0eresources.jobs\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"=\n" +
 	"\x06Labels\x123\n" +
 	"\x04list\x18\x01 \x03(\v2\x15.resources.jobs.LabelB\b\xbaH\x05\x92\x01\x02\x10\n" +
-	"R\x04list\"\x9b\x02\n" +
+	"R\x04list\"\xac\x02\n" +
 	"\x05Label\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x1e\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x1b\n" +
-	"\x04name\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x180R\x04name\x121\n" +
-	"\x05color\x18\x05 \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12\x14\n" +
+	"\x04name\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x180R\x04name\x12B\n" +
+	"\x05color\x18\x05 \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12\x14\n" +
 	"\x05order\x18\x06 \x01(\x05R\x05orderB\x06\n" +
 	"\x04_jobB\r\n" +
 	"\v_deleted_at\"O\n" +

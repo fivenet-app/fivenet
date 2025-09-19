@@ -7,6 +7,7 @@
 package content
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	structpb "google.golang.org/protobuf/types/known/structpb"
@@ -127,11 +128,10 @@ func (NodeType) EnumDescriptor() ([]byte, []int) {
 }
 
 type Content struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Version *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
-	Content *JSONNode              `protobuf:"bytes,2,opt,name=content,proto3,oneof" json:"content,omitempty"`
-	// @sanitize
-	RawContent    *string `protobuf:"bytes,3,opt,name=raw_content,json=rawContent,proto3,oneof" json:"raw_content,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
+	Content       *JSONNode              `protobuf:"bytes,2,opt,name=content,proto3,oneof" json:"content,omitempty"`
+	RawContent    *string                `protobuf:"bytes,3,opt,name=raw_content,json=rawContent,proto3,oneof" json:"raw_content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -188,17 +188,13 @@ func (x *Content) GetRawContent() string {
 }
 
 type JSONNode struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Type  NodeType               `protobuf:"varint,1,opt,name=type,proto3,enum=resources.common.content.NodeType" json:"type,omitempty"`
-	// @sanitize: method=StripTags
-	Id *string `protobuf:"bytes,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	// @sanitize: method=StripTags
-	Tag string `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
-	// @sanitize: method=StripTags
-	Attrs map[string]string `protobuf:"bytes,4,rep,name=attrs,proto3" json:"attrs,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	// @sanitize: method=StripTags
-	Text          *string     `protobuf:"bytes,5,opt,name=text,proto3,oneof" json:"text,omitempty"`
-	Content       []*JSONNode `protobuf:"bytes,6,rep,name=content,proto3" json:"content,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          NodeType               `protobuf:"varint,1,opt,name=type,proto3,enum=resources.common.content.NodeType" json:"type,omitempty"`
+	Id            *string                `protobuf:"bytes,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Tag           string                 `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	Attrs         map[string]string      `protobuf:"bytes,4,rep,name=attrs,proto3" json:"attrs,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Text          *string                `protobuf:"bytes,5,opt,name=text,proto3,oneof" json:"text,omitempty"`
+	Content       []*JSONNode            `protobuf:"bytes,6,rep,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -276,13 +272,11 @@ func (x *JSONNode) GetContent() []*JSONNode {
 }
 
 type TiptapJSONDocument struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Json  *structpb.Struct       `protobuf:"bytes,1,opt,name=json,proto3" json:"json,omitempty"`
-	// @sanitize: method=StripTags
-	Summary   string `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
-	WordCount uint32 `protobuf:"varint,3,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
-	// @sanitize: method=StripTags
-	FirstHeading  string `protobuf:"bytes,4,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Json          *structpb.Struct       `protobuf:"bytes,1,opt,name=json,proto3" json:"json,omitempty"`
+	Summary       string                 `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
+	WordCount     uint32                 `protobuf:"varint,3,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
+	FirstHeading  string                 `protobuf:"bytes,4,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,36 +343,36 @@ var File_resources_common_content_content_proto protoreflect.FileDescriptor
 
 const file_resources_common_content_content_proto_rawDesc = "" +
 	"\n" +
-	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a\x1cgoogle/protobuf/struct.proto\"\xcd\x01\n" +
+	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xd3\x01\n" +
 	"\aContent\x12&\n" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18H\x00R\aversion\x88\x01\x01\x12A\n" +
-	"\acontent\x18\x02 \x01(\v2\".resources.common.content.JSONNodeH\x01R\acontent\x88\x01\x01\x12/\n" +
-	"\vraw_content\x18\x03 \x01(\tB\t\xbaH\x06r\x04(\x80\x89zH\x02R\n" +
+	"\acontent\x18\x02 \x01(\v2\".resources.common.content.JSONNodeH\x01R\acontent\x88\x01\x01\x125\n" +
+	"\vraw_content\x18\x03 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04(\x80\x89zH\x02R\n" +
 	"rawContent\x88\x01\x01B\n" +
 	"\n" +
 	"\b_versionB\n" +
 	"\n" +
 	"\b_contentB\x0e\n" +
-	"\f_raw_content\"\xd9\x02\n" +
+	"\f_raw_content\"\xa5\x03\n" +
 	"\bJSONNode\x12@\n" +
-	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
-	"\x02id\x18\x02 \x01(\tH\x00R\x02id\x88\x01\x01\x12\x10\n" +
-	"\x03tag\x18\x03 \x01(\tR\x03tag\x12C\n" +
-	"\x05attrs\x18\x04 \x03(\v2-.resources.common.content.JSONNode.AttrsEntryR\x05attrs\x12\x17\n" +
-	"\x04text\x18\x05 \x01(\tH\x01R\x04text\x88\x01\x01\x12<\n" +
+	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12&\n" +
+	"\x02id\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x00R\x02id\x88\x01\x01\x12#\n" +
+	"\x03tag\x18\x03 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x03tag\x12V\n" +
+	"\x05attrs\x18\x04 \x03(\v2-.resources.common.content.JSONNode.AttrsEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x05attrs\x12*\n" +
+	"\x04text\x18\x05 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x01R\x04text\x88\x01\x01\x12<\n" +
 	"\acontent\x18\x06 \x03(\v2\".resources.common.content.JSONNodeR\acontent\x1a8\n" +
 	"\n" +
 	"AttrsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x05\n" +
 	"\x03_idB\a\n" +
-	"\x05_text\"\x9f\x01\n" +
+	"\x05_text\"\xc5\x01\n" +
 	"\x12TiptapJSONDocument\x12+\n" +
-	"\x04json\x18\x01 \x01(\v2\x17.google.protobuf.StructR\x04json\x12\x18\n" +
-	"\asummary\x18\x02 \x01(\tR\asummary\x12\x1d\n" +
+	"\x04json\x18\x01 \x01(\v2\x17.google.protobuf.StructR\x04json\x12+\n" +
+	"\asummary\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\asummary\x12\x1d\n" +
 	"\n" +
-	"word_count\x18\x03 \x01(\rR\twordCount\x12#\n" +
-	"\rfirst_heading\x18\x04 \x01(\tR\ffirstHeading*`\n" +
+	"word_count\x18\x03 \x01(\rR\twordCount\x126\n" +
+	"\rfirst_heading\x18\x04 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\ffirstHeading*`\n" +
 	"\vContentType\x12\x1c\n" +
 	"\x18CONTENT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11CONTENT_TYPE_HTML\x10\x01\x12\x1c\n" +

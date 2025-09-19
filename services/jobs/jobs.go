@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -31,7 +31,7 @@ func (s *Server) GetMOTD(
 		).
 		FROM(tJobProps).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(userInfo.GetJob())),
+			tJobProps.Job.EQ(mysql.String(userInfo.GetJob())),
 		).
 		LIMIT(1)
 
@@ -70,7 +70,7 @@ func (s *Server) SetMOTD(
 			req.GetMotd(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobProps.Motd.SET(jet.String(req.GetMotd())),
+			tJobProps.Motd.SET(mysql.String(req.GetMotd())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

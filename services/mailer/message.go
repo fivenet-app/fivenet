@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -37,12 +37,12 @@ func (s *Server) ListThreadMessages(
 
 	countStmt := tMessages.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tMessages.ID)).AS("data_count.total"),
 		).
 		FROM(tMessages).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
+			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
 		))
 
 	var count database.DataCount
@@ -82,9 +82,9 @@ func (s *Server) ListThreadMessages(
 					tEmails.ID.EQ(tMessages.SenderID),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(mysql.AND(
 			tMessages.DeletedAt.IS_NULL(),
-			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
+			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
 			tEmails.DeletedAt.IS_NULL(),
 		)).
 		OFFSET(req.GetPagination().GetOffset()).
@@ -103,8 +103,6 @@ func (s *Server) ListThreadMessages(
 			jobInfoFn(resp.GetMessages()[i].GetSender())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetMessages()))
 
 	return resp, nil
 }
@@ -127,7 +125,7 @@ func (s *Server) getMessage(ctx context.Context, messageId int64) (*mailer.Messa
 		).
 		FROM(tMessages).
 		WHERE(
-			tMessages.ID.EQ(jet.Int64(messageId)),
+			tMessages.ID.EQ(mysql.Int64(messageId)),
 		).
 		LIMIT(1)
 
@@ -326,9 +324,9 @@ func (s *Server) DeleteMessage(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if message != nil && message.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tMessages := table.FivenetMailerMessages
@@ -339,9 +337,9 @@ func (s *Server) DeleteMessage(
 		SET(
 			tMessages.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tMessages.ThreadID.EQ(jet.Int64(req.GetThreadId())),
-			tMessages.ID.EQ(jet.Int64(req.GetMessageId())),
+		WHERE(mysql.AND(
+			tMessages.ThreadID.EQ(mysql.Int64(req.GetThreadId())),
+			tMessages.ID.EQ(mysql.Int64(req.GetMessageId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -410,9 +408,9 @@ func (s *Server) SearchThreads(
 		}, nil
 	}
 
-	ids := []jet.Expression{}
+	ids := []mysql.Expression{}
 	for _, email := range listEmailsResp.GetEmails() {
-		ids = append(ids, jet.Int64(email.GetId()))
+		ids = append(ids, mysql.Int64(email.GetId()))
 	}
 
 	// Get Thread ids via threads recipients list
@@ -420,21 +418,21 @@ func (s *Server) SearchThreads(
 		AND(tMessages.ThreadID.IN(
 			tThreadsRecipients.
 				SELECT(
-					jet.DISTINCT(tThreadsRecipients.ThreadID),
+					mysql.DISTINCT(tThreadsRecipients.ThreadID),
 				).
 				FROM(tThreadsRecipients).
 				WHERE(
 					tThreadsRecipients.EmailID.IN(ids...),
 				),
 		)).
-		AND(jet.OR(
-			dbutils.MATCH(tMessages.Title, jet.String(req.GetSearch())),
-			dbutils.MATCH(tMessages.Content, jet.String(req.GetSearch())),
+		AND(mysql.OR(
+			dbutils.MATCH(tMessages.Title, mysql.String(req.GetSearch())),
+			dbutils.MATCH(tMessages.Content, mysql.String(req.GetSearch())),
 		))
 
 	countStmt := tMessages.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tMessages.ID)).AS("data_count.total"),
 		).
 		FROM(tMessages).
 		WHERE(condition)
@@ -482,8 +480,6 @@ func (s *Server) SearchThreads(
 			jobInfoFn(resp.GetMessages()[i].GetSender())
 		}
 	}
-
-	resp.GetPagination().Update(len(resp.GetMessages()))
 
 	return resp, nil
 }

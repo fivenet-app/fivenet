@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
@@ -65,8 +65,8 @@ func (s *Server) CreateOrUpdateLawBook(
 				req.GetLawBook().GetName(),
 				req.GetLawBook().Description,
 			).
-			WHERE(jet.AND(
-				tLawBooks.ID.EQ(jet.Int64(req.GetLawBook().GetId())),
+			WHERE(mysql.AND(
+				tLawBooks.ID.EQ(mysql.Int64(req.GetLawBook().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -120,7 +120,7 @@ func (s *Server) DeleteLawBook(
 	stmt := tLawBooks.
 		DELETE().
 		WHERE(
-			tLawBooks.ID.EQ(jet.Int64(req.GetId())),
+			tLawBooks.ID.EQ(mysql.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -148,7 +148,7 @@ func (s *Server) getLawBook(ctx context.Context, lawbookId int64) (*laws.LawBook
 		).
 		FROM(tLawBooks).
 		WHERE(
-			tLawBooks.ID.EQ(jet.Int64(lawbookId)),
+			tLawBooks.ID.EQ(mysql.Int64(lawbookId)),
 		).
 		LIMIT(1)
 
@@ -231,8 +231,8 @@ func (s *Server) CreateOrUpdateLaw(
 				req.GetLaw().DetentionTime,
 				req.GetLaw().StvoPoints,
 			).
-			WHERE(jet.AND(
-				tLaws.ID.EQ(jet.Int64(req.GetLaw().GetId())),
+			WHERE(mysql.AND(
+				tLaws.ID.EQ(mysql.Int64(req.GetLaw().GetId())),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -282,7 +282,7 @@ func (s *Server) DeleteLaw(
 	stmt := tLaws.
 		DELETE().
 		WHERE(
-			tLaws.ID.EQ(jet.Int64(req.GetId())),
+			tLaws.ID.EQ(mysql.Int64(req.GetId())),
 		).
 		LIMIT(1)
 
@@ -315,7 +315,7 @@ func (s *Server) getLaw(ctx context.Context, lawId int64) (*laws.Law, error) {
 		).
 		FROM(tLaws).
 		WHERE(
-			tLaws.ID.EQ(jet.Int64(lawId)),
+			tLaws.ID.EQ(mysql.Int64(lawId)),
 		).
 		LIMIT(1)
 

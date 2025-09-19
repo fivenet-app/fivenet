@@ -46,26 +46,18 @@ export interface MarkerMarker {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string name = 8
      */
     name: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string description = 9
      */
     description?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string postal = 10
      */
     postal?: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string color = 11
      */
     color?: string;
@@ -95,8 +87,6 @@ export interface MarkerMarker {
     creator?: UserShort;
 }
 /**
- * @dbscanner
- *
  * @generated from protobuf message resources.livemap.MarkerData
  */
 export interface MarkerData {
@@ -137,8 +127,6 @@ export interface CircleMarker {
  */
 export interface IconMarker {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string icon = 1
      */
     icon: string;
@@ -175,10 +163,10 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
             { no: 5, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 7, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "255" } } } },
-            { no: 9, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
-            { no: 10, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } } } },
-            { no: 11, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 9, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 10, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "48" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 11, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 12, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 13, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 14, name: "type", kind: "enum", T: () => ["resources.livemap.MarkerType", MarkerType, "MARKER_TYPE_"], options: { "tagger.tags": "alias:\"markerType\"" } },
@@ -335,7 +323,7 @@ class MarkerData$Type extends MessageType<MarkerData> {
         super("resources.livemap.MarkerData", [
             { no: 3, name: "circle", kind: "message", oneof: "data", T: () => CircleMarker },
             { no: 4, name: "icon", kind: "message", oneof: "data", T: () => IconMarker }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true, notJson: true } });
     }
     create(value?: PartialMessage<MarkerData>): MarkerData {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -447,7 +435,7 @@ export const CircleMarker = new CircleMarker$Type();
 class IconMarker$Type extends MessageType<IconMarker> {
     constructor() {
         super("resources.livemap.IconMarker", [
-            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } }
+            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<IconMarker>): IconMarker {

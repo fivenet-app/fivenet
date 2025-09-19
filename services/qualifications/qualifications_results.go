@@ -19,7 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -68,47 +68,55 @@ func (s *Server) ListQualificationsResults(
 		}
 
 		condition = condition.AND(
-			tQualiResults.QualificationID.EQ(jet.Int64(req.GetQualificationId())),
+			tQualiResults.QualificationID.EQ(mysql.Int64(req.GetQualificationId())),
 		)
 	} else {
-		condition = condition.AND(jet.AND(
-			tQuali.DeletedAt.IS_NULL(),
-			jet.OR(
-				jet.AND(
-					tQualiResults.CreatorID.EQ(jet.Int32(userInfo.GetUserId())),
-					tQualiResults.CreatorJob.EQ(jet.String(userInfo.GetJob())),
-				),
-				jet.AND(
-					tQAccess.Access.IS_NOT_NULL(),
-					jet.OR(
-						tQAccess.Access.GT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
-						jet.AND(
-							tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-							tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+		accessExists := mysql.EXISTS(
+			mysql.SELECT(mysql.Int(1)).
+				FROM(tQAccess).
+				WHERE(
+					tQAccess.TargetID.EQ(tQualiResults.QualificationID).
+						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))).
+						AND(
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))).
+								OR(
+									tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
+										AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+								),
 						),
-					),
 				),
+		)
+
+		condition = condition.AND(mysql.AND(
+			tQuali.DeletedAt.IS_NULL(),
+			mysql.OR(
+				mysql.AND(
+					tQualiResults.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tQualiResults.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+				),
+				accessExists,
 			),
 		))
 	}
 
-	countColumn := jet.Expression(tQualiResults.QualificationID)
+	countColumn := mysql.Expression(tQualiResults.QualificationID)
 	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).
-			AND(tQualiResults.UserID.EQ(jet.Int32(req.GetUserId())))
+		condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
+			AND(tQualiResults.UserID.EQ(mysql.Int32(req.GetUserId())))
 	} else {
 		if req.QualificationId == nil {
-			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.GetJob()))).AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())))
-			countColumn = jet.DISTINCT(tQualiResults.QualificationID)
+			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
+			countColumn = mysql.DISTINCT(tQualiResults.QualificationID)
 		} else {
-			countColumn = jet.DISTINCT(tQualiResults.UserID)
+			countColumn = mysql.DISTINCT(tQualiResults.UserID)
 		}
 	}
 
 	if len(req.GetStatus()) > 0 {
-		statuses := []jet.Expression{}
+		statuses := []mysql.Expression{}
 		for i := range req.GetStatus() {
-			statuses = append(statuses, jet.Int32(int32(req.GetStatus()[i])))
+			statuses = append(statuses, mysql.Int32(int32(req.GetStatus()[i])))
 		}
 
 		condition = condition.AND(tQualiResults.Status.IN(statuses...))
@@ -116,7 +124,7 @@ func (s *Server) ListQualificationsResults(
 
 	countStmt := tQualiResults.
 		SELECT(
-			jet.COUNT(countColumn).AS("data_count.total"),
+			mysql.COUNT(countColumn).AS("data_count.total"),
 		).
 		FROM(
 			tQualiResults.
@@ -125,8 +133,8 @@ func (s *Server) ListQualificationsResults(
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
+						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
 				).
 				LEFT_JOIN(tUser,
 					tQualiResults.UserID.EQ(tUser.ID),
@@ -151,9 +159,9 @@ func (s *Server) ListQualificationsResults(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
-		var column jet.Column
+		var column mysql.Column
 		switch req.GetSort().GetColumn() {
 		case "status":
 			column = tQualiResults.Status
@@ -222,8 +230,8 @@ func (s *Server) ListQualificationsResults(
 				).
 				LEFT_JOIN(tQAccess,
 					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(jet.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
+						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
+						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
 				),
 		).
 		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt, tQualiResults.ID).
@@ -341,7 +349,7 @@ func (s *Server) createOrUpdateQualificationResult(
 	quali, err := s.getQualification(
 		ctx,
 		qualificationId,
-		tQuali.ID.EQ(jet.Int64(qualificationId)),
+		tQuali.ID.EQ(mysql.Int64(qualificationId)),
 		userInfo,
 		false,
 	)
@@ -353,11 +361,11 @@ func (s *Server) createOrUpdateQualificationResult(
 	// There is currently no result with status successful
 	if resultId <= 0 &&
 		(currentResult == nil || (currentResult.GetStatus() != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
-		var creatorId jet.Expression
+		var creatorId mysql.Expression
 		if userInfo.GetUserId() <= 0 {
-			creatorId = jet.NULL
+			creatorId = mysql.NULL
 		} else {
-			creatorId = jet.Int32(userInfo.GetUserId())
+			creatorId = mysql.Int32(userInfo.GetUserId())
 		}
 
 		stmt := tQualiResults.
@@ -414,8 +422,8 @@ func (s *Server) createOrUpdateQualificationResult(
 				score,
 				summary,
 			).
-			WHERE(jet.AND(
-				tQualiResults.ID.EQ(jet.Int64(resultId)),
+			WHERE(mysql.AND(
+				tQualiResults.ID.EQ(mysql.Int64(resultId)),
 				tQualiResults.DeletedAt.IS_NULL(),
 			))
 
@@ -434,9 +442,9 @@ func (s *Server) createOrUpdateQualificationResult(
 			SET(
 				grading,
 			).
-			WHERE(jet.AND(
-				tExamResponses.QualificationID.EQ(jet.Int64(quali.GetId())),
-				tExamResponses.UserID.EQ(jet.Int32(userId)),
+			WHERE(mysql.AND(
+				tExamResponses.QualificationID.EQ(mysql.Int64(quali.GetId())),
+				tExamResponses.UserID.EQ(mysql.Int32(userId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -508,20 +516,20 @@ func (s *Server) getQualificationResult(
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
 	if resultId > 0 {
-		condition = condition.AND(tQualiResults.ID.EQ(jet.Int64(resultId)))
+		condition = condition.AND(tQualiResults.ID.EQ(mysql.Int64(resultId)))
 	} else if userId > 0 {
-		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userId)))
+		condition = condition.AND(tQualiResults.UserID.EQ(mysql.Int32(userId)))
 	} else {
-		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.GetUserId())))
+		condition = condition.AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 	}
 	if qualificationId > 0 {
-		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Int64(qualificationId)))
+		condition = condition.AND(tQualiResults.QualificationID.EQ(mysql.Int64(qualificationId)))
 	}
 
 	if len(status) > 0 {
-		statusConds := make([]jet.Expression, len(status))
+		statusConds := make([]mysql.Expression, len(status))
 		for i := range status {
-			statusConds[i] = jet.Int32(int32(status[i]))
+			statusConds[i] = mysql.Int32(int32(status[i]))
 		}
 
 		condition = condition.AND(tQualiResults.Status.IN(statusConds...))
@@ -567,7 +575,6 @@ func (s *Server) getQualificationResult(
 		WHERE(condition).
 		LIMIT(1)
 
-	fmt.Println(stmt.DebugSql())
 	var result qualifications.QualificationResult
 	if err := stmt.QueryContext(ctx, s.db, &result); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -629,7 +636,7 @@ func (s *Server) DeleteQualificationResult(
 	quali, err := s.getQualification(
 		ctx,
 		result.GetQualificationId(),
-		tQuali.ID.EQ(jet.Int64(result.GetQualificationId())),
+		tQuali.ID.EQ(mysql.Int64(result.GetQualificationId())),
 		userInfo,
 		false,
 	)
@@ -652,11 +659,11 @@ func (s *Server) DeleteQualificationResult(
 			tQualiResults.DeletedAt,
 		).
 		SET(
-			jet.CURRENT_TIMESTAMP(),
+			mysql.CURRENT_TIMESTAMP(),
 		).
-		WHERE(jet.AND(
-			tQualiResults.ID.EQ(jet.Int64(result.GetId())),
-			tQualiResults.ID.EQ(jet.Int64(req.GetResultId())),
+		WHERE(mysql.AND(
+			tQualiResults.ID.EQ(mysql.Int64(result.GetId())),
+			tQualiResults.ID.EQ(mysql.Int64(req.GetResultId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -732,9 +739,9 @@ func (s *Server) handleColleagueLabelSync(
 				tJobLabels.ID.AS("id"),
 			).
 			FROM(tJobLabels).
-			WHERE(jet.AND(
-				tJobLabels.Job.EQ(jet.String(userInfo.GetJob())),
-				tJobLabels.Name.EQ(jet.String(labelName)),
+			WHERE(mysql.AND(
+				tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
+				tJobLabels.Name.EQ(mysql.String(labelName)),
 			)).
 			LIMIT(1)
 
@@ -779,10 +786,10 @@ func (s *Server) handleColleagueLabelSync(
 	} else {
 		stmt := tUserLabels.
 			DELETE().
-			WHERE(jet.AND(
-				tUserLabels.UserID.EQ(jet.Int32(targetUserId)),
-				tUserLabels.Job.EQ(jet.String(userInfo.GetJob())),
-				tUserLabels.LabelID.EQ(jet.Int64(labelId)),
+			WHERE(mysql.AND(
+				tUserLabels.UserID.EQ(mysql.Int32(targetUserId)),
+				tUserLabels.Job.EQ(mysql.String(userInfo.GetJob())),
+				tUserLabels.LabelID.EQ(mysql.Int64(labelId)),
 			)).
 			LIMIT(1)
 

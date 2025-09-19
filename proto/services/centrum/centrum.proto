@@ -5,6 +5,7 @@ package services.centrum;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
@@ -50,7 +51,7 @@ message ListUnitsRequest {
 }
 
 message ListUnitsResponse {
-  repeated resources.centrum.Unit units = 1 [(codegen.itemslen.items_len) = true];
+  repeated resources.centrum.Unit units = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message CreateOrUpdateUnitRequest {
@@ -70,10 +71,14 @@ message DeleteUnitResponse {}
 message UpdateUnitStatusRequest {
   int64 unit_id = 1;
   resources.centrum.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
-  // @sanitize
-  optional string code = 4 [(buf.validate.field).string.max_len = 20];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 4 [
+    (buf.validate.field).string.max_len = 20,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 }
 
 message UpdateUnitStatusResponse {}
@@ -103,7 +108,7 @@ message UpdateDispatchersResponse {
 
 message ListUnitActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.UnitStatus activity = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.centrum.UnitStatus activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 // Dispatch Management
@@ -124,7 +129,7 @@ message ListDispatchesRequest {
 
 message ListDispatchesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.Dispatch dispatches = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.centrum.Dispatch dispatches = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetDispatchRequest {
@@ -160,16 +165,20 @@ message DeleteDispatchResponse {}
 message ListDispatchTargetJobsRequest {}
 
 message ListDispatchTargetJobsResponse {
-  repeated resources.jobs.Job jobs = 1 [(codegen.itemslen.items_len) = true];
+  repeated resources.jobs.Job jobs = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message UpdateDispatchStatusRequest {
   int64 dispatch_id = 1;
   resources.centrum.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
-  // @sanitize
-  optional string code = 4;
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string code = 4 [
+    (buf.validate.field).string.max_len = 24,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 }
 
 message UpdateDispatchStatusResponse {}
@@ -185,7 +194,7 @@ message AssignDispatchResponse {}
 
 message ListDispatchActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.centrum.DispatchStatus activity = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.centrum.DispatchStatus activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message JoinUnitRequest {
@@ -199,8 +208,10 @@ message JoinUnitResponse {
 message TakeDispatchRequest {
   repeated int64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
   resources.centrum.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
-  // @sanitize
-  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
+  optional string reason = 3 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 }
 
 message TakeDispatchResponse {}

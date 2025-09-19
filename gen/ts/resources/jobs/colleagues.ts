@@ -70,8 +70,6 @@ export interface Colleague {
      */
     props?: ColleagueProps;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string email = 20
      */
     email?: string;
@@ -101,8 +99,6 @@ export interface ColleagueProps {
      */
     absenceEnd?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string note = 6
      */
     note?: string;
@@ -136,7 +132,7 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 17, name: "profile_picture_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 18, name: "profile_picture", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"profile_picture\"" } },
             { no: 19, name: "props", kind: "message", T: () => ColleagueProps, options: { "tagger.tags": "alias:\"colleague_props\"" } },
-            { no: 20, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } } } }
+            { no: 20, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<Colleague>): Colleague {
@@ -271,7 +267,7 @@ class ColleagueProps$Type extends MessageType<ColleagueProps> {
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "absence_begin", kind: "message", T: () => Timestamp },
             { no: 5, name: "absence_end", kind: "message", T: () => Timestamp },
-            { no: 6, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "labels", kind: "message", T: () => Labels },
             { no: 8, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } },
             { no: 9, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }

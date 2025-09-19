@@ -107,9 +107,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
-    if (colleague === undefined) {
-        return;
-    }
+    if (colleague === undefined) return;
 
     if (colleague.props === undefined) {
         colleague.props = {
@@ -467,7 +465,7 @@ defineShortcuts({
                                 :src="row.original?.profilePicture"
                                 :name="`${row.original.firstname} ${row.original.lastname}`"
                                 size="sm"
-                                :enable-popup="true"
+                                enable-popup
                                 :alt="$t('common.profile_picture')"
                             />
 
@@ -563,9 +561,9 @@ defineShortcuts({
                                             <UButton
                                                 v-for="label in colleague.props?.labels?.list"
                                                 :key="label.name"
-                                                class="justify-between gap-2"
+                                                class="cursor-pointer justify-between gap-2"
                                                 :class="
-                                                    isColorBright(hexToRgb(label.color, RGBBlack)!)
+                                                    isColorBright(hexToRgb(label.color, rgbBlack)!)
                                                         ? 'text-black!'
                                                         : 'text-white!'
                                                 "

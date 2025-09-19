@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Law) Sanitize() error {
 	if m == nil {
 		return nil
@@ -22,13 +24,11 @@ func (m *Law) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
 	// Field: Hint
-
 	if m.Hint != nil {
 		*m.Hint = htmlsanitizer.Sanitize(*m.Hint)
 	}
@@ -48,6 +48,8 @@ func (m *Law) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *LawBook) Sanitize() error {
 	if m == nil {
 		return nil
@@ -63,7 +65,6 @@ func (m *LawBook) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}

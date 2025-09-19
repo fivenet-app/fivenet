@@ -47,14 +47,10 @@ export interface Message {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 8
      */
     title: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.content.Content content = 9
      */
     content?: Content;
@@ -72,8 +68,6 @@ export interface Message {
     creatorJob?: string;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.mailer.MessageData
  */
 export interface MessageData {
@@ -123,8 +117,8 @@ class Message$Type extends MessageType<Message> {
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 7, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 9, name: "content", kind: "message", T: () => Content },
+            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 9, name: "content", kind: "message", T: () => Content, options: { "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 10, name: "data", kind: "message", T: () => MessageData },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -244,7 +238,7 @@ class MessageData$Type extends MessageType<MessageData> {
     constructor() {
         super("resources.mailer.MessageData", [
             { no: 1, name: "attachments", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => MessageAttachment, options: { "buf.validate.field": { repeated: { maxItems: "3" } } } }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<MessageData>): MessageData {
         const message = globalThis.Object.create((this.messagePrototype!));

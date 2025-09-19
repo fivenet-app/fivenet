@@ -18,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -43,26 +43,28 @@ func (s *Server) ListEmails(
 ) (*pbmailer.ListEmailsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 
 	if !userInfo.GetSuperuser() || (userInfo.GetSuperuser() && req.All != nil && !req.GetAll()) {
 		// Include deactivated e-mails
-		condition = condition.AND(jet.AND(
+		condition = condition.AND(mysql.AND(
 			tEmails.DeletedAt.IS_NULL(),
-			jet.OR(
-				tEmails.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-				jet.OR(
-					tEmailsAccess.UserID.EQ(jet.Int32(userInfo.GetUserId())),
-					jet.AND(
-						tEmailsAccess.Job.EQ(jet.String(userInfo.GetJob())),
-						tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade())),
+			mysql.OR(
+				tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				mysql.OR(
+					tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					mysql.AND(
+						tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
-					jet.AND(
+					mysql.AND(
 						tEmailsAccess.QualificationID.IS_NOT_NULL(),
 						tQualificationsResults.DeletedAt.IS_NULL(),
 						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
 						tQualificationsResults.Status.EQ(
-							jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+							mysql.Int32(
+								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
+							),
 						),
 					),
 				),
@@ -72,17 +74,17 @@ func (s *Server) ListEmails(
 
 	countStmt := tEmails.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tEmails.ID)).AS("data_count.total"),
+			mysql.COUNT(mysql.DISTINCT(tEmails.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tEmails.
 				LEFT_JOIN(tEmailsAccess,
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
+						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
 				).
 				LEFT_JOIN(tQualificationsResults,
 					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID).
-						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+						AND(tQualificationsResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
 				),
 		).
 		WHERE(condition)
@@ -127,8 +129,6 @@ func (s *Server) ListEmails(
 		break
 	}
 
-	resp.GetPagination().Update(len(resp.GetEmails()))
-
 	return resp, nil
 }
 
@@ -139,7 +139,7 @@ func ListUserEmails(
 	pag *database.PaginationRequest,
 	includeDisabled bool,
 ) ([]*mailer.Email, error) {
-	condition := jet.Bool(true)
+	condition := mysql.Bool(true)
 	baseCondition := tEmails.DeletedAt.IS_NULL()
 	if !includeDisabled {
 		baseCondition = baseCondition.AND(tEmails.Deactivated.IS_FALSE())
@@ -148,26 +148,26 @@ func ListUserEmails(
 	if !userInfo.GetSuperuser() {
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		// Access predicates via EXISTS (no joins)
-		userAccessExists := jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		userAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess).
 				WHERE(
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(access))).
-						AND(tEmailsAccess.UserID.EQ(jet.Int32(userInfo.GetUserId()))),
+						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(access))).
+						AND(tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
 				),
 		)
 
-		jobAccessExists := jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		jobAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess).
 				WHERE(
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(access))).
-						AND(tEmailsAccess.Job.EQ(jet.String(userInfo.GetJob()))).
-						AND(tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.GetJobGrade()))),
+						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(access))).
+						AND(tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
+						AND(tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
 				),
 		)
 
@@ -176,26 +176,26 @@ SELECT(jet.Int(1)).
 		ea := tEmailsAccess.AS("ea")
 		qr := tQualificationsResults.AS("qr")
 
-		qualAccessExists := jet.EXISTS(
-			jet.
-SELECT(jet.Int(1)).
+		qualAccessExists := mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess.AS("ea")).
 				WHERE(
-					jet.AND(
+					mysql.AND(
 						ea.TargetID.EQ(tEmails.ID),
-						ea.Access.GT_EQ(jet.Int32(access)),
+						ea.Access.GT_EQ(mysql.Int32(access)),
 						ea.QualificationID.IS_NOT_NULL(),
-						jet.EXISTS(
-							jet.
-SELECT(jet.Int(1)).
+						mysql.EXISTS(
+							mysql.
+								SELECT(mysql.Int(1)).
 								FROM(tQualificationsResults.AS("qr")).
 								WHERE(
-									jet.AND(
+									mysql.AND(
 										qr.QualificationID.EQ(ea.QualificationID),
-										qr.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+										qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 										qr.DeletedAt.IS_NULL(),
 										qr.Status.EQ(
-											jet.Int32(
+											mysql.Int32(
 												int32(
 													qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
 												),
@@ -210,9 +210,9 @@ SELECT(jet.Int(1)).
 
 		condition = condition.AND(
 			baseCondition.AND(
-				jet.OR(
+				mysql.OR(
 					// owner may always see their email
-					tEmails.UserID.EQ(jet.Int32(userInfo.GetUserId())),
+					tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 					// access by explicit user, by job+grade, or by qualification
 					userAccessExists,
 					jobAccessExists,
@@ -261,7 +261,7 @@ SELECT(jet.Int(1)).
 func (s *Server) getEmailByCondition(
 	ctx context.Context,
 	tx qrm.DB,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 ) (*mailer.Email, error) {
 	stmt := tEmails.
 		SELECT(
@@ -300,7 +300,7 @@ func (s *Server) getEmail(
 	withAccess bool,
 	withSettings bool,
 ) (*mailer.Email, error) {
-	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(jet.Int64(emailId)))
+	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(mysql.Int64(emailId)))
 	if err != nil {
 		return nil, err
 	}
@@ -442,7 +442,7 @@ func (s *Server) CreateOrUpdateEmail(
 			email, err := s.getEmailByCondition(
 				ctx,
 				tx,
-				tEmails.UserID.EQ(jet.Int32(req.GetEmail().GetUserId())),
+				tEmails.UserID.EQ(mysql.Int32(req.GetEmail().GetUserId())),
 			)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -483,14 +483,14 @@ func (s *Server) CreateOrUpdateEmail(
 
 		tEmails := table.FivenetMailerEmails
 
-		label := jet.NULL
+		label := mysql.NULL
 		if req.Email.Label != nil && *req.Email.Label != "" {
-			label = jet.String(req.GetEmail().GetLabel())
+			label = mysql.String(req.GetEmail().GetLabel())
 		}
 
 		sets := []any{
-			tEmails.Label.SET(jet.StringExp(label)),
-			tEmails.CreatorID.SET(jet.Int32(userInfo.GetUserId())),
+			tEmails.Label.SET(mysql.StringExp(label)),
+			tEmails.CreatorID.SET(mysql.Int32(userInfo.GetUserId())),
 		}
 
 		// Update email only when necessary and allowed
@@ -504,22 +504,22 @@ func (s *Server) CreateOrUpdateEmail(
 			}
 
 			sets = append(sets,
-				tEmails.Email.SET(jet.String(req.GetEmail().GetEmail())),
-				tEmails.EmailChanged.SET(jet.CURRENT_TIMESTAMP()),
+				tEmails.Email.SET(mysql.String(req.GetEmail().GetEmail())),
+				tEmails.EmailChanged.SET(mysql.CURRENT_TIMESTAMP()),
 			)
 		}
 
 		if userInfo.GetSuperuser() {
 			sets = append(sets,
-				tEmails.Deactivated.SET(jet.Bool(req.GetEmail().GetDeactivated())),
+				tEmails.Deactivated.SET(mysql.Bool(req.GetEmail().GetDeactivated())),
 			)
 		}
 
-		condition := tEmails.ID.EQ(jet.Int64(req.GetEmail().GetId()))
+		condition := tEmails.ID.EQ(mysql.Int64(req.GetEmail().GetId()))
 		if req.Email.Job != nil {
-			condition = condition.AND(tEmails.Job.EQ(jet.String(userInfo.GetJob())))
+			condition = condition.AND(tEmails.Job.EQ(mysql.String(userInfo.GetJob())))
 		} else {
-			condition = condition.AND(tEmails.UserID.EQ(jet.Int32(userInfo.GetUserId())))
+			condition = condition.AND(tEmails.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 		}
 
 		stmt := tEmails.
@@ -528,8 +528,8 @@ func (s *Server) CreateOrUpdateEmail(
 				sets[0],
 				sets[1:]...,
 			).
-			WHERE(jet.AND(
-				tEmails.ID.EQ(jet.Int64(req.GetEmail().GetId())),
+			WHERE(mysql.AND(
+				tEmails.ID.EQ(mysql.Int64(req.GetEmail().GetId())),
 				condition,
 			))
 
@@ -549,7 +549,7 @@ func (s *Server) CreateOrUpdateEmail(
 					email.GetEmail(),
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tUserProps.Email.SET(jet.String(email.GetEmail())),
+					tUserProps.Email.SET(mysql.String(email.GetEmail())),
 				)
 
 			if _, err := upStmt.ExecContext(ctx, tx); err != nil {
@@ -641,7 +641,7 @@ func (s *Server) createEmail(
 				email.GetEmail(),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tUserProps.Email.SET(jet.String(email.GetEmail())),
+				tUserProps.Email.SET(mysql.String(email.GetEmail())),
 			)
 
 		if _, err := upStmt.ExecContext(ctx, tx); err != nil {
@@ -698,9 +698,9 @@ func (s *Server) DeleteEmail(
 		req.GetId(),
 	)
 
-	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	deletedAtTime := mysql.CURRENT_TIMESTAMP()
 	if email != nil && email.GetDeletedAt() != nil && userInfo.GetSuperuser() {
-		deletedAtTime = jet.TimestampExp(jet.NULL)
+		deletedAtTime = mysql.TimestampExp(mysql.NULL)
 	}
 
 	tEmails := table.FivenetMailerEmails
@@ -709,8 +709,8 @@ func (s *Server) DeleteEmail(
 		SET(
 			tEmails.DeletedAt.SET(deletedAtTime),
 		).
-		WHERE(jet.AND(
-			tEmails.ID.EQ(jet.Int64(req.GetId())),
+		WHERE(mysql.AND(
+			tEmails.ID.EQ(mysql.Int64(req.GetId())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

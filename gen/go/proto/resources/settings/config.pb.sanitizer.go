@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *AppConfig) Sanitize() error {
 	if m == nil {
 		return nil
@@ -21,9 +23,21 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: DefaultLocale
+	m.DefaultLocale = htmlsanitizer.Sanitize(m.DefaultLocale)
+
 	// Field: Discord
 	if m.Discord != nil {
 		if v, ok := any(m.GetDiscord()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Display
+	if m.Display != nil {
+		if v, ok := any(m.GetDisplay()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -66,6 +80,11 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Version
+	if m.Version != nil {
+		*m.Version = htmlsanitizer.Sanitize(*m.Version)
+	}
+
 	// Field: Website
 	if m.Website != nil {
 		if v, ok := any(m.GetWebsite()).(interface{ Sanitize() error }); ok {
@@ -78,6 +97,8 @@ func (m *AppConfig) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Auth) Sanitize() error {
 	if m == nil {
 		return nil
@@ -86,13 +107,14 @@ func (m *Auth) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Discord) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: BotId
-
 	if m.BotId != nil {
 		*m.BotId = htmlsanitizer.StripTags(*m.BotId)
 	}
@@ -115,7 +137,6 @@ func (m *Discord) Sanitize() error {
 	}
 
 	// Field: InviteUrl
-
 	if m.InviteUrl != nil {
 		*m.InviteUrl = htmlsanitizer.StripTags(*m.InviteUrl)
 	}
@@ -132,19 +153,19 @@ func (m *Discord) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DiscordBotPresence) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Status
-
 	if m.Status != nil {
 		*m.Status = htmlsanitizer.StripTags(*m.Status)
 	}
 
 	// Field: Url
-
 	if m.Url != nil {
 		*m.Url = htmlsanitizer.StripTags(*m.Url)
 	}
@@ -152,6 +173,26 @@ func (m *DiscordBotPresence) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *Display) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CurrencyName
+	m.CurrencyName = htmlsanitizer.StripTags(m.CurrencyName)
+
+	// Field: IntlLocale
+	if m.IntlLocale != nil {
+		*m.IntlLocale = htmlsanitizer.StripTags(*m.IntlLocale)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobInfo) Sanitize() error {
 	if m == nil {
 		return nil
@@ -185,19 +226,19 @@ func (m *JobInfo) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Links) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Imprint
-
 	if m.Imprint != nil {
 		*m.Imprint = htmlsanitizer.StripTags(*m.Imprint)
 	}
 
 	// Field: PrivacyPolicy
-
 	if m.PrivacyPolicy != nil {
 		*m.PrivacyPolicy = htmlsanitizer.StripTags(*m.PrivacyPolicy)
 	}
@@ -205,6 +246,8 @@ func (m *Links) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Perm) Sanitize() error {
 	if m == nil {
 		return nil
@@ -219,6 +262,8 @@ func (m *Perm) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Perms) Sanitize() error {
 	if m == nil {
 		return nil
@@ -239,6 +284,8 @@ func (m *Perms) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *System) Sanitize() error {
 	if m == nil {
 		return nil
@@ -256,14 +303,21 @@ func (m *System) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UnemployedJob) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserTracker) Sanitize() error {
 	if m == nil {
 		return nil
@@ -290,6 +344,8 @@ func (m *UserTracker) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Website) Sanitize() error {
 	if m == nil {
 		return nil

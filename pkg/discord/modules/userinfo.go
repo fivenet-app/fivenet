@@ -21,7 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -244,9 +244,9 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 	logs := []discord.Embed{}
 	settings := g.settings.Load()
 
-	jobs := []jet.Expression{jet.String(g.job)}
+	jobs := []mysql.Expression{mysql.String(g.job)}
 	for _, job := range g.appCfg.Get().Discord.GetIgnoredJobs() {
-		jobs = append(jobs, jet.String(job))
+		jobs = append(jobs, mysql.String(job))
 	}
 
 	tUsers := tables.User().AS("users")
@@ -272,15 +272,15 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
+					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(jet.String(g.job))),
+						AND(tColleagueProps.Job.EQ(mysql.String(g.job))),
 				),
 		).
-		WHERE(jet.AND(
-			tAccsOauth2.Provider.EQ(jet.String("discord")),
+		WHERE(mysql.AND(
+			tAccsOauth2.Provider.EQ(mysql.String("discord")),
 			tUsers.Job.IN(jobs...),
 		)).
 		ORDER_BY(tUsers.ID.ASC())

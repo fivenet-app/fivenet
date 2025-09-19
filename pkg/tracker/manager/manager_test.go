@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/sethvargo/go-retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -218,7 +218,7 @@ func TestRefreshUserLocations(t *testing.T) {
 				return nil
 			}
 
-			stmt := tLocs.SELECT(jet.COUNT(tLocs.Identifier).AS("total_count"))
+			stmt := tLocs.SELECT(mysql.COUNT(tLocs.Identifier).AS("total_count"))
 			var dest database.DataCount
 			if err := stmt.QueryContext(ctx, db, &dest); err != nil {
 				return err
@@ -276,11 +276,11 @@ func insertCitizenLocations(
 			hidden,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tLocs.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tLocs.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
-			tLocs.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
-			tLocs.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
-			tLocs.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
+			tLocs.Job.SET(mysql.StringExp(mysql.Raw("VALUES(`job`)"))),
+			tLocs.JobGrade.SET(mysql.IntExp(mysql.Raw("VALUES(`job_grade`)"))),
+			tLocs.X.SET(mysql.FloatExp(mysql.Raw("VALUES(`x`)"))),
+			tLocs.Y.SET(mysql.FloatExp(mysql.Raw("VALUES(`y`)"))),
+			tLocs.Hidden.SET(mysql.BoolExp(mysql.Raw("VALUES(`hidden`)"))),
 		)
 
 	_, err := stmt.ExecContext(ctx, db)

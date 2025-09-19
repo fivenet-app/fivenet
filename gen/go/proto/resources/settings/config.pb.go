@@ -7,6 +7,8 @@
 package settings
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -77,7 +79,6 @@ func (DiscordBotPresenceType) EnumDescriptor() ([]byte, []int) {
 	return file_resources_settings_config_proto_rawDescGZIP(), []int{0}
 }
 
-// @dbscanner: json,partial
 type AppConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
@@ -89,6 +90,7 @@ type AppConfig struct {
 	UserTracker   *UserTracker           `protobuf:"bytes,6,opt,name=user_tracker,json=userTracker,proto3" json:"user_tracker,omitempty"`
 	Discord       *Discord               `protobuf:"bytes,7,opt,name=discord,proto3" json:"discord,omitempty"`
 	System        *System                `protobuf:"bytes,9,opt,name=system,proto3" json:"system,omitempty"`
+	Display       *Display               `protobuf:"bytes,10,opt,name=display,proto3" json:"display,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -182,6 +184,13 @@ func (x *AppConfig) GetDiscord() *Discord {
 func (x *AppConfig) GetSystem() *System {
 	if x != nil {
 		return x.System
+	}
+	return nil
+}
+
+func (x *AppConfig) GetDisplay() *Display {
+	if x != nil {
+		return x.Display
 	}
 	return nil
 }
@@ -283,11 +292,9 @@ func (x *Perms) GetDefault() []*Perm {
 }
 
 type Perm struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	Category string `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
-	// @sanitize: method=StripTags
-	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Category      string                 `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -389,11 +396,9 @@ func (x *Website) GetStatsPage() bool {
 }
 
 type Links struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// @sanitize: method=StripTags
-	PrivacyPolicy *string `protobuf:"bytes,1,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacy_policy,omitempty"`
-	// @sanitize: method=StripTags
-	Imprint       *string `protobuf:"bytes,2,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PrivacyPolicy *string                `protobuf:"bytes,1,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacy_policy,omitempty"`
+	Imprint       *string                `protobuf:"bytes,2,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -445,10 +450,8 @@ func (x *Links) GetImprint() string {
 type JobInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UnemployedJob *UnemployedJob         `protobuf:"bytes,1,opt,name=unemployed_job,json=unemployedJob,proto3" json:"unemployed_job,omitempty"`
-	// @sanitize: method=StripTags
-	PublicJobs []string `protobuf:"bytes,2,rep,name=public_jobs,json=publicJobs,proto3" json:"public_jobs,omitempty"`
-	// @sanitize: method=StripTags
-	HiddenJobs    []string `protobuf:"bytes,3,rep,name=hidden_jobs,json=hiddenJobs,proto3" json:"hidden_jobs,omitempty"`
+	PublicJobs    []string               `protobuf:"bytes,2,rep,name=public_jobs,json=publicJobs,proto3" json:"public_jobs,omitempty"`
+	HiddenJobs    []string               `protobuf:"bytes,3,rep,name=hidden_jobs,json=hiddenJobs,proto3" json:"hidden_jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -609,17 +612,14 @@ func (x *UserTracker) GetDbRefreshTime() *durationpb.Duration {
 }
 
 type Discord struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Enabled      bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	SyncInterval *durationpb.Duration   `protobuf:"bytes,2,opt,name=sync_interval,json=syncInterval,proto3" json:"sync_interval,omitempty"`
-	// @sanitize: method=StripTags
-	InviteUrl *string `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
-	// @sanitize: method=StripTags
-	IgnoredJobs []string            `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
-	BotPresence *DiscordBotPresence `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
-	// @sanitize: method=StripTags
-	BotId          *string `protobuf:"bytes,6,opt,name=bot_id,json=botId,proto3,oneof" json:"bot_id,omitempty"`
-	BotPermissions int64   `protobuf:"varint,7,opt,name=bot_permissions,json=botPermissions,proto3" json:"bot_permissions,omitempty"`
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Enabled        bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	SyncInterval   *durationpb.Duration   `protobuf:"bytes,2,opt,name=sync_interval,json=syncInterval,proto3" json:"sync_interval,omitempty"`
+	InviteUrl      *string                `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
+	IgnoredJobs    []string               `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
+	BotPresence    *DiscordBotPresence    `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
+	BotId          *string                `protobuf:"bytes,6,opt,name=bot_id,json=botId,proto3,oneof" json:"bot_id,omitempty"`
+	BotPermissions int64                  `protobuf:"varint,7,opt,name=bot_permissions,json=botPermissions,proto3" json:"bot_permissions,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -704,12 +704,10 @@ func (x *Discord) GetBotPermissions() int64 {
 }
 
 type DiscordBotPresence struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Type  DiscordBotPresenceType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.settings.DiscordBotPresenceType" json:"type,omitempty"`
-	// @sanitize: method=StripTags
-	Status *string `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	// @sanitize: method=StripTags
-	Url           *string `protobuf:"bytes,3,opt,name=url,proto3,oneof" json:"url,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          DiscordBotPresenceType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.settings.DiscordBotPresenceType" json:"type,omitempty"`
+	Status        *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	Url           *string                `protobuf:"bytes,3,opt,name=url,proto3,oneof" json:"url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -817,11 +815,65 @@ func (x *System) GetBannerMessage() *BannerMessage {
 	return nil
 }
 
+type Display struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intl_locale,omitempty"`
+	// ISO 4217 currency code (e.g. "USD", "EUR")
+	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currency_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Display) Reset() {
+	*x = Display{}
+	mi := &file_resources_settings_config_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Display) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Display) ProtoMessage() {}
+
+func (x *Display) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Display.ProtoReflect.Descriptor instead.
+func (*Display) Descriptor() ([]byte, []int) {
+	return file_resources_settings_config_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *Display) GetIntlLocale() string {
+	if x != nil && x.IntlLocale != nil {
+		return *x.IntlLocale
+	}
+	return ""
+}
+
+func (x *Display) GetCurrencyName() string {
+	if x != nil {
+		return x.CurrencyName
+	}
+	return ""
+}
+
 var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\xe3\x03\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\xa4\x04\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12.\n" +
 	"\x0edefault_locale\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14R\rdefaultLocale\x12,\n" +
@@ -831,60 +883,67 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\bjob_info\x18\x05 \x01(\v2\x1b.resources.settings.JobInfoR\ajobInfo\x12B\n" +
 	"\fuser_tracker\x18\x06 \x01(\v2\x1f.resources.settings.UserTrackerR\vuserTracker\x125\n" +
 	"\adiscord\x18\a \x01(\v2\x1b.resources.settings.DiscordR\adiscord\x122\n" +
-	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06systemB\n" +
+	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06system\x125\n" +
+	"\adisplay\x18\n" +
+	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bR\rsignupEnabled\x12$\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\"E\n" +
 	"\x05Perms\x12<\n" +
-	"\adefault\x18\x01 \x03(\v2\x18.resources.settings.PermB\b\xbaH\x05\x92\x01\x02\x10dR\adefault\"J\n" +
-	"\x04Perm\x12$\n" +
-	"\bcategory\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\bcategory\x12\x1c\n" +
-	"\x04name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x04name\"Y\n" +
+	"\adefault\x18\x01 \x03(\v2\x18.resources.settings.PermB\b\xbaH\x05\x92\x01\x02\x10dR\adefault\"l\n" +
+	"\x04Perm\x125\n" +
+	"\bcategory\x18\x01 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x01R\bcategory\x12-\n" +
+	"\x04name\x18\x02 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\xff\x01R\x04name\"Y\n" +
 	"\aWebsite\x12/\n" +
 	"\x05links\x18\x01 \x01(\v2\x19.resources.settings.LinksR\x05links\x12\x1d\n" +
 	"\n" +
-	"stats_page\x18\x02 \x01(\bR\tstatsPage\"\x85\x01\n" +
-	"\x05Links\x124\n" +
-	"\x0eprivacy_policy\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\rprivacyPolicy\x88\x01\x01\x12'\n" +
-	"\aimprint\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\aimprint\x88\x01\x01B\x11\n" +
+	"stats_page\x18\x02 \x01(\bR\tstatsPage\"\xa7\x01\n" +
+	"\x05Links\x12E\n" +
+	"\x0eprivacy_policy\x18\x01 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\xff\x01H\x00R\rprivacyPolicy\x88\x01\x01\x128\n" +
+	"\aimprint\x18\x02 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\xff\x01H\x01R\aimprint\x88\x01\x01B\x11\n" +
 	"\x0f_privacy_policyB\n" +
 	"\n" +
-	"\b_imprint\"\xb1\x01\n" +
+	"\b_imprint\"\xd3\x01\n" +
 	"\aJobInfo\x12P\n" +
-	"\x0eunemployed_job\x18\x01 \x01(\v2!.resources.settings.UnemployedJobB\x06\xbaH\x03\xc8\x01\x01R\runemployedJob\x12)\n" +
-	"\vpublic_jobs\x18\x02 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10dR\n" +
-	"publicJobs\x12)\n" +
-	"\vhidden_jobs\x18\x03 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10dR\n" +
+	"\x0eunemployed_job\x18\x01 \x01(\v2!.resources.settings.UnemployedJobB\x06\xbaH\x03\xc8\x01\x01R\runemployedJob\x12:\n" +
+	"\vpublic_jobs\x18\x02 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10dR\n" +
+	"publicJobs\x12:\n" +
+	"\vhidden_jobs\x18\x03 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10dR\n" +
 	"hiddenJobs\"K\n" +
 	"\rUnemployedJob\x12\x1b\n" +
 	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x04name\x12\x1d\n" +
 	"\x05grade\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x05grade\"\xbc\x01\n" +
 	"\vUserTracker\x12S\n" +
 	"\frefresh_time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x15\xbaH\x12\xc8\x01\x01\xaa\x01\f\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\vrefreshTime\x12X\n" +
-	"\x0fdb_refresh_time\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x15\xbaH\x12\xc8\x01\x01\xaa\x01\f\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\rdbRefreshTime\"\x9e\x03\n" +
+	"\x0fdb_refresh_time\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x15\xbaH\x12\xc8\x01\x01\xaa\x01\f\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\rdbRefreshTime\"\xd1\x03\n" +
 	"\aDiscord\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12T\n" +
-	"\rsync_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\x11\xc8\x01\x01\xaa\x01\v\x1a\x05\b\x80\xaa\xeaU2\x02\b<R\fsyncInterval\x12,\n" +
+	"\rsync_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x14\xbaH\x11\xc8\x01\x01\xaa\x01\v\x1a\x05\b\x80\xaa\xeaU2\x02\b<R\fsyncInterval\x12=\n" +
 	"\n" +
-	"invite_url\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x00R\tinviteUrl\x88\x01\x01\x12+\n" +
-	"\fignored_jobs\x18\x04 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10dR\vignoredJobs\x12N\n" +
-	"\fbot_presence\x18\x05 \x01(\v2&.resources.settings.DiscordBotPresenceH\x01R\vbotPresence\x88\x01\x01\x12$\n" +
-	"\x06bot_id\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x02R\x05botId\x88\x01\x01\x12'\n" +
+	"invite_url\x18\x03 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\xff\x01H\x00R\tinviteUrl\x88\x01\x01\x12<\n" +
+	"\fignored_jobs\x18\x04 \x03(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05\x92\x01\x02\x10dR\vignoredJobs\x12N\n" +
+	"\fbot_presence\x18\x05 \x01(\v2&.resources.settings.DiscordBotPresenceH\x01R\vbotPresence\x88\x01\x01\x125\n" +
+	"\x06bot_id\x18\x06 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\xff\x01H\x02R\x05botId\x88\x01\x01\x12'\n" +
 	"\x0fbot_permissions\x18\a \x01(\x03R\x0ebotPermissionsB\r\n" +
 	"\v_invite_urlB\x0f\n" +
 	"\r_bot_presenceB\t\n" +
-	"\a_bot_id\"\x9b\x01\n" +
+	"\a_bot_id\"\xc1\x01\n" +
 	"\x12DiscordBotPresence\x12>\n" +
-	"\x04type\x18\x01 \x01(\x0e2*.resources.settings.DiscordBotPresenceTypeR\x04type\x12\x1b\n" +
-	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01\x12\x15\n" +
-	"\x03url\x18\x03 \x01(\tH\x01R\x03url\x88\x01\x01B\t\n" +
+	"\x04type\x18\x01 \x01(\x0e2*.resources.settings.DiscordBotPresenceTypeR\x04type\x12.\n" +
+	"\x06status\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x00R\x06status\x88\x01\x01\x12(\n" +
+	"\x03url\x18\x03 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x01R\x03url\x88\x01\x01B\t\n" +
 	"\a_statusB\x06\n" +
 	"\x04_url\"\x88\x01\n" +
 	"\x06System\x124\n" +
 	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12H\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage*\xde\x01\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"\x99\x01\n" +
+	"\aDisplay\x12>\n" +
+	"\vintl_locale\x18\x01 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18 H\x00R\n" +
+	"intlLocale\x88\x01\x01\x12>\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x98\x01\x03R\fcurrencyNameB\x0e\n" +
+	"\f_intl_locale*\xde\x01\n" +
 	"\x16DiscordBotPresenceType\x12)\n" +
 	"%DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
@@ -905,7 +964,7 @@ func file_resources_settings_config_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_resources_settings_config_proto_goTypes = []any{
 	(DiscordBotPresenceType)(0), // 0: resources.settings.DiscordBotPresenceType
 	(*AppConfig)(nil),           // 1: resources.settings.AppConfig
@@ -920,8 +979,9 @@ var file_resources_settings_config_proto_goTypes = []any{
 	(*Discord)(nil),             // 10: resources.settings.Discord
 	(*DiscordBotPresence)(nil),  // 11: resources.settings.DiscordBotPresence
 	(*System)(nil),              // 12: resources.settings.System
-	(*durationpb.Duration)(nil), // 13: google.protobuf.Duration
-	(*BannerMessage)(nil),       // 14: resources.settings.BannerMessage
+	(*Display)(nil),             // 13: resources.settings.Display
+	(*durationpb.Duration)(nil), // 14: google.protobuf.Duration
+	(*BannerMessage)(nil),       // 15: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -931,20 +991,21 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	9,  // 4: resources.settings.AppConfig.user_tracker:type_name -> resources.settings.UserTracker
 	10, // 5: resources.settings.AppConfig.discord:type_name -> resources.settings.Discord
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
-	4,  // 7: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 8: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 9: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	13, // 10: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	13, // 11: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	13, // 12: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 13: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 14: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	14, // 15: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
+	4,  // 8: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 9: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 10: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	14, // 11: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	14, // 12: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	14, // 13: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 14: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 15: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	15, // 16: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -957,13 +1018,14 @@ func file_resources_settings_config_proto_init() {
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}
+	file_resources_settings_config_proto_msgTypes[12].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

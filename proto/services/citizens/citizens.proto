@@ -5,6 +5,7 @@ package services.citizens;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
 import "resources/users/activity.proto";
@@ -28,7 +29,7 @@ message ListCitizensRequest {
 
 message ListCitizensResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.users.User users = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.users.User users = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetUserRequest {
@@ -50,18 +51,18 @@ message ListUserActivityRequest {
 
 message ListUserActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.users.UserActivity activity = 2 [(codegen.itemslen.items_len) = true];
+  repeated resources.users.UserActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message SetUserPropsRequest {
   resources.users.UserProps props = 1 [(buf.validate.field).required = true];
-  // @sanitize
   string reason = 2 [
     (buf.validate.field).string = {
       min_len: 3
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 }
 
@@ -75,13 +76,13 @@ message DeleteAvatarResponse {}
 
 message DeleteMugshotRequest {
   int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
-  // @sanitize
   string reason = 2 [
     (buf.validate.field).string = {
       min_len: 3
       max_len: 255
     },
-    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE
+    (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 }
 

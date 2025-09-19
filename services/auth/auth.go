@@ -24,7 +24,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.uber.org/zap"
@@ -47,7 +47,7 @@ func (s *Server) createTokenFromAccountAndChar(
 
 func (s *Server) getAccountFromDB(
 	ctx context.Context,
-	condition jet.BoolExpression,
+	condition mysql.BoolExpression,
 ) (*model.FivenetAccounts, error) {
 	stmt := tAccounts.
 		SELECT(
@@ -87,8 +87,8 @@ func (s *Server) Login(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.username", req.GetUsername()})
 
-	account, err := s.getAccountFromDB(ctx, jet.AND(
-		tAccounts.Username.EQ(jet.String(req.GetUsername())),
+	account, err := s.getAccountFromDB(ctx, mysql.AND(
+		tAccounts.Username.EQ(mysql.String(req.GetUsername())),
 		tAccounts.RegToken.IS_NULL(),
 		tAccounts.Password.IS_NOT_NULL(),
 	))
@@ -159,7 +159,7 @@ func (s *Server) CreateAccount(
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(jet.String(req.GetRegToken())))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())))
 	if err != nil {
 		s.logger.Error(
 			"failed to get account from database by registration token",
@@ -187,13 +187,13 @@ func (s *Server) CreateAccount(
 			tAccounts.RegToken,
 		).
 		SET(
-			tAccounts.Username.SET(jet.String(req.GetUsername())),
-			tAccounts.Password.SET(jet.String(hashedPassword)),
-			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
+			tAccounts.Username.SET(mysql.String(req.GetUsername())),
+			tAccounts.Password.SET(mysql.String(hashedPassword)),
+			tAccounts.RegToken.SET(mysql.StringExp(mysql.NULL)),
 		).
-		WHERE(jet.AND(
-			tAccounts.ID.EQ(jet.Int64(acc.ID)),
-			tAccounts.RegToken.EQ(jet.String(req.GetRegToken())),
+		WHERE(mysql.AND(
+			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
+			tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -264,10 +264,10 @@ func (s *Server) ChangePassword(
 			tAccounts.Password,
 		).
 		SET(
-			tAccounts.Password.SET(jet.String(pass)),
+			tAccounts.Password.SET(mysql.String(pass)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Int64(acc.ID)),
+			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -327,7 +327,7 @@ func (s *Server) ChangeUsername(
 	}
 
 	// If there is an account with the new username, fail
-	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(username)))
+	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(username)))
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
@@ -344,10 +344,10 @@ func (s *Server) ChangeUsername(
 			tAccounts.Username,
 		).
 		SET(
-			tAccounts.Username.SET(jet.String(username)),
+			tAccounts.Username.SET(mysql.String(username)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Int64(acc.ID)),
+			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -361,8 +361,8 @@ func (s *Server) ForgotPassword(
 	ctx context.Context,
 	req *pbauth.ForgotPasswordRequest,
 ) (*pbauth.ForgotPasswordResponse, error) {
-	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		tAccounts.RegToken.EQ(jet.String(req.GetRegToken())),
+	acc, err := s.getAccountFromDB(ctx, mysql.AND(
+		tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
 		tAccounts.Username.IS_NOT_NULL(),
 		tAccounts.Password.IS_NULL(),
 	))
@@ -389,11 +389,11 @@ func (s *Server) ForgotPassword(
 			tAccounts.RegToken,
 		).
 		SET(
-			tAccounts.Password.SET(jet.String(pass)),
-			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
+			tAccounts.Password.SET(mysql.String(pass)),
+			tAccounts.RegToken.SET(mysql.StringExp(mysql.NULL)),
 		).
 		WHERE(
-			tAccounts.ID.EQ(jet.Int64(acc.ID)),
+			tAccounts.ID.EQ(mysql.Int64(acc.ID)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -460,7 +460,7 @@ func (s *Server) GetCharacters(
 			),
 		).
 		WHERE(
-			tUsers.Identifier.LIKE(jet.String(buildCharSearchIdentifier(claims.Subject))),
+			tUsers.Identifier.LIKE(mysql.String(buildCharSearchIdentifier(claims.Subject))),
 		).
 		ORDER_BY(tUsers.ID).
 		LIMIT(10)
@@ -561,7 +561,7 @@ func (s *Server) getCharacter(
 				),
 		).
 		WHERE(
-			tUsers.ID.EQ(jet.Int32(charId)),
+			tUsers.ID.EQ(mysql.Int32(charId)),
 		).
 		LIMIT(1)
 
@@ -772,7 +772,7 @@ func (s *Server) SetSuperuserMode(
 	// Reset override job when switching off superuser mode using centralized helper
 	if !req.GetSuperuser() {
 		// Fetch the account for the current user
-		account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
+		account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(claims.Username)))
 		if err != nil {
 			return nil, errswrap.NewError(
 				fmt.Errorf("failed to get account from db. %w", err),
@@ -831,7 +831,7 @@ func (s *Server) SetSuperuserMode(
 	userInfo.Superuser = req.GetSuperuser()
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
+	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(claims.Username)))
 	if err != nil {
 		return nil, errswrap.NewError(
 			fmt.Errorf("failed to get account from db. %w", err),
@@ -892,7 +892,7 @@ func (s *Server) getJobWithProps(
 				),
 		).
 		WHERE(
-			tJobs.Name.EQ(jet.String(jobName)),
+			tJobs.Name.EQ(mysql.String(jobName)),
 		).
 		ORDER_BY(tJobsGrades.Grade.DESC()).
 		LIMIT(1)

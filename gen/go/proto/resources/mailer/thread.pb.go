@@ -7,6 +7,7 @@
 package mailer
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -25,21 +26,20 @@ const (
 )
 
 type Thread struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt      *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CreatorEmailId int64                  `protobuf:"varint,5,opt,name=creator_email_id,json=creatorEmailId,proto3" json:"creator_email_id,omitempty"`
-	CreatorEmail   *Email                 `protobuf:"bytes,6,opt,name=creator_email,json=creatorEmail,proto3,oneof" json:"creator_email,omitempty"`
-	CreatorId      *int32                 `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator        *users.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	// @sanitize: method=StripTags
-	Title         string                  `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
-	Recipients    []*ThreadRecipientEmail `protobuf:"bytes,10,rep,name=recipients,proto3" json:"recipients,omitempty"`
-	State         *ThreadState            `protobuf:"bytes,11,opt,name=state,proto3,oneof" json:"state,omitempty" alias:"thread_state"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState  `protogen:"open.v1"`
+	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt      *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	CreatorEmailId int64                   `protobuf:"varint,5,opt,name=creator_email_id,json=creatorEmailId,proto3" json:"creator_email_id,omitempty"`
+	CreatorEmail   *Email                  `protobuf:"bytes,6,opt,name=creator_email,json=creatorEmail,proto3,oneof" json:"creator_email,omitempty"`
+	CreatorId      *int32                  `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator        *users.UserShort        `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Title          string                  `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
+	Recipients     []*ThreadRecipientEmail `protobuf:"bytes,10,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	State          *ThreadState            `protobuf:"bytes,11,opt,name=state,proto3,oneof" json:"state,omitempty" alias:"thread_state"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Thread) Reset() {
@@ -329,7 +329,7 @@ var File_resources_mailer_thread_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/mailer/thread.proto\x12\x10resources.mailer\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe8\x05\n" +
+	"\x1dresources/mailer/thread.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xf9\x05\n" +
 	"\x06Thread\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -342,9 +342,8 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\rcreator_email\x18\x06 \x01(\v2\x17.resources.mailer.EmailH\x02R\fcreatorEmail\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12 \n" +
-	"\x05title\x18\t \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12P\n" +
+	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x121\n" +
+	"\x05title\x18\t \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12P\n" +
 	"\n" +
 	"recipients\x18\n" +
 	" \x03(\v2&.resources.mailer.ThreadRecipientEmailB\b\xbaH\x05\x92\x01\x02\x10\x14R\n" +

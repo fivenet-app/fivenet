@@ -21,26 +21,18 @@ const props = withDefaults(
 </script>
 
 <template>
-    <UAlert
-        :ui="{
-            icon: 'size-6',
-        }"
+    <UPageCard
+        :title="
+            $te(`components.hints.${hintId}.title`) ? $t(`components.hints.${hintId}.title`) : $t('components.hints.start_text')
+        "
         icon="i-mdi-information-outline"
-        variant="subtle"
+        :ui="{
+            leadingIcon: 'size-6',
+        }"
         v-bind="$attrs"
     >
-        <template v-if="!hideTitle" #title>
-            <div class="shrink-0 font-semibold">
-                {{
-                    $te(`components.hints.${hintId}.title`)
-                        ? $t(`components.hints.${hintId}.title`)
-                        : $t('components.hints.start_text')
-                }}
-            </div>
-        </template>
-
         <template #description>
-            <div class="mx-auto mb-2 flex items-center gap-2 text-base">
+            <div class="mx-auto mb-2 flex items-center gap-2 text-sm">
                 <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
                 <div v-if="showKey || to" class="flex-initial">
@@ -52,5 +44,5 @@ const props = withDefaults(
                 </div>
             </div>
         </template>
-    </UAlert>
+    </UPageCard>
 </template>

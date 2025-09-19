@@ -399,7 +399,7 @@
         "location": "Standort | Standorte",
         "units": "Keine Einheiten | {n} Einheit | {n} Einheiten",
         "unit": "Einheit | Einheiten",
-        "color": "Farbe",
+        "color": "Farbe | Farben",
         "initials": "Initialen",
         "updated": "Aktualisiert",
         "members": "Mitglieder",
@@ -700,7 +700,10 @@
         "longitude_short": "Long",
         "inactive": "Inaktiv",
         "path": "Pfad",
-        "directory": "Verzeichnis | Verzeichnisse"
+        "directory": "Verzeichnis | Verzeichnisse",
+        "undo": "Rückgängig machen",
+        "redo": "Wiederholen",
+        "sign": "Unterschreiben"
     },
     "components": {
         "partials": {
@@ -799,6 +802,11 @@
                     }
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen"
+            },
+            "SignaturePad": {
+                "pen_color": "Stiftfarbe",
+                "min_stroke_width": "Minimale Strichstärke",
+                "max_stroke_width": "Maximale Strichstärke"
             }
         },
         "clipboard": {

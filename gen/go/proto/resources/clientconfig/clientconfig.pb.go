@@ -33,6 +33,7 @@ type ClientConfig struct {
 	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"featureGates"`
 	Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3" json:"game,omitempty"`
 	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system,omitempty"`
+	Display       *Display               `protobuf:"bytes,9,opt,name=display,proto3" json:"display"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -119,6 +120,13 @@ func (x *ClientConfig) GetGame() *Game {
 func (x *ClientConfig) GetSystem() *System {
 	if x != nil {
 		return x.System
+	}
+	return nil
+}
+
+func (x *ClientConfig) GetDisplay() *Display {
+	if x != nil {
+		return x.Display
 	}
 	return nil
 }
@@ -615,11 +623,65 @@ func (x *OTLPFrontend) GetHeaders() map[string]string {
 	return nil
 }
 
+type Display struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
+	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
+	// ISO 4217 currency code (e.g. "USD", "EUR")
+	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currencyName"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Display) Reset() {
+	*x = Display{}
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Display) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Display) ProtoMessage() {}
+
+func (x *Display) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Display.ProtoReflect.Descriptor instead.
+func (*Display) Descriptor() ([]byte, []int) {
+	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Display) GetIntlLocale() string {
+	if x != nil && x.IntlLocale != nil {
+		return *x.IntlLocale
+	}
+	return ""
+}
+
+func (x *Display) GetCurrencyName() string {
+	if x != nil {
+		return x.CurrencyName
+	}
+	return ""
+}
+
 var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x13tagger/tagger.proto\"\xea\x03\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x13tagger/tagger.proto\"\xba\x04\n" +
 	"\fClientConfig\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
 	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x129\n" +
@@ -628,7 +690,8 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\awebsite\x18\x05 \x01(\v2\x1f.resources.clientconfig.WebsiteR\awebsite\x12c\n" +
 	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x120\n" +
 	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameR\x04game\x126\n" +
-	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\"\xec\x01\n" +
+	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\x12N\n" +
+	"\adisplay\x18\t \x01(\v2\x1f.resources.clientconfig.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\"\xec\x01\n" +
 	"\vLoginConfig\x12@\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
@@ -669,7 +732,12 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\aheaders\x18\x03 \x03(\v21.resources.clientconfig.OTLPFrontend.HeadersEntryR\aheaders\x1a:\n" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01BWZUgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x96\x01\n" +
+	"\aDisplay\x12<\n" +
+	"\vintl_locale\x18\x01 \x01(\tB\x16\x9a\x84\x9e\x03\x11json:\"intlLocale\"H\x00R\n" +
+	"intlLocale\x88\x01\x01\x12=\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
+	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
 
 var (
 	file_resources_clientconfig_clientconfig_proto_rawDescOnce sync.Once
@@ -683,7 +751,7 @@ func file_resources_clientconfig_clientconfig_proto_rawDescGZIP() []byte {
 	return file_resources_clientconfig_clientconfig_proto_rawDescData
 }
 
-var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*ClientConfig)(nil),           // 0: resources.clientconfig.ClientConfig
 	(*LoginConfig)(nil),            // 1: resources.clientconfig.LoginConfig
@@ -695,8 +763,9 @@ var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*Game)(nil),                   // 7: resources.clientconfig.Game
 	(*System)(nil),                 // 8: resources.clientconfig.System
 	(*OTLPFrontend)(nil),           // 9: resources.clientconfig.OTLPFrontend
-	nil,                            // 10: resources.clientconfig.OTLPFrontend.HeadersEntry
-	(*settings.BannerMessage)(nil), // 11: resources.settings.BannerMessage
+	(*Display)(nil),                // 10: resources.clientconfig.Display
+	nil,                            // 11: resources.clientconfig.OTLPFrontend.HeadersEntry
+	(*settings.BannerMessage)(nil), // 12: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	1,  // 0: resources.clientconfig.ClientConfig.login:type_name -> resources.clientconfig.LoginConfig
@@ -705,16 +774,17 @@ var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	6,  // 3: resources.clientconfig.ClientConfig.feature_gates:type_name -> resources.clientconfig.FeatureGates
 	7,  // 4: resources.clientconfig.ClientConfig.game:type_name -> resources.clientconfig.Game
 	8,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
-	2,  // 6: resources.clientconfig.LoginConfig.providers:type_name -> resources.clientconfig.ProviderConfig
-	5,  // 7: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
-	11, // 8: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	9,  // 9: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	10, // 10: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	10, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
+	2,  // 7: resources.clientconfig.LoginConfig.providers:type_name -> resources.clientconfig.ProviderConfig
+	5,  // 8: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
+	12, // 9: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	9,  // 10: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	11, // 11: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }
@@ -725,13 +795,14 @@ func file_resources_clientconfig_clientconfig_proto_init() {
 	file_resources_clientconfig_clientconfig_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_clientconfig_clientconfig_proto_msgTypes[8].OneofWrappers = []any{}
+	file_resources_clientconfig_clientconfig_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_clientconfig_clientconfig_proto_rawDesc), len(file_resources_clientconfig_clientconfig_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

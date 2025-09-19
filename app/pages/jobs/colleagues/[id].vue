@@ -69,9 +69,7 @@ useHead({
 });
 
 function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
-    if (colleague.value?.colleague === undefined) {
-        return;
-    }
+    if (colleague.value?.colleague === undefined) return;
 
     if (colleague.value.colleague?.props === undefined) {
         colleague.value.colleague.props = {

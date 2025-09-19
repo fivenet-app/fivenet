@@ -26,8 +26,6 @@ export interface Page {
      */
     id: number;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string job = 2
      */
     job: string;
@@ -73,20 +71,14 @@ export interface PageMeta {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string slug = 4
      */
     slug?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string title = 5
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string description = 6
      */
     description: string;
@@ -103,8 +95,6 @@ export interface PageMeta {
      */
     contentType: ContentType;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: repeated string tags = 10
      */
     tags: string[];
@@ -146,8 +136,6 @@ export interface PageShort {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: optional string slug = 6
      */
     slug?: string;
@@ -194,7 +182,7 @@ class Page$Type extends MessageType<Page> {
     constructor() {
         super("resources.wiki.Page", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "sql:\"primary_key\" alias:\"id\"" } },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "buf.validate.field": { required: true } } },
@@ -294,13 +282,13 @@ class PageMeta$Type extends MessageType<PageMeta> {
             { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } } } },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
+            { no: 4, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 9, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -432,7 +420,7 @@ class PageShort$Type extends MessageType<PageShort> {
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } } } },
+            { no: 6, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "children", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageShort },

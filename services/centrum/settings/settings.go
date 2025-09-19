@@ -17,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
@@ -140,7 +140,7 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 	if job != "" {
 		stmt = stmt.
 			WHERE(
-				tCentrumSettings.Job.EQ(jet.String(job)),
+				tCentrumSettings.Job.EQ(mysql.String(job)),
 			).
 			LIMIT(1)
 	}
@@ -162,7 +162,10 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 			return fmt.Errorf("failed to load access for job %s. %w", j, err)
 		}
 
-		s.calculateEffectiveAccess(settings)
+		settings.EffectiveAccess = s.calculateEffectiveAccess(
+			settings.GetJob(),
+			settings.GetOfferedAccess(),
+		)
 
 		if err := s.updateInKV(ctx, j, settings); err != nil {
 			return err
@@ -199,14 +202,14 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			settings.GetConfiguration(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.Enabled.SET(jet.Bool(settings.GetEnabled())),
-			tCentrumSettings.Type.SET(jet.Int32(int32(settings.GetType()))),
-			tCentrumSettings.Public.SET(jet.Bool(settings.GetPublic())),
-			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.GetMode()))),
-			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.GetFallbackMode()))),
-			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
-			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
-			tCentrumSettings.Configuration.SET(jet.StringExp(jet.Raw("VALUES(`configuration`)"))),
+			tCentrumSettings.Enabled.SET(mysql.Bool(settings.GetEnabled())),
+			tCentrumSettings.Type.SET(mysql.Int32(int32(settings.GetType()))),
+			tCentrumSettings.Public.SET(mysql.Bool(settings.GetPublic())),
+			tCentrumSettings.Mode.SET(mysql.Int32(int32(settings.GetMode()))),
+			tCentrumSettings.FallbackMode.SET(mysql.Int32(int32(settings.GetFallbackMode()))),
+			tCentrumSettings.PredefinedStatus.SET(mysql.StringExp(mysql.Raw("VALUES(`predefined_status`)"))),
+			tCentrumSettings.Timings.SET(mysql.StringExp(mysql.Raw("VALUES(`timings`)"))),
+			tCentrumSettings.Configuration.SET(mysql.StringExp(mysql.Raw("VALUES(`configuration`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -251,9 +254,9 @@ func (s *SettingsDB) loadAccess(
 			tCentrumJobAccess.AcceptedAt.AS("centrum_job_access.accepted_at"),
 		).
 		FROM(tCentrumJobAccess).
-		WHERE(jet.OR(
-			tCentrumJobAccess.SourceJob.EQ(jet.String(job)),
-			tCentrumJobAccess.Job.EQ(jet.String(job)),
+		WHERE(mysql.OR(
+			tCentrumJobAccess.SourceJob.EQ(mysql.String(job)),
+			tCentrumJobAccess.Job.EQ(mysql.String(job)),
 		)).
 		LIMIT(25)
 
@@ -305,9 +308,9 @@ func (s *SettingsDB) handleAccessChanges(
 	jobs := map[string]any{}
 
 	if len(removed) > 0 {
-		var ids []jet.Expression
+		var ids []mysql.Expression
 		for _, access := range removed {
-			ids = append(ids, jet.Int64(access.GetId()))
+			ids = append(ids, mysql.Int64(access.GetId()))
 			jobs[access.GetJob()] = nil
 		}
 
@@ -344,7 +347,7 @@ func (s *SettingsDB) handleAccessChanges(
 				access.GetAcceptedAt(),
 			).
 			WHERE(
-				table.FivenetCentrumJobAccess.ID.EQ(jet.Int64(access.GetId())),
+				table.FivenetCentrumJobAccess.ID.EQ(mysql.Int64(access.GetId())),
 			).
 			LIMIT(1)
 
@@ -474,8 +477,9 @@ func (s *SettingsDB) compareAccess(
 }
 
 func (s *SettingsDB) calculateEffectiveAccess(
-	settings *centrum.Settings,
-) {
+	job string,
+	offeredAccess *centrum.CentrumAccess,
+) *centrum.EffectiveAccess {
 	effectiveAccess := &centrum.EffectiveAccess{
 		Dispatches: &centrum.EffectiveDispatchAccess{},
 	}
@@ -484,9 +488,9 @@ func (s *SettingsDB) calculateEffectiveAccess(
 	// settings.Access: jobs this job offers access to (outbound)
 	// settings.AcceptedAccess: jobs this job has accepted access from (inbound)
 	// For each job in settings.Access, check if that job offers access to this job
-	if settings.GetOfferedAccess() != nil {
-		for _, offered := range settings.GetOfferedAccess().GetJobs() {
-			if offered.GetSourceJob() == settings.GetJob() {
+	if offeredAccess != nil {
+		for _, offered := range offeredAccess.GetJobs() {
+			if offered.GetSourceJob() == job {
 				continue // Skip self-references
 			}
 
@@ -504,7 +508,7 @@ func (s *SettingsDB) calculateEffectiveAccess(
 		}
 	}
 
-	settings.EffectiveAccess = effectiveAccess
+	return effectiveAccess
 }
 
 func (s *SettingsDB) Update(
@@ -524,7 +528,10 @@ func (s *SettingsDB) Update(
 
 	current.Merge(in)
 
-	s.calculateEffectiveAccess(current)
+	current.EffectiveAccess = s.calculateEffectiveAccess(
+		current.GetJob(),
+		current.GetOfferedAccess(),
+	)
 
 	if err := s.updateDB(ctx, job, current); err != nil {
 		return nil, err

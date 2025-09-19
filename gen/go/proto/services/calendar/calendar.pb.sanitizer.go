@@ -3,6 +3,8 @@
 
 package calendar
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateCalendarRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -20,6 +22,8 @@ func (m *CreateCalendarRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateCalendarResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -37,6 +41,8 @@ func (m *CreateCalendarResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -54,6 +60,8 @@ func (m *CreateOrUpdateCalendarEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *CreateOrUpdateCalendarEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -71,6 +79,8 @@ func (m *CreateOrUpdateCalendarEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -79,6 +89,8 @@ func (m *DeleteCalendarEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCalendarEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -87,6 +99,8 @@ func (m *DeleteCalendarEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCalendarRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -95,6 +109,8 @@ func (m *DeleteCalendarRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteCalendarResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -103,6 +119,8 @@ func (m *DeleteCalendarResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -111,6 +129,8 @@ func (m *GetCalendarEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCalendarEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -128,6 +148,8 @@ func (m *GetCalendarEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCalendarRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -136,6 +158,8 @@ func (m *GetCalendarRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetCalendarResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -153,6 +177,8 @@ func (m *GetCalendarResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetUpcomingEntriesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -161,6 +187,8 @@ func (m *GetUpcomingEntriesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GetUpcomingEntriesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -181,6 +209,8 @@ func (m *GetUpcomingEntriesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarEntriesRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -198,6 +228,8 @@ func (m *ListCalendarEntriesRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarEntriesResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -218,6 +250,8 @@ func (m *ListCalendarEntriesResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarEntryRSVPRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -235,6 +269,8 @@ func (m *ListCalendarEntryRSVPRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarEntryRSVPResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -264,6 +300,8 @@ func (m *ListCalendarEntryRSVPResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -290,6 +328,8 @@ func (m *ListCalendarsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListCalendarsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -319,6 +359,8 @@ func (m *ListCalendarsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListSubscriptionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -336,6 +378,8 @@ func (m *ListSubscriptionsRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListSubscriptionsResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -365,6 +409,8 @@ func (m *ListSubscriptionsResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RSVPCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -382,6 +428,8 @@ func (m *RSVPCalendarEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RSVPCalendarEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -399,6 +447,8 @@ func (m *RSVPCalendarEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ShareCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -407,6 +457,8 @@ func (m *ShareCalendarEntryRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ShareCalendarEntryResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -415,6 +467,8 @@ func (m *ShareCalendarEntryResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SubscribeToCalendarRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -432,6 +486,8 @@ func (m *SubscribeToCalendarRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SubscribeToCalendarResponse) Sanitize() error {
 	if m == nil {
 		return nil
@@ -449,6 +505,8 @@ func (m *SubscribeToCalendarResponse) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateCalendarRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -466,6 +524,8 @@ func (m *UpdateCalendarRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UpdateCalendarResponse) Sanitize() error {
 	if m == nil {
 		return nil

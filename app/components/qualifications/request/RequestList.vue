@@ -85,7 +85,7 @@ async function listQualificationRequests(
 </script>
 
 <template>
-    <UCard :ui="{ body: 'p-0 sm:p-0' }">
+    <UCard :ui="{ body: 'p-0 sm:p-0', footer: 'p-0 sm:px-2' }">
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl leading-6 font-semibold">

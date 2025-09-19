@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -48,7 +48,7 @@ func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) 
 				),
 		).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
+			tJobProps.Job.EQ(mysql.String(job)),
 		).
 		LIMIT(1)
 

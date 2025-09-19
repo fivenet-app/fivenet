@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Thread) Sanitize() error {
 	if m == nil {
 		return nil
@@ -84,6 +86,8 @@ func (m *Thread) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ThreadRecipientEmail) Sanitize() error {
 	if m == nil {
 		return nil
@@ -110,6 +114,8 @@ func (m *ThreadRecipientEmail) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ThreadState) Sanitize() error {
 	if m == nil {
 		return nil

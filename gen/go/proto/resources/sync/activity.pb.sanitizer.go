@@ -3,6 +3,12 @@
 
 package sync
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ColleagueProps) Sanitize() error {
 	if m == nil {
 		return nil
@@ -17,25 +23,51 @@ func (m *ColleagueProps) Sanitize() error {
 		}
 	}
 
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *TimeclockUpdate) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserOAuth2Conn) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: ExternalId
+	m.ExternalId = htmlsanitizer.Sanitize(m.ExternalId)
+
+	// Field: Identifier
+	m.Identifier = htmlsanitizer.Sanitize(m.Identifier)
+
+	// Field: ProviderName
+	m.ProviderName = htmlsanitizer.Sanitize(m.ProviderName)
+
+	// Field: Username
+	m.Username = htmlsanitizer.Sanitize(m.Username)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserProps) Sanitize() error {
 	if m == nil {
 		return nil
@@ -50,12 +82,39 @@ func (m *UserProps) Sanitize() error {
 		}
 	}
 
+	// Field: Reason
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserUpdate) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Firstname
+	if m.Firstname != nil {
+		*m.Firstname = htmlsanitizer.Sanitize(*m.Firstname)
+	}
+
+	// Field: Group
+	if m.Group != nil {
+		*m.Group = htmlsanitizer.Sanitize(*m.Group)
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+	}
+
+	// Field: Lastname
+	if m.Lastname != nil {
+		*m.Lastname = htmlsanitizer.Sanitize(*m.Lastname)
 	}
 
 	return nil

@@ -7,13 +7,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *BannerMessage) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: Color
-
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
@@ -37,7 +38,6 @@ func (m *BannerMessage) Sanitize() error {
 	}
 
 	// Field: Icon
-
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}

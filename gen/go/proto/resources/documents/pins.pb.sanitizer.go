@@ -3,6 +3,12 @@
 
 package documents
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DocumentPin) Sanitize() error {
 	if m == nil {
 		return nil
@@ -15,6 +21,11 @@ func (m *DocumentPin) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	return nil

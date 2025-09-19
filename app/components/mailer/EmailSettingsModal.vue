@@ -38,9 +38,7 @@ const canManage = computed(() => canAccess(selectedEmail.value?.access, selected
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (!selectedEmail.value?.id) {
-        return;
-    }
+    if (!selectedEmail.value?.id) return;
     canSubmit.value = false;
 
     const values = event.data;

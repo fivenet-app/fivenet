@@ -160,8 +160,6 @@ export interface SetColleaguePropsRequest {
      */
     props?: ColleagueProps;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: string reason = 2
      */
     reason: string;
@@ -250,8 +248,6 @@ export interface GetMOTDResponse {
  */
 export interface SetMOTDRequest {
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string motd = 1
      */
     motd: string;
@@ -391,7 +387,7 @@ class ListColleaguesResponse$Type extends MessageType<ListColleaguesResponse> {
     constructor() {
         super("services.jobs.ListColleaguesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "colleagues", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesResponse>): ListColleaguesResponse {
@@ -714,7 +710,7 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
     constructor() {
         super("services.jobs.ListColleagueActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ColleagueActivity, options: { "codegen.itemslen.items_len": true } }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ColleagueActivity, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityResponse>): ListColleagueActivityResponse {
@@ -768,7 +764,7 @@ class SetColleaguePropsRequest$Type extends MessageType<SetColleaguePropsRequest
     constructor() {
         super("services.jobs.SetColleaguePropsRequest", [
             { no: 1, name: "props", kind: "message", T: () => ColleagueProps },
-            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } } } }
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
     create(value?: PartialMessage<SetColleaguePropsRequest>): SetColleaguePropsRequest {
@@ -1241,7 +1237,7 @@ export const GetMOTDResponse = new GetMOTDResponse$Type();
 class SetMOTDRequest$Type extends MessageType<SetMOTDRequest> {
     constructor() {
         super("services.jobs.SetMOTDRequest", [
-            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } }
+            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<SetMOTDRequest>): SetMOTDRequest {

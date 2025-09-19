@@ -28,7 +28,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'close'): void;
+    (e: 'close', v: boolean): void;
     (e: 'refresh'): void;
 }>();
 
@@ -97,13 +97,9 @@ const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
 watchDebounced(
     () => props.threadId,
     async () => {
-        if (!thread.value?.state?.unread) {
-            return;
-        }
+        if (!thread.value?.state?.unread) return;
 
-        if (!canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE)) {
-            return;
-        }
+        if (!canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE)) return;
 
         await mailerStore.setThreadState({
             threadId: props.threadId,
@@ -119,9 +115,7 @@ watchDebounced(
 const threadState = computed(() => selectedThread.value?.state);
 
 async function postMessage(values: Schema): Promise<void> {
-    if (!selectedEmail.value?.id) {
-        return;
-    }
+    if (!selectedEmail.value?.id) return;
 
     await mailerStore.postMessage({
         message: {
@@ -193,18 +187,15 @@ function onCreate(item: string): void {
         email.length < 6 ||
         email.length > 80 ||
         state.value.recipients.find((r) => r.label.toLowerCase() === email.toLowerCase())
-    ) {
+    )
         return;
-    }
 
     state.value.recipients.push({ label: email });
 }
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (!selectedEmail.value?.id) {
-        return;
-    }
+    if (!selectedEmail.value?.id) return;
 
     canSubmit.value = false;
     await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
@@ -225,7 +216,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 </template>
 
                 <template #leading>
-                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close')" />
+                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close', false)" />
                 </template>
             </UDashboardNavbar>
 

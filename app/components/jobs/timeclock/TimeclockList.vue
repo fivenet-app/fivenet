@@ -58,13 +58,13 @@ const minMonth = subMonths(today, 6);
 
 const schema = z.object({
     viewMode: z
-        .nativeEnum(TimeclockViewMode)
+        .enum(TimeclockViewMode)
         .default(
             TimeclockViewMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockViewMode] ??
                 TimeclockViewMode.SELF,
         ),
     mode: z
-        .nativeEnum(TimeclockMode)
+        .enum(TimeclockMode)
         .default(
             TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
                 (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
@@ -100,9 +100,7 @@ const schema = z.object({
 const query = useSearchForm('jobs_timeclock', schema);
 
 function setFromProps(): void {
-    if (props.userId === undefined) {
-        return;
-    }
+    if (props.userId === undefined) return;
 
     query.viewMode = TimeclockViewMode.ALL;
     query.users = [props.userId];
@@ -635,7 +633,7 @@ const { game } = useAppConfig();
                                             <LazyJobsTimeclockStatsBlock
                                                 :weekly="data?.statsWeekly"
                                                 :stats="data?.stats"
-                                                :hide-header="true"
+                                                hide-header
                                                 :failed="!!error"
                                                 :loading="isRequestPending(status)"
                                             />

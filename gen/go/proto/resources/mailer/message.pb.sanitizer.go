@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Message) Sanitize() error {
 	if m == nil {
 		return nil
@@ -28,6 +30,11 @@ func (m *Message) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: CreatorJob
+	if m.CreatorJob != nil {
+		*m.CreatorJob = htmlsanitizer.Sanitize(*m.CreatorJob)
 	}
 
 	// Field: Data
@@ -72,6 +79,8 @@ func (m *Message) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MessageAttachment) Sanitize() error {
 	if m == nil {
 		return nil
@@ -92,14 +101,23 @@ func (m *MessageAttachment) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MessageAttachmentDocument) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Title
+	if m.Title != nil {
+		*m.Title = htmlsanitizer.Sanitize(*m.Title)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *MessageData) Sanitize() error {
 	if m == nil {
 		return nil

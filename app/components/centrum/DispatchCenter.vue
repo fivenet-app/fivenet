@@ -4,7 +4,6 @@ import 'splitpanes/dist/splitpanes.css';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import Feed from '~/components/centrum/Feed.vue';
 import DispatchLayer from '~/components/centrum/livemap/DispatchLayer.vue';
-import MarkerList from '~/components/centrum/MarkerList.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -61,7 +60,7 @@ onBeforeRouteLeave(async (to) => {
                 <Splitpanes>
                     <Pane :min-size="25">
                         <div class="relative size-full">
-                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-neutral-600/70">
+                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/70">
                                 <DataErrorBlock
                                     :title="$t('components.centrum.dispatch_center.failed_datastream')"
                                     :error="error"
@@ -69,12 +68,9 @@ onBeforeRouteLeave(async (to) => {
                                 />
                             </div>
 
-                            <LivemapBase :show-unit-names="true" :show-unit-status="true">
+                            <LivemapBase show-unit-names show-unit-status>
                                 <template #default>
-                                    <DispatchLayer
-                                        v-if="can('centrum.CentrumService/Stream').value"
-                                        :show-all-dispatches="true"
-                                    />
+                                    <DispatchLayer v-if="can('centrum.CentrumService/Stream').value" show-all-dispatches />
                                 </template>
                             </LivemapBase>
                         </div>
@@ -83,14 +79,13 @@ onBeforeRouteLeave(async (to) => {
                     <Pane :min-size="40" :size="70">
                         <Splitpanes horizontal>
                             <Pane :size="58" :min-size="2">
-                                <DispatchList :show-button="true" />
+                                <DispatchList show-button />
                             </Pane>
+
                             <Pane :size="26" :min-size="2">
                                 <UnitList />
                             </Pane>
-                            <Pane :size="8" :min-size="2">
-                                <MarkerList />
-                            </Pane>
+
                             <Pane :size="8" :min-size="2">
                                 <Feed :items="feed" />
                             </Pane>
@@ -105,11 +100,11 @@ onBeforeRouteLeave(async (to) => {
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: var(--color-gray-800);
+    background-color: var(--ui-border);
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: var(--color-gray-800);
+    background-color: var(--ui-border);
 }
 </style>

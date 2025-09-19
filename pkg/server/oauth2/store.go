@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2/providers"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -62,9 +62,9 @@ func (o *oauth2UserInfo) getAccountInfo(
 				tAccs.ID.EQ(tOauth2.AccountID),
 			),
 		).
-		WHERE(jet.AND(
-			tOauth2.Provider.EQ(jet.String(provider)),
-			tOauth2.ExternalID.EQ(jet.String(userInfo.ID)),
+		WHERE(mysql.AND(
+			tOauth2.Provider.EQ(mysql.String(provider)),
+			tOauth2.ExternalID.EQ(mysql.String(userInfo.ID)),
 			tAccs.Enabled.IS_TRUE(),
 		)).
 		LIMIT(1)

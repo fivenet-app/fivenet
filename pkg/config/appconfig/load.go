@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
@@ -159,7 +159,7 @@ func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
 			cfg,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tConfig.AppConfig.SET(jet.RawString("VALUES(`app_config`)")),
+			tConfig.AppConfig.SET(mysql.RawString("VALUES(`app_config`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, c.db); err != nil {

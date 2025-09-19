@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.laws;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -12,13 +13,17 @@ message LawBook {
   int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  // @sanitize
-  string name = 4 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 128
-  }];
-  // @sanitize
-  optional string description = 5 [(buf.validate.field).string.max_len = 255];
+  string name = 4 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 128
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 5 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   repeated Law laws = 6;
 }
 
@@ -27,15 +32,21 @@ message Law {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   int64 lawbook_id = 4;
-  // @sanitize
-  string name = 5 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 128
-  }];
-  // @sanitize
-  optional string description = 6 [(buf.validate.field).string.max_len = 1024];
-  // @sanitize
-  optional string hint = 7 [(buf.validate.field).string.max_len = 512];
+  string name = 5 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 128
+    },
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string description = 6 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string hint = 7 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
   optional uint32 fine = 8;
   optional uint32 detention_time = 9;
   optional uint32 stvo_points = 10;

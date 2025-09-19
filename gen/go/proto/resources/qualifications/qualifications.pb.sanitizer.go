@@ -7,6 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Qualification) Sanitize() error {
 	if m == nil {
 		return nil
@@ -51,6 +53,9 @@ func (m *Qualification) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
@@ -61,7 +66,6 @@ func (m *Qualification) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
 	}
@@ -105,8 +109,10 @@ func (m *Qualification) Sanitize() error {
 
 	}
 
-	// Field: LabelSyncFormat
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
+	// Field: LabelSyncFormat
 	if m.LabelSyncFormat != nil {
 		*m.LabelSyncFormat = htmlsanitizer.StripTags(*m.LabelSyncFormat)
 	}
@@ -156,14 +162,28 @@ func (m *Qualification) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationDiscordSettings) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: RoleFormat
+	if m.RoleFormat != nil {
+		*m.RoleFormat = htmlsanitizer.Sanitize(*m.RoleFormat)
+	}
+
+	// Field: RoleName
+	if m.RoleName != nil {
+		*m.RoleName = htmlsanitizer.Sanitize(*m.RoleName)
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationExamSettings) Sanitize() error {
 	if m == nil {
 		return nil
@@ -181,6 +201,8 @@ func (m *QualificationExamSettings) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -205,9 +227,13 @@ func (m *QualificationRequest) Sanitize() error {
 	}
 
 	// Field: ApproverComment
-
 	if m.ApproverComment != nil {
 		*m.ApproverComment = htmlsanitizer.StripTags(*m.ApproverComment)
+	}
+
+	// Field: ApproverJob
+	if m.ApproverJob != nil {
+		*m.ApproverJob = htmlsanitizer.Sanitize(*m.ApproverJob)
 	}
 
 	// Field: CreatedAt
@@ -247,7 +273,6 @@ func (m *QualificationRequest) Sanitize() error {
 	}
 
 	// Field: UserComment
-
 	if m.UserComment != nil {
 		*m.UserComment = htmlsanitizer.StripTags(*m.UserComment)
 	}
@@ -255,6 +280,8 @@ func (m *QualificationRequest) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationRequirement) Sanitize() error {
 	if m == nil {
 		return nil
@@ -281,6 +308,8 @@ func (m *QualificationRequirement) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationResult) Sanitize() error {
 	if m == nil {
 		return nil
@@ -303,6 +332,9 @@ func (m *QualificationResult) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
@@ -337,6 +369,8 @@ func (m *QualificationResult) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *QualificationShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -363,6 +397,9 @@ func (m *QualificationShort) Sanitize() error {
 		}
 	}
 
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
@@ -373,7 +410,6 @@ func (m *QualificationShort) Sanitize() error {
 	}
 
 	// Field: Description
-
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
 	}
@@ -386,6 +422,9 @@ func (m *QualificationShort) Sanitize() error {
 			}
 		}
 	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Requirements
 	for idx, item := range m.Requirements {

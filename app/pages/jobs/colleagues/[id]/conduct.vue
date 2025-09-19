@@ -24,5 +24,5 @@ const route = useRoute('jobs-colleagues-id-conduct');
 </script>
 
 <template>
-    <List :user-id="parseInt(route.params.id as string)" :hide-user-search="true" />
+    <List :user-id="parseInt(route.params.id as string)" hide-user-search />
 </template>

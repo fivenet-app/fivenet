@@ -51,7 +51,7 @@ const schema = z.object({
         .array()
         .max(10)
         .default(props.userId ? [props.userId] : []),
-    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.value.length).default(activityTypes.value),
+    types: z.enum(ColleagueActivityType).array().max(typesAttrs.value.length).default(activityTypes.value),
     sorting: z
         .object({
             columns: z

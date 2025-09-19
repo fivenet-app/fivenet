@@ -18,7 +18,7 @@ const { game } = useAppConfig();
             :src="user?.props?.mugshot?.filePath"
             :name="`${user.firstname} ${user.lastname}`"
             :alt="$t('common.mugshot')"
-            :enable-popup="true"
+            enable-popup
             size="3xl"
         />
 

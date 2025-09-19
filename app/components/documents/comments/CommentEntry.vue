@@ -59,15 +59,11 @@ let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document_comments'): Promise<void> {
-    if (saving.value) {
-        return;
-    }
+    if (saving.value) return;
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-        return;
-    }
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
@@ -128,9 +124,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
         editing.value = false;
         resetForm();
 
-        if (!response.comment) {
-            return;
-        }
+        if (!response.comment) return;
 
         comment.value = response.comment;
     } catch (e) {
@@ -159,9 +153,7 @@ async function deleteComment(id: number): Promise<void> {
 }
 
 function resetForm(): void {
-    if (!comment.value) {
-        return;
-    }
+    if (!comment.value) return;
 
     state.content = comment.value.content?.rawContent ?? '';
 }
@@ -171,9 +163,7 @@ watch(props, () => resetForm());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (!comment.value) {
-        return;
-    }
+    if (!comment.value) return;
 
     canSubmit.value = false;
     await editComment(comment.value.documentId, comment.value.id, event.data).finally(() =>

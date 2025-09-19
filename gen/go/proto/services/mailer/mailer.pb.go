@@ -9,6 +9,7 @@ package mailer
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -1077,11 +1078,10 @@ func (x *GetThreadResponse) GetThread() *mailer.Thread {
 }
 
 type CreateThreadRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Thread  *mailer.Thread         `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
-	Message *mailer.Message        `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	// @sanitize: method=StripTags
-	Recipients    []string `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Thread        *mailer.Thread         `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Message       *mailer.Message        `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Recipients    []string               `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1855,10 +1855,9 @@ func (x *ListThreadMessagesResponse) GetMessages() []*mailer.Message {
 }
 
 type PostMessageRequest struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Message *mailer.Message        `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-	// @sanitize: method=StripTags
-	Recipients    []string `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       *mailer.Message        `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Recipients    []string               `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2051,7 +2050,7 @@ var File_services_mailer_mailer_proto protoreflect.FileDescriptor
 
 const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1fresources/mailer/template.proto\x1a\x1dresources/mailer/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x88\x01\n" +
+	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1fresources/mailer/template.proto\x1a\x1dresources/mailer/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x88\x01\n" +
 	"\x11ListEmailsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -2122,12 +2121,12 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
 	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"E\n" +
 	"\x11GetThreadResponse\x120\n" +
-	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xc0\x01\n" +
+	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xd1\x01\n" +
 	"\x13CreateThreadRequest\x128\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadB\x06\xbaH\x03\xc8\x01\x01R\x06thread\x12;\n" +
-	"\amessage\x18\x02 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x122\n" +
+	"\amessage\x18\x02 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12C\n" +
 	"\n" +
-	"recipients\x18\x03 \x03(\tB\x12\xbaH\x0f\x92\x01\f\b\x01\x10\x0f\"\x06r\x04\x10\x06\x18PR\n" +
+	"recipients\x18\x03 \x03(\tB#\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x0f\x92\x01\f\b\x01\x10\x0f\"\x06r\x04\x10\x06\x18PR\n" +
 	"recipients\"H\n" +
 	"\x14CreateThreadResponse\x120\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"_\n" +
@@ -2174,11 +2173,11 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12;\n" +
-	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x83\x01\n" +
+	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x94\x01\n" +
 	"\x12PostMessageRequest\x12;\n" +
-	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x120\n" +
+	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12A\n" +
 	"\n" +
-	"recipients\x18\x02 \x03(\tB\x10\xbaH\r\x92\x01\n" +
+	"recipients\x18\x02 \x03(\tB!\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\r\x92\x01\n" +
 	"\x10\n" +
 	"\"\x06r\x04\x10\x06\x18PR\n" +
 	"recipients\"J\n" +

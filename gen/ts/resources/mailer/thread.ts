@@ -51,8 +51,6 @@ export interface Thread {
      */
     creator?: UserShort;
     /**
-     * @sanitize: method=StripTags
-     *
      * @generated from protobuf field: string title = 9
      */
     title: string;
@@ -139,7 +137,7 @@ class Thread$Type extends MessageType<Thread> {
             { no: 6, name: "creator_email", kind: "message", T: () => Email },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
-            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 10, name: "recipients", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ThreadRecipientEmail, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
             { no: 11, name: "state", kind: "message", T: () => ThreadState, options: { "tagger.tags": "alias:\"thread_state\"" } }
         ]);

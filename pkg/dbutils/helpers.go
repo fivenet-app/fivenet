@@ -1,11 +1,13 @@
 package dbutils
 
-import jet "github.com/go-jet/jet/v2/mysql"
+import (
+	"github.com/go-jet/jet/v2/mysql"
+)
 
-type Columns jet.ProjectionList
+type Columns mysql.ProjectionList
 
-func (c Columns) Get() jet.ProjectionList {
-	out := jet.ProjectionList{}
+func (c Columns) Get() mysql.ProjectionList {
+	out := mysql.ProjectionList{}
 
 	for i := range c {
 		if c[i] != nil {
@@ -16,49 +18,41 @@ func (c Columns) Get() jet.ProjectionList {
 	return out
 }
 
-func YEAR(column jet.Column) jet.Expression {
-	return jet.CustomExpression(
-		jet.Token("YEAR("),
+func YEAR(column mysql.Column) mysql.Expression {
+	return mysql.CustomExpression(
+		mysql.Token("YEAR("),
 		column,
-		jet.Token(")"),
+		mysql.Token(")"),
 	)
 }
 
-func WEEK(column jet.Column) jet.Expression {
-	return jet.CustomExpression(
-		jet.Token("WEEK("),
+func WEEK(column mysql.Column) mysql.Expression {
+	return mysql.CustomExpression(
+		mysql.Token("WEEK("),
 		column,
-		jet.Token(")"),
+		mysql.Token(")"),
 	)
 }
 
-func ANY_VALUE(column jet.Column) jet.Expression {
-	return jet.CustomExpression(
-		jet.Token("ANY_VALUE("),
-		column,
-		jet.Token(")"),
-	)
-}
-
-// JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-jet.
+// JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-mysql.
 //
 //nolint:revive // Function name is all uppercase to be consistent with go-jet package.
-func JSON_CONTAINS(column jet.Column, value jet.Expression) jet.Expression {
-	return jet.CustomExpression(
-		jet.Token("JSON_CONTAINS("),
+func JSON_CONTAINS(column mysql.Column, value mysql.Expression) mysql.Expression {
+	return mysql.CustomExpression(
+		mysql.Token("JSON_CONTAINS("),
 		column,
-		jet.Token(", "),
+		mysql.Token(", "),
 		value,
-		jet.Token(")"),
+		mysql.Token(")"),
 	)
 }
 
-func MATCH(column jet.Column, search jet.Expression) jet.BoolExpression {
-	return jet.BoolExp(jet.CustomExpression(
-		jet.Token("MATCH("),
+func MATCH(column mysql.Column, search mysql.Expression) mysql.BoolExpression {
+	return mysql.BoolExp(mysql.CustomExpression(
+		mysql.Token("MATCH("),
 		column,
-		jet.Token(") AGAINST ("),
+		mysql.Token(") AGAINST ("),
 		search,
-		jet.Token(" IN BOOLEAN MODE)"),
+		mysql.Token(" IN BOOLEAN MODE)"),
 	))
 }

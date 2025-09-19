@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 )
 
 const defaultDomain = "fivenet.ls"
@@ -93,7 +93,7 @@ func (s *Server) generateEmailProposals(
 			).
 			FROM(tUsers).
 			WHERE(
-				tUsers.ID.EQ(jet.Int32(userInfo.GetUserId())),
+				tUsers.ID.EQ(mysql.Int32(userInfo.GetUserId())),
 			).
 			LIMIT(1)
 

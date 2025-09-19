@@ -1,30 +1,22 @@
 package icons
 
 import (
-	"bytes"
-	"context"
-	"io"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
-	cache "github.com/Code-Hex/go-generics-cache"
-	iconifygo "github.com/andyburri/iconify-go"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	iconifygo "github.com/galexrt/iconify-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 )
-
-const cacheExpirationDuration = 4 * time.Hour
 
 type IconifyAPI struct {
 	server *iconifygo.IconifyServer
 
 	proxy  bool
 	apiURL string
-
-	cache *cache.Cache[string, []byte]
 
 	client *http.Client
 }
@@ -38,48 +30,45 @@ type Params struct {
 }
 
 // New creates a new ImageProxy instance with the provided logger and configuration.
-func New(p Params) *IconifyAPI {
-	ctxCancel, cancel := context.WithCancel(context.Background())
+func New(p Params) (*IconifyAPI, error) {
+	var icServer *iconifygo.IconifyServer
+	if !p.Config.Icons.Proxy {
+		var err error
+		icServer, err = iconifygo.NewIconifyServer(
+			"/api/icons",
+			p.Config.Icons.Path,
+			iconifygo.WithHandlers("json"),
+			iconifygo.WithPreloadIconsets([]string{"simple-icons", "lucide", "mdi", "flagpack"}),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create iconify server. %w", err)
+		}
+	}
 
 	ip := &IconifyAPI{
-		server: iconifygo.NewIconifyServer("/api/icons", p.Config.Icons.Path, "json"),
+		server: icServer,
 
 		proxy:  p.Config.Icons.Proxy,
 		apiURL: p.Config.Icons.APIURL,
-
-		cache: cache.NewContext(ctxCancel, cache.AsLRU[string, []byte]()),
-
-		client: http.DefaultClient,
 	}
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
+	if ip.proxy {
+		ip.client = http.DefaultClient
+	}
 
-		return nil
-	}))
-
-	return ip
+	return ip, nil
 }
 
 func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 	// Register the iconify API handler for local serving or proxy
 	if !i.proxy {
 		e.GET("/api/icons/*path", func(c *gin.Context) {
-			recorder := &responseCapture{ResponseWriter: c.Writer, buf: &bytes.Buffer{}}
-
 			if !validateIconRequest(c.Param("path"), c.Request.URL.Query()) {
 				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid icon request"})
 				return
 			}
 
-			i.server.HandlerFunc().ServeHTTP(recorder, c.Request)
-
-			// Cache the response body
-			i.cache.Set(
-				c.Request.URL.String(),
-				recorder.buf.Bytes(),
-				cache.WithExpiration(cacheExpirationDuration),
-			)
+			i.server.HandlerFunc().ServeHTTP(c.Writer, c.Request)
 		})
 	} else {
 		// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
@@ -93,15 +82,13 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 			}
 
 			// Build the target URL for the iconify API request
-			targetURL := buildTargetURL(i.apiURL, path, query)
-			if len(targetURL) > 1024 {
-				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
+			targetURL, err := buildTargetURL(i.apiURL, path, query)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to build proxy request"})
 				return
 			}
-
-			if cachedResponse, ok := i.cache.Get(targetURL); ok {
-				c.Writer.Header().Set("Content-Type", "application/json")
-				c.Writer.Write(cachedResponse)
+			if len(targetURL) > 1024 {
+				c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "request URL too long"})
 				return
 			}
 
@@ -126,18 +113,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 				return
 			}
 
-			// Need to read the body to be able to cache it..
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to read response body"})
-				return
-			}
-
-			i.cache.Set(targetURL, body, cache.WithExpiration(cacheExpirationDuration))
-
-			c.Writer.Header().Set("Content-Type", "application/json")
-			c.Status(resp.StatusCode)
-			c.Writer.Write(body)
+			c.DataFromReader(http.StatusOK, resp.ContentLength, "application/json", resp.Body, nil)
 		})
 	}
 }
@@ -154,22 +130,13 @@ func validateIconRequest(path string, query url.Values) bool {
 	return true
 }
 
-func buildTargetURL(apiURL string, path string, query url.Values) string {
-	targetURL := apiURL + path
+func buildTargetURL(apiURL string, path string, query url.Values) (string, error) {
+	targetURL, err := url.JoinPath(apiURL, path)
+	if err != nil {
+		return "", err
+	}
 	if q := query.Encode(); q != "" {
 		targetURL += "?" + q
 	}
-	return targetURL
-}
-
-// responseCapture wraps gin.ResponseWriter to capture output for caching icons.
-type responseCapture struct {
-	gin.ResponseWriter
-
-	buf *bytes.Buffer
-}
-
-func (w *responseCapture) Write(b []byte) (int, error) {
-	w.buf.Write(b)
-	return w.ResponseWriter.Write(b)
+	return targetURL, nil
 }

@@ -5,12 +5,12 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import { jobAccessEntry, qualificationAccessEntry } from '~/utils/validation';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { jobAccessEntry, qualificationAccessEntry } from '~~/shared/types/validation';
 
 const props = defineProps<{
     unit?: Unit;
@@ -45,7 +45,7 @@ const schema = z.object({
     color: z.coerce.string().length(7),
     icon: z.coerce.string().max(128).optional(),
     homePostal: z.union([z.coerce.string().min(1).max(48), z.coerce.string().length(0).optional()]),
-    attributes: z.nativeEnum(UnitAttribute).array().max(5).default([]),
+    attributes: z.enum(UnitAttribute).array().max(5).default([]),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
         qualifications: qualificationAccessEntry.array().max(maxAccessEntries).default([]),
@@ -117,9 +117,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 async function updateUnitInForm(): Promise<void> {
-    if (props.unit === undefined) {
-        return;
-    }
+    if (props.unit === undefined) return;
 
     state.name = props.unit.name;
     state.initials = props.unit.initials;

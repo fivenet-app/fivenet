@@ -3,12 +3,14 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "google/protobuf/duration.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
-// @dbscanner: json
 message Workflow {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   bool reminder = 1;
   ReminderSettings reminder_settings = 2;
 

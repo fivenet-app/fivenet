@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscompletor "github.com/fivenet-app/fivenet/v2025/services/completor/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -35,11 +35,11 @@ func (s *Server) CompleteCitizens(
 
 	currentJob := req.CurrentJob != nil && req.GetCurrentJob()
 
-	orderBys := []jet.OrderByClause{}
+	orderBys := []mysql.OrderByClause{}
 	if len(req.GetUserIds()) == 0 {
 		if currentJob {
 			condition = condition.AND(
-				tUsers.Job.EQ(jet.String(userInfo.GetJob())),
+				tUsers.Job.EQ(mysql.String(userInfo.GetJob())),
 			)
 		}
 
@@ -49,13 +49,13 @@ func (s *Server) CompleteCitizens(
 
 		if req.GetSearch() != "" {
 			req.Search = "%" + req.GetSearch() + "%"
-			condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
-				LIKE(jet.String(req.GetSearch()))
+			condition = mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
+				LIKE(mysql.String(req.GetSearch()))
 		}
 	} else {
-		userIds := []jet.Expression{}
+		userIds := []mysql.Expression{}
 		for _, v := range req.GetUserIds() {
-			userIds = append(userIds, jet.Int32(v))
+			userIds = append(userIds, mysql.Int32(v))
 		}
 
 		if req.UserIdsOnly != nil && req.GetUserIdsOnly() {
@@ -68,7 +68,7 @@ func (s *Server) CompleteCitizens(
 
 	orderBys = append(orderBys, tUsers.Lastname.ASC())
 
-	columns := jet.ProjectionList{
+	columns := mysql.ProjectionList{
 		tUsers.ID,
 		tUsers.Firstname,
 		tUsers.Lastname,
@@ -83,7 +83,7 @@ func (s *Server) CompleteCitizens(
 			columns[0],
 			columns[1:]...,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		OPTIMIZER_HINTS(mysql.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
@@ -168,16 +168,16 @@ func (s *Server) CompleteDocumentCategories(
 	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
 	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 
-	jobsExp := make([]jet.Expression, jobs.Len())
+	jobsExp := make([]mysql.Expression, jobs.Len())
 	for i := range jobs.GetStrings() {
-		jobsExp[i] = jet.String(jobs.GetStrings()[i])
+		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
 	condition := tDCategory.Job.IN(jobsExp...)
 	if req.GetSearch() != "" {
 		req.Search = "%" + req.GetSearch() + "%"
 		condition = condition.AND(
-			tDCategory.Name.LIKE(jet.String(req.GetSearch())),
+			tDCategory.Name.LIKE(mysql.String(req.GetSearch())),
 		)
 	}
 
@@ -239,16 +239,16 @@ func (s *Server) CompleteCitizenLabels(
 	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
 	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
 
-	jobsExp := make([]jet.Expression, jobs.Len())
+	jobsExp := make([]mysql.Expression, jobs.Len())
 	for i := range jobs.GetStrings() {
-		jobsExp[i] = jet.String(jobs.GetStrings()[i])
+		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
 	condition := tCitizensLabelsJob.Job.IN(jobsExp...)
 
 	if req.GetSearch() != "" {
 		req.Search = "%" + req.GetSearch() + "%"
-		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(jet.String(req.GetSearch())))
+		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(req.GetSearch())))
 	}
 
 	stmt := tCitizensLabelsJob.

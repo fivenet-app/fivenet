@@ -14,7 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -24,7 +24,7 @@ func (s *Server) ListCalendarEntryRSVP(
 ) (*pbcalendar.ListCalendarEntryRSVPResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Int64(req.GetEntryId())))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -50,12 +50,12 @@ func (s *Server) ListCalendarEntryRSVP(
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
-	condition := tCalendarRSVP.EntryID.EQ(jet.Int64(entry.GetId())).
-		AND(tCalendarRSVP.Response.GT(jet.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
+	condition := tCalendarRSVP.EntryID.EQ(mysql.Int64(entry.GetId())).
+		AND(tCalendarRSVP.Response.GT(mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
 	countStmt := tCalendarRSVP.
 		SELECT(
-			jet.COUNT(tCalendarRSVP.UserID).AS("data_count.total"),
+			mysql.COUNT(tCalendarRSVP.UserID).AS("data_count.total"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,
@@ -125,8 +125,6 @@ func (s *Server) ListCalendarEntryRSVP(
 		}
 	}
 
-	resp.GetPagination().Update(len(resp.GetEntries()))
-
 	return resp, nil
 }
 
@@ -148,7 +146,7 @@ func (s *Server) RSVPCalendarEntry(
 	entry, err := s.getEntry(
 		ctx,
 		userInfo,
-		tCalendarEntry.ID.EQ(jet.Int64(req.GetEntry().GetEntryId())),
+		tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntry().GetEntryId())),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -193,7 +191,7 @@ func (s *Server) RSVPCalendarEntry(
 			req.GetEntry().GetResponse(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCalendarRSVP.Response.SET(jet.Int32(int32(req.GetEntry().GetResponse()))),
+			tCalendarRSVP.Response.SET(mysql.Int32(int32(req.GetEntry().GetResponse()))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -253,9 +251,9 @@ func (s *Server) getRSVPCalendarEntry(
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
-		WHERE(jet.AND(
-			tCalendarRSVP.EntryID.EQ(jet.Int64(entryId)),
-			tCalendarRSVP.UserID.EQ(jet.Int32(userId)),
+		WHERE(mysql.AND(
+			tCalendarRSVP.EntryID.EQ(mysql.Int64(entryId)),
+			tCalendarRSVP.UserID.EQ(mysql.Int32(userId)),
 		)).
 		LIMIT(1)
 

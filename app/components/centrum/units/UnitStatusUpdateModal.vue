@@ -3,10 +3,10 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { unitStatusToBadgeColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
-import type { Coordinate } from '~/types/livemap';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { Coordinate } from '~~/shared/types/types';
 
 const props = defineProps<{
     unit: Unit;
@@ -26,7 +26,7 @@ const notifications = useNotificationsStore();
 const centrumCentrumClient = await getCentrumCentrumClient();
 
 const schema = z.object({
-    status: z.nativeEnum(StatusUnit),
+    status: z.enum(StatusUnit),
     code: z.union([z.coerce.string().min(1).max(20), z.coerce.string().length(0).optional()]),
     reason: z.union([z.coerce.string().min(3).max(255), z.coerce.string().length(0).optional()]),
 });

@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
@@ -40,7 +40,7 @@ func (s *Server) GetDispatchHeatmap(
 		).
 		FROM(tDispatchHeatmap).
 		WHERE(
-			tDispatchHeatmap.Job.EQ(jet.String(userInfo.GetJob())),
+			tDispatchHeatmap.Job.EQ(mysql.String(userInfo.GetJob())),
 		).
 		LIMIT(1)
 

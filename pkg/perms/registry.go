@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -357,9 +357,9 @@ func (p *Perms) updateDefaultRole(ctx context.Context) error {
 			tRoles.Grade,
 		).
 		SET(
-			tRoles.Grade.SET(jet.Int32(p.startJobGrade)),
+			tRoles.Grade.SET(mysql.Int32(p.startJobGrade)),
 		).
-		WHERE(tRoles.Job.EQ(jet.String(DefaultRoleJob))).
+		WHERE(tRoles.Job.EQ(mysql.String(DefaultRoleJob))).
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -376,7 +376,7 @@ func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
 		).
 		FROM(tRoles).
 		WHERE(
-			tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)),
+			tRoles.Job.NOT_EQ(mysql.String(DefaultRoleJob)),
 		).
 		GROUP_BY(tRoles.Job)
 

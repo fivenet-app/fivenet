@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <ActivityFeed :show-target-user="true" />
+    <ActivityFeed show-target-user />
 </template>

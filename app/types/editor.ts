@@ -1,10 +1,32 @@
 export const safeImagePaths = ['/api/image_proxy/', '/api/filestore/'] as const;
 
 export const fontColors = {
-    // Color list copied from Jodit editor to keep the same colors for Tiptap Editor now
+    // Color list copied from Jodit editor to keep the same colors for the Tiptap Editor now
     // https://github.com/xdan/jodit/blob/4d5a1b4dee874457e7b82be50693cf70e0cba4d4/src/config.ts#L561
-    greyscale: ['#000000', '#434343', '#666666', '#999999', '#B7B7B7', '#CCCCCC', '#D9D9D9', '#EFEFEF', '#F3F3F3', '#FFFFFF'],
-    palette: ['#980000', '#FF0000', '#FF9900', '#FFFF00', '#00F0F0', '#00FFFF', '#4A86E8', '#0000FF', '#9900FF', '#FF00FF'],
+    greyscale: [
+        '#000000',
+        '#434343',
+        '#666666',
+        '#999999',
+        '#B7B7B7',
+        '#CCCCCC',
+        '#D9D9D9',
+        '#EFEFEF',
+        '#F3F3F3',
+        '#FFFFFF',
+    ] as const,
+    palette: [
+        '#980000',
+        '#FF0000',
+        '#FF9900',
+        '#FFFF00',
+        '#00F0F0',
+        '#00FFFF',
+        '#4A86E8',
+        '#0000FF',
+        '#9900FF',
+        '#FF00FF',
+    ] as const,
     full: [
         '#E6B8AF',
         '#F4CCCC',
@@ -66,32 +88,32 @@ export const fontColors = {
         '#073763',
         '#20124D',
         '#4C1130',
-    ],
-};
+    ] as const,
+} as const;
 
 export const highlightColors = [
     {
         label: 'Red',
         value: '#ffa8a8',
-    },
+    } as const,
     {
         label: 'Orange',
         value: '#ffc078',
-    },
+    } as const,
     {
         label: 'Yellow',
         value: '#FAF594',
-    },
+    } as const,
     {
         label: 'Blue',
         value: '#74c0fc',
-    },
+    } as const,
     {
         label: 'Green',
         value: '#8ce99a',
-    },
+    } as const,
     {
         label: 'Purple',
         value: '#b197fc',
-    },
+    } as const,
 ];

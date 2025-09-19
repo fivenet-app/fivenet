@@ -7,6 +7,8 @@
 package jobs
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -91,16 +93,15 @@ func (ColleagueActivityType) EnumDescriptor() ([]byte, []int) {
 }
 
 type ColleagueActivity struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	Job          string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	SourceUserId *int32                 `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty"`
-	SourceUser   *Colleague             `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`
-	TargetUserId int32                  `protobuf:"varint,7,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser   *Colleague             `protobuf:"bytes,8,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`
-	ActivityType ColleagueActivityType  `protobuf:"varint,9,opt,name=activity_type,json=activityType,proto3,enum=resources.jobs.ColleagueActivityType" json:"activity_type,omitempty"`
-	// @sanitize
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	SourceUserId  *int32                 `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty"`
+	SourceUser    *Colleague             `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`
+	TargetUserId  int32                  `protobuf:"varint,7,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	TargetUser    *Colleague             `protobuf:"bytes,8,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`
+	ActivityType  ColleagueActivityType  `protobuf:"varint,9,opt,name=activity_type,json=activityType,proto3,enum=resources.jobs.ColleagueActivityType" json:"activity_type,omitempty"`
 	Reason        string                 `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
 	Data          *ColleagueActivityData `protobuf:"bytes,11,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -207,7 +208,6 @@ func (x *ColleagueActivity) GetData() *ColleagueActivityData {
 	return nil
 }
 
-// @dbscanner: json
 type ColleagueActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -534,7 +534,7 @@ var File_resources_jobs_activity_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x94\x05\n" +
+	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x9a\x05\n" +
 	"\x11ColleagueActivity\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -546,19 +546,19 @@ const file_resources_jobs_activity_proto_rawDesc = "" +
 	"\x0etarget_user_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\ftargetUserId\x12T\n" +
 	"\vtarget_user\x18\b \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"R\n" +
 	"targetUser\x12J\n" +
-	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12 \n" +
+	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12&\n" +
 	"\x06reason\x18\n" +
-	" \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\x06reason\x129\n" +
+	" \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\x06reason\x129\n" +
 	"\x04data\x18\v \x01(\v2%.resources.jobs.ColleagueActivityDataR\x04dataB\r\n" +
 	"\v_created_atB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
-	"\f_source_user\"\xb4\x02\n" +
+	"\f_source_user\"\xbc\x02\n" +
 	"\x15ColleagueActivityData\x12F\n" +
 	"\fabsence_date\x18\x01 \x01(\v2!.resources.jobs.AbsenceDateChangeH\x00R\vabsenceDate\x12@\n" +
 	"\fgrade_change\x18\x02 \x01(\v2\x1b.resources.jobs.GradeChangeH\x00R\vgradeChange\x12C\n" +
 	"\rlabels_change\x18\x03 \x01(\v2\x1c.resources.jobs.LabelsChangeH\x00R\flabelsChange\x12=\n" +
 	"\vname_change\x18\x04 \x01(\v2\x1a.resources.jobs.NameChangeH\x00R\n" +
-	"nameChangeB\r\n" +
+	"nameChange:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
 	"\x04data\x12\x05\xbaH\x02\b\x01\"\x99\x01\n" +
 	"\x11AbsenceDateChange\x12C\n" +
 	"\rabsence_begin\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\fabsenceBegin\x12?\n" +

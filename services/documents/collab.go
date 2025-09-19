@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )
@@ -47,7 +47,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 	}
 
 	doc, err := s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Int64(docId)),
+		tDocument.ID.EQ(mysql.Int64(docId)),
 		userInfo, true)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

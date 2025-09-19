@@ -92,7 +92,7 @@ const passwordVisibility = ref(false);
 
         <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.login')" />
 
-        <div v-if="!nuiEnabled && login.providers.length > 0" class="space-y-2">
+        <template v-if="!nuiEnabled && login.providers.length > 0">
             <UAlert
                 v-if="!socialLoginEnabled"
                 :description="$t('components.auth.LoginForm.social_login_disabled')"
@@ -112,34 +112,36 @@ const passwordVisibility = ref(false);
             />
 
             <template v-else>
-                <USeparator class="mt-2" :label="$t('common.or')" orientation="horizontal" />
+                <USeparator :label="$t('common.or')" orientation="horizontal" />
 
-                <div v-for="provider in login.providers" :key="provider.name">
-                    <UButton
-                        block
-                        color="neutral"
-                        external
-                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
-                        :to="`/api/oauth2/login/${provider.name}`"
-                        :disabled="!canSubmit"
-                    >
-                        <NuxtImg
-                            v-if="!provider.icon?.startsWith('i-')"
-                            class="size-5"
-                            :src="provider.icon"
-                            :alt="provider.name"
-                            placeholder-class="size-5"
-                            loading="lazy"
-                        />
-                        {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
-                    </UButton>
+                <div class="space-y-2">
+                    <div v-for="provider in login.providers" :key="provider.name">
+                        <UButton
+                            block
+                            color="neutral"
+                            variant="subtle"
+                            external
+                            :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
+                            :to="`/api/oauth2/login/${provider.name}`"
+                            :disabled="!canSubmit"
+                        >
+                            <NuxtImg
+                                v-if="!provider.icon?.startsWith('i-')"
+                                class="size-5"
+                                :src="provider.icon"
+                                :alt="provider.name"
+                                placeholder-class="size-5"
+                                loading="lazy"
+                            />
+                            {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
+                        </UButton>
+                    </div>
                 </div>
             </template>
-        </div>
+        </template>
 
         <DataErrorBlock
             v-if="loginError"
-            class="mt-2"
             :title="$t('components.auth.LoginForm.login_error')"
             :error="loginError"
             :close="() => (loginError = null)"

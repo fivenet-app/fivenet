@@ -35,9 +35,7 @@ async function handleError(url?: string): Promise<void> {
 const version = APP_VERSION;
 
 function copyError(): void {
-    if (!props.error) {
-        return;
-    }
+    if (!props.error) return;
 
     copyToClipboardWrapper(`**App Error occured - ${new Date().toLocaleString()}**
 \`\`\`

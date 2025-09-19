@@ -12,7 +12,7 @@ type ColumnSpec interface {
 	Order(desc bool) []mysql.OrderByClause
 }
 
-// Simple column = ASC/DESC with optional NULLS LAST/FIRST.
+// Column Contains info for sorting ASC/DESC by that column with optional NULLS LAST/FIRST.
 type Column struct {
 	Col       mysql.Column
 	NullsLast bool // Useful for timestamp columns
@@ -68,7 +68,7 @@ func New(allowed SpecMap, defaultOrder, tiebreaker []mysql.OrderByClause, maxCol
 	}
 }
 
-// Build converts your proto Sort into []jet.OrderByClause safely.
+// Build converts your proto Sort into []mysql.OrderByClause safely.
 func (b *Builder) Build(s *Sort) []mysql.OrderByClause {
 	out := make([]mysql.OrderByClause, 0, 4)
 

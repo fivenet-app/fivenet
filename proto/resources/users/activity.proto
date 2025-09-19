@@ -3,6 +3,8 @@ syntax = "proto3";
 package resources.users;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/labels.proto";
 import "resources/users/licenses.proto";
@@ -40,14 +42,14 @@ message UserActivity {
   optional UserShort source_user = 5 [(tagger.tags) = "alias:\"source_user\""];
   int32 target_user_id = 6 [(tagger.tags) = "alias:\"target_user_id\""];
   UserShort target_user = 7 [(tagger.tags) = "alias:\"target_user\""];
-  // @sanitize
   string key = 8 [
     (buf.validate.field).string.max_len = 64,
+    (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "alias:\"user_activity.key\""
   ];
-  // @sanitize
   string reason = 9 [
     (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true},
     (tagger.tags) = "alias:\"user_activity.reason\""
   ];
   optional UserActivityData data = 10 [(tagger.tags) = "alias:\"user_activity.data\""];
@@ -61,8 +63,9 @@ message UserActivity {
   ];
 }
 
-// @dbscanner: json
 message UserActivityData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
   oneof data {
     option (buf.validate.oneof).required = true;
 

@@ -3,6 +3,8 @@
 
 package notifications
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -23,6 +25,8 @@ func (m *JobEvent) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *JobGradeEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -31,6 +35,8 @@ func (m *JobGradeEvent) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *SystemEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -51,6 +57,8 @@ func (m *SystemEvent) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *UserEvent) Sanitize() error {
 	if m == nil {
 		return nil

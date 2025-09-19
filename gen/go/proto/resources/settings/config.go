@@ -15,6 +15,8 @@ const (
 
 	// https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
 	DefaultDiscordBotPermissions = -42471713
+
+	DefaultDisplayIntlLocale = "en-US"
 )
 
 func (x *AppConfig) Default() {
@@ -26,37 +28,35 @@ func (x *AppConfig) Default() {
 	}
 
 	if x.GetPerms() == nil {
-		x.Perms = &Perms{
-			Default: []*Perm{
-				{
-					Category: "auth.AuthService",
-					Name:     "ChooseCharacter",
-				},
-				{
-					Category: "completor.CompletorService",
-					Name:     "CompleteJobs",
-				},
-				{
-					Category: "documents.DocumentsService",
-					Name:     "ListDocuments",
-				},
-				{
-					Category: "qualifications.QualificationsService",
-					Name:     "ListQualifications",
-				},
-				{
-					Category: "wiki.WikiService",
-					Name:     "ListPages",
-				},
+		x.Perms = &Perms{}
+	}
+	if x.GetPerms().GetDefault() == nil {
+		x.Perms.Default = []*Perm{
+			{
+				Category: "auth.AuthService",
+				Name:     "ChooseCharacter",
+			},
+			{
+				Category: "completor.CompletorService",
+				Name:     "CompleteJobs",
+			},
+			{
+				Category: "documents.DocumentsService",
+				Name:     "ListDocuments",
+			},
+			{
+				Category: "qualifications.QualificationsService",
+				Name:     "ListQualifications",
+			},
+			{
+				Category: "wiki.WikiService",
+				Name:     "ListPages",
 			},
 		}
 	}
 
 	if x.GetWebsite() == nil {
-		x.Website = &Website{
-			Links:     &Links{},
-			StatsPage: false,
-		}
+		x.Website = &Website{}
 	}
 	if x.GetWebsite().GetLinks() == nil {
 		x.Website.Links = &Links{}
@@ -86,16 +86,7 @@ func (x *AppConfig) Default() {
 	}
 
 	if x.GetDiscord() == nil {
-		status := "FiveNet"
-		url := "https://fivenet.app"
-
 		x.Discord = &Discord{
-			Enabled: false,
-			BotPresence: &DiscordBotPresence{
-				Type:   DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME,
-				Status: &status,
-				Url:    &url,
-			},
 			BotPermissions: DefaultDiscordBotPermissions,
 		}
 	}
@@ -103,8 +94,13 @@ func (x *AppConfig) Default() {
 		x.Discord.SyncInterval = durationpb.New(DefaultDiscordSyncInterval)
 	}
 	if x.GetDiscord().GetBotPresence() == nil {
+		status := "FiveNet"
+		url := "https://fivenet.app"
+
 		x.Discord.BotPresence = &DiscordBotPresence{
-			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
+			Type:   DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME,
+			Status: &status,
+			Url:    &url,
 		}
 	}
 	if x.GetDiscord().GetBotPermissions() == 0 {
@@ -112,13 +108,23 @@ func (x *AppConfig) Default() {
 	}
 
 	if x.GetSystem() == nil {
-		x.System = &System{
-			BannerMessageEnabled: false,
-		}
+		x.System = &System{}
 	}
 	if x.GetSystem().GetBannerMessage() != nil {
 		if x.GetSystem().GetBannerMessage().GetCreatedAt() == nil {
 			x.System.BannerMessage.CreatedAt = timestamp.Now()
 		}
+	}
+
+	if x.GetDisplay() == nil {
+		x.Display = &Display{}
+	}
+	if x.GetDisplay().GetIntlLocale() == "" {
+		defaultIntlLocale := DefaultDisplayIntlLocale
+
+		x.Display.IntlLocale = &defaultIntlLocale
+	}
+	if x.GetDisplay().GetCurrencyName() == "" {
+		x.Display.CurrencyName = "USD"
 	}
 }

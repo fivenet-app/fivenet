@@ -55,16 +55,16 @@ const groupedLayers = computed(() => {
         <UTooltip :text="$t('common.layer', 2)">
             <UPopover :ui="{ content: 'w-full' }">
                 <UButton
-                    class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
+                    class="border border-black/20 bg-clip-padding p-1.5"
                     size="xl"
                     icon="i-mdi-layers-triple"
                     :ui="{ leadingIcon: 'size-8!' }"
                 />
 
                 <template #content>
-                    <div class="w-full max-w-xl divide-y divide-gray-100 py-1 dark:divide-gray-800">
-                        <div class="px-1">
-                            <p class="truncate text-sm font-bold text-highlighted">
+                    <div class="w-full max-w-xl divide-y divide-default py-1">
+                        <div class="px-1 pb-0.5">
+                            <p class="truncate text-base font-bold text-highlighted">
                                 {{ $t('common.layer', 2) }}
                             </p>
 
@@ -85,25 +85,27 @@ const groupedLayers = computed(() => {
                         <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
                             {{ $t('common.layers', 0) }}
                         </p>
-                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-default">
+                        <div
+                            v-else
+                            class="flex auto-cols-auto grid-flow-col flex-col divide-x divide-y divide-default md:grid md:divide-y-0"
+                        >
                             <div
                                 v-for="(category, key) in groupedLayers"
                                 :key="key"
-                                class="grid min-w-0 grid-flow-row auto-rows-min gap-1 px-1"
+                                class="grid min-w-0 grid-flow-row auto-rows-min gap-1 overflow-y-hidden px-1 pb-1 md:pb-0"
                             >
-                                <p class="truncate text-sm font-bold text-highlighted">
+                                <p class="truncate text-base font-bold text-highlighted">
                                     {{ category.category?.label ?? $t('common.na') }}
                                 </p>
 
-                                <div
+                                <USwitch
                                     v-for="layer in category.layers"
                                     :key="layer.key"
-                                    class="inline-flex gap-1 overflow-y-hidden"
-                                >
-                                    <USwitch v-model="layer.visible" :disabled="!!layer.disabled" />
-
-                                    <span class="truncate hover:line-clamp-2">{{ layer.label }}</span>
-                                </div>
+                                    v-model="layer.visible"
+                                    :label="layer.label"
+                                    :disabled="!!layer.disabled"
+                                    :ui="{ label: 'truncate text-sm hover:line-clamp-2' }"
+                                />
                             </div>
                         </div>
 

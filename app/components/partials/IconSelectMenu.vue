@@ -49,19 +49,27 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
             v-bind="$attrs"
         >
             <template v-if="icon" #default>
-                <component
-                    :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
-                    class="size-5"
-                    :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
-                />
+                <div class="inline-flex items-center gap-1">
+                    <component
+                        :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
+                        class="size-5"
+                        :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
+                    />
 
-                <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
+                    <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
+                </div>
             </template>
 
             <template #item-label="{ item }">
-                <component :is="item?.component" class="size-5" :style="{ color: `var(--color-${color ?? 'primary'}-500)` }" />
+                <div class="inline-flex items-center gap-1">
+                    <component
+                        :is="item?.component"
+                        class="size-5"
+                        :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
+                    />
 
-                <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
+                    <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>
+                </div>
             </template>
         </USelectMenu>
     </ClientOnly>

@@ -35,7 +35,6 @@ async function searchCitiznes(q: string): Promise<CommandPaletteItem[]> {
             search: q.trim().substring(1, 64).trim(),
         });
         const { response } = await call;
-        console.log('response', response);
 
         return response.users.map((u) => ({
             id: u.userId,
@@ -100,7 +99,7 @@ const idsLink = computed<CommandPaletteItem[]>(() => {
     ].filter((l) => l.label.toLowerCase().includes(q.toLowerCase()));
 
     const id = q.substring(q.indexOf('-') + 1).trim();
-    if (id.length > 0 && isNumber(id)) {
+    if (id.length > 0 && id !== '' && !isNaN(Number(id.toString()))) {
         if (q.startsWith('CIT')) {
             links.push({
                 id: 'id-citizen',

@@ -3,6 +3,12 @@
 
 package notifications
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ClientView) Sanitize() error {
 	if m == nil {
 		return nil
@@ -11,6 +17,8 @@ func (m *ClientView) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ObjectEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -23,6 +31,11 @@ func (m *ObjectEvent) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
 	return nil

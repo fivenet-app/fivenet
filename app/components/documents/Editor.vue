@@ -9,6 +9,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import type { Content } from '~/types/history';
+import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { type DocumentJobAccess, type DocumentUserAccess, AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -18,7 +19,6 @@ import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
-import { jobAccessEntry, userAccessEntry } from '~~/shared/types/validation';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -164,15 +164,11 @@ let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document'): Promise<void> {
-    if (saving.value) {
-        return;
-    }
+    if (saving.value) return;
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-        return;
-    }
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
@@ -264,9 +260,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             state.references
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((ref) => {
-                    if (state.references.some((r) => r.id === ref.id)) {
-                        return;
-                    }
+                    if (state.references.some((r) => r.id === ref.id)) return;
                     ref.sourceDocumentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentReference({
                         reference: ref,

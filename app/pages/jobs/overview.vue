@@ -36,17 +36,14 @@ const showRadioFrequency = ref(false);
                                 :src="jobProps.logoFile.filePath"
                                 :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"
                                 size="xl"
-                                :no-blur="true"
+                                no-blur
                             />
 
-                            <div>
+                            <div class="flex flex-col gap-2">
                                 <h1 class="text-3xl leading-6 font-semibold">
                                     {{ activeChar?.jobLabel }}
                                 </h1>
-                                <h2
-                                    v-if="activeChar?.job !== game.unemployedJobName"
-                                    class="mt-2 text-xl leading-6 font-semibold"
-                                >
+                                <h2 v-if="activeChar?.job !== game.unemployedJobName" class="text-xl leading-6 font-semibold">
                                     {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
                                 </h2>
                             </div>
@@ -68,7 +65,7 @@ const showRadioFrequency = ref(false);
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center justify-center text-lg font-bold">
                             <span :class="showRadioFrequency ? '' : 'blur'" @click="showRadioFrequency = !showRadioFrequency"
-                                >{{ jobProps?.radioFrequency }}.00</span
+                                >{{ jobProps?.radioFrequency }}{{ jobProps?.radioFrequency.includes('.') ? '' : '.00' }}</span
                             >
                         </div>
 

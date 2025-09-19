@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -28,20 +28,20 @@ func (s *Server) createOrUpdateWorkflowState(
 
 	now := time.Now()
 
-	autoCloseTime := jet.TimestampExp(jet.NULL)
+	autoCloseTime := mysql.TimestampExp(mysql.NULL)
 	if workflow.GetAutoClose() && workflow.GetAutoCloseSettings() != nil &&
 		workflow.GetAutoCloseSettings().GetDuration() != nil {
-		autoCloseTime = jet.TimestampT(
+		autoCloseTime = mysql.TimestampT(
 			now.Add(workflow.GetAutoCloseSettings().GetDuration().AsDuration()),
 		)
 	}
 
-	nextReminderTime := jet.TimestampExp(jet.NULL)
+	nextReminderTime := mysql.TimestampExp(mysql.NULL)
 	if workflow.GetReminder() && workflow.GetReminderSettings() != nil &&
 		len(workflow.GetReminderSettings().GetReminders()) > 0 {
 		reminder := workflow.GetReminderSettings().GetReminders()[0]
 
-		nextReminderTime = jet.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
+		nextReminderTime = mysql.TimestampT(now.Add(reminder.GetDuration().AsDuration()))
 	}
 
 	tWorkflow := table.FivenetDocumentsWorkflowState
@@ -56,12 +56,12 @@ func (s *Server) createOrUpdateWorkflowState(
 			documentId,
 			autoCloseTime,
 			nextReminderTime,
-			jet.NULL,
+			mysql.NULL,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tWorkflow.AutoCloseTime.SET(autoCloseTime),
 			tWorkflow.NextReminderTime.SET(nextReminderTime),
-			tWorkflow.NextReminderCount.SET(jet.IntExp(jet.NULL)),
+			tWorkflow.NextReminderCount.SET(mysql.IntExp(mysql.NULL)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

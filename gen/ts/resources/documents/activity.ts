@@ -53,8 +53,6 @@ export interface DocActivity {
      */
     creatorJobLabel?: string;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: optional string reason = 9
      */
     reason?: string;
@@ -64,8 +62,6 @@ export interface DocActivity {
     data?: DocActivityData;
 }
 /**
- * @dbscanner: json
- *
  * @generated from protobuf message resources.documents.DocActivityData
  */
 export interface DocActivityData {
@@ -337,7 +333,7 @@ class DocActivity$Type extends MessageType<DocActivity> {
             { no: 6, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 10, name: "data", kind: "message", T: () => DocActivityData }
         ]);
     }
@@ -447,7 +443,7 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
             { no: 4, name: "access_updated", kind: "message", oneof: "data", T: () => DocAccessUpdated },
             { no: 5, name: "access_requested", kind: "message", oneof: "data", T: () => DocAccessRequested },
             { no: 6, name: "sign_off_requested", kind: "message", oneof: "data", T: () => DocSignOffRequested }
-        ]);
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<DocActivityData>): DocActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));

@@ -57,29 +57,12 @@ export function toDate(ts: resourcesTimestampTimestamp.Timestamp | undefined, co
     return new Date(googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!).getTime() - -correction);
 }
 
-export function toDateLocaleString(
-    ts: resourcesTimestampTimestamp.Timestamp | undefined,
-    d?: (date: Date, format: string) => string,
-): string {
-    if (ts === undefined || typeof ts === 'undefined') {
-        return '-';
-    }
-
-    if (d) {
-        return d(googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!), 'short');
-    }
-
-    return googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!).toLocaleDateString();
-}
-
-export function fromString(time: string): Date {
+export function stringToDate(time: string): Date {
     return new Date(Date.parse(time));
 }
 
 export function toTimestamp(date?: Date): resourcesTimestampTimestamp.Timestamp | undefined {
-    if (date === undefined) {
-        return;
-    }
+    if (date === undefined) return;
 
     return {
         timestamp: googleProtobufTimestamp.Timestamp.fromDate(date),

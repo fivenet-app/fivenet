@@ -68,8 +68,6 @@ func (s *Server) ListFiles(
 	}
 	resp.Files = fs
 
-	resp.GetPagination().Update(len(resp.GetFiles()))
-
 	return resp, nil
 }
 

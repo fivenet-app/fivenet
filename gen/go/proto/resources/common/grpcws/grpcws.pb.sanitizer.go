@@ -3,6 +3,12 @@
 
 package grpcws
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Body) Sanitize() error {
 	if m == nil {
 		return nil
@@ -13,6 +19,8 @@ func (m *Body) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Cancel) Sanitize() error {
 	if m == nil {
 		return nil
@@ -21,6 +29,8 @@ func (m *Cancel) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Complete) Sanitize() error {
 	if m == nil {
 		return nil
@@ -29,10 +39,18 @@ func (m *Complete) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Failure) Sanitize() error {
 	if m == nil {
 		return nil
 	}
+
+	// Field: ErrorMessage
+	m.ErrorMessage = htmlsanitizer.Sanitize(m.ErrorMessage)
+
+	// Field: ErrorStatus
+	m.ErrorStatus = htmlsanitizer.Sanitize(m.ErrorStatus)
 
 	// Field: Headers
 	for idx, item := range m.Headers {
@@ -49,6 +67,8 @@ func (m *Failure) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *GrpcFrame) Sanitize() error {
 	if m == nil {
 		return nil
@@ -109,6 +129,8 @@ func (m *GrpcFrame) Sanitize() error {
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Header) Sanitize() error {
 	if m == nil {
 		return nil
@@ -126,17 +148,32 @@ func (m *Header) Sanitize() error {
 
 	}
 
+	// Field: Operation
+	m.Operation = htmlsanitizer.Sanitize(m.Operation)
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *HeaderValue) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
+	// Field: Value
+	for idx, item := range m.Value {
+		_, _ = idx, item
+
+		m.Value[idx] = htmlsanitizer.Sanitize(m.Value[idx])
+
+	}
+
 	return nil
 }
 
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Ping) Sanitize() error {
 	if m == nil {
 		return nil
