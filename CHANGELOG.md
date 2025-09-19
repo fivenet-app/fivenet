@@ -2,6 +2,119 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.9.0] - 2025-09-19
+
+### 🚀 Features
+
+- Add service management to dbsync command
+- Improve multi job dispatch creation
+- Use forked go-grpc-middleware lib to fix log fields missing
+- Add golangci-lint and resolve many issues
+- Protogetter fixes causing wrong data to be inserted
+- Move from uint64 to int64 in API/proto types
+- Add drag handle to tiptap editor
+- Use dashboard section for settings index
+- Improve multi-job dispatch handling
+- Cleanup multi-job dispatch handling
+- Show profile picture of dispatchers
+- Add max reminder count to document workflow state
+- Finalize public job list api for dispatch creation
+- Use big.js instead of eval for the math calculator quick button
+- Add file logging with rotation
+- Work through first part of migrations for nuxt ui v3
+- Pagination is now a list and more changes
+- Continue upgrade to nuxt ui v3
+- Continue reworking design to fit nuxt ui v3
+- Continue refining design to work with nuxt v3
+- Use go-dateparser to parse discord bot command date
+- Use ServiceOptions for permify proto generation
+- Improve document listing performance
+- Add job props and roles to sidebar settings item
+- Switch to galexrt/iconify-go pkg for simpler caching
+- Add qualification editor exam form validation
+- Copy and modify insecure credentials level for insecure grpc
+- Add basic central display locale settings
+- Use proto extension options for dbscanner and sanitizer
+
+### 🐛 Bug Fixes
+
+- Remove duplicated image extension component
+- Adjust dispatch target jobs select menu condition
+- Use different context for notification consumer deletion
+- Log collab room consumer deletion error
+- Cleanup for idle dispatches and unit pings for housekeeper
+- Switch trace attributes to log InjectFields
+- Add missing help text to filestore migrations subcommand
+- Attempt to fix context deadline issues caused by leader election
+- Grpc websocket tests caused by renames
+- Missing claim/user info when userinfo retrieval fails
+- Start work on nestif linter complaints
+- More gosec fixess
+- Last gosec complaints
+- Polish multi job dispatch ui logic
+- Dispatchers not having job label properly set
+- Nil issue in centrum settings access logic
+- De locale file formatting
+- Ignore logger sync error
+- Transition warn issue
+- Continue fixing design issues caused by nuxt ui v3
+- Design issues caused by nuxt v3 upgrade
+- Design issues caused by nuxt v3 upgrade
+- Continue fixing ui upgrade issues
+- Continue fixing design issues caused by nuxt ui v3 upgrade
+- Continue fixing design issues caused by nuxt ui upgrade
+- Ui issues caused by nuxt ui v3 upgrade
+- Adjust ui based on changes caused by nuxt ui v3 upgrade
+- Move find calendar modal to drawer
+- Wrong context used for errgroup groups
+- Use errgroup for sync service stream with context
+- Use latitude/longtitude short form for screens smaller than lg
+- Use 3 seconds for jetstream fetch max wait
+- Protoc svcs ts list listing all proto files
+- Personal document pin color not changing
+- Import type lint issue
+- Container build issue caused by nuxt/content upgrade
+- Lru cache tests
+- Adjust unique id tiptap extension
+- Oklch color issue in fivem nui (cef v103)
+- Document list entry padding
+- Cleanup component names
+- Intermittent superuser job changing issue
+- Activity feed text color
+- Tweak template padding/margin differences
+- Input fields, editor issues and improve template view + editor
+- Tailwindcss v4 color issue due to oklch and fivem nui cef v103
+- Improve dbsync cli logging
+- Users dbsync offsset not changing
+- Found design padding and ux issues
+- Sql_mode ONLY_FULL_GROUP_BY issue with group_by
+- Add no data block to join unit slideover
+- Improve zod error handling in search forms
+- Filestore list not having prefix search
+- Cleanup UFileUpload attrs orders a bit
+- Leftover type and lint issues
+- Timeclock list full order by sql_mode issue
+- Removed ANY_VALUE, not available in Mariadb
+- Improve livemap layer selector on small screens
+- Cleanup divide to use default color
+- Cleanup utils and shared types folders
+- Rely on itemslen proto interceptor where used
+- Remove "true" value from boolean attrs and fix dashboard panels
+- Exam auto grade translation warning
+- Exam editor auto grade default value
+- Remove debug sql outputs
+- Improve tutor view list paddings and margins
+- Improve qualifications lists footer padding
+- Iconify server issues and icon select menu
+- Rename RequestModal to RequestDrawer
+- Clone retrieved userinfo object
+- Override renovate bot schedule
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove internet feature for future revival
+- Rename jet package usages to mysql
+
 ## [2025.8.1] - 2025-08-07
 
 ### 🐛 Bug Fixes
