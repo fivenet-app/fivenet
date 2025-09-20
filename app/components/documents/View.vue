@@ -430,13 +430,15 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
                                 variant="ghost"
                                 @click="
-                                    (doc.document?.deletedAt !== undefined ? confirmModalWithReason : confirmModal).open({
-                                        confirm: async (reason?: string) =>
-                                            documentsDocuments.deleteDocument(
+                                    (doc.document?.deletedAt === undefined ? confirmModalWithReason : confirmModal).open({
+                                        confirm: async (reason?: string) => {
+                                            await documentsDocuments.deleteDocument(
                                                 documentId,
                                                 isSuperuser && doc?.document?.deletedAt !== undefined,
                                                 reason,
-                                            ),
+                                            );
+                                            refresh();
+                                        },
                                     })
                                 "
                             />
