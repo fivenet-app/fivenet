@@ -142,7 +142,7 @@
         "protoc": "32.1.0",
         "protoc-gen-js": "3.21.4-4",
         "release-it": "19.0.5",
-        "sass": "1.92.1",
+        "sass": "1.93.0",
         "tailwindcss": "4.1.13",
         "typescript": "5.9.2",
         "vitest": "3.2.4",
