@@ -4,39 +4,45 @@
 @plugin '@tailwindcss/typography';
 
 :root {
-  --ui-radius: 0.25rem;
+    --ui-radius: 0.25rem;
 
-  --ui-white: rgba(0, 0, 0, 1.0);
+    --ui-white: rgba(0, 0, 0, 1.0);
 }
 
 .dark {
     --ui-white: rgba(255, 255, 255, 1.0);
 }
 
-@theme {
-  --font-sans: 'Public Sans', sans-serif;
+@theme static {
+    --font-sans: 'Public Sans', sans-serif;
 
-  --animate-wiggle: wiggle 1s infinite;
+    --animate-wiggle: wiggle 1s infinite;
 
-  @keyframes wiggle {
-    0%, 80% {
-      transform: rotate(0deg);
+    @keyframes wiggle {
+
+        0%,
+        80% {
+            transform: rotate(0deg);
+        }
+
+        85% {
+            transform: rotate(5deg);
+        }
+
+        95% {
+            transform: rotate(-5deg);
+        }
+
+        100% {
+            transform: rotate(0deg);
+        }
     }
-    85% {
-      transform: rotate(5deg);
-    }
-    95% {
-      transform: rotate(-5deg);
-    }
-    100% {
-      transform: rotate(0deg);
-    }
-  }
 }
 
 @layer components {
     .prose p:empty::after {
-        content: '\00a0'; /* non breaking space */
+        /* non breaking space */
+        content: '\00a0';
     }
 }
 
@@ -278,4 +284,99 @@ html {
     .template-var[data-hidden='true'] {
         display: none;
     }
+}
+
+html.chrome103 {
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--color-gray-300);
+        border-radius: 6px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--color-gray-600);
+    }
+}
+
+html.chrome103:root {
+    /* Transforms (avoid 'initial' in injected transform lists) */
+    --tw-rotate-x: 0deg;
+    --tw-rotate-y: 0deg;
+    --tw-rotate-z: 0deg;
+    --tw-skew-x: 0deg;
+    --tw-skew-y: 0deg;
+
+    /* Shadows & Rings (fixes your ring/color sticking) */
+    --tw-shadow: 0 0 #000000;
+    --tw-shadow-color: transparent;
+    --tw-shadow-alpha: 100%;
+    --tw-inset-shadow: 0 0 #000000;
+    --tw-inset-shadow-color: transparent;
+    --tw-inset-shadow-alpha: 100%;
+
+    --tw-ring-color: transparent;
+    --tw-ring-shadow: 0 0 #000000;
+    --tw-inset-ring-color: transparent;
+    --tw-inset-ring-shadow: 0 0 #000000;
+    --tw-ring-inset: ;
+    --tw-ring-offset-width: 0px;
+    --tw-ring-offset-color: #ffffff;
+    --tw-ring-offset-shadow: 0 0 #000000;
+
+    /* Gradients (leave colors alone; avoid keyword tokens) */
+    --tw-gradient-position: 0% 0%;
+
+    /* Typography tokens used in composed properties */
+    --tw-leading: normal;
+    --tw-font-weight: 400;
+    --tw-tracking: normal;
+
+    /* font-variant-numeric assembly tokens */
+    --tw-ordinal: normal;
+    --tw-slashed-zero: normal;
+    --tw-numeric-figure: normal;
+    --tw-numeric-spacing: normal;
+    --tw-numeric-fraction: normal;
+
+    /* Filters (explicit identity values) */
+    --tw-blur: 0;
+    --tw-brightness: 1;
+    --tw-contrast: 1;
+    --tw-grayscale: 0;
+    --tw-hue-rotate: 0deg;
+    --tw-invert: 0;
+    --tw-opacity: 1;
+    --tw-saturate: 1;
+    --tw-sepia: 0;
+
+    /* Drop-shadow tokens */
+    --tw-drop-shadow: none;
+    --tw-drop-shadow-color: transparent;
+    --tw-drop-shadow-alpha: 100%;
+    --tw-drop-shadow-size: 0 0 #000000;
+
+    /* Backdrop filters (identity) */
+    --tw-backdrop-blur: 0;
+    --tw-backdrop-brightness: 1;
+    --tw-backdrop-contrast: 1;
+    --tw-backdrop-grayscale: 0;
+    --tw-backdrop-hue-rotate: 0deg;
+    --tw-backdrop-invert: 0;
+    --tw-backdrop-opacity: 1;
+    --tw-backdrop-saturate: 1;
+    --tw-backdrop-sepia: 0;
+
+    /* Transitions (neutral) */
+    --tw-duration: 0s;
+    --tw-ease: linear;
 }

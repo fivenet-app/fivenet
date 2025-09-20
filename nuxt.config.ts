@@ -105,6 +105,7 @@ export default defineNuxtConfig({
                 preserve: true,
                 browsers: 'chrome >= 103',
             },
+            './internal/postcss/postcss-cef-fixup': {},
         },
     },
 

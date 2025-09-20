@@ -168,6 +168,12 @@ export default defineAppConfig({
             warning: 'mdi-alert',
         },
 
+        alert: {
+            slots: {
+                root: 'p-2',
+            },
+        },
+
         inputMenu: {
             slots: {
                 content: 'min-w-fit',

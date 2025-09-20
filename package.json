@@ -98,7 +98,7 @@
         "vue-timeline-chart": "4.0.1",
         "y-protocols": "1.0.6",
         "yjs": "13.6.27",
-        "zod": "4.1.9"
+        "zod": "4.1.11"
     },
     "devDependencies": {
         "@csmith/release-it-calver-plugin": "2023.12.0",
@@ -142,7 +142,7 @@
         "protoc": "32.1.0",
         "protoc-gen-js": "3.21.4-4",
         "release-it": "19.0.5",
-        "sass": "1.92.1",
+        "sass": "1.93.0",
         "tailwindcss": "4.1.13",
         "typescript": "5.9.2",
         "vitest": "3.2.4",

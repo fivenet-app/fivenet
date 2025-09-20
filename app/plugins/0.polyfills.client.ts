@@ -3,7 +3,10 @@ export default defineNuxtPlugin({
         if (!import.meta.client) return;
 
         // Make sure we're running in a Chromium based browser
-        if (getChromeVersion() === false) return;
+        const version = getChromeVersion();
+        if (version === false || version > 130) return;
+
+        document.documentElement.classList.add('chrome103');
 
         console.info('Loading Polyfills for CEF');
         /* FiveM NUI uses Chromium Embedded Framework version 103.x - As of now requires following polyfills:
