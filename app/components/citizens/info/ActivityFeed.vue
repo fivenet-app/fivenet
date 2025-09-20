@@ -154,7 +154,7 @@ watchDebounced(query, async () => refresh(), {
             />
 
             <div v-else class="relative flex-1">
-                <ul class="min-w-full divide-y divide-default overflow-clip" role="list">
+                <ul class="min-w-full divide-y divide-default" role="list">
                     <ActivityFeedEntry v-for="activity in data?.activity" :key="activity.id" :activity="activity" />
                 </ul>
             </div>

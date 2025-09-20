@@ -433,7 +433,7 @@ defineShortcuts({
                 class="min-w-full divide-y divide-default"
                 :class="[
                     design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : '',
-                    isRequestPending(status) ? 'overflow-y-hidden' : 'overflow-clip',
+                    isRequestPending(status) ? 'overflow-y-hidden' : '',
                 ]"
                 role="list"
             >
