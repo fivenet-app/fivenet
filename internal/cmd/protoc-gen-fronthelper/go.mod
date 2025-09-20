@@ -3,7 +3,7 @@ module github.com/fivenet-app/fivenet/v2025/internal/cmd/protoc-gen-fronthelper
 go 1.25.1
 
 require (
-	github.com/fivenet-app/fivenet/v2025 v2025.9.0
+	github.com/fivenet-app/fivenet/v2025 v2025.9.1
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	golang.org/x/text v0.29.0
 	google.golang.org/protobuf v1.36.9
