@@ -173,8 +173,8 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                         <div class="mb-4">
                             <h1 class="inline-flex items-center gap-2 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                                 <UIcon
-                                    class="shrink-0 text-primary"
-                                    :class="`text-${template.color}-500 dark:text-${template.color}-400`"
+                                    class="shrink-0"
+                                    :class="`text-${template.color ?? 'primary'}`"
                                     :name="
                                         template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'
                                     "

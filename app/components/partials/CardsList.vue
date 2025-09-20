@@ -34,16 +34,12 @@ const { can } = useAuth();
                     <component
                         :is="availableIcons.find((item) => item.name === module.icon)?.component ?? fallbackIcon.component"
                         v-if="module.icon"
-                        class="h-10 w-10 shrink-0 text-primary"
-                        :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"
+                        class="h-10 w-10 shrink-0"
+                        :class="`text-${module.color ?? 'primary'}`"
                     />
                 </template>
                 <template v-else>
-                    <UIcon
-                        class="h-10 w-10 shrink-0 text-primary"
-                        :class="`text-${module.color}-500 dark:text-${module.color}-400`"
-                        :name="module.icon"
-                    />
+                    <UIcon class="h-10 w-10 shrink-0" :class="`text-${module.color ?? 'primary'}`" :name="module.icon" />
                 </template>
             </template>
 
