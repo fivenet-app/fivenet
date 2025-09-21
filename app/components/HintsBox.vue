@@ -33,8 +33,8 @@ const hints = shuffleArray([
         }"
     >
         <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" class="mb-6">
-            <div class="mx-auto mb-2 flex items-center gap-2 text-sm">
-                <span class="grow">{{ $t(`components.hints.${hint.key}.content`) }}</span>
+            <div class="mx-auto flex flex-col items-center gap-2 text-sm sm:flex-row">
+                <span class="max-w-xl grow sm:max-w-full">{{ $t(`components.hints.${hint.key}.content`) }}</span>
 
                 <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
                     <UKbd v-if="hint.keyboard" size="md">

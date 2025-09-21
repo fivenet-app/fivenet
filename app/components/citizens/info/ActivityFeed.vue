@@ -78,11 +78,10 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
     }
 }
 
-const denyView = computed(() => {
-    return (
-        props.userId === activeChar.value?.userId && attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value
-    );
-});
+const denyView = computed(
+    () =>
+        props.userId === activeChar.value?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value,
+);
 
 watchDebounced(query, async () => refresh(), {
     debounce: 500,

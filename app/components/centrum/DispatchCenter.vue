@@ -60,7 +60,7 @@ onBeforeRouteLeave(async (to) => {
                 <Splitpanes>
                     <Pane :min-size="25">
                         <div class="relative size-full">
-                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/70">
+                            <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-default/75">
                                 <DataErrorBlock
                                     :title="$t('components.centrum.dispatch_center.failed_datastream')"
                                     :error="error"

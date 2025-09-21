@@ -263,6 +263,6 @@
     --color-stone-900: rgb(28, 25, 23);
     --color-stone-950: rgb(12, 10, 9);
 
-    --color-black: #000;
-    --color-white: #fff;
+    --color-black: rgb(0, 0, 0);
+    --color-white: rgb(255, 255, 255);
 }
