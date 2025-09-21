@@ -98,7 +98,6 @@ export default function colorMixTransparencyFallback(opts = {}) {
             if (!propSet.has(decl.prop.toLowerCase())) return;
 
             const fallbackVal = computeFallbackValue(decl.value);
-            console.log(' -> ', fallbackVal);
             if (!fallbackVal) return;
 
             const sup = findTopmostSupports(decl);
