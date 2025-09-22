@@ -154,10 +154,7 @@ func (s *Scheduler) start(ctx context.Context) {
 					}
 
 					s.logger.Debug("scheduling cron job", zap.String("name", job.GetName()))
-					wg.Add(1)
-					go func() {
-						defer wg.Done()
-
+					wg.Go(func() {
 						if err := s.registry.store.ComputeUpdate(ctx, key, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 							if existing == nil {
 								return existing, false, nil
@@ -183,7 +180,7 @@ func (s *Scheduler) start(ctx context.Context) {
 								zap.String("job_name", job.GetName()),
 							)
 						}
-					}()
+					})
 
 					return true
 				})

@@ -132,10 +132,7 @@ func New(p Params) (Result, error) {
 			return fmt.Errorf("failed to run nats migrations. %w", err)
 		}
 
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+		wg.Go(func() {
 			for {
 				select {
 				case <-ctx.Done():
@@ -145,7 +142,7 @@ func New(p Params) (Result, error) {
 					metricNATSAsyncPending.Set(float64(res.JS.PublishAsyncPending()))
 				}
 			}
-		}()
+		})
 
 		return nil
 	}))

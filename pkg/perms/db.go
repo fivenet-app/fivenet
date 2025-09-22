@@ -17,7 +17,7 @@ func (p *Perms) loadData(ctx context.Context) error {
 	ctx, span := p.tracer.Start(ctx, "perms.load")
 	defer span.End()
 
-	if err := p.loadPermissions(ctx); err != nil {
+	if err := p.loadPermissions(ctx, 0); err != nil {
 		return fmt.Errorf("failed to load permissions. %w", err)
 	}
 
@@ -71,6 +71,45 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (p *Perms) loadPermissionByGuard(ctx context.Context, guard string) (int64, error) {
+	tPerms := tPerms.AS("cache_perm")
+	stmt := tPerms.
+		SELECT(
+			tPerms.ID,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
+			tPerms.Order,
+		).
+		FROM(tPerms)
+
+	if guard != "" {
+		stmt = stmt.
+			WHERE(tPerms.GuardName.EQ(mysql.String(guard))).
+			LIMIT(1)
+	}
+
+	perm := cachePerm{}
+	if err := stmt.QueryContext(ctx, p.db, &perm); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, fmt.Errorf("failed to query permissions. %w", err)
+		}
+	}
+
+	if perm.ID != 0 {
+		p.permsMap.Store(perm.ID, &cachePerm{
+			ID:        perm.ID,
+			Category:  perm.Category,
+			Name:      perm.Name,
+			GuardName: BuildGuard(perm.Category, perm.Name),
+			Order:     perm.Order,
+		})
+		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), perm.ID)
+	}
+
+	return perm.ID, nil
 }
 
 func (p *Perms) loadAttributes(ctx context.Context) error {

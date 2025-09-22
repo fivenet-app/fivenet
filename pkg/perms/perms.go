@@ -310,16 +310,13 @@ func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, para
 		return fmt.Errorf("failed to register permissions. %w", err)
 	}
 
-	p.wg.Add(1)
-	go func() {
-		defer p.wg.Done()
-
+	p.wg.Go(func() {
 		if err := p.ApplyJobPermissions(ctxCancel, ""); err != nil {
 			p.logger.Error("failed to apply job permissions", zap.Error(err))
 			return
 		}
 		p.logger.Debug("successfully applied job permissions")
-	}()
+	})
 
 	return nil
 }

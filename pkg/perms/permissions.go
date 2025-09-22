@@ -40,7 +40,12 @@ func (p *Perms) CreatePermission(
 
 		permId, ok := p.lookupPermIDByGuard(guard)
 		if !ok {
-			return 0, errors.New("created permission not found in our cache")
+			permId, err = p.loadPermissionByGuard(ctx, guard) // try to load it from DB again
+			if err != nil || permId == 0 {
+				return 0, fmt.Errorf("failed to query permission after duplicate error. %w", err)
+			}
+
+			return permId, nil
 		}
 
 		return permId, nil
