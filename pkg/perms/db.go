@@ -17,7 +17,7 @@ func (p *Perms) loadData(ctx context.Context) error {
 	ctx, span := p.tracer.Start(ctx, "perms.load")
 	defer span.End()
 
-	if err := p.loadPermissions(ctx, 0); err != nil {
+	if err := p.loadPermissions(ctx); err != nil {
 		return fmt.Errorf("failed to load permissions. %w", err)
 	}
 
