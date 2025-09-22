@@ -186,3 +186,7 @@ func StripTags(in string) string {
 
 	return html.UnescapeString(stripTags.Sanitize(in))
 }
+
+func SanitizeNoEntities(in string) string {
+	return html.UnescapeString(Sanitize(in))
+}

@@ -37,7 +37,7 @@ import { PaginationRequest } from "../../resources/common/database/database";
 import { Template } from "../../resources/documents/templates";
 import { TemplateData } from "../../resources/documents/templates";
 import { TemplateShort } from "../../resources/documents/templates";
-// Templates ==================================================================
+// Templates
 
 /**
  * @generated from protobuf message services.documents.ListTemplatesRequest
@@ -133,7 +133,7 @@ export interface DeleteTemplateRequest {
  */
 export interface DeleteTemplateResponse {
 }
-// Documents ==================================================================
+// Documents
 
 /**
  * @generated from protobuf message services.documents.ListDocumentsRequest
@@ -326,7 +326,7 @@ export interface RemoveDocumentRelationRequest {
  */
 export interface RemoveDocumentRelationResponse {
 }
-// Comments ===============================================================
+// Comments
 
 /**
  * @generated from protobuf message services.documents.GetCommentsRequest
@@ -546,7 +546,7 @@ export interface UpdateDocumentRequest {
      */
     files: File[];
 }
-// Document Activity and Requests =============================================
+// Document Activity and Requests
 
 /**
  * @generated from protobuf message services.documents.ListDocumentActivityRequest
@@ -684,7 +684,7 @@ export interface DeleteDocumentReqRequest {
  */
 export interface DeleteDocumentReqResponse {
 }
-// Access =====================================================================
+// Access
 
 /**
  * @generated from protobuf message services.documents.GetDocumentAccessRequest
@@ -760,7 +760,7 @@ export interface ListUserDocumentsResponse {
      */
     relations: DocumentRelation[];
 }
-// Categories =================================================================
+// Categories
 
 /**
  * @generated from protobuf message services.documents.ListCategoriesRequest
@@ -808,7 +808,7 @@ export interface DeleteCategoryRequest {
  */
 export interface DeleteCategoryResponse {
 }
-// Pins =======================================================================
+// Pins
 
 /**
  * @generated from protobuf message services.documents.ListDocumentPinsRequest
@@ -867,7 +867,7 @@ export interface ToggleDocumentPinResponse {
      */
     pin?: DocumentPin;
 }
-// Reminders ==================================================================
+// Reminders
 
 /**
  * @generated from protobuf message services.documents.SetDocumentReminderRequest

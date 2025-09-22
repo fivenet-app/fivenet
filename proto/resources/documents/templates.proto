@@ -55,6 +55,10 @@ message Template {
       min_len: 3
       max_bytes: 10240
     },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeNoEntities"
+    },
     (tagger.tags) = "alias:\"content_title\""
   ];
   string content = 11 [

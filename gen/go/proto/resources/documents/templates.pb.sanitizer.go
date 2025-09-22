@@ -51,7 +51,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: ContentTitle
-	m.ContentTitle = htmlsanitizer.Sanitize(m.ContentTitle)
+	m.ContentTitle = htmlsanitizer.SanitizeNoEntities(m.ContentTitle)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
