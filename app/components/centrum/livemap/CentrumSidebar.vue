@@ -610,11 +610,11 @@ defineShortcuts({
                             </li>
 
                             <template v-else>
-                                <template v-for="id in getSortedOwnDispatches.slice().reverse()" :key="id">
+                                <template v-for="dispatch in getSortedOwnDispatches.toReversed()" :key="dispatch">
                                     <OwnDispatchEntry
-                                        v-if="dispatches.get(id) !== undefined"
-                                        v-model:selected-dispatch="selectedDispatch"
-                                        :dispatch="dispatches.get(id)!"
+                                        v-if="dispatches.get(dispatch) !== undefined"
+                                        v-model="selectedDispatch"
+                                        :dispatch="dispatches.get(dispatch)!"
                                     />
                                 </template>
                             </template>

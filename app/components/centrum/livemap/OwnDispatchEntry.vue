@@ -8,12 +8,9 @@ import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispa
 
 const props = defineProps<{
     dispatch: Dispatch;
-    selectedDispatch: number | undefined;
 }>();
 
-defineEmits<{
-    (e: 'update:selectedDispatch', dsp: number | undefined): void;
-}>();
+const modelValue = defineModel<number | undefined>({ required: true });
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -42,13 +39,13 @@ useIntervalFn(
 </script>
 
 <template>
-    <li class="flex flex-row items-center gap-1">
+    <li class="my-1 flex flex-row items-center gap-1">
         <div class="flex flex-col items-center gap-2">
             <URadioGroup
-                :value="dispatch.id"
+                v-model="modelValue"
                 name="active"
-                :checked="selectedDispatch === dispatch.id"
-                @update:model-value="$emit('update:selectedDispatch', dispatch.id)"
+                :items="[dispatch.id]"
+                :ui="{ label: 'hidden', item: 'items-end', wrapper: 'ms-0' }"
             />
 
             <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
@@ -59,7 +56,7 @@ useIntervalFn(
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
-            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', root: dispatchTimeStyle.class }"
+            :ui="{ base: dispatchTimeStyle.class + ' ' + (dispatchTimeStyle.ping ? 'animate-pulse' : '') }"
         >
             <UButton
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
