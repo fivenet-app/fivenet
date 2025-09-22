@@ -39,7 +39,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: Content
-	m.Content = htmlsanitizer.Sanitize(m.Content)
+	m.Content = htmlsanitizer.SanitizeNoEntities(m.Content)
 
 	// Field: ContentAccess
 	if m.ContentAccess != nil {

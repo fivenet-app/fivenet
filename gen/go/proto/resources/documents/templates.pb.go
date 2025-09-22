@@ -720,7 +720,7 @@ var File_resources_documents_templates_proto protoreflect.FileDescriptor
 
 const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/templates.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xd4\b\n" +
+	"#resources/documents/templates.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xee\b\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -735,8 +735,8 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\x05color\x18\b \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x02R\x05color\x88\x01\x01\x12*\n" +
 	"\x04icon\x18\t \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x03R\x04icon\x88\x01\x01\x12Y\n" +
 	"\rcontent_title\x18\n" +
-	" \x01(\tB4\xda\xf3\x18\x16\b\x01\x12\x12SanitizeNoEntities\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12.\n" +
-	"\acontent\x18\v \x01(\tB\x14\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
+	" \x01(\tB4\xda\xf3\x18\x16\b\x01\x12\x12SanitizeNoEntities\x9a\x84\x9e\x03\x15alias:\"content_title\"R\fcontentTitle\x12H\n" +
+	"\acontent\x18\v \x01(\tB.\xda\xf3\x18\x16\b\x01\x12\x12SanitizeNoEntities\x9a\x84\x9e\x03\x0falias:\"content\"R\acontent\x12(\n" +
 	"\x05state\x18\f \x01(\tB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12P\n" +
 	"\x06schema\x18\r \x01(\v2#.resources.documents.TemplateSchemaB\x13\x9a\x84\x9e\x03\x0ealias:\"schema\"R\x06schema\x12\x1f\n" +
 	"\vcreator_job\x18\x0e \x01(\tR\n" +
