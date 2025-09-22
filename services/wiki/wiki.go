@@ -84,7 +84,10 @@ func (s *Server) ListPages(
 			tPageShort.DeletedAt.IS_NULL(),
 			mysql.OR(
 				tPageShort.Public.IS_TRUE(),
-				tPageShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				mysql.AND(
+					tPageShort.Job.EQ(mysql.String(userInfo.GetJob())),
+					tPageShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+				),
 				accessExists,
 			),
 		))
