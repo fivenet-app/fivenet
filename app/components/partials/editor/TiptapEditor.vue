@@ -640,7 +640,7 @@ onBeforeRouteLeave(() => {
         class="relative flex min-h-0 flex-1 flex-col overflow-y-hidden"
         :ui="{
             header: 'p-0 sm:px-2 sticky inset-x-0 top-0 z-[1] shrink-0 bg-neutral-100/75 p-0.5 backdrop-blur dark:bg-neutral-800/75',
-            body: 'p-0 sm:p-0 overflow-y-auto flex-1',
+            body: 'p-0 sm:p-0 overflow-y-auto flex-1 border-x border-neutral-100/75 dark:border-neutral-800/75',
             footer: 'p-0 sm:px-2 sticky inset-x-0 bottom-0 z-[1] flex w-full flex-none justify-between bg-neutral-100 px-1 text-center dark:bg-neutral-800',
         }"
     >

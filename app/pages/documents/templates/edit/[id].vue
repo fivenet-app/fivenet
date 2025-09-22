@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
+import Editor from '~/components/documents/templates/Editor.vue';
 
 useHead({
     title: 'pages.documents.templates.edit.title',
@@ -24,5 +24,5 @@ const route = useRoute('documents-templates-edit-id');
 </script>
 
 <template>
-    <TemplateEditor :template-id="parseInt(route.params.id)" />
+    <Editor :template-id="parseInt(route.params.id)" />
 </template>

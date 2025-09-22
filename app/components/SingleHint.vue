@@ -22,12 +22,14 @@ const props = withDefaults(
 
 <template>
     <UPageCard
+        icon="i-mdi-information-outline"
         :title="
             $te(`components.hints.${hintId}.title`) ? $t(`components.hints.${hintId}.title`) : $t('components.hints.start_text')
         "
-        icon="i-mdi-information-outline"
         :ui="{
+            wrapper: 'flex-row gap-2',
             leadingIcon: 'size-6',
+            container: 'p-2 sm:p-2',
         }"
         v-bind="$attrs"
     >
@@ -35,12 +37,16 @@ const props = withDefaults(
             <div class="mx-auto mb-2 flex items-center gap-2 text-sm">
                 <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
-                <div v-if="showKey || to" class="flex-initial">
-                    <UKbd v-if="showKey" :value="$t(`components.hints.${hintId}.keyboard`)" />
-
-                    <UButton v-else-if="to" :to="to.toString()" :external="props.external" :target="linkTarget">
-                        {{ $t('components.hints.click_me') }}
-                    </UButton>
+                <div v-if="showKey || to" class="flex-initial shrink-0">
+                    <UKbd v-if="showKey" size="md" :value="$t(`components.hints.${hintId}.keyboard`)" />
+                    <UButton
+                        v-else-if="to"
+                        size="sm"
+                        :to="to.toString()"
+                        :external="props.external"
+                        :target="linkTarget"
+                        :label="$t('components.hints.click_me')"
+                    />
                 </div>
             </div>
         </template>

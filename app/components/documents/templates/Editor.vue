@@ -23,7 +23,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
-import TemplateEditorButtons from './TemplateEditorButtons.vue';
+import EditorButtons from './EditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
 const props = defineProps<{
@@ -558,7 +558,6 @@ const formRef = useTemplateRef('formRef');
                             </UFormField>
 
                             <SingleHint
-                                class="my-2"
                                 hint-id="template_editor_templating"
                                 to="https://fivenet.app/user-guides/documents/templates"
                                 external
@@ -579,7 +578,7 @@ const formRef = useTemplateRef('formRef');
                                         :extensions="extensions"
                                     >
                                         <template #toolbar="{ editor }">
-                                            <TemplateEditorButtons :editor="editor" />
+                                            <EditorButtons :editor="editor" />
                                         </template>
                                     </TiptapEditor>
                                 </ClientOnly>

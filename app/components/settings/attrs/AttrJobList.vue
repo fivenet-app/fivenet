@@ -90,6 +90,17 @@ const columns = computed(
     () =>
         [
             {
+                id: 'actions',
+                cell: ({ row }) =>
+                    h(UTooltip, { text: t('common.show') }, () =>
+                        h(UButton, {
+                            to: { name: 'settings-limiter-job', params: { job: row.original.job } },
+                            variant: 'link',
+                            icon: 'i-mdi-eye',
+                        }),
+                    ),
+            },
+            {
                 accessorKey: 'job',
                 header: ({ column }) => {
                     const isSorted = column.getIsSorted();
@@ -113,17 +124,6 @@ const columns = computed(
                     },
                 },
                 cell: ({ row }) => `${row.original.jobLabel} (${row.original.job})`,
-            },
-            {
-                id: 'actions',
-                cell: ({ row }) =>
-                    h(UTooltip, { text: t('common.show') }, () =>
-                        h(UButton, {
-                            to: { name: 'settings-limiter-job', params: { job: row.original.job } },
-                            variant: 'link',
-                            icon: 'i-mdi-eye',
-                        }),
-                    ),
             },
         ] as TableColumn<Role>[],
 );

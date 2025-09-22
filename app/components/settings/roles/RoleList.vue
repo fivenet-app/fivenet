@@ -89,16 +89,6 @@ const columns = computed(
     () =>
         [
             {
-                accessorKey: 'rank',
-                header: t('common.rank'),
-                meta: {
-                    class: {
-                        td: 'text-highlighted',
-                    },
-                },
-                cell: ({ row }) => `${row.original.jobLabel} - ${row.original.jobGradeLabel} (${row.original.grade})`,
-            },
-            {
                 id: 'actions',
                 cell: ({ row }) =>
                     h(UTooltip, { text: $t('common.show') }, [
@@ -108,6 +98,16 @@ const columns = computed(
                             icon: 'i-mdi-eye',
                         }),
                     ]),
+            },
+            {
+                accessorKey: 'rank',
+                header: t('common.rank'),
+                meta: {
+                    class: {
+                        td: 'text-highlighted',
+                    },
+                },
+                cell: ({ row }) => `${row.original.jobGradeLabel} (${row.original.grade})`,
             },
         ] as TableColumn<Role>[],
 );

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
+import Editor from '~/components/documents/templates/Editor.vue';
 
 useHead({
     title: 'pages.documents.templates.create_template',
@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <TemplateEditor />
+    <Editor />
 </template>

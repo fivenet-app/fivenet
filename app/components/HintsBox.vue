@@ -30,19 +30,17 @@ const hints = shuffleArray([
         :ui="{
             wrapper: 'flex-row gap-2',
             leadingIcon: 'size-6',
+            container: 'p-2 sm:p-2',
         }"
+        v-bind="$attrs"
     >
         <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" class="mb-6">
             <div class="mx-auto flex flex-col items-center gap-2 text-sm sm:flex-row">
                 <span class="max-w-xl grow sm:max-w-full">{{ $t(`components.hints.${hint.key}.content`) }}</span>
 
                 <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
-                    <UKbd v-if="hint.keyboard" size="md">
-                        {{ $t(`components.hints.${hint.key}.keyboard`) }}
-                    </UKbd>
-                    <UButton v-else-if="hint.to" size="sm" :to="hint.to">
-                        {{ $t('components.hints.click_me') }}
-                    </UButton>
+                    <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
+                    <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
                 </div>
             </div>
         </UCarousel>

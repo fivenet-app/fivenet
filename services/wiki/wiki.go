@@ -114,7 +114,7 @@ func (s *Server) ListPages(
 		}
 	}
 
-	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
+	pag, _ := req.GetPagination().GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
 	resp := &pbwiki.ListPagesResponse{
 		Pagination: pag,
 		Pages:      []*wiki.PageShort{},
@@ -163,7 +163,7 @@ func (s *Server) ListPages(
 		OFFSET(req.GetPagination().GetOffset()).
 		// .NULLS_FIRST()
 		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
-		LIMIT(limit)
+		LIMIT(defaultWikiUpperLimit)
 
 	pages := []*wiki.PageShort{}
 	if err := stmt.QueryContext(ctx, s.db, &pages); err != nil {
