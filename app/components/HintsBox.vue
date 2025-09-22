@@ -30,7 +30,6 @@ const hints = shuffleArray([
         :ui="{
             wrapper: 'flex-row gap-2',
             leadingIcon: 'size-6',
-            container: 'p-2 sm:p-2',
         }"
         v-bind="$attrs"
     >

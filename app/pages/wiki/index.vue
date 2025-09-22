@@ -109,7 +109,11 @@ const wikiService = await useWikiWiki();
                 :retry="refresh"
             />
 
-            <UPageGrid v-else>
+            <UPageGrid
+                v-else
+                class="mx-auto w-full max-w-(--breakpoint-xl)"
+                :class="pages.length === 1 ? 'sm:grid-cols-1 lg:grid-cols-1' : pages.length === 2 ? 'lg:grid-cols-2' : ''"
+            >
                 <UPageCard
                     v-for="p in pages"
                     :key="p.id"

@@ -100,7 +100,9 @@ const items = [
         <template #body>
             <CardsList :items="items" />
 
-            <HintsBox class="mt-4" />
+            <div class="mx-auto max-w-(--breakpoint-xl)">
+                <HintsBox />
+            </div>
         </template>
     </UDashboardPanel>
 </template>
