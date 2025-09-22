@@ -58,7 +58,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
                                     <PhoneNumberBlock :number="dispatcher.phoneNumber" />
                                 </template>
 
-                                <template v-if="dispatcher.profilePicture" #icon>
+                                <template v-if="dispatcher.profilePicture" #leading>
                                     <ProfilePictureImg
                                         class="mr-2"
                                         :src="dispatcher?.profilePicture"

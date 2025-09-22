@@ -28,7 +28,7 @@ defineEmits<{
                         icon="i-mdi-file-document"
                         :ui="{ title: 'line-clamp-3! whitespace-normal!' }"
                     >
-                        <template #icon>
+                        <template #leading>
                             <div class="flex-1">
                                 <GenericImg
                                     v-if="file.contentType.startsWith('image/')"

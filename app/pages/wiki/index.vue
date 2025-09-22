@@ -116,10 +116,10 @@ const wikiService = await useWikiWiki();
                     :title="`${p.jobLabel} ${$t('common.wiki')}`"
                     :to="`/wiki/${p.job}/${p.id}/${p.slug ?? ''}`"
                     icon="i-mdi-brain"
-                    :ui="{ title: 'text-xl' }"
+                    :ui="{ title: 'text-xl', leadingIcon: 'h-10 w-10' }"
                 >
-                    <template v-if="p.rootInfo?.logo?.filePath" #icon>
-                        <GenericImg class="h-10 w-auto" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
+                    <template v-if="p.rootInfo?.logo?.filePath" #leading>
+                        <GenericImg class="h-10 w-10" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
                     </template>
                 </UPageCard>
             </UPageGrid>
