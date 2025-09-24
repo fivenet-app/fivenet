@@ -3787,6 +3787,12 @@ Policy snapshot applied to a specific version
 | `state` | [string](#string) |  |  |
 | `signed` | [bool](#bool) |  |  |
 | `approved` | [bool](#bool) |  |  |
+| `approval_current_order` | [int32](#int32) | optional |  |
+| `approval_pending_tasks` | [int32](#int32) | optional |  |
+| `approval_any_declined` | [bool](#bool) | optional |  |
+| `sig_required_remaining` | [int32](#int32) | optional |  |
+| `sig_required_total` | [int32](#int32) | optional |  |
+| `sig_collected_valid` | [int32](#int32) | optional |  |
 
 
 

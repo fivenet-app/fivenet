@@ -76,6 +76,7 @@ message DocumentShort {
 
 message DocumentMeta {
   int64 document_id = 1;
+
   bool closed = 2;
   bool draft = 3;
   bool public = 4;
@@ -83,8 +84,17 @@ message DocumentMeta {
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
+
   bool signed = 6;
   bool approved = 7;
+
+  optional int32 approval_current_order = 8;
+  optional int32 approval_pending_tasks = 9;
+  optional bool approval_any_declined = 10;
+
+  optional int32 sig_required_remaining = 11;
+  optional int32 sig_required_total = 12;
+  optional int32 sig_collected_valid = 13;
 }
 
 enum DocReference {

@@ -503,16 +503,22 @@ func (x *DocumentShort) GetWorkflowUser() *WorkflowUserState {
 }
 
 type DocumentMeta struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Closed        bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft         bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public        bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
-	State         string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
-	Signed        bool                   `protobuf:"varint,6,opt,name=signed,proto3" json:"signed,omitempty"`
-	Approved      bool                   `protobuf:"varint,7,opt,name=approved,proto3" json:"approved,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId           int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Closed               bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft                bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public               bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
+	State                string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	Signed               bool                   `protobuf:"varint,6,opt,name=signed,proto3" json:"signed,omitempty"`
+	Approved             bool                   `protobuf:"varint,7,opt,name=approved,proto3" json:"approved,omitempty"`
+	ApprovalCurrentOrder *int32                 `protobuf:"varint,8,opt,name=approval_current_order,json=approvalCurrentOrder,proto3,oneof" json:"approval_current_order,omitempty"`
+	ApprovalPendingTasks *int32                 `protobuf:"varint,9,opt,name=approval_pending_tasks,json=approvalPendingTasks,proto3,oneof" json:"approval_pending_tasks,omitempty"`
+	ApprovalAnyDeclined  *bool                  `protobuf:"varint,10,opt,name=approval_any_declined,json=approvalAnyDeclined,proto3,oneof" json:"approval_any_declined,omitempty"`
+	SigRequiredRemaining *int32                 `protobuf:"varint,11,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
+	SigRequiredTotal     *int32                 `protobuf:"varint,12,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
+	SigCollectedValid    *int32                 `protobuf:"varint,13,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *DocumentMeta) Reset() {
@@ -592,6 +598,48 @@ func (x *DocumentMeta) GetApproved() bool {
 		return x.Approved
 	}
 	return false
+}
+
+func (x *DocumentMeta) GetApprovalCurrentOrder() int32 {
+	if x != nil && x.ApprovalCurrentOrder != nil {
+		return *x.ApprovalCurrentOrder
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetApprovalPendingTasks() int32 {
+	if x != nil && x.ApprovalPendingTasks != nil {
+		return *x.ApprovalPendingTasks
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetApprovalAnyDeclined() bool {
+	if x != nil && x.ApprovalAnyDeclined != nil {
+		return *x.ApprovalAnyDeclined
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetSigRequiredRemaining() int32 {
+	if x != nil && x.SigRequiredRemaining != nil {
+		return *x.SigRequiredRemaining
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetSigRequiredTotal() int32 {
+	if x != nil && x.SigRequiredTotal != nil {
+		return *x.SigRequiredTotal
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetSigCollectedValid() int32 {
+	if x != nil && x.SigCollectedValid != nil {
+		return *x.SigCollectedValid
+	}
+	return 0
 }
 
 type DocumentReference struct {
@@ -1085,7 +1133,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xc7\x01\n" +
+	"\x0e_workflow_user\"\xb3\x05\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x16\n" +
@@ -1094,7 +1142,20 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x06public\x18\x04 \x01(\bR\x06public\x12\x1c\n" +
 	"\x05state\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
 	"\x06signed\x18\x06 \x01(\bR\x06signed\x12\x1a\n" +
-	"\bapproved\x18\a \x01(\bR\bapproved\"\x95\x06\n" +
+	"\bapproved\x18\a \x01(\bR\bapproved\x129\n" +
+	"\x16approval_current_order\x18\b \x01(\x05H\x00R\x14approvalCurrentOrder\x88\x01\x01\x129\n" +
+	"\x16approval_pending_tasks\x18\t \x01(\x05H\x01R\x14approvalPendingTasks\x88\x01\x01\x127\n" +
+	"\x15approval_any_declined\x18\n" +
+	" \x01(\bH\x02R\x13approvalAnyDeclined\x88\x01\x01\x129\n" +
+	"\x16sig_required_remaining\x18\v \x01(\x05H\x03R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
+	"\x12sig_required_total\x18\f \x01(\x05H\x04R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
+	"\x13sig_collected_valid\x18\r \x01(\x05H\x05R\x11sigCollectedValid\x88\x01\x01B\x19\n" +
+	"\x17_approval_current_orderB\x19\n" +
+	"\x17_approval_pending_tasksB\x18\n" +
+	"\x16_approval_any_declinedB\x19\n" +
+	"\x17_sig_required_remainingB\x15\n" +
+	"\x13_sig_required_totalB\x16\n" +
+	"\x14_sig_collected_valid\"\x95\x06\n" +
 	"\x11DocumentReference\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -1264,6 +1325,7 @@ func file_resources_documents_documents_proto_init() {
 	file_resources_documents_workflow_proto_init()
 	file_resources_documents_documents_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[1].OneofWrappers = []any{}
+	file_resources_documents_documents_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[5].OneofWrappers = []any{}
