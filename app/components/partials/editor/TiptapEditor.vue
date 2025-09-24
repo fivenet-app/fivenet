@@ -615,14 +615,7 @@ function applyVersion(version: Version<unknown>): void {
 
 const formErrors = inject<Ref<FormError[]> | null>(formErrorsInjectionKey, null);
 
-const error = computed(
-    () =>
-        props.error ||
-        formErrors?.value?.find(
-            (error) =>
-                error.name && (error.name === props.name || (props.errorPattern && error.name.match(props.errorPattern))),
-        )?.message,
-);
+const error = computed(() => formErrors?.value?.find((error) => error.name && error.name === props.name)?.message);
 
 watch(
     editorSettings,
@@ -1382,8 +1375,8 @@ onBeforeRouteLeave(() => {
         />
 
         <template v-if="editor" #footer>
-            <div class="flex w-full flex-1 flex-col">
-                <div v-if="error" class="mb-2">
+            <div class="flex w-full flex-1 flex-col gap-1">
+                <div v-if="error" class="mb-2 flex items-start">
                     <div v-if="typeof error === 'string'" :id="`${name}-error`" class="text-error">{{ error }}</div>
                 </div>
 
