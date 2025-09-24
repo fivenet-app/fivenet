@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { FormError } from '@nuxt/ui';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { generateJSON, getSchema, type Extensions, type Range } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
@@ -54,6 +55,7 @@ import YJSUserPopover from './YJSUserPopover.vue';
 
 const props = withDefaults(
     defineProps<{
+        name?: string;
         wrapperClass?: string;
         limit?: number;
         fileLimit?: number;
@@ -73,6 +75,7 @@ const props = withDefaults(
         filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     }>(),
     {
+        name: undefined,
         wrapperClass: '',
         limit: undefined,
         fileLimit: 10,
@@ -609,6 +612,17 @@ function applyVersion(version: Version<unknown>): void {
         type: NotificationType.SUCCESS,
     });
 }
+
+const formErrors = inject<Ref<FormError[]> | null>(formErrorsInjectionKey, null);
+
+const error = computed(
+    () =>
+        props.error ||
+        formErrors?.value?.find(
+            (error) =>
+                error.name && (error.name === props.name || (props.errorPattern && error.name.match(props.errorPattern))),
+        )?.message,
+);
 
 watch(
     editorSettings,
@@ -1368,30 +1382,37 @@ onBeforeRouteLeave(() => {
         />
 
         <template v-if="editor" #footer>
-            <div class="flex" :class="[{ 'flex-1': targetId }]">
-                <template v-if="$slots.footer">
-                    <slot name="footer" />
-                </template>
-                <div v-else-if="saving" class="inline-flex items-center gap-1">
-                    <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
-                    <span>{{ $t('common.save', 2) }}...</span>
+            <div class="flex w-full flex-1 flex-col">
+                <div v-if="error" class="mb-2">
+                    <div v-if="typeof error === 'string'" :id="`${name}-error`" class="text-error">{{ error }}</div>
                 </div>
 
-                <div v-if="loading" class="inline-flex items-center gap-1">
-                    <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />
-                    {{ $t('common.loading') }}
+                <div class="flex" :class="[{ 'flex-1': targetId }]">
+                    <template v-if="$slots.footer">
+                        <slot name="footer" />
+                    </template>
+                    <div v-else-if="saving" class="inline-flex items-center gap-1">
+                        <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
+                        <span>{{ $t('common.save', 2) }}...</span>
+                    </div>
+
+                    <div v-if="loading" class="inline-flex items-center gap-1">
+                        <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />
+                        {{ $t('common.loading') }}
+                    </div>
                 </div>
-            </div>
 
-            <div v-if="targetId" class="inline-flex flex-1 items-center justify-center">
-                <YJSUserPopover />
-            </div>
+                <div v-if="targetId" class="inline-flex flex-1 items-center justify-center">
+                    <YJSUserPopover />
+                </div>
 
-            <div class="inline-flex flex-1 items-center justify-end">
-                {{ editor.storage.characterCount.characters() }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
-                {{ $t('common.chars', editor.storage.characterCount.characters()) }}
-                |
-                {{ editor.storage.characterCount.words() }} {{ $t('common.word', editor.storage.characterCount.words()) }}
+                <div class="inline-flex flex-1 items-center justify-end">
+                    {{ editor.storage.characterCount.characters()
+                    }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
+                    {{ $t('common.chars', editor.storage.characterCount.characters()) }}
+                    |
+                    {{ editor.storage.characterCount.words() }} {{ $t('common.word', editor.storage.characterCount.words()) }}
+                </div>
             </div>
         </template>
     </UCard>

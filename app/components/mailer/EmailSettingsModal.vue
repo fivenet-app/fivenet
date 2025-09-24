@@ -102,10 +102,11 @@ const formRef = useTemplateRef('formRef');
                         />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="signature" :label="$t('common.signature')">
+                    <UFormField class="flex-1" name="signature" :label="$t('common.signature')" :ui="{ error: 'hidden' }">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.signature"
+                                name="signature"
                                 :disabled="disabled || !canManage"
                                 wrapper-class="min-h-44"
                             />

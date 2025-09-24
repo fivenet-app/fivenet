@@ -585,9 +585,14 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                     </div>
                                 </UFormField>
 
-                                <UFormField name="message">
+                                <UFormField name="content" :ui="{ error: 'hidden' }">
                                     <ClientOnly>
-                                        <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
+                                        <TiptapEditor
+                                            v-model="state.content"
+                                            name="content"
+                                            :disabled="!canSubmit"
+                                            wrapper-class="min-h-44"
+                                        />
                                     </ClientOnly>
                                 </UFormField>
 

@@ -269,6 +269,7 @@ const formRef = useTemplateRef('formRef');
                             :label="$t('common.message')"
                             :ui="{
                                 container: 'flex flex-1 flex-col',
+                                error: 'hidden',
                             }"
                         >
                             <div class="flex flex-1 flex-col items-center sm:flex-row">
@@ -280,6 +281,7 @@ const formRef = useTemplateRef('formRef');
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
+                                    name="content"
                                     class="flex-1 overflow-y-hidden"
                                     :disabled="!canSubmit"
                                     wrapper-class="min-h-96"

@@ -221,10 +221,11 @@ const confirmModal = overlay.create(ConfirmModal);
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                    <UFormField name="comment">
+                    <UFormField name="content" :ui="{ error: 'hidden' }">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
+                                name="content"
                                 wrapper-class="min-h-44"
                                 disable-images
                                 :limit="1250"

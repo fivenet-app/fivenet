@@ -197,10 +197,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                            <UFormField name="comment">
+                            <UFormField name="content" :ui="{ error: 'hidden' }">
                                 <ClientOnly>
                                     <TiptapEditor
                                         v-model="state.content"
+                                        name="content"
                                         :placeholder="$t('components.documents.document_comments.add_comment')"
                                         wrapper-class="min-h-44"
                                         disable-images

@@ -859,9 +859,9 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessage.title"
                                 :label="$t('common.message')"
-                                :ui="{ container: '' }"
+                                :ui="{ container: '', error: 'hidden' }"
                             >
-                                <TiptapEditor v-model="state.system.bannerMessage.title" />
+                                <TiptapEditor v-model="state.system.bannerMessage.title" name="system.bannerMessage.title" />
                             </UFormField>
 
                             <UFormField

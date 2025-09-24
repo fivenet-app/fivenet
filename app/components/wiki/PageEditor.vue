@@ -581,6 +581,7 @@ const formRef = useTemplateRef('formRef');
                                     <TiptapEditor
                                         v-model="state.content"
                                         v-model:files="state.files"
+                                        name="content"
                                         class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :disabled="!canDo.edit"
                                         history-type="wiki"

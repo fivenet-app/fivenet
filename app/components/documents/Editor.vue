@@ -631,6 +631,7 @@ provide('yjsProvider', provider);
                             <TiptapEditor
                                 v-model="state.content"
                                 v-model:files="state.files"
+                                name="content"
                                 class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                                 :disabled="!canDo.edit"
                                 history-type="document"

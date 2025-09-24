@@ -243,9 +243,9 @@ const formRef = useTemplateRef('formRef');
                         <InputDatePicker v-model="state.endTime" clearable time class="w-full" />
                     </UFormField>
 
-                    <UFormField class="flex-1" name="content" :label="$t('common.content')" required>
+                    <UFormField class="flex-1" name="content" :label="$t('common.content')" required :ui="{ error: 'hidden' }">
                         <ClientOnly>
-                            <TiptapEditor v-model="state.content" wrapper-class="min-h-80" class="w-full" />
+                            <TiptapEditor v-model="state.content" name="content" wrapper-class="min-h-80" class="w-full" />
                         </ClientOnly>
                     </UFormField>
 

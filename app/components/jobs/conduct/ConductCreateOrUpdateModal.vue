@@ -215,9 +215,9 @@ const formRef = useTemplateRef('formRef');
                             </label>
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <UFormField name="message">
+                            <UFormField name="message" :ui="{ error: 'hidden' }">
                                 <ClientOnly>
-                                    <TiptapEditor v-model="state.message" class="min-h-100 w-full" />
+                                    <TiptapEditor v-model="state.message" name="message" class="min-h-100 w-full" />
                                 </ClientOnly>
                             </UFormField>
                         </dd>

@@ -99,12 +99,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UFormField
             class="flex flex-1 overflow-y-hidden"
             name="content"
-            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hidden' }"
             label="&nbsp;"
+            :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: 'hidden', error: 'hidden' }"
         >
             <ClientOnly>
                 <TiptapEditor
                     v-model="state.content"
+                    name="content"
                     class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                     wrapper-class="min-h-80"
                 />
