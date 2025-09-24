@@ -80,43 +80,27 @@ export interface Document {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: resources.documents.DocumentStatus status = 24
+     * @generated from protobuf field: resources.documents.DocumentMeta meta = 15
      */
-    status: DocumentStatus;
+    meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: string state = 15
-     */
-    state: string;
-    /**
-     * @generated from protobuf field: bool closed = 16
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 17
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 18
-     */
-    public: boolean;
-    /**
-     * @generated from protobuf field: optional int64 template_id = 19
+     * @generated from protobuf field: optional int64 template_id = 16
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
     /**
-     * @generated from protobuf field: repeated resources.file.File files = 23
+     * @generated from protobuf field: repeated resources.file.File files = 20
      */
     files: File[];
 }
@@ -177,37 +161,54 @@ export interface DocumentShort {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: resources.documents.DocumentStatus status = 24
+     * @generated from protobuf field: resources.documents.DocumentMeta meta = 15
      */
-    status: DocumentStatus;
+    meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: string state = 15
-     */
-    state: string;
-    /**
-     * @generated from protobuf field: bool closed = 16
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 17
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 18
-     */
-    public: boolean;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
+}
+/**
+ * @generated from protobuf message resources.documents.DocumentMeta
+ */
+export interface DocumentMeta {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: bool closed = 2
+     */
+    closed: boolean;
+    /**
+     * @generated from protobuf field: bool draft = 3
+     */
+    draft: boolean;
+    /**
+     * @generated from protobuf field: bool public = 4
+     */
+    public: boolean;
+    /**
+     * @generated from protobuf field: string state = 5
+     */
+    state: string;
+    /**
+     * @generated from protobuf field: bool signed = 6
+     */
+    signed: boolean;
+    /**
+     * @generated from protobuf field: bool approved = 7
+     */
+    approved: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -362,43 +363,6 @@ export interface WorkflowUserState {
     document?: DocumentShort;
 }
 /**
- * @generated from protobuf enum resources.documents.DocumentStatus
- */
-export enum DocumentStatus {
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_DRAFT = 1;
-     */
-    DRAFT = 1,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_REVIEWING = 2;
-     */
-    REVIEWING = 2,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_APPROVED = 3;
-     */
-    APPROVED = 3,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_SIGNING = 4;
-     */
-    SIGNING = 4,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_SIGNED = 5;
-     */
-    SIGNED = 5,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_AMENDED = 6;
-     */
-    AMENDED = 6,
-    /**
-     * @generated from protobuf enum value: DOCUMENT_STATUS_ARCHIVED = 7;
-     */
-    ARCHIVED = 7
-}
-/**
  * @generated from protobuf enum resources.documents.DocReference
  */
 export enum DocReference {
@@ -462,16 +426,12 @@ class Document$Type extends MessageType<Document> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 24, name: "status", kind: "enum", T: () => ["resources.documents.DocumentStatus", DocumentStatus, "DOCUMENT_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 19, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 20, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
-            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
-            { no: 23, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 15, name: "meta", kind: "message", T: () => DocumentMeta, options: { "tagger.tags": "alias:\"meta\"" } },
+            { no: 16, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 17, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
+            { no: 18, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 19, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
+            { no: 20, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -480,11 +440,6 @@ class Document$Type extends MessageType<Document> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
-        message.status = 0;
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         message.files = [];
         if (value !== undefined)
             reflectionMergePartial<Document>(this, message, value);
@@ -537,34 +492,22 @@ class Document$Type extends MessageType<Document> {
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* resources.documents.DocumentStatus status */ 24:
-                    message.status = reader.int32();
+                case /* resources.documents.DocumentMeta meta */ 15:
+                    message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* string state */ 15:
-                    message.state = reader.string();
-                    break;
-                case /* bool closed */ 16:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 17:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 18:
-                    message.public = reader.bool();
-                    break;
-                case /* optional int64 template_id */ 19:
+                case /* optional int64 template_id */ 16:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.DocumentPin pin */ 20:
+                case /* optional resources.documents.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 21:
+                case /* optional resources.documents.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
-                case /* repeated resources.file.File files */ 23:
+                case /* repeated resources.file.File files */ 20:
                     message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -621,36 +564,24 @@ class Document$Type extends MessageType<Document> {
         /* optional string creator_job_label = 14; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* string state = 15; */
-        if (message.state !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 16; */
-        if (message.closed !== false)
-            writer.tag(16, WireType.Varint).bool(message.closed);
-        /* bool draft = 17; */
-        if (message.draft !== false)
-            writer.tag(17, WireType.Varint).bool(message.draft);
-        /* bool public = 18; */
-        if (message.public !== false)
-            writer.tag(18, WireType.Varint).bool(message.public);
-        /* optional int64 template_id = 19; */
+        /* resources.documents.DocumentMeta meta = 15; */
+        if (message.meta)
+            DocumentMeta.internalBinaryWrite(message.meta, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional int64 template_id = 16; */
         if (message.templateId !== undefined)
-            writer.tag(19, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.DocumentPin pin = 20; */
+            writer.tag(16, WireType.Varint).int64(message.templateId);
+        /* optional resources.documents.DocumentPin pin = 17; */
         if (message.pin)
-            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 21; */
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 18; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.file.File files = 23; */
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.file.File files = 20; */
         for (let i = 0; i < message.files.length; i++)
-            File.internalBinaryWrite(message.files[i], writer.tag(23, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentStatus status = 24; */
-        if (message.status !== 0)
-            writer.tag(24, WireType.Varint).int32(message.status);
+            File.internalBinaryWrite(message.files[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -678,14 +609,10 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 24, name: "status", kind: "enum", T: () => ["resources.documents.DocumentStatus", DocumentStatus, "DOCUMENT_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 20, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
-            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
+            { no: 15, name: "meta", kind: "message", T: () => DocumentMeta, options: { "tagger.tags": "alias:\"meta\"" } },
+            { no: 17, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
+            { no: 18, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 19, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<DocumentShort>): DocumentShort {
@@ -694,11 +621,6 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
-        message.status = 0;
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         if (value !== undefined)
             reflectionMergePartial<DocumentShort>(this, message, value);
         return message;
@@ -747,28 +669,16 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* resources.documents.DocumentStatus status */ 24:
-                    message.status = reader.int32();
+                case /* resources.documents.DocumentMeta meta */ 15:
+                    message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* string state */ 15:
-                    message.state = reader.string();
-                    break;
-                case /* bool closed */ 16:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 17:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 18:
-                    message.public = reader.bool();
-                    break;
-                case /* optional resources.documents.DocumentPin pin */ 20:
+                case /* optional resources.documents.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 21:
+                case /* optional resources.documents.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 default:
@@ -822,30 +732,18 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional string creator_job_label = 14; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* string state = 15; */
-        if (message.state !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 16; */
-        if (message.closed !== false)
-            writer.tag(16, WireType.Varint).bool(message.closed);
-        /* bool draft = 17; */
-        if (message.draft !== false)
-            writer.tag(17, WireType.Varint).bool(message.draft);
-        /* bool public = 18; */
-        if (message.public !== false)
-            writer.tag(18, WireType.Varint).bool(message.public);
-        /* optional resources.documents.DocumentPin pin = 20; */
+        /* resources.documents.DocumentMeta meta = 15; */
+        if (message.meta)
+            DocumentMeta.internalBinaryWrite(message.meta, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentPin pin = 17; */
         if (message.pin)
-            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 21; */
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 18; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentStatus status = 24; */
-        if (message.status !== 0)
-            writer.tag(24, WireType.Varint).int32(message.status);
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -856,6 +754,101 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
  * @generated MessageType for protobuf message resources.documents.DocumentShort
  */
 export const DocumentShort = new DocumentShort$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocumentMeta$Type extends MessageType<DocumentMeta> {
+    constructor() {
+        super("resources.documents.DocumentMeta", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 6, name: "signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "approved", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        message.closed = false;
+        message.draft = false;
+        message.public = false;
+        message.state = "";
+        message.signed = false;
+        message.approved = false;
+        if (value !== undefined)
+            reflectionMergePartial<DocumentMeta>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocumentMeta): DocumentMeta {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* bool closed */ 2:
+                    message.closed = reader.bool();
+                    break;
+                case /* bool draft */ 3:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 4:
+                    message.public = reader.bool();
+                    break;
+                case /* string state */ 5:
+                    message.state = reader.string();
+                    break;
+                case /* bool signed */ 6:
+                    message.signed = reader.bool();
+                    break;
+                case /* bool approved */ 7:
+                    message.approved = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocumentMeta, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* bool closed = 2; */
+        if (message.closed !== false)
+            writer.tag(2, WireType.Varint).bool(message.closed);
+        /* bool draft = 3; */
+        if (message.draft !== false)
+            writer.tag(3, WireType.Varint).bool(message.draft);
+        /* bool public = 4; */
+        if (message.public !== false)
+            writer.tag(4, WireType.Varint).bool(message.public);
+        /* string state = 5; */
+        if (message.state !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.state);
+        /* bool signed = 6; */
+        if (message.signed !== false)
+            writer.tag(6, WireType.Varint).bool(message.signed);
+        /* bool approved = 7; */
+        if (message.approved !== false)
+            writer.tag(7, WireType.Varint).bool(message.approved);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocumentMeta
+ */
+export const DocumentMeta = new DocumentMeta$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DocumentReference$Type extends MessageType<DocumentReference> {
     constructor() {

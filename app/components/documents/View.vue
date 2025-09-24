@@ -133,8 +133,22 @@ function updateReminderTime(reminderTime?: Timestamp): void {
 
 async function toggleDocument(): Promise<void> {
     if (!doc.value?.document) return;
+    if (!doc.value?.document?.meta) {
+        doc.value.document!.meta = {
+            documentId: props.documentId,
+            closed: false,
+            draft: false,
+            approved: false,
+            signed: false,
+            public: false,
+            state: '',
+        };
+    }
 
-    doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
+    doc.value.document!.meta.closed = await documentsDocuments.toggleDocument(
+        props.documentId,
+        !doc.value.document?.meta?.closed,
+    );
 }
 
 const approvalDrawer = overlay.create(ApprovalDrawer);
@@ -169,7 +183,7 @@ defineShortcuts({
         )
             return;
 
-        documentsDocuments.toggleDocument(props.documentId, !!doc.value?.document?.closed);
+        documentsDocuments.toggleDocument(props.documentId, !!doc.value?.document?.meta?.closed);
     },
     'd-e': () => {
         if (
@@ -262,9 +276,9 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         >
                             <UButton
                                 block
-                                :label="doc.document?.closed ? $t('common.open', 1) : $t('common.close', 1)"
-                                :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                :color="doc.document?.closed ? 'success' : 'error'"
+                                :label="doc.document?.meta?.closed ? $t('common.open', 1) : $t('common.close', 1)"
+                                :icon="doc.document?.meta?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
+                                :color="doc.document?.meta?.closed ? 'success' : 'error'"
                                 variant="ghost"
                                 @click="toggleDocument()"
                             />
@@ -504,14 +518,14 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                     <div class="mb-2 flex gap-2">
                         <CategoryBadge :category="doc.document?.category" />
 
-                        <OpenClosedBadge :closed="doc.document?.closed" size="md" />
+                        <OpenClosedBadge :closed="doc.document?.meta?.closed" size="md" />
 
                         <UBadge
-                            v-if="doc.document?.state"
+                            v-if="doc.document?.meta?.state"
                             class="inline-flex gap-1"
                             size="md"
                             icon="i-mdi-note-check"
-                            :label="doc.document?.state"
+                            :label="doc.document?.meta?.state"
                         />
 
                         <UBadge
@@ -693,7 +707,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                             <div id="comments">
                                 <Comments
                                     :document-id="documentId"
-                                    :closed="doc.document?.closed"
+                                    :closed="doc.document?.meta?.closed"
                                     :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
                                     @counted="commentCount = $event"
                                     @new-comment="commentCount && commentCount++"

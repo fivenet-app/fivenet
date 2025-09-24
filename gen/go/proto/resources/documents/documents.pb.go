@@ -27,70 +27,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type DocumentStatus int32
-
-const (
-	DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED DocumentStatus = 0
-	DocumentStatus_DOCUMENT_STATUS_DRAFT       DocumentStatus = 1
-	DocumentStatus_DOCUMENT_STATUS_REVIEWING   DocumentStatus = 2
-	DocumentStatus_DOCUMENT_STATUS_APPROVED    DocumentStatus = 3
-	DocumentStatus_DOCUMENT_STATUS_SIGNING     DocumentStatus = 4
-	DocumentStatus_DOCUMENT_STATUS_SIGNED      DocumentStatus = 5
-	DocumentStatus_DOCUMENT_STATUS_AMENDED     DocumentStatus = 6
-	DocumentStatus_DOCUMENT_STATUS_ARCHIVED    DocumentStatus = 7
-)
-
-// Enum value maps for DocumentStatus.
-var (
-	DocumentStatus_name = map[int32]string{
-		0: "DOCUMENT_STATUS_UNSPECIFIED",
-		1: "DOCUMENT_STATUS_DRAFT",
-		2: "DOCUMENT_STATUS_REVIEWING",
-		3: "DOCUMENT_STATUS_APPROVED",
-		4: "DOCUMENT_STATUS_SIGNING",
-		5: "DOCUMENT_STATUS_SIGNED",
-		6: "DOCUMENT_STATUS_AMENDED",
-		7: "DOCUMENT_STATUS_ARCHIVED",
-	}
-	DocumentStatus_value = map[string]int32{
-		"DOCUMENT_STATUS_UNSPECIFIED": 0,
-		"DOCUMENT_STATUS_DRAFT":       1,
-		"DOCUMENT_STATUS_REVIEWING":   2,
-		"DOCUMENT_STATUS_APPROVED":    3,
-		"DOCUMENT_STATUS_SIGNING":     4,
-		"DOCUMENT_STATUS_SIGNED":      5,
-		"DOCUMENT_STATUS_AMENDED":     6,
-		"DOCUMENT_STATUS_ARCHIVED":    7,
-	}
-)
-
-func (x DocumentStatus) Enum() *DocumentStatus {
-	p := new(DocumentStatus)
-	*p = x
-	return p
-}
-
-func (x DocumentStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (DocumentStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_documents_proto_enumTypes[0].Descriptor()
-}
-
-func (DocumentStatus) Type() protoreflect.EnumType {
-	return &file_resources_documents_documents_proto_enumTypes[0]
-}
-
-func (x DocumentStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use DocumentStatus.Descriptor instead.
-func (DocumentStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{0}
-}
-
 type DocReference int32
 
 const (
@@ -130,11 +66,11 @@ func (x DocReference) String() string {
 }
 
 func (DocReference) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_documents_proto_enumTypes[1].Descriptor()
+	return file_resources_documents_documents_proto_enumTypes[0].Descriptor()
 }
 
 func (DocReference) Type() protoreflect.EnumType {
-	return &file_resources_documents_documents_proto_enumTypes[1]
+	return &file_resources_documents_documents_proto_enumTypes[0]
 }
 
 func (x DocReference) Number() protoreflect.EnumNumber {
@@ -143,7 +79,7 @@ func (x DocReference) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DocReference.Descriptor instead.
 func (DocReference) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{1}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{0}
 }
 
 type DocRelation int32
@@ -182,11 +118,11 @@ func (x DocRelation) String() string {
 }
 
 func (DocRelation) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_documents_proto_enumTypes[2].Descriptor()
+	return file_resources_documents_documents_proto_enumTypes[1].Descriptor()
 }
 
 func (DocRelation) Type() protoreflect.EnumType {
-	return &file_resources_documents_documents_proto_enumTypes[2]
+	return &file_resources_documents_documents_proto_enumTypes[1]
 }
 
 func (x DocRelation) Number() protoreflect.EnumNumber {
@@ -195,7 +131,7 @@ func (x DocRelation) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use DocRelation.Descriptor instead.
 func (DocRelation) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{1}
 }
 
 type Document struct {
@@ -214,16 +150,12 @@ type Document struct {
 	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Status          DocumentStatus         `protobuf:"varint,24,opt,name=status,proto3,enum=resources.documents.DocumentStatus" json:"status,omitempty"`
-	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
-	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public          bool                   `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
-	TemplateId      *int64                 `protobuf:"varint,19,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	Pin             *DocumentPin           `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
-	WorkflowState   *WorkflowState         `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
-	Files           []*file.File           `protobuf:"bytes,23,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	Meta            *DocumentMeta          `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty" alias:"meta"`
+	TemplateId      *int64                 `protobuf:"varint,16,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
+	Pin             *DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	WorkflowState   *WorkflowState         `protobuf:"bytes,18,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,19,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	Files           []*file.File           `protobuf:"bytes,20,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -356,39 +288,11 @@ func (x *Document) GetCreatorJobLabel() string {
 	return ""
 }
 
-func (x *Document) GetStatus() DocumentStatus {
+func (x *Document) GetMeta() *DocumentMeta {
 	if x != nil {
-		return x.Status
+		return x.Meta
 	}
-	return DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED
-}
-
-func (x *Document) GetState() string {
-	if x != nil {
-		return x.State
-	}
-	return ""
-}
-
-func (x *Document) GetClosed() bool {
-	if x != nil {
-		return x.Closed
-	}
-	return false
-}
-
-func (x *Document) GetDraft() bool {
-	if x != nil {
-		return x.Draft
-	}
-	return false
-}
-
-func (x *Document) GetPublic() bool {
-	if x != nil {
-		return x.Public
-	}
-	return false
+	return nil
 }
 
 func (x *Document) GetTemplateId() int64 {
@@ -441,14 +345,10 @@ type DocumentShort struct {
 	Creator         *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Status          DocumentStatus         `protobuf:"varint,24,opt,name=status,proto3,enum=resources.documents.DocumentStatus" json:"status,omitempty"`
-	State           string                 `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
-	Closed          bool                   `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft           bool                   `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public          bool                   `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
-	Pin             *DocumentPin           `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
-	WorkflowState   *WorkflowState         `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	Meta            *DocumentMeta          `protobuf:"bytes,15,opt,name=meta,proto3" json:"meta,omitempty" alias:"meta"`
+	Pin             *DocumentPin           `protobuf:"bytes,17,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	WorkflowState   *WorkflowState         `protobuf:"bytes,18,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser    *WorkflowUserState     `protobuf:"bytes,19,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -574,39 +474,11 @@ func (x *DocumentShort) GetCreatorJobLabel() string {
 	return ""
 }
 
-func (x *DocumentShort) GetStatus() DocumentStatus {
+func (x *DocumentShort) GetMeta() *DocumentMeta {
 	if x != nil {
-		return x.Status
+		return x.Meta
 	}
-	return DocumentStatus_DOCUMENT_STATUS_UNSPECIFIED
-}
-
-func (x *DocumentShort) GetState() string {
-	if x != nil {
-		return x.State
-	}
-	return ""
-}
-
-func (x *DocumentShort) GetClosed() bool {
-	if x != nil {
-		return x.Closed
-	}
-	return false
-}
-
-func (x *DocumentShort) GetDraft() bool {
-	if x != nil {
-		return x.Draft
-	}
-	return false
-}
-
-func (x *DocumentShort) GetPublic() bool {
-	if x != nil {
-		return x.Public
-	}
-	return false
+	return nil
 }
 
 func (x *DocumentShort) GetPin() *DocumentPin {
@@ -630,6 +502,98 @@ func (x *DocumentShort) GetWorkflowUser() *WorkflowUserState {
 	return nil
 }
 
+type DocumentMeta struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Closed        bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft         bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public        bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
+	State         string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	Signed        bool                   `protobuf:"varint,6,opt,name=signed,proto3" json:"signed,omitempty"`
+	Approved      bool                   `protobuf:"varint,7,opt,name=approved,proto3" json:"approved,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DocumentMeta) Reset() {
+	*x = DocumentMeta{}
+	mi := &file_resources_documents_documents_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DocumentMeta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DocumentMeta) ProtoMessage() {}
+
+func (x *DocumentMeta) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_documents_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DocumentMeta.ProtoReflect.Descriptor instead.
+func (*DocumentMeta) Descriptor() ([]byte, []int) {
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DocumentMeta) GetDocumentId() int64 {
+	if x != nil {
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetClosed() bool {
+	if x != nil {
+		return x.Closed
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetDraft() bool {
+	if x != nil {
+		return x.Draft
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetPublic() bool {
+	if x != nil {
+		return x.Public
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *DocumentMeta) GetSigned() bool {
+	if x != nil {
+		return x.Signed
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetApproved() bool {
+	if x != nil {
+		return x.Approved
+	}
+	return false
+}
+
 type DocumentReference struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	Id               *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
@@ -647,7 +611,7 @@ type DocumentReference struct {
 
 func (x *DocumentReference) Reset() {
 	*x = DocumentReference{}
-	mi := &file_resources_documents_documents_proto_msgTypes[2]
+	mi := &file_resources_documents_documents_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -659,7 +623,7 @@ func (x *DocumentReference) String() string {
 func (*DocumentReference) ProtoMessage() {}
 
 func (x *DocumentReference) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_documents_proto_msgTypes[2]
+	mi := &file_resources_documents_documents_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -672,7 +636,7 @@ func (x *DocumentReference) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DocumentReference.ProtoReflect.Descriptor instead.
 func (*DocumentReference) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DocumentReference) GetId() int64 {
@@ -755,7 +719,7 @@ type DocumentRelation struct {
 
 func (x *DocumentRelation) Reset() {
 	*x = DocumentRelation{}
-	mi := &file_resources_documents_documents_proto_msgTypes[3]
+	mi := &file_resources_documents_documents_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -767,7 +731,7 @@ func (x *DocumentRelation) String() string {
 func (*DocumentRelation) ProtoMessage() {}
 
 func (x *DocumentRelation) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_documents_proto_msgTypes[3]
+	mi := &file_resources_documents_documents_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -780,7 +744,7 @@ func (x *DocumentRelation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DocumentRelation.ProtoReflect.Descriptor instead.
 func (*DocumentRelation) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{3}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DocumentRelation) GetId() int64 {
@@ -861,7 +825,7 @@ type WorkflowState struct {
 
 func (x *WorkflowState) Reset() {
 	*x = WorkflowState{}
-	mi := &file_resources_documents_documents_proto_msgTypes[4]
+	mi := &file_resources_documents_documents_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -873,7 +837,7 @@ func (x *WorkflowState) String() string {
 func (*WorkflowState) ProtoMessage() {}
 
 func (x *WorkflowState) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_documents_proto_msgTypes[4]
+	mi := &file_resources_documents_documents_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -886,7 +850,7 @@ func (x *WorkflowState) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowState.ProtoReflect.Descriptor instead.
 func (*WorkflowState) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{4}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *WorkflowState) GetDocumentId() int64 {
@@ -954,7 +918,7 @@ type WorkflowUserState struct {
 
 func (x *WorkflowUserState) Reset() {
 	*x = WorkflowUserState{}
-	mi := &file_resources_documents_documents_proto_msgTypes[5]
+	mi := &file_resources_documents_documents_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -966,7 +930,7 @@ func (x *WorkflowUserState) String() string {
 func (*WorkflowUserState) ProtoMessage() {}
 
 func (x *WorkflowUserState) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_documents_proto_msgTypes[5]
+	mi := &file_resources_documents_documents_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -979,7 +943,7 @@ func (x *WorkflowUserState) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WorkflowUserState.ProtoReflect.Descriptor instead.
 func (*WorkflowUserState) Descriptor() ([]byte, []int) {
-	return file_resources_documents_documents_proto_rawDescGZIP(), []int{5}
+	return file_resources_documents_documents_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *WorkflowUserState) GetDocumentId() int64 {
@@ -1042,7 +1006,8 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xa2\v\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcb\n" +
+	"\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1064,19 +1029,15 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tH\aR\x0fcreatorJobLabel\x88\x01\x01\x12;\n" +
-	"\x06status\x18\x18 \x01(\x0e2#.resources.documents.DocumentStatusR\x06status\x12\x1c\n" +
-	"\x05state\x18\x0f \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
-	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
-	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\x12 \x01(\bR\x06public\x12$\n" +
-	"\vtemplate_id\x18\x13 \x01(\x03H\bR\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\aR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12$\n" +
+	"\vtemplate_id\x18\x10 \x01(\x03H\bR\n" +
 	"templateId\x88\x01\x01\x12I\n" +
-	"\x03pin\x18\x14 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\tR\x03pin\x88\x01\x01\x12N\n" +
-	"\x0eworkflow_state\x18\x15 \x01(\v2\".resources.documents.WorkflowStateH\n" +
+	"\x03pin\x18\x11 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\tR\x03pin\x88\x01\x01\x12N\n" +
+	"\x0eworkflow_state\x18\x12 \x01(\v2\".resources.documents.WorkflowStateH\n" +
 	"R\rworkflowState\x88\x01\x01\x12P\n" +
-	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\vR\fworkflowUser\x88\x01\x01\x12>\n" +
-	"\x05files\x18\x17 \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\r\n" +
+	"\rworkflow_user\x18\x13 \x01(\v2&.resources.documents.WorkflowUserStateH\vR\fworkflowUser\x88\x01\x01\x12>\n" +
+	"\x05files\x18\x14 \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -1089,7 +1050,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xf6\t\n" +
+	"\x0e_workflow_user\"\x9f\t\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1109,15 +1070,11 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tH\x06R\x0fcreatorJobLabel\x88\x01\x01\x12;\n" +
-	"\x06status\x18\x18 \x01(\x0e2#.resources.documents.DocumentStatusR\x06status\x12\x1c\n" +
-	"\x05state\x18\x0f \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
-	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
-	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\x12 \x01(\bR\x06public\x12I\n" +
-	"\x03pin\x18\x14 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\aR\x03pin\x88\x01\x01\x12N\n" +
-	"\x0eworkflow_state\x18\x15 \x01(\v2\".resources.documents.WorkflowStateH\bR\rworkflowState\x88\x01\x01\x12P\n" +
-	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\tR\fworkflowUser\x88\x01\x01B\r\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\x06R\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12I\n" +
+	"\x03pin\x18\x11 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\aR\x03pin\x88\x01\x01\x12N\n" +
+	"\x0eworkflow_state\x18\x12 \x01(\v2\".resources.documents.WorkflowStateH\bR\rworkflowState\x88\x01\x01\x12P\n" +
+	"\rworkflow_user\x18\x13 \x01(\v2&.resources.documents.WorkflowUserStateH\tR\fworkflowUser\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -1128,7 +1085,16 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\x95\x06\n" +
+	"\x0e_workflow_user\"\xc7\x01\n" +
+	"\fDocumentMeta\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12\x16\n" +
+	"\x06closed\x18\x02 \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\x03 \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\x04 \x01(\bR\x06public\x12\x1c\n" +
+	"\x05state\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
+	"\x06signed\x18\x06 \x01(\bR\x06signed\x12\x1a\n" +
+	"\bapproved\x18\a \x01(\bR\bapproved\"\x95\x06\n" +
 	"\x11DocumentReference\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
@@ -1194,16 +1160,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x15_manual_reminder_timeB\x1a\n" +
 	"\x18_manual_reminder_messageB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_document*\xfd\x01\n" +
-	"\x0eDocumentStatus\x12\x1f\n" +
-	"\x1bDOCUMENT_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15DOCUMENT_STATUS_DRAFT\x10\x01\x12\x1d\n" +
-	"\x19DOCUMENT_STATUS_REVIEWING\x10\x02\x12\x1c\n" +
-	"\x18DOCUMENT_STATUS_APPROVED\x10\x03\x12\x1b\n" +
-	"\x17DOCUMENT_STATUS_SIGNING\x10\x04\x12\x1a\n" +
-	"\x16DOCUMENT_STATUS_SIGNED\x10\x05\x12\x1b\n" +
-	"\x17DOCUMENT_STATUS_AMENDED\x10\x06\x12\x1c\n" +
-	"\x18DOCUMENT_STATUS_ARCHIVED\x10\a*\x99\x01\n" +
+	"\t_document*\x99\x01\n" +
 	"\fDocReference\x12\x1d\n" +
 	"\x19DOC_REFERENCE_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14DOC_REFERENCE_LINKED\x10\x01\x12\x18\n" +
@@ -1228,14 +1185,14 @@ func file_resources_documents_documents_proto_rawDescGZIP() []byte {
 	return file_resources_documents_documents_proto_rawDescData
 }
 
-var file_resources_documents_documents_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_documents_documents_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_documents_documents_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_documents_documents_proto_goTypes = []any{
-	(DocumentStatus)(0),         // 0: resources.documents.DocumentStatus
-	(DocReference)(0),           // 1: resources.documents.DocReference
-	(DocRelation)(0),            // 2: resources.documents.DocRelation
-	(*Document)(nil),            // 3: resources.documents.Document
-	(*DocumentShort)(nil),       // 4: resources.documents.DocumentShort
+	(DocReference)(0),           // 0: resources.documents.DocReference
+	(DocRelation)(0),            // 1: resources.documents.DocRelation
+	(*Document)(nil),            // 2: resources.documents.Document
+	(*DocumentShort)(nil),       // 3: resources.documents.DocumentShort
+	(*DocumentMeta)(nil),        // 4: resources.documents.DocumentMeta
 	(*DocumentReference)(nil),   // 5: resources.documents.DocumentReference
 	(*DocumentRelation)(nil),    // 6: resources.documents.DocumentRelation
 	(*WorkflowState)(nil),       // 7: resources.documents.WorkflowState
@@ -1257,7 +1214,7 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	11, // 4: resources.documents.Document.content_type:type_name -> resources.common.content.ContentType
 	12, // 5: resources.documents.Document.content:type_name -> resources.common.content.Content
 	13, // 6: resources.documents.Document.creator:type_name -> resources.users.UserShort
-	0,  // 7: resources.documents.Document.status:type_name -> resources.documents.DocumentStatus
+	4,  // 7: resources.documents.Document.meta:type_name -> resources.documents.DocumentMeta
 	14, // 8: resources.documents.Document.pin:type_name -> resources.documents.DocumentPin
 	7,  // 9: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
 	8,  // 10: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
@@ -1269,27 +1226,27 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	11, // 16: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
 	12, // 17: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
 	13, // 18: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
-	0,  // 19: resources.documents.DocumentShort.status:type_name -> resources.documents.DocumentStatus
+	4,  // 19: resources.documents.DocumentShort.meta:type_name -> resources.documents.DocumentMeta
 	14, // 20: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
 	7,  // 21: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
 	8,  // 22: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
 	9,  // 23: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 24: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
-	1,  // 25: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
-	4,  // 26: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
+	3,  // 24: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
+	0,  // 25: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
+	3,  // 26: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
 	13, // 27: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
 	9,  // 28: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 29: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
+	3,  // 29: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
 	13, // 30: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
-	2,  // 31: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
+	1,  // 31: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
 	13, // 32: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
 	9,  // 33: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
 	9,  // 34: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
 	16, // 35: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
-	4,  // 36: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
+	3,  // 36: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
 	9,  // 37: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
 	16, // 38: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
-	4,  // 39: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
+	3,  // 39: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
 	40, // [40:40] is the sub-list for method output_type
 	40, // [40:40] is the sub-list for method input_type
 	40, // [40:40] is the sub-list for extension type_name
@@ -1307,17 +1264,17 @@ func file_resources_documents_documents_proto_init() {
 	file_resources_documents_workflow_proto_init()
 	file_resources_documents_documents_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_documents_documents_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_documents_documents_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_documents_proto_rawDesc), len(file_resources_documents_documents_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   6,
+			NumEnums:      2,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

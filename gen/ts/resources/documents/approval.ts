@@ -136,27 +136,23 @@ export interface Selector {
  */
 export interface ApprovalPolicyApplied {
     /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: int64 document_id = 2
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 3
+     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 2
      */
     onEditBehavior: OnEditBehavior;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3
+     */
+    createdAt?: Timestamp;
     /**
      * Materialized stages
      *
      * @generated from protobuf field: repeated resources.documents.ApprovalStage stages = 4
      */
     stages: ApprovalStage[];
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5
-     */
-    createdAt?: Timestamp;
 }
 /**
  * Stages & tasks
@@ -165,6 +161,8 @@ export interface ApprovalPolicyApplied {
  */
 export interface RequireAll {
     /**
+     * value=true
+     *
      * @generated from protobuf field: bool value = 1
      */
     value: boolean;
@@ -174,6 +172,8 @@ export interface RequireAll {
  */
 export interface QuorumAny {
     /**
+     * e.g., any 2
+     *
      * @generated from protobuf field: int32 count = 1
      */
     count: number;
@@ -704,16 +704,14 @@ export const Selector = new Selector$Type();
 class ApprovalPolicyApplied$Type extends MessageType<ApprovalPolicyApplied> {
     constructor() {
         super("resources.documents.ApprovalPolicyApplied", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "stages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalStage },
-            { no: 5, name: "created_at", kind: "message", T: () => Timestamp }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "stages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalStage }
         ]);
     }
     create(value?: PartialMessage<ApprovalPolicyApplied>): ApprovalPolicyApplied {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
         message.documentId = 0;
         message.onEditBehavior = 0;
         message.stages = [];
@@ -726,20 +724,17 @@ class ApprovalPolicyApplied$Type extends MessageType<ApprovalPolicyApplied> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* int64 document_id */ 2:
+                case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.OnEditBehavior on_edit_behavior */ 3:
+                case /* resources.documents.OnEditBehavior on_edit_behavior */ 2:
                     message.onEditBehavior = reader.int32();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 3:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 case /* repeated resources.documents.ApprovalStage stages */ 4:
                     message.stages.push(ApprovalStage.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 5:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -753,21 +748,18 @@ class ApprovalPolicyApplied$Type extends MessageType<ApprovalPolicyApplied> {
         return message;
     }
     internalBinaryWrite(message: ApprovalPolicyApplied, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* int64 document_id = 2; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* resources.documents.OnEditBehavior on_edit_behavior = 3; */
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.documents.OnEditBehavior on_edit_behavior = 2; */
         if (message.onEditBehavior !== 0)
-            writer.tag(3, WireType.Varint).int32(message.onEditBehavior);
+            writer.tag(2, WireType.Varint).int32(message.onEditBehavior);
+        /* resources.timestamp.Timestamp created_at = 3; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.documents.ApprovalStage stages = 4; */
         for (let i = 0; i < message.stages.length; i++)
             ApprovalStage.internalBinaryWrite(message.stages[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.timestamp.Timestamp created_at = 5; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

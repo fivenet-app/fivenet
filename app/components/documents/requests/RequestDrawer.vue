@@ -30,7 +30,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 type RequestType = { key: DocActivityType; attrKey: string };
 const requestTypes = [
-    { key: props.doc.closed ? DocActivityType.REQUESTED_OPENING : DocActivityType.REQUESTED_CLOSURE, attrKey: 'Closure' },
+    { key: props.doc.meta?.closed ? DocActivityType.REQUESTED_OPENING : DocActivityType.REQUESTED_CLOSURE, attrKey: 'Closure' },
     { key: DocActivityType.REQUESTED_UPDATE, attrKey: 'Update' },
     { key: DocActivityType.REQUESTED_OWNER_CHANGE, attrKey: 'OwnerChange' },
     { key: DocActivityType.REQUESTED_DELETION, attrKey: 'Deletion' },

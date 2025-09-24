@@ -22,7 +22,7 @@ export const tileLayers = [
             maxZoom: 7,
         },
     },
-] as const;
+];
 
 export type Postal = {
     x: number;

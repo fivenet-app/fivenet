@@ -102,7 +102,7 @@ const columns = computed(
             {
                 accessorKey: 'closed',
                 header: t('common.close', 2),
-                cell: ({ row }) => h(OpenClosedBadge, { closed: row.original.document?.closed, variant: 'subtle' }),
+                cell: ({ row }) => h(OpenClosedBadge, { closed: row.original.document?.meta?.closed, variant: 'subtle' }),
             },
             {
                 accessorKey: 'relation',

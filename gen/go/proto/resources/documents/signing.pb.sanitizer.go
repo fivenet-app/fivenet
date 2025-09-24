@@ -23,6 +23,14 @@ func (m *Signature) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
 	// Field: PayloadJson
 	m.PayloadJson = htmlsanitizer.Sanitize(m.PayloadJson)
 
@@ -38,11 +46,23 @@ func (m *Signature) Sanitize() error {
 		}
 	}
 
-	// Field: SnapshotHash
-	m.SnapshotHash = htmlsanitizer.Sanitize(m.SnapshotHash)
+	// Field: SnapshotDate
+	if m.SnapshotDate != nil {
+		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
-	// Field: VersionSignedOn
-	m.VersionSignedOn = htmlsanitizer.Sanitize(m.VersionSignedOn)
+	// Field: User
+	if m.User != nil {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
@@ -91,6 +111,15 @@ func (m *Stamp) Sanitize() error {
 		return nil
 	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -108,14 +137,62 @@ func (m *Stamp) Sanitize() error {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
 	}
 
-	// Field: PolicyJson
-	m.PolicyJson = htmlsanitizer.Sanitize(m.PolicyJson)
-
 	// Field: SvgTemplate
 	m.SvgTemplate = htmlsanitizer.Sanitize(m.SvgTemplate)
 
-	// Field: VariantsJson
-	m.VariantsJson = htmlsanitizer.Sanitize(m.VariantsJson)
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *StampAccess) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *StampJobAccess) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
+	// Field: JobLabel
+	if m.JobLabel != nil {
+		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
 
 	return nil
 }

@@ -72,12 +72,12 @@ function setFromProps(): void {
     if (!document.value?.document) return;
 
     state.title = document.value.document.title;
-    state.state = document.value.document.state;
+    state.state = document.value.document.meta?.state ?? '';
+    state.closed = document.value.document.meta?.closed ?? false;
+    state.draft = document.value.document.meta?.draft ?? false;
+    state.public = document.value.document.meta?.public ?? false;
     state.content = document.value.document.content?.rawContent ?? '';
     state.category = document.value.document.category ?? emptyCategory;
-    state.closed = document.value.document.closed;
-    state.draft = document.value.document.draft;
-    state.public = document.value.document.public;
     if (document.value.access) {
         state.access.jobs = document.value.access.jobs;
         state.access.users = document.value.access.users;
@@ -120,11 +120,13 @@ const emptyCategory: Category = {
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
-    state: z.union([z.coerce.string().length(0), z.coerce.string().min(3).max(32)]),
     content: z.coerce.string().min(3).max(1750000),
-    closed: z.coerce.boolean(),
-    draft: z.coerce.boolean(),
-    public: z.coerce.boolean(),
+    // Meta
+    closed: z.coerce.boolean().default(false),
+    draft: z.coerce.boolean().default(true),
+    public: z.coerce.boolean().default(false),
+    state: z.union([z.coerce.string().length(0), z.coerce.string().min(3).max(32)]).default(''),
+
     category: z.custom<Category>().default({ ...emptyCategory }),
     access: z
         .object({
@@ -141,11 +143,11 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     title: '',
-    state: '',
     content: '',
     closed: false,
-    draft: false,
+    draft: true,
     public: false,
+    state: '',
     category: emptyCategory,
     access: {
         jobs: [],
@@ -228,10 +230,15 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             rawContent: values.content,
         },
         contentType: ContentType.HTML,
-        state: values.state,
-        closed: values.closed,
-        draft: values.draft,
-        public: values.public,
+        meta: {
+            documentId: id,
+            closed: values.closed,
+            draft: values.draft,
+            public: values.public,
+            state: values.state,
+            approved: false,
+            signed: false,
+        },
         categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
         access: values.access,
         files: values.files,
@@ -299,7 +306,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         });
 
         if (response.document) {
-            state.draft = response.document.draft;
+            state.draft = response.document.meta?.draft ?? false;
         }
 
         clipboardStore.clear();
@@ -387,11 +394,13 @@ sendClientView(props.documentId);
 
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
-const detailsYdoc = ydoc.getMap('details');
-useYBoolean(detailsYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
-useYBoolean(detailsYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
-useYBoolean(detailsYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
-useYBoolean(detailsYdoc, 'public', toRef(state, 'public'), { provider: provider });
+ydoc.getText('state').observe((event) => {
+    console.log('Yjs state changed:', event);
+});
+const metaYdoc = ydoc.getMap('meta');
+useYBoolean(metaYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
+useYBoolean(metaYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
+useYBoolean(metaYdoc, 'public', toRef(state, 'public'), { provider: provider });
 const categoryYdoc = ydoc.getMap<Primitive>('category');
 useYObject<Category>(
     categoryYdoc,

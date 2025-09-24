@@ -15,17 +15,6 @@ import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
-enum DocumentStatus {
-  DOCUMENT_STATUS_UNSPECIFIED = 0;
-  DOCUMENT_STATUS_DRAFT = 1;
-  DOCUMENT_STATUS_REVIEWING = 2;
-  DOCUMENT_STATUS_APPROVED = 3;
-  DOCUMENT_STATUS_SIGNING = 4;
-  DOCUMENT_STATUS_SIGNED = 5;
-  DOCUMENT_STATUS_AMENDED = 6;
-  DOCUMENT_STATUS_ARCHIVED = 7;
-}
-
 message Document {
   int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
@@ -51,19 +40,12 @@ message Document {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
-  DocumentStatus status = 24 [(buf.validate.field).enum.defined_only = true];
-  string state = 15 [
-    (buf.validate.field).string.max_len = 32,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-  bool closed = 16;
-  bool draft = 17;
-  bool public = 18;
-  optional int64 template_id = 19;
-  optional DocumentPin pin = 20 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 21;
-  optional WorkflowUserState workflow_user = 22;
-  repeated resources.file.File files = 23 [(tagger.tags) = "alias:\"files\""];
+  DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
+  optional int64 template_id = 16;
+  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional WorkflowState workflow_state = 18;
+  optional WorkflowUserState workflow_user = 19;
+  repeated resources.file.File files = 20 [(tagger.tags) = "alias:\"files\""];
 }
 
 message DocumentShort {
@@ -86,17 +68,23 @@ message DocumentShort {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
-  DocumentStatus status = 24 [(buf.validate.field).enum.defined_only = true];
-  string state = 15 [
+  DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
+  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional WorkflowState workflow_state = 18;
+  optional WorkflowUserState workflow_user = 19;
+}
+
+message DocumentMeta {
+  int64 document_id = 1;
+  bool closed = 2;
+  bool draft = 3;
+  bool public = 4;
+  string state = 5 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
-  bool closed = 16;
-  bool draft = 17;
-  bool public = 18;
-  optional DocumentPin pin = 20 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 21;
-  optional WorkflowUserState workflow_user = 22;
+  bool signed = 6;
+  bool approved = 7;
 }
 
 enum DocReference {

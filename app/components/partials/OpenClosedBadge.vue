@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-defineProps<{
+import type { BadgeProps } from '@nuxt/ui';
+
+interface Props extends /* @vue-ignore */ BadgeProps {
     closed: boolean | undefined;
-}>();
+}
+
+defineProps<Props>();
 </script>
 
 <template>

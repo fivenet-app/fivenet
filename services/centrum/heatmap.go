@@ -81,7 +81,7 @@ WITH exploded AS (
     JOIN JSON_TABLE(
         f.jobs, '$[*]'
         COLUMNS (
-            job VARCHAR(50) PATH '$'
+            job varchar(50) PATH '$'
         )
     ) AS jt
 ),

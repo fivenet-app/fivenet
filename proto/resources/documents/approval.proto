@@ -62,23 +62,24 @@ enum OnEditBehavior {
 }
 
 message ApprovalPolicyApplied {
-  int64 id = 1;
-  int64 document_id = 2;
-  OnEditBehavior on_edit_behavior = 3 [(buf.validate.field).enum.defined_only = true];
+  int64 document_id = 1;
+  OnEditBehavior on_edit_behavior = 2 [(buf.validate.field).enum.defined_only = true];
+  resources.timestamp.Timestamp created_at = 3;
 
   // Materialized stages
   repeated ApprovalStage stages = 4;
-  resources.timestamp.Timestamp created_at = 5;
 }
 
 // Stages & tasks
 message RequireAll {
+  // value=true
   bool value = 1;
-} // value=true
+}
 
 message QuorumAny {
+  // e.g., any 2
   int32 count = 1;
-} // e.g., any 2
+}
 
 message ApprovalStage {
   int64 id = 1;

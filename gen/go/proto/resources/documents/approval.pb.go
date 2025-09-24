@@ -532,12 +532,11 @@ func (*Selector_JobGrade) isSelector_Target() {}
 
 type ApprovalPolicyApplied struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId     int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	OnEditBehavior OnEditBehavior         `protobuf:"varint,3,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	DocumentId     int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	OnEditBehavior OnEditBehavior         `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Materialized stages
-	Stages        []*ApprovalStage     `protobuf:"bytes,4,rep,name=stages,proto3" json:"stages,omitempty"`
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Stages        []*ApprovalStage `protobuf:"bytes,4,rep,name=stages,proto3" json:"stages,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -572,13 +571,6 @@ func (*ApprovalPolicyApplied) Descriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ApprovalPolicyApplied) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
 func (x *ApprovalPolicyApplied) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -593,13 +585,6 @@ func (x *ApprovalPolicyApplied) GetOnEditBehavior() OnEditBehavior {
 	return OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED
 }
 
-func (x *ApprovalPolicyApplied) GetStages() []*ApprovalStage {
-	if x != nil {
-		return x.Stages
-	}
-	return nil
-}
-
 func (x *ApprovalPolicyApplied) GetCreatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -607,10 +592,18 @@ func (x *ApprovalPolicyApplied) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *ApprovalPolicyApplied) GetStages() []*ApprovalStage {
+	if x != nil {
+		return x.Stages
+	}
+	return nil
+}
+
 // Stages & tasks
 type RequireAll struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         bool                   `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// value=true
+	Value         bool `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -653,8 +646,9 @@ func (x *RequireAll) GetValue() bool {
 }
 
 type QuorumAny struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         int32                  `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// e.g., any 2
+	Count         int32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1050,15 +1044,14 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x04user\x18\x01 \x01(\v2!.resources.documents.UserSelectorH\x00R\x04user\x129\n" +
 	"\x03job\x18\x02 \x01(\v2%.resources.documents.JobGradeSelectorH\x00R\x03job\x12D\n" +
 	"\tjob_grade\x18\x03 \x01(\v2%.resources.documents.JobGradeSelectorH\x00R\bjobGradeB\b\n" +
-	"\x06target\"\x92\x02\n" +
-	"\x15ApprovalPolicyApplied\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"\x06target\"\x82\x02\n" +
+	"\x15ApprovalPolicyApplied\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12M\n" +
-	"\x10on_edit_behavior\x18\x03 \x01(\x0e2#.resources.documents.OnEditBehaviorR\x0eonEditBehavior\x12:\n" +
-	"\x06stages\x18\x04 \x03(\v2\".resources.documents.ApprovalStageR\x06stages\x12=\n" +
+	"\x10on_edit_behavior\x18\x02 \x01(\x0e2#.resources.documents.OnEditBehaviorR\x0eonEditBehavior\x12=\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\"\"\n" +
+	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12:\n" +
+	"\x06stages\x18\x04 \x03(\v2\".resources.documents.ApprovalStageR\x06stages\"\"\n" +
 	"\n" +
 	"RequireAll\x12\x14\n" +
 	"\x05value\x18\x01 \x01(\bR\x05value\"!\n" +
@@ -1171,8 +1164,8 @@ var file_resources_documents_approval_proto_depIdxs = []int32{
 	5,  // 9: resources.documents.Selector.job:type_name -> resources.documents.JobGradeSelector
 	5,  // 10: resources.documents.Selector.job_grade:type_name -> resources.documents.JobGradeSelector
 	1,  // 11: resources.documents.ApprovalPolicyApplied.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
-	10, // 12: resources.documents.ApprovalPolicyApplied.stages:type_name -> resources.documents.ApprovalStage
-	12, // 13: resources.documents.ApprovalPolicyApplied.created_at:type_name -> resources.timestamp.Timestamp
+	12, // 12: resources.documents.ApprovalPolicyApplied.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 13: resources.documents.ApprovalPolicyApplied.stages:type_name -> resources.documents.ApprovalStage
 	12, // 14: resources.documents.ApprovalStage.created_at:type_name -> resources.timestamp.Timestamp
 	3,  // 15: resources.documents.ApprovalStage.selector:type_name -> resources.documents.PartySelector
 	8,  // 16: resources.documents.ApprovalStage.require_all:type_name -> resources.documents.RequireAll

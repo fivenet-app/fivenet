@@ -3396,11 +3396,10 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
-| `stages` | [ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | Materialized stages |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `stages` | [ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | Materialized stages |
 
 
 
@@ -3488,7 +3487,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `count` | [int32](#int32) |  |  |
+| `count` | [int32](#int32) |  | e.g., any 2 |
 
 
 
@@ -3501,7 +3500,7 @@ Stages & tasks
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `value` | [bool](#bool) |  |  |
+| `value` | [bool](#bool) |  | value=true |
 
 
 
@@ -3765,16 +3764,29 @@ Policy snapshot applied to a specific version
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `status` | [DocumentStatus](#resourcesdocumentsDocumentStatus) |  |  |
-| `state` | [string](#string) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
+| `meta` | [DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 | `template_id` | [int64](#int64) | optional |  |
 | `pin` | [DocumentPin](#resourcesdocumentsDocumentPin) | optional |  |
 | `workflow_state` | [WorkflowState](#resourcesdocumentsWorkflowState) | optional |  |
 | `workflow_user` | [WorkflowUserState](#resourcesdocumentsWorkflowUserState) | optional |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
+
+
+
+
+
+### resources.documents.DocumentMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `state` | [string](#string) |  |  |
+| `signed` | [bool](#bool) |  |  |
+| `approved` | [bool](#bool) |  |  |
 
 
 
@@ -3836,11 +3848,7 @@ Policy snapshot applied to a specific version
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `status` | [DocumentStatus](#resourcesdocumentsDocumentStatus) |  |  |
-| `state` | [string](#string) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
+| `meta` | [DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 | `pin` | [DocumentPin](#resourcesdocumentsDocumentPin) | optional |  |
 | `workflow_state` | [WorkflowState](#resourcesdocumentsWorkflowState) | optional |  |
 | `workflow_user` | [WorkflowUserState](#resourcesdocumentsWorkflowUserState) | optional |  |
@@ -3908,21 +3916,6 @@ Policy snapshot applied to a specific version
 | `DOC_RELATION_CAUSED` | 3 |  |
 
 
-
-### resources.documents.DocumentStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DOCUMENT_STATUS_UNSPECIFIED` | 0 |  |
-| `DOCUMENT_STATUS_DRAFT` | 1 |  |
-| `DOCUMENT_STATUS_REVIEWING` | 2 |  |
-| `DOCUMENT_STATUS_APPROVED` | 3 |  |
-| `DOCUMENT_STATUS_SIGNING` | 4 |  |
-| `DOCUMENT_STATUS_SIGNED` | 5 |  |
-| `DOCUMENT_STATUS_AMENDED` | 6 |  |
-| `DOCUMENT_STATUS_ARCHIVED` | 7 |  |
-
-
  <!-- end enums -->
 
  <!-- end HasExtensions -->
@@ -3975,13 +3968,15 @@ Policy snapshot applied to a specific version
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
-| `version_signed_on` | [string](#string) |  | version_id whose hash was shown |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | version_id whose hash was shown |
 | `requirement_id` | [int64](#int64) |  | Null/Empty for optional acknowledgements |
 | `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_json` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
 | `stamp_id` | [int64](#int64) |  | if type == STAMP |
-| `snapshot_hash` | [string](#string) |  | Hash at sign time |
 | `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
 | `reason` | [string](#string) |  | Revoke/Invalid reason |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -4011,8 +4006,6 @@ Policy snapshot applied to a specific version
 
 
 ### resources.documents.Stamp
-Stamps
-
 
 
 | Field | Type | Label | Description |
@@ -4021,10 +4014,38 @@ Stamps
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `owner_id` | [int32](#int32) |  |  |
-| `svg_template` | [string](#string) |  | Parameterized SVG with slots |
-| `variants_json` | [string](#string) |  | Sizes/styles |
-| `policy_json` | [string](#string) |  | Who may use |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `svg_template` | [string](#string) |  | Parameterized SVG with slots |
+| `access` | [StampAccess](#resourcesdocumentsStampAccess) |  |  |
+
+
+
+
+
+### resources.documents.StampAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [StampJobAccess](#resourcesdocumentsStampJobAccess) | repeated |  |
+
+
+
+
+
+### resources.documents.StampJobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [StampAccessLevel](#resourcesdocumentsStampAccessLevel) |  |  |
 
 
 
@@ -4039,18 +4060,6 @@ Stamps
 | `BINDING_MODE_UNSPECIFIED` | 0 |  |
 | `BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
 | `BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
-
-
-
-### resources.documents.OwnerType
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `OWNER_TYPE_UNSPECIFIED` | 0 |  |
-| `OWNER_TYPE_USER` | 1 |  |
-| `OWNER_TYPE_ROLE` | 2 |  |
-| `OWNER_TYPE_FACTION` | 3 |  |
-| `OWNER_TYPE_ORG` | 4 |  |
 
 
 
@@ -4073,6 +4082,18 @@ Stamps
 | `SIGNATURE_TYPE_FREEHAND` | 1 |  |
 | `SIGNATURE_TYPE_TYPED` | 2 |  |
 | `SIGNATURE_TYPE_STAMP` | 3 |  |
+
+
+
+### resources.documents.StampAccessLevel
+Stamps
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STAMP_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `STAMP_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `STAMP_ACCESS_LEVEL_USE` | 2 |  |
 
 
  <!-- end enums -->
@@ -9335,10 +9356,7 @@ Leader UX: add or cancel reviewer tasks on the fly
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `data` | [string](#string) | optional |  |
-| `state` | [string](#string) |  |  |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
+| `meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 | `access` | [resources.documents.DocumentAccess](#resourcesdocumentsDocumentAccess) | optional |  |
 | `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 

@@ -286,6 +286,11 @@ func (s *Server) getDocument(
 	if doc.GetCreator() != nil {
 		s.enricher.EnrichJobInfo(doc.GetCreator())
 	}
+	if doc.Meta == nil {
+		doc.Meta = &documents.DocumentMeta{
+			DocumentId: doc.GetId(),
+		}
+	}
 
 	return &doc, nil
 }
@@ -541,15 +546,15 @@ func (s *Server) UpdateDocument(
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
-	if oldDoc.GetClosed() && req.GetClosed() && !userInfo.GetSuperuser() {
+	if oldDoc.GetMeta().GetClosed() && req.GetMeta().GetClosed() && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrClosedDoc
 	}
 
 	// A document can only be switched to published once
-	if !oldDoc.GetDraft() && oldDoc.GetDraft() != req.GetDraft() {
+	if !oldDoc.GetMeta().GetDraft() && oldDoc.GetMeta().GetDraft() != req.GetMeta().GetDraft() {
 		// Allow a super user to change the draft state
 		if !userInfo.GetSuperuser() {
-			req.Draft = oldDoc.GetDraft()
+			req.GetMeta().Draft = oldDoc.GetMeta().GetDraft()
 		}
 	}
 
@@ -611,10 +616,10 @@ func (s *Server) UpdateDocument(
 				req.GetContent().GetSummary(DocSummaryLength),
 				req.GetContent(),
 				mysql.NULL,
-				req.GetState(),
-				req.GetClosed(),
-				req.GetDraft(),
-				req.GetPublic(),
+				req.GetMeta().GetState(),
+				req.GetMeta().GetClosed(),
+				req.GetMeta().GetDraft(),
+				req.GetMeta().GetPublic(),
 			).
 			WHERE(
 				tDocument.ID.EQ(mysql.Int64(oldDoc.GetId())),
@@ -627,7 +632,9 @@ func (s *Server) UpdateDocument(
 		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
 			Title:   req.GetTitle(),
 			Content: req.GetContent(),
-			State:   req.GetState(),
+			Meta: &documents.DocumentMeta{
+				State: req.GetMeta().GetState(),
+			},
 		})
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -675,7 +682,7 @@ func (s *Server) UpdateDocument(
 	}
 
 	if !onlyUpdateAccess {
-		if oldDoc.GetDraft() != req.GetDraft() {
+		if oldDoc.GetMeta().GetDraft() != req.GetMeta().GetDraft() {
 			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 				DocumentId:   oldDoc.GetId(),
 				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED,
