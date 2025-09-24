@@ -3982,7 +3982,7 @@ Policy snapshot applied to a specific version
 | `job_label` | [string](#string) | optional |  |
 | `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_json` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
-| `stamp_id` | [int64](#int64) |  | if type == STAMP |
+| `stamp_id` | [int64](#int64) | optional | if type == STAMP |
 | `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
 | `reason` | [string](#string) |  | Revoke/Invalid reason |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -9467,8 +9467,7 @@ Leader UX: add or cancel reviewer tasks on the fly
 | `requirement_id` | [int64](#int64) |  | empty => optional/ack |
 | `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_json` | [string](#string) |  |  |
-| `stamp_id` | [int64](#int64) |  | If STAMP |
-| `snapshot_hash` | [string](#string) |  | Client-computed from snapshot_json |
+| `stamp_id` | [int64](#int64) | optional | If STAMP |
 
 
 

@@ -276,9 +276,7 @@ type ApplySignatureRequest struct {
 	Type          documents.SignatureType `protobuf:"varint,3,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
 	PayloadJson   string                  `protobuf:"bytes,4,opt,name=payload_json,json=payloadJson,proto3" json:"payload_json,omitempty"`
 	// If STAMP
-	StampId int64 `protobuf:"varint,5,opt,name=stamp_id,json=stampId,proto3" json:"stamp_id,omitempty"`
-	// Client-computed from snapshot_json
-	SnapshotHash  string `protobuf:"bytes,6,opt,name=snapshot_hash,json=snapshotHash,proto3" json:"snapshot_hash,omitempty"`
+	StampId       *int64 `protobuf:"varint,5,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -342,17 +340,10 @@ func (x *ApplySignatureRequest) GetPayloadJson() string {
 }
 
 func (x *ApplySignatureRequest) GetStampId() int64 {
-	if x != nil {
-		return x.StampId
+	if x != nil && x.StampId != nil {
+		return *x.StampId
 	}
 	return 0
-}
-
-func (x *ApplySignatureRequest) GetSnapshotHash() string {
-	if x != nil {
-		return x.SnapshotHash
-	}
-	return ""
 }
 
 type ApplySignatureResponse struct {
@@ -775,15 +766,15 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"]\n" +
 	"\x19GetSignaturePanelResponse\x12@\n" +
-	"\x05panel\x18\x01 \x01(\v2*.services.documents.SignaturePanelSnapshotR\x05panel\"\xfa\x01\n" +
+	"\x05panel\x18\x01 \x01(\v2*.services.documents.SignaturePanelSnapshotR\x05panel\"\xe7\x01\n" +
 	"\x15ApplySignatureRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12%\n" +
 	"\x0erequirement_id\x18\x02 \x01(\x03R\rrequirementId\x126\n" +
 	"\x04type\x18\x03 \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12!\n" +
-	"\fpayload_json\x18\x04 \x01(\tR\vpayloadJson\x12\x19\n" +
-	"\bstamp_id\x18\x05 \x01(\x03R\astampId\x12#\n" +
-	"\rsnapshot_hash\x18\x06 \x01(\tR\fsnapshotHash\"\x98\x01\n" +
+	"\fpayload_json\x18\x04 \x01(\tR\vpayloadJson\x12\x1e\n" +
+	"\bstamp_id\x18\x05 \x01(\x03H\x00R\astampId\x88\x01\x01B\v\n" +
+	"\t_stamp_id\"\x98\x01\n" +
 	"\x16ApplySignatureResponse\x12<\n" +
 	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\x12@\n" +
 	"\x05panel\x18\x02 \x01(\v2*.services.documents.SignaturePanelSnapshotR\x05panel\"S\n" +
@@ -901,6 +892,7 @@ func file_services_documents_signing_proto_init() {
 	if File_services_documents_signing_proto != nil {
 		return
 	}
+	file_services_documents_signing_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

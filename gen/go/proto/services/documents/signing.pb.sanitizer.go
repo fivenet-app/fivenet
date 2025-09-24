@@ -17,9 +17,6 @@ func (m *ApplySignatureRequest) Sanitize() error {
 	// Field: PayloadJson
 	m.PayloadJson = htmlsanitizer.Sanitize(m.PayloadJson)
 
-	// Field: SnapshotHash
-	m.SnapshotHash = htmlsanitizer.Sanitize(m.SnapshotHash)
-
 	return nil
 }
 

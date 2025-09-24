@@ -42,9 +42,7 @@ message ApplySignatureRequest {
   resources.documents.SignatureType type = 3;
   string payload_json = 4;
   // If STAMP
-  int64 stamp_id = 5;
-  // Client-computed from snapshot_json
-  string snapshot_hash = 6;
+  optional int64 stamp_id = 5;
 }
 
 message ApplySignatureResponse {

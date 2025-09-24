@@ -70,7 +70,7 @@ message Signature {
   // SVG path, typed preview, stamp fill, etc.
   string payload_json = 10;
   // if type == STAMP
-  int64 stamp_id = 11;
+  optional int64 stamp_id = 11;
 
   SignatureStatus status = 12 [(buf.validate.field).enum.defined_only = true];
   // Revoke/Invalid reason

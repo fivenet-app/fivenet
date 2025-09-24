@@ -355,7 +355,7 @@ type Signature struct {
 	// SVG path, typed preview, stamp fill, etc.
 	PayloadJson string `protobuf:"bytes,10,opt,name=payload_json,json=payloadJson,proto3" json:"payload_json,omitempty"`
 	// if type == STAMP
-	StampId int64           `protobuf:"varint,11,opt,name=stamp_id,json=stampId,proto3" json:"stamp_id,omitempty"`
+	StampId *int64          `protobuf:"varint,11,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	Status  SignatureStatus `protobuf:"varint,12,opt,name=status,proto3,enum=resources.documents.SignatureStatus" json:"status,omitempty"`
 	// Revoke/Invalid reason
 	Reason        string               `protobuf:"bytes,13,opt,name=reason,proto3" json:"reason,omitempty"`
@@ -466,8 +466,8 @@ func (x *Signature) GetPayloadJson() string {
 }
 
 func (x *Signature) GetStampId() int64 {
-	if x != nil {
-		return x.StampId
+	if x != nil && x.StampId != nil {
+		return *x.StampId
 	}
 	return 0
 }
@@ -753,7 +753,7 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\x05label\x18\x06 \x01(\tR\x05label\x12>\n" +
 	"\bselector\x18\a \x01(\v2\".resources.documents.PartySelectorR\bselector\x12C\n" +
 	"\fbinding_mode\x18\b \x01(\x0e2 .resources.documents.BindingModeR\vbindingMode\x12G\n" +
-	"\rallowed_types\x18\t \x03(\x0e2\".resources.documents.SignatureTypeR\fallowedTypes\"\x9f\x05\n" +
+	"\rallowed_types\x18\t \x03(\x0e2\".resources.documents.SignatureTypeR\fallowedTypes\"\xb1\x05\n" +
 	"\tSignature\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -766,17 +766,18 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\tjob_label\x18\b \x01(\tH\x01R\bjobLabel\x88\x01\x01\x126\n" +
 	"\x04type\x18\t \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12!\n" +
 	"\fpayload_json\x18\n" +
-	" \x01(\tR\vpayloadJson\x12\x19\n" +
-	"\bstamp_id\x18\v \x01(\x03R\astampId\x12<\n" +
+	" \x01(\tR\vpayloadJson\x12\x1e\n" +
+	"\bstamp_id\x18\v \x01(\x03H\x02R\astampId\x88\x01\x01\x12<\n" +
 	"\x06status\x18\f \x01(\x0e2$.resources.documents.SignatureStatusR\x06status\x12\x16\n" +
 	"\x06reason\x18\r \x01(\tR\x06reason\x12=\n" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\trevokedAt\x88\x01\x01B\a\n" +
+	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\trevokedAt\x88\x01\x01B\a\n" +
 	"\x05_userB\f\n" +
 	"\n" +
-	"_job_labelB\r\n" +
+	"_job_labelB\v\n" +
+	"\t_stamp_idB\r\n" +
 	"\v_revoked_at\"\x90\x02\n" +
 	"\x05Stamp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +

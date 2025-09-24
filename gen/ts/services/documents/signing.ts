@@ -104,15 +104,9 @@ export interface ApplySignatureRequest {
     /**
      * If STAMP
      *
-     * @generated from protobuf field: int64 stamp_id = 5
+     * @generated from protobuf field: optional int64 stamp_id = 5
      */
-    stampId: number;
-    /**
-     * Client-computed from snapshot_json
-     *
-     * @generated from protobuf field: string snapshot_hash = 6
-     */
-    snapshotHash: string;
+    stampId?: number;
 }
 /**
  * @generated from protobuf message services.documents.ApplySignatureResponse
@@ -495,8 +489,7 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
             { no: 2, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"] },
             { no: 4, name: "payload_json", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "stamp_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 6, name: "snapshot_hash", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ApplySignatureRequest>): ApplySignatureRequest {
@@ -505,8 +498,6 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
         message.requirementId = 0;
         message.type = 0;
         message.payloadJson = "";
-        message.stampId = 0;
-        message.snapshotHash = "";
         if (value !== undefined)
             reflectionMergePartial<ApplySignatureRequest>(this, message, value);
         return message;
@@ -528,11 +519,8 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
                 case /* string payload_json */ 4:
                     message.payloadJson = reader.string();
                     break;
-                case /* int64 stamp_id */ 5:
+                case /* optional int64 stamp_id */ 5:
                     message.stampId = reader.int64().toNumber();
-                    break;
-                case /* string snapshot_hash */ 6:
-                    message.snapshotHash = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -558,12 +546,9 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
         /* string payload_json = 4; */
         if (message.payloadJson !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.payloadJson);
-        /* int64 stamp_id = 5; */
-        if (message.stampId !== 0)
+        /* optional int64 stamp_id = 5; */
+        if (message.stampId !== undefined)
             writer.tag(5, WireType.Varint).int64(message.stampId);
-        /* string snapshot_hash = 6; */
-        if (message.snapshotHash !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.snapshotHash);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

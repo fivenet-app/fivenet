@@ -38,7 +38,7 @@ CREATE TABLE `fivenet_documents_approval_stages` (
   PRIMARY KEY (`id`),
 
   KEY `idx_stage_doc_snapshot` (`document_id`, `snapshot_date`, `order`),
-  KEY `idx_stage_policy` (`policy_id`),
+  KEY `idx_stage_order` (`order`),
 
   CONSTRAINT `fk_stage_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_stage_policy_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents_approval_policies` (`document_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -78,8 +78,8 @@ CREATE TABLE `fivenet_documents_approval_tasks` (
   KEY `idx_task_doc_snapshot_status` (`document_id`, `snapshot_date`, `status`),
   KEY `idx_task_stage_status` (`stage_id`, `status`),
 
-  CONSTRAINT `fk_task_stage` FOREIGN KEY (`stage_id`) REFERENCES `fivenet_documents_approval_stages`(`id`),
-  CONSTRAINT `fk_task_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+  CONSTRAINT `fk_task_stage` FOREIGN KEY (`stage_id`) REFERENCES `fivenet_documents_approval_stages`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_task_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 -- Document Signing System
@@ -108,7 +108,7 @@ CREATE TABLE `fivenet_documents_signature_requirements` (
   KEY `idx_sigreq_doc_snapshot` (`document_id`, `snapshot_date`),
   KEY `idx_sigreq_doc_snap_required` (`document_id`, `snapshot_date`, `required`),
 
-  CONSTRAINT `fk_sigreq_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`)
+  CONSTRAINT `fk_sigreq_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `fivenet_documents_signatures` (

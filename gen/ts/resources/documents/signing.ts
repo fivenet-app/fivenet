@@ -112,9 +112,9 @@ export interface Signature {
     /**
      * if type == STAMP
      *
-     * @generated from protobuf field: int64 stamp_id = 11
+     * @generated from protobuf field: optional int64 stamp_id = 11
      */
-    stampId: number;
+    stampId?: number;
     /**
      * @generated from protobuf field: resources.documents.SignatureStatus status = 12
      */
@@ -428,7 +428,7 @@ class Signature$Type extends MessageType<Signature> {
             { no: 8, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 9, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 10, name: "payload_json", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "stamp_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 11, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 12, name: "status", kind: "enum", T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 13, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 14, name: "created_at", kind: "message", T: () => Timestamp },
@@ -444,7 +444,6 @@ class Signature$Type extends MessageType<Signature> {
         message.job = "";
         message.type = 0;
         message.payloadJson = "";
-        message.stampId = 0;
         message.status = 0;
         message.reason = "";
         if (value !== undefined)
@@ -486,7 +485,7 @@ class Signature$Type extends MessageType<Signature> {
                 case /* string payload_json */ 10:
                     message.payloadJson = reader.string();
                     break;
-                case /* int64 stamp_id */ 11:
+                case /* optional int64 stamp_id */ 11:
                     message.stampId = reader.int64().toNumber();
                     break;
                 case /* resources.documents.SignatureStatus status */ 12:
@@ -543,8 +542,8 @@ class Signature$Type extends MessageType<Signature> {
         /* string payload_json = 10; */
         if (message.payloadJson !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.payloadJson);
-        /* int64 stamp_id = 11; */
-        if (message.stampId !== 0)
+        /* optional int64 stamp_id = 11; */
+        if (message.stampId !== undefined)
             writer.tag(11, WireType.Varint).int64(message.stampId);
         /* resources.documents.SignatureStatus status = 12; */
         if (message.status !== 0)
