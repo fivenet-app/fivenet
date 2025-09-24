@@ -17,6 +17,7 @@ import (
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -72,11 +73,7 @@ func (s *Server) ListColleagues(
 	if len(userIds) > 0 && req.UserOnly != nil && req.GetUserOnly() {
 		condition = condition.AND(tColleague.ID.IN(userIds...))
 	} else {
-		search := strings.TrimSpace(req.GetSearch())
-		search = strings.ReplaceAll(search, "%", "")
-		search = strings.ReplaceAll(search, " ", "%")
-		if search != "" {
-			search = "%" + search + "%"
+		if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
 			condition = condition.AND(
 				mysql.CONCAT(tColleague.Firstname, mysql.String(" "), tColleague.Lastname).
 					LIKE(mysql.String(search)),
@@ -95,12 +92,8 @@ func (s *Server) ListColleagues(
 	}
 
 	if req.GetNamePrefix() != "" {
-		namePrefix := strings.TrimSpace(req.GetNamePrefix())
-		namePrefix = strings.ReplaceAll(namePrefix, "%", "")
-		namePrefix = strings.ReplaceAll(namePrefix, " ", "%")
+		namePrefix := dbutils.PrepareForLikeSearch(req.GetNamePrefix())
 		if namePrefix != "" {
-			namePrefix = "%" + namePrefix + "%"
-
 			condition = condition.AND(mysql.AND(
 				tColleagueProps.NamePrefix.IS_NOT_NULL(),
 				tColleagueProps.NamePrefix.LIKE(mysql.String(namePrefix)),
@@ -109,12 +102,8 @@ func (s *Server) ListColleagues(
 	}
 
 	if req.GetNameSuffix() != "" {
-		nameSuffix := strings.TrimSpace(req.GetNameSuffix())
-		nameSuffix = strings.ReplaceAll(nameSuffix, "%", "")
-		nameSuffix = strings.ReplaceAll(nameSuffix, " ", "%")
+		nameSuffix := dbutils.PrepareForLikeSearch(req.GetNameSuffix())
 		if nameSuffix != "" {
-			nameSuffix = "%" + nameSuffix + "%"
-
 			condition = condition.AND(mysql.AND(
 				tColleagueProps.NameSuffix.IS_NOT_NULL(),
 				tColleagueProps.NameSuffix.LIKE(mysql.String(nameSuffix)),

@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2025/services/auth"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -232,7 +233,7 @@ func (g *GroupSync) checkIfUserIsPartOfJob(
 		).
 		FROM(tUsers).
 		WHERE(mysql.AND(
-			tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), mysql.String(identifier))),
+			tUsers.Identifier.LIKE(mysql.String(auth.BuildCharSearchIdentifier(identifier))),
 			tUsers.Job.EQ(mysql.String(job)),
 		))
 

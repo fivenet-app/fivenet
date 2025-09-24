@@ -71,12 +71,8 @@ func (s *Server) ListCitizens(
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
 
-			if req.PhoneNumber != nil && req.GetPhoneNumber() != "" {
-				phoneNumber := strings.ReplaceAll(
-					strings.ReplaceAll(req.GetPhoneNumber(), "%", ""),
-					" ",
-					"",
-				) + "%"
+			if req.GetPhoneNumber() != "" {
+				phoneNumber := dbutils.PrepareForLikeSearch(req.GetPhoneNumber())
 				condition = condition.AND(tUser.PhoneNumber.LIKE(mysql.String(phoneNumber)))
 			}
 
@@ -127,22 +123,19 @@ func (s *Server) ListCitizens(
 		}
 	}
 
-	req.Search = strings.TrimSpace(req.GetSearch())
-	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-	req.Search = strings.ReplaceAll(req.GetSearch(), "\t", " ")
-	if req.GetSearch() != "" {
-		req.Search = "%" + req.GetSearch() + "%"
+	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
 		condition = condition.AND(
 			mysql.CONCAT(tUser.Firstname, mysql.String(" "), tUser.Lastname).
-				LIKE(mysql.String(req.GetSearch())),
+				LIKE(mysql.String(search)),
 		)
 	}
 
 	if req.Dateofbirth != nil && req.GetDateofbirth() != "" {
+		dateofbirth := dbutils.PrepareForLikeSearch(req.GetDateofbirth())
+
 		condition = condition.AND(
 			tUser.Dateofbirth.LIKE(
-				mysql.String(strings.ReplaceAll(req.GetDateofbirth(), "%", " ") + "%"),
+				mysql.String(dateofbirth),
 			),
 		)
 	}

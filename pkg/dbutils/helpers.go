@@ -1,58 +1,28 @@
 package dbutils
 
 import (
-	"github.com/go-jet/jet/v2/mysql"
+	"strings"
 )
 
-type Columns mysql.ProjectionList
+func PrepareForLikeSearch(input string) string {
+	// Step 1: Trim leading and trailing spaces
+	input = strings.TrimSpace(input)
 
-func (c Columns) Get() mysql.ProjectionList {
-	out := mysql.ProjectionList{}
+	// Step 2: Normalize multiple spaces to a single space
+	input = strings.Join(strings.Fields(input), " ")
 
-	for i := range c {
-		if c[i] != nil {
-			out = append(out, c[i])
-		}
+	// Step 3: Escape special characters
+	input = strings.ReplaceAll(input, "%", "\\%")
+	input = strings.ReplaceAll(input, "_", "\\_")
+	input = strings.ReplaceAll(input, "\t", " ")
+
+	// Step 4: Replace spaces with `%` for LIKE condition
+	input = strings.ReplaceAll(input, " ", "%")
+
+	// Step 5: Wrap with `%` if not empty
+	if input != "" {
+		input = "%" + input + "%"
 	}
 
-	return out
-}
-
-func YEAR(column mysql.Column) mysql.Expression {
-	return mysql.CustomExpression(
-		mysql.Token("YEAR("),
-		column,
-		mysql.Token(")"),
-	)
-}
-
-func WEEK(column mysql.Column) mysql.Expression {
-	return mysql.CustomExpression(
-		mysql.Token("WEEK("),
-		column,
-		mysql.Token(")"),
-	)
-}
-
-// JSON_CONTAINS is a helper function to create a JSON_CONTAINS expression in go-mysql.
-//
-//nolint:revive // Function name is all uppercase to be consistent with go-jet package.
-func JSON_CONTAINS(column mysql.Column, value mysql.Expression) mysql.Expression {
-	return mysql.CustomExpression(
-		mysql.Token("JSON_CONTAINS("),
-		column,
-		mysql.Token(", "),
-		value,
-		mysql.Token(")"),
-	)
-}
-
-func MATCH(column mysql.Column, search mysql.Expression) mysql.BoolExpression {
-	return mysql.BoolExp(mysql.CustomExpression(
-		mysql.Token("MATCH("),
-		column,
-		mysql.Token(") AGAINST ("),
-		search,
-		mysql.Token(" IN BOOLEAN MODE)"),
-	))
+	return input
 }

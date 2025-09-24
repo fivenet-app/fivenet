@@ -65,7 +65,13 @@ const { data: items } = await useAsyncData(
 
 <template>
     <ClientOnly>
-        <USelectMenu v-model:search-term="searchTerm" :loading="loading" :items="props.items ?? items" v-bind="$attrs">
+        <USelectMenu
+            v-model:search-term="searchTerm"
+            :loading="loading"
+            :items="props.items ?? items"
+            ignore-filter
+            v-bind="$attrs"
+        >
             <template v-for="(_, name) in $slots" #[name]="slotProps">
                 <!-- @vue-expect-error to type or not to type, the `name` attribute is correct but not correct -->
                 <slot :name="name" v-bind="name === 'default' ? { ...slotProps, items } : slotProps" />

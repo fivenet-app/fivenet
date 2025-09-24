@@ -4,11 +4,11 @@ import (
 	context "context"
 	"errors"
 	"slices"
-	"strings"
 
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor"
 	permscompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -43,14 +43,10 @@ func (s *Server) CompleteCitizens(
 			)
 		}
 
-		req.Search = strings.TrimSpace(req.GetSearch())
-		req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-		req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-
-		if req.GetSearch() != "" {
-			req.Search = "%" + req.GetSearch() + "%"
+		search := dbutils.PrepareForLikeSearch(req.GetSearch())
+		if search != "" {
 			condition = mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
-				LIKE(mysql.String(req.GetSearch()))
+				LIKE(mysql.String(search))
 		}
 	} else {
 		userIds := []mysql.Expression{}
@@ -164,20 +160,16 @@ func (s *Server) CompleteDocumentCategories(
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	req.Search = strings.TrimSpace(req.GetSearch())
-	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-
 	jobsExp := make([]mysql.Expression, jobs.Len())
 	for i := range jobs.GetStrings() {
 		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
 	}
 
 	condition := tDCategory.Job.IN(jobsExp...)
-	if req.GetSearch() != "" {
-		req.Search = "%" + req.GetSearch() + "%"
+
+	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
 		condition = condition.AND(
-			tDCategory.Name.LIKE(mysql.String(req.GetSearch())),
+			tDCategory.Name.LIKE(mysql.String(search)),
 		)
 	}
 
@@ -235,10 +227,6 @@ func (s *Server) CompleteCitizenLabels(
 		jobs.Strings = append(jobs.Strings, userInfo.GetJob())
 	}
 
-	req.Search = strings.TrimSpace(req.GetSearch())
-	req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-	req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-
 	jobsExp := make([]mysql.Expression, jobs.Len())
 	for i := range jobs.GetStrings() {
 		jobsExp[i] = mysql.String(jobs.GetStrings()[i])
@@ -246,9 +234,8 @@ func (s *Server) CompleteCitizenLabels(
 
 	condition := tCitizensLabelsJob.Job.IN(jobsExp...)
 
-	if req.GetSearch() != "" {
-		req.Search = "%" + req.GetSearch() + "%"
-		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(req.GetSearch())))
+	if search := dbutils.PrepareForLikeSearch(req.GetSearch()); search != "" {
+		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(mysql.String(search)))
 	}
 
 	stmt := tCitizensLabelsJob.

@@ -4,6 +4,20 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
+type Columns mysql.ProjectionList
+
+func (c Columns) Get() mysql.ProjectionList {
+	out := mysql.ProjectionList{}
+
+	for i := range c {
+		if c[i] != nil {
+			out = append(out, c[i])
+		}
+	}
+
+	return out
+}
+
 const DisableColumnName = "-"
 
 type CustomColumns struct {

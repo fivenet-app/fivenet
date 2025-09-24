@@ -460,7 +460,7 @@ func (s *Server) GetCharacters(
 			),
 		).
 		WHERE(
-			tUsers.Identifier.LIKE(mysql.String(buildCharSearchIdentifier(claims.Subject))),
+			tUsers.Identifier.LIKE(mysql.String(BuildCharSearchIdentifier(claims.Subject))),
 		).
 		ORDER_BY(tUsers.ID).
 		LIMIT(10)
@@ -511,7 +511,7 @@ func (s *Server) GetCharacters(
 	return resp, nil
 }
 
-func buildCharSearchIdentifier(license string) string {
+func BuildCharSearchIdentifier(license string) string {
 	return "%" + license
 }
 
@@ -772,7 +772,10 @@ func (s *Server) SetSuperuserMode(
 	// Reset override job when switching off superuser mode using centralized helper
 	if !req.GetSuperuser() {
 		// Fetch the account for the current user
-		account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(claims.Username)))
+		account, err := s.getAccountFromDB(
+			ctx,
+			tAccounts.Username.EQ(mysql.String(claims.Username)),
+		)
 		if err != nil {
 			return nil, errswrap.NewError(
 				fmt.Errorf("failed to get account from db. %w", err),

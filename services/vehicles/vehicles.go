@@ -3,7 +3,6 @@ package vehicles
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
@@ -46,20 +45,22 @@ func (s *Server) ListVehicles(
 
 	condition := mysql.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
-	if req.LicensePlate != nil && req.GetLicensePlate() != "" {
+	if req.GetLicensePlate() != "" {
 		logRequest = true
-		condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(
-			strings.ReplaceAll(req.GetLicensePlate(), "%", "")+"%",
-		)))
+
+		if search := dbutils.PrepareForLikeSearch(req.GetLicensePlate()); search != "" {
+			condition = mysql.AND(condition, tVehicles.Plate.LIKE(mysql.String(search)))
+		}
 	}
 
 	// Make sure the model column is available
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
 	if modelColumn != nil && req.Model != nil && req.GetModel() != "" {
 		logRequest = true
-		condition = mysql.AND(condition, tVehicles.Model.LIKE(mysql.String(
-			strings.ReplaceAll(req.GetModel(), "%", "")+"%",
-		)))
+
+		if search := dbutils.PrepareForLikeSearch(req.GetModel()); search != "" {
+			condition = mysql.AND(condition, tVehicles.Model.LIKE(mysql.String(search)))
+		}
 	}
 
 	if len(req.GetUserIds()) > 0 {

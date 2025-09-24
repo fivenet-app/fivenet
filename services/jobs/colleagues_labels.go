@@ -3,7 +3,6 @@ package jobs
 import (
 	context "context"
 	"errors"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
@@ -11,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -61,14 +61,13 @@ func (s *Server) GetColleagueLabels(
 	condition := tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())).
 		AND(tJobLabels.DeletedAt.IS_NULL())
 
-	if req.Search != nil && req.GetSearch() != "" {
-		*req.Search = strings.TrimSpace(req.GetSearch())
-		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-		*req.Search = "%" + req.GetSearch() + "%"
-		condition = condition.AND(mysql.OR(
-			tJobLabels.Name.LIKE(mysql.String(req.GetSearch())),
-		))
+	if req.GetSearch() != "" {
+		search := dbutils.PrepareForLikeSearch(req.GetSearch())
+		if search != "" {
+			condition = condition.AND(mysql.OR(
+				tJobLabels.Name.LIKE(mysql.String(search)),
+			))
+		}
 	}
 
 	stmt := tJobLabels.

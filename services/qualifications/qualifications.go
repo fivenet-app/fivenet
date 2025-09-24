@@ -14,6 +14,7 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -38,14 +39,11 @@ func (s *Server) ListQualifications(
 
 	condition := mysql.Bool(true)
 
-	if req.Search != nil && req.GetSearch() != "" {
-		*req.Search = strings.TrimSpace(req.GetSearch())
-		*req.Search = strings.ReplaceAll(req.GetSearch(), "%", "")
-		*req.Search = strings.ReplaceAll(req.GetSearch(), " ", "%")
-		*req.Search = "%" + req.GetSearch() + "%"
+	if req.GetSearch() != "" {
+		search := dbutils.PrepareForLikeSearch(req.GetSearch())
 		condition = condition.AND(mysql.OR(
-			tQuali.Abbreviation.LIKE(mysql.String(req.GetSearch())),
-			tQuali.Title.LIKE(mysql.String(req.GetSearch())),
+			tQuali.Abbreviation.LIKE(mysql.String(search)),
+			tQuali.Title.LIKE(mysql.String(search)),
 		))
 	}
 
