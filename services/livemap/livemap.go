@@ -132,12 +132,14 @@ func (s *Server) sendUserMarkers(
 	srv pblivemap.LivemapService_StreamServer,
 	usersJobs *permissions.JobGradeList,
 	userInfo *userinfo.UserInfo,
+	userOnDuty bool,
 ) error {
 	// Get user markers
 	markers := s.tracker.GetFilteredUserMarkers(usersJobs, userInfo)
 
 	// Send initial payload
 	if err := srv.Send(&pblivemap.StreamResponse{
+		UserOnDuty: &userOnDuty,
 		Data: &pblivemap.StreamResponse_Snapshot{
 			Snapshot: &pblivemap.Snapshot{
 				Markers: markers,
@@ -170,7 +172,7 @@ func (s *Server) Stream(
 	}
 
 	if userOnDuty {
-		if err := s.sendUserMarkers(srv, usersJobs, userInfo); err != nil {
+		if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
 			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 		}
 	} else {
@@ -300,8 +302,8 @@ func (s *Server) Stream(
 				}
 
 				if op == "DEL" || op == "PURGE" {
-					// Ignore delete and purge operations when not on duty
-					if !userOnDuty {
+					// Ignore delete and purge operations when not on duty (unless superuser)
+					if !userOnDuty && !userInfo.GetSuperuser() {
 						continue
 					}
 
@@ -375,11 +377,11 @@ func (s *Server) Stream(
 					if um.GetUserId() == userInfo.GetUserId() {
 						userOnDuty = true
 						// If the user is (back) on duty, we send the user markers snapshot
-						if err := s.sendUserMarkers(srv, usersJobs, userInfo); err != nil {
+						if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
 							return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 						}
-					} else {
-						// If the user is not on duty, we skip sending marker updates
+					} else if !userInfo.GetSuperuser() {
+						// If the user is not on duty and not superuser, we skip sending marker updates
 						continue
 					}
 				}
