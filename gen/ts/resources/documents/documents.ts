@@ -202,35 +202,23 @@ export interface DocumentMeta {
      */
     state: string;
     /**
-     * @generated from protobuf field: bool signed = 6
-     */
-    signed: boolean;
-    /**
-     * @generated from protobuf field: bool approved = 7
+     * @generated from protobuf field: bool approved = 6
      */
     approved: boolean;
     /**
-     * @generated from protobuf field: optional int32 approval_current_order = 8
+     * @generated from protobuf field: bool signed = 7
      */
-    approvalCurrentOrder?: number;
+    signed: boolean;
     /**
-     * @generated from protobuf field: optional int32 approval_pending_tasks = 9
-     */
-    approvalPendingTasks?: number;
-    /**
-     * @generated from protobuf field: optional bool approval_any_declined = 10
-     */
-    approvalAnyDeclined?: boolean;
-    /**
-     * @generated from protobuf field: optional int32 sig_required_remaining = 11
+     * @generated from protobuf field: optional int32 sig_required_remaining = 8
      */
     sigRequiredRemaining?: number;
     /**
-     * @generated from protobuf field: optional int32 sig_required_total = 12
+     * @generated from protobuf field: optional int32 sig_required_total = 9
      */
     sigRequiredTotal?: number;
     /**
-     * @generated from protobuf field: optional int32 sig_collected_valid = 13
+     * @generated from protobuf field: optional int32 sig_collected_valid = 10
      */
     sigCollectedValid?: number;
 }
@@ -787,14 +775,11 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
             { no: 3, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 6, name: "signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "approved", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "approval_current_order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 9, name: "approval_pending_tasks", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "approval_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 11, name: "sig_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 13, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "approved", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "sig_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 9, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
@@ -804,8 +789,8 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         message.draft = false;
         message.public = false;
         message.state = "";
-        message.signed = false;
         message.approved = false;
+        message.signed = false;
         if (value !== undefined)
             reflectionMergePartial<DocumentMeta>(this, message, value);
         return message;
@@ -830,28 +815,19 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
                 case /* string state */ 5:
                     message.state = reader.string();
                     break;
-                case /* bool signed */ 6:
-                    message.signed = reader.bool();
-                    break;
-                case /* bool approved */ 7:
+                case /* bool approved */ 6:
                     message.approved = reader.bool();
                     break;
-                case /* optional int32 approval_current_order */ 8:
-                    message.approvalCurrentOrder = reader.int32();
+                case /* bool signed */ 7:
+                    message.signed = reader.bool();
                     break;
-                case /* optional int32 approval_pending_tasks */ 9:
-                    message.approvalPendingTasks = reader.int32();
-                    break;
-                case /* optional bool approval_any_declined */ 10:
-                    message.approvalAnyDeclined = reader.bool();
-                    break;
-                case /* optional int32 sig_required_remaining */ 11:
+                case /* optional int32 sig_required_remaining */ 8:
                     message.sigRequiredRemaining = reader.int32();
                     break;
-                case /* optional int32 sig_required_total */ 12:
+                case /* optional int32 sig_required_total */ 9:
                     message.sigRequiredTotal = reader.int32();
                     break;
-                case /* optional int32 sig_collected_valid */ 13:
+                case /* optional int32 sig_collected_valid */ 10:
                     message.sigCollectedValid = reader.int32();
                     break;
                 default:
@@ -881,30 +857,21 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         /* string state = 5; */
         if (message.state !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.state);
-        /* bool signed = 6; */
-        if (message.signed !== false)
-            writer.tag(6, WireType.Varint).bool(message.signed);
-        /* bool approved = 7; */
+        /* bool approved = 6; */
         if (message.approved !== false)
-            writer.tag(7, WireType.Varint).bool(message.approved);
-        /* optional int32 approval_current_order = 8; */
-        if (message.approvalCurrentOrder !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.approvalCurrentOrder);
-        /* optional int32 approval_pending_tasks = 9; */
-        if (message.approvalPendingTasks !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.approvalPendingTasks);
-        /* optional bool approval_any_declined = 10; */
-        if (message.approvalAnyDeclined !== undefined)
-            writer.tag(10, WireType.Varint).bool(message.approvalAnyDeclined);
-        /* optional int32 sig_required_remaining = 11; */
+            writer.tag(6, WireType.Varint).bool(message.approved);
+        /* bool signed = 7; */
+        if (message.signed !== false)
+            writer.tag(7, WireType.Varint).bool(message.signed);
+        /* optional int32 sig_required_remaining = 8; */
         if (message.sigRequiredRemaining !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.sigRequiredRemaining);
-        /* optional int32 sig_required_total = 12; */
+            writer.tag(8, WireType.Varint).int32(message.sigRequiredRemaining);
+        /* optional int32 sig_required_total = 9; */
         if (message.sigRequiredTotal !== undefined)
-            writer.tag(12, WireType.Varint).int32(message.sigRequiredTotal);
-        /* optional int32 sig_collected_valid = 13; */
+            writer.tag(9, WireType.Varint).int32(message.sigRequiredTotal);
+        /* optional int32 sig_collected_valid = 10; */
         if (message.sigCollectedValid !== undefined)
-            writer.tag(13, WireType.Varint).int32(message.sigCollectedValid);
+            writer.tag(10, WireType.Varint).int32(message.sigCollectedValid);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

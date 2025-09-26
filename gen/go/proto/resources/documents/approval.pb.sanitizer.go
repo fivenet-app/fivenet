@@ -9,22 +9,13 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ApprovalPolicyApplied) Sanitize() error {
+func (m *ApprovalAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Stages
-	for idx, item := range m.Stages {
+	// Field: Jobs
+	for idx, item := range m.Jobs {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -40,9 +31,36 @@ func (m *ApprovalPolicyApplied) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ApprovalStage) Sanitize() error {
+func (m *ApprovalPolicy) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ActiveSnapshotDate
+	if m.ActiveSnapshotDate != nil {
+		if v, ok := any(m.GetActiveSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CompletedAt
+	if m.CompletedAt != nil {
+		if v, ok := any(m.GetCompletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: CreatedAt
@@ -63,32 +81,18 @@ func (m *ApprovalStage) Sanitize() error {
 		}
 	}
 
-	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
-
-	// Field: QuorumAny
-	switch v := m.Rule.(type) {
-
-	case *ApprovalStage_QuorumAny:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+	// Field: StartedAt
+	if m.StartedAt != nil {
+		if v, ok := any(m.GetStartedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
-		// Field: RequireAll
-	case *ApprovalStage_RequireAll:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
-	// Field: Selector
-	if m.Selector != nil {
-		if v, ok := any(m.GetSelector()).(interface{ Sanitize() error }); ok {
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -106,7 +110,9 @@ func (m *ApprovalTask) Sanitize() error {
 	}
 
 	// Field: Comment
-	m.Comment = htmlsanitizer.Sanitize(m.Comment)
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+	}
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -138,6 +144,11 @@ func (m *ApprovalTask) Sanitize() error {
 		}
 	}
 
+	// Field: DecidedByJob
+	if m.DecidedByJob != nil {
+		*m.DecidedByJob = htmlsanitizer.Sanitize(*m.DecidedByJob)
+	}
+
 	// Field: DueAt
 	if m.DueAt != nil {
 		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
@@ -147,9 +158,23 @@ func (m *ApprovalTask) Sanitize() error {
 		}
 	}
 
+	// Field: Job
+	if m.Job != nil {
+		*m.Job = htmlsanitizer.Sanitize(*m.Job)
+	}
+
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: SnapshotDate
+	if m.SnapshotDate != nil {
+		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -157,7 +182,7 @@ func (m *ApprovalTask) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *JobGradeSelector) Sanitize() error {
+func (m *ApprovalTaskJobAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -182,138 +207,6 @@ func (m *JobGradeSelector) Sanitize() error {
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *PartySelector) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Exclusions
-	for idx, item := range m.Exclusions {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Fallbacks
-	for idx, item := range m.Fallbacks {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Who
-	for idx, item := range m.Who {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *QuorumAny) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *RequireAll) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *Selector) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Job
-	switch v := m.Target.(type) {
-
-	case *Selector_Job:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobGrade
-	case *Selector_JobGrade:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: User
-	case *Selector_User:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UserSelector) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: User
-	if m.User != nil {
-		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

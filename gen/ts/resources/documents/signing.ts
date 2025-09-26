@@ -4,16 +4,98 @@
 // @ts-nocheck
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
-import { PartySelector } from "./approval";
 import { Timestamp } from "../timestamp/timestamp";
+/**
+ * @generated from protobuf message resources.documents.SignatureAccess
+ */
+export interface SignatureAccess {
+    /**
+     * @generated from protobuf field: repeated resources.documents.SignatureJobAccess jobs = 1
+     */
+    jobs: SignatureJobAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.documents.SignatureUserAccess users = 2
+     */
+    users: SignatureUserAccess[];
+}
+/**
+ * @generated from protobuf message resources.documents.SignatureJobAccess
+ */
+export interface SignatureJobAccess {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int64 target_id = 3
+     */
+    targetId: number;
+    /**
+     * @generated from protobuf field: string job = 4
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 5
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 6
+     */
+    minimumGrade: number;
+    /**
+     * @generated from protobuf field: optional string job_grade_label = 7
+     */
+    jobGradeLabel?: string;
+    /**
+     * @generated from protobuf field: resources.documents.SignatureAccessLevel access = 8
+     */
+    access: SignatureAccessLevel;
+}
+/**
+ * @generated from protobuf message resources.documents.SignatureUserAccess
+ */
+export interface SignatureUserAccess {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int64 target_id = 3
+     */
+    targetId: number;
+    /**
+     * @generated from protobuf field: int32 user_id = 4
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort user = 5
+     */
+    user?: UserShort;
+    /**
+     * @generated from protobuf field: resources.documents.SignatureAccessLevel access = 6
+     */
+    access: SignatureAccessLevel;
+    /**
+     * @generated from protobuf field: optional bool required = 7
+     */
+    required?: boolean;
+}
 /**
  * @generated from protobuf message resources.documents.SignatureRequirement
  */
@@ -27,37 +109,39 @@ export interface SignatureRequirement {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
      */
-    createdAt?: Timestamp;
+    snapshotDate?: Timestamp;
     /**
-     * NULL/0 => any-order
+     * "Leader", "Counterparty Rep"
      *
-     * @generated from protobuf field: int32 sequence_order = 4
+     * @generated from protobuf field: string label = 4
      */
-    sequenceOrder: number;
+    label: string;
     /**
      * @generated from protobuf field: bool required = 5
      */
     required: boolean;
     /**
-     * "Leader", "Counterparty Rep"
-     *
-     * @generated from protobuf field: string label = 6
+     * @generated from protobuf field: resources.documents.SignatureBindingMode binding_mode = 6
      */
-    label: string;
+    bindingMode: SignatureBindingMode;
     /**
-     * @generated from protobuf field: resources.documents.PartySelector selector = 7
-     */
-    selector?: PartySelector;
-    /**
-     * @generated from protobuf field: resources.documents.BindingMode binding_mode = 8
-     */
-    bindingMode: BindingMode;
-    /**
-     * @generated from protobuf field: repeated resources.documents.SignatureType allowed_types = 9
+     * @generated from protobuf field: repeated resources.documents.SignatureType allowed_types = 7
      */
     allowedTypes: SignatureType[];
+    /**
+     * @generated from protobuf field: resources.documents.SignatureAccess access = 8
+     */
+    access?: SignatureAccess;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 9
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 10
+     */
+    updatedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.documents.Signature
@@ -80,9 +164,9 @@ export interface Signature {
     /**
      * Null/Empty for optional acknowledgements
      *
-     * @generated from protobuf field: int64 requirement_id = 4
+     * @generated from protobuf field: optional int64 requirement_id = 4
      */
-    requirementId: number;
+    requirementId?: number;
     /**
      * @generated from protobuf field: int32 user_id = 5
      */
@@ -122,9 +206,9 @@ export interface Signature {
     /**
      * Revoke/Invalid reason
      *
-     * @generated from protobuf field: string reason = 13
+     * @generated from protobuf field: optional string reason = 13
      */
-    reason: string;
+    reason?: string;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 14
      */
@@ -216,23 +300,23 @@ export interface StampJobAccess {
     access: StampAccessLevel;
 }
 /**
- * @generated from protobuf enum resources.documents.BindingMode
+ * @generated from protobuf enum resources.documents.SignatureBindingMode
  */
-export enum BindingMode {
+export enum SignatureBindingMode {
     /**
-     * @generated from protobuf enum value: BINDING_MODE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
      * Invalidates on content edits
      *
-     * @generated from protobuf enum value: BINDING_MODE_BINDING = 1;
+     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_BINDING = 1;
      */
     BINDING = 1,
     /**
      * Stays but marked 'signed on vX'
      *
-     * @generated from protobuf enum value: BINDING_MODE_NONBINDING = 2;
+     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_NONBINDING = 2;
      */
     NONBINDING = 2
 }
@@ -258,6 +342,23 @@ export enum SignatureType {
     STAMP = 3
 }
 /**
+ * @generated from protobuf enum resources.documents.SignatureAccessLevel
+ */
+export enum SignatureAccessLevel {
+    /**
+     * @generated from protobuf enum value: SIGNATURE_ACCESS_LEVEL_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: SIGNATURE_ACCESS_LEVEL_BLOCKED = 1;
+     */
+    BLOCKED = 1,
+    /**
+     * @generated from protobuf enum value: SIGNATURE_ACCESS_LEVEL_SIGN = 2;
+     */
+    SIGN = 2
+}
+/**
  * @generated from protobuf enum resources.documents.SignatureStatus
  */
 export enum SignatureStatus {
@@ -274,9 +375,9 @@ export enum SignatureStatus {
      */
     REVOKED = 2,
     /**
-     * @generated from protobuf enum value: SIGNATURE_STATUS_INVALID_PRIOR_VERSION = 3;
+     * @generated from protobuf enum value: SIGNATURE_STATUS_INVALID = 3;
      */
-    INVALID_PRIOR_VERSION = 3
+    INVALID = 3
 }
 /**
  * Stamps
@@ -298,27 +399,274 @@ export enum StampAccessLevel {
     USE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class SignatureAccess$Type extends MessageType<SignatureAccess> {
+    constructor() {
+        super("resources.documents.SignatureAccess", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } },
+            { no: 2, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureUserAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"user_access\"" } }
+        ]);
+    }
+    create(value?: PartialMessage<SignatureAccess>): SignatureAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobs = [];
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<SignatureAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SignatureAccess): SignatureAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.SignatureJobAccess jobs */ 1:
+                    message.jobs.push(SignatureJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.documents.SignatureUserAccess users */ 2:
+                    message.users.push(SignatureUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SignatureAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.SignatureJobAccess jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            SignatureJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignatureUserAccess users = 2; */
+        for (let i = 0; i < message.users.length; i++)
+            SignatureUserAccess.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.SignatureAccess
+ */
+export const SignatureAccess = new SignatureAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SignatureJobAccess$Type extends MessageType<SignatureJobAccess> {
+    constructor() {
+        super("resources.documents.SignatureJobAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.SignatureAccessLevel", SignatureAccessLevel, "SIGNATURE_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SignatureJobAccess>): SignatureJobAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.targetId = 0;
+        message.job = "";
+        message.minimumGrade = 0;
+        message.access = 0;
+        if (value !== undefined)
+            reflectionMergePartial<SignatureJobAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SignatureJobAccess): SignatureJobAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* int64 target_id */ 3:
+                    message.targetId = reader.int64().toNumber();
+                    break;
+                case /* string job */ 4:
+                    message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 5:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* int32 minimum_grade */ 6:
+                    message.minimumGrade = reader.int32();
+                    break;
+                case /* optional string job_grade_label */ 7:
+                    message.jobGradeLabel = reader.string();
+                    break;
+                case /* resources.documents.SignatureAccessLevel access */ 8:
+                    message.access = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SignatureJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 target_id = 3; */
+        if (message.targetId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.targetId);
+        /* string job = 4; */
+        if (message.job !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 5; */
+        if (message.jobLabel !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 minimum_grade = 6; */
+        if (message.minimumGrade !== 0)
+            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
+        /* optional string job_grade_label = 7; */
+        if (message.jobGradeLabel !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
+        /* resources.documents.SignatureAccessLevel access = 8; */
+        if (message.access !== 0)
+            writer.tag(8, WireType.Varint).int32(message.access);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.SignatureJobAccess
+ */
+export const SignatureJobAccess = new SignatureJobAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SignatureUserAccess$Type extends MessageType<SignatureUserAccess> {
+    constructor() {
+        super("resources.documents.SignatureUserAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 5, name: "user", kind: "message", T: () => UserShort },
+            { no: 6, name: "access", kind: "enum", T: () => ["resources.documents.SignatureAccessLevel", SignatureAccessLevel, "SIGNATURE_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 7, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SignatureUserAccess>): SignatureUserAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.targetId = 0;
+        message.userId = 0;
+        message.access = 0;
+        if (value !== undefined)
+            reflectionMergePartial<SignatureUserAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SignatureUserAccess): SignatureUserAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* int64 target_id */ 3:
+                    message.targetId = reader.int64().toNumber();
+                    break;
+                case /* int32 user_id */ 4:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort user */ 5:
+                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                    break;
+                case /* resources.documents.SignatureAccessLevel access */ 6:
+                    message.access = reader.int32();
+                    break;
+                case /* optional bool required */ 7:
+                    message.required = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SignatureUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int64 target_id = 3; */
+        if (message.targetId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.targetId);
+        /* int32 user_id = 4; */
+        if (message.userId !== 0)
+            writer.tag(4, WireType.Varint).int32(message.userId);
+        /* optional resources.users.UserShort user = 5; */
+        if (message.user)
+            UserShort.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.SignatureAccessLevel access = 6; */
+        if (message.access !== 0)
+            writer.tag(6, WireType.Varint).int32(message.access);
+        /* optional bool required = 7; */
+        if (message.required !== undefined)
+            writer.tag(7, WireType.Varint).bool(message.required);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.SignatureUserAccess
+ */
+export const SignatureUserAccess = new SignatureUserAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
     constructor() {
         super("resources.documents.SignatureRequirement", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "sequence_order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 4, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "selector", kind: "message", T: () => PartySelector },
-            { no: 8, name: "binding_mode", kind: "enum", T: () => ["resources.documents.BindingMode", BindingMode, "BINDING_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 9, name: "allowed_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } }
+            { no: 6, name: "binding_mode", kind: "enum", T: () => ["resources.documents.SignatureBindingMode", SignatureBindingMode, "SIGNATURE_BINDING_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 7, name: "allowed_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } },
+            { no: 8, name: "access", kind: "message", T: () => SignatureAccess },
+            { no: 9, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 10, name: "updated_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<SignatureRequirement>): SignatureRequirement {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.documentId = 0;
-        message.sequenceOrder = 0;
-        message.required = false;
         message.label = "";
+        message.required = false;
         message.bindingMode = 0;
         message.allowedTypes = [];
         if (value !== undefined)
@@ -336,30 +684,33 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
                 case /* int64 document_id */ 2:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp created_at */ 3:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* int32 sequence_order */ 4:
-                    message.sequenceOrder = reader.int32();
+                case /* string label */ 4:
+                    message.label = reader.string();
                     break;
                 case /* bool required */ 5:
                     message.required = reader.bool();
                     break;
-                case /* string label */ 6:
-                    message.label = reader.string();
-                    break;
-                case /* resources.documents.PartySelector selector */ 7:
-                    message.selector = PartySelector.internalBinaryRead(reader, reader.uint32(), options, message.selector);
-                    break;
-                case /* resources.documents.BindingMode binding_mode */ 8:
+                case /* resources.documents.SignatureBindingMode binding_mode */ 6:
                     message.bindingMode = reader.int32();
                     break;
-                case /* repeated resources.documents.SignatureType allowed_types */ 9:
+                case /* repeated resources.documents.SignatureType allowed_types */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.allowedTypes.push(reader.int32());
                     else
                         message.allowedTypes.push(reader.int32());
+                    break;
+                case /* resources.documents.SignatureAccess access */ 8:
+                    message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 9:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* resources.timestamp.Timestamp updated_at */ 10:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -379,31 +730,34 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
         /* int64 document_id = 2; */
         if (message.documentId !== 0)
             writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp created_at = 3; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* int32 sequence_order = 4; */
-        if (message.sequenceOrder !== 0)
-            writer.tag(4, WireType.Varint).int32(message.sequenceOrder);
+        /* resources.timestamp.Timestamp snapshot_date = 3; */
+        if (message.snapshotDate)
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string label = 4; */
+        if (message.label !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.label);
         /* bool required = 5; */
         if (message.required !== false)
             writer.tag(5, WireType.Varint).bool(message.required);
-        /* string label = 6; */
-        if (message.label !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.label);
-        /* resources.documents.PartySelector selector = 7; */
-        if (message.selector)
-            PartySelector.internalBinaryWrite(message.selector, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.BindingMode binding_mode = 8; */
+        /* resources.documents.SignatureBindingMode binding_mode = 6; */
         if (message.bindingMode !== 0)
-            writer.tag(8, WireType.Varint).int32(message.bindingMode);
-        /* repeated resources.documents.SignatureType allowed_types = 9; */
+            writer.tag(6, WireType.Varint).int32(message.bindingMode);
+        /* repeated resources.documents.SignatureType allowed_types = 7; */
         if (message.allowedTypes.length) {
-            writer.tag(9, WireType.LengthDelimited).fork();
+            writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.allowedTypes.length; i++)
                 writer.int32(message.allowedTypes[i]);
             writer.join();
         }
+        /* resources.documents.SignatureAccess access = 8; */
+        if (message.access)
+            SignatureAccess.internalBinaryWrite(message.access, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp created_at = 9; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp updated_at = 10; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -421,7 +775,7 @@ class Signature$Type extends MessageType<Signature> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "requirement_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
             { no: 7, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -430,7 +784,7 @@ class Signature$Type extends MessageType<Signature> {
             { no: 10, name: "payload_json", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 12, name: "status", kind: "enum", T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 13, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 13, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 14, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 15, name: "revoked_at", kind: "message", T: () => Timestamp }
         ]);
@@ -439,13 +793,11 @@ class Signature$Type extends MessageType<Signature> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.documentId = 0;
-        message.requirementId = 0;
         message.userId = 0;
         message.job = "";
         message.type = 0;
         message.payloadJson = "";
         message.status = 0;
-        message.reason = "";
         if (value !== undefined)
             reflectionMergePartial<Signature>(this, message, value);
         return message;
@@ -464,7 +816,7 @@ class Signature$Type extends MessageType<Signature> {
                 case /* resources.timestamp.Timestamp snapshot_date */ 3:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* int64 requirement_id */ 4:
+                case /* optional int64 requirement_id */ 4:
                     message.requirementId = reader.int64().toNumber();
                     break;
                 case /* int32 user_id */ 5:
@@ -491,7 +843,7 @@ class Signature$Type extends MessageType<Signature> {
                 case /* resources.documents.SignatureStatus status */ 12:
                     message.status = reader.int32();
                     break;
-                case /* string reason */ 13:
+                case /* optional string reason */ 13:
                     message.reason = reader.string();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 14:
@@ -521,8 +873,8 @@ class Signature$Type extends MessageType<Signature> {
         /* resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* int64 requirement_id = 4; */
-        if (message.requirementId !== 0)
+        /* optional int64 requirement_id = 4; */
+        if (message.requirementId !== undefined)
             writer.tag(4, WireType.Varint).int64(message.requirementId);
         /* int32 user_id = 5; */
         if (message.userId !== 0)
@@ -548,8 +900,8 @@ class Signature$Type extends MessageType<Signature> {
         /* resources.documents.SignatureStatus status = 12; */
         if (message.status !== 0)
             writer.tag(12, WireType.Varint).int32(message.status);
-        /* string reason = 13; */
-        if (message.reason !== "")
+        /* optional string reason = 13; */
+        if (message.reason !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.reason);
         /* resources.timestamp.Timestamp created_at = 14; */
         if (message.createdAt)

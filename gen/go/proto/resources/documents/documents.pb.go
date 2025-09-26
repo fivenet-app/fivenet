@@ -509,14 +509,11 @@ type DocumentMeta struct {
 	Draft                bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
 	Public               bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
 	State                string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
-	Signed               bool                   `protobuf:"varint,6,opt,name=signed,proto3" json:"signed,omitempty"`
-	Approved             bool                   `protobuf:"varint,7,opt,name=approved,proto3" json:"approved,omitempty"`
-	ApprovalCurrentOrder *int32                 `protobuf:"varint,8,opt,name=approval_current_order,json=approvalCurrentOrder,proto3,oneof" json:"approval_current_order,omitempty"`
-	ApprovalPendingTasks *int32                 `protobuf:"varint,9,opt,name=approval_pending_tasks,json=approvalPendingTasks,proto3,oneof" json:"approval_pending_tasks,omitempty"`
-	ApprovalAnyDeclined  *bool                  `protobuf:"varint,10,opt,name=approval_any_declined,json=approvalAnyDeclined,proto3,oneof" json:"approval_any_declined,omitempty"`
-	SigRequiredRemaining *int32                 `protobuf:"varint,11,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
-	SigRequiredTotal     *int32                 `protobuf:"varint,12,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
-	SigCollectedValid    *int32                 `protobuf:"varint,13,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
+	Approved             bool                   `protobuf:"varint,6,opt,name=approved,proto3" json:"approved,omitempty"`
+	Signed               bool                   `protobuf:"varint,7,opt,name=signed,proto3" json:"signed,omitempty"`
+	SigRequiredRemaining *int32                 `protobuf:"varint,8,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
+	SigRequiredTotal     *int32                 `protobuf:"varint,9,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
+	SigCollectedValid    *int32                 `protobuf:"varint,10,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -586,13 +583,6 @@ func (x *DocumentMeta) GetState() string {
 	return ""
 }
 
-func (x *DocumentMeta) GetSigned() bool {
-	if x != nil {
-		return x.Signed
-	}
-	return false
-}
-
 func (x *DocumentMeta) GetApproved() bool {
 	if x != nil {
 		return x.Approved
@@ -600,23 +590,9 @@ func (x *DocumentMeta) GetApproved() bool {
 	return false
 }
 
-func (x *DocumentMeta) GetApprovalCurrentOrder() int32 {
-	if x != nil && x.ApprovalCurrentOrder != nil {
-		return *x.ApprovalCurrentOrder
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetApprovalPendingTasks() int32 {
-	if x != nil && x.ApprovalPendingTasks != nil {
-		return *x.ApprovalPendingTasks
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetApprovalAnyDeclined() bool {
-	if x != nil && x.ApprovalAnyDeclined != nil {
-		return *x.ApprovalAnyDeclined
+func (x *DocumentMeta) GetSigned() bool {
+	if x != nil {
+		return x.Signed
 	}
 	return false
 }
@@ -1133,26 +1109,20 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xb3\x05\n" +
+	"\x0e_workflow_user\"\xb4\x03\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x16\n" +
 	"\x06closed\x18\x02 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x03 \x01(\bR\x05draft\x12\x16\n" +
 	"\x06public\x18\x04 \x01(\bR\x06public\x12\x1c\n" +
-	"\x05state\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x16\n" +
-	"\x06signed\x18\x06 \x01(\bR\x06signed\x12\x1a\n" +
-	"\bapproved\x18\a \x01(\bR\bapproved\x129\n" +
-	"\x16approval_current_order\x18\b \x01(\x05H\x00R\x14approvalCurrentOrder\x88\x01\x01\x129\n" +
-	"\x16approval_pending_tasks\x18\t \x01(\x05H\x01R\x14approvalPendingTasks\x88\x01\x01\x127\n" +
-	"\x15approval_any_declined\x18\n" +
-	" \x01(\bH\x02R\x13approvalAnyDeclined\x88\x01\x01\x129\n" +
-	"\x16sig_required_remaining\x18\v \x01(\x05H\x03R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
-	"\x12sig_required_total\x18\f \x01(\x05H\x04R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
-	"\x13sig_collected_valid\x18\r \x01(\x05H\x05R\x11sigCollectedValid\x88\x01\x01B\x19\n" +
-	"\x17_approval_current_orderB\x19\n" +
-	"\x17_approval_pending_tasksB\x18\n" +
-	"\x16_approval_any_declinedB\x19\n" +
+	"\x05state\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x1a\n" +
+	"\bapproved\x18\x06 \x01(\bR\bapproved\x12\x16\n" +
+	"\x06signed\x18\a \x01(\bR\x06signed\x129\n" +
+	"\x16sig_required_remaining\x18\b \x01(\x05H\x00R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
+	"\x12sig_required_total\x18\t \x01(\x05H\x01R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
+	"\x13sig_collected_valid\x18\n" +
+	" \x01(\x05H\x02R\x11sigCollectedValid\x88\x01\x01B\x19\n" +
 	"\x17_sig_required_remainingB\x15\n" +
 	"\x13_sig_required_totalB\x16\n" +
 	"\x14_sig_collected_valid\"\x95\x06\n" +

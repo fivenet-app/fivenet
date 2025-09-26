@@ -9,6 +9,7 @@ package documents
 import (
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -22,58 +23,6 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
-
-type PartyAccessLevel int32
-
-const (
-	PartyAccessLevel_PARTY_ACCESS_LEVEL_UNSPECIFIED PartyAccessLevel = 0
-	PartyAccessLevel_PARTY_ACCESS_LEVEL_BLOCKED     PartyAccessLevel = 1
-	PartyAccessLevel_PARTY_ACCESS_LEVEL_VIEW        PartyAccessLevel = 2
-	PartyAccessLevel_PARTY_ACCESS_LEVEL_PERFORM     PartyAccessLevel = 3
-)
-
-// Enum value maps for PartyAccessLevel.
-var (
-	PartyAccessLevel_name = map[int32]string{
-		0: "PARTY_ACCESS_LEVEL_UNSPECIFIED",
-		1: "PARTY_ACCESS_LEVEL_BLOCKED",
-		2: "PARTY_ACCESS_LEVEL_VIEW",
-		3: "PARTY_ACCESS_LEVEL_PERFORM",
-	}
-	PartyAccessLevel_value = map[string]int32{
-		"PARTY_ACCESS_LEVEL_UNSPECIFIED": 0,
-		"PARTY_ACCESS_LEVEL_BLOCKED":     1,
-		"PARTY_ACCESS_LEVEL_VIEW":        2,
-		"PARTY_ACCESS_LEVEL_PERFORM":     3,
-	}
-)
-
-func (x PartyAccessLevel) Enum() *PartyAccessLevel {
-	p := new(PartyAccessLevel)
-	*p = x
-	return p
-}
-
-func (x PartyAccessLevel) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (PartyAccessLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_approval_proto_enumTypes[0].Descriptor()
-}
-
-func (PartyAccessLevel) Type() protoreflect.EnumType {
-	return &file_resources_documents_approval_proto_enumTypes[0]
-}
-
-func (x PartyAccessLevel) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use PartyAccessLevel.Descriptor instead.
-func (PartyAccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{0}
-}
 
 // Policy snapshot applied to a specific version
 type OnEditBehavior int32
@@ -111,11 +60,11 @@ func (x OnEditBehavior) String() string {
 }
 
 func (OnEditBehavior) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_approval_proto_enumTypes[1].Descriptor()
+	return file_resources_documents_approval_proto_enumTypes[0].Descriptor()
 }
 
 func (OnEditBehavior) Type() protoreflect.EnumType {
-	return &file_resources_documents_approval_proto_enumTypes[1]
+	return &file_resources_documents_approval_proto_enumTypes[0]
 }
 
 func (x OnEditBehavior) Number() protoreflect.EnumNumber {
@@ -124,7 +73,105 @@ func (x OnEditBehavior) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use OnEditBehavior.Descriptor instead.
 func (OnEditBehavior) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{0}
+}
+
+type ApprovalRuleKind int32
+
+const (
+	ApprovalRuleKind_APPROVAL_RULE_KIND_UNSPECIFIED ApprovalRuleKind = 0
+	ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL ApprovalRuleKind = 1
+	ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY  ApprovalRuleKind = 2
+)
+
+// Enum value maps for ApprovalRuleKind.
+var (
+	ApprovalRuleKind_name = map[int32]string{
+		0: "APPROVAL_RULE_KIND_UNSPECIFIED",
+		1: "APPROVAL_RULE_KIND_REQUIRE_ALL",
+		2: "APPROVAL_RULE_KIND_QUORUM_ANY",
+	}
+	ApprovalRuleKind_value = map[string]int32{
+		"APPROVAL_RULE_KIND_UNSPECIFIED": 0,
+		"APPROVAL_RULE_KIND_REQUIRE_ALL": 1,
+		"APPROVAL_RULE_KIND_QUORUM_ANY":  2,
+	}
+)
+
+func (x ApprovalRuleKind) Enum() *ApprovalRuleKind {
+	p := new(ApprovalRuleKind)
+	*p = x
+	return p
+}
+
+func (x ApprovalRuleKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ApprovalRuleKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_approval_proto_enumTypes[1].Descriptor()
+}
+
+func (ApprovalRuleKind) Type() protoreflect.EnumType {
+	return &file_resources_documents_approval_proto_enumTypes[1]
+}
+
+func (x ApprovalRuleKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ApprovalRuleKind.Descriptor instead.
+func (ApprovalRuleKind) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{1}
+}
+
+type ApprovalAssigneeKind int32
+
+const (
+	ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_UNSPECIFIED ApprovalAssigneeKind = 0
+	ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER        ApprovalAssigneeKind = 1
+	ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE   ApprovalAssigneeKind = 2
+)
+
+// Enum value maps for ApprovalAssigneeKind.
+var (
+	ApprovalAssigneeKind_name = map[int32]string{
+		0: "APPROVAL_ASSIGNEE_KIND_UNSPECIFIED",
+		1: "APPROVAL_ASSIGNEE_KIND_USER",
+		2: "APPROVAL_ASSIGNEE_KIND_JOB_GRADE",
+	}
+	ApprovalAssigneeKind_value = map[string]int32{
+		"APPROVAL_ASSIGNEE_KIND_UNSPECIFIED": 0,
+		"APPROVAL_ASSIGNEE_KIND_USER":        1,
+		"APPROVAL_ASSIGNEE_KIND_JOB_GRADE":   2,
+	}
+)
+
+func (x ApprovalAssigneeKind) Enum() *ApprovalAssigneeKind {
+	p := new(ApprovalAssigneeKind)
+	*p = x
+	return p
+}
+
+func (x ApprovalAssigneeKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ApprovalAssigneeKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_approval_proto_enumTypes[2].Descriptor()
+}
+
+func (ApprovalAssigneeKind) Type() protoreflect.EnumType {
+	return &file_resources_documents_approval_proto_enumTypes[2]
+}
+
+func (x ApprovalAssigneeKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ApprovalAssigneeKind.Descriptor instead.
+func (ApprovalAssigneeKind) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{2}
 }
 
 type ApprovalTaskStatus int32
@@ -169,11 +216,11 @@ func (x ApprovalTaskStatus) String() string {
 }
 
 func (ApprovalTaskStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_approval_proto_enumTypes[2].Descriptor()
+	return file_resources_documents_approval_proto_enumTypes[3].Descriptor()
 }
 
 func (ApprovalTaskStatus) Type() protoreflect.EnumType {
-	return &file_resources_documents_approval_proto_enumTypes[2]
+	return &file_resources_documents_approval_proto_enumTypes[3]
 }
 
 func (x ApprovalTaskStatus) Number() protoreflect.EnumNumber {
@@ -182,380 +229,97 @@ func (x ApprovalTaskStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ApprovalTaskStatus.Descriptor instead.
 func (ApprovalTaskStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{2}
-}
-
-type PartySelector struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Primary targets
-	Who []*Selector `protobuf:"bytes,1,rep,name=who,proto3" json:"who,omitempty"`
-	// Optional exclusions
-	Exclusions []*Selector `protobuf:"bytes,2,rep,name=exclusions,proto3" json:"exclusions,omitempty"`
-	// Optional fallbacks if who resolves to 0
-	Fallbacks     []*Selector `protobuf:"bytes,3,rep,name=fallbacks,proto3" json:"fallbacks,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PartySelector) Reset() {
-	*x = PartySelector{}
-	mi := &file_resources_documents_approval_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PartySelector) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PartySelector) ProtoMessage() {}
-
-func (x *PartySelector) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PartySelector.ProtoReflect.Descriptor instead.
-func (*PartySelector) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *PartySelector) GetWho() []*Selector {
-	if x != nil {
-		return x.Who
-	}
-	return nil
-}
-
-func (x *PartySelector) GetExclusions() []*Selector {
-	if x != nil {
-		return x.Exclusions
-	}
-	return nil
-}
-
-func (x *PartySelector) GetFallbacks() []*Selector {
-	if x != nil {
-		return x.Fallbacks
-	}
-	return nil
-}
-
-type UserSelector struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *users.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Access        PartyAccessLevel       `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.PartyAccessLevel" json:"access,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserSelector) Reset() {
-	*x = UserSelector{}
-	mi := &file_resources_documents_approval_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserSelector) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserSelector) ProtoMessage() {}
-
-func (x *UserSelector) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserSelector.ProtoReflect.Descriptor instead.
-func (*UserSelector) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *UserSelector) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *UserSelector) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *UserSelector) GetTargetId() int64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *UserSelector) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserSelector) GetUser() *users.UserShort {
-	if x != nil {
-		return x.User
-	}
-	return nil
-}
-
-func (x *UserSelector) GetAccess() PartyAccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return PartyAccessLevel_PARTY_ACCESS_LEVEL_UNSPECIFIED
-}
-
-type JobGradeSelector struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	MinimumGrade  *int32                 `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3,oneof" json:"minimum_grade,omitempty"`
-	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Access        PartyAccessLevel       `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.PartyAccessLevel" json:"access,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *JobGradeSelector) Reset() {
-	*x = JobGradeSelector{}
-	mi := &file_resources_documents_approval_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *JobGradeSelector) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JobGradeSelector) ProtoMessage() {}
-
-func (x *JobGradeSelector) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JobGradeSelector.ProtoReflect.Descriptor instead.
-func (*JobGradeSelector) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *JobGradeSelector) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *JobGradeSelector) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *JobGradeSelector) GetTargetId() int64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *JobGradeSelector) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *JobGradeSelector) GetJobLabel() string {
-	if x != nil && x.JobLabel != nil {
-		return *x.JobLabel
-	}
-	return ""
-}
-
-func (x *JobGradeSelector) GetMinimumGrade() int32 {
-	if x != nil && x.MinimumGrade != nil {
-		return *x.MinimumGrade
-	}
-	return 0
-}
-
-func (x *JobGradeSelector) GetJobGradeLabel() string {
-	if x != nil && x.JobGradeLabel != nil {
-		return *x.JobGradeLabel
-	}
-	return ""
-}
-
-func (x *JobGradeSelector) GetAccess() PartyAccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return PartyAccessLevel_PARTY_ACCESS_LEVEL_UNSPECIFIED
-}
-
-type Selector struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Types that are valid to be assigned to Target:
-	//
-	//	*Selector_User
-	//	*Selector_Job
-	//	*Selector_JobGrade
-	Target        isSelector_Target `protobuf_oneof:"target"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Selector) Reset() {
-	*x = Selector{}
-	mi := &file_resources_documents_approval_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Selector) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Selector) ProtoMessage() {}
-
-func (x *Selector) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Selector.ProtoReflect.Descriptor instead.
-func (*Selector) Descriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *Selector) GetTarget() isSelector_Target {
-	if x != nil {
-		return x.Target
+type ApprovalAccessLevel int32
+
+const (
+	ApprovalAccessLevel_APPROVAL_ACCESS_LEVEL_UNSPECIFIED ApprovalAccessLevel = 0
+	ApprovalAccessLevel_APPROVAL_ACCESS_LEVEL_BLOCKED     ApprovalAccessLevel = 1
+	ApprovalAccessLevel_APPROVAL_ACCESS_LEVEL_USE         ApprovalAccessLevel = 2
+)
+
+// Enum value maps for ApprovalAccessLevel.
+var (
+	ApprovalAccessLevel_name = map[int32]string{
+		0: "APPROVAL_ACCESS_LEVEL_UNSPECIFIED",
+		1: "APPROVAL_ACCESS_LEVEL_BLOCKED",
+		2: "APPROVAL_ACCESS_LEVEL_USE",
 	}
-	return nil
-}
-
-func (x *Selector) GetUser() *UserSelector {
-	if x != nil {
-		if x, ok := x.Target.(*Selector_User); ok {
-			return x.User
-		}
+	ApprovalAccessLevel_value = map[string]int32{
+		"APPROVAL_ACCESS_LEVEL_UNSPECIFIED": 0,
+		"APPROVAL_ACCESS_LEVEL_BLOCKED":     1,
+		"APPROVAL_ACCESS_LEVEL_USE":         2,
 	}
-	return nil
+)
+
+func (x ApprovalAccessLevel) Enum() *ApprovalAccessLevel {
+	p := new(ApprovalAccessLevel)
+	*p = x
+	return p
 }
 
-func (x *Selector) GetJob() *JobGradeSelector {
-	if x != nil {
-		if x, ok := x.Target.(*Selector_Job); ok {
-			return x.Job
-		}
-	}
-	return nil
+func (x ApprovalAccessLevel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (x *Selector) GetJobGrade() *JobGradeSelector {
-	if x != nil {
-		if x, ok := x.Target.(*Selector_JobGrade); ok {
-			return x.JobGrade
-		}
-	}
-	return nil
+func (ApprovalAccessLevel) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_approval_proto_enumTypes[4].Descriptor()
 }
 
-type isSelector_Target interface {
-	isSelector_Target()
+func (ApprovalAccessLevel) Type() protoreflect.EnumType {
+	return &file_resources_documents_approval_proto_enumTypes[4]
 }
 
-type Selector_User struct {
-	User *UserSelector `protobuf:"bytes,1,opt,name=user,proto3,oneof"`
+func (x ApprovalAccessLevel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
 }
 
-type Selector_Job struct {
-	Job *JobGradeSelector `protobuf:"bytes,2,opt,name=job,proto3,oneof"`
+// Deprecated: Use ApprovalAccessLevel.Descriptor instead.
+func (ApprovalAccessLevel) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{4}
 }
 
-type Selector_JobGrade struct {
-	JobGrade *JobGradeSelector `protobuf:"bytes,3,opt,name=job_grade,json=jobGrade,proto3,oneof"`
-}
-
-func (*Selector_User) isSelector_Target() {}
-
-func (*Selector_Job) isSelector_Target() {}
-
-func (*Selector_JobGrade) isSelector_Target() {}
-
-type ApprovalPolicyApplied struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId     int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	OnEditBehavior OnEditBehavior         `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
-	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// Materialized stages
-	Stages        []*ApprovalStage `protobuf:"bytes,4,rep,name=stages,proto3" json:"stages,omitempty"`
+type ApprovalPolicy struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	Id                 int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DocumentId         int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	OnEditBehavior     OnEditBehavior         `protobuf:"varint,3,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	RuleKind           ApprovalRuleKind       `protobuf:"varint,4,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
+	RequiredCount      int32                  `protobuf:"varint,5,opt,name=required_count,json=requiredCount,proto3" json:"required_count,omitempty"`
+	ActiveSnapshotDate *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=active_snapshot_date,json=activeSnapshotDate,proto3" json:"active_snapshot_date,omitempty"`
+	DueAt              *timestamp.Timestamp   `protobuf:"bytes,7,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	StartedAt          *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	CompletedAt        *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	Access             *ApprovalAccess        `protobuf:"bytes,10,opt,name=access,proto3" json:"access,omitempty"`
+	// Optional cached aggregates (service maintained)
+	AssignedCount int32                `protobuf:"varint,11,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
+	ApprovedCount int32                `protobuf:"varint,12,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
+	DeclinedCount int32                `protobuf:"varint,13,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
+	PendingCount  int32                `protobuf:"varint,14,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
+	AnyDeclined   bool                 `protobuf:"varint,15,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApprovalPolicyApplied) Reset() {
-	*x = ApprovalPolicyApplied{}
-	mi := &file_resources_documents_approval_proto_msgTypes[4]
+func (x *ApprovalPolicy) Reset() {
+	*x = ApprovalPolicy{}
+	mi := &file_resources_documents_approval_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApprovalPolicyApplied) String() string {
+func (x *ApprovalPolicy) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApprovalPolicyApplied) ProtoMessage() {}
+func (*ApprovalPolicy) ProtoMessage() {}
 
-func (x *ApprovalPolicyApplied) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[4]
+func (x *ApprovalPolicy) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_approval_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -566,326 +330,162 @@ func (x *ApprovalPolicyApplied) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApprovalPolicyApplied.ProtoReflect.Descriptor instead.
-func (*ApprovalPolicyApplied) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use ApprovalPolicy.ProtoReflect.Descriptor instead.
+func (*ApprovalPolicy) Descriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ApprovalPolicyApplied) GetDocumentId() int64 {
+func (x *ApprovalPolicy) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ApprovalPolicy) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
 	return 0
 }
 
-func (x *ApprovalPolicyApplied) GetOnEditBehavior() OnEditBehavior {
+func (x *ApprovalPolicy) GetOnEditBehavior() OnEditBehavior {
 	if x != nil {
 		return x.OnEditBehavior
 	}
 	return OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED
 }
 
-func (x *ApprovalPolicyApplied) GetCreatedAt() *timestamp.Timestamp {
+func (x *ApprovalPolicy) GetRuleKind() ApprovalRuleKind {
 	if x != nil {
-		return x.CreatedAt
+		return x.RuleKind
 	}
-	return nil
+	return ApprovalRuleKind_APPROVAL_RULE_KIND_UNSPECIFIED
 }
 
-func (x *ApprovalPolicyApplied) GetStages() []*ApprovalStage {
+func (x *ApprovalPolicy) GetRequiredCount() int32 {
 	if x != nil {
-		return x.Stages
-	}
-	return nil
-}
-
-// Stages & tasks
-type RequireAll struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// value=true
-	Value         bool `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RequireAll) Reset() {
-	*x = RequireAll{}
-	mi := &file_resources_documents_approval_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RequireAll) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RequireAll) ProtoMessage() {}
-
-func (x *RequireAll) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RequireAll.ProtoReflect.Descriptor instead.
-func (*RequireAll) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *RequireAll) GetValue() bool {
-	if x != nil {
-		return x.Value
-	}
-	return false
-}
-
-type QuorumAny struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// e.g., any 2
-	Count         int32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *QuorumAny) Reset() {
-	*x = QuorumAny{}
-	mi := &file_resources_documents_approval_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *QuorumAny) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*QuorumAny) ProtoMessage() {}
-
-func (x *QuorumAny) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use QuorumAny.ProtoReflect.Descriptor instead.
-func (*QuorumAny) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *QuorumAny) GetCount() int32 {
-	if x != nil {
-		return x.Count
+		return x.RequiredCount
 	}
 	return 0
 }
 
-type ApprovalStage struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	Name       string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	// 1..N; same order => parallel
-	Order    int32          `protobuf:"varint,5,opt,name=order,proto3" json:"order,omitempty"`
-	Selector *PartySelector `protobuf:"bytes,6,opt,name=selector,proto3" json:"selector,omitempty"`
-	// Types that are valid to be assigned to Rule:
-	//
-	//	*ApprovalStage_RequireAll
-	//	*ApprovalStage_QuorumAny
-	Rule  isApprovalStage_Rule `protobuf_oneof:"rule"`
-	DueAt *timestamp.Timestamp `protobuf:"bytes,9,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
-	// Optional cached aggregates (service maintained)
-	AssignedCount int32 `protobuf:"varint,10,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
-	ApprovedCount int32 `protobuf:"varint,11,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
-	DeclinedCount int32 `protobuf:"varint,12,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
-	PendingCount  int32 `protobuf:"varint,13,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ApprovalStage) Reset() {
-	*x = ApprovalStage{}
-	mi := &file_resources_documents_approval_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ApprovalStage) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ApprovalStage) ProtoMessage() {}
-
-func (x *ApprovalStage) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[7]
+func (x *ApprovalPolicy) GetActiveSnapshotDate() *timestamp.Timestamp {
 	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ApprovalStage.ProtoReflect.Descriptor instead.
-func (*ApprovalStage) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *ApprovalStage) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *ApprovalStage) GetDocumentId() int64 {
-	if x != nil {
-		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *ApprovalStage) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
+		return x.ActiveSnapshotDate
 	}
 	return nil
 }
 
-func (x *ApprovalStage) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *ApprovalStage) GetOrder() int32 {
-	if x != nil {
-		return x.Order
-	}
-	return 0
-}
-
-func (x *ApprovalStage) GetSelector() *PartySelector {
-	if x != nil {
-		return x.Selector
-	}
-	return nil
-}
-
-func (x *ApprovalStage) GetRule() isApprovalStage_Rule {
-	if x != nil {
-		return x.Rule
-	}
-	return nil
-}
-
-func (x *ApprovalStage) GetRequireAll() *RequireAll {
-	if x != nil {
-		if x, ok := x.Rule.(*ApprovalStage_RequireAll); ok {
-			return x.RequireAll
-		}
-	}
-	return nil
-}
-
-func (x *ApprovalStage) GetQuorumAny() *QuorumAny {
-	if x != nil {
-		if x, ok := x.Rule.(*ApprovalStage_QuorumAny); ok {
-			return x.QuorumAny
-		}
-	}
-	return nil
-}
-
-func (x *ApprovalStage) GetDueAt() *timestamp.Timestamp {
+func (x *ApprovalPolicy) GetDueAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.DueAt
 	}
 	return nil
 }
 
-func (x *ApprovalStage) GetAssignedCount() int32 {
+func (x *ApprovalPolicy) GetStartedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.StartedAt
+	}
+	return nil
+}
+
+func (x *ApprovalPolicy) GetCompletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
+func (x *ApprovalPolicy) GetAccess() *ApprovalAccess {
+	if x != nil {
+		return x.Access
+	}
+	return nil
+}
+
+func (x *ApprovalPolicy) GetAssignedCount() int32 {
 	if x != nil {
 		return x.AssignedCount
 	}
 	return 0
 }
 
-func (x *ApprovalStage) GetApprovedCount() int32 {
+func (x *ApprovalPolicy) GetApprovedCount() int32 {
 	if x != nil {
 		return x.ApprovedCount
 	}
 	return 0
 }
 
-func (x *ApprovalStage) GetDeclinedCount() int32 {
+func (x *ApprovalPolicy) GetDeclinedCount() int32 {
 	if x != nil {
 		return x.DeclinedCount
 	}
 	return 0
 }
 
-func (x *ApprovalStage) GetPendingCount() int32 {
+func (x *ApprovalPolicy) GetPendingCount() int32 {
 	if x != nil {
 		return x.PendingCount
 	}
 	return 0
 }
 
-type isApprovalStage_Rule interface {
-	isApprovalStage_Rule()
+func (x *ApprovalPolicy) GetAnyDeclined() bool {
+	if x != nil {
+		return x.AnyDeclined
+	}
+	return false
 }
 
-type ApprovalStage_RequireAll struct {
-	RequireAll *RequireAll `protobuf:"bytes,7,opt,name=require_all,json=requireAll,proto3,oneof"`
+func (x *ApprovalPolicy) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
 }
 
-type ApprovalStage_QuorumAny struct {
-	QuorumAny *QuorumAny `protobuf:"bytes,8,opt,name=quorum_any,json=quorumAny,proto3,oneof"`
+func (x *ApprovalPolicy) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
 }
-
-func (*ApprovalStage_RequireAll) isApprovalStage_Rule() {}
-
-func (*ApprovalStage_QuorumAny) isApprovalStage_Rule() {}
 
 type ApprovalTask struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	StageId    int64                  `protobuf:"varint,2,opt,name=stage_id,json=stageId,proto3" json:"stage_id,omitempty"`
-	DocumentId int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CreatorId  int32                  `protobuf:"varint,5,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator    *users.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	// Snapshot of why this user was assigned (for audit stability)
-	CreatorJob      string             `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	JobLabel        *string            `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	CreatorJobGrade int32              `protobuf:"varint,9,opt,name=creator_job_grade,json=creatorJobGrade,proto3" json:"creator_job_grade,omitempty"`
-	Status          ApprovalTaskStatus `protobuf:"varint,10,opt,name=status,proto3,enum=resources.documents.ApprovalTaskStatus" json:"status,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	UserId       *int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	Job          *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	MinimumGrade *int32                 `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3,oneof" json:"minimum_grade,omitempty"`
+	// Who actually decided (for group tasks or audit)
+	DecidedByUserId    *int32             `protobuf:"varint,7,opt,name=decided_by_user_id,json=decidedByUserId,proto3,oneof" json:"decided_by_user_id,omitempty"`
+	DecidedByJob       *string            `protobuf:"bytes,8,opt,name=decided_by_job,json=decidedByJob,proto3,oneof" json:"decided_by_job,omitempty"`
+	DecidedByUserGrade *int32             `protobuf:"varint,9,opt,name=decided_by_user_grade,json=decidedByUserGrade,proto3,oneof" json:"decided_by_user_grade,omitempty"`
+	Status             ApprovalTaskStatus `protobuf:"varint,10,opt,name=status,proto3,enum=resources.documents.ApprovalTaskStatus" json:"status,omitempty"`
 	// Optional comment on approve/decline
-	Comment       string               `protobuf:"bytes,11,opt,name=comment,proto3" json:"comment,omitempty"`
-	DecidedAt     *timestamp.Timestamp `protobuf:"bytes,12,opt,name=decided_at,json=decidedAt,proto3,oneof" json:"decided_at,omitempty"`
-	DueAt         *timestamp.Timestamp `protobuf:"bytes,13,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Comment       *string              `protobuf:"bytes,11,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,12,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	DecidedAt     *timestamp.Timestamp `protobuf:"bytes,13,opt,name=decided_at,json=decidedAt,proto3,oneof" json:"decided_at,omitempty"`
+	DueAt         *timestamp.Timestamp `protobuf:"bytes,14,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	DecisionCount int32                `protobuf:"varint,15,opt,name=decision_count,json=decisionCount,proto3" json:"decision_count,omitempty"`
+	CreatorId     int32                `protobuf:"varint,16,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator       *users.UserShort     `protobuf:"bytes,17,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	// Snapshot of why this user was assigned (for audit stability)
+	CreatorJob      string  `protobuf:"bytes,18,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	JobLabel        *string `protobuf:"bytes,19,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	CreatorJobGrade int32   `protobuf:"varint,20,opt,name=creator_job_grade,json=creatorJobGrade,proto3" json:"creator_job_grade,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ApprovalTask) Reset() {
 	*x = ApprovalTask{}
-	mi := &file_resources_documents_approval_proto_msgTypes[8]
+	mi := &file_resources_documents_approval_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -897,7 +497,7 @@ func (x *ApprovalTask) String() string {
 func (*ApprovalTask) ProtoMessage() {}
 
 func (x *ApprovalTask) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_approval_proto_msgTypes[8]
+	mi := &file_resources_documents_approval_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -910,19 +510,12 @@ func (x *ApprovalTask) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovalTask.ProtoReflect.Descriptor instead.
 func (*ApprovalTask) Descriptor() ([]byte, []int) {
-	return file_resources_documents_approval_proto_rawDescGZIP(), []int{8}
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ApprovalTask) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ApprovalTask) GetStageId() int64 {
-	if x != nil {
-		return x.StageId
 	}
 	return 0
 }
@@ -934,11 +527,95 @@ func (x *ApprovalTask) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *ApprovalTask) GetSnapshotDate() *timestamp.Timestamp {
+	if x != nil {
+		return x.SnapshotDate
+	}
+	return nil
+}
+
+func (x *ApprovalTask) GetUserId() int32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *ApprovalTask) GetJob() string {
+	if x != nil && x.Job != nil {
+		return *x.Job
+	}
+	return ""
+}
+
+func (x *ApprovalTask) GetMinimumGrade() int32 {
+	if x != nil && x.MinimumGrade != nil {
+		return *x.MinimumGrade
+	}
+	return 0
+}
+
+func (x *ApprovalTask) GetDecidedByUserId() int32 {
+	if x != nil && x.DecidedByUserId != nil {
+		return *x.DecidedByUserId
+	}
+	return 0
+}
+
+func (x *ApprovalTask) GetDecidedByJob() string {
+	if x != nil && x.DecidedByJob != nil {
+		return *x.DecidedByJob
+	}
+	return ""
+}
+
+func (x *ApprovalTask) GetDecidedByUserGrade() int32 {
+	if x != nil && x.DecidedByUserGrade != nil {
+		return *x.DecidedByUserGrade
+	}
+	return 0
+}
+
+func (x *ApprovalTask) GetStatus() ApprovalTaskStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ApprovalTaskStatus_APPROVAL_TASK_STATUS_UNSPECIFIED
+}
+
+func (x *ApprovalTask) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
 func (x *ApprovalTask) GetCreatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
+}
+
+func (x *ApprovalTask) GetDecidedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DecidedAt
+	}
+	return nil
+}
+
+func (x *ApprovalTask) GetDueAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DueAt
+	}
+	return nil
+}
+
+func (x *ApprovalTask) GetDecisionCount() int32 {
+	if x != nil {
+		return x.DecisionCount
+	}
+	return 0
 }
 
 func (x *ApprovalTask) GetCreatorId() int32 {
@@ -976,150 +653,264 @@ func (x *ApprovalTask) GetCreatorJobGrade() int32 {
 	return 0
 }
 
-func (x *ApprovalTask) GetStatus() ApprovalTaskStatus {
-	if x != nil {
-		return x.Status
-	}
-	return ApprovalTaskStatus_APPROVAL_TASK_STATUS_UNSPECIFIED
+type ApprovalAccess struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Jobs          []*ApprovalTaskJobAccess `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApprovalTask) GetComment() string {
+func (x *ApprovalAccess) Reset() {
+	*x = ApprovalAccess{}
+	mi := &file_resources_documents_approval_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApprovalAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApprovalAccess) ProtoMessage() {}
+
+func (x *ApprovalAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_approval_proto_msgTypes[2]
 	if x != nil {
-		return x.Comment
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApprovalAccess.ProtoReflect.Descriptor instead.
+func (*ApprovalAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ApprovalAccess) GetJobs() []*ApprovalTaskJobAccess {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
+type ApprovalTaskJobAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Access        ApprovalAccessLevel    `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.ApprovalAccessLevel" json:"access,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApprovalTaskJobAccess) Reset() {
+	*x = ApprovalTaskJobAccess{}
+	mi := &file_resources_documents_approval_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApprovalTaskJobAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApprovalTaskJobAccess) ProtoMessage() {}
+
+func (x *ApprovalTaskJobAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_approval_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApprovalTaskJobAccess.ProtoReflect.Descriptor instead.
+func (*ApprovalTaskJobAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_approval_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ApprovalTaskJobAccess) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ApprovalTaskJobAccess) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *ApprovalTaskJobAccess) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *ApprovalTaskJobAccess) GetJob() string {
+	if x != nil {
+		return x.Job
 	}
 	return ""
 }
 
-func (x *ApprovalTask) GetDecidedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.DecidedAt
+func (x *ApprovalTaskJobAccess) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
 	}
-	return nil
+	return ""
 }
 
-func (x *ApprovalTask) GetDueAt() *timestamp.Timestamp {
+func (x *ApprovalTaskJobAccess) GetMinimumGrade() int32 {
 	if x != nil {
-		return x.DueAt
+		return x.MinimumGrade
 	}
-	return nil
+	return 0
+}
+
+func (x *ApprovalTaskJobAccess) GetJobGradeLabel() string {
+	if x != nil && x.JobGradeLabel != nil {
+		return *x.JobGradeLabel
+	}
+	return ""
+}
+
+func (x *ApprovalTaskJobAccess) GetAccess() ApprovalAccessLevel {
+	if x != nil {
+		return x.Access
+	}
+	return ApprovalAccessLevel_APPROVAL_ACCESS_LEVEL_UNSPECIFIED
 }
 
 var File_resources_documents_approval_proto protoreflect.FileDescriptor
 
 const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xbc\x01\n" +
-	"\rPartySelector\x12/\n" +
-	"\x03who\x18\x01 \x03(\v2\x1d.resources.documents.SelectorR\x03who\x12=\n" +
+	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcc\a\n" +
+	"\x0eApprovalPolicy\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"documentId\x12M\n" +
+	"\x10on_edit_behavior\x18\x03 \x01(\x0e2#.resources.documents.OnEditBehaviorR\x0eonEditBehavior\x12B\n" +
+	"\trule_kind\x18\x04 \x01(\x0e2%.resources.documents.ApprovalRuleKindR\bruleKind\x12%\n" +
+	"\x0erequired_count\x18\x05 \x01(\x05R\rrequiredCount\x12P\n" +
+	"\x14active_snapshot_date\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampR\x12activeSnapshotDate\x12:\n" +
+	"\x06due_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05dueAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"exclusions\x18\x02 \x03(\v2\x1d.resources.documents.SelectorR\n" +
-	"exclusions\x12;\n" +
-	"\tfallbacks\x18\x03 \x03(\v2\x1d.resources.documents.SelectorR\tfallbacks\"\xa4\x02\n" +
-	"\fUserSelector\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"started_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tstartedAt\x88\x01\x01\x12F\n" +
+	"\fcompleted_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\vcompletedAt\x88\x01\x01\x12;\n" +
+	"\x06access\x18\n" +
+	" \x01(\v2#.resources.documents.ApprovalAccessR\x06access\x12%\n" +
+	"\x0eassigned_count\x18\v \x01(\x05R\rassignedCount\x12%\n" +
+	"\x0eapproved_count\x18\f \x01(\x05R\rapprovedCount\x12%\n" +
+	"\x0edeclined_count\x18\r \x01(\x05R\rdeclinedCount\x12#\n" +
+	"\rpending_count\x18\x0e \x01(\x05R\fpendingCount\x12!\n" +
+	"\fany_declined\x18\x0f \x01(\bR\vanyDeclined\x12=\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12=\n" +
-	"\x06access\x18\b \x01(\x0e2%.resources.documents.PartyAccessLevelR\x06accessB\r\n" +
-	"\v_created_atB\a\n" +
-	"\x05_user\"\x90\x03\n" +
-	"\x10JobGradeSelector\x12\x0e\n" +
+	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"updated_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tupdatedAt\x88\x01\x01B\t\n" +
+	"\a_due_atB\r\n" +
+	"\v_started_atB\x0f\n" +
+	"\r_completed_atB\r\n" +
+	"\v_updated_at\"\xb1\b\n" +
+	"\fApprovalTask\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
+	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"documentId\x12C\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x1c\n" +
+	"\auser_id\x18\x04 \x01(\x05H\x00R\x06userId\x88\x01\x01\x12\x15\n" +
+	"\x03job\x18\x05 \x01(\tH\x01R\x03job\x88\x01\x01\x12(\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05H\x02R\fminimumGrade\x88\x01\x01\x120\n" +
+	"\x12decided_by_user_id\x18\a \x01(\x05H\x03R\x0fdecidedByUserId\x88\x01\x01\x12)\n" +
+	"\x0edecided_by_job\x18\b \x01(\tH\x04R\fdecidedByJob\x88\x01\x01\x126\n" +
+	"\x15decided_by_user_grade\x18\t \x01(\x05H\x05R\x12decidedByUserGrade\x88\x01\x01\x12?\n" +
+	"\x06status\x18\n" +
+	" \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\x06status\x12\x1d\n" +
+	"\acomment\x18\v \x01(\tH\x06R\acomment\x88\x01\x01\x12=\n" +
+	"\n" +
+	"created_at\x18\f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"decided_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\aR\tdecidedAt\x88\x01\x01\x12:\n" +
+	"\x06due_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampH\bR\x05dueAt\x88\x01\x01\x12%\n" +
+	"\x0edecision_count\x18\x0f \x01(\x05R\rdecisionCount\x12\x1d\n" +
+	"\n" +
+	"creator_id\x18\x10 \x01(\x05R\tcreatorId\x129\n" +
+	"\acreator\x18\x11 \x01(\v2\x1a.resources.users.UserShortH\tR\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\x12 \x01(\tR\n" +
+	"creatorJob\x12 \n" +
+	"\tjob_label\x18\x13 \x01(\tH\n" +
+	"R\bjobLabel\x88\x01\x01\x12*\n" +
+	"\x11creator_job_grade\x18\x14 \x01(\x05R\x0fcreatorJobGradeB\n" +
+	"\n" +
+	"\b_user_idB\x06\n" +
+	"\x04_jobB\x10\n" +
+	"\x0e_minimum_gradeB\x15\n" +
+	"\x13_decided_by_user_idB\x11\n" +
+	"\x0f_decided_by_jobB\x18\n" +
+	"\x16_decided_by_user_gradeB\n" +
+	"\n" +
+	"\b_commentB\r\n" +
+	"\v_decided_atB\t\n" +
+	"\a_due_atB\n" +
+	"\n" +
+	"\b_creatorB\f\n" +
+	"\n" +
+	"_job_label\"i\n" +
+	"\x0eApprovalAccess\x12W\n" +
+	"\x04jobs\x18\x01 \x03(\v2*.resources.documents.ApprovalTaskJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\x81\x03\n" +
+	"\x15ApprovalTaskJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
 	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12(\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05H\x02R\fminimumGrade\x88\x01\x01\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x03R\rjobGradeLabel\x88\x01\x01\x12=\n" +
-	"\x06access\x18\b \x01(\x0e2%.resources.documents.PartyAccessLevelR\x06accessB\r\n" +
+	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12@\n" +
+	"\x06access\x18\b \x01(\x0e2(.resources.documents.ApprovalAccessLevelR\x06accessB\r\n" +
 	"\v_created_atB\f\n" +
 	"\n" +
-	"_job_labelB\x10\n" +
-	"\x0e_minimum_gradeB\x12\n" +
-	"\x10_job_grade_label\"\xce\x01\n" +
-	"\bSelector\x127\n" +
-	"\x04user\x18\x01 \x01(\v2!.resources.documents.UserSelectorH\x00R\x04user\x129\n" +
-	"\x03job\x18\x02 \x01(\v2%.resources.documents.JobGradeSelectorH\x00R\x03job\x12D\n" +
-	"\tjob_grade\x18\x03 \x01(\v2%.resources.documents.JobGradeSelectorH\x00R\bjobGradeB\b\n" +
-	"\x06target\"\x82\x02\n" +
-	"\x15ApprovalPolicyApplied\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12M\n" +
-	"\x10on_edit_behavior\x18\x02 \x01(\x0e2#.resources.documents.OnEditBehaviorR\x0eonEditBehavior\x12=\n" +
-	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12:\n" +
-	"\x06stages\x18\x04 \x03(\v2\".resources.documents.ApprovalStageR\x06stages\"\"\n" +
-	"\n" +
-	"RequireAll\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\bR\x05value\"!\n" +
-	"\tQuorumAny\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x05R\x05count\"\xd7\x04\n" +
-	"\rApprovalStage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12=\n" +
-	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12\x14\n" +
-	"\x05order\x18\x05 \x01(\x05R\x05order\x12>\n" +
-	"\bselector\x18\x06 \x01(\v2\".resources.documents.PartySelectorR\bselector\x12B\n" +
-	"\vrequire_all\x18\a \x01(\v2\x1f.resources.documents.RequireAllH\x00R\n" +
-	"requireAll\x12?\n" +
-	"\n" +
-	"quorum_any\x18\b \x01(\v2\x1e.resources.documents.QuorumAnyH\x00R\tquorumAny\x12:\n" +
-	"\x06due_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12%\n" +
-	"\x0eassigned_count\x18\n" +
-	" \x01(\x05R\rassignedCount\x12%\n" +
-	"\x0eapproved_count\x18\v \x01(\x05R\rapprovedCount\x12%\n" +
-	"\x0edeclined_count\x18\f \x01(\x05R\rdeclinedCount\x12#\n" +
-	"\rpending_count\x18\r \x01(\x05R\fpendingCountB\x06\n" +
-	"\x04ruleB\t\n" +
-	"\a_due_at\"\xf1\x04\n" +
-	"\fApprovalTask\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\bstage_id\x18\x02 \x01(\x03R\astageId\x12\x1f\n" +
-	"\vdocument_id\x18\x03 \x01(\x03R\n" +
-	"documentId\x12=\n" +
-	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x1d\n" +
-	"\n" +
-	"creator_id\x18\x05 \x01(\x05R\tcreatorId\x129\n" +
-	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortH\x00R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\a \x01(\tR\n" +
-	"creatorJob\x12 \n" +
-	"\tjob_label\x18\b \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12*\n" +
-	"\x11creator_job_grade\x18\t \x01(\x05R\x0fcreatorJobGrade\x12?\n" +
-	"\x06status\x18\n" +
-	" \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\x06status\x12\x18\n" +
-	"\acomment\x18\v \x01(\tR\acomment\x12B\n" +
-	"\n" +
-	"decided_at\x18\f \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdecidedAt\x88\x01\x01\x12:\n" +
-	"\x06due_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x05dueAt\x88\x01\x01B\n" +
-	"\n" +
-	"\b_creatorB\f\n" +
-	"\n" +
-	"_job_labelB\r\n" +
-	"\v_decided_atB\t\n" +
-	"\a_due_at*\x93\x01\n" +
-	"\x10PartyAccessLevel\x12\"\n" +
-	"\x1ePARTY_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
-	"\x1aPARTY_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1b\n" +
-	"\x17PARTY_ACCESS_LEVEL_VIEW\x10\x02\x12\x1e\n" +
-	"\x1aPARTY_ACCESS_LEVEL_PERFORM\x10\x03*r\n" +
+	"_job_labelB\x12\n" +
+	"\x10_job_grade_label*r\n" +
 	"\x0eOnEditBehavior\x12 \n" +
 	"\x1cON_EDIT_BEHAVIOR_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16ON_EDIT_BEHAVIOR_RESET\x10\x01\x12\"\n" +
-	"\x1eON_EDIT_BEHAVIOR_KEEP_PROGRESS\x10\x02*\xe8\x01\n" +
+	"\x1eON_EDIT_BEHAVIOR_KEEP_PROGRESS\x10\x02*}\n" +
+	"\x10ApprovalRuleKind\x12\"\n" +
+	"\x1eAPPROVAL_RULE_KIND_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eAPPROVAL_RULE_KIND_REQUIRE_ALL\x10\x01\x12!\n" +
+	"\x1dAPPROVAL_RULE_KIND_QUORUM_ANY\x10\x02*\x85\x01\n" +
+	"\x14ApprovalAssigneeKind\x12&\n" +
+	"\"APPROVAL_ASSIGNEE_KIND_UNSPECIFIED\x10\x00\x12\x1f\n" +
+	"\x1bAPPROVAL_ASSIGNEE_KIND_USER\x10\x01\x12$\n" +
+	" APPROVAL_ASSIGNEE_KIND_JOB_GRADE\x10\x02*\xe8\x01\n" +
 	"\x12ApprovalTaskStatus\x12$\n" +
 	" APPROVAL_TASK_STATUS_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cAPPROVAL_TASK_STATUS_PENDING\x10\x01\x12!\n" +
 	"\x1dAPPROVAL_TASK_STATUS_APPROVED\x10\x02\x12!\n" +
 	"\x1dAPPROVAL_TASK_STATUS_DECLINED\x10\x03\x12 \n" +
 	"\x1cAPPROVAL_TASK_STATUS_EXPIRED\x10\x04\x12\"\n" +
-	"\x1eAPPROVAL_TASK_STATUS_CANCELLED\x10\x05BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x1eAPPROVAL_TASK_STATUS_CANCELLED\x10\x05*~\n" +
+	"\x13ApprovalAccessLevel\x12%\n" +
+	"!APPROVAL_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12!\n" +
+	"\x1dAPPROVAL_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1d\n" +
+	"\x19APPROVAL_ACCESS_LEVEL_USE\x10\x02BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_approval_proto_rawDescOnce sync.Once
@@ -1133,54 +924,45 @@ func file_resources_documents_approval_proto_rawDescGZIP() []byte {
 	return file_resources_documents_approval_proto_rawDescData
 }
 
-var file_resources_documents_approval_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_resources_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_resources_documents_approval_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_resources_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_documents_approval_proto_goTypes = []any{
-	(PartyAccessLevel)(0),         // 0: resources.documents.PartyAccessLevel
-	(OnEditBehavior)(0),           // 1: resources.documents.OnEditBehavior
-	(ApprovalTaskStatus)(0),       // 2: resources.documents.ApprovalTaskStatus
-	(*PartySelector)(nil),         // 3: resources.documents.PartySelector
-	(*UserSelector)(nil),          // 4: resources.documents.UserSelector
-	(*JobGradeSelector)(nil),      // 5: resources.documents.JobGradeSelector
-	(*Selector)(nil),              // 6: resources.documents.Selector
-	(*ApprovalPolicyApplied)(nil), // 7: resources.documents.ApprovalPolicyApplied
-	(*RequireAll)(nil),            // 8: resources.documents.RequireAll
-	(*QuorumAny)(nil),             // 9: resources.documents.QuorumAny
-	(*ApprovalStage)(nil),         // 10: resources.documents.ApprovalStage
-	(*ApprovalTask)(nil),          // 11: resources.documents.ApprovalTask
-	(*timestamp.Timestamp)(nil),   // 12: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),       // 13: resources.users.UserShort
+	(OnEditBehavior)(0),           // 0: resources.documents.OnEditBehavior
+	(ApprovalRuleKind)(0),         // 1: resources.documents.ApprovalRuleKind
+	(ApprovalAssigneeKind)(0),     // 2: resources.documents.ApprovalAssigneeKind
+	(ApprovalTaskStatus)(0),       // 3: resources.documents.ApprovalTaskStatus
+	(ApprovalAccessLevel)(0),      // 4: resources.documents.ApprovalAccessLevel
+	(*ApprovalPolicy)(nil),        // 5: resources.documents.ApprovalPolicy
+	(*ApprovalTask)(nil),          // 6: resources.documents.ApprovalTask
+	(*ApprovalAccess)(nil),        // 7: resources.documents.ApprovalAccess
+	(*ApprovalTaskJobAccess)(nil), // 8: resources.documents.ApprovalTaskJobAccess
+	(*timestamp.Timestamp)(nil),   // 9: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),       // 10: resources.users.UserShort
 }
 var file_resources_documents_approval_proto_depIdxs = []int32{
-	6,  // 0: resources.documents.PartySelector.who:type_name -> resources.documents.Selector
-	6,  // 1: resources.documents.PartySelector.exclusions:type_name -> resources.documents.Selector
-	6,  // 2: resources.documents.PartySelector.fallbacks:type_name -> resources.documents.Selector
-	12, // 3: resources.documents.UserSelector.created_at:type_name -> resources.timestamp.Timestamp
-	13, // 4: resources.documents.UserSelector.user:type_name -> resources.users.UserShort
-	0,  // 5: resources.documents.UserSelector.access:type_name -> resources.documents.PartyAccessLevel
-	12, // 6: resources.documents.JobGradeSelector.created_at:type_name -> resources.timestamp.Timestamp
-	0,  // 7: resources.documents.JobGradeSelector.access:type_name -> resources.documents.PartyAccessLevel
-	4,  // 8: resources.documents.Selector.user:type_name -> resources.documents.UserSelector
-	5,  // 9: resources.documents.Selector.job:type_name -> resources.documents.JobGradeSelector
-	5,  // 10: resources.documents.Selector.job_grade:type_name -> resources.documents.JobGradeSelector
-	1,  // 11: resources.documents.ApprovalPolicyApplied.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
-	12, // 12: resources.documents.ApprovalPolicyApplied.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 13: resources.documents.ApprovalPolicyApplied.stages:type_name -> resources.documents.ApprovalStage
-	12, // 14: resources.documents.ApprovalStage.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 15: resources.documents.ApprovalStage.selector:type_name -> resources.documents.PartySelector
-	8,  // 16: resources.documents.ApprovalStage.require_all:type_name -> resources.documents.RequireAll
-	9,  // 17: resources.documents.ApprovalStage.quorum_any:type_name -> resources.documents.QuorumAny
-	12, // 18: resources.documents.ApprovalStage.due_at:type_name -> resources.timestamp.Timestamp
-	12, // 19: resources.documents.ApprovalTask.created_at:type_name -> resources.timestamp.Timestamp
-	13, // 20: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
-	2,  // 21: resources.documents.ApprovalTask.status:type_name -> resources.documents.ApprovalTaskStatus
-	12, // 22: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
-	12, // 23: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	0,  // 0: resources.documents.ApprovalPolicy.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
+	1,  // 1: resources.documents.ApprovalPolicy.rule_kind:type_name -> resources.documents.ApprovalRuleKind
+	9,  // 2: resources.documents.ApprovalPolicy.active_snapshot_date:type_name -> resources.timestamp.Timestamp
+	9,  // 3: resources.documents.ApprovalPolicy.due_at:type_name -> resources.timestamp.Timestamp
+	9,  // 4: resources.documents.ApprovalPolicy.started_at:type_name -> resources.timestamp.Timestamp
+	9,  // 5: resources.documents.ApprovalPolicy.completed_at:type_name -> resources.timestamp.Timestamp
+	7,  // 6: resources.documents.ApprovalPolicy.access:type_name -> resources.documents.ApprovalAccess
+	9,  // 7: resources.documents.ApprovalPolicy.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 8: resources.documents.ApprovalPolicy.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 9: resources.documents.ApprovalTask.snapshot_date:type_name -> resources.timestamp.Timestamp
+	3,  // 10: resources.documents.ApprovalTask.status:type_name -> resources.documents.ApprovalTaskStatus
+	9,  // 11: resources.documents.ApprovalTask.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 12: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
+	9,  // 13: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
+	10, // 14: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
+	8,  // 15: resources.documents.ApprovalAccess.jobs:type_name -> resources.documents.ApprovalTaskJobAccess
+	9,  // 16: resources.documents.ApprovalTaskJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 17: resources.documents.ApprovalTaskJobAccess.access:type_name -> resources.documents.ApprovalAccessLevel
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_approval_proto_init() }
@@ -1188,25 +970,16 @@ func file_resources_documents_approval_proto_init() {
 	if File_resources_documents_approval_proto != nil {
 		return
 	}
+	file_resources_documents_approval_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_documents_approval_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_documents_approval_proto_msgTypes[2].OneofWrappers = []any{}
-	file_resources_documents_approval_proto_msgTypes[3].OneofWrappers = []any{
-		(*Selector_User)(nil),
-		(*Selector_Job)(nil),
-		(*Selector_JobGrade)(nil),
-	}
-	file_resources_documents_approval_proto_msgTypes[7].OneofWrappers = []any{
-		(*ApprovalStage_RequireAll)(nil),
-		(*ApprovalStage_QuorumAny)(nil),
-	}
-	file_resources_documents_approval_proto_msgTypes[8].OneofWrappers = []any{}
+	file_resources_documents_approval_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_approval_proto_rawDesc), len(file_resources_documents_approval_proto_rawDesc)),
-			NumEnums:      3,
-			NumMessages:   9,
+			NumEnums:      5,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

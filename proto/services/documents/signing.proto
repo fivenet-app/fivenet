@@ -4,100 +4,136 @@ package services.documents;
 
 import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
-import "resources/documents/approval.proto";
 import "resources/documents/signing.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
-message SignaturePanelSnapshot {
-  int64 document_id = 1;
+message ListRequirementsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+}
 
+message ListRequirementsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.SignatureRequirement requirements = 2;
-  // Includes optional acknowledgements
-  repeated resources.documents.Signature collected = 3;
-
-  bool all_required_collected = 4;
 }
 
-message PrepareSignatureRequirementsRequest {
-  int64 document_id = 1;
+message UpsertRequirementRequest {
+  resources.documents.SignatureRequirement requirement = 1 [(buf.validate.field).required = true];
 }
 
-message PrepareSignatureRequirementsResponse {
-  repeated resources.documents.SignatureRequirement requirements = 1;
+message UpsertRequirementResponse {
+  resources.documents.SignatureRequirement requirement = 1;
 }
 
-message GetSignaturePanelRequest {
-  int64 document_id = 1;
+message DeleteRequirementRequest {
+  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
-message GetSignaturePanelResponse {
-  SignaturePanelSnapshot panel = 1;
+message DeleteRequirementResponse {}
+
+message ListRequirementAccessRequest {
+  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message ListRequirementAccessResponse {
+  resources.documents.SignatureAccess access = 1;
+}
+
+message UpsertRequirementAccessRequest {
+  resources.documents.SignatureAccess access = 1;
+}
+
+message UpsertRequirementAccessResponse {
+  resources.documents.SignatureAccess access = 1;
+}
+
+message DeleteRequirementAccessRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteRequirementAccessResponse {}
+
+message ListSignaturesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListSignaturesResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.Signature signatures = 2;
 }
 
 message ApplySignatureRequest {
-  int64 document_id = 1;
-  // empty => optional/ack
-  int64 requirement_id = 2;
-  resources.documents.SignatureType type = 3;
-  string payload_json = 4;
-  // If STAMP
-  optional int64 stamp_id = 5;
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
+  int64 requirement_id = 3; // 0/omit for acknowledgement
+  resources.documents.SignatureType type = 4 [(buf.validate.field).enum.defined_only = true];
+  string payload_json = 5 [(buf.validate.field).string.min_len = 1];
+  int64 stamp_id = 6; // when type=STAMP
+  string idempotency_key = 10 [(buf.validate.field).string.max_len = 64];
 }
 
 message ApplySignatureResponse {
   resources.documents.Signature signature = 1;
-  SignaturePanelSnapshot panel = 2;
+  bool document_signed = 2;
 }
 
 message RevokeSignatureRequest {
-  int64 signature_id = 1;
+  int64 signature_id = 1 [(buf.validate.field).int64.gt = 0];
   string reason = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message RevokeSignatureResponse {
   resources.documents.Signature signature = 1;
-  SignaturePanelSnapshot panel = 2;
 }
 
-message RequestSignaturesRequest {
-  int64 document_id = 1;
-  // Who to ask
-  resources.documents.PartySelector selector = 2;
-  // Signature is required
-  bool required = 3;
-  // For created requirements
-  resources.documents.BindingMode binding_mode = 4;
-  repeated resources.documents.SignatureType allowed_types = 5;
-  // Optional ordering
-  int32 sequence_order = 6;
+message RecomputeSignatureStatusRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
 }
 
-message RequestSignaturesResponse {
-  repeated resources.documents.SignatureRequirement requirements = 1;
-  SignaturePanelSnapshot panel = 2;
+message RecomputeSignatureStatusResponse {
+  bool document_signed = 1;
+  int32 required_total = 2;
+  int32 required_remaining = 3;
+  int32 collected_valid = 4;
 }
 
+// Stamps listing — your example wired in as a method
 message ListUsableStampsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   int64 document_id = 2;
 }
+
 message ListUsableStampsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.Stamp stamps = 2;
 }
 
 service SigningService {
-  rpc PrepareSignatureRequirements(PrepareSignatureRequirementsRequest) returns (PrepareSignatureRequirementsResponse);
+  // Requirements
+  rpc ListRequirements(ListRequirementsRequest) returns (ListRequirementsResponse);
+  rpc UpsertRequirement(UpsertRequirementRequest) returns (UpsertRequirementResponse);
+  rpc DeleteRequirement(DeleteRequirementRequest) returns (DeleteRequirementResponse);
 
-  rpc GetSignaturePanel(GetSignaturePanelRequest) returns (GetSignaturePanelResponse);
+  // Requirement ACL
+  rpc ListRequirementAccess(ListRequirementAccessRequest) returns (ListRequirementAccessResponse);
+  rpc UpsertRequirementAccess(UpsertRequirementAccessRequest) returns (UpsertRequirementAccessResponse);
+  rpc DeleteRequirementAccess(DeleteRequirementAccessRequest) returns (DeleteRequirementAccessResponse);
 
+  // Signatures
+  rpc ListSignatures(ListSignaturesRequest) returns (ListSignaturesResponse);
   rpc ApplySignature(ApplySignatureRequest) returns (ApplySignatureResponse);
   rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse);
 
-  // Convenience for “request signatures” UX
-  rpc RequestSignatures(RequestSignaturesRequest) returns (RequestSignaturesResponse);
+  // Helpers
+  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse);
 
-  // List stamps the caller can use on this doc/version
+  // Stamps
   rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse);
 }

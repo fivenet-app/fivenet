@@ -24,54 +24,54 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type BindingMode int32
+type SignatureBindingMode int32
 
 const (
-	BindingMode_BINDING_MODE_UNSPECIFIED BindingMode = 0
+	SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED SignatureBindingMode = 0
 	// Invalidates on content edits
-	BindingMode_BINDING_MODE_BINDING BindingMode = 1
+	SignatureBindingMode_SIGNATURE_BINDING_MODE_BINDING SignatureBindingMode = 1
 	// Stays but marked 'signed on vX'
-	BindingMode_BINDING_MODE_NONBINDING BindingMode = 2
+	SignatureBindingMode_SIGNATURE_BINDING_MODE_NONBINDING SignatureBindingMode = 2
 )
 
-// Enum value maps for BindingMode.
+// Enum value maps for SignatureBindingMode.
 var (
-	BindingMode_name = map[int32]string{
-		0: "BINDING_MODE_UNSPECIFIED",
-		1: "BINDING_MODE_BINDING",
-		2: "BINDING_MODE_NONBINDING",
+	SignatureBindingMode_name = map[int32]string{
+		0: "SIGNATURE_BINDING_MODE_UNSPECIFIED",
+		1: "SIGNATURE_BINDING_MODE_BINDING",
+		2: "SIGNATURE_BINDING_MODE_NONBINDING",
 	}
-	BindingMode_value = map[string]int32{
-		"BINDING_MODE_UNSPECIFIED": 0,
-		"BINDING_MODE_BINDING":     1,
-		"BINDING_MODE_NONBINDING":  2,
+	SignatureBindingMode_value = map[string]int32{
+		"SIGNATURE_BINDING_MODE_UNSPECIFIED": 0,
+		"SIGNATURE_BINDING_MODE_BINDING":     1,
+		"SIGNATURE_BINDING_MODE_NONBINDING":  2,
 	}
 )
 
-func (x BindingMode) Enum() *BindingMode {
-	p := new(BindingMode)
+func (x SignatureBindingMode) Enum() *SignatureBindingMode {
+	p := new(SignatureBindingMode)
 	*p = x
 	return p
 }
 
-func (x BindingMode) String() string {
+func (x SignatureBindingMode) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (BindingMode) Descriptor() protoreflect.EnumDescriptor {
+func (SignatureBindingMode) Descriptor() protoreflect.EnumDescriptor {
 	return file_resources_documents_signing_proto_enumTypes[0].Descriptor()
 }
 
-func (BindingMode) Type() protoreflect.EnumType {
+func (SignatureBindingMode) Type() protoreflect.EnumType {
 	return &file_resources_documents_signing_proto_enumTypes[0]
 }
 
-func (x BindingMode) Number() protoreflect.EnumNumber {
+func (x SignatureBindingMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use BindingMode.Descriptor instead.
-func (BindingMode) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use SignatureBindingMode.Descriptor instead.
+func (SignatureBindingMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
 }
 
@@ -127,13 +127,62 @@ func (SignatureType) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
 }
 
+type SignatureAccessLevel int32
+
+const (
+	SignatureAccessLevel_SIGNATURE_ACCESS_LEVEL_UNSPECIFIED SignatureAccessLevel = 0
+	SignatureAccessLevel_SIGNATURE_ACCESS_LEVEL_BLOCKED     SignatureAccessLevel = 1
+	SignatureAccessLevel_SIGNATURE_ACCESS_LEVEL_SIGN        SignatureAccessLevel = 2
+)
+
+// Enum value maps for SignatureAccessLevel.
+var (
+	SignatureAccessLevel_name = map[int32]string{
+		0: "SIGNATURE_ACCESS_LEVEL_UNSPECIFIED",
+		1: "SIGNATURE_ACCESS_LEVEL_BLOCKED",
+		2: "SIGNATURE_ACCESS_LEVEL_SIGN",
+	}
+	SignatureAccessLevel_value = map[string]int32{
+		"SIGNATURE_ACCESS_LEVEL_UNSPECIFIED": 0,
+		"SIGNATURE_ACCESS_LEVEL_BLOCKED":     1,
+		"SIGNATURE_ACCESS_LEVEL_SIGN":        2,
+	}
+)
+
+func (x SignatureAccessLevel) Enum() *SignatureAccessLevel {
+	p := new(SignatureAccessLevel)
+	*p = x
+	return p
+}
+
+func (x SignatureAccessLevel) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SignatureAccessLevel) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_signing_proto_enumTypes[2].Descriptor()
+}
+
+func (SignatureAccessLevel) Type() protoreflect.EnumType {
+	return &file_resources_documents_signing_proto_enumTypes[2]
+}
+
+func (x SignatureAccessLevel) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SignatureAccessLevel.Descriptor instead.
+func (SignatureAccessLevel) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+}
+
 type SignatureStatus int32
 
 const (
-	SignatureStatus_SIGNATURE_STATUS_UNSPECIFIED           SignatureStatus = 0
-	SignatureStatus_SIGNATURE_STATUS_VALID                 SignatureStatus = 1
-	SignatureStatus_SIGNATURE_STATUS_REVOKED               SignatureStatus = 2
-	SignatureStatus_SIGNATURE_STATUS_INVALID_PRIOR_VERSION SignatureStatus = 3
+	SignatureStatus_SIGNATURE_STATUS_UNSPECIFIED SignatureStatus = 0
+	SignatureStatus_SIGNATURE_STATUS_VALID       SignatureStatus = 1
+	SignatureStatus_SIGNATURE_STATUS_REVOKED     SignatureStatus = 2
+	SignatureStatus_SIGNATURE_STATUS_INVALID     SignatureStatus = 3
 )
 
 // Enum value maps for SignatureStatus.
@@ -142,13 +191,13 @@ var (
 		0: "SIGNATURE_STATUS_UNSPECIFIED",
 		1: "SIGNATURE_STATUS_VALID",
 		2: "SIGNATURE_STATUS_REVOKED",
-		3: "SIGNATURE_STATUS_INVALID_PRIOR_VERSION",
+		3: "SIGNATURE_STATUS_INVALID",
 	}
 	SignatureStatus_value = map[string]int32{
-		"SIGNATURE_STATUS_UNSPECIFIED":           0,
-		"SIGNATURE_STATUS_VALID":                 1,
-		"SIGNATURE_STATUS_REVOKED":               2,
-		"SIGNATURE_STATUS_INVALID_PRIOR_VERSION": 3,
+		"SIGNATURE_STATUS_UNSPECIFIED": 0,
+		"SIGNATURE_STATUS_VALID":       1,
+		"SIGNATURE_STATUS_REVOKED":     2,
+		"SIGNATURE_STATUS_INVALID":     3,
 	}
 )
 
@@ -163,11 +212,11 @@ func (x SignatureStatus) String() string {
 }
 
 func (SignatureStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[2].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[3].Descriptor()
 }
 
 func (SignatureStatus) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[2]
+	return &file_resources_documents_signing_proto_enumTypes[3]
 }
 
 func (x SignatureStatus) Number() protoreflect.EnumNumber {
@@ -176,7 +225,7 @@ func (x SignatureStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignatureStatus.Descriptor instead.
 func (SignatureStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
 // Stamps
@@ -213,11 +262,11 @@ func (x StampAccessLevel) String() string {
 }
 
 func (StampAccessLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[3].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[4].Descriptor()
 }
 
 func (StampAccessLevel) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[3]
+	return &file_resources_documents_signing_proto_enumTypes[4]
 }
 
 func (x StampAccessLevel) Number() protoreflect.EnumNumber {
@@ -226,29 +275,273 @@ func (x StampAccessLevel) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use StampAccessLevel.Descriptor instead.
 func (StampAccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
+}
+
+type SignatureAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []*SignatureJobAccess  `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	Users         []*SignatureUserAccess `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignatureAccess) Reset() {
+	*x = SignatureAccess{}
+	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignatureAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignatureAccess) ProtoMessage() {}
+
+func (x *SignatureAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignatureAccess.ProtoReflect.Descriptor instead.
+func (*SignatureAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SignatureAccess) GetJobs() []*SignatureJobAccess {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
+func (x *SignatureAccess) GetUsers() []*SignatureUserAccess {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+type SignatureJobAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Access        SignatureAccessLevel   `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.SignatureAccessLevel" json:"access,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignatureJobAccess) Reset() {
+	*x = SignatureJobAccess{}
+	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignatureJobAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignatureJobAccess) ProtoMessage() {}
+
+func (x *SignatureJobAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignatureJobAccess.ProtoReflect.Descriptor instead.
+func (*SignatureJobAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SignatureJobAccess) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SignatureJobAccess) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SignatureJobAccess) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *SignatureJobAccess) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+func (x *SignatureJobAccess) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
+	}
+	return ""
+}
+
+func (x *SignatureJobAccess) GetMinimumGrade() int32 {
+	if x != nil {
+		return x.MinimumGrade
+	}
+	return 0
+}
+
+func (x *SignatureJobAccess) GetJobGradeLabel() string {
+	if x != nil && x.JobGradeLabel != nil {
+		return *x.JobGradeLabel
+	}
+	return ""
+}
+
+func (x *SignatureJobAccess) GetAccess() SignatureAccessLevel {
+	if x != nil {
+		return x.Access
+	}
+	return SignatureAccessLevel_SIGNATURE_ACCESS_LEVEL_UNSPECIFIED
+}
+
+type SignatureUserAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	TargetId      int64                  `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	UserId        int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	User          *users.UserShort       `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	Access        SignatureAccessLevel   `protobuf:"varint,6,opt,name=access,proto3,enum=resources.documents.SignatureAccessLevel" json:"access,omitempty"`
+	Required      *bool                  `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignatureUserAccess) Reset() {
+	*x = SignatureUserAccess{}
+	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignatureUserAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignatureUserAccess) ProtoMessage() {}
+
+func (x *SignatureUserAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignatureUserAccess.ProtoReflect.Descriptor instead.
+func (*SignatureUserAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SignatureUserAccess) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SignatureUserAccess) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SignatureUserAccess) GetTargetId() int64 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+func (x *SignatureUserAccess) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *SignatureUserAccess) GetUser() *users.UserShort {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *SignatureUserAccess) GetAccess() SignatureAccessLevel {
+	if x != nil {
+		return x.Access
+	}
+	return SignatureAccessLevel_SIGNATURE_ACCESS_LEVEL_UNSPECIFIED
+}
+
+func (x *SignatureUserAccess) GetRequired() bool {
+	if x != nil && x.Required != nil {
+		return *x.Required
+	}
+	return false
 }
 
 type SignatureRequirement struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	CreatedAt  *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	// NULL/0 => any-order
-	SequenceOrder int32 `protobuf:"varint,4,opt,name=sequence_order,json=sequenceOrder,proto3" json:"sequence_order,omitempty"`
-	Required      bool  `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	// "Leader", "Counterparty Rep"
-	Label         string          `protobuf:"bytes,6,opt,name=label,proto3" json:"label,omitempty"`
-	Selector      *PartySelector  `protobuf:"bytes,7,opt,name=selector,proto3" json:"selector,omitempty"`
-	BindingMode   BindingMode     `protobuf:"varint,8,opt,name=binding_mode,json=bindingMode,proto3,enum=resources.documents.BindingMode" json:"binding_mode,omitempty"`
-	AllowedTypes  []SignatureType `protobuf:"varint,9,rep,packed,name=allowed_types,json=allowedTypes,proto3,enum=resources.documents.SignatureType" json:"allowed_types,omitempty"`
+	Label         string               `protobuf:"bytes,4,opt,name=label,proto3" json:"label,omitempty"`
+	Required      bool                 `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty"`
+	BindingMode   SignatureBindingMode `protobuf:"varint,6,opt,name=binding_mode,json=bindingMode,proto3,enum=resources.documents.SignatureBindingMode" json:"binding_mode,omitempty"`
+	AllowedTypes  []SignatureType      `protobuf:"varint,7,rep,packed,name=allowed_types,json=allowedTypes,proto3,enum=resources.documents.SignatureType" json:"allowed_types,omitempty"`
+	Access        *SignatureAccess     `protobuf:"bytes,8,opt,name=access,proto3" json:"access,omitempty"`
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SignatureRequirement) Reset() {
 	*x = SignatureRequirement{}
-	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	mi := &file_resources_documents_signing_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -260,7 +553,7 @@ func (x *SignatureRequirement) String() string {
 func (*SignatureRequirement) ProtoMessage() {}
 
 func (x *SignatureRequirement) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	mi := &file_resources_documents_signing_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -273,7 +566,7 @@ func (x *SignatureRequirement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureRequirement.ProtoReflect.Descriptor instead.
 func (*SignatureRequirement) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SignatureRequirement) GetId() int64 {
@@ -290,25 +583,11 @@ func (x *SignatureRequirement) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *SignatureRequirement) GetCreatedAt() *timestamp.Timestamp {
+func (x *SignatureRequirement) GetSnapshotDate() *timestamp.Timestamp {
 	if x != nil {
-		return x.CreatedAt
+		return x.SnapshotDate
 	}
 	return nil
-}
-
-func (x *SignatureRequirement) GetSequenceOrder() int32 {
-	if x != nil {
-		return x.SequenceOrder
-	}
-	return 0
-}
-
-func (x *SignatureRequirement) GetRequired() bool {
-	if x != nil {
-		return x.Required
-	}
-	return false
 }
 
 func (x *SignatureRequirement) GetLabel() string {
@@ -318,23 +597,44 @@ func (x *SignatureRequirement) GetLabel() string {
 	return ""
 }
 
-func (x *SignatureRequirement) GetSelector() *PartySelector {
+func (x *SignatureRequirement) GetRequired() bool {
 	if x != nil {
-		return x.Selector
+		return x.Required
 	}
-	return nil
+	return false
 }
 
-func (x *SignatureRequirement) GetBindingMode() BindingMode {
+func (x *SignatureRequirement) GetBindingMode() SignatureBindingMode {
 	if x != nil {
 		return x.BindingMode
 	}
-	return BindingMode_BINDING_MODE_UNSPECIFIED
+	return SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED
 }
 
 func (x *SignatureRequirement) GetAllowedTypes() []SignatureType {
 	if x != nil {
 		return x.AllowedTypes
+	}
+	return nil
+}
+
+func (x *SignatureRequirement) GetAccess() *SignatureAccess {
+	if x != nil {
+		return x.Access
+	}
+	return nil
+}
+
+func (x *SignatureRequirement) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *SignatureRequirement) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
 	}
 	return nil
 }
@@ -346,7 +646,7 @@ type Signature struct {
 	// version_id whose hash was shown
 	SnapshotDate *timestamp.Timestamp `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	// Null/Empty for optional acknowledgements
-	RequirementId int64            `protobuf:"varint,4,opt,name=requirement_id,json=requirementId,proto3" json:"requirement_id,omitempty"`
+	RequirementId *int64           `protobuf:"varint,4,opt,name=requirement_id,json=requirementId,proto3,oneof" json:"requirement_id,omitempty"`
 	UserId        int32            `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort `protobuf:"bytes,6,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	Job           string           `protobuf:"bytes,7,opt,name=job,proto3" json:"job,omitempty"`
@@ -358,7 +658,7 @@ type Signature struct {
 	StampId *int64          `protobuf:"varint,11,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	Status  SignatureStatus `protobuf:"varint,12,opt,name=status,proto3,enum=resources.documents.SignatureStatus" json:"status,omitempty"`
 	// Revoke/Invalid reason
-	Reason        string               `protobuf:"bytes,13,opt,name=reason,proto3" json:"reason,omitempty"`
+	Reason        *string              `protobuf:"bytes,13,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,14,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	RevokedAt     *timestamp.Timestamp `protobuf:"bytes,15,opt,name=revoked_at,json=revokedAt,proto3,oneof" json:"revoked_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -367,7 +667,7 @@ type Signature struct {
 
 func (x *Signature) Reset() {
 	*x = Signature{}
-	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	mi := &file_resources_documents_signing_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +679,7 @@ func (x *Signature) String() string {
 func (*Signature) ProtoMessage() {}
 
 func (x *Signature) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	mi := &file_resources_documents_signing_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +692,7 @@ func (x *Signature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Signature.ProtoReflect.Descriptor instead.
 func (*Signature) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Signature) GetId() int64 {
@@ -417,8 +717,8 @@ func (x *Signature) GetSnapshotDate() *timestamp.Timestamp {
 }
 
 func (x *Signature) GetRequirementId() int64 {
-	if x != nil {
-		return x.RequirementId
+	if x != nil && x.RequirementId != nil {
+		return *x.RequirementId
 	}
 	return 0
 }
@@ -480,8 +780,8 @@ func (x *Signature) GetStatus() SignatureStatus {
 }
 
 func (x *Signature) GetReason() string {
-	if x != nil {
-		return x.Reason
+	if x != nil && x.Reason != nil {
+		return *x.Reason
 	}
 	return ""
 }
@@ -516,7 +816,7 @@ type Stamp struct {
 
 func (x *Stamp) Reset() {
 	*x = Stamp{}
-	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	mi := &file_resources_documents_signing_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -528,7 +828,7 @@ func (x *Stamp) String() string {
 func (*Stamp) ProtoMessage() {}
 
 func (x *Stamp) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	mi := &file_resources_documents_signing_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -541,7 +841,7 @@ func (x *Stamp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Stamp.ProtoReflect.Descriptor instead.
 func (*Stamp) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Stamp) GetId() int64 {
@@ -602,7 +902,7 @@ type StampAccess struct {
 
 func (x *StampAccess) Reset() {
 	*x = StampAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[3]
+	mi := &file_resources_documents_signing_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -614,7 +914,7 @@ func (x *StampAccess) String() string {
 func (*StampAccess) ProtoMessage() {}
 
 func (x *StampAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[3]
+	mi := &file_resources_documents_signing_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -627,7 +927,7 @@ func (x *StampAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StampAccess.ProtoReflect.Descriptor instead.
 func (*StampAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StampAccess) GetJobs() []*StampJobAccess {
@@ -653,7 +953,7 @@ type StampJobAccess struct {
 
 func (x *StampJobAccess) Reset() {
 	*x = StampJobAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[4]
+	mi := &file_resources_documents_signing_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -665,7 +965,7 @@ func (x *StampJobAccess) String() string {
 func (*StampJobAccess) ProtoMessage() {}
 
 func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[4]
+	mi := &file_resources_documents_signing_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -678,7 +978,7 @@ func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StampJobAccess.ProtoReflect.Descriptor instead.
 func (*StampJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *StampJobAccess) GetId() int64 {
@@ -741,43 +1041,77 @@ var File_resources_documents_signing_proto protoreflect.FileDescriptor
 
 const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	"!resources/documents/signing.proto\x12\x13resources.documents\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xad\x03\n" +
+	"!resources/documents/signing.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc1\x01\n" +
+	"\x0fSignatureAccess\x12T\n" +
+	"\x04jobs\x18\x01 \x03(\v2'.resources.documents.SignatureJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12X\n" +
+	"\x05users\x18\x02 \x03(\v2(.resources.documents.SignatureUserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users\"\xff\x02\n" +
+	"\x12SignatureJobAccess\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
+	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
+	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12A\n" +
+	"\x06access\x18\b \x01(\x0e2).resources.documents.SignatureAccessLevelR\x06accessB\r\n" +
+	"\v_created_atB\f\n" +
+	"\n" +
+	"_job_labelB\x12\n" +
+	"\x10_job_grade_label\"\xdd\x02\n" +
+	"\x13SignatureUserAccess\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x17\n" +
+	"\auser_id\x18\x04 \x01(\x05R\x06userId\x123\n" +
+	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12A\n" +
+	"\x06access\x18\x06 \x01(\x0e2).resources.documents.SignatureAccessLevelR\x06access\x12\x1f\n" +
+	"\brequired\x18\a \x01(\bH\x02R\brequired\x88\x01\x01B\r\n" +
+	"\v_created_atB\a\n" +
+	"\x05_userB\v\n" +
+	"\t_required\"\x91\x04\n" +
 	"\x14SignatureRequirement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12=\n" +
+	"documentId\x12C\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x14\n" +
+	"\x05label\x18\x04 \x01(\tR\x05label\x12\x1a\n" +
+	"\brequired\x18\x05 \x01(\bR\brequired\x12L\n" +
+	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeR\vbindingMode\x12G\n" +
+	"\rallowed_types\x18\a \x03(\x0e2\".resources.documents.SignatureTypeR\fallowedTypes\x12<\n" +
+	"\x06access\x18\b \x01(\v2$.resources.documents.SignatureAccessR\x06access\x12=\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12%\n" +
-	"\x0esequence_order\x18\x04 \x01(\x05R\rsequenceOrder\x12\x1a\n" +
-	"\brequired\x18\x05 \x01(\bR\brequired\x12\x14\n" +
-	"\x05label\x18\x06 \x01(\tR\x05label\x12>\n" +
-	"\bselector\x18\a \x01(\v2\".resources.documents.PartySelectorR\bselector\x12C\n" +
-	"\fbinding_mode\x18\b \x01(\x0e2 .resources.documents.BindingModeR\vbindingMode\x12G\n" +
-	"\rallowed_types\x18\t \x03(\x0e2\".resources.documents.SignatureTypeR\fallowedTypes\"\xb1\x05\n" +
+	"created_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
+	"\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xd9\x05\n" +
 	"\tSignature\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12%\n" +
-	"\x0erequirement_id\x18\x04 \x01(\x03R\rrequirementId\x12\x17\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12*\n" +
+	"\x0erequirement_id\x18\x04 \x01(\x03H\x00R\rrequirementId\x88\x01\x01\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x06 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x12\x10\n" +
+	"\x04user\x18\x06 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12\x10\n" +
 	"\x03job\x18\a \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\b \x01(\tH\x01R\bjobLabel\x88\x01\x01\x126\n" +
+	"\tjob_label\x18\b \x01(\tH\x02R\bjobLabel\x88\x01\x01\x126\n" +
 	"\x04type\x18\t \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12!\n" +
 	"\fpayload_json\x18\n" +
 	" \x01(\tR\vpayloadJson\x12\x1e\n" +
-	"\bstamp_id\x18\v \x01(\x03H\x02R\astampId\x88\x01\x01\x12<\n" +
-	"\x06status\x18\f \x01(\x0e2$.resources.documents.SignatureStatusR\x06status\x12\x16\n" +
-	"\x06reason\x18\r \x01(\tR\x06reason\x12=\n" +
+	"\bstamp_id\x18\v \x01(\x03H\x03R\astampId\x88\x01\x01\x12<\n" +
+	"\x06status\x18\f \x01(\x0e2$.resources.documents.SignatureStatusR\x06status\x12\x1b\n" +
+	"\x06reason\x18\r \x01(\tH\x04R\x06reason\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\trevokedAt\x88\x01\x01B\a\n" +
+	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\trevokedAt\x88\x01\x01B\x11\n" +
+	"\x0f_requirement_idB\a\n" +
 	"\x05_userB\f\n" +
 	"\n" +
 	"_job_labelB\v\n" +
-	"\t_stamp_idB\r\n" +
+	"\t_stamp_idB\t\n" +
+	"\a_reasonB\r\n" +
 	"\v_revoked_at\"\x90\x02\n" +
 	"\x05Stamp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
@@ -805,21 +1139,25 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_label*b\n" +
-	"\vBindingMode\x12\x1c\n" +
-	"\x18BINDING_MODE_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14BINDING_MODE_BINDING\x10\x01\x12\x1b\n" +
-	"\x17BINDING_MODE_NONBINDING\x10\x02*\x80\x01\n" +
+	"\x10_job_grade_label*\x89\x01\n" +
+	"\x14SignatureBindingMode\x12&\n" +
+	"\"SIGNATURE_BINDING_MODE_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eSIGNATURE_BINDING_MODE_BINDING\x10\x01\x12%\n" +
+	"!SIGNATURE_BINDING_MODE_NONBINDING\x10\x02*\x80\x01\n" +
 	"\rSignatureType\x12\x1e\n" +
 	"\x1aSIGNATURE_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17SIGNATURE_TYPE_FREEHAND\x10\x01\x12\x18\n" +
 	"\x14SIGNATURE_TYPE_TYPED\x10\x02\x12\x18\n" +
-	"\x14SIGNATURE_TYPE_STAMP\x10\x03*\x99\x01\n" +
+	"\x14SIGNATURE_TYPE_STAMP\x10\x03*\x83\x01\n" +
+	"\x14SignatureAccessLevel\x12&\n" +
+	"\"SIGNATURE_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eSIGNATURE_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1f\n" +
+	"\x1bSIGNATURE_ACCESS_LEVEL_SIGN\x10\x02*\x8b\x01\n" +
 	"\x0fSignatureStatus\x12 \n" +
 	"\x1cSIGNATURE_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SIGNATURE_STATUS_VALID\x10\x01\x12\x1c\n" +
-	"\x18SIGNATURE_STATUS_REVOKED\x10\x02\x12*\n" +
-	"&SIGNATURE_STATUS_INVALID_PRIOR_VERSION\x10\x03*r\n" +
+	"\x18SIGNATURE_STATUS_REVOKED\x10\x02\x12\x1c\n" +
+	"\x18SIGNATURE_STATUS_INVALID\x10\x03*r\n" +
 	"\x10StampAccessLevel\x12\"\n" +
 	"\x1eSTAMP_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
@@ -837,43 +1175,55 @@ func file_resources_documents_signing_proto_rawDescGZIP() []byte {
 	return file_resources_documents_signing_proto_rawDescData
 }
 
-var file_resources_documents_signing_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_resources_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_resources_documents_signing_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_resources_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_resources_documents_signing_proto_goTypes = []any{
-	(BindingMode)(0),             // 0: resources.documents.BindingMode
+	(SignatureBindingMode)(0),    // 0: resources.documents.SignatureBindingMode
 	(SignatureType)(0),           // 1: resources.documents.SignatureType
-	(SignatureStatus)(0),         // 2: resources.documents.SignatureStatus
-	(StampAccessLevel)(0),        // 3: resources.documents.StampAccessLevel
-	(*SignatureRequirement)(nil), // 4: resources.documents.SignatureRequirement
-	(*Signature)(nil),            // 5: resources.documents.Signature
-	(*Stamp)(nil),                // 6: resources.documents.Stamp
-	(*StampAccess)(nil),          // 7: resources.documents.StampAccess
-	(*StampJobAccess)(nil),       // 8: resources.documents.StampJobAccess
-	(*timestamp.Timestamp)(nil),  // 9: resources.timestamp.Timestamp
-	(*PartySelector)(nil),        // 10: resources.documents.PartySelector
-	(*users.UserShort)(nil),      // 11: resources.users.UserShort
+	(SignatureAccessLevel)(0),    // 2: resources.documents.SignatureAccessLevel
+	(SignatureStatus)(0),         // 3: resources.documents.SignatureStatus
+	(StampAccessLevel)(0),        // 4: resources.documents.StampAccessLevel
+	(*SignatureAccess)(nil),      // 5: resources.documents.SignatureAccess
+	(*SignatureJobAccess)(nil),   // 6: resources.documents.SignatureJobAccess
+	(*SignatureUserAccess)(nil),  // 7: resources.documents.SignatureUserAccess
+	(*SignatureRequirement)(nil), // 8: resources.documents.SignatureRequirement
+	(*Signature)(nil),            // 9: resources.documents.Signature
+	(*Stamp)(nil),                // 10: resources.documents.Stamp
+	(*StampAccess)(nil),          // 11: resources.documents.StampAccess
+	(*StampJobAccess)(nil),       // 12: resources.documents.StampJobAccess
+	(*timestamp.Timestamp)(nil),  // 13: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),      // 14: resources.users.UserShort
 }
 var file_resources_documents_signing_proto_depIdxs = []int32{
-	9,  // 0: resources.documents.SignatureRequirement.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 1: resources.documents.SignatureRequirement.selector:type_name -> resources.documents.PartySelector
-	0,  // 2: resources.documents.SignatureRequirement.binding_mode:type_name -> resources.documents.BindingMode
-	1,  // 3: resources.documents.SignatureRequirement.allowed_types:type_name -> resources.documents.SignatureType
-	9,  // 4: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
-	11, // 5: resources.documents.Signature.user:type_name -> resources.users.UserShort
-	1,  // 6: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
-	2,  // 7: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
-	9,  // 8: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 9: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
-	9,  // 10: resources.documents.Stamp.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 11: resources.documents.Stamp.access:type_name -> resources.documents.StampAccess
-	8,  // 12: resources.documents.StampAccess.jobs:type_name -> resources.documents.StampJobAccess
-	9,  // 13: resources.documents.StampJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 14: resources.documents.StampJobAccess.access:type_name -> resources.documents.StampAccessLevel
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	6,  // 0: resources.documents.SignatureAccess.jobs:type_name -> resources.documents.SignatureJobAccess
+	7,  // 1: resources.documents.SignatureAccess.users:type_name -> resources.documents.SignatureUserAccess
+	13, // 2: resources.documents.SignatureJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	2,  // 3: resources.documents.SignatureJobAccess.access:type_name -> resources.documents.SignatureAccessLevel
+	13, // 4: resources.documents.SignatureUserAccess.created_at:type_name -> resources.timestamp.Timestamp
+	14, // 5: resources.documents.SignatureUserAccess.user:type_name -> resources.users.UserShort
+	2,  // 6: resources.documents.SignatureUserAccess.access:type_name -> resources.documents.SignatureAccessLevel
+	13, // 7: resources.documents.SignatureRequirement.snapshot_date:type_name -> resources.timestamp.Timestamp
+	0,  // 8: resources.documents.SignatureRequirement.binding_mode:type_name -> resources.documents.SignatureBindingMode
+	1,  // 9: resources.documents.SignatureRequirement.allowed_types:type_name -> resources.documents.SignatureType
+	5,  // 10: resources.documents.SignatureRequirement.access:type_name -> resources.documents.SignatureAccess
+	13, // 11: resources.documents.SignatureRequirement.created_at:type_name -> resources.timestamp.Timestamp
+	13, // 12: resources.documents.SignatureRequirement.updated_at:type_name -> resources.timestamp.Timestamp
+	13, // 13: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
+	14, // 14: resources.documents.Signature.user:type_name -> resources.users.UserShort
+	1,  // 15: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
+	3,  // 16: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
+	13, // 17: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
+	13, // 18: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
+	13, // 19: resources.documents.Stamp.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 20: resources.documents.Stamp.access:type_name -> resources.documents.StampAccess
+	12, // 21: resources.documents.StampAccess.jobs:type_name -> resources.documents.StampJobAccess
+	13, // 22: resources.documents.StampJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 23: resources.documents.StampJobAccess.access:type_name -> resources.documents.StampAccessLevel
+	24, // [24:24] is the sub-list for method output_type
+	24, // [24:24] is the sub-list for method input_type
+	24, // [24:24] is the sub-list for extension type_name
+	24, // [24:24] is the sub-list for extension extendee
+	0,  // [0:24] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_signing_proto_init() }
@@ -881,17 +1231,18 @@ func file_resources_documents_signing_proto_init() {
 	if File_resources_documents_signing_proto != nil {
 		return
 	}
-	file_resources_documents_approval_proto_init()
 	file_resources_documents_signing_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_documents_signing_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_documents_signing_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_signing_proto_rawDesc), len(file_resources_documents_signing_proto_rawDesc)),
-			NumEnums:      4,
-			NumMessages:   5,
+			NumEnums:      5,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

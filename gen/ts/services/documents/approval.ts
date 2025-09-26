@@ -12,111 +12,220 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PartySelector } from "../../resources/documents/approval";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { ApprovalTaskStatus } from "../../resources/documents/approval";
 import { PaginationRequest } from "../../resources/common/database/database";
-import { OnEditBehavior } from "../../resources/documents/approval";
+import { ApprovalAccess } from "../../resources/documents/approval";
 import { ApprovalTask } from "../../resources/documents/approval";
-import { ApprovalStage } from "../../resources/documents/approval";
+import { Timestamp } from "../../resources/timestamp/timestamp";
+import { OnEditBehavior } from "../../resources/documents/approval";
+import { ApprovalRuleKind } from "../../resources/documents/approval";
+import { ApprovalPolicy } from "../../resources/documents/approval";
 /**
- * @generated from protobuf message services.documents.ApprovalPanelSnapshot
+ * @generated from protobuf message services.documents.GetPolicyRequest
  */
-export interface ApprovalPanelSnapshot {
+export interface GetPolicyRequest {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+}
+/**
+ * @generated from protobuf message services.documents.GetPolicyResponse
+ */
+export interface GetPolicyResponse {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     */
+    policy?: ApprovalPolicy;
+}
+/**
+ * @generated from protobuf message services.documents.UpsertPolicyRequest
+ */
+export interface UpsertPolicyRequest {
     /**
      * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
-     * Smallest incomplete order
-     *
-     * @generated from protobuf field: int32 current_order = 2
+     * @generated from protobuf field: resources.documents.ApprovalRuleKind rule_kind = 2
      */
-    currentOrder: number;
+    ruleKind: ApprovalRuleKind;
     /**
-     * With aggregates
-     *
-     * @generated from protobuf field: repeated resources.documents.ApprovalStage stages = 3
+     * @generated from protobuf field: int32 required_count = 3
      */
-    stages: ApprovalStage[];
+    requiredCount: number; // used if QUORUM_ANY
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTask pending_tasks = 4
-     */
-    pendingTasks: ApprovalTask[];
-    /**
-     * @generated from protobuf field: bool all_required_stages_satisfied = 5
-     */
-    allRequiredStagesSatisfied: boolean;
-    /**
-     * @generated from protobuf field: bool any_declined = 6
-     */
-    anyDeclined: boolean;
-}
-/**
- * @generated from protobuf message services.documents.StartReviewRequest
- */
-export interface StartReviewRequest {
-    /**
-     * @generated from protobuf field: string document_id = 1
-     */
-    documentId: string;
-    /**
-     * Optional override
-     *
-     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 2
+     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 4
      */
     onEditBehavior: OnEditBehavior;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp due_at = 5
+     */
+    dueAt?: Timestamp;
 }
 /**
- * @generated from protobuf message services.documents.StartReviewResponse
+ * @generated from protobuf message services.documents.UpsertPolicyResponse
  */
-export interface StartReviewResponse {
+export interface UpsertPolicyResponse {
     /**
-     * @generated from protobuf field: string policy_id = 1
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
      */
-    policyId: string;
-    /**
-     * @generated from protobuf field: services.documents.ApprovalPanelSnapshot panel = 2
-     */
-    panel?: ApprovalPanelSnapshot;
+    policy?: ApprovalPolicy;
 }
 /**
- * @generated from protobuf message services.documents.GetApprovalPanelRequest
+ * @generated from protobuf message services.documents.StartApprovalRoundRequest
  */
-export interface GetApprovalPanelRequest {
+export interface StartApprovalRoundRequest {
     /**
-     * @generated from protobuf field: string document_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    documentId: string;
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
+     */
+    snapshotDate?: Timestamp; // if omitted, server uses now
+    /**
+     * @generated from protobuf field: bool regen_tasks = 3
+     */
+    regenTasks: boolean; // re-materialize tasks from ACL
 }
 /**
- * @generated from protobuf message services.documents.GetApprovalPanelResponse
+ * @generated from protobuf message services.documents.StartApprovalRoundResponse
  */
-export interface GetApprovalPanelResponse {
+export interface StartApprovalRoundResponse {
     /**
-     * @generated from protobuf field: services.documents.ApprovalPanelSnapshot panel = 1
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
      */
-    panel?: ApprovalPanelSnapshot;
+    policy?: ApprovalPolicy;
+    /**
+     * @generated from protobuf field: repeated resources.documents.ApprovalTask tasks = 2
+     */
+    tasks: ApprovalTask[];
 }
 /**
- * @generated from protobuf message services.documents.ListMyApprovalTasksRequest
+ * @generated from protobuf message services.documents.CompleteApprovalRoundRequest
  */
-export interface ListMyApprovalTasksRequest {
+export interface CompleteApprovalRoundRequest {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+}
+/**
+ * @generated from protobuf message services.documents.CompleteApprovalRoundResponse
+ */
+export interface CompleteApprovalRoundResponse {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     */
+    policy?: ApprovalPolicy;
+}
+/**
+ * @generated from protobuf message services.documents.RecomputePolicyCountersRequest
+ */
+export interface RecomputePolicyCountersRequest {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+}
+/**
+ * @generated from protobuf message services.documents.RecomputePolicyCountersResponse
+ */
+export interface RecomputePolicyCountersResponse {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     */
+    policy?: ApprovalPolicy;
+}
+/**
+ * @generated from protobuf message services.documents.ListApprovalAccessRequest
+ */
+export interface ListApprovalAccessRequest {
+    /**
+     * @generated from protobuf field: int64 policy_id = 1
+     */
+    policyId: number;
+}
+/**
+ * @generated from protobuf message services.documents.ListApprovalAccessResponse
+ */
+export interface ListApprovalAccessResponse {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalAccess access = 1
+     */
+    access?: ApprovalAccess;
+}
+/**
+ * @generated from protobuf message services.documents.UpsertApprovalAccessRequest
+ */
+export interface UpsertApprovalAccessRequest {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalAccess access = 1
+     */
+    access?: ApprovalAccess;
+}
+/**
+ * @generated from protobuf message services.documents.UpsertApprovalAccessResponse
+ */
+export interface UpsertApprovalAccessResponse {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalAccess access = 1
+     */
+    access?: ApprovalAccess;
+}
+/**
+ * @generated from protobuf message services.documents.DeleteApprovalAccessRequest
+ */
+export interface DeleteApprovalAccessRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
+ * @generated from protobuf message services.documents.DeleteApprovalAccessResponse
+ */
+export interface DeleteApprovalAccessResponse {
+}
+/**
+ * @generated from protobuf message services.documents.ListTasksRequest
+ */
+export interface ListTasksRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
      */
     pagination?: PaginationRequest;
     /**
-     * Default: PENDING
-     *
-     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus status = 2
+     * @generated from protobuf field: int64 document_id = 2
      */
-    status: ApprovalTaskStatus[];
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
+     */
+    snapshotDate?: Timestamp;
+    /**
+     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 4
+     */
+    statuses: ApprovalTaskStatus[];
+    /**
+     * @generated from protobuf field: int32 user_id = 5
+     */
+    userId: number; // filter "my tasks"
+    /**
+     * @generated from protobuf field: string job = 6
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 7
+     */
+    minimumGrade: number;
 }
 /**
- * @generated from protobuf message services.documents.ListMyApprovalTasksResponse
+ * @generated from protobuf message services.documents.ListTasksResponse
  */
-export interface ListMyApprovalTasksResponse {
+export interface ListTasksResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
      */
@@ -127,170 +236,80 @@ export interface ListMyApprovalTasksResponse {
     tasks: ApprovalTask[];
 }
 /**
- * @generated from protobuf message services.documents.DecisionApprove
+ * @generated from protobuf message services.documents.DecideTaskRequest
  */
-export interface DecisionApprove {
+export interface DecideTaskRequest {
     /**
-     * @generated from protobuf field: string comment = 1
+     * @generated from protobuf field: int64 task_id = 1
+     */
+    taskId: number;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalTaskStatus new_status = 2
+     */
+    newStatus: ApprovalTaskStatus; // APPROVED or DECLINED
+    /**
+     * @generated from protobuf field: string comment = 3
      */
     comment: string;
+    /**
+     * @generated from protobuf field: string idempotency_key = 10
+     */
+    idempotencyKey: string;
 }
 /**
- * @generated from protobuf message services.documents.DecisionDecline
+ * @generated from protobuf message services.documents.DecideTaskResponse
  */
-export interface DecisionDecline {
+export interface DecideTaskResponse {
     /**
-     * @generated from protobuf field: string reason = 1
+     * @generated from protobuf field: resources.documents.ApprovalTask task = 1
+     */
+    task?: ApprovalTask;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 2
+     */
+    policy?: ApprovalPolicy; // counters updated
+}
+/**
+ * @generated from protobuf message services.documents.ReopenTaskRequest
+ */
+export interface ReopenTaskRequest {
+    /**
+     * @generated from protobuf field: int64 task_id = 1
+     */
+    taskId: number;
+    /**
+     * @generated from protobuf field: string reason = 2
      */
     reason: string;
 }
 /**
- * @generated from protobuf message services.documents.DecideApprovalTaskRequest
+ * @generated from protobuf message services.documents.ReopenTaskResponse
  */
-export interface DecideApprovalTaskRequest {
+export interface ReopenTaskResponse {
     /**
-     * @generated from protobuf field: string task_id = 1
+     * @generated from protobuf field: resources.documents.ApprovalTask task = 1
      */
-    taskId: string;
+    task?: ApprovalTask;
     /**
-     * @generated from protobuf oneof: decision
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 2
      */
-    decision: {
-        oneofKind: "approve";
-        /**
-         * @generated from protobuf field: services.documents.DecisionApprove approve = 10
-         */
-        approve: DecisionApprove;
-    } | {
-        oneofKind: "decline";
-        /**
-         * @generated from protobuf field: services.documents.DecisionDecline decline = 11
-         */
-        decline: DecisionDecline;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message services.documents.DecideApprovalTaskResponse
- */
-export interface DecideApprovalTaskResponse {
-    /**
-     * @generated from protobuf field: resources.documents.ApprovalTask updated = 1
-     */
-    updated?: ApprovalTask;
-    /**
-     * @generated from protobuf field: bool stage_completed = 2
-     */
-    stageCompleted: boolean;
-    /**
-     * @generated from protobuf field: bool document_now_approved = 3
-     */
-    documentNowApproved: boolean;
-    /**
-     * Updated snapshot for optimistic UI
-     *
-     * @generated from protobuf field: services.documents.ApprovalPanelSnapshot panel = 4
-     */
-    panel?: ApprovalPanelSnapshot;
-}
-/**
- * Leader UX: add or cancel reviewer tasks on the fly
- *
- * @generated from protobuf message services.documents.AddReviewersRequest
- */
-export interface AddReviewersRequest {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * Who to add
-     *
-     * @generated from protobuf field: resources.documents.PartySelector selector = 2
-     */
-    selector?: PartySelector;
-    /**
-     * Optional: convert to a parallel stage if needed
-     *
-     * @generated from protobuf field: int32 quorum_any = 3
-     */
-    quorumAny: number;
-    /**
-     * Optional: attach to existing stage
-     *
-     * @generated from protobuf field: int64 stage_id = 4
-     */
-    stageId: number;
-}
-/**
- * @generated from protobuf message services.documents.AddReviewersResponse
- */
-export interface AddReviewersResponse {
-    /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTask created_tasks = 1
-     */
-    createdTasks: ApprovalTask[];
-    /**
-     * @generated from protobuf field: services.documents.ApprovalPanelSnapshot panel = 2
-     */
-    panel?: ApprovalPanelSnapshot;
-}
-/**
- * @generated from protobuf message services.documents.CancelReviewTasksRequest
- */
-export interface CancelReviewTasksRequest {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: repeated string task_ids = 2
-     */
-    taskIds: string[];
-    /**
-     * @generated from protobuf field: string reason = 3
-     */
-    reason: string;
-}
-/**
- * @generated from protobuf message services.documents.CancelReviewTasksResponse
- */
-export interface CancelReviewTasksResponse {
-    /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTask cancelled = 1
-     */
-    cancelled: ApprovalTask[];
-    /**
-     * @generated from protobuf field: services.documents.ApprovalPanelSnapshot panel = 2
-     */
-    panel?: ApprovalPanelSnapshot;
+    policy?: ApprovalPolicy;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class ApprovalPanelSnapshot$Type extends MessageType<ApprovalPanelSnapshot> {
+class GetPolicyRequest$Type extends MessageType<GetPolicyRequest> {
     constructor() {
-        super("services.documents.ApprovalPanelSnapshot", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "current_order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "stages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalStage },
-            { no: 4, name: "pending_tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask },
-            { no: 5, name: "all_required_stages_satisfied", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "any_declined", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        super("services.documents.GetPolicyRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
-    create(value?: PartialMessage<ApprovalPanelSnapshot>): ApprovalPanelSnapshot {
+    create(value?: PartialMessage<GetPolicyRequest>): GetPolicyRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
-        message.currentOrder = 0;
-        message.stages = [];
-        message.pendingTasks = [];
-        message.allRequiredStagesSatisfied = false;
-        message.anyDeclined = false;
         if (value !== undefined)
-            reflectionMergePartial<ApprovalPanelSnapshot>(this, message, value);
+            reflectionMergePartial<GetPolicyRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalPanelSnapshot): ApprovalPanelSnapshot {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPolicyRequest): GetPolicyRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -298,21 +317,6 @@ class ApprovalPanelSnapshot$Type extends MessageType<ApprovalPanelSnapshot> {
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* int32 current_order */ 2:
-                    message.currentOrder = reader.int32();
-                    break;
-                case /* repeated resources.documents.ApprovalStage stages */ 3:
-                    message.stages.push(ApprovalStage.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.documents.ApprovalTask pending_tasks */ 4:
-                    message.pendingTasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* bool all_required_stages_satisfied */ 5:
-                    message.allRequiredStagesSatisfied = reader.bool();
-                    break;
-                case /* bool any_declined */ 6:
-                    message.anyDeclined = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -324,25 +328,10 @@ class ApprovalPanelSnapshot$Type extends MessageType<ApprovalPanelSnapshot> {
         }
         return message;
     }
-    internalBinaryWrite(message: ApprovalPanelSnapshot, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GetPolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* int32 current_order = 2; */
-        if (message.currentOrder !== 0)
-            writer.tag(2, WireType.Varint).int32(message.currentOrder);
-        /* repeated resources.documents.ApprovalStage stages = 3; */
-        for (let i = 0; i < message.stages.length; i++)
-            ApprovalStage.internalBinaryWrite(message.stages[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalTask pending_tasks = 4; */
-        for (let i = 0; i < message.pendingTasks.length; i++)
-            ApprovalTask.internalBinaryWrite(message.pendingTasks[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool all_required_stages_satisfied = 5; */
-        if (message.allRequiredStagesSatisfied !== false)
-            writer.tag(5, WireType.Varint).bool(message.allRequiredStagesSatisfied);
-        /* bool any_declined = 6; */
-        if (message.anyDeclined !== false)
-            writer.tag(6, WireType.Varint).bool(message.anyDeclined);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -350,36 +339,96 @@ class ApprovalPanelSnapshot$Type extends MessageType<ApprovalPanelSnapshot> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ApprovalPanelSnapshot
+ * @generated MessageType for protobuf message services.documents.GetPolicyRequest
  */
-export const ApprovalPanelSnapshot = new ApprovalPanelSnapshot$Type();
+export const GetPolicyRequest = new GetPolicyRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class StartReviewRequest$Type extends MessageType<StartReviewRequest> {
+class GetPolicyResponse$Type extends MessageType<GetPolicyResponse> {
     constructor() {
-        super("services.documents.StartReviewRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"] }
+        super("services.documents.GetPolicyResponse", [
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
         ]);
     }
-    create(value?: PartialMessage<StartReviewRequest>): StartReviewRequest {
+    create(value?: PartialMessage<GetPolicyResponse>): GetPolicyResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = "";
+        if (value !== undefined)
+            reflectionMergePartial<GetPolicyResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPolicyResponse): GetPolicyResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalPolicy policy */ 1:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetPolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalPolicy policy = 1; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.GetPolicyResponse
+ */
+export const GetPolicyResponse = new GetPolicyResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertPolicyRequest$Type extends MessageType<UpsertPolicyRequest> {
+    constructor() {
+        super("services.documents.UpsertPolicyRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "required_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 5, name: "due_at", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertPolicyRequest>): UpsertPolicyRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        message.ruleKind = 0;
+        message.requiredCount = 0;
         message.onEditBehavior = 0;
         if (value !== undefined)
-            reflectionMergePartial<StartReviewRequest>(this, message, value);
+            reflectionMergePartial<UpsertPolicyRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StartReviewRequest): StartReviewRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertPolicyRequest): UpsertPolicyRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string document_id */ 1:
-                    message.documentId = reader.string();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.OnEditBehavior on_edit_behavior */ 2:
+                case /* resources.documents.ApprovalRuleKind rule_kind */ 2:
+                    message.ruleKind = reader.int32();
+                    break;
+                case /* int32 required_count */ 3:
+                    message.requiredCount = reader.int32();
+                    break;
+                case /* resources.documents.OnEditBehavior on_edit_behavior */ 4:
                     message.onEditBehavior = reader.int32();
                     break;
+                case /* resources.timestamp.Timestamp due_at */ 5:
+                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -391,13 +440,22 @@ class StartReviewRequest$Type extends MessageType<StartReviewRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: StartReviewRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string document_id = 1; */
-        if (message.documentId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.documentId);
-        /* resources.documents.OnEditBehavior on_edit_behavior = 2; */
+    internalBinaryWrite(message: UpsertPolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.documents.ApprovalRuleKind rule_kind = 2; */
+        if (message.ruleKind !== 0)
+            writer.tag(2, WireType.Varint).int32(message.ruleKind);
+        /* int32 required_count = 3; */
+        if (message.requiredCount !== 0)
+            writer.tag(3, WireType.Varint).int32(message.requiredCount);
+        /* resources.documents.OnEditBehavior on_edit_behavior = 4; */
         if (message.onEditBehavior !== 0)
-            writer.tag(2, WireType.Varint).int32(message.onEditBehavior);
+            writer.tag(4, WireType.Varint).int32(message.onEditBehavior);
+        /* resources.timestamp.Timestamp due_at = 5; */
+        if (message.dueAt)
+            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -405,34 +463,29 @@ class StartReviewRequest$Type extends MessageType<StartReviewRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.StartReviewRequest
+ * @generated MessageType for protobuf message services.documents.UpsertPolicyRequest
  */
-export const StartReviewRequest = new StartReviewRequest$Type();
+export const UpsertPolicyRequest = new UpsertPolicyRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class StartReviewResponse$Type extends MessageType<StartReviewResponse> {
+class UpsertPolicyResponse$Type extends MessageType<UpsertPolicyResponse> {
     constructor() {
-        super("services.documents.StartReviewResponse", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "panel", kind: "message", T: () => ApprovalPanelSnapshot }
+        super("services.documents.UpsertPolicyResponse", [
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
         ]);
     }
-    create(value?: PartialMessage<StartReviewResponse>): StartReviewResponse {
+    create(value?: PartialMessage<UpsertPolicyResponse>): UpsertPolicyResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = "";
         if (value !== undefined)
-            reflectionMergePartial<StartReviewResponse>(this, message, value);
+            reflectionMergePartial<UpsertPolicyResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StartReviewResponse): StartReviewResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertPolicyResponse): UpsertPolicyResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string policy_id */ 1:
-                    message.policyId = reader.string();
-                    break;
-                case /* services.documents.ApprovalPanelSnapshot panel */ 2:
-                    message.panel = ApprovalPanelSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.panel);
+                case /* resources.documents.ApprovalPolicy policy */ 1:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -445,13 +498,10 @@ class StartReviewResponse$Type extends MessageType<StartReviewResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: StartReviewResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string policy_id = 1; */
-        if (message.policyId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.policyId);
-        /* services.documents.ApprovalPanelSnapshot panel = 2; */
-        if (message.panel)
-            ApprovalPanelSnapshot.internalBinaryWrite(message.panel, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: UpsertPolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalPolicy policy = 1; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -459,30 +509,39 @@ class StartReviewResponse$Type extends MessageType<StartReviewResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.StartReviewResponse
+ * @generated MessageType for protobuf message services.documents.UpsertPolicyResponse
  */
-export const StartReviewResponse = new StartReviewResponse$Type();
+export const UpsertPolicyResponse = new UpsertPolicyResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetApprovalPanelRequest$Type extends MessageType<GetApprovalPanelRequest> {
+class StartApprovalRoundRequest$Type extends MessageType<StartApprovalRoundRequest> {
     constructor() {
-        super("services.documents.GetApprovalPanelRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        super("services.documents.StartApprovalRoundRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 3, name: "regen_tasks", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<GetApprovalPanelRequest>): GetApprovalPanelRequest {
+    create(value?: PartialMessage<StartApprovalRoundRequest>): StartApprovalRoundRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = "";
+        message.documentId = 0;
+        message.regenTasks = false;
         if (value !== undefined)
-            reflectionMergePartial<GetApprovalPanelRequest>(this, message, value);
+            reflectionMergePartial<StartApprovalRoundRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetApprovalPanelRequest): GetApprovalPanelRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StartApprovalRoundRequest): StartApprovalRoundRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string document_id */ 1:
-                    message.documentId = reader.string();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp snapshot_date */ 2:
+                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
+                    break;
+                case /* bool regen_tasks */ 3:
+                    message.regenTasks = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -495,10 +554,16 @@ class GetApprovalPanelRequest$Type extends MessageType<GetApprovalPanelRequest> 
         }
         return message;
     }
-    internalBinaryWrite(message: GetApprovalPanelRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string document_id = 1; */
-        if (message.documentId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.documentId);
+    internalBinaryWrite(message: StartApprovalRoundRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.timestamp.Timestamp snapshot_date = 2; */
+        if (message.snapshotDate)
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool regen_tasks = 3; */
+        if (message.regenTasks !== false)
+            writer.tag(3, WireType.Varint).bool(message.regenTasks);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -506,29 +571,34 @@ class GetApprovalPanelRequest$Type extends MessageType<GetApprovalPanelRequest> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.GetApprovalPanelRequest
+ * @generated MessageType for protobuf message services.documents.StartApprovalRoundRequest
  */
-export const GetApprovalPanelRequest = new GetApprovalPanelRequest$Type();
+export const StartApprovalRoundRequest = new StartApprovalRoundRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetApprovalPanelResponse$Type extends MessageType<GetApprovalPanelResponse> {
+class StartApprovalRoundResponse$Type extends MessageType<StartApprovalRoundResponse> {
     constructor() {
-        super("services.documents.GetApprovalPanelResponse", [
-            { no: 1, name: "panel", kind: "message", T: () => ApprovalPanelSnapshot }
+        super("services.documents.StartApprovalRoundResponse", [
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy },
+            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask }
         ]);
     }
-    create(value?: PartialMessage<GetApprovalPanelResponse>): GetApprovalPanelResponse {
+    create(value?: PartialMessage<StartApprovalRoundResponse>): StartApprovalRoundResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.tasks = [];
         if (value !== undefined)
-            reflectionMergePartial<GetApprovalPanelResponse>(this, message, value);
+            reflectionMergePartial<StartApprovalRoundResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetApprovalPanelResponse): GetApprovalPanelResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StartApprovalRoundResponse): StartApprovalRoundResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.documents.ApprovalPanelSnapshot panel */ 1:
-                    message.panel = ApprovalPanelSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.panel);
+                case /* resources.documents.ApprovalPolicy policy */ 1:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                case /* repeated resources.documents.ApprovalTask tasks */ 2:
+                    message.tasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -541,10 +611,13 @@ class GetApprovalPanelResponse$Type extends MessageType<GetApprovalPanelResponse
         }
         return message;
     }
-    internalBinaryWrite(message: GetApprovalPanelResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.documents.ApprovalPanelSnapshot panel = 1; */
-        if (message.panel)
-            ApprovalPanelSnapshot.internalBinaryWrite(message.panel, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: StartApprovalRoundResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalPolicy policy = 1; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.ApprovalTask tasks = 2; */
+        for (let i = 0; i < message.tasks.length; i++)
+            ApprovalTask.internalBinaryWrite(message.tasks[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -552,25 +625,490 @@ class GetApprovalPanelResponse$Type extends MessageType<GetApprovalPanelResponse
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.GetApprovalPanelResponse
+ * @generated MessageType for protobuf message services.documents.StartApprovalRoundResponse
  */
-export const GetApprovalPanelResponse = new GetApprovalPanelResponse$Type();
+export const StartApprovalRoundResponse = new StartApprovalRoundResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListMyApprovalTasksRequest$Type extends MessageType<ListMyApprovalTasksRequest> {
+class CompleteApprovalRoundRequest$Type extends MessageType<CompleteApprovalRoundRequest> {
     constructor() {
-        super("services.documents.ListMyApprovalTasksRequest", [
+        super("services.documents.CompleteApprovalRoundRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CompleteApprovalRoundRequest>): CompleteApprovalRoundRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CompleteApprovalRoundRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteApprovalRoundRequest): CompleteApprovalRoundRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CompleteApprovalRoundRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.CompleteApprovalRoundRequest
+ */
+export const CompleteApprovalRoundRequest = new CompleteApprovalRoundRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CompleteApprovalRoundResponse$Type extends MessageType<CompleteApprovalRoundResponse> {
+    constructor() {
+        super("services.documents.CompleteApprovalRoundResponse", [
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
+        ]);
+    }
+    create(value?: PartialMessage<CompleteApprovalRoundResponse>): CompleteApprovalRoundResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CompleteApprovalRoundResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteApprovalRoundResponse): CompleteApprovalRoundResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalPolicy policy */ 1:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CompleteApprovalRoundResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalPolicy policy = 1; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.CompleteApprovalRoundResponse
+ */
+export const CompleteApprovalRoundResponse = new CompleteApprovalRoundResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RecomputePolicyCountersRequest$Type extends MessageType<RecomputePolicyCountersRequest> {
+    constructor() {
+        super("services.documents.RecomputePolicyCountersRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<RecomputePolicyCountersRequest>): RecomputePolicyCountersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RecomputePolicyCountersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputePolicyCountersRequest): RecomputePolicyCountersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RecomputePolicyCountersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.RecomputePolicyCountersRequest
+ */
+export const RecomputePolicyCountersRequest = new RecomputePolicyCountersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RecomputePolicyCountersResponse$Type extends MessageType<RecomputePolicyCountersResponse> {
+    constructor() {
+        super("services.documents.RecomputePolicyCountersResponse", [
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
+        ]);
+    }
+    create(value?: PartialMessage<RecomputePolicyCountersResponse>): RecomputePolicyCountersResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RecomputePolicyCountersResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputePolicyCountersResponse): RecomputePolicyCountersResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalPolicy policy */ 1:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RecomputePolicyCountersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalPolicy policy = 1; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.RecomputePolicyCountersResponse
+ */
+export const RecomputePolicyCountersResponse = new RecomputePolicyCountersResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListApprovalAccessRequest$Type extends MessageType<ListApprovalAccessRequest> {
+    constructor() {
+        super("services.documents.ListApprovalAccessRequest", [
+            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListApprovalAccessRequest>): ListApprovalAccessRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.policyId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ListApprovalAccessRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalAccessRequest): ListApprovalAccessRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 policy_id */ 1:
+                    message.policyId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListApprovalAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 policy_id = 1; */
+        if (message.policyId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.policyId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListApprovalAccessRequest
+ */
+export const ListApprovalAccessRequest = new ListApprovalAccessRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListApprovalAccessResponse$Type extends MessageType<ListApprovalAccessResponse> {
+    constructor() {
+        super("services.documents.ListApprovalAccessResponse", [
+            { no: 1, name: "access", kind: "message", T: () => ApprovalAccess }
+        ]);
+    }
+    create(value?: PartialMessage<ListApprovalAccessResponse>): ListApprovalAccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListApprovalAccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalAccessResponse): ListApprovalAccessResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalAccess access */ 1:
+                    message.access = ApprovalAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListApprovalAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalAccess access = 1; */
+        if (message.access)
+            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListApprovalAccessResponse
+ */
+export const ListApprovalAccessResponse = new ListApprovalAccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertApprovalAccessRequest$Type extends MessageType<UpsertApprovalAccessRequest> {
+    constructor() {
+        super("services.documents.UpsertApprovalAccessRequest", [
+            { no: 1, name: "access", kind: "message", T: () => ApprovalAccess, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertApprovalAccessRequest>): UpsertApprovalAccessRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpsertApprovalAccessRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertApprovalAccessRequest): UpsertApprovalAccessRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalAccess access */ 1:
+                    message.access = ApprovalAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpsertApprovalAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalAccess access = 1; */
+        if (message.access)
+            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.UpsertApprovalAccessRequest
+ */
+export const UpsertApprovalAccessRequest = new UpsertApprovalAccessRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertApprovalAccessResponse$Type extends MessageType<UpsertApprovalAccessResponse> {
+    constructor() {
+        super("services.documents.UpsertApprovalAccessResponse", [
+            { no: 1, name: "access", kind: "message", T: () => ApprovalAccess }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertApprovalAccessResponse>): UpsertApprovalAccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpsertApprovalAccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertApprovalAccessResponse): UpsertApprovalAccessResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalAccess access */ 1:
+                    message.access = ApprovalAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpsertApprovalAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalAccess access = 1; */
+        if (message.access)
+            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.UpsertApprovalAccessResponse
+ */
+export const UpsertApprovalAccessResponse = new UpsertApprovalAccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteApprovalAccessRequest$Type extends MessageType<DeleteApprovalAccessRequest> {
+    constructor() {
+        super("services.documents.DeleteApprovalAccessRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteApprovalAccessRequest>): DeleteApprovalAccessRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteApprovalAccessRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApprovalAccessRequest): DeleteApprovalAccessRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteApprovalAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.DeleteApprovalAccessRequest
+ */
+export const DeleteApprovalAccessRequest = new DeleteApprovalAccessRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteApprovalAccessResponse$Type extends MessageType<DeleteApprovalAccessResponse> {
+    constructor() {
+        super("services.documents.DeleteApprovalAccessResponse", []);
+    }
+    create(value?: PartialMessage<DeleteApprovalAccessResponse>): DeleteApprovalAccessResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteApprovalAccessResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteApprovalAccessResponse): DeleteApprovalAccessResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteApprovalAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.DeleteApprovalAccessResponse
+ */
+export const DeleteApprovalAccessResponse = new DeleteApprovalAccessResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
+    constructor() {
+        super("services.documents.ListTasksRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"] }
+            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
+            { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<ListMyApprovalTasksRequest>): ListMyApprovalTasksRequest {
+    create(value?: PartialMessage<ListTasksRequest>): ListTasksRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.status = [];
+        message.documentId = 0;
+        message.statuses = [];
+        message.userId = 0;
+        message.job = "";
+        message.minimumGrade = 0;
         if (value !== undefined)
-            reflectionMergePartial<ListMyApprovalTasksRequest>(this, message, value);
+            reflectionMergePartial<ListTasksRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListMyApprovalTasksRequest): ListMyApprovalTasksRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTasksRequest): ListTasksRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -578,12 +1116,27 @@ class ListMyApprovalTasksRequest$Type extends MessageType<ListMyApprovalTasksReq
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.ApprovalTaskStatus status */ 2:
+                case /* int64 document_id */ 2:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
+                    break;
+                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.status.push(reader.int32());
+                            message.statuses.push(reader.int32());
                     else
-                        message.status.push(reader.int32());
+                        message.statuses.push(reader.int32());
+                    break;
+                case /* int32 user_id */ 5:
+                    message.userId = reader.int32();
+                    break;
+                case /* string job */ 6:
+                    message.job = reader.string();
+                    break;
+                case /* int32 minimum_grade */ 7:
+                    message.minimumGrade = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -596,17 +1149,32 @@ class ListMyApprovalTasksRequest$Type extends MessageType<ListMyApprovalTasksReq
         }
         return message;
     }
-    internalBinaryWrite(message: ListMyApprovalTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalTaskStatus status = 2; */
-        if (message.status.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.status.length; i++)
-                writer.int32(message.status[i]);
+        /* int64 document_id = 2; */
+        if (message.documentId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.documentId);
+        /* resources.timestamp.Timestamp snapshot_date = 3; */
+        if (message.snapshotDate)
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.ApprovalTaskStatus statuses = 4; */
+        if (message.statuses.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.statuses.length; i++)
+                writer.int32(message.statuses[i]);
             writer.join();
         }
+        /* int32 user_id = 5; */
+        if (message.userId !== 0)
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* string job = 6; */
+        if (message.job !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.job);
+        /* int32 minimum_grade = 7; */
+        if (message.minimumGrade !== 0)
+            writer.tag(7, WireType.Varint).int32(message.minimumGrade);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -614,25 +1182,25 @@ class ListMyApprovalTasksRequest$Type extends MessageType<ListMyApprovalTasksReq
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListMyApprovalTasksRequest
+ * @generated MessageType for protobuf message services.documents.ListTasksRequest
  */
-export const ListMyApprovalTasksRequest = new ListMyApprovalTasksRequest$Type();
+export const ListTasksRequest = new ListTasksRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListMyApprovalTasksResponse$Type extends MessageType<ListMyApprovalTasksResponse> {
+class ListTasksResponse$Type extends MessageType<ListTasksResponse> {
     constructor() {
-        super("services.documents.ListMyApprovalTasksResponse", [
+        super("services.documents.ListTasksResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask }
         ]);
     }
-    create(value?: PartialMessage<ListMyApprovalTasksResponse>): ListMyApprovalTasksResponse {
+    create(value?: PartialMessage<ListTasksResponse>): ListTasksResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.tasks = [];
         if (value !== undefined)
-            reflectionMergePartial<ListMyApprovalTasksResponse>(this, message, value);
+            reflectionMergePartial<ListTasksResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListMyApprovalTasksResponse): ListMyApprovalTasksResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTasksResponse): ListTasksResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -654,7 +1222,7 @@ class ListMyApprovalTasksResponse$Type extends MessageType<ListMyApprovalTasksRe
         }
         return message;
     }
-    internalBinaryWrite(message: ListMyApprovalTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -668,31 +1236,46 @@ class ListMyApprovalTasksResponse$Type extends MessageType<ListMyApprovalTasksRe
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListMyApprovalTasksResponse
+ * @generated MessageType for protobuf message services.documents.ListTasksResponse
  */
-export const ListMyApprovalTasksResponse = new ListMyApprovalTasksResponse$Type();
+export const ListTasksResponse = new ListTasksResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DecisionApprove$Type extends MessageType<DecisionApprove> {
+class DecideTaskRequest$Type extends MessageType<DecideTaskRequest> {
     constructor() {
-        super("services.documents.DecisionApprove", [
-            { no: 1, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+        super("services.documents.DecideTaskRequest", [
+            { no: 1, name: "task_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "new_status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
+            { no: 10, name: "idempotency_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
         ]);
     }
-    create(value?: PartialMessage<DecisionApprove>): DecisionApprove {
+    create(value?: PartialMessage<DecideTaskRequest>): DecideTaskRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.taskId = 0;
+        message.newStatus = 0;
         message.comment = "";
+        message.idempotencyKey = "";
         if (value !== undefined)
-            reflectionMergePartial<DecisionApprove>(this, message, value);
+            reflectionMergePartial<DecideTaskRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecisionApprove): DecisionApprove {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecideTaskRequest): DecideTaskRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string comment */ 1:
+                case /* int64 task_id */ 1:
+                    message.taskId = reader.int64().toNumber();
+                    break;
+                case /* resources.documents.ApprovalTaskStatus new_status */ 2:
+                    message.newStatus = reader.int32();
+                    break;
+                case /* string comment */ 3:
                     message.comment = reader.string();
                     break;
+                case /* string idempotency_key */ 10:
+                    message.idempotencyKey = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -704,10 +1287,19 @@ class DecisionApprove$Type extends MessageType<DecisionApprove> {
         }
         return message;
     }
-    internalBinaryWrite(message: DecisionApprove, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string comment = 1; */
+    internalBinaryWrite(message: DecideTaskRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 task_id = 1; */
+        if (message.taskId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.taskId);
+        /* resources.documents.ApprovalTaskStatus new_status = 2; */
+        if (message.newStatus !== 0)
+            writer.tag(2, WireType.Varint).int32(message.newStatus);
+        /* string comment = 3; */
         if (message.comment !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.comment);
+            writer.tag(3, WireType.LengthDelimited).string(message.comment);
+        /* string idempotency_key = 10; */
+        if (message.idempotencyKey !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.idempotencyKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -715,29 +1307,87 @@ class DecisionApprove$Type extends MessageType<DecisionApprove> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DecisionApprove
+ * @generated MessageType for protobuf message services.documents.DecideTaskRequest
  */
-export const DecisionApprove = new DecisionApprove$Type();
+export const DecideTaskRequest = new DecideTaskRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DecisionDecline$Type extends MessageType<DecisionDecline> {
+class DecideTaskResponse$Type extends MessageType<DecideTaskResponse> {
     constructor() {
-        super("services.documents.DecisionDecline", [
-            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+        super("services.documents.DecideTaskResponse", [
+            { no: 1, name: "task", kind: "message", T: () => ApprovalTask },
+            { no: 2, name: "policy", kind: "message", T: () => ApprovalPolicy }
         ]);
     }
-    create(value?: PartialMessage<DecisionDecline>): DecisionDecline {
+    create(value?: PartialMessage<DecideTaskResponse>): DecideTaskResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.reason = "";
         if (value !== undefined)
-            reflectionMergePartial<DecisionDecline>(this, message, value);
+            reflectionMergePartial<DecideTaskResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecisionDecline): DecisionDecline {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecideTaskResponse): DecideTaskResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string reason */ 1:
+                case /* resources.documents.ApprovalTask task */ 1:
+                    message.task = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
+                    break;
+                case /* resources.documents.ApprovalPolicy policy */ 2:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DecideTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalTask task = 1; */
+        if (message.task)
+            ApprovalTask.internalBinaryWrite(message.task, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.ApprovalPolicy policy = 2; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.DecideTaskResponse
+ */
+export const DecideTaskResponse = new DecideTaskResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ReopenTaskRequest$Type extends MessageType<ReopenTaskRequest> {
+    constructor() {
+        super("services.documents.ReopenTaskRequest", [
+            { no: 1, name: "task_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ReopenTaskRequest>): ReopenTaskRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.taskId = 0;
+        message.reason = "";
+        if (value !== undefined)
+            reflectionMergePartial<ReopenTaskRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenTaskRequest): ReopenTaskRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 task_id */ 1:
+                    message.taskId = reader.int64().toNumber();
+                    break;
+                case /* string reason */ 2:
                     message.reason = reader.string();
                     break;
                 default:
@@ -751,10 +1401,13 @@ class DecisionDecline$Type extends MessageType<DecisionDecline> {
         }
         return message;
     }
-    internalBinaryWrite(message: DecisionDecline, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string reason = 1; */
+    internalBinaryWrite(message: ReopenTaskRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 task_id = 1; */
+        if (message.taskId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.taskId);
+        /* string reason = 2; */
         if (message.reason !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.reason);
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -762,45 +1415,33 @@ class DecisionDecline$Type extends MessageType<DecisionDecline> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DecisionDecline
+ * @generated MessageType for protobuf message services.documents.ReopenTaskRequest
  */
-export const DecisionDecline = new DecisionDecline$Type();
+export const ReopenTaskRequest = new ReopenTaskRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DecideApprovalTaskRequest$Type extends MessageType<DecideApprovalTaskRequest> {
+class ReopenTaskResponse$Type extends MessageType<ReopenTaskResponse> {
     constructor() {
-        super("services.documents.DecideApprovalTaskRequest", [
-            { no: 1, name: "task_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "approve", kind: "message", oneof: "decision", T: () => DecisionApprove },
-            { no: 11, name: "decline", kind: "message", oneof: "decision", T: () => DecisionDecline }
+        super("services.documents.ReopenTaskResponse", [
+            { no: 1, name: "task", kind: "message", T: () => ApprovalTask },
+            { no: 2, name: "policy", kind: "message", T: () => ApprovalPolicy }
         ]);
     }
-    create(value?: PartialMessage<DecideApprovalTaskRequest>): DecideApprovalTaskRequest {
+    create(value?: PartialMessage<ReopenTaskResponse>): ReopenTaskResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.taskId = "";
-        message.decision = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<DecideApprovalTaskRequest>(this, message, value);
+            reflectionMergePartial<ReopenTaskResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecideApprovalTaskRequest): DecideApprovalTaskRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenTaskResponse): ReopenTaskResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string task_id */ 1:
-                    message.taskId = reader.string();
+                case /* resources.documents.ApprovalTask task */ 1:
+                    message.task = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
                     break;
-                case /* services.documents.DecisionApprove approve */ 10:
-                    message.decision = {
-                        oneofKind: "approve",
-                        approve: DecisionApprove.internalBinaryRead(reader, reader.uint32(), options, (message.decision as any).approve)
-                    };
-                    break;
-                case /* services.documents.DecisionDecline decline */ 11:
-                    message.decision = {
-                        oneofKind: "decline",
-                        decline: DecisionDecline.internalBinaryRead(reader, reader.uint32(), options, (message.decision as any).decline)
-                    };
+                case /* resources.documents.ApprovalPolicy policy */ 2:
+                    message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -813,16 +1454,13 @@ class DecideApprovalTaskRequest$Type extends MessageType<DecideApprovalTaskReque
         }
         return message;
     }
-    internalBinaryWrite(message: DecideApprovalTaskRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string task_id = 1; */
-        if (message.taskId !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.taskId);
-        /* services.documents.DecisionApprove approve = 10; */
-        if (message.decision.oneofKind === "approve")
-            DecisionApprove.internalBinaryWrite(message.decision.approve, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* services.documents.DecisionDecline decline = 11; */
-        if (message.decision.oneofKind === "decline")
-            DecisionDecline.internalBinaryWrite(message.decision.decline, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: ReopenTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalTask task = 1; */
+        if (message.task)
+            ApprovalTask.internalBinaryWrite(message.task, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.ApprovalPolicy policy = 2; */
+        if (message.policy)
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -830,327 +1468,22 @@ class DecideApprovalTaskRequest$Type extends MessageType<DecideApprovalTaskReque
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DecideApprovalTaskRequest
+ * @generated MessageType for protobuf message services.documents.ReopenTaskResponse
  */
-export const DecideApprovalTaskRequest = new DecideApprovalTaskRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DecideApprovalTaskResponse$Type extends MessageType<DecideApprovalTaskResponse> {
-    constructor() {
-        super("services.documents.DecideApprovalTaskResponse", [
-            { no: 1, name: "updated", kind: "message", T: () => ApprovalTask },
-            { no: 2, name: "stage_completed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "document_now_approved", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "panel", kind: "message", T: () => ApprovalPanelSnapshot }
-        ]);
-    }
-    create(value?: PartialMessage<DecideApprovalTaskResponse>): DecideApprovalTaskResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.stageCompleted = false;
-        message.documentNowApproved = false;
-        if (value !== undefined)
-            reflectionMergePartial<DecideApprovalTaskResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DecideApprovalTaskResponse): DecideApprovalTaskResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.documents.ApprovalTask updated */ 1:
-                    message.updated = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.updated);
-                    break;
-                case /* bool stage_completed */ 2:
-                    message.stageCompleted = reader.bool();
-                    break;
-                case /* bool document_now_approved */ 3:
-                    message.documentNowApproved = reader.bool();
-                    break;
-                case /* services.documents.ApprovalPanelSnapshot panel */ 4:
-                    message.panel = ApprovalPanelSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.panel);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DecideApprovalTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalTask updated = 1; */
-        if (message.updated)
-            ApprovalTask.internalBinaryWrite(message.updated, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool stage_completed = 2; */
-        if (message.stageCompleted !== false)
-            writer.tag(2, WireType.Varint).bool(message.stageCompleted);
-        /* bool document_now_approved = 3; */
-        if (message.documentNowApproved !== false)
-            writer.tag(3, WireType.Varint).bool(message.documentNowApproved);
-        /* services.documents.ApprovalPanelSnapshot panel = 4; */
-        if (message.panel)
-            ApprovalPanelSnapshot.internalBinaryWrite(message.panel, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.DecideApprovalTaskResponse
- */
-export const DecideApprovalTaskResponse = new DecideApprovalTaskResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddReviewersRequest$Type extends MessageType<AddReviewersRequest> {
-    constructor() {
-        super("services.documents.AddReviewersRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "selector", kind: "message", T: () => PartySelector },
-            { no: 3, name: "quorum_any", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "stage_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<AddReviewersRequest>): AddReviewersRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.quorumAny = 0;
-        message.stageId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<AddReviewersRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddReviewersRequest): AddReviewersRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* resources.documents.PartySelector selector */ 2:
-                    message.selector = PartySelector.internalBinaryRead(reader, reader.uint32(), options, message.selector);
-                    break;
-                case /* int32 quorum_any */ 3:
-                    message.quorumAny = reader.int32();
-                    break;
-                case /* int64 stage_id */ 4:
-                    message.stageId = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddReviewersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.documents.PartySelector selector = 2; */
-        if (message.selector)
-            PartySelector.internalBinaryWrite(message.selector, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int32 quorum_any = 3; */
-        if (message.quorumAny !== 0)
-            writer.tag(3, WireType.Varint).int32(message.quorumAny);
-        /* int64 stage_id = 4; */
-        if (message.stageId !== 0)
-            writer.tag(4, WireType.Varint).int64(message.stageId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.AddReviewersRequest
- */
-export const AddReviewersRequest = new AddReviewersRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddReviewersResponse$Type extends MessageType<AddReviewersResponse> {
-    constructor() {
-        super("services.documents.AddReviewersResponse", [
-            { no: 1, name: "created_tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask },
-            { no: 2, name: "panel", kind: "message", T: () => ApprovalPanelSnapshot }
-        ]);
-    }
-    create(value?: PartialMessage<AddReviewersResponse>): AddReviewersResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.createdTasks = [];
-        if (value !== undefined)
-            reflectionMergePartial<AddReviewersResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddReviewersResponse): AddReviewersResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.documents.ApprovalTask created_tasks */ 1:
-                    message.createdTasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* services.documents.ApprovalPanelSnapshot panel */ 2:
-                    message.panel = ApprovalPanelSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.panel);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddReviewersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.ApprovalTask created_tasks = 1; */
-        for (let i = 0; i < message.createdTasks.length; i++)
-            ApprovalTask.internalBinaryWrite(message.createdTasks[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.documents.ApprovalPanelSnapshot panel = 2; */
-        if (message.panel)
-            ApprovalPanelSnapshot.internalBinaryWrite(message.panel, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.AddReviewersResponse
- */
-export const AddReviewersResponse = new AddReviewersResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CancelReviewTasksRequest$Type extends MessageType<CancelReviewTasksRequest> {
-    constructor() {
-        super("services.documents.CancelReviewTasksRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "task_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<CancelReviewTasksRequest>): CancelReviewTasksRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.taskIds = [];
-        message.reason = "";
-        if (value !== undefined)
-            reflectionMergePartial<CancelReviewTasksRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CancelReviewTasksRequest): CancelReviewTasksRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* repeated string task_ids */ 2:
-                    message.taskIds.push(reader.string());
-                    break;
-                case /* string reason */ 3:
-                    message.reason = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CancelReviewTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* repeated string task_ids = 2; */
-        for (let i = 0; i < message.taskIds.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.taskIds[i]);
-        /* string reason = 3; */
-        if (message.reason !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.reason);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.CancelReviewTasksRequest
- */
-export const CancelReviewTasksRequest = new CancelReviewTasksRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CancelReviewTasksResponse$Type extends MessageType<CancelReviewTasksResponse> {
-    constructor() {
-        super("services.documents.CancelReviewTasksResponse", [
-            { no: 1, name: "cancelled", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask },
-            { no: 2, name: "panel", kind: "message", T: () => ApprovalPanelSnapshot }
-        ]);
-    }
-    create(value?: PartialMessage<CancelReviewTasksResponse>): CancelReviewTasksResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.cancelled = [];
-        if (value !== undefined)
-            reflectionMergePartial<CancelReviewTasksResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CancelReviewTasksResponse): CancelReviewTasksResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.documents.ApprovalTask cancelled */ 1:
-                    message.cancelled.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* services.documents.ApprovalPanelSnapshot panel */ 2:
-                    message.panel = ApprovalPanelSnapshot.internalBinaryRead(reader, reader.uint32(), options, message.panel);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CancelReviewTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.ApprovalTask cancelled = 1; */
-        for (let i = 0; i < message.cancelled.length; i++)
-            ApprovalTask.internalBinaryWrite(message.cancelled[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.documents.ApprovalPanelSnapshot panel = 2; */
-        if (message.panel)
-            ApprovalPanelSnapshot.internalBinaryWrite(message.panel, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.CancelReviewTasksResponse
- */
-export const CancelReviewTasksResponse = new CancelReviewTasksResponse$Type();
+export const ReopenTaskResponse = new ReopenTaskResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.documents.ApprovalService
  */
 export const ApprovalService = new ServiceType("services.documents.ApprovalService", [
-    { name: "StartReview", options: {}, I: StartReviewRequest, O: StartReviewResponse },
-    { name: "GetApprovalPanel", options: {}, I: GetApprovalPanelRequest, O: GetApprovalPanelResponse },
-    { name: "ListMyApprovalTasks", options: {}, I: ListMyApprovalTasksRequest, O: ListMyApprovalTasksResponse },
-    { name: "DecideApprovalTask", options: {}, I: DecideApprovalTaskRequest, O: DecideApprovalTaskResponse },
-    { name: "AddReviewers", options: {}, I: AddReviewersRequest, O: AddReviewersResponse },
-    { name: "CancelReviewTasks", options: {}, I: CancelReviewTasksRequest, O: CancelReviewTasksResponse }
+    { name: "GetPolicy", options: {}, I: GetPolicyRequest, O: GetPolicyResponse },
+    { name: "UpsertPolicy", options: {}, I: UpsertPolicyRequest, O: UpsertPolicyResponse },
+    { name: "StartApprovalRound", options: {}, I: StartApprovalRoundRequest, O: StartApprovalRoundResponse },
+    { name: "CompleteApprovalRound", options: {}, I: CompleteApprovalRoundRequest, O: CompleteApprovalRoundResponse },
+    { name: "RecomputePolicyCounters", options: {}, I: RecomputePolicyCountersRequest, O: RecomputePolicyCountersResponse },
+    { name: "ListApprovalAccess", options: {}, I: ListApprovalAccessRequest, O: ListApprovalAccessResponse },
+    { name: "UpsertApprovalAccess", options: {}, I: UpsertApprovalAccessRequest, O: UpsertApprovalAccessResponse },
+    { name: "DeleteApprovalAccess", options: {}, I: DeleteApprovalAccessRequest, O: DeleteApprovalAccessResponse },
+    { name: "ListTasks", options: {}, I: ListTasksRequest, O: ListTasksResponse },
+    { name: "DecideTask", options: {}, I: DecideTaskRequest, O: DecideTaskResponse },
+    { name: "ReopenTask", options: {}, I: ReopenTaskRequest, O: ReopenTaskResponse }
 ]);

@@ -14,61 +14,184 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @generated from protobuf message resources.documents.PartySelector
+ * @generated from protobuf message resources.documents.ApprovalPolicy
  */
-export interface PartySelector {
-    /**
-     * Primary targets
-     *
-     * @generated from protobuf field: repeated resources.documents.Selector who = 1
-     */
-    who: Selector[];
-    /**
-     * Optional exclusions
-     *
-     * @generated from protobuf field: repeated resources.documents.Selector exclusions = 2
-     */
-    exclusions: Selector[];
-    /**
-     * Optional fallbacks if who resolves to 0
-     *
-     * @generated from protobuf field: repeated resources.documents.Selector fallbacks = 3
-     */
-    fallbacks: Selector[];
-}
-/**
- * @generated from protobuf message resources.documents.UserSelector
- */
-export interface UserSelector {
+export interface ApprovalPolicy {
     /**
      * @generated from protobuf field: int64 id = 1
      */
     id: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2
+     * @generated from protobuf field: int64 document_id = 2
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 3
+     */
+    onEditBehavior: OnEditBehavior;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalRuleKind rule_kind = 4
+     */
+    ruleKind: ApprovalRuleKind;
+    /**
+     * @generated from protobuf field: int32 required_count = 5
+     */
+    requiredCount: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp active_snapshot_date = 6
+     */
+    activeSnapshotDate?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 7
+     */
+    dueAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp started_at = 8
+     */
+    startedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp completed_at = 9
+     */
+    completedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalAccess access = 10
+     */
+    access?: ApprovalAccess;
+    /**
+     * Optional cached aggregates (service maintained)
+     *
+     * @generated from protobuf field: int32 assigned_count = 11
+     */
+    assignedCount: number;
+    /**
+     * @generated from protobuf field: int32 approved_count = 12
+     */
+    approvedCount: number;
+    /**
+     * @generated from protobuf field: int32 declined_count = 13
+     */
+    declinedCount: number;
+    /**
+     * @generated from protobuf field: int32 pending_count = 14
+     */
+    pendingCount: number;
+    /**
+     * @generated from protobuf field: bool any_declined = 15
+     */
+    anyDeclined: boolean;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 16
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: int64 target_id = 3
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 17
      */
-    targetId: number;
-    /**
-     * @generated from protobuf field: int32 user_id = 4
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 5
-     */
-    user?: UserShort;
-    /**
-     * @generated from protobuf field: resources.documents.PartyAccessLevel access = 8
-     */
-    access: PartyAccessLevel;
+    updatedAt?: Timestamp;
 }
 /**
- * @generated from protobuf message resources.documents.JobGradeSelector
+ * @generated from protobuf message resources.documents.ApprovalTask
  */
-export interface JobGradeSelector {
+export interface ApprovalTask {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: int64 document_id = 2
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
+     */
+    snapshotDate?: Timestamp;
+    /**
+     * @generated from protobuf field: optional int32 user_id = 4
+     */
+    userId?: number;
+    /**
+     * @generated from protobuf field: optional string job = 5
+     */
+    job?: string;
+    /**
+     * @generated from protobuf field: optional int32 minimum_grade = 6
+     */
+    minimumGrade?: number;
+    /**
+     * Who actually decided (for group tasks or audit)
+     *
+     * @generated from protobuf field: optional int32 decided_by_user_id = 7
+     */
+    decidedByUserId?: number;
+    /**
+     * @generated from protobuf field: optional string decided_by_job = 8
+     */
+    decidedByJob?: string;
+    /**
+     * @generated from protobuf field: optional int32 decided_by_user_grade = 9
+     */
+    decidedByUserGrade?: number;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalTaskStatus status = 10
+     */
+    status: ApprovalTaskStatus;
+    /**
+     * Optional comment on approve/decline
+     *
+     * @generated from protobuf field: optional string comment = 11
+     */
+    comment?: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 12
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp decided_at = 13
+     */
+    decidedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 14
+     */
+    dueAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int32 decision_count = 15
+     */
+    decisionCount: number;
+    /**
+     * @generated from protobuf field: int32 creator_id = 16
+     */
+    creatorId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 17
+     */
+    creator?: UserShort;
+    /**
+     * Snapshot of why this user was assigned (for audit stability)
+     *
+     * @generated from protobuf field: string creator_job = 18
+     */
+    creatorJob: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 19
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: int32 creator_job_grade = 20
+     */
+    creatorJobGrade: number;
+}
+/**
+ * @generated from protobuf message resources.documents.ApprovalAccess
+ */
+export interface ApprovalAccess {
+    /**
+     * @generated from protobuf field: repeated resources.documents.ApprovalTaskJobAccess jobs = 1
+     */
+    jobs: ApprovalTaskJobAccess[];
+}
+/**
+ * @generated from protobuf message resources.documents.ApprovalTaskJobAccess
+ */
+export interface ApprovalTaskJobAccess {
     /**
      * @generated from protobuf field: int64 id = 1
      */
@@ -90,246 +213,17 @@ export interface JobGradeSelector {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional int32 minimum_grade = 6
+     * @generated from protobuf field: int32 minimum_grade = 6
      */
-    minimumGrade?: number;
+    minimumGrade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 7
      */
     jobGradeLabel?: string;
     /**
-     * @generated from protobuf field: resources.documents.PartyAccessLevel access = 8
+     * @generated from protobuf field: resources.documents.ApprovalAccessLevel access = 8
      */
-    access: PartyAccessLevel;
-}
-/**
- * @generated from protobuf message resources.documents.Selector
- */
-export interface Selector {
-    /**
-     * @generated from protobuf oneof: target
-     */
-    target: {
-        oneofKind: "user";
-        /**
-         * @generated from protobuf field: resources.documents.UserSelector user = 1
-         */
-        user: UserSelector;
-    } | {
-        oneofKind: "job";
-        /**
-         * @generated from protobuf field: resources.documents.JobGradeSelector job = 2
-         */
-        job: JobGradeSelector;
-    } | {
-        oneofKind: "jobGrade";
-        /**
-         * @generated from protobuf field: resources.documents.JobGradeSelector job_grade = 3
-         */
-        jobGrade: JobGradeSelector;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message resources.documents.ApprovalPolicyApplied
- */
-export interface ApprovalPolicyApplied {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 2
-     */
-    onEditBehavior: OnEditBehavior;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3
-     */
-    createdAt?: Timestamp;
-    /**
-     * Materialized stages
-     *
-     * @generated from protobuf field: repeated resources.documents.ApprovalStage stages = 4
-     */
-    stages: ApprovalStage[];
-}
-/**
- * Stages & tasks
- *
- * @generated from protobuf message resources.documents.RequireAll
- */
-export interface RequireAll {
-    /**
-     * value=true
-     *
-     * @generated from protobuf field: bool value = 1
-     */
-    value: boolean;
-}
-/**
- * @generated from protobuf message resources.documents.QuorumAny
- */
-export interface QuorumAny {
-    /**
-     * e.g., any 2
-     *
-     * @generated from protobuf field: int32 count = 1
-     */
-    count: number;
-}
-/**
- * @generated from protobuf message resources.documents.ApprovalStage
- */
-export interface ApprovalStage {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: int64 document_id = 2
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: string name = 4
-     */
-    name: string;
-    /**
-     * 1..N; same order => parallel
-     *
-     * @generated from protobuf field: int32 order = 5
-     */
-    order: number;
-    /**
-     * @generated from protobuf field: resources.documents.PartySelector selector = 6
-     */
-    selector?: PartySelector;
-    /**
-     * @generated from protobuf oneof: rule
-     */
-    rule: {
-        oneofKind: "requireAll";
-        /**
-         * @generated from protobuf field: resources.documents.RequireAll require_all = 7
-         */
-        requireAll: RequireAll;
-    } | {
-        oneofKind: "quorumAny";
-        /**
-         * @generated from protobuf field: resources.documents.QuorumAny quorum_any = 8
-         */
-        quorumAny: QuorumAny;
-    } | {
-        oneofKind: undefined;
-    };
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 9
-     */
-    dueAt?: Timestamp;
-    /**
-     * Optional cached aggregates (service maintained)
-     *
-     * @generated from protobuf field: int32 assigned_count = 10
-     */
-    assignedCount: number;
-    /**
-     * @generated from protobuf field: int32 approved_count = 11
-     */
-    approvedCount: number;
-    /**
-     * @generated from protobuf field: int32 declined_count = 12
-     */
-    declinedCount: number;
-    /**
-     * @generated from protobuf field: int32 pending_count = 13
-     */
-    pendingCount: number;
-}
-/**
- * @generated from protobuf message resources.documents.ApprovalTask
- */
-export interface ApprovalTask {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: int64 stage_id = 2
-     */
-    stageId: number;
-    /**
-     * @generated from protobuf field: int64 document_id = 3
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 4
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: int32 creator_id = 5
-     */
-    creatorId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 6
-     */
-    creator?: UserShort;
-    /**
-     * Snapshot of why this user was assigned (for audit stability)
-     *
-     * @generated from protobuf field: string creator_job = 7
-     */
-    creatorJob: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 8
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 creator_job_grade = 9
-     */
-    creatorJobGrade: number;
-    /**
-     * @generated from protobuf field: resources.documents.ApprovalTaskStatus status = 10
-     */
-    status: ApprovalTaskStatus;
-    /**
-     * Optional comment on approve/decline
-     *
-     * @generated from protobuf field: string comment = 11
-     */
-    comment: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp decided_at = 12
-     */
-    decidedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 13
-     */
-    dueAt?: Timestamp;
-}
-/**
- * @generated from protobuf enum resources.documents.PartyAccessLevel
- */
-export enum PartyAccessLevel {
-    /**
-     * @generated from protobuf enum value: PARTY_ACCESS_LEVEL_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: PARTY_ACCESS_LEVEL_BLOCKED = 1;
-     */
-    BLOCKED = 1,
-    /**
-     * @generated from protobuf enum value: PARTY_ACCESS_LEVEL_VIEW = 2;
-     */
-    VIEW = 2,
-    /**
-     * @generated from protobuf enum value: PARTY_ACCESS_LEVEL_PERFORM = 3;
-     */
-    PERFORM = 3
+    access: ApprovalAccessLevel;
 }
 /**
  * Policy snapshot applied to a specific version
@@ -353,6 +247,40 @@ export enum OnEditBehavior {
      * @generated from protobuf enum value: ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
      */
     KEEP_PROGRESS = 2
+}
+/**
+ * @generated from protobuf enum resources.documents.ApprovalRuleKind
+ */
+export enum ApprovalRuleKind {
+    /**
+     * @generated from protobuf enum value: APPROVAL_RULE_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: APPROVAL_RULE_KIND_REQUIRE_ALL = 1;
+     */
+    REQUIRE_ALL = 1,
+    /**
+     * @generated from protobuf enum value: APPROVAL_RULE_KIND_QUORUM_ANY = 2;
+     */
+    QUORUM_ANY = 2
+}
+/**
+ * @generated from protobuf enum resources.documents.ApprovalAssigneeKind
+ */
+export enum ApprovalAssigneeKind {
+    /**
+     * @generated from protobuf enum value: APPROVAL_ASSIGNEE_KIND_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: APPROVAL_ASSIGNEE_KIND_USER = 1;
+     */
+    USER = 1,
+    /**
+     * @generated from protobuf enum value: APPROVAL_ASSIGNEE_KIND_JOB_GRADE = 2;
+     */
+    JOB_GRADE = 2
 }
 /**
  * @generated from protobuf enum resources.documents.ApprovalTaskStatus
@@ -383,92 +311,63 @@ export enum ApprovalTaskStatus {
      */
     CANCELLED = 5
 }
-// @generated message type with reflection information, may provide speed optimized methods
-class PartySelector$Type extends MessageType<PartySelector> {
-    constructor() {
-        super("resources.documents.PartySelector", [
-            { no: 1, name: "who", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Selector },
-            { no: 2, name: "exclusions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Selector },
-            { no: 3, name: "fallbacks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Selector }
-        ]);
-    }
-    create(value?: PartialMessage<PartySelector>): PartySelector {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.who = [];
-        message.exclusions = [];
-        message.fallbacks = [];
-        if (value !== undefined)
-            reflectionMergePartial<PartySelector>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PartySelector): PartySelector {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.documents.Selector who */ 1:
-                    message.who.push(Selector.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.documents.Selector exclusions */ 2:
-                    message.exclusions.push(Selector.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.documents.Selector fallbacks */ 3:
-                    message.fallbacks.push(Selector.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PartySelector, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Selector who = 1; */
-        for (let i = 0; i < message.who.length; i++)
-            Selector.internalBinaryWrite(message.who[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.Selector exclusions = 2; */
-        for (let i = 0; i < message.exclusions.length; i++)
-            Selector.internalBinaryWrite(message.exclusions[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.Selector fallbacks = 3; */
-        for (let i = 0; i < message.fallbacks.length; i++)
-            Selector.internalBinaryWrite(message.fallbacks[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
 /**
- * @generated MessageType for protobuf message resources.documents.PartySelector
+ * @generated from protobuf enum resources.documents.ApprovalAccessLevel
  */
-export const PartySelector = new PartySelector$Type();
+export enum ApprovalAccessLevel {
+    /**
+     * @generated from protobuf enum value: APPROVAL_ACCESS_LEVEL_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: APPROVAL_ACCESS_LEVEL_BLOCKED = 1;
+     */
+    BLOCKED = 1,
+    /**
+     * @generated from protobuf enum value: APPROVAL_ACCESS_LEVEL_USE = 2;
+     */
+    USE = 2
+}
 // @generated message type with reflection information, may provide speed optimized methods
-class UserSelector$Type extends MessageType<UserSelector> {
+class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
     constructor() {
-        super("resources.documents.UserSelector", [
+        super("resources.documents.ApprovalPolicy", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 5, name: "user", kind: "message", T: () => UserShort },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.PartyAccessLevel", PartyAccessLevel, "PARTY_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 4, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 5, name: "required_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
+            { no: 6, name: "active_snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 7, name: "due_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "started_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "completed_at", kind: "message", T: () => Timestamp },
+            { no: 10, name: "access", kind: "message", T: () => ApprovalAccess },
+            { no: 11, name: "assigned_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "approved_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "declined_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "pending_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "any_declined", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 16, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 17, name: "updated_at", kind: "message", T: () => Timestamp }
         ]);
     }
-    create(value?: PartialMessage<UserSelector>): UserSelector {
+    create(value?: PartialMessage<ApprovalPolicy>): ApprovalPolicy {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
-        message.targetId = 0;
-        message.userId = 0;
-        message.access = 0;
+        message.documentId = 0;
+        message.onEditBehavior = 0;
+        message.ruleKind = 0;
+        message.requiredCount = 0;
+        message.assignedCount = 0;
+        message.approvedCount = 0;
+        message.declinedCount = 0;
+        message.pendingCount = 0;
+        message.anyDeclined = false;
         if (value !== undefined)
-            reflectionMergePartial<UserSelector>(this, message, value);
+            reflectionMergePartial<ApprovalPolicy>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserSelector): UserSelector {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalPolicy): ApprovalPolicy {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -476,20 +375,53 @@ class UserSelector$Type extends MessageType<UserSelector> {
                 case /* int64 id */ 1:
                     message.id = reader.int64().toNumber();
                     break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                case /* int64 document_id */ 2:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.documents.OnEditBehavior on_edit_behavior */ 3:
+                    message.onEditBehavior = reader.int32();
+                    break;
+                case /* resources.documents.ApprovalRuleKind rule_kind */ 4:
+                    message.ruleKind = reader.int32();
+                    break;
+                case /* int32 required_count */ 5:
+                    message.requiredCount = reader.int32();
+                    break;
+                case /* resources.timestamp.Timestamp active_snapshot_date */ 6:
+                    message.activeSnapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.activeSnapshotDate);
+                    break;
+                case /* optional resources.timestamp.Timestamp due_at */ 7:
+                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp started_at */ 8:
+                    message.startedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp completed_at */ 9:
+                    message.completedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.completedAt);
+                    break;
+                case /* resources.documents.ApprovalAccess access */ 10:
+                    message.access = ApprovalAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                case /* int32 assigned_count */ 11:
+                    message.assignedCount = reader.int32();
+                    break;
+                case /* int32 approved_count */ 12:
+                    message.approvedCount = reader.int32();
+                    break;
+                case /* int32 declined_count */ 13:
+                    message.declinedCount = reader.int32();
+                    break;
+                case /* int32 pending_count */ 14:
+                    message.pendingCount = reader.int32();
+                    break;
+                case /* bool any_declined */ 15:
+                    message.anyDeclined = reader.bool();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 16:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* int64 target_id */ 3:
-                    message.targetId = reader.int64().toNumber();
-                    break;
-                case /* int32 user_id */ 4:
-                    message.userId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort user */ 5:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
-                    break;
-                case /* resources.documents.PartyAccessLevel access */ 8:
-                    message.access = reader.int32();
+                case /* optional resources.timestamp.Timestamp updated_at */ 17:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -502,25 +434,58 @@ class UserSelector$Type extends MessageType<UserSelector> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserSelector, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ApprovalPolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
+        /* int64 document_id = 2; */
+        if (message.documentId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.documentId);
+        /* resources.documents.OnEditBehavior on_edit_behavior = 3; */
+        if (message.onEditBehavior !== 0)
+            writer.tag(3, WireType.Varint).int32(message.onEditBehavior);
+        /* resources.documents.ApprovalRuleKind rule_kind = 4; */
+        if (message.ruleKind !== 0)
+            writer.tag(4, WireType.Varint).int32(message.ruleKind);
+        /* int32 required_count = 5; */
+        if (message.requiredCount !== 0)
+            writer.tag(5, WireType.Varint).int32(message.requiredCount);
+        /* resources.timestamp.Timestamp active_snapshot_date = 6; */
+        if (message.activeSnapshotDate)
+            Timestamp.internalBinaryWrite(message.activeSnapshotDate, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp due_at = 7; */
+        if (message.dueAt)
+            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp started_at = 8; */
+        if (message.startedAt)
+            Timestamp.internalBinaryWrite(message.startedAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp completed_at = 9; */
+        if (message.completedAt)
+            Timestamp.internalBinaryWrite(message.completedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.ApprovalAccess access = 10; */
+        if (message.access)
+            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* int32 assigned_count = 11; */
+        if (message.assignedCount !== 0)
+            writer.tag(11, WireType.Varint).int32(message.assignedCount);
+        /* int32 approved_count = 12; */
+        if (message.approvedCount !== 0)
+            writer.tag(12, WireType.Varint).int32(message.approvedCount);
+        /* int32 declined_count = 13; */
+        if (message.declinedCount !== 0)
+            writer.tag(13, WireType.Varint).int32(message.declinedCount);
+        /* int32 pending_count = 14; */
+        if (message.pendingCount !== 0)
+            writer.tag(14, WireType.Varint).int32(message.pendingCount);
+        /* bool any_declined = 15; */
+        if (message.anyDeclined !== false)
+            writer.tag(15, WireType.Varint).bool(message.anyDeclined);
+        /* resources.timestamp.Timestamp created_at = 16; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 target_id = 3; */
-        if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.targetId);
-        /* int32 user_id = 4; */
-        if (message.userId !== 0)
-            writer.tag(4, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 5; */
-        if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.PartyAccessLevel access = 8; */
-        if (message.access !== 0)
-            writer.tag(8, WireType.Varint).int32(message.access);
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 17; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -528,34 +493,268 @@ class UserSelector$Type extends MessageType<UserSelector> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.UserSelector
+ * @generated MessageType for protobuf message resources.documents.ApprovalPolicy
  */
-export const UserSelector = new UserSelector$Type();
+export const ApprovalPolicy = new ApprovalPolicy$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobGradeSelector$Type extends MessageType<JobGradeSelector> {
+class ApprovalTask$Type extends MessageType<ApprovalTask> {
     constructor() {
-        super("resources.documents.JobGradeSelector", [
+        super("resources.documents.ApprovalTask", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "decided_by_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "decided_by_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 9, name: "decided_by_user_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 11, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 12, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 13, name: "decided_at", kind: "message", T: () => Timestamp },
+            { no: 14, name: "due_at", kind: "message", T: () => Timestamp },
+            { no: 15, name: "decision_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 17, name: "creator", kind: "message", T: () => UserShort },
+            { no: 18, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 19, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 20, name: "creator_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ApprovalTask>): ApprovalTask {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.documentId = 0;
+        message.status = 0;
+        message.decisionCount = 0;
+        message.creatorId = 0;
+        message.creatorJob = "";
+        message.creatorJobGrade = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ApprovalTask>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalTask): ApprovalTask {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                case /* int64 document_id */ 2:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
+                    break;
+                case /* optional int32 user_id */ 4:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional string job */ 5:
+                    message.job = reader.string();
+                    break;
+                case /* optional int32 minimum_grade */ 6:
+                    message.minimumGrade = reader.int32();
+                    break;
+                case /* optional int32 decided_by_user_id */ 7:
+                    message.decidedByUserId = reader.int32();
+                    break;
+                case /* optional string decided_by_job */ 8:
+                    message.decidedByJob = reader.string();
+                    break;
+                case /* optional int32 decided_by_user_grade */ 9:
+                    message.decidedByUserGrade = reader.int32();
+                    break;
+                case /* resources.documents.ApprovalTaskStatus status */ 10:
+                    message.status = reader.int32();
+                    break;
+                case /* optional string comment */ 11:
+                    message.comment = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 12:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp decided_at */ 13:
+                    message.decidedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.decidedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp due_at */ 14:
+                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
+                    break;
+                case /* int32 decision_count */ 15:
+                    message.decisionCount = reader.int32();
+                    break;
+                case /* int32 creator_id */ 16:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort creator */ 17:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* string creator_job */ 18:
+                    message.creatorJob = reader.string();
+                    break;
+                case /* optional string job_label */ 19:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* int32 creator_job_grade */ 20:
+                    message.creatorJobGrade = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ApprovalTask, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        /* int64 document_id = 2; */
+        if (message.documentId !== 0)
+            writer.tag(2, WireType.Varint).int64(message.documentId);
+        /* resources.timestamp.Timestamp snapshot_date = 3; */
+        if (message.snapshotDate)
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 user_id = 4; */
+        if (message.userId !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.userId);
+        /* optional string job = 5; */
+        if (message.job !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.job);
+        /* optional int32 minimum_grade = 6; */
+        if (message.minimumGrade !== undefined)
+            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
+        /* optional int32 decided_by_user_id = 7; */
+        if (message.decidedByUserId !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.decidedByUserId);
+        /* optional string decided_by_job = 8; */
+        if (message.decidedByJob !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.decidedByJob);
+        /* optional int32 decided_by_user_grade = 9; */
+        if (message.decidedByUserGrade !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.decidedByUserGrade);
+        /* resources.documents.ApprovalTaskStatus status = 10; */
+        if (message.status !== 0)
+            writer.tag(10, WireType.Varint).int32(message.status);
+        /* optional string comment = 11; */
+        if (message.comment !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.comment);
+        /* resources.timestamp.Timestamp created_at = 12; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp decided_at = 13; */
+        if (message.decidedAt)
+            Timestamp.internalBinaryWrite(message.decidedAt, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp due_at = 14; */
+        if (message.dueAt)
+            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* int32 decision_count = 15; */
+        if (message.decisionCount !== 0)
+            writer.tag(15, WireType.Varint).int32(message.decisionCount);
+        /* int32 creator_id = 16; */
+        if (message.creatorId !== 0)
+            writer.tag(16, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 17; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 18; */
+        if (message.creatorJob !== "")
+            writer.tag(18, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string job_label = 19; */
+        if (message.jobLabel !== undefined)
+            writer.tag(19, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 creator_job_grade = 20; */
+        if (message.creatorJobGrade !== 0)
+            writer.tag(20, WireType.Varint).int32(message.creatorJobGrade);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.ApprovalTask
+ */
+export const ApprovalTask = new ApprovalTask$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ApprovalAccess$Type extends MessageType<ApprovalAccess> {
+    constructor() {
+        super("resources.documents.ApprovalAccess", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTaskJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
+        ]);
+    }
+    create(value?: PartialMessage<ApprovalAccess>): ApprovalAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.jobs = [];
+        if (value !== undefined)
+            reflectionMergePartial<ApprovalAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalAccess): ApprovalAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.ApprovalTaskJobAccess jobs */ 1:
+                    message.jobs.push(ApprovalTaskJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ApprovalAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.ApprovalTaskJobAccess jobs = 1; */
+        for (let i = 0; i < message.jobs.length; i++)
+            ApprovalTaskJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.ApprovalAccess
+ */
+export const ApprovalAccess = new ApprovalAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
+    constructor() {
+        super("resources.documents.ApprovalTaskJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 6, name: "minimum_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.PartyAccessLevel", PartyAccessLevel, "PARTY_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.ApprovalAccessLevel", ApprovalAccessLevel, "APPROVAL_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<JobGradeSelector>): JobGradeSelector {
+    create(value?: PartialMessage<ApprovalTaskJobAccess>): ApprovalTaskJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
         message.job = "";
+        message.minimumGrade = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<JobGradeSelector>(this, message, value);
+            reflectionMergePartial<ApprovalTaskJobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobGradeSelector): JobGradeSelector {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalTaskJobAccess): ApprovalTaskJobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -575,13 +774,13 @@ class JobGradeSelector$Type extends MessageType<JobGradeSelector> {
                 case /* optional string job_label */ 5:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional int32 minimum_grade */ 6:
+                case /* int32 minimum_grade */ 6:
                     message.minimumGrade = reader.int32();
                     break;
                 case /* optional string job_grade_label */ 7:
                     message.jobGradeLabel = reader.string();
                     break;
-                case /* resources.documents.PartyAccessLevel access */ 8:
+                case /* resources.documents.ApprovalAccessLevel access */ 8:
                     message.access = reader.int32();
                     break;
                 default:
@@ -595,7 +794,7 @@ class JobGradeSelector$Type extends MessageType<JobGradeSelector> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobGradeSelector, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ApprovalTaskJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
@@ -611,13 +810,13 @@ class JobGradeSelector$Type extends MessageType<JobGradeSelector> {
         /* optional string job_label = 5; */
         if (message.jobLabel !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional int32 minimum_grade = 6; */
-        if (message.minimumGrade !== undefined)
+        /* int32 minimum_grade = 6; */
+        if (message.minimumGrade !== 0)
             writer.tag(6, WireType.Varint).int32(message.minimumGrade);
         /* optional string job_grade_label = 7; */
         if (message.jobGradeLabel !== undefined)
             writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.documents.PartyAccessLevel access = 8; */
+        /* resources.documents.ApprovalAccessLevel access = 8; */
         if (message.access !== 0)
             writer.tag(8, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
@@ -627,523 +826,6 @@ class JobGradeSelector$Type extends MessageType<JobGradeSelector> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.JobGradeSelector
+ * @generated MessageType for protobuf message resources.documents.ApprovalTaskJobAccess
  */
-export const JobGradeSelector = new JobGradeSelector$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class Selector$Type extends MessageType<Selector> {
-    constructor() {
-        super("resources.documents.Selector", [
-            { no: 1, name: "user", kind: "message", oneof: "target", T: () => UserSelector },
-            { no: 2, name: "job", kind: "message", oneof: "target", T: () => JobGradeSelector },
-            { no: 3, name: "job_grade", kind: "message", oneof: "target", T: () => JobGradeSelector }
-        ]);
-    }
-    create(value?: PartialMessage<Selector>): Selector {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.target = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<Selector>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Selector): Selector {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.documents.UserSelector user */ 1:
-                    message.target = {
-                        oneofKind: "user",
-                        user: UserSelector.internalBinaryRead(reader, reader.uint32(), options, (message.target as any).user)
-                    };
-                    break;
-                case /* resources.documents.JobGradeSelector job */ 2:
-                    message.target = {
-                        oneofKind: "job",
-                        job: JobGradeSelector.internalBinaryRead(reader, reader.uint32(), options, (message.target as any).job)
-                    };
-                    break;
-                case /* resources.documents.JobGradeSelector job_grade */ 3:
-                    message.target = {
-                        oneofKind: "jobGrade",
-                        jobGrade: JobGradeSelector.internalBinaryRead(reader, reader.uint32(), options, (message.target as any).jobGrade)
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: Selector, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.UserSelector user = 1; */
-        if (message.target.oneofKind === "user")
-            UserSelector.internalBinaryWrite(message.target.user, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.JobGradeSelector job = 2; */
-        if (message.target.oneofKind === "job")
-            JobGradeSelector.internalBinaryWrite(message.target.job, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.JobGradeSelector job_grade = 3; */
-        if (message.target.oneofKind === "jobGrade")
-            JobGradeSelector.internalBinaryWrite(message.target.jobGrade, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.Selector
- */
-export const Selector = new Selector$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ApprovalPolicyApplied$Type extends MessageType<ApprovalPolicyApplied> {
-    constructor() {
-        super("resources.documents.ApprovalPolicyApplied", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "stages", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalStage }
-        ]);
-    }
-    create(value?: PartialMessage<ApprovalPolicyApplied>): ApprovalPolicyApplied {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        message.onEditBehavior = 0;
-        message.stages = [];
-        if (value !== undefined)
-            reflectionMergePartial<ApprovalPolicyApplied>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalPolicyApplied): ApprovalPolicyApplied {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* resources.documents.OnEditBehavior on_edit_behavior */ 2:
-                    message.onEditBehavior = reader.int32();
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 3:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* repeated resources.documents.ApprovalStage stages */ 4:
-                    message.stages.push(ApprovalStage.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ApprovalPolicyApplied, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.documents.OnEditBehavior on_edit_behavior = 2; */
-        if (message.onEditBehavior !== 0)
-            writer.tag(2, WireType.Varint).int32(message.onEditBehavior);
-        /* resources.timestamp.Timestamp created_at = 3; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalStage stages = 4; */
-        for (let i = 0; i < message.stages.length; i++)
-            ApprovalStage.internalBinaryWrite(message.stages[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.ApprovalPolicyApplied
- */
-export const ApprovalPolicyApplied = new ApprovalPolicyApplied$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RequireAll$Type extends MessageType<RequireAll> {
-    constructor() {
-        super("resources.documents.RequireAll", [
-            { no: 1, name: "value", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<RequireAll>): RequireAll {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.value = false;
-        if (value !== undefined)
-            reflectionMergePartial<RequireAll>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RequireAll): RequireAll {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool value */ 1:
-                    message.value = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: RequireAll, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool value = 1; */
-        if (message.value !== false)
-            writer.tag(1, WireType.Varint).bool(message.value);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.RequireAll
- */
-export const RequireAll = new RequireAll$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class QuorumAny$Type extends MessageType<QuorumAny> {
-    constructor() {
-        super("resources.documents.QuorumAny", [
-            { no: 1, name: "count", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<QuorumAny>): QuorumAny {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.count = 0;
-        if (value !== undefined)
-            reflectionMergePartial<QuorumAny>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QuorumAny): QuorumAny {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int32 count */ 1:
-                    message.count = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QuorumAny, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 count = 1; */
-        if (message.count !== 0)
-            writer.tag(1, WireType.Varint).int32(message.count);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.QuorumAny
- */
-export const QuorumAny = new QuorumAny$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ApprovalStage$Type extends MessageType<ApprovalStage> {
-    constructor() {
-        super("resources.documents.ApprovalStage", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "selector", kind: "message", T: () => PartySelector },
-            { no: 7, name: "require_all", kind: "message", oneof: "rule", T: () => RequireAll },
-            { no: 8, name: "quorum_any", kind: "message", oneof: "rule", T: () => QuorumAny },
-            { no: 9, name: "due_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "assigned_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "approved_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "declined_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 13, name: "pending_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<ApprovalStage>): ApprovalStage {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.documentId = 0;
-        message.name = "";
-        message.order = 0;
-        message.rule = { oneofKind: undefined };
-        message.assignedCount = 0;
-        message.approvedCount = 0;
-        message.declinedCount = 0;
-        message.pendingCount = 0;
-        if (value !== undefined)
-            reflectionMergePartial<ApprovalStage>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalStage): ApprovalStage {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* int64 document_id */ 2:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 3:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* string name */ 4:
-                    message.name = reader.string();
-                    break;
-                case /* int32 order */ 5:
-                    message.order = reader.int32();
-                    break;
-                case /* resources.documents.PartySelector selector */ 6:
-                    message.selector = PartySelector.internalBinaryRead(reader, reader.uint32(), options, message.selector);
-                    break;
-                case /* resources.documents.RequireAll require_all */ 7:
-                    message.rule = {
-                        oneofKind: "requireAll",
-                        requireAll: RequireAll.internalBinaryRead(reader, reader.uint32(), options, (message.rule as any).requireAll)
-                    };
-                    break;
-                case /* resources.documents.QuorumAny quorum_any */ 8:
-                    message.rule = {
-                        oneofKind: "quorumAny",
-                        quorumAny: QuorumAny.internalBinaryRead(reader, reader.uint32(), options, (message.rule as any).quorumAny)
-                    };
-                    break;
-                case /* optional resources.timestamp.Timestamp due_at */ 9:
-                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
-                    break;
-                case /* int32 assigned_count */ 10:
-                    message.assignedCount = reader.int32();
-                    break;
-                case /* int32 approved_count */ 11:
-                    message.approvedCount = reader.int32();
-                    break;
-                case /* int32 declined_count */ 12:
-                    message.declinedCount = reader.int32();
-                    break;
-                case /* int32 pending_count */ 13:
-                    message.pendingCount = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ApprovalStage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* int64 document_id = 2; */
-        if (message.documentId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp created_at = 3; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string name = 4; */
-        if (message.name !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.name);
-        /* int32 order = 5; */
-        if (message.order !== 0)
-            writer.tag(5, WireType.Varint).int32(message.order);
-        /* resources.documents.PartySelector selector = 6; */
-        if (message.selector)
-            PartySelector.internalBinaryWrite(message.selector, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.RequireAll require_all = 7; */
-        if (message.rule.oneofKind === "requireAll")
-            RequireAll.internalBinaryWrite(message.rule.requireAll, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.QuorumAny quorum_any = 8; */
-        if (message.rule.oneofKind === "quorumAny")
-            QuorumAny.internalBinaryWrite(message.rule.quorumAny, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp due_at = 9; */
-        if (message.dueAt)
-            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* int32 assigned_count = 10; */
-        if (message.assignedCount !== 0)
-            writer.tag(10, WireType.Varint).int32(message.assignedCount);
-        /* int32 approved_count = 11; */
-        if (message.approvedCount !== 0)
-            writer.tag(11, WireType.Varint).int32(message.approvedCount);
-        /* int32 declined_count = 12; */
-        if (message.declinedCount !== 0)
-            writer.tag(12, WireType.Varint).int32(message.declinedCount);
-        /* int32 pending_count = 13; */
-        if (message.pendingCount !== 0)
-            writer.tag(13, WireType.Varint).int32(message.pendingCount);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.ApprovalStage
- */
-export const ApprovalStage = new ApprovalStage$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ApprovalTask$Type extends MessageType<ApprovalTask> {
-    constructor() {
-        super("resources.documents.ApprovalTask", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "stage_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "creator", kind: "message", T: () => UserShort },
-            { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "creator_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 11, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 12, name: "decided_at", kind: "message", T: () => Timestamp },
-            { no: 13, name: "due_at", kind: "message", T: () => Timestamp }
-        ]);
-    }
-    create(value?: PartialMessage<ApprovalTask>): ApprovalTask {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.stageId = 0;
-        message.documentId = 0;
-        message.creatorId = 0;
-        message.creatorJob = "";
-        message.creatorJobGrade = 0;
-        message.status = 0;
-        message.comment = "";
-        if (value !== undefined)
-            reflectionMergePartial<ApprovalTask>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalTask): ApprovalTask {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                case /* int64 stage_id */ 2:
-                    message.stageId = reader.int64().toNumber();
-                    break;
-                case /* int64 document_id */ 3:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 4:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* int32 creator_id */ 5:
-                    message.creatorId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort creator */ 6:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
-                    break;
-                case /* string creator_job */ 7:
-                    message.creatorJob = reader.string();
-                    break;
-                case /* optional string job_label */ 8:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 creator_job_grade */ 9:
-                    message.creatorJobGrade = reader.int32();
-                    break;
-                case /* resources.documents.ApprovalTaskStatus status */ 10:
-                    message.status = reader.int32();
-                    break;
-                case /* string comment */ 11:
-                    message.comment = reader.string();
-                    break;
-                case /* optional resources.timestamp.Timestamp decided_at */ 12:
-                    message.decidedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.decidedAt);
-                    break;
-                case /* optional resources.timestamp.Timestamp due_at */ 13:
-                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ApprovalTask, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        /* int64 stage_id = 2; */
-        if (message.stageId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.stageId);
-        /* int64 document_id = 3; */
-        if (message.documentId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp created_at = 4; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* int32 creator_id = 5; */
-        if (message.creatorId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 6; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 7; */
-        if (message.creatorJob !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string job_label = 8; */
-        if (message.jobLabel !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 creator_job_grade = 9; */
-        if (message.creatorJobGrade !== 0)
-            writer.tag(9, WireType.Varint).int32(message.creatorJobGrade);
-        /* resources.documents.ApprovalTaskStatus status = 10; */
-        if (message.status !== 0)
-            writer.tag(10, WireType.Varint).int32(message.status);
-        /* string comment = 11; */
-        if (message.comment !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.comment);
-        /* optional resources.timestamp.Timestamp decided_at = 12; */
-        if (message.decidedAt)
-            Timestamp.internalBinaryWrite(message.decidedAt, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp due_at = 13; */
-        if (message.dueAt)
-            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.ApprovalTask
- */
-export const ApprovalTask = new ApprovalTask$Type();
+export const ApprovalTaskJobAccess = new ApprovalTaskJobAccess$Type();

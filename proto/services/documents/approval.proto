@@ -5,109 +5,133 @@ package services.documents;
 import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
+import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
-message ApprovalPanelSnapshot {
-  int64 document_id = 1;
-  // Smallest incomplete order
-  int32 current_order = 2;
-  // With aggregates
-  repeated resources.documents.ApprovalStage stages = 3;
-  repeated resources.documents.ApprovalTask pending_tasks = 4;
-
-  bool all_required_stages_satisfied = 5;
-  bool any_declined = 6;
+message GetPolicyRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
-message StartReviewRequest {
-  string document_id = 1;
-  // Optional override
-  resources.documents.OnEditBehavior on_edit_behavior = 2;
+message GetPolicyResponse {
+  resources.documents.ApprovalPolicy policy = 1;
 }
 
-message StartReviewResponse {
-  string policy_id = 1;
-  ApprovalPanelSnapshot panel = 2;
+message UpsertPolicyRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.documents.ApprovalRuleKind rule_kind = 2 [(buf.validate.field).enum.defined_only = true];
+  int32 required_count = 3; // used if QUORUM_ANY
+  resources.documents.OnEditBehavior on_edit_behavior = 4 [(buf.validate.field).enum.defined_only = true];
+  resources.timestamp.Timestamp due_at = 5;
 }
 
-message GetApprovalPanelRequest {
-  string document_id = 1;
+message UpsertPolicyResponse {
+  resources.documents.ApprovalPolicy policy = 1;
 }
 
-message GetApprovalPanelResponse {
-  ApprovalPanelSnapshot panel = 1;
+message StartApprovalRoundRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2; // if omitted, server uses now
+  bool regen_tasks = 3; // re-materialize tasks from ACL
 }
 
-message ListMyApprovalTasksRequest {
+message StartApprovalRoundResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+  repeated resources.documents.ApprovalTask tasks = 2;
+}
+
+message CompleteApprovalRoundRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message CompleteApprovalRoundResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+}
+
+message RecomputePolicyCountersRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message RecomputePolicyCountersResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+}
+
+message ListApprovalAccessRequest {
+  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message ListApprovalAccessResponse {
+  resources.documents.ApprovalAccess access = 1;
+}
+
+message UpsertApprovalAccessRequest {
+  resources.documents.ApprovalAccess access = 1 [(buf.validate.field).required = true];
+}
+
+message UpsertApprovalAccessResponse {
+  resources.documents.ApprovalAccess access = 1;
+}
+
+message DeleteApprovalAccessRequest {
+  int64 id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteApprovalAccessResponse {}
+
+message ListTasksRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  // Default: PENDING
-  repeated resources.documents.ApprovalTaskStatus status = 2;
+
+  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+
+  repeated resources.documents.ApprovalTaskStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
+  int32 user_id = 5; // filter "my tasks"
+  string job = 6 [(buf.validate.field).string.max_len = 20];
+  int32 minimum_grade = 7;
 }
 
-message ListMyApprovalTasksResponse {
+message ListTasksResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.ApprovalTask tasks = 2;
 }
 
-message DecisionApprove {
-  string comment = 1 [(buf.validate.field).string.max_len = 255];
+message DecideTaskRequest {
+  int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.documents.ApprovalTaskStatus new_status = 2 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  string comment = 3 [(buf.validate.field).string.max_len = 500];
+  string idempotency_key = 10 [(buf.validate.field).string.max_len = 64];
 }
 
-message DecisionDecline {
-  string reason = 1 [(buf.validate.field).string.max_len = 255];
+message DecideTaskResponse {
+  resources.documents.ApprovalTask task = 1;
+  resources.documents.ApprovalPolicy policy = 2; // counters updated
 }
 
-message DecideApprovalTaskRequest {
-  string task_id = 1;
-
-  oneof decision {
-    DecisionApprove approve = 10;
-    DecisionDecline decline = 11;
-  }
+message ReopenTaskRequest {
+  int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
+  string reason = 2 [(buf.validate.field).string.max_len = 255];
 }
 
-message DecideApprovalTaskResponse {
-  resources.documents.ApprovalTask updated = 1;
-  bool stage_completed = 2;
-  bool document_now_approved = 3;
-  // Updated snapshot for optimistic UI
-  ApprovalPanelSnapshot panel = 4;
-}
-
-// Leader UX: add or cancel reviewer tasks on the fly
-message AddReviewersRequest {
-  int64 document_id = 1;
-  // Who to add
-  resources.documents.PartySelector selector = 2;
-  // Optional: convert to a parallel stage if needed
-  int32 quorum_any = 3;
-  // Optional: attach to existing stage
-  int64 stage_id = 4;
-}
-message AddReviewersResponse {
-  repeated resources.documents.ApprovalTask created_tasks = 1;
-  ApprovalPanelSnapshot panel = 2;
-}
-
-message CancelReviewTasksRequest {
-  int64 document_id = 1;
-  repeated string task_ids = 2;
-  string reason = 3 [(buf.validate.field).string.max_len = 255];
-}
-message CancelReviewTasksResponse {
-  repeated resources.documents.ApprovalTask cancelled = 1;
-  ApprovalPanelSnapshot panel = 2;
+message ReopenTaskResponse {
+  resources.documents.ApprovalTask task = 1;
+  resources.documents.ApprovalPolicy policy = 2;
 }
 
 service ApprovalService {
-  rpc StartReview(StartReviewRequest) returns (StartReviewResponse);
-  rpc GetApprovalPanel(GetApprovalPanelRequest) returns (GetApprovalPanelResponse);
+  // Policy
+  rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse);
+  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse);
+  rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse);
+  rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse);
+  rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse);
 
-  rpc ListMyApprovalTasks(ListMyApprovalTasksRequest) returns (ListMyApprovalTasksResponse);
-  rpc DecideApprovalTask(DecideApprovalTaskRequest) returns (DecideApprovalTaskResponse);
+  // Access (policy-scoped)
+  rpc ListApprovalAccess(ListApprovalAccessRequest) returns (ListApprovalAccessResponse);
+  rpc UpsertApprovalAccess(UpsertApprovalAccessRequest) returns (UpsertApprovalAccessResponse);
+  rpc DeleteApprovalAccess(DeleteApprovalAccessRequest) returns (DeleteApprovalAccessResponse);
 
-  // Light-weight mutations leaders will need:
-  rpc AddReviewers(AddReviewersRequest) returns (AddReviewersResponse);
-  rpc CancelReviewTasks(CancelReviewTasksRequest) returns (CancelReviewTasksResponse);
+  // Tasks
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+  rpc DecideTask(DecideTaskRequest) returns (DecideTaskResponse);
+  rpc ReopenTask(ReopenTaskRequest) returns (ReopenTaskResponse);
 }

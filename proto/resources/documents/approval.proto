@@ -5,52 +5,9 @@ package resources.documents;
 import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
-
-enum PartyAccessLevel {
-  PARTY_ACCESS_LEVEL_UNSPECIFIED = 0;
-  PARTY_ACCESS_LEVEL_BLOCKED = 1;
-  PARTY_ACCESS_LEVEL_VIEW = 2;
-  PARTY_ACCESS_LEVEL_PERFORM = 3;
-}
-
-message PartySelector {
-  // Primary targets
-  repeated Selector who = 1;
-  // Optional exclusions
-  repeated Selector exclusions = 2;
-  // Optional fallbacks if who resolves to 0
-  repeated Selector fallbacks = 3;
-}
-
-message UserSelector {
-  int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3;
-  int32 user_id = 4 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort user = 5;
-  PartyAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
-}
-
-message JobGradeSelector {
-  int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3;
-  string job = 4 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
-  optional int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
-  PartyAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
-}
-
-message Selector {
-  oneof target {
-    UserSelector user = 1;
-    JobGradeSelector job = 2;
-    JobGradeSelector job_grade = 3;
-  }
-}
 
 // Policy snapshot applied to a specific version
 enum OnEditBehavior {
@@ -61,48 +18,42 @@ enum OnEditBehavior {
   ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
 }
 
-message ApprovalPolicyApplied {
-  int64 document_id = 1;
-  OnEditBehavior on_edit_behavior = 2 [(buf.validate.field).enum.defined_only = true];
-  resources.timestamp.Timestamp created_at = 3;
-
-  // Materialized stages
-  repeated ApprovalStage stages = 4;
+enum ApprovalRuleKind {
+  APPROVAL_RULE_KIND_UNSPECIFIED = 0;
+  APPROVAL_RULE_KIND_REQUIRE_ALL = 1;
+  APPROVAL_RULE_KIND_QUORUM_ANY = 2;
 }
 
-// Stages & tasks
-message RequireAll {
-  // value=true
-  bool value = 1;
-}
-
-message QuorumAny {
-  // e.g., any 2
-  int32 count = 1;
-}
-
-message ApprovalStage {
+message ApprovalPolicy {
   int64 id = 1;
   int64 document_id = 2;
-  resources.timestamp.Timestamp created_at = 3;
 
-  string name = 4;
-  // 1..N; same order => parallel
-  int32 order = 5;
-  PartySelector selector = 6;
+  OnEditBehavior on_edit_behavior = 3 [(buf.validate.field).enum.defined_only = true];
 
-  oneof rule {
-    RequireAll require_all = 7;
-    QuorumAny quorum_any = 8;
-  }
+  ApprovalRuleKind rule_kind = 4 [(buf.validate.field).enum.defined_only = true];
+  int32 required_count = 5 [(buf.validate.field).int32.gte = 1];
+  resources.timestamp.Timestamp active_snapshot_date = 6;
+  optional resources.timestamp.Timestamp due_at = 7;
+  optional resources.timestamp.Timestamp started_at = 8;
+  optional resources.timestamp.Timestamp completed_at = 9;
 
-  optional resources.timestamp.Timestamp due_at = 9;
+  ApprovalAccess access = 10;
 
   // Optional cached aggregates (service maintained)
-  int32 assigned_count = 10;
-  int32 approved_count = 11;
-  int32 declined_count = 12;
-  int32 pending_count = 13;
+  int32 assigned_count = 11;
+  int32 approved_count = 12;
+  int32 declined_count = 13;
+  int32 pending_count = 14;
+  bool any_declined = 15;
+
+  resources.timestamp.Timestamp created_at = 16;
+  optional resources.timestamp.Timestamp updated_at = 17;
+}
+
+enum ApprovalAssigneeKind {
+  APPROVAL_ASSIGNEE_KIND_UNSPECIFIED = 0;
+  APPROVAL_ASSIGNEE_KIND_USER = 1;
+  APPROVAL_ASSIGNEE_KIND_JOB_GRADE = 2;
 }
 
 enum ApprovalTaskStatus {
@@ -116,20 +67,57 @@ enum ApprovalTaskStatus {
 
 message ApprovalTask {
   int64 id = 1;
-  int64 stage_id = 2;
-  int64 document_id = 3;
-  resources.timestamp.Timestamp created_at = 4;
+  int64 document_id = 2;
+  resources.timestamp.Timestamp snapshot_date = 3;
 
-  int32 creator_id = 5;
-  optional resources.users.UserShort creator = 6;
-  // Snapshot of why this user was assigned (for audit stability)
-  string creator_job = 7;
-  optional string job_label = 8;
-  int32 creator_job_grade = 9;
+  optional int32 user_id = 4;
+
+  optional string job = 5 [(buf.validate.field).string.max_len = 20];
+  optional int32 minimum_grade = 6;
+
+  // Who actually decided (for group tasks or audit)
+  optional int32 decided_by_user_id = 7;
+  optional string decided_by_job = 8 [(buf.validate.field).string.max_len = 20];
+  optional int32 decided_by_user_grade = 9;
 
   ApprovalTaskStatus status = 10 [(buf.validate.field).enum.defined_only = true];
   // Optional comment on approve/decline
-  string comment = 11 [(buf.validate.field).string.max_len = 255];
-  optional resources.timestamp.Timestamp decided_at = 12;
-  optional resources.timestamp.Timestamp due_at = 13;
+  optional string comment = 11 [(buf.validate.field).string.max_len = 255];
+
+  resources.timestamp.Timestamp created_at = 12;
+  optional resources.timestamp.Timestamp decided_at = 13;
+  optional resources.timestamp.Timestamp due_at = 14;
+
+  int32 decision_count = 15;
+
+  int32 creator_id = 16;
+  optional resources.users.UserShort creator = 17;
+  // Snapshot of why this user was assigned (for audit stability)
+  string creator_job = 18;
+  optional string job_label = 19;
+  int32 creator_job_grade = 20;
+}
+
+enum ApprovalAccessLevel {
+  APPROVAL_ACCESS_LEVEL_UNSPECIFIED = 0;
+  APPROVAL_ACCESS_LEVEL_BLOCKED = 1;
+  APPROVAL_ACCESS_LEVEL_USE = 2;
+}
+
+message ApprovalAccess {
+  repeated ApprovalTaskJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+}
+
+message ApprovalTaskJobAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  ApprovalAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
 }

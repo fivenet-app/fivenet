@@ -3391,38 +3391,39 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 ## resources/documents/approval.proto
 
 
-### resources.documents.ApprovalPolicyApplied
+### resources.documents.ApprovalAccess
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `stages` | [ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | Materialized stages |
+| `jobs` | [ApprovalTaskJobAccess](#resourcesdocumentsApprovalTaskJobAccess) | repeated |  |
 
 
 
 
 
-### resources.documents.ApprovalStage
+### resources.documents.ApprovalPolicy
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `name` | [string](#string) |  |  |
-| `order` | [int32](#int32) |  | 1..N; same order => parallel |
-| `selector` | [PartySelector](#resourcesdocumentsPartySelector) |  |  |
-| `require_all` | [RequireAll](#resourcesdocumentsRequireAll) |  |  |
-| `quorum_any` | [QuorumAny](#resourcesdocumentsQuorumAny) |  |  |
+| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
+| `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
+| `required_count` | [int32](#int32) |  |  |
+| `active_snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `access` | [ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
 | `assigned_count` | [int32](#int32) |  | Optional cached aggregates (service maintained) |
 | `approved_count` | [int32](#int32) |  |  |
 | `declined_count` | [int32](#int32) |  |  |
 | `pending_count` | [int32](#int32) |  |  |
+| `any_declined` | [bool](#bool) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -3434,24 +3435,31 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `stage_id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) | optional |  |
+| `decided_by_user_id` | [int32](#int32) | optional | Who actually decided (for group tasks or audit) |
+| `decided_by_job` | [string](#string) | optional |  |
+| `decided_by_user_grade` | [int32](#int32) | optional |  |
+| `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
+| `comment` | [string](#string) | optional | Optional comment on approve/decline |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `decision_count` | [int32](#int32) |  |  |
 | `creator_id` | [int32](#int32) |  |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  | Snapshot of why this user was assigned (for audit stability) |
 | `job_label` | [string](#string) | optional |  |
 | `creator_job_grade` | [int32](#int32) |  |  |
-| `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
-| `comment` | [string](#string) |  | Optional comment on approve/decline |
-| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
 
 
-### resources.documents.JobGradeSelector
+### resources.documents.ApprovalTaskJobAccess
 
 
 | Field | Type | Label | Description |
@@ -3461,80 +3469,44 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `target_id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
 | `job_grade_label` | [string](#string) | optional |  |
-| `access` | [PartyAccessLevel](#resourcesdocumentsPartyAccessLevel) |  |  |
-
-
-
-
-
-### resources.documents.PartySelector
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `who` | [Selector](#resourcesdocumentsSelector) | repeated | Primary targets |
-| `exclusions` | [Selector](#resourcesdocumentsSelector) | repeated | Optional exclusions |
-| `fallbacks` | [Selector](#resourcesdocumentsSelector) | repeated | Optional fallbacks if who resolves to 0 |
-
-
-
-
-
-### resources.documents.QuorumAny
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `count` | [int32](#int32) |  | e.g., any 2 |
-
-
-
-
-
-### resources.documents.RequireAll
-Stages & tasks
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `value` | [bool](#bool) |  | value=true |
-
-
-
-
-
-### resources.documents.Selector
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user` | [UserSelector](#resourcesdocumentsUserSelector) |  |  |
-| `job` | [JobGradeSelector](#resourcesdocumentsJobGradeSelector) |  |  |
-| `job_grade` | [JobGradeSelector](#resourcesdocumentsJobGradeSelector) |  |  |
-
-
-
-
-
-### resources.documents.UserSelector
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `access` | [PartyAccessLevel](#resourcesdocumentsPartyAccessLevel) |  |  |
+| `access` | [ApprovalAccessLevel](#resourcesdocumentsApprovalAccessLevel) |  |  |
 
 
 
 
  <!-- end messages -->
+
+
+### resources.documents.ApprovalAccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `APPROVAL_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `APPROVAL_ACCESS_LEVEL_USE` | 2 |  |
+
+
+
+### resources.documents.ApprovalAssigneeKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_ASSIGNEE_KIND_UNSPECIFIED` | 0 |  |
+| `APPROVAL_ASSIGNEE_KIND_USER` | 1 |  |
+| `APPROVAL_ASSIGNEE_KIND_JOB_GRADE` | 2 |  |
+
+
+
+### resources.documents.ApprovalRuleKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_RULE_KIND_UNSPECIFIED` | 0 |  |
+| `APPROVAL_RULE_KIND_REQUIRE_ALL` | 1 |  |
+| `APPROVAL_RULE_KIND_QUORUM_ANY` | 2 |  |
+
 
 
 ### resources.documents.ApprovalTaskStatus
@@ -3559,17 +3531,6 @@ Policy snapshot applied to a specific version
 | `ON_EDIT_BEHAVIOR_UNSPECIFIED` | 0 |  |
 | `ON_EDIT_BEHAVIOR_RESET` | 1 | Reset review on content edits |
 | `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 2 | Keep approvals where possible |
-
-
-
-### resources.documents.PartyAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `PARTY_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `PARTY_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `PARTY_ACCESS_LEVEL_VIEW` | 2 |  |
-| `PARTY_ACCESS_LEVEL_PERFORM` | 3 |  |
 
 
  <!-- end enums -->
@@ -3785,11 +3746,8 @@ Policy snapshot applied to a specific version
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
 | `state` | [string](#string) |  |  |
-| `signed` | [bool](#bool) |  |  |
 | `approved` | [bool](#bool) |  |  |
-| `approval_current_order` | [int32](#int32) | optional |  |
-| `approval_pending_tasks` | [int32](#int32) | optional |  |
-| `approval_any_declined` | [bool](#bool) | optional |  |
+| `signed` | [bool](#bool) |  |  |
 | `sig_required_remaining` | [int32](#int32) | optional |  |
 | `sig_required_total` | [int32](#int32) | optional |  |
 | `sig_collected_valid` | [int32](#int32) | optional |  |
@@ -3975,7 +3933,7 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | version_id whose hash was shown |
-| `requirement_id` | [int64](#int64) |  | Null/Empty for optional acknowledgements |
+| `requirement_id` | [int64](#int64) | optional | Null/Empty for optional acknowledgements |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `job` | [string](#string) |  |  |
@@ -3984,9 +3942,39 @@ Policy snapshot applied to a specific version
 | `payload_json` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
 | `stamp_id` | [int64](#int64) | optional | if type == STAMP |
 | `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
-| `reason` | [string](#string) |  | Revoke/Invalid reason |
+| `reason` | [string](#string) | optional | Revoke/Invalid reason |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.documents.SignatureAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [SignatureJobAccess](#resourcesdocumentsSignatureJobAccess) | repeated |  |
+| `users` | [SignatureUserAccess](#resourcesdocumentsSignatureUserAccess) | repeated |  |
+
+
+
+
+
+### resources.documents.SignatureJobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [SignatureAccessLevel](#resourcesdocumentsSignatureAccessLevel) |  |  |
 
 
 
@@ -3999,13 +3987,31 @@ Policy snapshot applied to a specific version
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `sequence_order` | [int32](#int32) |  | NULL/0 => any-order |
-| `required` | [bool](#bool) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `label` | [string](#string) |  | "Leader", "Counterparty Rep" |
-| `selector` | [PartySelector](#resourcesdocumentsPartySelector) |  |  |
-| `binding_mode` | [BindingMode](#resourcesdocumentsBindingMode) |  |  |
+| `required` | [bool](#bool) |  |  |
+| `binding_mode` | [SignatureBindingMode](#resourcesdocumentsSignatureBindingMode) |  |  |
 | `allowed_types` | [SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
+| `access` | [SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.documents.SignatureUserAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `access` | [SignatureAccessLevel](#resourcesdocumentsSignatureAccessLevel) |  |  |
+| `required` | [bool](#bool) | optional |  |
 
 
 
@@ -4059,13 +4065,23 @@ Policy snapshot applied to a specific version
  <!-- end messages -->
 
 
-### resources.documents.BindingMode
+### resources.documents.SignatureAccessLevel
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `BINDING_MODE_UNSPECIFIED` | 0 |  |
-| `BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
-| `BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
+| `SIGNATURE_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `SIGNATURE_ACCESS_LEVEL_SIGN` | 2 |  |
+
+
+
+### resources.documents.SignatureBindingMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
+| `SIGNATURE_BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
 
 
 
@@ -4076,7 +4092,7 @@ Policy snapshot applied to a specific version
 | `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
 | `SIGNATURE_STATUS_VALID` | 1 |  |
 | `SIGNATURE_STATUS_REVOKED` | 2 |  |
-| `SIGNATURE_STATUS_INVALID_PRIOR_VERSION` | 3 |  |
+| `SIGNATURE_STATUS_INVALID` | 3 |  |
 
 
 
@@ -8390,159 +8406,133 @@ Auth Service handles user authentication, character selection and oauth2 connect
 ## services/documents/approval.proto
 
 
-### services.documents.AddReviewersRequest
-Leader UX: add or cancel reviewer tasks on the fly
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `selector` | [resources.documents.PartySelector](#resourcesdocumentsPartySelector) |  | Who to add |
-| `quorum_any` | [int32](#int32) |  | Optional: convert to a parallel stage if needed |
-| `stage_id` | [int64](#int64) |  | Optional: attach to existing stage |
-
-
-
-
-
-### services.documents.AddReviewersResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `created_tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
-| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
-
-
-
-
-
-### services.documents.ApprovalPanelSnapshot
+### services.documents.CompleteApprovalRoundRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `current_order` | [int32](#int32) |  | Smallest incomplete order |
-| `stages` | [resources.documents.ApprovalStage](#resourcesdocumentsApprovalStage) | repeated | With aggregates |
-| `pending_tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
-| `all_required_stages_satisfied` | [bool](#bool) |  |  |
-| `any_declined` | [bool](#bool) |  |  |
 
 
 
 
 
-### services.documents.CancelReviewTasksRequest
+### services.documents.CompleteApprovalRoundResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `task_ids` | [string](#string) | repeated |  |
-| `reason` | [string](#string) |  |  |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
 
 
 
 
 
-### services.documents.CancelReviewTasksResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `cancelled` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
-| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
-
-
-
-
-
-### services.documents.DecideApprovalTaskRequest
+### services.documents.DecideTaskRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `task_id` | [string](#string) |  |  |
-| `approve` | [DecisionApprove](#servicesdocumentsDecisionApprove) |  |  |
-| `decline` | [DecisionDecline](#servicesdocumentsDecisionDecline) |  |  |
-
-
-
-
-
-### services.documents.DecideApprovalTaskResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
-| `stage_completed` | [bool](#bool) |  |  |
-| `document_now_approved` | [bool](#bool) |  |  |
-| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  | Updated snapshot for optimistic UI |
-
-
-
-
-
-### services.documents.DecisionApprove
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
+| `task_id` | [int64](#int64) |  |  |
+| `new_status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  | APPROVED or DECLINED |
 | `comment` | [string](#string) |  |  |
+| `idempotency_key` | [string](#string) |  |  |
 
 
 
 
 
-### services.documents.DecisionDecline
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reason` | [string](#string) |  |  |
-
-
-
-
-
-### services.documents.GetApprovalPanelRequest
+### services.documents.DecideTaskResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [string](#string) |  |  |
+| `task` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  | counters updated |
 
 
 
 
 
-### services.documents.GetApprovalPanelResponse
+### services.documents.DeleteApprovalAccessRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+| `id` | [int64](#int64) |  |  |
 
 
 
 
 
-### services.documents.ListMyApprovalTasksRequest
+### services.documents.DeleteApprovalAccessResponse
+
+
+
+
+
+### services.documents.GetPolicyRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetPolicyResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+
+
+
+
+
+### services.documents.ListApprovalAccessRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `policy_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.ListApprovalAccessResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
+
+
+
+
+
+### services.documents.ListTasksRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated | Default: PENDING |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
+| `user_id` | [int32](#int32) |  | filter "my tasks" |
+| `job` | [string](#string) |  |  |
+| `minimum_grade` | [int32](#int32) |  |  |
 
 
 
 
 
-### services.documents.ListMyApprovalTasksResponse
+### services.documents.ListTasksResponse
 
 
 | Field | Type | Label | Description |
@@ -8554,25 +8544,120 @@ Leader UX: add or cancel reviewer tasks on the fly
 
 
 
-### services.documents.StartReviewRequest
+### services.documents.RecomputePolicyCountersRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [string](#string) |  |  |
-| `on_edit_behavior` | [resources.documents.OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  | Optional override |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
 
 
-### services.documents.StartReviewResponse
+### services.documents.RecomputePolicyCountersResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [string](#string) |  |  |
-| `panel` | [ApprovalPanelSnapshot](#servicesdocumentsApprovalPanelSnapshot) |  |  |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+
+
+
+
+
+### services.documents.ReopenTaskRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `task_id` | [int64](#int64) |  |  |
+| `reason` | [string](#string) |  |  |
+
+
+
+
+
+### services.documents.ReopenTaskResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `task` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+
+
+
+
+
+### services.documents.StartApprovalRoundRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | if omitted, server uses now |
+| `regen_tasks` | [bool](#bool) |  | re-materialize tasks from ACL |
+
+
+
+
+
+### services.documents.StartApprovalRoundResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+| `tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+
+
+
+
+
+### services.documents.UpsertApprovalAccessRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
+
+
+
+
+
+### services.documents.UpsertApprovalAccessResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
+
+
+
+
+
+### services.documents.UpsertPolicyRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
+| `rule_kind` | [resources.documents.ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
+| `required_count` | [int32](#int32) |  | used if QUORUM_ANY |
+| `on_edit_behavior` | [resources.documents.OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### services.documents.UpsertPolicyResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
 
 
 
@@ -8588,12 +8673,17 @@ Leader UX: add or cancel reviewer tasks on the fly
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `StartReview` | [StartReviewRequest](#servicesdocumentsStartReviewRequest) | [StartReviewResponse](#servicesdocumentsStartReviewResponse) | |
-| `GetApprovalPanel` | [GetApprovalPanelRequest](#servicesdocumentsGetApprovalPanelRequest) | [GetApprovalPanelResponse](#servicesdocumentsGetApprovalPanelResponse) | |
-| `ListMyApprovalTasks` | [ListMyApprovalTasksRequest](#servicesdocumentsListMyApprovalTasksRequest) | [ListMyApprovalTasksResponse](#servicesdocumentsListMyApprovalTasksResponse) | |
-| `DecideApprovalTask` | [DecideApprovalTaskRequest](#servicesdocumentsDecideApprovalTaskRequest) | [DecideApprovalTaskResponse](#servicesdocumentsDecideApprovalTaskResponse) | |
-| `AddReviewers` | [AddReviewersRequest](#servicesdocumentsAddReviewersRequest) | [AddReviewersResponse](#servicesdocumentsAddReviewersResponse) |Light-weight mutations leaders will need: |
-| `CancelReviewTasks` | [CancelReviewTasksRequest](#servicesdocumentsCancelReviewTasksRequest) | [CancelReviewTasksResponse](#servicesdocumentsCancelReviewTasksResponse) | |
+| `GetPolicy` | [GetPolicyRequest](#servicesdocumentsGetPolicyRequest) | [GetPolicyResponse](#servicesdocumentsGetPolicyResponse) |Policy |
+| `UpsertPolicy` | [UpsertPolicyRequest](#servicesdocumentsUpsertPolicyRequest) | [UpsertPolicyResponse](#servicesdocumentsUpsertPolicyResponse) | |
+| `StartApprovalRound` | [StartApprovalRoundRequest](#servicesdocumentsStartApprovalRoundRequest) | [StartApprovalRoundResponse](#servicesdocumentsStartApprovalRoundResponse) | |
+| `CompleteApprovalRound` | [CompleteApprovalRoundRequest](#servicesdocumentsCompleteApprovalRoundRequest) | [CompleteApprovalRoundResponse](#servicesdocumentsCompleteApprovalRoundResponse) | |
+| `RecomputePolicyCounters` | [RecomputePolicyCountersRequest](#servicesdocumentsRecomputePolicyCountersRequest) | [RecomputePolicyCountersResponse](#servicesdocumentsRecomputePolicyCountersResponse) | |
+| `ListApprovalAccess` | [ListApprovalAccessRequest](#servicesdocumentsListApprovalAccessRequest) | [ListApprovalAccessResponse](#servicesdocumentsListApprovalAccessResponse) |Access (policy-scoped) |
+| `UpsertApprovalAccess` | [UpsertApprovalAccessRequest](#servicesdocumentsUpsertApprovalAccessRequest) | [UpsertApprovalAccessResponse](#servicesdocumentsUpsertApprovalAccessResponse) | |
+| `DeleteApprovalAccess` | [DeleteApprovalAccessRequest](#servicesdocumentsDeleteApprovalAccessRequest) | [DeleteApprovalAccessResponse](#servicesdocumentsDeleteApprovalAccessResponse) | |
+| `ListTasks` | [ListTasksRequest](#servicesdocumentsListTasksRequest) | [ListTasksResponse](#servicesdocumentsListTasksResponse) |Tasks |
+| `DecideTask` | [DecideTaskRequest](#servicesdocumentsDecideTaskRequest) | [DecideTaskResponse](#servicesdocumentsDecideTaskResponse) | |
+| `ReopenTask` | [ReopenTaskRequest](#servicesdocumentsReopenTaskRequest) | [ReopenTaskResponse](#servicesdocumentsReopenTaskResponse) | |
 
  <!-- end services -->
 
@@ -9464,10 +9554,12 @@ Leader UX: add or cancel reviewer tasks on the fly
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `requirement_id` | [int64](#int64) |  | empty => optional/ack |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `requirement_id` | [int64](#int64) |  | 0/omit for acknowledgement |
 | `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_json` | [string](#string) |  |  |
-| `stamp_id` | [int64](#int64) | optional | If STAMP |
+| `stamp_id` | [int64](#int64) |  | when type=STAMP |
+| `idempotency_key` | [string](#string) |  |  |
 
 
 
@@ -9479,35 +9571,122 @@ Leader UX: add or cancel reviewer tasks on the fly
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
-| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+| `document_signed` | [bool](#bool) |  |  |
 
 
 
 
 
-### services.documents.GetSignaturePanelRequest
+### services.documents.DeleteRequirementAccessRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteRequirementAccessResponse
+
+
+
+
+
+### services.documents.DeleteRequirementRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirement_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.DeleteRequirementResponse
+
+
+
+
+
+### services.documents.ListRequirementAccessRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirement_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.ListRequirementAccessResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+
+
+
+
+
+### services.documents.ListRequirementsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 
 
 
 
 
-### services.documents.GetSignaturePanelResponse
+### services.documents.ListRequirementsResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
+
+
+
+
+
+### services.documents.ListSignaturesRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `statuses` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | repeated |  |
+
+
+
+
+
+### services.documents.ListSignaturesResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `signatures` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated |  |
 
 
 
 
 
 ### services.documents.ListUsableStampsRequest
+Stamps listing — your example wired in as a method
+
 
 
 | Field | Type | Label | Description |
@@ -9531,51 +9710,27 @@ Leader UX: add or cancel reviewer tasks on the fly
 
 
 
-### services.documents.PrepareSignatureRequirementsRequest
+### services.documents.RecomputeSignatureStatusRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 
 
 
 
 
-### services.documents.PrepareSignatureRequirementsResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
-
-
-
-
-
-### services.documents.RequestSignaturesRequest
+### services.documents.RecomputeSignatureStatusResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `selector` | [resources.documents.PartySelector](#resourcesdocumentsPartySelector) |  | Who to ask |
-| `required` | [bool](#bool) |  | Signature is required |
-| `binding_mode` | [resources.documents.BindingMode](#resourcesdocumentsBindingMode) |  | For created requirements |
-| `allowed_types` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
-| `sequence_order` | [int32](#int32) |  | Optional ordering |
-
-
-
-
-
-### services.documents.RequestSignaturesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
-| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
+| `document_signed` | [bool](#bool) |  |  |
+| `required_total` | [int32](#int32) |  |  |
+| `required_remaining` | [int32](#int32) |  |  |
+| `collected_valid` | [int32](#int32) |  |  |
 
 
 
@@ -9599,21 +9754,50 @@ Leader UX: add or cancel reviewer tasks on the fly
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
-| `panel` | [SignaturePanelSnapshot](#servicesdocumentsSignaturePanelSnapshot) |  |  |
 
 
 
 
 
-### services.documents.SignaturePanelSnapshot
+### services.documents.UpsertRequirementAccessRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
-| `collected` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated | Includes optional acknowledgements |
-| `all_required_collected` | [bool](#bool) |  |  |
+| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+
+
+
+
+
+### services.documents.UpsertRequirementAccessResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+
+
+
+
+
+### services.documents.UpsertRequirementRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirement` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) |  |  |
+
+
+
+
+
+### services.documents.UpsertRequirementResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirement` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) |  |  |
 
 
 
@@ -9629,12 +9813,17 @@ Leader UX: add or cancel reviewer tasks on the fly
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `PrepareSignatureRequirements` | [PrepareSignatureRequirementsRequest](#servicesdocumentsPrepareSignatureRequirementsRequest) | [PrepareSignatureRequirementsResponse](#servicesdocumentsPrepareSignatureRequirementsResponse) | |
-| `GetSignaturePanel` | [GetSignaturePanelRequest](#servicesdocumentsGetSignaturePanelRequest) | [GetSignaturePanelResponse](#servicesdocumentsGetSignaturePanelResponse) | |
+| `ListRequirements` | [ListRequirementsRequest](#servicesdocumentsListRequirementsRequest) | [ListRequirementsResponse](#servicesdocumentsListRequirementsResponse) |Requirements |
+| `UpsertRequirement` | [UpsertRequirementRequest](#servicesdocumentsUpsertRequirementRequest) | [UpsertRequirementResponse](#servicesdocumentsUpsertRequirementResponse) | |
+| `DeleteRequirement` | [DeleteRequirementRequest](#servicesdocumentsDeleteRequirementRequest) | [DeleteRequirementResponse](#servicesdocumentsDeleteRequirementResponse) | |
+| `ListRequirementAccess` | [ListRequirementAccessRequest](#servicesdocumentsListRequirementAccessRequest) | [ListRequirementAccessResponse](#servicesdocumentsListRequirementAccessResponse) |Requirement ACL |
+| `UpsertRequirementAccess` | [UpsertRequirementAccessRequest](#servicesdocumentsUpsertRequirementAccessRequest) | [UpsertRequirementAccessResponse](#servicesdocumentsUpsertRequirementAccessResponse) | |
+| `DeleteRequirementAccess` | [DeleteRequirementAccessRequest](#servicesdocumentsDeleteRequirementAccessRequest) | [DeleteRequirementAccessResponse](#servicesdocumentsDeleteRequirementAccessResponse) | |
+| `ListSignatures` | [ListSignaturesRequest](#servicesdocumentsListSignaturesRequest) | [ListSignaturesResponse](#servicesdocumentsListSignaturesResponse) |Signatures |
 | `ApplySignature` | [ApplySignatureRequest](#servicesdocumentsApplySignatureRequest) | [ApplySignatureResponse](#servicesdocumentsApplySignatureResponse) | |
 | `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
-| `RequestSignatures` | [RequestSignaturesRequest](#servicesdocumentsRequestSignaturesRequest) | [RequestSignaturesResponse](#servicesdocumentsRequestSignaturesResponse) |Convenience for “request signatures” UX |
-| `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |List stamps the caller can use on this doc/version |
+| `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
+| `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |Stamps |
 
  <!-- end services -->
 

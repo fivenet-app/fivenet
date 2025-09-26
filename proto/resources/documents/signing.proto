@@ -3,19 +3,18 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
-import "resources/documents/approval.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
-enum BindingMode {
-  BINDING_MODE_UNSPECIFIED = 0;
+enum SignatureBindingMode {
+  SIGNATURE_BINDING_MODE_UNSPECIFIED = 0;
   // Invalidates on content edits
-  BINDING_MODE_BINDING = 1;
+  SIGNATURE_BINDING_MODE_BINDING = 1;
   // Stays but marked 'signed on vX'
-  BINDING_MODE_NONBINDING = 2;
+  SIGNATURE_BINDING_MODE_NONBINDING = 2;
 }
 
 enum SignatureType {
@@ -25,33 +24,73 @@ enum SignatureType {
   SIGNATURE_TYPE_STAMP = 3;
 }
 
+enum SignatureAccessLevel {
+  SIGNATURE_ACCESS_LEVEL_UNSPECIFIED = 0;
+  SIGNATURE_ACCESS_LEVEL_BLOCKED = 1;
+  SIGNATURE_ACCESS_LEVEL_SIGN = 2;
+}
+
+message SignatureAccess {
+  repeated SignatureJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+  repeated SignatureUserAccess users = 2 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"user_access\""
+  ];
+}
+
+message SignatureJobAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  SignatureAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}
+
+message SignatureUserAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  int32 user_id = 4 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort user = 5;
+  SignatureAccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
+  optional bool required = 7;
+}
+
 message SignatureRequirement {
   int64 id = 1;
   int64 document_id = 2;
 
-  resources.timestamp.Timestamp created_at = 3;
+  resources.timestamp.Timestamp snapshot_date = 3;
 
-  // NULL/0 => any-order
-  int32 sequence_order = 4;
-  bool required = 5;
   // "Leader", "Counterparty Rep"
-  string label = 6;
+  string label = 4;
+  bool required = 5;
 
-  resources.documents.PartySelector selector = 7;
-  BindingMode binding_mode = 8 [(buf.validate.field).enum.defined_only = true];
-  repeated SignatureType allowed_types = 9 [(buf.validate.field).repeated = {
+  SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
+  repeated SignatureType allowed_types = 7 [(buf.validate.field).repeated = {
     max_items: 3
     items: {
       enum: {defined_only: true}
     }
   }];
+
+  SignatureAccess access = 8;
+
+  resources.timestamp.Timestamp created_at = 9;
+  resources.timestamp.Timestamp updated_at = 10;
 }
 
 enum SignatureStatus {
   SIGNATURE_STATUS_UNSPECIFIED = 0;
   SIGNATURE_STATUS_VALID = 1;
   SIGNATURE_STATUS_REVOKED = 2;
-  SIGNATURE_STATUS_INVALID_PRIOR_VERSION = 3;
+  SIGNATURE_STATUS_INVALID = 3;
 }
 
 message Signature {
@@ -60,7 +99,8 @@ message Signature {
   // version_id whose hash was shown
   resources.timestamp.Timestamp snapshot_date = 3;
   // Null/Empty for optional acknowledgements
-  int64 requirement_id = 4;
+  optional int64 requirement_id = 4;
+
   int32 user_id = 5;
   optional resources.users.UserShort user = 6;
   string job = 7 [(buf.validate.field).string.max_len = 20];
@@ -74,7 +114,7 @@ message Signature {
 
   SignatureStatus status = 12 [(buf.validate.field).enum.defined_only = true];
   // Revoke/Invalid reason
-  string reason = 13;
+  optional string reason = 13;
 
   resources.timestamp.Timestamp created_at = 14;
   optional resources.timestamp.Timestamp revoked_at = 15;
