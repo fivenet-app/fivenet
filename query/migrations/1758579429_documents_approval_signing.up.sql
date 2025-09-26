@@ -49,8 +49,8 @@ CREATE TABLE `fivenet_documents_approval_policies` (
   PRIMARY KEY (`id`),
 
   KEY `idx_policy_doc_snapshot` (`document_id`, `active_snapshot_date`),
-  KEY `idx_policy_started_at` (`started_at`)
-  KEY `idx_policy_completed_at` (`completed_at`)
+  KEY `idx_policy_started_at` (`started_at`),
+  KEY `idx_policy_completed_at` (`completed_at`),
 
   CONSTRAINT `fk_policy_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;

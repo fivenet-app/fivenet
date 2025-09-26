@@ -8522,9 +8522,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
-| `user_id` | [int32](#int32) |  | filter "my tasks" |
+| `user_id` | [int32](#int32) |  | Filter "my tasks" |
 | `job` | [string](#string) |  |  |
 | `minimum_grade` | [int32](#int32) |  |  |
 
@@ -9554,7 +9554,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `requirement_id` | [int64](#int64) |  | 0/omit for acknowledgement |
 | `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_json` | [string](#string) |  |  |

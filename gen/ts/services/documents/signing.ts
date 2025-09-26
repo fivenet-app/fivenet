@@ -176,7 +176,7 @@ export interface ApplySignatureRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
+     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 2
      */
     snapshotDate?: Timestamp;
     /**
@@ -363,7 +363,7 @@ class ListRequirementsResponse$Type extends MessageType<ListRequirementsResponse
     constructor() {
         super("services.documents.ListRequirementsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureRequirement }
+            { no: 2, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureRequirement, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListRequirementsResponse>): ListRequirementsResponse {
@@ -941,7 +941,7 @@ class ListSignaturesResponse$Type extends MessageType<ListSignaturesResponse> {
     constructor() {
         super("services.documents.ListSignaturesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature }
+            { no: 2, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListSignaturesResponse>): ListSignaturesResponse {
@@ -1023,7 +1023,7 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 2:
+                case /* optional resources.timestamp.Timestamp snapshot_date */ 2:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
                 case /* int64 requirement_id */ 3:
@@ -1056,7 +1056,7 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 2; */
+        /* optional resources.timestamp.Timestamp snapshot_date = 2; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* int64 requirement_id = 3; */
@@ -1423,7 +1423,7 @@ class ListUsableStampsResponse$Type extends MessageType<ListUsableStampsResponse
     constructor() {
         super("services.documents.ListUsableStampsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "stamps", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Stamp }
+            { no: 2, name: "stamps", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Stamp, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListUsableStampsResponse>): ListUsableStampsResponse {
@@ -1476,15 +1476,15 @@ export const ListUsableStampsResponse = new ListUsableStampsResponse$Type();
  * @generated ServiceType for protobuf service services.documents.SigningService
  */
 export const SigningService = new ServiceType("services.documents.SigningService", [
-    { name: "ListRequirements", options: {}, I: ListRequirementsRequest, O: ListRequirementsResponse },
-    { name: "UpsertRequirement", options: {}, I: UpsertRequirementRequest, O: UpsertRequirementResponse },
-    { name: "DeleteRequirement", options: {}, I: DeleteRequirementRequest, O: DeleteRequirementResponse },
-    { name: "ListRequirementAccess", options: {}, I: ListRequirementAccessRequest, O: ListRequirementAccessResponse },
-    { name: "UpsertRequirementAccess", options: {}, I: UpsertRequirementAccessRequest, O: UpsertRequirementAccessResponse },
-    { name: "DeleteRequirementAccess", options: {}, I: DeleteRequirementAccessRequest, O: DeleteRequirementAccessResponse },
-    { name: "ListSignatures", options: {}, I: ListSignaturesRequest, O: ListSignaturesResponse },
-    { name: "ApplySignature", options: {}, I: ApplySignatureRequest, O: ApplySignatureResponse },
-    { name: "RevokeSignature", options: {}, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
-    { name: "RecomputeSignatureStatus", options: {}, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
-    { name: "ListUsableStamps", options: {}, I: ListUsableStampsRequest, O: ListUsableStampsResponse }
+    { name: "ListRequirements", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementsRequest, O: ListRequirementsResponse },
+    { name: "UpsertRequirement", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertRequirementRequest, O: UpsertRequirementResponse },
+    { name: "DeleteRequirement", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteRequirementRequest, O: DeleteRequirementResponse },
+    { name: "ListRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementAccessRequest, O: ListRequirementAccessResponse },
+    { name: "UpsertRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertRequirementAccessRequest, O: UpsertRequirementAccessResponse },
+    { name: "DeleteRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteRequirement" } }, I: DeleteRequirementAccessRequest, O: DeleteRequirementAccessResponse },
+    { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
+    { name: "ApplySignature", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ApplySignatureRequest, O: ApplySignatureResponse },
+    { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirementAccess" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
+    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteDocument" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
+    { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse }
 ]);

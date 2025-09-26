@@ -3,6 +3,8 @@ syntax = "proto3";
 package services.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
 import "resources/timestamp/timestamp.proto";
@@ -37,7 +39,7 @@ message StartApprovalRoundRequest {
 
 message StartApprovalRoundResponse {
   resources.documents.ApprovalPolicy policy = 1;
-  repeated resources.documents.ApprovalTask tasks = 2;
+  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message CompleteApprovalRoundRequest {
@@ -82,17 +84,17 @@ message ListTasksRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
 
   int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+  optional resources.timestamp.Timestamp snapshot_date = 3;
 
   repeated resources.documents.ApprovalTaskStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
-  int32 user_id = 5; // filter "my tasks"
+  int32 user_id = 5; // Filter "my tasks"
   string job = 6 [(buf.validate.field).string.max_len = 20];
   int32 minimum_grade = 7;
 }
 
 message ListTasksResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.ApprovalTask tasks = 2;
+  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message DecideTaskRequest {
@@ -119,19 +121,77 @@ message ReopenTaskResponse {
 
 service ApprovalService {
   // Policy
-  rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse);
-  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse);
-  rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse);
-  rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse);
-  rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse);
+  rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "DeleteDocument"
+    };
+  }
 
   // Access (policy-scoped)
-  rpc ListApprovalAccess(ListApprovalAccessRequest) returns (ListApprovalAccessResponse);
-  rpc UpsertApprovalAccess(UpsertApprovalAccessRequest) returns (UpsertApprovalAccessResponse);
-  rpc DeleteApprovalAccess(DeleteApprovalAccessRequest) returns (DeleteApprovalAccessResponse);
+  rpc ListApprovalAccess(ListApprovalAccessRequest) returns (ListApprovalAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertApprovalAccess(UpsertApprovalAccessRequest) returns (UpsertApprovalAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc DeleteApprovalAccess(DeleteApprovalAccessRequest) returns (DeleteApprovalAccessResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
   // Tasks
-  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
-  rpc DecideTask(DecideTaskRequest) returns (DecideTaskResponse);
-  rpc ReopenTask(ReopenTaskRequest) returns (ReopenTaskResponse);
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc DecideTask(DecideTaskRequest) returns (DecideTaskResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc ReopenTask(ReopenTaskRequest) returns (ReopenTaskResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
 }

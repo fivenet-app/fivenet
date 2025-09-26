@@ -202,7 +202,7 @@ export interface ListTasksRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
+     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 3
      */
     snapshotDate?: Timestamp;
     /**
@@ -212,7 +212,7 @@ export interface ListTasksRequest {
     /**
      * @generated from protobuf field: int32 user_id = 5
      */
-    userId: number; // filter "my tasks"
+    userId: number; // Filter "my tasks"
     /**
      * @generated from protobuf field: string job = 6
      */
@@ -579,7 +579,7 @@ class StartApprovalRoundResponse$Type extends MessageType<StartApprovalRoundResp
     constructor() {
         super("services.documents.StartApprovalRoundResponse", [
             { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy },
-            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask }
+            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<StartApprovalRoundResponse>): StartApprovalRoundResponse {
@@ -1090,7 +1090,7 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
         super("services.documents.ListTasksRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
+            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
             { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
@@ -1119,7 +1119,7 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
                 case /* int64 document_id */ 2:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                case /* optional resources.timestamp.Timestamp snapshot_date */ 3:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
                 case /* repeated resources.documents.ApprovalTaskStatus statuses */ 4:
@@ -1156,7 +1156,7 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
         /* int64 document_id = 2; */
         if (message.documentId !== 0)
             writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 3; */
+        /* optional resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.documents.ApprovalTaskStatus statuses = 4; */
@@ -1190,7 +1190,7 @@ class ListTasksResponse$Type extends MessageType<ListTasksResponse> {
     constructor() {
         super("services.documents.ListTasksResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask }
+            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListTasksResponse>): ListTasksResponse {
@@ -1475,15 +1475,15 @@ export const ReopenTaskResponse = new ReopenTaskResponse$Type();
  * @generated ServiceType for protobuf service services.documents.ApprovalService
  */
 export const ApprovalService = new ServiceType("services.documents.ApprovalService", [
-    { name: "GetPolicy", options: {}, I: GetPolicyRequest, O: GetPolicyResponse },
-    { name: "UpsertPolicy", options: {}, I: UpsertPolicyRequest, O: UpsertPolicyResponse },
-    { name: "StartApprovalRound", options: {}, I: StartApprovalRoundRequest, O: StartApprovalRoundResponse },
-    { name: "CompleteApprovalRound", options: {}, I: CompleteApprovalRoundRequest, O: CompleteApprovalRoundResponse },
-    { name: "RecomputePolicyCounters", options: {}, I: RecomputePolicyCountersRequest, O: RecomputePolicyCountersResponse },
-    { name: "ListApprovalAccess", options: {}, I: ListApprovalAccessRequest, O: ListApprovalAccessResponse },
-    { name: "UpsertApprovalAccess", options: {}, I: UpsertApprovalAccessRequest, O: UpsertApprovalAccessResponse },
-    { name: "DeleteApprovalAccess", options: {}, I: DeleteApprovalAccessRequest, O: DeleteApprovalAccessResponse },
-    { name: "ListTasks", options: {}, I: ListTasksRequest, O: ListTasksResponse },
-    { name: "DecideTask", options: {}, I: DecideTaskRequest, O: DecideTaskResponse },
-    { name: "ReopenTask", options: {}, I: ReopenTaskRequest, O: ReopenTaskResponse }
+    { name: "GetPolicy", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: GetPolicyRequest, O: GetPolicyResponse },
+    { name: "UpsertPolicy", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertPolicyRequest, O: UpsertPolicyResponse },
+    { name: "StartApprovalRound", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: StartApprovalRoundRequest, O: StartApprovalRoundResponse },
+    { name: "CompleteApprovalRound", options: { "codegen.perms.perms": { enabled: true } }, I: CompleteApprovalRoundRequest, O: CompleteApprovalRoundResponse },
+    { name: "RecomputePolicyCounters", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteDocument" } }, I: RecomputePolicyCountersRequest, O: RecomputePolicyCountersResponse },
+    { name: "ListApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalAccessRequest, O: ListApprovalAccessResponse },
+    { name: "UpsertApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertApprovalAccessRequest, O: UpsertApprovalAccessResponse },
+    { name: "DeleteApprovalAccess", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteApprovalAccessRequest, O: DeleteApprovalAccessResponse },
+    { name: "ListTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListTasksRequest, O: ListTasksResponse },
+    { name: "DecideTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: DecideTaskRequest, O: DecideTaskResponse },
+    { name: "ReopenTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ReopenTaskRequest, O: ReopenTaskResponse }
 ]);

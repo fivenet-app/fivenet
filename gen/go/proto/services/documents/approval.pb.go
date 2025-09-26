@@ -7,6 +7,8 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -780,9 +782,9 @@ type ListTasksRequest struct {
 	state         protoimpl.MessageState         `protogen:"open.v1"`
 	Pagination    *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId    int64                          `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate  *timestamp.Timestamp           `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	SnapshotDate  *timestamp.Timestamp           `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,4,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
-	UserId        int32                          `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // filter "my tasks"
+	UserId        int32                          `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // Filter "my tasks"
 	Job           string                         `protobuf:"bytes,6,opt,name=job,proto3" json:"job,omitempty"`
 	MinimumGrade  int32                          `protobuf:"varint,7,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1148,7 +1150,7 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"3\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"3\n" +
 	"\x10GetPolicyRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"P\n" +
@@ -1168,10 +1170,10 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"documentId\x12C\n" +
 	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x1f\n" +
 	"\vregen_tasks\x18\x03 \x01(\bR\n" +
-	"regenTasks\"\x92\x01\n" +
+	"regenTasks\"\x98\x01\n" +
 	"\x1aStartApprovalRoundResponse\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\x127\n" +
-	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskR\x05tasks\"?\n" +
+	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\x12=\n" +
+	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"?\n" +
 	"\x1cCompleteApprovalRoundRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"\\\n" +
@@ -1192,23 +1194,24 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"-\n" +
 	"\x1bDeleteApprovalAccessRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1e\n" +
-	"\x1cDeleteApprovalAccessResponse\"\xdb\x02\n" +
+	"\x1cDeleteApprovalAccessResponse\"\xf2\x02\n" +
 	"\x10ListTasksRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12C\n" +
+	"documentId\x12H\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12C\n" +
 	"\bstatuses\x18\x04 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\x12\x17\n" +
 	"\auser_id\x18\x05 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x06 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\a \x01(\x05R\fminimumGrade\"\x9b\x01\n" +
+	"\rminimum_grade\x18\a \x01(\x05R\fminimumGradeB\x10\n" +
+	"\x0e_snapshot_date\"\xa1\x01\n" +
 	"\x11ListTasksResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x127\n" +
-	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskR\x05tasks\"\xb7\x01\n" +
+	"pagination\x12=\n" +
+	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xb7\x01\n" +
 	"\x11DecideTaskRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12F\n" +
 	"\n" +
@@ -1224,21 +1227,21 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x88\x01\n" +
 	"\x12ReopenTaskResponse\x125\n" +
 	"\x04task\x18\x01 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xc5\t\n" +
-	"\x0fApprovalService\x12X\n" +
-	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\x12a\n" +
-	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\x12s\n" +
-	"\x12StartApprovalRound\x12-.services.documents.StartApprovalRoundRequest\x1a..services.documents.StartApprovalRoundResponse\x12|\n" +
-	"\x15CompleteApprovalRound\x120.services.documents.CompleteApprovalRoundRequest\x1a1.services.documents.CompleteApprovalRoundResponse\x12\x82\x01\n" +
-	"\x17RecomputePolicyCounters\x122.services.documents.RecomputePolicyCountersRequest\x1a3.services.documents.RecomputePolicyCountersResponse\x12s\n" +
-	"\x12ListApprovalAccess\x12-.services.documents.ListApprovalAccessRequest\x1a..services.documents.ListApprovalAccessResponse\x12y\n" +
-	"\x14UpsertApprovalAccess\x12/.services.documents.UpsertApprovalAccessRequest\x1a0.services.documents.UpsertApprovalAccessResponse\x12y\n" +
-	"\x14DeleteApprovalAccess\x12/.services.documents.DeleteApprovalAccessRequest\x1a0.services.documents.DeleteApprovalAccessResponse\x12X\n" +
-	"\tListTasks\x12$.services.documents.ListTasksRequest\x1a%.services.documents.ListTasksResponse\x12[\n" +
+	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xd1\f\n" +
+	"\x0fApprovalService\x12\x81\x01\n" +
+	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x8a\x01\n" +
+	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x9c\x01\n" +
+	"\x12StartApprovalRound\x12-.services.documents.StartApprovalRoundRequest\x1a..services.documents.StartApprovalRoundResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
+	"\x15CompleteApprovalRound\x120.services.documents.CompleteApprovalRoundRequest\x1a1.services.documents.CompleteApprovalRoundResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xac\x01\n" +
+	"\x17RecomputePolicyCounters\x122.services.documents.RecomputePolicyCountersRequest\x1a3.services.documents.RecomputePolicyCountersResponse\"(\xd2\xf3\x18$\b\x01\x12\x10DocumentsService\x1a\x0eDeleteDocument\x12\x9c\x01\n" +
+	"\x12ListApprovalAccess\x12-.services.documents.ListApprovalAccessRequest\x1a..services.documents.ListApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xa2\x01\n" +
+	"\x14UpsertApprovalAccess\x12/.services.documents.UpsertApprovalAccessRequest\x1a0.services.documents.UpsertApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
+	"\x14DeleteApprovalAccess\x12/.services.documents.DeleteApprovalAccessRequest\x1a0.services.documents.DeleteApprovalAccessResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x81\x01\n" +
+	"\tListTasks\x12$.services.documents.ListTasksRequest\x1a%.services.documents.ListTasksResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
 	"\n" +
-	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\x12[\n" +
+	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
 	"\n" +
-	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocumentsBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_approval_proto_rawDescOnce sync.Once
@@ -1344,6 +1347,7 @@ func file_services_documents_approval_proto_init() {
 	if File_services_documents_approval_proto != nil {
 		return
 	}
+	file_services_documents_approval_proto_msgTypes[16].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

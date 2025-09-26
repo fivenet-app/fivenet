@@ -7,6 +7,8 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -683,7 +685,7 @@ func (x *ListSignaturesResponse) GetSignatures() []*documents.Signature {
 type ApplySignatureRequest struct {
 	state          protoimpl.MessageState  `protogen:"open.v1"`
 	DocumentId     int64                   `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate   *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	SnapshotDate   *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	RequirementId  int64                   `protobuf:"varint,3,opt,name=requirement_id,json=requirementId,proto3" json:"requirement_id,omitempty"` // 0/omit for acknowledgement
 	Type           documents.SignatureType `protobuf:"varint,4,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
 	PayloadJson    string                  `protobuf:"bytes,5,opt,name=payload_json,json=payloadJson,proto3" json:"payload_json,omitempty"`
@@ -1149,19 +1151,19 @@ var File_services_documents_signing_proto protoreflect.FileDescriptor
 
 const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	" services/documents/signing.proto\x12\x12services.documents\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a#resources/timestamp/timestamp.proto\"\xcd\x01\n" +
+	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a#resources/timestamp/timestamp.proto\"\xcd\x01\n" +
 	"\x17ListRequirementsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\"\xb8\x01\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\"\xbe\x01\n" +
 	"\x18ListRequirementsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12M\n" +
-	"\frequirements\x18\x02 \x03(\v2).resources.documents.SignatureRequirementR\frequirements\"g\n" +
+	"pagination\x12S\n" +
+	"\frequirements\x18\x02 \x03(\v2).resources.documents.SignatureRequirementB\x04\xc8\xf3\x18\x01R\frequirements\"g\n" +
 	"\x18UpsertRequirementRequest\x12K\n" +
 	"\vrequirement\x18\x01 \x01(\v2).resources.documents.SignatureRequirementR\vrequirement\"h\n" +
 	"\x19UpsertRequirementResponse\x12K\n" +
@@ -1187,24 +1189,25 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
 	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12@\n" +
-	"\bstatuses\x18\x04 \x03(\x0e2$.resources.documents.SignatureStatusR\bstatuses\"\xa7\x01\n" +
+	"\bstatuses\x18\x04 \x03(\x0e2$.resources.documents.SignatureStatusR\bstatuses\"\xad\x01\n" +
 	"\x16ListSignaturesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12>\n" +
+	"pagination\x12D\n" +
 	"\n" +
-	"signatures\x18\x02 \x03(\v2\x1e.resources.documents.SignatureR\n" +
-	"signatures\"\xc3\x02\n" +
+	"signatures\x18\x02 \x03(\v2\x1e.resources.documents.SignatureB\x04\xc8\xf3\x18\x01R\n" +
+	"signatures\"\xda\x02\n" +
 	"\x15ApplySignatureRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12%\n" +
+	"documentId\x12H\n" +
+	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12%\n" +
 	"\x0erequirement_id\x18\x03 \x01(\x03R\rrequirementId\x126\n" +
 	"\x04type\x18\x04 \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12!\n" +
 	"\fpayload_json\x18\x05 \x01(\tR\vpayloadJson\x12\x19\n" +
 	"\bstamp_id\x18\x06 \x01(\x03R\astampId\x12'\n" +
 	"\x0fidempotency_key\x18\n" +
-	" \x01(\tR\x0eidempotencyKey\"\x7f\n" +
+	" \x01(\tR\x0eidempotencyKeyB\x10\n" +
+	"\x0e_snapshot_date\"\x7f\n" +
 	"\x16ApplySignatureResponse\x12<\n" +
 	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\x12'\n" +
 	"\x0fdocument_signed\x18\x02 \x01(\bR\x0edocumentSigned\"S\n" +
@@ -1227,25 +1230,24 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\x9d\x01\n" +
+	"documentId\"\xa3\x01\n" +
 	"\x18ListUsableStampsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x122\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampR\x06stamps2\xa0\n" +
-	"\n" +
-	"\x0eSigningService\x12m\n" +
-	"\x10ListRequirements\x12+.services.documents.ListRequirementsRequest\x1a,.services.documents.ListRequirementsResponse\x12p\n" +
-	"\x11UpsertRequirement\x12,.services.documents.UpsertRequirementRequest\x1a-.services.documents.UpsertRequirementResponse\x12p\n" +
-	"\x11DeleteRequirement\x12,.services.documents.DeleteRequirementRequest\x1a-.services.documents.DeleteRequirementResponse\x12|\n" +
-	"\x15ListRequirementAccess\x120.services.documents.ListRequirementAccessRequest\x1a1.services.documents.ListRequirementAccessResponse\x12\x82\x01\n" +
-	"\x17UpsertRequirementAccess\x122.services.documents.UpsertRequirementAccessRequest\x1a3.services.documents.UpsertRequirementAccessResponse\x12\x82\x01\n" +
-	"\x17DeleteRequirementAccess\x122.services.documents.DeleteRequirementAccessRequest\x1a3.services.documents.DeleteRequirementAccessResponse\x12g\n" +
-	"\x0eListSignatures\x12).services.documents.ListSignaturesRequest\x1a*.services.documents.ListSignaturesResponse\x12g\n" +
-	"\x0eApplySignature\x12).services.documents.ApplySignatureRequest\x1a*.services.documents.ApplySignatureResponse\x12j\n" +
-	"\x0fRevokeSignature\x12*.services.documents.RevokeSignatureRequest\x1a+.services.documents.RevokeSignatureResponse\x12\x85\x01\n" +
-	"\x18RecomputeSignatureStatus\x123.services.documents.RecomputeSignatureStatusRequest\x1a4.services.documents.RecomputeSignatureStatusResponse\x12m\n" +
-	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"pagination\x128\n" +
+	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps2\xc6\r\n" +
+	"\x0eSigningService\x12\x96\x01\n" +
+	"\x10ListRequirements\x12+.services.documents.ListRequirementsRequest\x1a,.services.documents.ListRequirementsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x99\x01\n" +
+	"\x11UpsertRequirement\x12,.services.documents.UpsertRequirementRequest\x1a-.services.documents.UpsertRequirementResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12x\n" +
+	"\x11DeleteRequirement\x12,.services.documents.DeleteRequirementRequest\x1a-.services.documents.DeleteRequirementResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa5\x01\n" +
+	"\x15ListRequirementAccess\x120.services.documents.ListRequirementAccessRequest\x1a1.services.documents.ListRequirementAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xab\x01\n" +
+	"\x17UpsertRequirementAccess\x122.services.documents.UpsertRequirementAccessRequest\x1a3.services.documents.UpsertRequirementAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xaf\x01\n" +
+	"\x17DeleteRequirementAccess\x122.services.documents.DeleteRequirementAccessRequest\x1a3.services.documents.DeleteRequirementAccessResponse\"+\xd2\xf3\x18'\b\x01\x12\x10DocumentsService\x1a\x11DeleteRequirement\x12\x90\x01\n" +
+	"\x0eListSignatures\x12).services.documents.ListSignaturesRequest\x1a*.services.documents.ListSignaturesResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x90\x01\n" +
+	"\x0eApplySignature\x12).services.documents.ApplySignatureRequest\x1a*.services.documents.ApplySignatureResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x8b\x01\n" +
+	"\x0fRevokeSignature\x12*.services.documents.RevokeSignatureRequest\x1a+.services.documents.RevokeSignatureResponse\"\x1f\xd2\xf3\x18\x1b\b\x01\x1a\x17DeleteRequirementAccess\x12\xaf\x01\n" +
+	"\x18RecomputeSignatureStatus\x123.services.documents.RecomputeSignatureStatusRequest\x1a4.services.documents.RecomputeSignatureStatusResponse\"(\xd2\xf3\x18$\b\x01\x12\x10DocumentsService\x1a\x0eDeleteDocument\x12\x96\x01\n" +
+	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocumentsBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_signing_proto_rawDescOnce sync.Once
@@ -1350,6 +1352,7 @@ func file_services_documents_signing_proto_init() {
 	if File_services_documents_signing_proto != nil {
 		return
 	}
+	file_services_documents_signing_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

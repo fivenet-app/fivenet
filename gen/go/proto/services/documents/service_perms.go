@@ -13,6 +13,17 @@ import (
 )
 
 var PermsRemap = map[string]string{
+	// Service: documents.ApprovalService
+	"documents.ApprovalService/DecideTask":              "DocumentsService/ListDocuments",
+	"documents.ApprovalService/GetPolicy":               "DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalAccess":      "DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListTasks":               "DocumentsService/ListDocuments",
+	"documents.ApprovalService/RecomputePolicyCounters": "DocumentsService/DeleteDocument",
+	"documents.ApprovalService/ReopenTask":              "DocumentsService/ListDocuments",
+	"documents.ApprovalService/StartApprovalRound":      "DocumentsService/ListDocuments",
+	"documents.ApprovalService/UpsertApprovalAccess":    "DocumentsService/ListDocuments",
+	"documents.ApprovalService/UpsertPolicy":            "DocumentsService/ListDocuments",
+
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
 
@@ -33,10 +44,36 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/UpdateDocumentReq":       "documents.DocumentsService/CreateDocumentReq",
 	"documents.DocumentsService/UpdateTemplate":          "documents.DocumentsService/CreateTemplate",
 	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
+
+	// Service: documents.SigningService
+	"documents.SigningService/ApplySignature":           "DocumentsService/ListDocuments",
+	"documents.SigningService/DeleteRequirementAccess":  "DocumentsService/DeleteRequirement",
+	"documents.SigningService/ListRequirementAccess":    "DocumentsService/ListDocuments",
+	"documents.SigningService/ListRequirements":         "DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignatures":           "DocumentsService/ListDocuments",
+	"documents.SigningService/ListUsableStamps":         "DocumentsService/ListDocuments",
+	"documents.SigningService/RecomputeSignatureStatus": "DocumentsService/DeleteDocument",
+	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteRequirementAccess",
+	"documents.SigningService/UpsertRequirement":        "DocumentsService/ListDocuments",
+	"documents.SigningService/UpsertRequirementAccess":  "DocumentsService/ListDocuments",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
+		// Service: documents.ApprovalService
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceCompleteApprovalRoundPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceDeleteApprovalAccessPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
 
 		// Service: documents.DocumentsService
 		{
@@ -227,6 +264,20 @@ func init() {
 			},
 			Order: 5000,
 			Icon:  "i-mdi-file-document-box-multiple-outline",
+		},
+
+		// Service: documents.SigningService
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceDeleteRequirementPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceDeleteRequirementAccessPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

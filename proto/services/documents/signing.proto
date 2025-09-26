@@ -3,6 +3,8 @@ syntax = "proto3";
 package services.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/signing.proto";
 import "resources/timestamp/timestamp.proto";
@@ -17,7 +19,7 @@ message ListRequirementsRequest {
 
 message ListRequirementsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.SignatureRequirement requirements = 2;
+  repeated resources.documents.SignatureRequirement requirements = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message UpsertRequirementRequest {
@@ -65,12 +67,12 @@ message ListSignaturesRequest {
 
 message ListSignaturesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.Signature signatures = 2;
+  repeated resources.documents.Signature signatures = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ApplySignatureRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
+  optional resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
   int64 requirement_id = 3; // 0/omit for acknowledgement
   resources.documents.SignatureType type = 4 [(buf.validate.field).enum.defined_only = true];
   string payload_json = 5 [(buf.validate.field).string.min_len = 1];
@@ -112,28 +114,89 @@ message ListUsableStampsRequest {
 
 message ListUsableStampsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.Stamp stamps = 2;
+  repeated resources.documents.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
 }
 
 service SigningService {
   // Requirements
-  rpc ListRequirements(ListRequirementsRequest) returns (ListRequirementsResponse);
-  rpc UpsertRequirement(UpsertRequirementRequest) returns (UpsertRequirementResponse);
-  rpc DeleteRequirement(DeleteRequirementRequest) returns (DeleteRequirementResponse);
+  rpc ListRequirements(ListRequirementsRequest) returns (ListRequirementsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertRequirement(UpsertRequirementRequest) returns (UpsertRequirementResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc DeleteRequirement(DeleteRequirementRequest) returns (DeleteRequirementResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
 
   // Requirement ACL
-  rpc ListRequirementAccess(ListRequirementAccessRequest) returns (ListRequirementAccessResponse);
-  rpc UpsertRequirementAccess(UpsertRequirementAccessRequest) returns (UpsertRequirementAccessResponse);
-  rpc DeleteRequirementAccess(DeleteRequirementAccessRequest) returns (DeleteRequirementAccessResponse);
+  rpc ListRequirementAccess(ListRequirementAccessRequest) returns (ListRequirementAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertRequirementAccess(UpsertRequirementAccessRequest) returns (UpsertRequirementAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc DeleteRequirementAccess(DeleteRequirementAccessRequest) returns (DeleteRequirementAccessResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "DeleteRequirement"
+    };
+  }
 
   // Signatures
-  rpc ListSignatures(ListSignaturesRequest) returns (ListSignaturesResponse);
-  rpc ApplySignature(ApplySignatureRequest) returns (ApplySignatureResponse);
-  rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse);
+  rpc ListSignatures(ListSignaturesRequest) returns (ListSignaturesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc ApplySignature(ApplySignatureRequest) returns (ApplySignatureResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "DeleteRequirementAccess"
+    };
+  }
 
   // Helpers
-  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse);
+  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "DeleteDocument"
+    };
+  }
 
   // Stamps
-  rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse);
+  rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
+  }
 }
