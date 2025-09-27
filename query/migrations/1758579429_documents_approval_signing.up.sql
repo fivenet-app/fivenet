@@ -1,7 +1,7 @@
 BEGIN;
 
 -- Document Meta Table
-CREATE TABLE `fivenet_documents_meta` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_meta` (
   `document_id` bigint(20) unsigned NOT NULL,
 
   `recomputed_at` datetime(3) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `fivenet_documents_meta` (
 ) ENGINE = InnoDB;
 
 -- Document Approval System
-CREATE TABLE `fivenet_documents_approval_policies` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
 
@@ -55,7 +55,7 @@ CREATE TABLE `fivenet_documents_approval_policies` (
   CONSTRAINT `fk_policy_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE `fivenet_documents_approval_access` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_access` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint unsigned NOT NULL,
   `user_id` int DEFAULT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `fivenet_documents_approval_access` (
   CONSTRAINT `fk_fivenet_doc_approval_stages_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE `fivenet_documents_approval_tasks` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
   `snapshot_date` datetime(3) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE `fivenet_documents_approval_tasks` (
 
 -- Document Signing System
 
-CREATE TABLE `fivenet_documents_signature_requirements` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
   `snapshot_date` datetime(3) NOT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE `fivenet_documents_signature_requirements` (
   CONSTRAINT `fk_sigreq_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE `fivenet_documents_signature_requirements_access` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements_access` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint unsigned NOT NULL,
   `job` varchar(40) DEFAULT NULL,
@@ -161,37 +161,7 @@ CREATE TABLE `fivenet_documents_signature_requirements_access` (
   CONSTRAINT `fk_fivenet_doc_signature_reqs_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_signature_requirements` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE `fivenet_documents_signatures` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `document_id` bigint(20) unsigned NOT NULL,
-  `snapshot_date` datetime(3) NOT NULL,
-  `requirement_id` bigint(20) unsigned DEFAULT NULL,
-  `user_id` int(11) NOT NULL,
-  `user_job` varchar(20) NOT NULL,
-
-  `type` smallint(2) NOT NULL,
-  `payload_json` longtext NOT NULL,
-  `stamp_id` bigint(20) unsigned DEFAULT NULL,
-
-  `status` smallint(2) NOT NULL,
-  `reason` varchar(255) DEFAULT NULL,
-
-  `created_at` datetime(3) NOT NULL,
-  `revoked_at` datetime(3) DEFAULT NULL,
-
-  PRIMARY KEY (`id`),
-
-  UNIQUE KEY `uq_req_user` (`requirement_id`, `user_id`),
-  KEY `idx_sig_doc_snapshot_status` (`document_id`, `snapshot_date`, `status`),
-  KEY `idx_sig_user_created` (`user_id`, `created_at`),
-  KEY `idx_sig_requirement_status` (`requirement_id`, `status`),
-
-  CONSTRAINT `fk_sig_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_sig_req` FOREIGN KEY (`requirement_id`) REFERENCES `fivenet_documents_signature_requirements` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_sig_stamp` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_signatures_stamps` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE = InnoDB;
-
-CREATE TABLE `fivenet_documents_signatures_stamps` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(120) NOT NULL,
 
@@ -222,7 +192,37 @@ CREATE TABLE `fivenet_documents_signatures_stamps` (
   CONSTRAINT `fk_stamp_user` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE `fivenet_documents_signatures_stamps_access` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `document_id` bigint(20) unsigned NOT NULL,
+  `snapshot_date` datetime(3) NOT NULL,
+  `requirement_id` bigint(20) unsigned DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  `user_job` varchar(20) NOT NULL,
+
+  `type` smallint(2) NOT NULL,
+  `payload_json` longtext NOT NULL,
+  `stamp_id` bigint(20) unsigned DEFAULT NULL,
+
+  `status` smallint(2) NOT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+
+  `created_at` datetime(3) NOT NULL,
+  `revoked_at` datetime(3) DEFAULT NULL,
+
+  PRIMARY KEY (`id`),
+
+  UNIQUE KEY `uq_req_user` (`requirement_id`, `user_id`),
+  KEY `idx_sig_doc_snapshot_status` (`document_id`, `snapshot_date`, `status`),
+  KEY `idx_sig_user_created` (`user_id`, `created_at`),
+  KEY `idx_sig_requirement_status` (`requirement_id`, `status`),
+
+  CONSTRAINT `fk_sig_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_sig_req` FOREIGN KEY (`requirement_id`) REFERENCES `fivenet_documents_signature_requirements` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_sig_stamp` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_signatures_stamps` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint(20) unsigned NOT NULL,
   `job` varchar(40) NOT NULL,
