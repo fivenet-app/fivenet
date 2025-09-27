@@ -31,14 +31,14 @@ func init() {
 			Name:     permkeys.ConductServiceCreateConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    6700,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Icon:     "i-mdi-list-status",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
 			Name:     permkeys.ConductServiceDeleteConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    6700,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Icon:     "i-mdi-list-status",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
@@ -51,14 +51,14 @@ func init() {
 				},
 			},
 			Order: 6700,
-			Icon:  "i-mdi-file-document-box-multiple-outline",
+			Icon:  "i-mdi-list-status",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
 			Name:     permkeys.ConductServiceUpdateConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    6700,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Icon:     "i-mdi-list-status",
 		},
 
 		// Service: jobs.JobsService
@@ -139,7 +139,7 @@ func init() {
 			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,
 			Attrs:    []perms.Attr{},
 			Order:    6200,
-			Icon:     "i-mdi-file-document-box-multiple-outline",
+			Icon:     "i-mdi-timeline-clock-outline",
 		},
 		{
 			Category: permkeys.TimeclockServicePerm,
@@ -152,7 +152,7 @@ func init() {
 				},
 			},
 			Order: 6200,
-			Icon:  "i-mdi-file-document-box-multiple-outline",
+			Icon:  "i-mdi-timeline-clock-outline",
 		},
 	})
 }

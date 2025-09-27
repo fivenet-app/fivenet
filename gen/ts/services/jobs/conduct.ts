@@ -552,4 +552,4 @@ export const ConductService = new ServiceType("services.jobs.ConductService", [
     { name: "CreateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
     { name: "UpdateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },
     { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse }
-], { "codegen.perms.perms_svc": { order: 67, icon: "i-mdi-file-document-box-multiple-outline" } });
+], { "codegen.perms.perms_svc": { order: 67, icon: "i-mdi-list-status" } });

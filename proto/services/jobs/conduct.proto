@@ -52,7 +52,7 @@ message DeleteConductEntryResponse {}
 service ConductService {
   option (codegen.perms.perms_svc) = {
     order: 67
-    icon: "i-mdi-file-document-box-multiple-outline"
+    icon: "i-mdi-list-status"
   };
 
   rpc ListConductEntries(ListConductEntriesRequest) returns (ListConductEntriesResponse) {

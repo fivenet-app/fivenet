@@ -806,4 +806,4 @@ export const TimeclockService = new ServiceType("services.jobs.TimeclockService"
     { name: "ListTimeclock", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["All"] }] } }, I: ListTimeclockRequest, O: ListTimeclockResponse },
     { name: "GetTimeclockStats", options: { "codegen.perms.perms": { enabled: true, name: "ListTimeclock" } }, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse },
     { name: "ListInactiveEmployees", options: { "codegen.perms.perms": { enabled: true } }, I: ListInactiveEmployeesRequest, O: ListInactiveEmployeesResponse }
-], { "codegen.perms.perms_svc": { order: 62, icon: "i-mdi-file-document-box-multiple-outline" } });
+], { "codegen.perms.perms_svc": { order: 62, icon: "i-mdi-timeline-clock-outline" } });
