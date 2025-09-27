@@ -3396,7 +3396,25 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [ApprovalTaskJobAccess](#resourcesdocumentsApprovalTaskJobAccess) | repeated |  |
+| `jobs` | [ApprovalJobAccess](#resourcesdocumentsApprovalJobAccess) | repeated |  |
+
+
+
+
+
+### resources.documents.ApprovalJobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [ApprovalAccessLevel](#resourcesdocumentsApprovalAccessLevel) |  |  |
 
 
 
@@ -3454,24 +3472,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `creator_job` | [string](#string) |  | Snapshot of why this user was assigned (for audit stability) |
 | `job_label` | [string](#string) | optional |  |
 | `creator_job_grade` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.documents.ApprovalTaskJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [ApprovalAccessLevel](#resourcesdocumentsApprovalAccessLevel) |  |  |
 
 
 
@@ -3991,10 +3991,21 @@ Policy snapshot applied to a specific version
 | `label` | [string](#string) |  | "Leader", "Counterparty Rep" |
 | `required` | [bool](#bool) |  |  |
 | `binding_mode` | [SignatureBindingMode](#resourcesdocumentsSignatureBindingMode) |  |  |
-| `allowed_types` | [SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
+| `allowed_types` | [SignatureTypes](#resourcesdocumentsSignatureTypes) |  |  |
 | `access` | [SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.documents.SignatureTypes
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `types` | [SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
 
 
 
@@ -8620,6 +8631,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
 | `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
 
 
@@ -9764,6 +9776,7 @@ Stamps listing — your example wired in as a method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `requirement_id` | [int64](#int64) |  |  |
 | `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
 
 

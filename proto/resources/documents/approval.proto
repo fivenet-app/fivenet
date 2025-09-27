@@ -105,13 +105,13 @@ enum ApprovalAccessLevel {
 }
 
 message ApprovalAccess {
-  repeated ApprovalTaskJobAccess jobs = 1 [
+  repeated ApprovalJobAccess jobs = 1 [
     (buf.validate.field).repeated.max_items = 20,
     (tagger.tags) = "alias:\"job_access\""
   ];
 }
 
-message ApprovalTaskJobAccess {
+message ApprovalJobAccess {
   int64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   int64 target_id = 3;

@@ -184,14 +184,14 @@ export interface ApprovalTask {
  */
 export interface ApprovalAccess {
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTaskJobAccess jobs = 1
+     * @generated from protobuf field: repeated resources.documents.ApprovalJobAccess jobs = 1
      */
-    jobs: ApprovalTaskJobAccess[];
+    jobs: ApprovalJobAccess[];
 }
 /**
- * @generated from protobuf message resources.documents.ApprovalTaskJobAccess
+ * @generated from protobuf message resources.documents.ApprovalJobAccess
  */
-export interface ApprovalTaskJobAccess {
+export interface ApprovalJobAccess {
     /**
      * @generated from protobuf field: int64 id = 1
      */
@@ -686,7 +686,7 @@ export const ApprovalTask = new ApprovalTask$Type();
 class ApprovalAccess$Type extends MessageType<ApprovalAccess> {
     constructor() {
         super("resources.documents.ApprovalAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTaskJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } }, "tagger.tags": "alias:\"job_access\"" } }
         ]);
     }
     create(value?: PartialMessage<ApprovalAccess>): ApprovalAccess {
@@ -701,8 +701,8 @@ class ApprovalAccess$Type extends MessageType<ApprovalAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.ApprovalTaskJobAccess jobs */ 1:
-                    message.jobs.push(ApprovalTaskJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.documents.ApprovalJobAccess jobs */ 1:
+                    message.jobs.push(ApprovalJobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -716,9 +716,9 @@ class ApprovalAccess$Type extends MessageType<ApprovalAccess> {
         return message;
     }
     internalBinaryWrite(message: ApprovalAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.ApprovalTaskJobAccess jobs = 1; */
+        /* repeated resources.documents.ApprovalJobAccess jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            ApprovalTaskJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            ApprovalJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -730,9 +730,9 @@ class ApprovalAccess$Type extends MessageType<ApprovalAccess> {
  */
 export const ApprovalAccess = new ApprovalAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
+class ApprovalJobAccess$Type extends MessageType<ApprovalJobAccess> {
     constructor() {
-        super("resources.documents.ApprovalTaskJobAccess", [
+        super("resources.documents.ApprovalJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -743,7 +743,7 @@ class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
             { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.ApprovalAccessLevel", ApprovalAccessLevel, "APPROVAL_ACCESS_LEVEL_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<ApprovalTaskJobAccess>): ApprovalTaskJobAccess {
+    create(value?: PartialMessage<ApprovalJobAccess>): ApprovalJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
@@ -751,10 +751,10 @@ class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
         message.minimumGrade = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<ApprovalTaskJobAccess>(this, message, value);
+            reflectionMergePartial<ApprovalJobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalTaskJobAccess): ApprovalTaskJobAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ApprovalJobAccess): ApprovalJobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -794,7 +794,7 @@ class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: ApprovalTaskJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ApprovalJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
@@ -826,6 +826,6 @@ class ApprovalTaskJobAccess$Type extends MessageType<ApprovalTaskJobAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.ApprovalTaskJobAccess
+ * @generated MessageType for protobuf message resources.documents.ApprovalJobAccess
  */
-export const ApprovalTaskJobAccess = new ApprovalTaskJobAccess$Type();
+export const ApprovalJobAccess = new ApprovalJobAccess$Type();

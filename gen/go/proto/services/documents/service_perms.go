@@ -14,15 +14,14 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: documents.ApprovalService
+	"documents.ApprovalService/CompleteApprovalRound":   "DocumentsService/ListDocuments",
 	"documents.ApprovalService/DecideTask":              "DocumentsService/ListDocuments",
 	"documents.ApprovalService/GetPolicy":               "DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListApprovalAccess":      "DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListTasks":               "DocumentsService/ListDocuments",
-	"documents.ApprovalService/RecomputePolicyCounters": "DocumentsService/DeleteDocument",
-	"documents.ApprovalService/ReopenTask":              "DocumentsService/ListDocuments",
+	"documents.ApprovalService/RecomputePolicyCounters": "documents.ApprovalService/DeleteApprovalAccess",
 	"documents.ApprovalService/StartApprovalRound":      "DocumentsService/ListDocuments",
 	"documents.ApprovalService/UpsertApprovalAccess":    "DocumentsService/ListDocuments",
-	"documents.ApprovalService/UpsertPolicy":            "DocumentsService/ListDocuments",
 
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
@@ -47,15 +46,14 @@ var PermsRemap = map[string]string{
 
 	// Service: documents.SigningService
 	"documents.SigningService/ApplySignature":           "DocumentsService/ListDocuments",
-	"documents.SigningService/DeleteRequirementAccess":  "DocumentsService/DeleteRequirement",
+	"documents.SigningService/DeleteRequirementAccess":  "documents.SigningService/UpsertRequirement",
 	"documents.SigningService/ListRequirementAccess":    "DocumentsService/ListDocuments",
 	"documents.SigningService/ListRequirements":         "DocumentsService/ListDocuments",
 	"documents.SigningService/ListSignatures":           "DocumentsService/ListDocuments",
 	"documents.SigningService/ListUsableStamps":         "DocumentsService/ListDocuments",
-	"documents.SigningService/RecomputeSignatureStatus": "DocumentsService/DeleteDocument",
-	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteRequirementAccess",
-	"documents.SigningService/UpsertRequirement":        "DocumentsService/ListDocuments",
-	"documents.SigningService/UpsertRequirementAccess":  "DocumentsService/ListDocuments",
+	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteRequirement",
+	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteRequirement",
+	"documents.SigningService/UpsertRequirementAccess":  "documents.SigningService/UpsertRequirement",
 }
 
 func init() {
@@ -64,13 +62,19 @@ func init() {
 		// Service: documents.ApprovalService
 		{
 			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceCompleteApprovalRoundPerm,
+			Name:     permkeys.ApprovalServiceDeleteApprovalAccessPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 		{
 			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceDeleteApprovalAccessPerm,
+			Name:     permkeys.ApprovalServiceReopenTaskPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceUpsertPolicyPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
@@ -275,7 +279,7 @@ func init() {
 		},
 		{
 			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceDeleteRequirementAccessPerm,
+			Name:     permkeys.SigningServiceUpsertRequirementPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},

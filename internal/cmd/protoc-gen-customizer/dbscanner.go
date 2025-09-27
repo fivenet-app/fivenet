@@ -78,11 +78,12 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 
 			// Check if the field option is present and true
 			var val dbscannerpb.MessageOptions
-			ok, err := f.Extension(dbscannerpb.E_Dbscanner, &val)
+			ok, err := m.Extension(dbscannerpb.E_Dbscanner, &val)
 			if err != nil {
 				p.Fail("error reading dbscanner extension: %v", err)
 			}
 
+			p.Debugf("DBScanner: %s, option: %+v, present: %v", mName, &val, ok)
 			if !ok {
 				continue
 			}

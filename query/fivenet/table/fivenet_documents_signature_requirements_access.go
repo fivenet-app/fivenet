@@ -19,6 +19,7 @@ type fivenetDocumentsSignatureRequirementsAccessTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	TargetID     mysql.ColumnInteger
+    UserID       mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
 	Access       mysql.ColumnInteger
@@ -65,11 +66,12 @@ func newFivenetDocumentsSignatureRequirementsAccessTableImpl(schemaName, tableNa
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		TargetIDColumn     = mysql.IntegerColumn("target_id")
+		UserIDColumn       = mysql.IntegerColumn("user_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 		defaultColumns     = mysql.ColumnList{}
 	)
 
@@ -79,6 +81,7 @@ func newFivenetDocumentsSignatureRequirementsAccessTableImpl(schemaName, tableNa
 		//Columns
 		ID:           IDColumn,
 		TargetID:     TargetIDColumn,
+        UserID:       UserIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
 		Access:       AccessColumn,

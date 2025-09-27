@@ -1,8 +1,13 @@
 <script lang="ts" setup>
-import { VueSignaturePad, type Signature } from '@selemondev/vue3-signature-pad';
+import type { Signature } from '@selemondev/vue3-signature-pad';
 
 const settingsStore = useSettingsStore();
 const { signature: signatureSettings } = storeToRefs(settingsStore);
+
+const VueSignaturePad = defineAsyncComponent(async () => {
+    const m = await import('@selemondev/vue3-signature-pad');
+    return m.VueSignaturePad;
+});
 
 const modelValue = defineModel<string>({ required: true });
 
@@ -17,6 +22,7 @@ const colors = [
         color: 'rgb(255, 85, 51)',
     },
 ];
+
 const signature = ref<Signature>();
 
 function handleUndo() {

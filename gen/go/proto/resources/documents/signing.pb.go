@@ -7,6 +7,7 @@
 package documents
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -278,6 +279,50 @@ func (StampAccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
 }
 
+type SignatureTypes struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Types         []SignatureType        `protobuf:"varint,1,rep,packed,name=types,proto3,enum=resources.documents.SignatureType" json:"types,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SignatureTypes) Reset() {
+	*x = SignatureTypes{}
+	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SignatureTypes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SignatureTypes) ProtoMessage() {}
+
+func (x *SignatureTypes) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SignatureTypes.ProtoReflect.Descriptor instead.
+func (*SignatureTypes) Descriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SignatureTypes) GetTypes() []SignatureType {
+	if x != nil {
+		return x.Types
+	}
+	return nil
+}
+
 type SignatureAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*SignatureJobAccess  `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
@@ -288,7 +333,7 @@ type SignatureAccess struct {
 
 func (x *SignatureAccess) Reset() {
 	*x = SignatureAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	mi := &file_resources_documents_signing_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -300,7 +345,7 @@ func (x *SignatureAccess) String() string {
 func (*SignatureAccess) ProtoMessage() {}
 
 func (x *SignatureAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[0]
+	mi := &file_resources_documents_signing_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -313,7 +358,7 @@ func (x *SignatureAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureAccess.ProtoReflect.Descriptor instead.
 func (*SignatureAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SignatureAccess) GetJobs() []*SignatureJobAccess {
@@ -346,7 +391,7 @@ type SignatureJobAccess struct {
 
 func (x *SignatureJobAccess) Reset() {
 	*x = SignatureJobAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	mi := &file_resources_documents_signing_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -358,7 +403,7 @@ func (x *SignatureJobAccess) String() string {
 func (*SignatureJobAccess) ProtoMessage() {}
 
 func (x *SignatureJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[1]
+	mi := &file_resources_documents_signing_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +416,7 @@ func (x *SignatureJobAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureJobAccess.ProtoReflect.Descriptor instead.
 func (*SignatureJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SignatureJobAccess) GetId() int64 {
@@ -445,7 +490,7 @@ type SignatureUserAccess struct {
 
 func (x *SignatureUserAccess) Reset() {
 	*x = SignatureUserAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	mi := &file_resources_documents_signing_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -457,7 +502,7 @@ func (x *SignatureUserAccess) String() string {
 func (*SignatureUserAccess) ProtoMessage() {}
 
 func (x *SignatureUserAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[2]
+	mi := &file_resources_documents_signing_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -470,7 +515,7 @@ func (x *SignatureUserAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureUserAccess.ProtoReflect.Descriptor instead.
 func (*SignatureUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SignatureUserAccess) GetId() int64 {
@@ -531,7 +576,7 @@ type SignatureRequirement struct {
 	Label         string               `protobuf:"bytes,4,opt,name=label,proto3" json:"label,omitempty"`
 	Required      bool                 `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty"`
 	BindingMode   SignatureBindingMode `protobuf:"varint,6,opt,name=binding_mode,json=bindingMode,proto3,enum=resources.documents.SignatureBindingMode" json:"binding_mode,omitempty"`
-	AllowedTypes  []SignatureType      `protobuf:"varint,7,rep,packed,name=allowed_types,json=allowedTypes,proto3,enum=resources.documents.SignatureType" json:"allowed_types,omitempty"`
+	AllowedTypes  *SignatureTypes      `protobuf:"bytes,7,opt,name=allowed_types,json=allowedTypes,proto3" json:"allowed_types,omitempty"`
 	Access        *SignatureAccess     `protobuf:"bytes,8,opt,name=access,proto3" json:"access,omitempty"`
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -541,7 +586,7 @@ type SignatureRequirement struct {
 
 func (x *SignatureRequirement) Reset() {
 	*x = SignatureRequirement{}
-	mi := &file_resources_documents_signing_proto_msgTypes[3]
+	mi := &file_resources_documents_signing_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -553,7 +598,7 @@ func (x *SignatureRequirement) String() string {
 func (*SignatureRequirement) ProtoMessage() {}
 
 func (x *SignatureRequirement) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[3]
+	mi := &file_resources_documents_signing_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -566,7 +611,7 @@ func (x *SignatureRequirement) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureRequirement.ProtoReflect.Descriptor instead.
 func (*SignatureRequirement) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SignatureRequirement) GetId() int64 {
@@ -611,7 +656,7 @@ func (x *SignatureRequirement) GetBindingMode() SignatureBindingMode {
 	return SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED
 }
 
-func (x *SignatureRequirement) GetAllowedTypes() []SignatureType {
+func (x *SignatureRequirement) GetAllowedTypes() *SignatureTypes {
 	if x != nil {
 		return x.AllowedTypes
 	}
@@ -667,7 +712,7 @@ type Signature struct {
 
 func (x *Signature) Reset() {
 	*x = Signature{}
-	mi := &file_resources_documents_signing_proto_msgTypes[4]
+	mi := &file_resources_documents_signing_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -679,7 +724,7 @@ func (x *Signature) String() string {
 func (*Signature) ProtoMessage() {}
 
 func (x *Signature) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[4]
+	mi := &file_resources_documents_signing_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -692,7 +737,7 @@ func (x *Signature) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Signature.ProtoReflect.Descriptor instead.
 func (*Signature) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Signature) GetId() int64 {
@@ -816,7 +861,7 @@ type Stamp struct {
 
 func (x *Stamp) Reset() {
 	*x = Stamp{}
-	mi := &file_resources_documents_signing_proto_msgTypes[5]
+	mi := &file_resources_documents_signing_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -828,7 +873,7 @@ func (x *Stamp) String() string {
 func (*Stamp) ProtoMessage() {}
 
 func (x *Stamp) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[5]
+	mi := &file_resources_documents_signing_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -841,7 +886,7 @@ func (x *Stamp) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Stamp.ProtoReflect.Descriptor instead.
 func (*Stamp) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{5}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Stamp) GetId() int64 {
@@ -902,7 +947,7 @@ type StampAccess struct {
 
 func (x *StampAccess) Reset() {
 	*x = StampAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[6]
+	mi := &file_resources_documents_signing_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -914,7 +959,7 @@ func (x *StampAccess) String() string {
 func (*StampAccess) ProtoMessage() {}
 
 func (x *StampAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[6]
+	mi := &file_resources_documents_signing_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -927,7 +972,7 @@ func (x *StampAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StampAccess.ProtoReflect.Descriptor instead.
 func (*StampAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{6}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *StampAccess) GetJobs() []*StampJobAccess {
@@ -953,7 +998,7 @@ type StampJobAccess struct {
 
 func (x *StampJobAccess) Reset() {
 	*x = StampJobAccess{}
-	mi := &file_resources_documents_signing_proto_msgTypes[7]
+	mi := &file_resources_documents_signing_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -965,7 +1010,7 @@ func (x *StampJobAccess) String() string {
 func (*StampJobAccess) ProtoMessage() {}
 
 func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_documents_signing_proto_msgTypes[7]
+	mi := &file_resources_documents_signing_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -978,7 +1023,7 @@ func (x *StampJobAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StampJobAccess.ProtoReflect.Descriptor instead.
 func (*StampJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{7}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *StampJobAccess) GetId() int64 {
@@ -1041,7 +1086,9 @@ var File_resources_documents_signing_proto protoreflect.FileDescriptor
 
 const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	"!resources/documents/signing.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc1\x01\n" +
+	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"R\n" +
+	"\x0eSignatureTypes\x128\n" +
+	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeR\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xc1\x01\n" +
 	"\x0fSignatureAccess\x12T\n" +
 	"\x04jobs\x18\x01 \x03(\v2'.resources.documents.SignatureJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12X\n" +
 	"\x05users\x18\x02 \x03(\v2(.resources.documents.SignatureUserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users\"\xff\x02\n" +
@@ -1070,7 +1117,7 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\brequired\x18\a \x01(\bH\x02R\brequired\x88\x01\x01B\r\n" +
 	"\v_created_atB\a\n" +
 	"\x05_userB\v\n" +
-	"\t_required\"\x91\x04\n" +
+	"\t_required\"\x92\x04\n" +
 	"\x14SignatureRequirement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -1078,8 +1125,8 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x14\n" +
 	"\x05label\x18\x04 \x01(\tR\x05label\x12\x1a\n" +
 	"\brequired\x18\x05 \x01(\bR\brequired\x12L\n" +
-	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeR\vbindingMode\x12G\n" +
-	"\rallowed_types\x18\a \x03(\x0e2\".resources.documents.SignatureTypeR\fallowedTypes\x12<\n" +
+	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeR\vbindingMode\x12H\n" +
+	"\rallowed_types\x18\a \x01(\v2#.resources.documents.SignatureTypesR\fallowedTypes\x12<\n" +
 	"\x06access\x18\b \x01(\v2$.resources.documents.SignatureAccessR\x06access\x12=\n" +
 	"\n" +
 	"created_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
@@ -1176,54 +1223,56 @@ func file_resources_documents_signing_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_documents_signing_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_resources_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_resources_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_resources_documents_signing_proto_goTypes = []any{
 	(SignatureBindingMode)(0),    // 0: resources.documents.SignatureBindingMode
 	(SignatureType)(0),           // 1: resources.documents.SignatureType
 	(SignatureAccessLevel)(0),    // 2: resources.documents.SignatureAccessLevel
 	(SignatureStatus)(0),         // 3: resources.documents.SignatureStatus
 	(StampAccessLevel)(0),        // 4: resources.documents.StampAccessLevel
-	(*SignatureAccess)(nil),      // 5: resources.documents.SignatureAccess
-	(*SignatureJobAccess)(nil),   // 6: resources.documents.SignatureJobAccess
-	(*SignatureUserAccess)(nil),  // 7: resources.documents.SignatureUserAccess
-	(*SignatureRequirement)(nil), // 8: resources.documents.SignatureRequirement
-	(*Signature)(nil),            // 9: resources.documents.Signature
-	(*Stamp)(nil),                // 10: resources.documents.Stamp
-	(*StampAccess)(nil),          // 11: resources.documents.StampAccess
-	(*StampJobAccess)(nil),       // 12: resources.documents.StampJobAccess
-	(*timestamp.Timestamp)(nil),  // 13: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),      // 14: resources.users.UserShort
+	(*SignatureTypes)(nil),       // 5: resources.documents.SignatureTypes
+	(*SignatureAccess)(nil),      // 6: resources.documents.SignatureAccess
+	(*SignatureJobAccess)(nil),   // 7: resources.documents.SignatureJobAccess
+	(*SignatureUserAccess)(nil),  // 8: resources.documents.SignatureUserAccess
+	(*SignatureRequirement)(nil), // 9: resources.documents.SignatureRequirement
+	(*Signature)(nil),            // 10: resources.documents.Signature
+	(*Stamp)(nil),                // 11: resources.documents.Stamp
+	(*StampAccess)(nil),          // 12: resources.documents.StampAccess
+	(*StampJobAccess)(nil),       // 13: resources.documents.StampJobAccess
+	(*timestamp.Timestamp)(nil),  // 14: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),      // 15: resources.users.UserShort
 }
 var file_resources_documents_signing_proto_depIdxs = []int32{
-	6,  // 0: resources.documents.SignatureAccess.jobs:type_name -> resources.documents.SignatureJobAccess
-	7,  // 1: resources.documents.SignatureAccess.users:type_name -> resources.documents.SignatureUserAccess
-	13, // 2: resources.documents.SignatureJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	2,  // 3: resources.documents.SignatureJobAccess.access:type_name -> resources.documents.SignatureAccessLevel
-	13, // 4: resources.documents.SignatureUserAccess.created_at:type_name -> resources.timestamp.Timestamp
-	14, // 5: resources.documents.SignatureUserAccess.user:type_name -> resources.users.UserShort
-	2,  // 6: resources.documents.SignatureUserAccess.access:type_name -> resources.documents.SignatureAccessLevel
-	13, // 7: resources.documents.SignatureRequirement.snapshot_date:type_name -> resources.timestamp.Timestamp
-	0,  // 8: resources.documents.SignatureRequirement.binding_mode:type_name -> resources.documents.SignatureBindingMode
-	1,  // 9: resources.documents.SignatureRequirement.allowed_types:type_name -> resources.documents.SignatureType
-	5,  // 10: resources.documents.SignatureRequirement.access:type_name -> resources.documents.SignatureAccess
-	13, // 11: resources.documents.SignatureRequirement.created_at:type_name -> resources.timestamp.Timestamp
-	13, // 12: resources.documents.SignatureRequirement.updated_at:type_name -> resources.timestamp.Timestamp
-	13, // 13: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
-	14, // 14: resources.documents.Signature.user:type_name -> resources.users.UserShort
-	1,  // 15: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
-	3,  // 16: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
-	13, // 17: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
-	13, // 18: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
-	13, // 19: resources.documents.Stamp.created_at:type_name -> resources.timestamp.Timestamp
-	11, // 20: resources.documents.Stamp.access:type_name -> resources.documents.StampAccess
-	12, // 21: resources.documents.StampAccess.jobs:type_name -> resources.documents.StampJobAccess
-	13, // 22: resources.documents.StampJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 23: resources.documents.StampJobAccess.access:type_name -> resources.documents.StampAccessLevel
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	1,  // 0: resources.documents.SignatureTypes.types:type_name -> resources.documents.SignatureType
+	7,  // 1: resources.documents.SignatureAccess.jobs:type_name -> resources.documents.SignatureJobAccess
+	8,  // 2: resources.documents.SignatureAccess.users:type_name -> resources.documents.SignatureUserAccess
+	14, // 3: resources.documents.SignatureJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	2,  // 4: resources.documents.SignatureJobAccess.access:type_name -> resources.documents.SignatureAccessLevel
+	14, // 5: resources.documents.SignatureUserAccess.created_at:type_name -> resources.timestamp.Timestamp
+	15, // 6: resources.documents.SignatureUserAccess.user:type_name -> resources.users.UserShort
+	2,  // 7: resources.documents.SignatureUserAccess.access:type_name -> resources.documents.SignatureAccessLevel
+	14, // 8: resources.documents.SignatureRequirement.snapshot_date:type_name -> resources.timestamp.Timestamp
+	0,  // 9: resources.documents.SignatureRequirement.binding_mode:type_name -> resources.documents.SignatureBindingMode
+	5,  // 10: resources.documents.SignatureRequirement.allowed_types:type_name -> resources.documents.SignatureTypes
+	6,  // 11: resources.documents.SignatureRequirement.access:type_name -> resources.documents.SignatureAccess
+	14, // 12: resources.documents.SignatureRequirement.created_at:type_name -> resources.timestamp.Timestamp
+	14, // 13: resources.documents.SignatureRequirement.updated_at:type_name -> resources.timestamp.Timestamp
+	14, // 14: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
+	15, // 15: resources.documents.Signature.user:type_name -> resources.users.UserShort
+	1,  // 16: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
+	3,  // 17: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
+	14, // 18: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
+	14, // 19: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
+	14, // 20: resources.documents.Stamp.created_at:type_name -> resources.timestamp.Timestamp
+	12, // 21: resources.documents.Stamp.access:type_name -> resources.documents.StampAccess
+	13, // 22: resources.documents.StampAccess.jobs:type_name -> resources.documents.StampJobAccess
+	14, // 23: resources.documents.StampJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 24: resources.documents.StampJobAccess.access:type_name -> resources.documents.StampAccessLevel
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_signing_proto_init() }
@@ -1231,18 +1280,18 @@ func file_resources_documents_signing_proto_init() {
 	if File_resources_documents_signing_proto != nil {
 		return
 	}
-	file_resources_documents_signing_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[2].OneofWrappers = []any{}
-	file_resources_documents_signing_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_documents_signing_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[5].OneofWrappers = []any{}
-	file_resources_documents_signing_proto_msgTypes[7].OneofWrappers = []any{}
+	file_resources_documents_signing_proto_msgTypes[6].OneofWrappers = []any{}
+	file_resources_documents_signing_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_signing_proto_rawDesc), len(file_resources_documents_signing_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

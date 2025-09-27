@@ -45,12 +45,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
 
   `created_at` datetime(3) NOT NULL,
   `updated_at` datetime(3) NOT NULL,
+  `deleted_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
 
   KEY `idx_policy_doc_snapshot` (`document_id`, `active_snapshot_date`),
   KEY `idx_policy_started_at` (`started_at`),
   KEY `idx_policy_completed_at` (`completed_at`),
+  KEY `idx_policy_deleted_at` (`deleted_at`),
 
   CONSTRAINT `fk_policy_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
@@ -126,18 +128,20 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements` (
   `required` tinyint(1) NOT NULL DEFAULT 1,
 
   `binding_mode` smallint(2) NOT NULL,
-  `allowed_types_mask` smallint(2) NOT NULL DEFAULT 7,
+  `allowed_types_mask` varchar(120) NOT NULL DEFAULT '[]',
 
   `collected_count` int NOT NULL DEFAULT 0,
   `required_count` int NOT NULL DEFAULT 1,
 
   `created_at` datetime(3) NOT NULL,
   `updated_at` datetime(3) NOT NULL,
+  `deleted_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
 
   KEY `idx_sigreq_doc_snapshot` (`document_id`, `snapshot_date`),
   KEY `idx_sigreq_doc_snap_required` (`document_id`, `snapshot_date`, `required`),
+  KEY `idx_sigreq_deleted_at` (`deleted_at`),
 
   CONSTRAINT `fk_sigreq_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
@@ -145,20 +149,24 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements` (
 CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements_access` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `target_id` bigint unsigned NOT NULL,
+  `user_id` int DEFAULT NULL,
   `job` varchar(40) DEFAULT NULL,
   `minimum_grade` int DEFAULT NULL,
   `access` smallint NOT NULL,
 
   PRIMARY KEY (`id`),
 
+  UNIQUE KEY `idx_user_id_access_unique` (`target_id`, `user_id`),
   UNIQUE KEY `idx_job_minimum_grade_access_unique` (`target_id`,`job`,`minimum_grade`),
 
+  KEY `fk_documents_signature_reqs_access_user_id` (`user_id`),
   KEY `fk_documents_signature_reqs_access_access` (`access`),
   KEY `idx_job_minimum_grade` (`job`,`minimum_grade`),
   KEY `idx_access_target_access_user` (`target_id`,`access`),
   KEY `idx_access_target_access_job_grade` (`target_id`,`access`,`job`,`minimum_grade`),
 
-  CONSTRAINT `fk_fivenet_doc_signature_reqs_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_signature_requirements` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_doc_signature_reqs_access_target_id` FOREIGN KEY (`target_id`) REFERENCES `fivenet_documents_signature_requirements` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signature_reqs_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps` (

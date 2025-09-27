@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "tagger/tagger.proto";
@@ -22,6 +23,17 @@ enum SignatureType {
   SIGNATURE_TYPE_FREEHAND = 1;
   SIGNATURE_TYPE_TYPED = 2;
   SIGNATURE_TYPE_STAMP = 3;
+}
+
+message SignatureTypes {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated SignatureType types = 1 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
 }
 
 enum SignatureAccessLevel {
@@ -73,12 +85,7 @@ message SignatureRequirement {
   bool required = 5;
 
   SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
-  repeated SignatureType allowed_types = 7 [(buf.validate.field).repeated = {
-    max_items: 3
-    items: {
-      enum: {defined_only: true}
-    }
-  }];
+  SignatureTypes allowed_types = 7;
 
   SignatureAccess access = 8;
 

@@ -104,6 +104,8 @@ func init() {
 type Server struct {
 	pbdocuments.DocumentsServiceServer
 	pbdocuments.CollabServiceServer
+	pbdocuments.ApprovalServiceServer
+	pbdocuments.SigningServiceServer
 
 	logger *zap.Logger
 	db     *sql.DB
@@ -120,6 +122,11 @@ type Server struct {
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+
+	approvalAccess *access.Grouped[documents.ApprovalJobAccess, *documents.ApprovalJobAccess, access.DummyUserAccess[documents.ApprovalAccessLevel], *access.DummyUserAccess[documents.ApprovalAccessLevel], access.DummyQualificationAccess[documents.ApprovalAccessLevel], *access.DummyQualificationAccess[documents.ApprovalAccessLevel], documents.ApprovalAccessLevel]
+
+	signatureAccess      *access.Grouped[documents.SignatureJobAccess, *documents.SignatureJobAccess, documents.SignatureUserAccess, *documents.SignatureUserAccess, access.DummyQualificationAccess[documents.SignatureAccessLevel], *access.DummyQualificationAccess[documents.SignatureAccessLevel], documents.SignatureAccessLevel]
+	signatureStampAccess *access.Grouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel]
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -238,6 +245,168 @@ func NewServer(p Params) *Server {
 			nil,
 			nil,
 		),
+
+		approvalAccess: access.NewGrouped[documents.ApprovalJobAccess, *documents.ApprovalJobAccess, access.DummyUserAccess[documents.ApprovalAccessLevel], *access.DummyUserAccess[documents.ApprovalAccessLevel], access.DummyQualificationAccess[documents.ApprovalAccessLevel], *access.DummyQualificationAccess[documents.ApprovalAccessLevel], documents.ApprovalAccessLevel](
+			p.DB,
+			table.FivenetDocumentsApprovalPolicies,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsApprovalPolicies.ID,
+				DeletedAt:  table.FivenetDocumentsApprovalPolicies.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: nil,
+			},
+			access.NewJobs[documents.ApprovalJobAccess, *documents.ApprovalJobAccess, documents.ApprovalAccessLevel](
+				table.FivenetDocumentsApprovalAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsApprovalAccess.ID,
+						TargetID: table.FivenetDocumentsApprovalAccess.TargetID,
+						Access:   table.FivenetDocumentsApprovalAccess.Access,
+					},
+					Job:          table.FivenetDocumentsApprovalAccess.Job,
+					MinimumGrade: table.FivenetDocumentsApprovalAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsApprovalAccess.AS("approval_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID: table.FivenetDocumentsApprovalAccess.AS(
+							"approval_job_access",
+						).ID,
+						TargetID: table.FivenetDocumentsApprovalAccess.AS(
+							"approval_job_access",
+						).TargetID,
+						Access: table.FivenetDocumentsApprovalAccess.AS(
+							"approval_job_access",
+						).Access,
+					},
+					Job: table.FivenetDocumentsApprovalAccess.AS(
+						"approval_job_access",
+					).Job,
+					MinimumGrade: table.FivenetDocumentsApprovalAccess.AS(
+						"approval_job_access",
+					).MinimumGrade,
+				},
+			),
+			nil,
+			nil,
+		),
+
+		signatureAccess: access.NewGrouped[documents.SignatureJobAccess, *documents.SignatureJobAccess, documents.SignatureUserAccess, *documents.SignatureUserAccess, access.DummyQualificationAccess[documents.SignatureAccessLevel], *access.DummyQualificationAccess[documents.SignatureAccessLevel], documents.SignatureAccessLevel](
+			p.DB,
+			table.FivenetDocumentsSignatureRequirements,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsSignatureRequirements.ID,
+				DeletedAt:  table.FivenetDocumentsSignatureRequirements.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: nil,
+			},
+			access.NewJobs[documents.SignatureJobAccess, *documents.SignatureJobAccess, documents.SignatureAccessLevel](
+				table.FivenetDocumentsSignatureRequirementsAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsSignatureRequirementsAccess.ID,
+						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.TargetID,
+						Access:   table.FivenetDocumentsSignatureRequirementsAccess.Access,
+					},
+					Job:          table.FivenetDocumentsSignatureRequirementsAccess.Job,
+					MinimumGrade: table.FivenetDocumentsSignatureRequirementsAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsSignatureRequirementsAccess.AS("signature_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_job_access",
+						).ID,
+						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_job_access",
+						).TargetID,
+						Access: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_job_access",
+						).Access,
+					},
+					Job: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						"signature_job_access",
+					).Job,
+					MinimumGrade: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						"signature_job_access",
+					).MinimumGrade,
+				},
+			),
+			access.NewUsers[documents.SignatureUserAccess, *documents.SignatureUserAccess, documents.SignatureAccessLevel](
+				table.FivenetDocumentsSignatureRequirementsAccess,
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsSignatureRequirementsAccess.ID,
+						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.TargetID,
+						Access:   table.FivenetDocumentsSignatureRequirementsAccess.Access,
+					},
+					UserId: table.FivenetDocumentsSignatureRequirementsAccess.UserID,
+				},
+				table.FivenetDocumentsSignatureRequirementsAccess.AS("signature_user_access"),
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_user_access",
+						).ID,
+						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_user_access",
+						).TargetID,
+						Access: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+							"signature_user_access",
+						).Access,
+					},
+					UserId: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						"signature_user_access",
+					).UserID,
+				},
+			),
+			nil,
+		),
+		signatureStampAccess: access.NewGrouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel](
+			p.DB,
+			table.FivenetDocumentsSignaturesStampsAccess,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsSignaturesStamps.ID,
+				DeletedAt:  table.FivenetDocumentsSignaturesStamps.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: nil,
+			},
+			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](
+				table.FivenetDocumentsSignaturesStampsAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsSignaturesStampsAccess.ID,
+						TargetID: table.FivenetDocumentsSignaturesStampsAccess.TargetID,
+						Access:   table.FivenetDocumentsSignaturesStampsAccess.Access,
+					},
+					Job:          table.FivenetDocumentsSignaturesStampsAccess.Job,
+					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsSignaturesStampsAccess.AS("stamp_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).ID,
+						TargetID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).TargetID,
+						Access: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).Access,
+					},
+					Job: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						"stamp_job_access",
+					).Job,
+					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						"stamp_job_access",
+					).MinimumGrade,
+				},
+			),
+			nil,
+			nil,
+		),
+
 		collabServer: collabServer,
 		fHandler:     fHandler,
 	}
@@ -257,7 +426,12 @@ func NewServer(p Params) *Server {
 
 func newAccess(
 	db *sql.DB,
-) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
+) *access.Grouped[
+	documents.DocumentJobAccess, *documents.DocumentJobAccess,
+	documents.DocumentUserAccess, *documents.DocumentUserAccess,
+	access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel],
+	documents.AccessLevel,
+] {
 	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 		db,
 		table.FivenetDocuments,
@@ -316,6 +490,8 @@ func newAccess(
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterDocumentsServiceServer(srv, s)
 	pbdocuments.RegisterCollabServiceServer(srv, s)
+	pbdocuments.RegisterApprovalServiceServer(srv, s)
+	pbdocuments.RegisterSigningServiceServer(srv, s)
 }
 
 // GetPermsRemap returns the permissions re-mapping for the services.

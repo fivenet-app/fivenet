@@ -45,7 +45,8 @@ message ListRequirementAccessResponse {
 }
 
 message UpsertRequirementAccessRequest {
-  resources.documents.SignatureAccess access = 1;
+  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.documents.SignatureAccess access = 2 [(buf.validate.field).required = true];
 }
 
 message UpsertRequirementAccessResponse {
@@ -127,11 +128,7 @@ service SigningService {
     };
   }
   rpc UpsertRequirement(UpsertRequirementRequest) returns (UpsertRequirementResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc DeleteRequirement(DeleteRequirementRequest) returns (DeleteRequirementResponse) {
     option (codegen.perms.perms) = {enabled: true};
@@ -148,15 +145,13 @@ service SigningService {
   rpc UpsertRequirementAccess(UpsertRequirementAccessRequest) returns (UpsertRequirementAccessResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
+      name: "UpsertRequirement"
     };
   }
   rpc DeleteRequirementAccess(DeleteRequirementAccessRequest) returns (DeleteRequirementAccessResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
-      name: "DeleteRequirement"
+      name: "UpsertRequirement"
     };
   }
 
@@ -178,7 +173,7 @@ service SigningService {
   rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "DeleteRequirementAccess"
+      name: "DeleteRequirement"
     };
   }
 
@@ -186,8 +181,7 @@ service SigningService {
   rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
-      name: "DeleteDocument"
+      name: "DeleteRequirement"
     };
   }
 

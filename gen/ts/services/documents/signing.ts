@@ -106,7 +106,11 @@ export interface ListRequirementAccessResponse {
  */
 export interface UpsertRequirementAccessRequest {
     /**
-     * @generated from protobuf field: resources.documents.SignatureAccess access = 1
+     * @generated from protobuf field: int64 requirement_id = 1
+     */
+    requirementId: number;
+    /**
+     * @generated from protobuf field: resources.documents.SignatureAccess access = 2
      */
     access?: SignatureAccess;
 }
@@ -686,11 +690,13 @@ export const ListRequirementAccessResponse = new ListRequirementAccessResponse$T
 class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementAccessRequest> {
     constructor() {
         super("services.documents.UpsertRequirementAccessRequest", [
-            { no: 1, name: "access", kind: "message", T: () => SignatureAccess }
+            { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "access", kind: "message", T: () => SignatureAccess, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<UpsertRequirementAccessRequest>): UpsertRequirementAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.requirementId = 0;
         if (value !== undefined)
             reflectionMergePartial<UpsertRequirementAccessRequest>(this, message, value);
         return message;
@@ -700,7 +706,10 @@ class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementA
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.SignatureAccess access */ 1:
+                case /* int64 requirement_id */ 1:
+                    message.requirementId = reader.int64().toNumber();
+                    break;
+                case /* resources.documents.SignatureAccess access */ 2:
                     message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -715,9 +724,12 @@ class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementA
         return message;
     }
     internalBinaryWrite(message: UpsertRequirementAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.SignatureAccess access = 1; */
+        /* int64 requirement_id = 1; */
+        if (message.requirementId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.requirementId);
+        /* resources.documents.SignatureAccess access = 2; */
         if (message.access)
-            SignatureAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            SignatureAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1477,14 +1489,14 @@ export const ListUsableStampsResponse = new ListUsableStampsResponse$Type();
  */
 export const SigningService = new ServiceType("services.documents.SigningService", [
     { name: "ListRequirements", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementsRequest, O: ListRequirementsResponse },
-    { name: "UpsertRequirement", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertRequirementRequest, O: UpsertRequirementResponse },
+    { name: "UpsertRequirement", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertRequirementRequest, O: UpsertRequirementResponse },
     { name: "DeleteRequirement", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteRequirementRequest, O: DeleteRequirementResponse },
     { name: "ListRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementAccessRequest, O: ListRequirementAccessResponse },
-    { name: "UpsertRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertRequirementAccessRequest, O: UpsertRequirementAccessResponse },
-    { name: "DeleteRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteRequirement" } }, I: DeleteRequirementAccessRequest, O: DeleteRequirementAccessResponse },
+    { name: "UpsertRequirementAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertRequirement" } }, I: UpsertRequirementAccessRequest, O: UpsertRequirementAccessResponse },
+    { name: "DeleteRequirementAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertRequirement" } }, I: DeleteRequirementAccessRequest, O: DeleteRequirementAccessResponse },
     { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
     { name: "ApplySignature", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ApplySignatureRequest, O: ApplySignatureResponse },
-    { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirementAccess" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
-    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteDocument" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
+    { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
+    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
     { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse }
 ]);

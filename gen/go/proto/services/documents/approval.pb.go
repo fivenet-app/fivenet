@@ -612,7 +612,8 @@ func (x *ListApprovalAccessResponse) GetAccess() *documents.ApprovalAccess {
 
 type UpsertApprovalAccessRequest struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Access        *documents.ApprovalAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
+	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Access        *documents.ApprovalAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -645,6 +646,13 @@ func (x *UpsertApprovalAccessRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpsertApprovalAccessRequest.ProtoReflect.Descriptor instead.
 func (*UpsertApprovalAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *UpsertApprovalAccessRequest) GetDocumentId() int64 {
+	if x != nil {
+		return x.DocumentId
+	}
+	return 0
 }
 
 func (x *UpsertApprovalAccessRequest) GetAccess() *documents.ApprovalAccess {
@@ -1187,9 +1195,11 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x19ListApprovalAccessRequest\x12\x1b\n" +
 	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\"Y\n" +
 	"\x1aListApprovalAccessResponse\x12;\n" +
-	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"Z\n" +
-	"\x1bUpsertApprovalAccessRequest\x12;\n" +
-	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"[\n" +
+	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"{\n" +
+	"\x1bUpsertApprovalAccessRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12;\n" +
+	"\x06access\x18\x02 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"[\n" +
 	"\x1cUpsertApprovalAccessResponse\x12;\n" +
 	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"-\n" +
 	"\x1bDeleteApprovalAccessRequest\x12\x0e\n" +
@@ -1227,21 +1237,21 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x88\x01\n" +
 	"\x12ReopenTaskResponse\x125\n" +
 	"\x04task\x18\x01 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xd1\f\n" +
+	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xa2\f\n" +
 	"\x0fApprovalService\x12\x81\x01\n" +
-	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x8a\x01\n" +
-	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x9c\x01\n" +
-	"\x12StartApprovalRound\x12-.services.documents.StartApprovalRoundRequest\x1a..services.documents.StartApprovalRoundResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
-	"\x15CompleteApprovalRound\x120.services.documents.CompleteApprovalRoundRequest\x1a1.services.documents.CompleteApprovalRoundResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xac\x01\n" +
-	"\x17RecomputePolicyCounters\x122.services.documents.RecomputePolicyCountersRequest\x1a3.services.documents.RecomputePolicyCountersResponse\"(\xd2\xf3\x18$\b\x01\x12\x10DocumentsService\x1a\x0eDeleteDocument\x12\x9c\x01\n" +
+	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12i\n" +
+	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
+	"\x12StartApprovalRound\x12-.services.documents.StartApprovalRoundRequest\x1a..services.documents.StartApprovalRoundResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xa5\x01\n" +
+	"\x15CompleteApprovalRound\x120.services.documents.CompleteApprovalRoundRequest\x1a1.services.documents.CompleteApprovalRoundResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xa0\x01\n" +
+	"\x17RecomputePolicyCounters\x122.services.documents.RecomputePolicyCountersRequest\x1a3.services.documents.RecomputePolicyCountersResponse\"\x1c\xd2\xf3\x18\x18\b\x01\x1a\x14DeleteApprovalAccess\x12\x9c\x01\n" +
 	"\x12ListApprovalAccess\x12-.services.documents.ListApprovalAccessRequest\x1a..services.documents.ListApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xa2\x01\n" +
 	"\x14UpsertApprovalAccess\x12/.services.documents.UpsertApprovalAccessRequest\x1a0.services.documents.UpsertApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
 	"\x14DeleteApprovalAccess\x12/.services.documents.DeleteApprovalAccessRequest\x1a0.services.documents.DeleteApprovalAccessResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x81\x01\n" +
 	"\tListTasks\x12$.services.documents.ListTasksRequest\x1a%.services.documents.ListTasksResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
 	"\n" +
-	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
+	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12c\n" +
 	"\n" +
-	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocumentsBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponse\"\x06\xd2\xf3\x18\x02\b\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_approval_proto_rawDescOnce sync.Once

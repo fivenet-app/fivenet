@@ -654,8 +654,8 @@ func (x *ApprovalTask) GetCreatorJobGrade() int32 {
 }
 
 type ApprovalAccess struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	Jobs          []*ApprovalTaskJobAccess `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []*ApprovalJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -690,14 +690,14 @@ func (*ApprovalAccess) Descriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ApprovalAccess) GetJobs() []*ApprovalTaskJobAccess {
+func (x *ApprovalAccess) GetJobs() []*ApprovalJobAccess {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
 }
 
-type ApprovalTaskJobAccess struct {
+type ApprovalJobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -711,20 +711,20 @@ type ApprovalTaskJobAccess struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ApprovalTaskJobAccess) Reset() {
-	*x = ApprovalTaskJobAccess{}
+func (x *ApprovalJobAccess) Reset() {
+	*x = ApprovalJobAccess{}
 	mi := &file_resources_documents_approval_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ApprovalTaskJobAccess) String() string {
+func (x *ApprovalJobAccess) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ApprovalTaskJobAccess) ProtoMessage() {}
+func (*ApprovalJobAccess) ProtoMessage() {}
 
-func (x *ApprovalTaskJobAccess) ProtoReflect() protoreflect.Message {
+func (x *ApprovalJobAccess) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_documents_approval_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -736,61 +736,61 @@ func (x *ApprovalTaskJobAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ApprovalTaskJobAccess.ProtoReflect.Descriptor instead.
-func (*ApprovalTaskJobAccess) Descriptor() ([]byte, []int) {
+// Deprecated: Use ApprovalJobAccess.ProtoReflect.Descriptor instead.
+func (*ApprovalJobAccess) Descriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ApprovalTaskJobAccess) GetId() int64 {
+func (x *ApprovalJobAccess) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *ApprovalTaskJobAccess) GetCreatedAt() *timestamp.Timestamp {
+func (x *ApprovalJobAccess) GetCreatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *ApprovalTaskJobAccess) GetTargetId() int64 {
+func (x *ApprovalJobAccess) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
 	return 0
 }
 
-func (x *ApprovalTaskJobAccess) GetJob() string {
+func (x *ApprovalJobAccess) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
 }
 
-func (x *ApprovalTaskJobAccess) GetJobLabel() string {
+func (x *ApprovalJobAccess) GetJobLabel() string {
 	if x != nil && x.JobLabel != nil {
 		return *x.JobLabel
 	}
 	return ""
 }
 
-func (x *ApprovalTaskJobAccess) GetMinimumGrade() int32 {
+func (x *ApprovalJobAccess) GetMinimumGrade() int32 {
 	if x != nil {
 		return x.MinimumGrade
 	}
 	return 0
 }
 
-func (x *ApprovalTaskJobAccess) GetJobGradeLabel() string {
+func (x *ApprovalJobAccess) GetJobGradeLabel() string {
 	if x != nil && x.JobGradeLabel != nil {
 		return *x.JobGradeLabel
 	}
 	return ""
 }
 
-func (x *ApprovalTaskJobAccess) GetAccess() ApprovalAccessLevel {
+func (x *ApprovalJobAccess) GetAccess() ApprovalAccessLevel {
 	if x != nil {
 		return x.Access
 	}
@@ -871,10 +871,10 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\f\n" +
 	"\n" +
-	"_job_label\"i\n" +
-	"\x0eApprovalAccess\x12W\n" +
-	"\x04jobs\x18\x01 \x03(\v2*.resources.documents.ApprovalTaskJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\x81\x03\n" +
-	"\x15ApprovalTaskJobAccess\x12\x0e\n" +
+	"_job_label\"e\n" +
+	"\x0eApprovalAccess\x12S\n" +
+	"\x04jobs\x18\x01 \x03(\v2&.resources.documents.ApprovalJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\"\xfd\x02\n" +
+	"\x11ApprovalJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
@@ -927,17 +927,17 @@ func file_resources_documents_approval_proto_rawDescGZIP() []byte {
 var file_resources_documents_approval_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_resources_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_documents_approval_proto_goTypes = []any{
-	(OnEditBehavior)(0),           // 0: resources.documents.OnEditBehavior
-	(ApprovalRuleKind)(0),         // 1: resources.documents.ApprovalRuleKind
-	(ApprovalAssigneeKind)(0),     // 2: resources.documents.ApprovalAssigneeKind
-	(ApprovalTaskStatus)(0),       // 3: resources.documents.ApprovalTaskStatus
-	(ApprovalAccessLevel)(0),      // 4: resources.documents.ApprovalAccessLevel
-	(*ApprovalPolicy)(nil),        // 5: resources.documents.ApprovalPolicy
-	(*ApprovalTask)(nil),          // 6: resources.documents.ApprovalTask
-	(*ApprovalAccess)(nil),        // 7: resources.documents.ApprovalAccess
-	(*ApprovalTaskJobAccess)(nil), // 8: resources.documents.ApprovalTaskJobAccess
-	(*timestamp.Timestamp)(nil),   // 9: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),       // 10: resources.users.UserShort
+	(OnEditBehavior)(0),         // 0: resources.documents.OnEditBehavior
+	(ApprovalRuleKind)(0),       // 1: resources.documents.ApprovalRuleKind
+	(ApprovalAssigneeKind)(0),   // 2: resources.documents.ApprovalAssigneeKind
+	(ApprovalTaskStatus)(0),     // 3: resources.documents.ApprovalTaskStatus
+	(ApprovalAccessLevel)(0),    // 4: resources.documents.ApprovalAccessLevel
+	(*ApprovalPolicy)(nil),      // 5: resources.documents.ApprovalPolicy
+	(*ApprovalTask)(nil),        // 6: resources.documents.ApprovalTask
+	(*ApprovalAccess)(nil),      // 7: resources.documents.ApprovalAccess
+	(*ApprovalJobAccess)(nil),   // 8: resources.documents.ApprovalJobAccess
+	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 10: resources.users.UserShort
 }
 var file_resources_documents_approval_proto_depIdxs = []int32{
 	0,  // 0: resources.documents.ApprovalPolicy.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
@@ -955,9 +955,9 @@ var file_resources_documents_approval_proto_depIdxs = []int32{
 	9,  // 12: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
 	9,  // 13: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
 	10, // 14: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
-	8,  // 15: resources.documents.ApprovalAccess.jobs:type_name -> resources.documents.ApprovalTaskJobAccess
-	9,  // 16: resources.documents.ApprovalTaskJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 17: resources.documents.ApprovalTaskJobAccess.access:type_name -> resources.documents.ApprovalAccessLevel
+	8,  // 15: resources.documents.ApprovalAccess.jobs:type_name -> resources.documents.ApprovalJobAccess
+	9,  // 16: resources.documents.ApprovalJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 17: resources.documents.ApprovalJobAccess.access:type_name -> resources.documents.ApprovalAccessLevel
 	18, // [18:18] is the sub-list for method output_type
 	18, // [18:18] is the sub-list for method input_type
 	18, // [18:18] is the sub-list for extension type_name

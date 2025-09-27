@@ -67,7 +67,8 @@ message ListApprovalAccessResponse {
 }
 
 message UpsertApprovalAccessRequest {
-  resources.documents.ApprovalAccess access = 1 [(buf.validate.field).required = true];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.documents.ApprovalAccess access = 2 [(buf.validate.field).required = true];
 }
 
 message UpsertApprovalAccessResponse {
@@ -129,11 +130,7 @@ service ApprovalService {
     };
   }
   rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse) {
     option (codegen.perms.perms) = {
@@ -143,13 +140,16 @@ service ApprovalService {
     };
   }
   rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse) {
-    option (codegen.perms.perms) = {enabled: true};
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "DocumentsService"
+      name: "ListDocuments"
+    };
   }
   rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
-      name: "DeleteDocument"
+      name: "DeleteApprovalAccess"
     };
   }
 
@@ -188,10 +188,6 @@ service ApprovalService {
     };
   }
   rpc ReopenTask(ReopenTaskRequest) returns (ReopenTaskResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
 }

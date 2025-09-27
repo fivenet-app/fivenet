@@ -162,7 +162,11 @@ export interface ListApprovalAccessResponse {
  */
 export interface UpsertApprovalAccessRequest {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalAccess access = 1
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalAccess access = 2
      */
     access?: ApprovalAccess;
 }
@@ -911,11 +915,13 @@ export const ListApprovalAccessResponse = new ListApprovalAccessResponse$Type();
 class UpsertApprovalAccessRequest$Type extends MessageType<UpsertApprovalAccessRequest> {
     constructor() {
         super("services.documents.UpsertApprovalAccessRequest", [
-            { no: 1, name: "access", kind: "message", T: () => ApprovalAccess, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "access", kind: "message", T: () => ApprovalAccess, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<UpsertApprovalAccessRequest>): UpsertApprovalAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
         if (value !== undefined)
             reflectionMergePartial<UpsertApprovalAccessRequest>(this, message, value);
         return message;
@@ -925,7 +931,10 @@ class UpsertApprovalAccessRequest$Type extends MessageType<UpsertApprovalAccessR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalAccess access */ 1:
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.documents.ApprovalAccess access */ 2:
                     message.access = ApprovalAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -940,9 +949,12 @@ class UpsertApprovalAccessRequest$Type extends MessageType<UpsertApprovalAccessR
         return message;
     }
     internalBinaryWrite(message: UpsertApprovalAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalAccess access = 1; */
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.documents.ApprovalAccess access = 2; */
         if (message.access)
-            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            ApprovalAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1476,14 +1488,14 @@ export const ReopenTaskResponse = new ReopenTaskResponse$Type();
  */
 export const ApprovalService = new ServiceType("services.documents.ApprovalService", [
     { name: "GetPolicy", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: GetPolicyRequest, O: GetPolicyResponse },
-    { name: "UpsertPolicy", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertPolicyRequest, O: UpsertPolicyResponse },
+    { name: "UpsertPolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertPolicyRequest, O: UpsertPolicyResponse },
     { name: "StartApprovalRound", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: StartApprovalRoundRequest, O: StartApprovalRoundResponse },
-    { name: "CompleteApprovalRound", options: { "codegen.perms.perms": { enabled: true } }, I: CompleteApprovalRoundRequest, O: CompleteApprovalRoundResponse },
-    { name: "RecomputePolicyCounters", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "DeleteDocument" } }, I: RecomputePolicyCountersRequest, O: RecomputePolicyCountersResponse },
+    { name: "CompleteApprovalRound", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: CompleteApprovalRoundRequest, O: CompleteApprovalRoundResponse },
+    { name: "RecomputePolicyCounters", options: { "codegen.perms.perms": { enabled: true, name: "DeleteApprovalAccess" } }, I: RecomputePolicyCountersRequest, O: RecomputePolicyCountersResponse },
     { name: "ListApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalAccessRequest, O: ListApprovalAccessResponse },
     { name: "UpsertApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertApprovalAccessRequest, O: UpsertApprovalAccessResponse },
     { name: "DeleteApprovalAccess", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteApprovalAccessRequest, O: DeleteApprovalAccessResponse },
     { name: "ListTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListTasksRequest, O: ListTasksResponse },
     { name: "DecideTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: DecideTaskRequest, O: DecideTaskResponse },
-    { name: "ReopenTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ReopenTaskRequest, O: ReopenTaskResponse }
+    { name: "ReopenTask", options: { "codegen.perms.perms": { enabled: true } }, I: ReopenTaskRequest, O: ReopenTaskResponse }
 ]);

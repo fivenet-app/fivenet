@@ -23,11 +23,12 @@ type fivenetDocumentsSignatureRequirementsTable struct {
 	Label            mysql.ColumnString
 	Required         mysql.ColumnBool
 	BindingMode      mysql.ColumnInteger
-	AllowedTypesMask mysql.ColumnInteger
+	AllowedTypesMask mysql.ColumnString
 	CollectedCount   mysql.ColumnInteger
 	RequiredCount    mysql.ColumnInteger
 	CreatedAt        mysql.ColumnTimestamp
 	UpdatedAt        mysql.ColumnTimestamp
+    DeletedAt        mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -75,14 +76,15 @@ func newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, al
 		LabelColumn            = mysql.StringColumn("label")
 		RequiredColumn         = mysql.BoolColumn("required")
 		BindingModeColumn      = mysql.IntegerColumn("binding_mode")
-		AllowedTypesMaskColumn = mysql.IntegerColumn("allowed_types_mask")
+		AllowedTypesMaskColumn = mysql.StringColumn("allowed_types_mask")
 		CollectedCountColumn   = mysql.IntegerColumn("collected_count")
 		RequiredCountColumn    = mysql.IntegerColumn("required_count")
 		CreatedAtColumn        = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn        = mysql.TimestampColumn("updated_at")
-		allColumns             = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns         = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn}
-		defaultColumns         = mysql.ColumnList{RequiredColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn}
+        DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
+		allColumns             = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns         = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns         = mysql.ColumnList{RequiredColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, DeletedAtColumn}
 	)
 
 	return fivenetDocumentsSignatureRequirementsTable{
@@ -100,6 +102,7 @@ func newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, al
 		RequiredCount:    RequiredCountColumn,
 		CreatedAt:        CreatedAtColumn,
 		UpdatedAt:        UpdatedAtColumn,
+        DeletedAt:        DeletedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -3007,6 +3007,32 @@
                     "key": "Set own reminders on documents",
                     "description": "Allows to set own reminders for documents."
                 }
+            },
+            "ApprovalService": {
+                "category": "Document Approval",
+                "DeleteApprovalAccess": {
+                    "key": "Delete Approval Access",
+                    "description": "Delete approval access for users."
+                },
+                "ReopenTask": {
+                    "key": "Reopen Task",
+                    "description": "Reopen a completed task."
+                },
+                "UpsertPolicy": {
+                    "key": "Create or Update Approval Policy",
+                    "description": "Create or update approval policies for jobs."
+                }
+            },
+            "SigningService": {
+                "category": "Document Signing",
+                "DeleteRequirement": {
+                    "key": "Delete Signing Requirement",
+                    "description": "Delete a signing requirement."
+                },
+                "UpsertRequirement": {
+                    "key": "Create or Update Signing Requirement",
+                    "description": "Create or update a signing requirement."
+                }
             }
         },
         "livemap": {

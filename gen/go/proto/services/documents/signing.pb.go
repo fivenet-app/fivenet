@@ -396,7 +396,8 @@ func (x *ListRequirementAccessResponse) GetAccess() *documents.SignatureAccess {
 
 type UpsertRequirementAccessRequest struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
-	Access        *documents.SignatureAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
+	RequirementId int64                      `protobuf:"varint,1,opt,name=requirement_id,json=requirementId,proto3" json:"requirement_id,omitempty"`
+	Access        *documents.SignatureAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -429,6 +430,13 @@ func (x *UpsertRequirementAccessRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use UpsertRequirementAccessRequest.ProtoReflect.Descriptor instead.
 func (*UpsertRequirementAccessRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpsertRequirementAccessRequest) GetRequirementId() int64 {
+	if x != nil {
+		return x.RequirementId
+	}
+	return 0
 }
 
 func (x *UpsertRequirementAccessRequest) GetAccess() *documents.SignatureAccess {
@@ -1174,9 +1182,10 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x1cListRequirementAccessRequest\x12%\n" +
 	"\x0erequirement_id\x18\x01 \x01(\x03R\rrequirementId\"]\n" +
 	"\x1dListRequirementAccessResponse\x12<\n" +
-	"\x06access\x18\x01 \x01(\v2$.resources.documents.SignatureAccessR\x06access\"^\n" +
-	"\x1eUpsertRequirementAccessRequest\x12<\n" +
-	"\x06access\x18\x01 \x01(\v2$.resources.documents.SignatureAccessR\x06access\"_\n" +
+	"\x06access\x18\x01 \x01(\v2$.resources.documents.SignatureAccessR\x06access\"\x85\x01\n" +
+	"\x1eUpsertRequirementAccessRequest\x12%\n" +
+	"\x0erequirement_id\x18\x01 \x01(\x03R\rrequirementId\x12<\n" +
+	"\x06access\x18\x02 \x01(\v2$.resources.documents.SignatureAccessR\x06access\"_\n" +
 	"\x1fUpsertRequirementAccessResponse\x12<\n" +
 	"\x06access\x18\x01 \x01(\v2$.resources.documents.SignatureAccessR\x06access\"0\n" +
 	"\x1eDeleteRequirementAccessRequest\x12\x0e\n" +
@@ -1235,18 +1244,18 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps2\xc6\r\n" +
+	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps2\xef\f\n" +
 	"\x0eSigningService\x12\x96\x01\n" +
-	"\x10ListRequirements\x12+.services.documents.ListRequirementsRequest\x1a,.services.documents.ListRequirementsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x99\x01\n" +
-	"\x11UpsertRequirement\x12,.services.documents.UpsertRequirementRequest\x1a-.services.documents.UpsertRequirementResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12x\n" +
+	"\x10ListRequirements\x12+.services.documents.ListRequirementsRequest\x1a,.services.documents.ListRequirementsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12x\n" +
+	"\x11UpsertRequirement\x12,.services.documents.UpsertRequirementRequest\x1a-.services.documents.UpsertRequirementResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
 	"\x11DeleteRequirement\x12,.services.documents.DeleteRequirementRequest\x1a-.services.documents.DeleteRequirementResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa5\x01\n" +
-	"\x15ListRequirementAccess\x120.services.documents.ListRequirementAccessRequest\x1a1.services.documents.ListRequirementAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xab\x01\n" +
-	"\x17UpsertRequirementAccess\x122.services.documents.UpsertRequirementAccessRequest\x1a3.services.documents.UpsertRequirementAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xaf\x01\n" +
-	"\x17DeleteRequirementAccess\x122.services.documents.DeleteRequirementAccessRequest\x1a3.services.documents.DeleteRequirementAccessResponse\"+\xd2\xf3\x18'\b\x01\x12\x10DocumentsService\x1a\x11DeleteRequirement\x12\x90\x01\n" +
+	"\x15ListRequirementAccess\x120.services.documents.ListRequirementAccessRequest\x1a1.services.documents.ListRequirementAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x9d\x01\n" +
+	"\x17UpsertRequirementAccess\x122.services.documents.UpsertRequirementAccessRequest\x1a3.services.documents.UpsertRequirementAccessResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11UpsertRequirement\x12\x9d\x01\n" +
+	"\x17DeleteRequirementAccess\x122.services.documents.DeleteRequirementAccessRequest\x1a3.services.documents.DeleteRequirementAccessResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11UpsertRequirement\x12\x90\x01\n" +
 	"\x0eListSignatures\x12).services.documents.ListSignaturesRequest\x1a*.services.documents.ListSignaturesResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x90\x01\n" +
-	"\x0eApplySignature\x12).services.documents.ApplySignatureRequest\x1a*.services.documents.ApplySignatureResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x8b\x01\n" +
-	"\x0fRevokeSignature\x12*.services.documents.RevokeSignatureRequest\x1a+.services.documents.RevokeSignatureResponse\"\x1f\xd2\xf3\x18\x1b\b\x01\x1a\x17DeleteRequirementAccess\x12\xaf\x01\n" +
-	"\x18RecomputeSignatureStatus\x123.services.documents.RecomputeSignatureStatusRequest\x1a4.services.documents.RecomputeSignatureStatusResponse\"(\xd2\xf3\x18$\b\x01\x12\x10DocumentsService\x1a\x0eDeleteDocument\x12\x96\x01\n" +
+	"\x0eApplySignature\x12).services.documents.ApplySignatureRequest\x1a*.services.documents.ApplySignatureResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x85\x01\n" +
+	"\x0fRevokeSignature\x12*.services.documents.RevokeSignatureRequest\x1a+.services.documents.RevokeSignatureResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11DeleteRequirement\x12\xa0\x01\n" +
+	"\x18RecomputeSignatureStatus\x123.services.documents.RecomputeSignatureStatusRequest\x1a4.services.documents.RecomputeSignatureStatusResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11DeleteRequirement\x12\x96\x01\n" +
 	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocumentsBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (

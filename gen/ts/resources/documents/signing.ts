@@ -4,15 +4,24 @@
 // @ts-nocheck
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
+/**
+ * @generated from protobuf message resources.documents.SignatureTypes
+ */
+export interface SignatureTypes {
+    /**
+     * @generated from protobuf field: repeated resources.documents.SignatureType types = 1
+     */
+    types: SignatureType[];
+}
 /**
  * @generated from protobuf message resources.documents.SignatureAccess
  */
@@ -127,9 +136,9 @@ export interface SignatureRequirement {
      */
     bindingMode: SignatureBindingMode;
     /**
-     * @generated from protobuf field: repeated resources.documents.SignatureType allowed_types = 7
+     * @generated from protobuf field: resources.documents.SignatureTypes allowed_types = 7
      */
-    allowedTypes: SignatureType[];
+    allowedTypes?: SignatureTypes;
     /**
      * @generated from protobuf field: resources.documents.SignatureAccess access = 8
      */
@@ -399,6 +408,61 @@ export enum StampAccessLevel {
     USE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class SignatureTypes$Type extends MessageType<SignatureTypes> {
+    constructor() {
+        super("resources.documents.SignatureTypes", [
+            { no: 1, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<SignatureTypes>): SignatureTypes {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.types = [];
+        if (value !== undefined)
+            reflectionMergePartial<SignatureTypes>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SignatureTypes): SignatureTypes {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.SignatureType types */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.types.push(reader.int32());
+                    else
+                        message.types.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SignatureTypes, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.SignatureType types = 1; */
+        if (message.types.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.types.length; i++)
+                writer.int32(message.types[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.SignatureTypes
+ */
+export const SignatureTypes = new SignatureTypes$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class SignatureAccess$Type extends MessageType<SignatureAccess> {
     constructor() {
         super("resources.documents.SignatureAccess", [
@@ -655,7 +719,7 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
             { no: 4, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "binding_mode", kind: "enum", T: () => ["resources.documents.SignatureBindingMode", SignatureBindingMode, "SIGNATURE_BINDING_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "allowed_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "3", items: { enum: { definedOnly: true } } } } } },
+            { no: 7, name: "allowed_types", kind: "message", T: () => SignatureTypes },
             { no: 8, name: "access", kind: "message", T: () => SignatureAccess },
             { no: 9, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 10, name: "updated_at", kind: "message", T: () => Timestamp }
@@ -668,7 +732,6 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
         message.label = "";
         message.required = false;
         message.bindingMode = 0;
-        message.allowedTypes = [];
         if (value !== undefined)
             reflectionMergePartial<SignatureRequirement>(this, message, value);
         return message;
@@ -696,12 +759,8 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
                 case /* resources.documents.SignatureBindingMode binding_mode */ 6:
                     message.bindingMode = reader.int32();
                     break;
-                case /* repeated resources.documents.SignatureType allowed_types */ 7:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.allowedTypes.push(reader.int32());
-                    else
-                        message.allowedTypes.push(reader.int32());
+                case /* resources.documents.SignatureTypes allowed_types */ 7:
+                    message.allowedTypes = SignatureTypes.internalBinaryRead(reader, reader.uint32(), options, message.allowedTypes);
                     break;
                 case /* resources.documents.SignatureAccess access */ 8:
                     message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
@@ -742,13 +801,9 @@ class SignatureRequirement$Type extends MessageType<SignatureRequirement> {
         /* resources.documents.SignatureBindingMode binding_mode = 6; */
         if (message.bindingMode !== 0)
             writer.tag(6, WireType.Varint).int32(message.bindingMode);
-        /* repeated resources.documents.SignatureType allowed_types = 7; */
-        if (message.allowedTypes.length) {
-            writer.tag(7, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.allowedTypes.length; i++)
-                writer.int32(message.allowedTypes[i]);
-            writer.join();
-        }
+        /* resources.documents.SignatureTypes allowed_types = 7; */
+        if (message.allowedTypes)
+            SignatureTypes.internalBinaryWrite(message.allowedTypes, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.documents.SignatureAccess access = 8; */
         if (message.access)
             SignatureAccess.internalBinaryWrite(message.access, writer.tag(8, WireType.LengthDelimited).fork(), options).join();

@@ -152,9 +152,12 @@ func (m *SignatureRequirement) Sanitize() error {
 	}
 
 	// Field: AllowedTypes
-	for idx, item := range m.AllowedTypes {
-		_, _ = idx, item
-
+	if m.AllowedTypes != nil {
+		if v, ok := any(m.GetAllowedTypes()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: CreatedAt
@@ -185,6 +188,22 @@ func (m *SignatureRequirement) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *SignatureTypes) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Types
+	for idx, item := range m.Types {
+		_, _ = idx, item
+
 	}
 
 	return nil
