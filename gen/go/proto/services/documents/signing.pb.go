@@ -1244,7 +1244,7 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps2\xef\f\n" +
+	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps2\x88\r\n" +
 	"\x0eSigningService\x12\x96\x01\n" +
 	"\x10ListRequirements\x12+.services.documents.ListRequirementsRequest\x1a,.services.documents.ListRequirementsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12x\n" +
 	"\x11UpsertRequirement\x12,.services.documents.UpsertRequirementRequest\x1a-.services.documents.UpsertRequirementResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12x\n" +
@@ -1256,7 +1256,7 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x0eApplySignature\x12).services.documents.ApplySignatureRequest\x1a*.services.documents.ApplySignatureResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x85\x01\n" +
 	"\x0fRevokeSignature\x12*.services.documents.RevokeSignatureRequest\x1a+.services.documents.RevokeSignatureResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11DeleteRequirement\x12\xa0\x01\n" +
 	"\x18RecomputeSignatureStatus\x123.services.documents.RecomputeSignatureStatusRequest\x1a4.services.documents.RecomputeSignatureStatusResponse\"\x19\xd2\xf3\x18\x15\b\x01\x1a\x11DeleteRequirement\x12\x96\x01\n" +
-	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocumentsBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x1a\x17\xea\xf3\x18\x13\b9\x12\x0fi-mdi-signatureBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_signing_proto_rawDescOnce sync.Once

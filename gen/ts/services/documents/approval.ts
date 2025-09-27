@@ -1498,4 +1498,4 @@ export const ApprovalService = new ServiceType("services.documents.ApprovalServi
     { name: "ListTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListTasksRequest, O: ListTasksResponse },
     { name: "DecideTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: DecideTaskRequest, O: DecideTaskResponse },
     { name: "ReopenTask", options: { "codegen.perms.perms": { enabled: true } }, I: ReopenTaskRequest, O: ReopenTaskResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 52, icon: "i-mdi-approval" } });

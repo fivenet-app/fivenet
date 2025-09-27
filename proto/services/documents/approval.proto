@@ -121,6 +121,11 @@ message ReopenTaskResponse {
 }
 
 service ApprovalService {
+  option (codegen.perms.perms_svc) = {
+    order: 52
+    icon: "i-mdi-approval"
+  };
+
   // Policy
   rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse) {
     option (codegen.perms.perms) = {

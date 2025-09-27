@@ -119,6 +119,11 @@ message ListUsableStampsResponse {
 }
 
 service SigningService {
+  option (codegen.perms.perms_svc) = {
+    order: 57
+    icon: "i-mdi-signature"
+  };
+
   // Requirements
   rpc ListRequirements(ListRequirementsRequest) returns (ListRequirementsResponse) {
     option (codegen.perms.perms) = {

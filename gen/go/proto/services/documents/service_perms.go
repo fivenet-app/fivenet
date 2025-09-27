@@ -64,19 +64,22 @@ func init() {
 			Category: permkeys.ApprovalServicePerm,
 			Name:     permkeys.ApprovalServiceDeleteApprovalAccessPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    5200,
+			Icon:     "i-mdi-approval",
 		},
 		{
 			Category: permkeys.ApprovalServicePerm,
 			Name:     permkeys.ApprovalServiceReopenTaskPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    5200,
+			Icon:     "i-mdi-approval",
 		},
 		{
 			Category: permkeys.ApprovalServicePerm,
 			Name:     permkeys.ApprovalServiceUpsertPolicyPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    5200,
+			Icon:     "i-mdi-approval",
 		},
 
 		// Service: documents.DocumentsService
@@ -275,13 +278,15 @@ func init() {
 			Category: permkeys.SigningServicePerm,
 			Name:     permkeys.SigningServiceDeleteRequirementPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    5700,
+			Icon:     "i-mdi-signature",
 		},
 		{
 			Category: permkeys.SigningServicePerm,
 			Name:     permkeys.SigningServiceUpsertRequirementPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    5700,
+			Icon:     "i-mdi-signature",
 		},
 	})
 }

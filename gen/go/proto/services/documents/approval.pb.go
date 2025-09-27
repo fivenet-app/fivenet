@@ -1237,7 +1237,7 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x88\x01\n" +
 	"\x12ReopenTaskResponse\x125\n" +
 	"\x04task\x18\x01 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xa2\f\n" +
+	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xba\f\n" +
 	"\x0fApprovalService\x12\x81\x01\n" +
 	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12i\n" +
 	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
@@ -1251,7 +1251,7 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12c\n" +
 	"\n" +
-	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponse\"\x06\xd2\xf3\x18\x02\b\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"ReopenTask\x12%.services.documents.ReopenTaskRequest\x1a&.services.documents.ReopenTaskResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_approval_proto_rawDescOnce sync.Once

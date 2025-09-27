@@ -1499,4 +1499,4 @@ export const SigningService = new ServiceType("services.documents.SigningService
     { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
     { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
     { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 57, icon: "i-mdi-signature" } });
