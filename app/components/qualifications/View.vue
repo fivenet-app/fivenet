@@ -331,7 +331,7 @@ const requestUserModal = overlay.create(RequestUserModal);
 
             <UDashboardToolbar v-if="qualification" class="print:hidden">
                 <div class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
-                    <div class="mb-4">
+                    <div class="mb-2">
                         <h1
                             class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1"
                             :class="!qualification.title ? 'italic' : ''"

@@ -170,7 +170,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
             <UDashboardToolbar>
                 <template #default>
                     <div v-if="template" class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
-                        <div class="mb-4">
+                        <div class="mb-2">
                             <h1 class="inline-flex items-center gap-2 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                                 <UIcon
                                     class="shrink-0"

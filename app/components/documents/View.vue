@@ -194,6 +194,8 @@ defineShortcuts({
     },
 });
 
+const headToggled = ref(false);
+
 const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
@@ -449,8 +451,8 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
 
             <UDashboardToolbar v-if="doc" class="print:hidden">
                 <div class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
-                    <div class="mb-4">
-                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
+                    <div class="mb-2">
+                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1" :class="headToggled && 'line-clamp-1'">
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
                             </span>
@@ -486,81 +488,97 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         />
                     </div>
 
-                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
-                            <span class="inline-flex items-center gap-1">
-                                {{ $t('common.created_by') }}
-                                <CitizenInfoPopover :user="doc.document?.creator" size="xs" />
-                            </span>
-                        </UBadge>
+                    <div class="flex flex-row pb-3 sm:pb-0">
+                        <div class="flex-1">
+                            <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                                <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-account">
+                                    <span class="inline-flex items-center gap-1">
+                                        {{ $t('common.created_by') }}
+                                        <CitizenInfoPopover :user="doc.document?.creator" size="xs" />
+                                    </span>
+                                </UBadge>
 
-                        <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
-                            {{ $t('common.created') }}
-                            <GenericTime :value="doc.document?.createdAt" type="long" />
-                        </UBadge>
+                                <UBadge class="inline-flex gap-1" color="neutral" size="md" icon="i-mdi-calendar">
+                                    {{ $t('common.created') }}
+                                    <GenericTime :value="doc.document?.createdAt" type="long" />
+                                </UBadge>
 
-                        <UBadge
-                            v-if="doc.document?.updatedAt"
-                            class="inline-flex gap-1"
-                            color="neutral"
-                            size="md"
-                            icon="i-mdi-calendar-edit"
-                        >
-                            {{ $t('common.updated') }}
-                            <GenericTime :value="doc.document?.updatedAt" type="long" />
-                        </UBadge>
+                                <UBadge
+                                    v-if="doc.document?.updatedAt"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    size="md"
+                                    icon="i-mdi-calendar-edit"
+                                >
+                                    {{ $t('common.updated') }}
+                                    <GenericTime :value="doc.document?.updatedAt" type="long" />
+                                </UBadge>
 
-                        <UBadge
-                            v-if="doc.document?.workflowState?.autoCloseTime"
-                            class="inline-flex gap-1"
-                            color="neutral"
-                            size="md"
-                            icon="i-mdi-lock-clock"
-                        >
-                            {{ $t('common.auto_close', 2) }}
-                            <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
-                        </UBadge>
-                        <UBadge
-                            v-else-if="doc.document?.workflowState?.nextReminderTime"
-                            class="inline-flex gap-1"
-                            color="neutral"
-                            size="md"
-                            icon="i-mdi-reminder"
-                        >
-                            {{ $t('common.reminder') }}
-                            <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
-                        </UBadge>
+                                <UBadge
+                                    v-if="doc.document?.workflowState?.autoCloseTime"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    size="md"
+                                    icon="i-mdi-lock-clock"
+                                >
+                                    {{ $t('common.auto_close', 2) }}
+                                    <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
+                                </UBadge>
+                                <UBadge
+                                    v-else-if="doc.document?.workflowState?.nextReminderTime"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    size="md"
+                                    icon="i-mdi-reminder"
+                                >
+                                    {{ $t('common.reminder') }}
+                                    <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
+                                </UBadge>
 
-                        <UBadge
-                            v-if="doc.document?.workflowUser?.manualReminderTime"
-                            class="inline-flex gap-1"
-                            color="neutral"
-                            size="md"
-                            icon="i-mdi-reminder"
-                        >
-                            {{ $t('common.reminder') }}
-                            <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
-                        </UBadge>
+                                <UBadge
+                                    v-if="doc.document?.workflowUser?.manualReminderTime"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    size="md"
+                                    icon="i-mdi-reminder"
+                                >
+                                    {{ $t('common.reminder') }}
+                                    <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
+                                </UBadge>
 
-                        <UBadge
-                            v-if="doc.document?.draft"
-                            class="inline-flex gap-1"
-                            color="info"
-                            size="md"
-                            icon="i-mdi-pencil"
-                            :label="$t('common.draft')"
-                        />
+                                <UBadge
+                                    v-if="doc.document?.draft"
+                                    class="inline-flex gap-1"
+                                    color="info"
+                                    size="md"
+                                    icon="i-mdi-pencil"
+                                    :label="$t('common.draft')"
+                                />
 
-                        <UBadge
-                            v-if="doc.document?.deletedAt"
-                            class="inline-flex gap-1"
-                            color="warning"
-                            size="md"
-                            icon="i-mdi-calendar-remove"
-                        >
-                            {{ $t('common.deleted') }}
-                            <GenericTime :value="doc.document?.deletedAt" type="long" />
-                        </UBadge>
+                                <UBadge
+                                    v-if="doc.document?.deletedAt"
+                                    class="inline-flex gap-1"
+                                    color="warning"
+                                    size="md"
+                                    icon="i-mdi-calendar-remove"
+                                >
+                                    {{ $t('common.deleted') }}
+                                    <GenericTime :value="doc.document?.deletedAt" type="long" />
+                                </UBadge>
+                            </div>
+                        </div>
+
+                        <div>
+                            <UButton
+                                icon="i-mdi-chevron-double-down"
+                                variant="link"
+                                size="sm"
+                                class="group place-self-end"
+                                :ui="{ leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180' }"
+                                :data-state="headToggled ? 'open' : 'closed'"
+                                @click="headToggled = !headToggled"
+                            />
+                        </div>
                     </div>
                 </div>
             </UDashboardToolbar>

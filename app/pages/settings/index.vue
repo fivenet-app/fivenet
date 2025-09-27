@@ -106,7 +106,7 @@ const superuserItems = [
 
         <template #body>
             <div class="flex flex-col gap-1">
-                <div class="mb-4">
+                <div class="mb-2">
                     <CardsList :items="items" />
                 </div>
 
