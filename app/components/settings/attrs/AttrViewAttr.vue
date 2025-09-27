@@ -162,14 +162,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
     attrValues.value.validValues.jobGradeList.jobs[job.name] = game.startJobGrade;
     if (!job.grades[0]) return;
 
-    if (!attrValues.value.validValues.jobGradeList.fineGrained) {
-        if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
-            attrValues.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
-        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name]) {
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-            delete attrValues.value.validValues.jobGradeList.jobs[job.name];
-        }
-    } else {
+    if (attrValues.value.validValues.jobGradeList.fineGrained) {
         if (checked && !attrValues.value.validValues.jobGradeList.grades[job.name]) {
             attrValues.value.validValues.jobGradeList.grades[job.name] = {
                 grades: [job.grades[0].grade],
@@ -177,6 +170,13 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         } else if (!checked && attrValues.value.validValues.jobGradeList.grades[job.name]) {
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete attrValues.value.validValues.jobGradeList.grades[job.name];
+        }
+    } else {
+        if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+            attrValues.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
+        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+            delete attrValues.value.validValues.jobGradeList.jobs[job.name];
         }
     }
 }

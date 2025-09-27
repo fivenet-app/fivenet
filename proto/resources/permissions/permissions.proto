@@ -16,6 +16,7 @@ message Permission {
   string guard_name = 5 [(buf.validate.field).string.max_len = 255];
   bool val = 6;
   optional int32 order = 7 [(buf.validate.field).int32.gte = 0];
+  optional string icon = 8 [(buf.validate.field).string.max_len = 128];
 }
 
 message Role {

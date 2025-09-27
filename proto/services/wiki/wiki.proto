@@ -70,6 +70,11 @@ message ListPageActivityResponse {
 }
 
 service WikiService {
+  option (codegen.perms.perms_svc) = {
+    order: 110
+    icon: "i-mdi-brain"
+  };
+
   rpc ListPages(ListPagesRequest) returns (ListPagesResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

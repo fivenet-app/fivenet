@@ -1432,4 +1432,4 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
     { name: "DeleteOAuth2Connection", options: {}, I: DeleteOAuth2ConnectionRequest, O: DeleteOAuth2ConnectionResponse },
     { name: "SetSuperuserMode", options: {}, I: SetSuperuserModeRequest, O: SetSuperuserModeResponse }
-]);
+], { "codegen.perms.perms_svc": { icon: "i-mdi-key-outline" } });

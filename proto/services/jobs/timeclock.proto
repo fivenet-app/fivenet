@@ -80,6 +80,11 @@ message ListInactiveEmployeesResponse {
 }
 
 service TimeclockService {
+  option (codegen.perms.perms_svc) = {
+    order: 62
+    icon: "i-mdi-file-document-box-multiple-outline"
+  };
+
   rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse) {
     option (codegen.perms.perms) = {
       enabled: true

@@ -2184,7 +2184,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1d\n" +
 	"\n" +
 	"message_id\x18\x03 \x01(\x03R\tmessageId\"\x17\n" +
-	"\x15DeleteMessageResponse2\xa2\x13\n" +
+	"\x15DeleteMessageResponse2\xc4\x13\n" +
 	"\rMailerService\x12]\n" +
 	"\n" +
 	"ListEmails\x12\".services.mailer.ListEmailsRequest\x1a#.services.mailer.ListEmailsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12c\n" +
@@ -2224,7 +2224,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
 	"ListEmails\x12{\n" +
 	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
-	"ListEmailsBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"ListEmails\x1a \xea\xf3\x18\x1c\b\x14\x12\x18i-mdi-inbox-full-outlineBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var (
 	file_services_mailer_mailer_proto_rawDescOnce sync.Once

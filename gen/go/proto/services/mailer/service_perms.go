@@ -45,19 +45,22 @@ func init() {
 					ValidValues: []string{"Job"},
 				},
 			},
-			Order: 0,
+			Order: 2000,
+			Icon:  "i-mdi-inbox-full-outline",
 		},
 		{
 			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceDeleteEmailPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    2000,
+			Icon:     "i-mdi-inbox-full-outline",
 		},
 		{
 			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceListEmailsPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    2000,
+			Icon:     "i-mdi-inbox-full-outline",
 		},
 	})
 }

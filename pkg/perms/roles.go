@@ -367,6 +367,8 @@ func (p *Perms) GetRolePermissions(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 			tRolePerms.Val.AS("permission.val"),
 		).
 		FROM(
@@ -446,6 +448,7 @@ func (p *Perms) GetEffectiveRolePermissions(
 			GuardName: p.GuardName,
 			Val:       v,
 			Order:     p.Order,
+			Icon:      p.Icon,
 		})
 	}
 
@@ -564,6 +567,8 @@ func (p *Perms) GetJobPermissions(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 			tJobPerms.Val.AS("permission.val"),
 		).
 		FROM(

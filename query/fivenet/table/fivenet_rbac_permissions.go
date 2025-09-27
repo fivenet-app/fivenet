@@ -23,6 +23,7 @@ type fivenetRbacPermissionsTable struct {
 	Name      mysql.ColumnString
 	GuardName mysql.ColumnString
 	Order     mysql.ColumnInteger
+    Icon      mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -70,9 +71,10 @@ func newFivenetRbacPermissionsTableImpl(schemaName, tableName, alias string) fiv
 		NameColumn      = mysql.StringColumn("name")
 		GuardNameColumn = mysql.StringColumn("guard_name")
 		OrderColumn     = mysql.IntegerColumn("order")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn, OrderColumn}
+        IconColumn      = mysql.StringColumn("icon")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn, IconColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, OrderColumn, IconColumn}
 	)
 
 	return fivenetRbacPermissionsTable{
@@ -85,6 +87,7 @@ func newFivenetRbacPermissionsTableImpl(schemaName, tableName, alias string) fiv
 		Name:      NameColumn,
 		GuardName: GuardNameColumn,
 		Order:     OrderColumn,
+        Icon:      IconColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

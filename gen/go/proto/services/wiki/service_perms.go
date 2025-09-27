@@ -28,19 +28,22 @@ func init() {
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceDeletePagePerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    11000,
+			Icon:     "i-mdi-brain",
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPageActivityPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    11000,
+			Icon:     "i-mdi-brain",
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPagesPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    11000,
+			Icon:     "i-mdi-brain",
 		},
 		{
 			Category: permkeys.WikiServicePerm,
@@ -52,7 +55,8 @@ func init() {
 					ValidValues: []string{"Public"},
 				},
 			},
-			Order: 0,
+			Order: 11000,
+			Icon:  "i-mdi-brain",
 		},
 	})
 }

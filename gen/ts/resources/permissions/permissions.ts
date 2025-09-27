@@ -45,6 +45,10 @@ export interface Permission {
      * @generated from protobuf field: optional int32 order = 7
      */
     order?: number;
+    /**
+     * @generated from protobuf field: optional string icon = 8
+     */
+    icon?: string;
 }
 /**
  * @generated from protobuf message resources.permissions.Role
@@ -106,7 +110,8 @@ class Permission$Type extends MessageType<Permission> {
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 5, name: "guard_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 6, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 7, name: "order", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<Permission>): Permission {
@@ -146,6 +151,9 @@ class Permission$Type extends MessageType<Permission> {
                 case /* optional int32 order */ 7:
                     message.order = reader.int32();
                     break;
+                case /* optional string icon */ 8:
+                    message.icon = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -179,6 +187,9 @@ class Permission$Type extends MessageType<Permission> {
         /* optional int32 order = 7; */
         if (message.order !== undefined)
             writer.tag(7, WireType.Varint).int32(message.order);
+        /* optional string icon = 8; */
+        if (message.icon !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

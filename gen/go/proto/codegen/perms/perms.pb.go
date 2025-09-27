@@ -167,6 +167,58 @@ func (x *Attr) GetValidStringList() []string {
 	return nil
 }
 
+type ServiceOptions struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Order         int32                  `protobuf:"varint,1,opt,name=order,proto3" json:"order,omitempty"`
+	Icon          *string                `protobuf:"bytes,2,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ServiceOptions) Reset() {
+	*x = ServiceOptions{}
+	mi := &file_codegen_perms_perms_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ServiceOptions) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ServiceOptions) ProtoMessage() {}
+
+func (x *ServiceOptions) ProtoReflect() protoreflect.Message {
+	mi := &file_codegen_perms_perms_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ServiceOptions.ProtoReflect.Descriptor instead.
+func (*ServiceOptions) Descriptor() ([]byte, []int) {
+	return file_codegen_perms_perms_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ServiceOptions) GetOrder() int32 {
+	if x != nil {
+		return x.Order
+	}
+	return 0
+}
+
+func (x *ServiceOptions) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
+}
+
 var file_codegen_perms_perms_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
@@ -176,12 +228,26 @@ var file_codegen_perms_perms_proto_extTypes = []protoimpl.ExtensionInfo{
 		Tag:           "bytes,51002,opt,name=perms",
 		Filename:      "codegen/perms/perms.proto",
 	},
+	{
+		ExtendedType:  (*descriptorpb.ServiceOptions)(nil),
+		ExtensionType: (*ServiceOptions)(nil),
+		Field:         51005,
+		Name:          "codegen.perms.perms_svc",
+		Tag:           "bytes,51005,opt,name=perms_svc",
+		Filename:      "codegen/perms/perms.proto",
+	},
 }
 
 // Extension fields to descriptorpb.MethodOptions.
 var (
 	// optional codegen.perms.FieldOptions perms = 51002;
 	E_Perms = &file_codegen_perms_perms_proto_extTypes[0]
+)
+
+// Extension fields to descriptorpb.ServiceOptions.
+var (
+	// optional codegen.perms.ServiceOptions perms_svc = 51005;
+	E_PermsSvc = &file_codegen_perms_perms_proto_extTypes[1]
 )
 
 var File_codegen_perms_perms_proto protoreflect.FileDescriptor
@@ -202,8 +268,13 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value\x128\n" +
 	"\x04type\x18\x03 \x01(\x0e2$.resources.permissions.AttributeTypeR\x04type\x12*\n" +
-	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList:S\n" +
-	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.FieldOptionsR\x05permsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;permsb\x06proto3"
+	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"H\n" +
+	"\x0eServiceOptions\x12\x14\n" +
+	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
+	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
+	"\x05_icon:S\n" +
+	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.FieldOptionsR\x05perms:]\n" +
+	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;permsb\x06proto3"
 
 var (
 	file_codegen_perms_perms_proto_rawDescOnce sync.Once
@@ -217,22 +288,26 @@ func file_codegen_perms_perms_proto_rawDescGZIP() []byte {
 	return file_codegen_perms_perms_proto_rawDescData
 }
 
-var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_codegen_perms_perms_proto_goTypes = []any{
-	(*FieldOptions)(nil),               // 0: codegen.perms.FieldOptions
-	(*Attr)(nil),                       // 1: codegen.perms.Attr
-	(permissions.AttributeType)(0),     // 2: resources.permissions.AttributeType
-	(*descriptorpb.MethodOptions)(nil), // 3: google.protobuf.MethodOptions
+	(*FieldOptions)(nil),                // 0: codegen.perms.FieldOptions
+	(*Attr)(nil),                        // 1: codegen.perms.Attr
+	(*ServiceOptions)(nil),              // 2: codegen.perms.ServiceOptions
+	(permissions.AttributeType)(0),      // 3: resources.permissions.AttributeType
+	(*descriptorpb.MethodOptions)(nil),  // 4: google.protobuf.MethodOptions
+	(*descriptorpb.ServiceOptions)(nil), // 5: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
 	1, // 0: codegen.perms.FieldOptions.attrs:type_name -> codegen.perms.Attr
-	2, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.AttributeType
-	3, // 2: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
-	0, // 3: codegen.perms.perms:type_name -> codegen.perms.FieldOptions
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	3, // [3:4] is the sub-list for extension type_name
-	2, // [2:3] is the sub-list for extension extendee
+	3, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.AttributeType
+	4, // 2: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
+	5, // 3: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
+	0, // 4: codegen.perms.perms:type_name -> codegen.perms.FieldOptions
+	2, // 5: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	4, // [4:6] is the sub-list for extension type_name
+	2, // [2:4] is the sub-list for extension extendee
 	0, // [0:2] is the sub-list for field type_name
 }
 
@@ -242,14 +317,15 @@ func file_codegen_perms_perms_proto_init() {
 		return
 	}
 	file_codegen_perms_perms_proto_msgTypes[0].OneofWrappers = []any{}
+	file_codegen_perms_perms_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_codegen_perms_perms_proto_rawDesc), len(file_codegen_perms_perms_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
-			NumExtensions: 1,
+			NumMessages:   3,
+			NumExtensions: 2,
 			NumServices:   0,
 		},
 		GoTypes:           file_codegen_perms_perms_proto_goTypes,

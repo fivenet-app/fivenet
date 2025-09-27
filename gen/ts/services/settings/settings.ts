@@ -1594,4 +1594,4 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "ListUserGuilds", options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
     { name: "UploadJobLogo", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteJobLogo", options: { "codegen.perms.perms": { enabled: true, name: "SetJobProps" } }, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 120, icon: "i-mdi-cog-outline" } });

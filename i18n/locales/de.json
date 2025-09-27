@@ -3274,14 +3274,6 @@
                     "attrs_types": {
                         "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
                     }
-                },
-                "DeleteCalendar": {
-                    "key": "Löschen von Kalendern",
-                    "description": "Löschen von Kalendern."
-                },
-                "DeleteCalendarEntry": {
-                    "key": "Löschen von Kalendereinträgen",
-                    "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
                 }
             }
         },

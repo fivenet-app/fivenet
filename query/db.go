@@ -6,6 +6,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/XSAM/otelsql"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -75,7 +76,11 @@ func SetupDB(p Params) (Result, error) {
 	if !p.Config.Database.SkipMigrations {
 		var err error
 		if req, err = MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.IgnoreRequirements, p.Config.Database.ESXCompat, p.Config.Database.DisableLocking); err != nil {
-			return res, err
+			// In Debug mode only warn about "no migration found for version" errors, as they are common during development.
+			if !(p.Config.Mode == "debug" &&
+				strings.Contains(err.Error(), "no migration found for version")) {
+				return res, err
+			}
 		}
 	}
 

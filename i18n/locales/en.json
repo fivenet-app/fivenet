@@ -3274,14 +3274,6 @@
                     "attrs_types": {
                         "Fields": "Access to creating faction-own calendars"
                     }
-                },
-                "DeleteCalendar": {
-                    "key": "Delete calendars",
-                    "description": "Delete calendars"
-                },
-                "DeleteCalendarEntry": {
-                    "key": "Delete Calendar Entries",
-                    "description": "Delete entries from calendars (requires manage access.)"
                 }
             }
         },

@@ -31,6 +31,7 @@ type Permission struct {
 	GuardName     string                 `protobuf:"bytes,5,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty"`
 	Val           bool                   `protobuf:"varint,6,opt,name=val,proto3" json:"val,omitempty"`
 	Order         *int32                 `protobuf:"varint,7,opt,name=order,proto3,oneof" json:"order,omitempty"`
+	Icon          *string                `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -112,6 +113,13 @@ func (x *Permission) GetOrder() int32 {
 		return *x.Order
 	}
 	return 0
+}
+
+func (x *Permission) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
+	}
+	return ""
 }
 
 type Role struct {
@@ -270,7 +278,7 @@ var File_resources_permissions_permissions_proto protoreflect.FileDescriptor
 
 const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
-	"'resources/permissions/permissions.proto\x12\x15resources.permissions\x1a&resources/permissions/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\xf5\x01\n" +
+	"'resources/permissions/permissions.proto\x12\x15resources.permissions\x1a&resources/permissions/attributes.proto\x1a#resources/timestamp/timestamp.proto\"\x97\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
@@ -281,9 +289,11 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"\n" +
 	"guard_name\x18\x05 \x01(\tR\tguardName\x12\x10\n" +
 	"\x03val\x18\x06 \x01(\bR\x03val\x12\x19\n" +
-	"\x05order\x18\a \x01(\x05H\x01R\x05order\x88\x01\x01B\r\n" +
+	"\x05order\x18\a \x01(\x05H\x01R\x05order\x88\x01\x01\x12\x17\n" +
+	"\x04icon\x18\b \x01(\tH\x02R\x04icon\x88\x01\x01B\r\n" +
 	"\v_created_atB\b\n" +
-	"\x06_order\"\x8d\x03\n" +
+	"\x06_orderB\a\n" +
+	"\x05_icon\"\x8d\x03\n" +
 	"\x04Role\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +

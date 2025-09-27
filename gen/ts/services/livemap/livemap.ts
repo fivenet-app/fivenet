@@ -833,4 +833,4 @@ export const LivemapService = new ServiceType("services.livemap.LivemapService",
     { name: "Stream", serverStreaming: true, options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Markers", type: "ATTRIBUTE_TYPE_JOB_LIST" }, { key: "Players", type: "ATTRIBUTE_TYPE_JOB_GRADE_LIST" }] } }, I: StreamRequest, O: StreamResponse },
     { name: "CreateOrUpdateMarker", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: CreateOrUpdateMarkerRequest, O: CreateOrUpdateMarkerResponse },
     { name: "DeleteMarker", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "Lower_Rank", "Same_Rank", "Any"] }] } }, I: DeleteMarkerRequest, O: DeleteMarkerResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 90, icon: "i-mdi-map-outline" } });

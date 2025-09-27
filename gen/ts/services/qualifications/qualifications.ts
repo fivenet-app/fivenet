@@ -138,7 +138,7 @@ export interface DeleteQualificationRequest {
  */
 export interface DeleteQualificationResponse {
 }
-// Access =====================================================================
+// Access
 
 /**
  * @generated from protobuf message services.qualifications.GetQualificationAccessRequest
@@ -176,7 +176,7 @@ export interface SetQualificationAccessRequest {
  */
 export interface SetQualificationAccessResponse {
 }
-// Requests ===================================================================
+// Requests
 
 /**
  * @generated from protobuf message services.qualifications.ListQualificationRequestsRequest
@@ -254,7 +254,7 @@ export interface DeleteQualificationReqRequest {
  */
 export interface DeleteQualificationReqResponse {
 }
-// Results ====================================================================
+// Results
 
 /**
  * @generated from protobuf message services.qualifications.ListQualificationsResultsRequest
@@ -332,7 +332,7 @@ export interface DeleteQualificationResultRequest {
  */
 export interface DeleteQualificationResultResponse {
 }
-// Exam =======================================================================
+// Exam
 
 /**
  * @generated from protobuf message services.qualifications.GetExamInfoRequest
@@ -2220,4 +2220,4 @@ export const QualificationsService = new ServiceType("services.qualifications.Qu
     { name: "SubmitExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: SubmitExamRequest, O: SubmitExamResponse },
     { name: "GetUserExam", options: { "codegen.perms.perms": { enabled: true, name: "ListQualifications" } }, I: GetUserExamRequest, O: GetUserExamResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdateQualification" } }, I: UploadFileRequest, O: UploadFileResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 80, icon: "i-mdi-school-outline" } });

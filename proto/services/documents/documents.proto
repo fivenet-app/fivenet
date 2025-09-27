@@ -430,6 +430,11 @@ message SetDocumentReminderRequest {
 message SetDocumentReminderResponse {}
 
 service DocumentsService {
+  option (codegen.perms.perms_svc) = {
+    order: 50
+    icon: "i-mdi-file-document-box-multiple-outline"
+  };
+
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

@@ -97,6 +97,11 @@ message ManageLabelsResponse {
 }
 
 service CitizensService {
+  option (codegen.perms.perms_svc) = {
+    order: 30
+    icon: "i-mdi-account-multiple-outline"
+  };
+
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse) {
     option (codegen.perms.perms) = {
       enabled: true

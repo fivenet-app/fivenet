@@ -152,6 +152,11 @@ message DeleteJobLogoRequest {}
 message DeleteJobLogoResponse {}
 
 service SettingsService {
+  option (codegen.perms.perms_svc) = {
+    order: 120
+    icon: "i-mdi-cog-outline"
+  };
+
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

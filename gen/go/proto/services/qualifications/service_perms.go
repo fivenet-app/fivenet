@@ -40,13 +40,15 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
-			Order: 0,
+			Order: 8000,
+			Icon:  "i-mdi-school-outline",
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceListQualificationsPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
@@ -63,7 +65,8 @@ func init() {
 					ValidValues: []string{"Public"},
 				},
 			},
-			Order: 0,
+			Order: 8000,
+			Icon:  "i-mdi-school-outline",
 		},
 	})
 }

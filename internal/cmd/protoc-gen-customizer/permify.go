@@ -113,6 +113,22 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 			data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
 			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
 
+			var order int32
+			var icon *string
+
+			var serviceOpts permspb.ServiceOptions
+			_, err := s.Extension(permspb.E_PermsSvc, &serviceOpts)
+			if err != nil {
+				p.Fail("error reading perms option:", err)
+			}
+
+			if serviceOpts.Icon != nil {
+				icon = serviceOpts.Icon
+			}
+			if serviceOpts.Order != 0 {
+				order = serviceOpts.Order
+			}
+
 			for _, m := range s.Methods() {
 				mName := string(m.Name())
 				mName = strings.TrimPrefix(mName, "services.")
@@ -143,7 +159,13 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				if val.Service != nil && *val.Service != "" {
 					perm.Service = val.Service
 				}
-				perm.Order = val.Order
+				if val.Order != 0 {
+					perm.Order = val.Order
+				} else {
+					perm.Order = order
+				}
+				perm.Order *= 100
+				perm.Icon = icon
 
 				perm.Attrs = make([]Attr, len(val.Attrs))
 				for i, a := range val.Attrs {
@@ -271,6 +293,7 @@ func init() {
             {{- end }}
             },
             Order: {{ $perm.Order }},
+            {{ with $perm.Icon }}Icon: "{{ $perm.Icon }}",{{ end }}
 		},
 		{{ end }}
 	{{- end }}
@@ -312,6 +335,7 @@ type Perm struct {
 	Name    string
 	Attrs   []Attr
 	Order   int32
+	Icon    *string
 }
 
 type Attr struct {

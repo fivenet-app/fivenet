@@ -23,7 +23,8 @@ func init() {
 					ValidValues: []string{"Wanted"},
 				},
 			},
-			Order: 0,
+			Order: 4000,
+			Icon:  "i-mdi-car-outline",
 		},
 		{
 			Category: permkeys.VehiclesServicePerm,
@@ -35,7 +36,8 @@ func init() {
 					ValidValues: []string{"Wanted"},
 				},
 			},
-			Order: 0,
+			Order: 4000,
+			Icon:  "i-mdi-car-outline",
 		},
 	})
 }

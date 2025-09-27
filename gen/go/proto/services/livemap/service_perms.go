@@ -23,7 +23,8 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
-			Order: 0,
+			Order: 9000,
+			Icon:  "i-mdi-map-outline",
 		},
 		{
 			Category: permkeys.LivemapServicePerm,
@@ -35,7 +36,8 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
-			Order: 0,
+			Order: 9000,
+			Icon:  "i-mdi-map-outline",
 		},
 		{
 			Category: permkeys.LivemapServicePerm,
@@ -50,7 +52,8 @@ func init() {
 					Type: permissions.JobGradeListAttributeType,
 				},
 			},
-			Order: 0,
+			Order: 9000,
+			Icon:  "i-mdi-map-outline",
 		},
 	})
 }

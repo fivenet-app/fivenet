@@ -1189,7 +1189,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_props2\x92\b\n" +
+	"_job_props2\xab\b\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -1201,7 +1201,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12u\n" +
 	"\x16DeleteOAuth2Connection\x12,.services.auth.DeleteOAuth2ConnectionRequest\x1a-.services.auth.DeleteOAuth2ConnectionResponse\x12c\n" +
-	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
+	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
 
 var (
 	file_services_auth_auth_proto_rawDescOnce sync.Once

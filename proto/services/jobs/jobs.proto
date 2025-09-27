@@ -124,6 +124,11 @@ message SetMOTDResponse {
 }
 
 service JobsService {
+  option (codegen.perms.perms_svc) = {
+    order: 60
+    icon: "i-mdi-briefcase-outline"
+  };
+
   rpc ListColleagues(ListColleaguesRequest) returns (ListColleaguesResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

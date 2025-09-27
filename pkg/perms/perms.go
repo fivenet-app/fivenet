@@ -37,7 +37,13 @@ type Permissions interface {
 		category Category,
 		name Name,
 	) (*permissions.Permission, error)
-	CreatePermission(ctx context.Context, category Category, name Name) (int64, error)
+	CreatePermission(
+		ctx context.Context,
+		category Category,
+		name Name,
+		order int32,
+		icon *string,
+	) (int64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
 	// Attributes management
@@ -265,6 +271,7 @@ type cachePerm struct {
 	Name      Name
 	GuardName string
 	Order     *int32
+	Icon      *string
 }
 
 type cacheAttr struct {

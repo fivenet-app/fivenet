@@ -254,6 +254,11 @@ message StreamResponse {
 }
 
 service CentrumService {
+  option (codegen.perms.perms_svc) = {
+    order: 100
+    icon: "i-mdi-car-emergency"
+  };
+
   rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse) {
     option (codegen.perms.perms) = {
       enabled: true

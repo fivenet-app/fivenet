@@ -39,6 +39,11 @@ func (m *Permission) Sanitize() error {
 	// Field: GuardName
 	m.GuardName = htmlsanitizer.Sanitize(m.GuardName)
 
+	// Field: Icon
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.Sanitize(*m.Icon)
+	}
+
 	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
 

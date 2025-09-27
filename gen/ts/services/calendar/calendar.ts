@@ -1881,4 +1881,4 @@ export const CalendarService = new ServiceType("services.calendar.CalendarServic
     { name: "RSVPCalendarEntry", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: RSVPCalendarEntryRequest, O: RSVPCalendarEntryResponse },
     { name: "ListSubscriptions", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListSubscriptionsRequest, O: ListSubscriptionsResponse },
     { name: "SubscribeToCalendar", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: SubscribeToCalendarRequest, O: SubscribeToCalendarResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 70, icon: "i-mdi-calendar-outline" } });

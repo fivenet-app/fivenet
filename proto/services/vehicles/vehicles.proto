@@ -45,6 +45,11 @@ message SetVehiclePropsResponse {
 }
 
 service VehiclesService {
+  option (codegen.perms.perms_svc) = {
+    order: 40
+    icon: "i-mdi-car-outline"
+  };
+
   rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse) {
     option (codegen.perms.perms) = {
       enabled: true

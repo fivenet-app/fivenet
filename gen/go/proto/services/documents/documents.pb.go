@@ -3845,7 +3845,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xf4&\n" +
+	"\x1bSetDocumentReminderResponse2\xa6'\n" +
 	"\x10DocumentsService\x12l\n" +
 	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12u\n" +
 	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTemplates\x12o\n" +
@@ -3896,7 +3896,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x05Types\x18\x01\"\aJobWide\x12~\n" +
 	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01\x1a0\xea\xf3\x18,\b2\x12(i-mdi-file-document-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_documents_proto_rawDescOnce sync.Once

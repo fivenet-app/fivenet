@@ -3162,4 +3162,4 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "TakeDispatch", options: { "codegen.perms.perms": { enabled: true } }, I: TakeDispatchRequest, O: TakeDispatchResponse },
     { name: "UpdateUnitStatus", options: { "codegen.perms.perms": { enabled: true, name: "TakeDispatch" } }, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
     { name: "UpdateDispatchStatus", options: { "codegen.perms.perms": { enabled: true, name: "TakeDispatch" } }, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 100, icon: "i-mdi-car-emergency" } });

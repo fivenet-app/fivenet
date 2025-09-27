@@ -344,4 +344,4 @@ export const SetVehiclePropsResponse = new SetVehiclePropsResponse$Type();
 export const VehiclesService = new ServiceType("services.vehicles.VehiclesService", [
     { name: "ListVehicles", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: ListVehiclesRequest, O: ListVehiclesResponse },
     { name: "SetVehicleProps", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Wanted"] }] } }, I: SetVehiclePropsRequest, O: SetVehiclePropsResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 40, icon: "i-mdi-car-outline" } });

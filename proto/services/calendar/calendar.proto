@@ -154,6 +154,11 @@ message SubscribeToCalendarResponse {
 }
 
 service CalendarService {
+  option (codegen.perms.perms_svc) = {
+    order: 70
+    icon: "i-mdi-calendar-outline"
+  };
+
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse) {
     option (codegen.perms.perms) = {
       enabled: true

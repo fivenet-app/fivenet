@@ -2636,4 +2636,4 @@ export const MailerService = new ServiceType("services.mailer.MailerService", [
     { name: "DeleteMessage", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteMessageRequest, O: DeleteMessageResponse },
     { name: "GetEmailSettings", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: GetEmailSettingsRequest, O: GetEmailSettingsResponse },
     { name: "SetEmailSettings", options: { "codegen.perms.perms": { enabled: true, name: "ListEmails" } }, I: SetEmailSettingsRequest, O: SetEmailSettingsResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 20, icon: "i-mdi-inbox-full-outline" } });

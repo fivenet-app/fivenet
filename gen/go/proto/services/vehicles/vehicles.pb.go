@@ -296,12 +296,12 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\"q\n" +
 	"\x17SetVehiclePropsResponse\x126\n" +
 	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason2\x95\x02\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason2\xb0\x02\n" +
 	"\x0fVehiclesService\x12{\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
-	"\x06Fields\x18\x01\"\x06WantedBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_services_vehicles_vehicles_proto_rawDescOnce sync.Once

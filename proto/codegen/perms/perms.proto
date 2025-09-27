@@ -26,3 +26,12 @@ message Attr {
 
   repeated string valid_string_list = 4;
 }
+
+extend google.protobuf.ServiceOptions {
+  ServiceOptions perms_svc = 51005;
+}
+
+message ServiceOptions {
+  int32 order = 1;
+  optional string icon = 2;
+}

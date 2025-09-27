@@ -18,6 +18,8 @@ func (p *Perms) CreatePermission(
 	ctx context.Context,
 	category Category,
 	name Name,
+	order int32,
+	icon *string,
 ) (int64, error) {
 	guard := BuildGuard(category, name)
 	stmt := tPerms.
@@ -25,11 +27,15 @@ func (p *Perms) CreatePermission(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 		).
 		VALUES(
 			category,
 			name,
 			guard,
+			order,
+			icon,
 		)
 
 	res, err := stmt.ExecContext(ctx, p.db)
@@ -64,6 +70,8 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 	category Category,
 	name Name,
 ) (*permissions.Permission, error) {
+	tPerms := tPerms.AS("permission")
+
 	stmt := tPerms.
 		SELECT(
 			tPerms.ID,
@@ -71,6 +79,8 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms).
 		WHERE(mysql.AND(
@@ -80,7 +90,6 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 		LIMIT(1)
 
 	dest := &permissions.Permission{}
-
 	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permission by guard. %w", err)
@@ -99,23 +108,37 @@ func (p *Perms) UpdatePermission(
 	id int64,
 	category Category,
 	name Name,
+	order int32,
+	icon *string,
 ) error {
 	guard := Guard(string(category) + "-" + string(name))
+
+	var iconExp mysql.StringExpression
+	if icon != nil {
+		iconExp = mysql.String(*icon)
+	} else {
+		iconExp = mysql.StringExp(mysql.NULL)
+	}
 
 	stmt := tPerms.
 		UPDATE(
 			tPerms.Name,
 			tPerms.Category,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 		).
 		SET(
 			tPerms.Category.SET(mysql.String(string(category))),
 			tPerms.Name.SET(mysql.String(string(name))),
 			tPerms.GuardName.SET(mysql.String(guard)),
+			tPerms.Order.SET(mysql.Int32(order)),
+			tPerms.Icon.SET(iconExp),
 		).
 		WHERE(
 			tPerms.ID.EQ(mysql.Int64(id)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to execute update statement. %w", err)
@@ -134,6 +157,8 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms).
 		ORDER_BY(
@@ -196,6 +221,8 @@ func (p *Perms) GetPermissionsByIDs(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms).
 		WHERE(
@@ -229,6 +256,7 @@ func (p *Perms) GetPermission(
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
 		).
 		FROM(tPerms).
 		WHERE(mysql.AND(

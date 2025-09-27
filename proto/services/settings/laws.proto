@@ -36,6 +36,11 @@ message DeleteLawRequest {
 message DeleteLawResponse {}
 
 service LawsService {
+  option (codegen.perms.perms_svc) = {
+    order: 122
+    icon: "i-mdi-scale-balance"
+  };
+
   rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

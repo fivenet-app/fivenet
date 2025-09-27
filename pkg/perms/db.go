@@ -49,6 +49,7 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms)
 
@@ -66,6 +67,7 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 			Name:      perm.Name,
 			GuardName: BuildGuard(perm.Category, perm.Name),
 			Order:     perm.Order,
+			Icon:      perm.Icon,
 		})
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), perm.ID)
 	}
@@ -82,6 +84,7 @@ func (p *Perms) loadPermissionByGuard(ctx context.Context, guard string) (int64,
 			tPerms.Name,
 			tPerms.GuardName,
 			tPerms.Order,
+			tPerms.Icon,
 		).
 		FROM(tPerms)
 
@@ -105,6 +108,7 @@ func (p *Perms) loadPermissionByGuard(ctx context.Context, guard string) (int64,
 			Name:      perm.Name,
 			GuardName: BuildGuard(perm.Category, perm.Name),
 			Order:     perm.Order,
+			Icon:      perm.Icon,
 		})
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), perm.ID)
 	}

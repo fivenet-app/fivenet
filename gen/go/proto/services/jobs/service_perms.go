@@ -30,13 +30,15 @@ func init() {
 			Category: permkeys.ConductServicePerm,
 			Name:     permkeys.ConductServiceCreateConductEntryPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6700,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
 			Name:     permkeys.ConductServiceDeleteConductEntryPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6700,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
@@ -48,13 +50,15 @@ func init() {
 					ValidValues: []string{"Own", "All"},
 				},
 			},
-			Order: 0,
+			Order: 6700,
+			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.ConductServicePerm,
 			Name:     permkeys.ConductServiceUpdateConductEntryPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6700,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 
 		// Service: jobs.JobsService
@@ -73,7 +77,8 @@ func init() {
 					ValidValues: []string{"Note", "Labels"},
 				},
 			},
-			Order: 0,
+			Order: 6000,
+			Icon:  "i-mdi-briefcase-outline",
 		},
 		{
 			Category: permkeys.JobsServicePerm,
@@ -85,19 +90,22 @@ func init() {
 					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
 				},
 			},
-			Order: 0,
+			Order: 6000,
+			Icon:  "i-mdi-briefcase-outline",
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleaguesPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceManageLabelsPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
 		},
 		{
 			Category: permkeys.JobsServicePerm,
@@ -114,13 +122,15 @@ func init() {
 					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
 			},
-			Order: 0,
+			Order: 6000,
+			Icon:  "i-mdi-briefcase-outline",
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceSetMOTDPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
 		},
 
 		// Service: jobs.TimeclockService
@@ -128,7 +138,8 @@ func init() {
 			Category: permkeys.TimeclockServicePerm,
 			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    6200,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.TimeclockServicePerm,
@@ -140,7 +151,8 @@ func init() {
 					ValidValues: []string{"All"},
 				},
 			},
-			Order: 0,
+			Order: 6200,
+			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 	})
 }

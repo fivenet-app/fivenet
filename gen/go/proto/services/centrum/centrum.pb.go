@@ -2621,7 +2621,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\x10dispatch_updated\x18\n" +
 	" \x01(\v2\x1b.resources.centrum.DispatchH\x00R\x0fdispatchUpdated\x12L\n" +
 	"\x0fdispatch_status\x18\v \x01(\v2!.resources.centrum.DispatchStatusH\x00R\x0edispatchStatusB\b\n" +
-	"\x06change2\x80\x15\n" +
+	"\x06change2\x9d\x15\n" +
 	"\x0eCentrumService\x12\x87\x01\n" +
 	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\"\"\xd2\xf3\x18\x1e\b\x01*\x1a\n" +
 	"\x06Access\x18\x01\"\x06Shared\"\x06Public\x12k\n" +
@@ -2655,7 +2655,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12e\n" +
 	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x7f\n" +
 	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x12\x8b\x01\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatchBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fTakeDispatch\x1a\x1b\xea\xf3\x18\x17\bd\x12\x13i-mdi-car-emergencyBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var (
 	file_services_centrum_centrum_proto_rawDescOnce sync.Once

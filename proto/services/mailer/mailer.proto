@@ -248,6 +248,11 @@ message DeleteMessageRequest {
 message DeleteMessageResponse {}
 
 service MailerService {
+  option (codegen.perms.perms_svc) = {
+    order: 20
+    icon: "i-mdi-inbox-full-outline"
+  };
+
   rpc ListEmails(ListEmailsRequest) returns (ListEmailsResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

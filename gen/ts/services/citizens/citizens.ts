@@ -957,4 +957,4 @@ export const CitizensService = new ServiceType("services.citizens.CitizensServic
     { name: "UploadMugshot", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteMugshot", options: { "codegen.perms.perms": { enabled: true, name: "SetUserProps" } }, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
     { name: "ManageLabels", options: { "codegen.perms.perms": { enabled: true } }, I: ManageLabelsRequest, O: ManageLabelsResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 30, icon: "i-mdi-account-multiple-outline" } });

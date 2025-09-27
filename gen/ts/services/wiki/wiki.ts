@@ -789,4 +789,4 @@ export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "DeletePage", options: { "codegen.perms.perms": { enabled: true } }, I: DeletePageRequest, O: DeletePageResponse },
     { name: "ListPageActivity", options: { "codegen.perms.perms": { enabled: true } }, I: ListPageActivityRequest, O: ListPageActivityResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: UploadFileRequest, O: UploadFileResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-brain" } });

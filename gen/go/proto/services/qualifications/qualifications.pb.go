@@ -1836,7 +1836,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x04exam\x18\x01 \x01(\v2'.resources.qualifications.ExamQuestionsR\x04exam\x12?\n" +
 	"\texam_user\x18\x02 \x01(\v2\".resources.qualifications.ExamUserR\bexamUser\x12E\n" +
 	"\tresponses\x18\x03 \x01(\v2'.resources.qualifications.ExamResponsesR\tresponses\x12?\n" +
-	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xac\x14\n" +
+	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xca\x14\n" +
 	"\x15QualificationsService\x12\x85\x01\n" +
 	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x93\x01\n" +
 	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x9d\x01\n" +
@@ -1860,7 +1860,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12\x84\x01\n" +
 	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListQualifications\x12r\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification(\x01BZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1b\xd2\xf3\x18\x17\b\x01\x1a\x13UpdateQualification(\x01\x1a\x1c\xea\xf3\x18\x18\bP\x12\x14i-mdi-school-outlineBZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_services_qualifications_qualifications_proto_rawDescOnce sync.Once

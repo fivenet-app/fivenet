@@ -803,7 +803,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x13ManageLabelsRequest\x12.\n" +
 	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
 	"\x14ManageLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\x90\n" +
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xb8\n" +
 	"\n" +
 	"\x0fCitizensService\x12\xb1\x02\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01*\xc5\x01\n" +
@@ -819,7 +819,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
 	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps(\x01\x12x\n" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps\x12g\n" +
-	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var (
 	file_services_citizens_citizens_proto_rawDescOnce sync.Once

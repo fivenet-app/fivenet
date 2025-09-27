@@ -30,7 +30,8 @@ func init() {
 					Type: permissions.JobGradeListAttributeType,
 				},
 			},
-			Order: 0,
+			Order: 3000,
+			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
 			Category: permkeys.CitizensServicePerm,
@@ -42,7 +43,8 @@ func init() {
 					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"},
 				},
 			},
-			Order: 0,
+			Order: 3000,
+			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
 			Category: permkeys.CitizensServicePerm,
@@ -54,13 +56,15 @@ func init() {
 					ValidValues: []string{"SourceUser", "Own"},
 				},
 			},
-			Order: 0,
+			Order: 3000,
+			Icon:  "i-mdi-account-multiple-outline",
 		},
 		{
 			Category: permkeys.CitizensServicePerm,
 			Name:     permkeys.CitizensServiceManageLabelsPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    3000,
+			Icon:     "i-mdi-account-multiple-outline",
 		},
 		{
 			Category: permkeys.CitizensServicePerm,
@@ -72,7 +76,8 @@ func init() {
 					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"},
 				},
 			},
-			Order: 0,
+			Order: 3000,
+			Icon:  "i-mdi-account-multiple-outline",
 		},
 	})
 }

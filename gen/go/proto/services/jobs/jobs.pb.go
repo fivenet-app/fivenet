@@ -1091,7 +1091,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\x0eSetMOTDRequest\x12%\n" +
 	"\x04motd\x18\x01 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x04motd\"%\n" +
 	"\x0fSetMOTDResponse\x12\x12\n" +
-	"\x04motd\x18\x01 \x01(\tR\x04motd2\xaf\n" +
+	"\x04motd\x18\x01 \x01(\tR\x04motd2\xd0\n" +
 	"\n" +
 	"\vJobsService\x12e\n" +
 	"\x0eListColleagues\x12$.services.jobs.ListColleaguesRequest\x1a%.services.jobs.ListColleaguesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12`\n" +
@@ -1110,7 +1110,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
 	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12U\n" +
 	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
-	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_jobs_proto_rawDescOnce sync.Once

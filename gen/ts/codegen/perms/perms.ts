@@ -58,6 +58,19 @@ export interface Attr {
      */
     validStringList: string[];
 }
+/**
+ * @generated from protobuf message codegen.perms.ServiceOptions
+ */
+export interface ServiceOptions {
+    /**
+     * @generated from protobuf field: int32 order = 1
+     */
+    order: number;
+    /**
+     * @generated from protobuf field: optional string icon = 2
+     */
+    icon?: string;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldOptions$Type extends MessageType<FieldOptions> {
     constructor() {
@@ -206,3 +219,57 @@ class Attr$Type extends MessageType<Attr> {
  * @generated MessageType for protobuf message codegen.perms.Attr
  */
 export const Attr = new Attr$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ServiceOptions$Type extends MessageType<ServiceOptions> {
+    constructor() {
+        super("codegen.perms.ServiceOptions", [
+            { no: 1, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ServiceOptions>): ServiceOptions {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.order = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ServiceOptions>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ServiceOptions): ServiceOptions {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 order */ 1:
+                    message.order = reader.int32();
+                    break;
+                case /* optional string icon */ 2:
+                    message.icon = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ServiceOptions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 order = 1; */
+        if (message.order !== 0)
+            writer.tag(1, WireType.Varint).int32(message.order);
+        /* optional string icon = 2; */
+        if (message.icon !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.icon);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message codegen.perms.ServiceOptions
+ */
+export const ServiceOptions = new ServiceOptions$Type();

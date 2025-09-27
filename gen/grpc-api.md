@@ -259,6 +259,18 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+
+### codegen.perms.ServiceOptions
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `order` | [int32](#int32) |  |  |
+| `icon` | [string](#string) | optional |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -269,6 +281,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Extension | Type | Base | Number | Description |
 | --------- | ---- | ---- | ------ | ----------- |
 | `perms` | FieldOptions | .google.protobuf.MethodOptions | 51002 |  |
+| `perms_svc` | ServiceOptions | .google.protobuf.ServiceOptions | 51005 |  |
 
  <!-- end HasExtensions -->
 
@@ -5401,6 +5414,7 @@ User related events
 | `guard_name` | [string](#string) |  |  |
 | `val` | [bool](#bool) |  |  |
 | `order` | [int32](#int32) | optional |  |
+| `icon` | [string](#string) | optional |  |
 
 
 

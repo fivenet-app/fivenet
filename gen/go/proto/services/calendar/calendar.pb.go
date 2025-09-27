@@ -1549,7 +1549,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub\x12\x16\n" +
 	"\x06delete\x18\x02 \x01(\bR\x06delete\"P\n" +
 	"\x1bSubscribeToCalendarResponse\x121\n" +
-	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub2\x84\x0f\n" +
+	"\x03sub\x18\x01 \x01(\v2\x1f.resources.calendar.CalendarSubR\x03sub2\xa4\x0f\n" +
 	"\x0fCalendarService\x12o\n" +
 	"\rListCalendars\x12'.services.calendar.ListCalendarsRequest\x1a(.services.calendar.ListCalendarsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12i\n" +
 	"\vGetCalendar\x12%.services.calendar.GetCalendarRequest\x1a&.services.calendar.GetCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x86\x01\n" +
@@ -1566,7 +1566,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03AnyBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendarb\x06proto3"
+	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendarb\x06proto3"
 
 var (
 	file_services_calendar_calendar_proto_rawDescOnce sync.Once

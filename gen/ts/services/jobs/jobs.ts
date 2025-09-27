@@ -1341,4 +1341,4 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "GetColleagueLabelsStats", options: { "codegen.perms.perms": { enabled: true, name: "GetColleague" } }, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
     { name: "GetMOTD", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: { "codegen.perms.perms": { enabled: true } }, I: SetMOTDRequest, O: SetMOTDResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 60, icon: "i-mdi-briefcase-outline" } });

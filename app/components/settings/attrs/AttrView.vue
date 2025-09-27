@@ -41,7 +41,7 @@ const {
 const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
-const permCategories = ref<Set<string>>(new Set());
+const permCategories = ref<Map<string, { category: string; icon: string | undefined; order: number }>>(new Map());
 const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
@@ -67,7 +67,7 @@ async function getAllPermissions(job: string): Promise<void> {
         });
         const { response } = await call;
 
-        permList.value = response.permissions;
+        permList.value = response.permissions.sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0));
         attrList.value = response.attributes;
 
         await genPermissionCategories();
@@ -81,7 +81,13 @@ async function genPermissionCategories(): Promise<void> {
     permCategories.value.clear();
 
     permList.value.forEach((perm) => {
-        permCategories.value.add(perm.category);
+        if (permCategories.value.has(perm.category)) return;
+
+        permCategories.value.set(perm.category, {
+            category: perm.category,
+            icon: perm.icon,
+            order: perm.order ?? 999999,
+        });
     });
 }
 
@@ -334,12 +340,16 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
 }
 
 const accordionCategories = computed(() =>
-    [...permCategories.value.entries()].map((category) => {
-        return {
-            label: t(`perms.${category[1]}.category`),
-            category: category[0],
-        };
-    }),
+    [...permCategories.value.entries()]
+        .map((category) => {
+            return {
+                label: t(`perms.${category[1].category}.category`),
+                category: category[1].category,
+                icon: category[1].icon,
+                order: category[1].order,
+            };
+        })
+        .sort((a, b) => a.order - b.order),
 );
 
 async function deleteFaction(job: string): Promise<void> {

@@ -17,6 +17,7 @@ func init() {
 			Name:     permkeys.AuthServiceChooseCharacterPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
+			Icon:     "i-mdi-key-outline",
 		},
 	})
 }

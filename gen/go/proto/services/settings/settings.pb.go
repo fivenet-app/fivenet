@@ -1321,7 +1321,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x16ListUserGuildsResponse\x120\n" +
 	"\x06guilds\x18\x01 \x03(\v2\x18.resources.discord.GuildR\x06guilds\"\x16\n" +
 	"\x14DeleteJobLogoRequest\"\x17\n" +
-	"\x15DeleteJobLogoResponse2\xbd\f\n" +
+	"\x15DeleteJobLogoResponse2\xd8\f\n" +
 	"\x0fSettingsService\x12d\n" +
 	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12d\n" +
 	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12[\n" +
@@ -1338,7 +1338,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12z\n" +
 	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12m\n" +
 	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps(\x01\x12w\n" +
-	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobPropsBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x1a\x19\xea\xf3\x18\x15\bx\x12\x11i-mdi-cog-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_settings_proto_rawDescOnce sync.Once

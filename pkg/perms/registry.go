@@ -32,6 +32,7 @@ type Perm struct {
 	Name     Name
 	Attrs    []Attr
 	Order    int32
+	Icon     string
 }
 
 type Attr struct {
@@ -63,7 +64,12 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 	}
 
 	for _, perm := range permsList {
-		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name, perm.Order)
+		var icon *string
+		if perm.Icon != "" {
+			icon = &perm.Icon
+		}
+
+		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name, perm.Order, icon)
 		if err != nil {
 			return fmt.Errorf(
 				"failed to create or update permission (category: %s, name: %s). %w",
@@ -72,12 +78,14 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 				err,
 			)
 		}
+
 		p.permsMap.Store(permId, &cachePerm{
 			ID:        permId,
 			Category:  perm.Category,
 			Name:      perm.Name,
 			GuardName: BuildGuard(perm.Category, perm.Name),
 			Order:     &perm.Order,
+			Icon:      icon,
 		})
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
@@ -173,6 +181,7 @@ func (p *Perms) createOrUpdatePermission(
 	category Category,
 	name Name,
 	order int32,
+	icon *string,
 ) (int64, error) {
 	perm, err := p.loadPermissionFromDatabaseByCategoryName(ctx, category, name)
 	if err != nil {
@@ -183,8 +192,8 @@ func (p *Perms) createOrUpdatePermission(
 
 	if perm != nil {
 		if Category(perm.GetCategory()) != category || Name(perm.GetName()) != name ||
-			(perm.Order == nil || perm.GetOrder() != order) {
-			if err := p.UpdatePermission(ctx, perm.GetId(), category, name); err != nil {
+			(perm.GetOrder() != order) || (icon == nil || perm.GetIcon() != *icon) {
+			if err := p.UpdatePermission(ctx, perm.GetId(), category, name, order, icon); err != nil {
 				return perm.GetId(), fmt.Errorf("failed to update permission. %w", err)
 			}
 		}
@@ -192,7 +201,7 @@ func (p *Perms) createOrUpdatePermission(
 		return perm.GetId(), nil
 	}
 
-	return p.CreatePermission(ctx, category, name)
+	return p.CreatePermission(ctx, category, name, order, icon)
 }
 
 func (p *Perms) registerOrUpdateAttribute(

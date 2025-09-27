@@ -690,12 +690,12 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"pagination\x12?\n" +
 	"\n" +
 	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
-	"colleagues2\x82\x03\n" +
+	"colleagues2\xb4\x03\n" +
 	"\x10TimeclockService\x12s\n" +
 	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\"\x17\xd2\xf3\x18\x13\b\x01*\x0f\n" +
 	"\x06Access\x18\x01\"\x03All\x12}\n" +
 	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTimeclock\x12z\n" +
-	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a0\xea\xf3\x18,\b>\x12(i-mdi-file-document-box-multiple-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_timeclock_proto_rawDescOnce sync.Once

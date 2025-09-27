@@ -4648,4 +4648,4 @@ export const DocumentsService = new ServiceType("services.documents.DocumentsSer
     { name: "ToggleDocumentPin", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Types", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["JobWide"] }] } }, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse },
     { name: "SetDocumentReminder", options: { "codegen.perms.perms": { enabled: true } }, I: SetDocumentReminderRequest, O: SetDocumentReminderResponse },
     { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdateDocument" } }, I: UploadFileRequest, O: UploadFileResponse }
-]);
+], { "codegen.perms.perms_svc": { order: 50, icon: "i-mdi-file-document-box-multiple-outline" } });

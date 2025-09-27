@@ -720,7 +720,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x16\n" +
-	"\x14DeleteMarkerResponse2\xc3\x03\n" +
+	"\x14DeleteMarkerResponse2\xde\x03\n" +
 	"\x0eLivemapService\x12o\n" +
 	"\x06Stream\x12\x1f.services.livemap.StreamRequest\x1a .services.livemap.StreamResponse\" \xd2\xf3\x18\x1c\b\x01*\v\n" +
 	"\aMarkers\x18\x02*\v\n" +
@@ -730,7 +730,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x92\x01\n" +
 	"\fDeleteMarker\x12%.services.livemap.DeleteMarkerRequest\x1a&.services.livemap.DeleteMarkerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03AnyBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a\x19\xea\xf3\x18\x15\bZ\x12\x11i-mdi-map-outlineBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
 
 var (
 	file_services_livemap_livemap_proto_rawDescOnce sync.Once

@@ -80,6 +80,11 @@ message DeleteMarkerRequest {
 message DeleteMarkerResponse {}
 
 service LivemapService {
+  option (codegen.perms.perms_svc) = {
+    order: 90
+    icon: "i-mdi-map-outline"
+  };
+
   rpc Stream(StreamRequest) returns (stream StreamResponse) {
     option (codegen.perms.perms) = {
       enabled: true

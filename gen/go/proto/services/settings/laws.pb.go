@@ -377,12 +377,12 @@ const file_services_settings_laws_proto_rawDesc = "" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x13\n" +
-	"\x11DeleteLawResponse2\xfd\x03\n" +
+	"\x11DeleteLawResponse2\x9a\x04\n" +
 	"\vLawsService\x12\x82\x01\n" +
 	"\x15CreateOrUpdateLawBook\x12/.services.settings.CreateOrUpdateLawBookRequest\x1a0.services.settings.CreateOrUpdateLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12j\n" +
 	"\rDeleteLawBook\x12'.services.settings.DeleteLawBookRequest\x1a(.services.settings.DeleteLawBookResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8d\x01\n" +
 	"\x11CreateOrUpdateLaw\x12+.services.settings.CreateOrUpdateLawRequest\x1a,.services.settings.CreateOrUpdateLawResponse\"\x1d\xd2\xf3\x18\x19\b\x01\x1a\x15CreateOrUpdateLawBook\x12m\n" +
-	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rDeleteLawBookBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\tDeleteLaw\x12#.services.settings.DeleteLawRequest\x1a$.services.settings.DeleteLawResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rDeleteLawBook\x1a\x1b\xea\xf3\x18\x17\bz\x12\x13i-mdi-scale-balanceBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_laws_proto_rawDescOnce sync.Once

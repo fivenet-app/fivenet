@@ -41,7 +41,8 @@ func init() {
 					ValidValues: []string{"Job", "Public"},
 				},
 			},
-			Order: 0,
+			Order: 7000,
+			Icon:  "i-mdi-calendar-outline",
 		},
 	})
 }

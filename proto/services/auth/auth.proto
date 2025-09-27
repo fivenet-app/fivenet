@@ -153,6 +153,11 @@ message SetSuperuserModeResponse {
 // Auth Service handles user authentication, character selection and oauth2 connections
 // Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
 service AuthService {
+  option (codegen.perms.perms_svc) = {
+    order: 0
+    icon: "i-mdi-key-outline"
+  };
+
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 

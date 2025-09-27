@@ -58,6 +58,11 @@ message CompleteCitizenLabelsResponse {
 }
 
 service CompletorService {
+  option (codegen.perms.perms_svc) = {
+    order: 10
+    icon: "i-mdi-keyboard-tab"
+  };
+
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }

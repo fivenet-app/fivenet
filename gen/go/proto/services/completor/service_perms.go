@@ -28,13 +28,15 @@ func init() {
 					Type: permissions.JobListAttributeType,
 				},
 			},
-			Order: 0,
+			Order: 1000,
+			Icon:  "i-mdi-keyboard-tab",
 		},
 		{
 			Category: permkeys.CompletorServicePerm,
 			Name:     permkeys.CompletorServiceCompleteCitizensPerm,
 			Attrs:    []perms.Attr{},
-			Order:    0,
+			Order:    1000,
+			Icon:     "i-mdi-keyboard-tab",
 		},
 		{
 			Category: permkeys.CompletorServicePerm,
@@ -45,7 +47,8 @@ func init() {
 					Type: permissions.JobListAttributeType,
 				},
 			},
-			Order: 0,
+			Order: 1000,
+			Icon:  "i-mdi-keyboard-tab",
 		},
 	})
 }
