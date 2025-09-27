@@ -3009,7 +3009,7 @@
                 }
             },
             "ApprovalService": {
-                "category": "Document Approval",
+                "category": "Documents: Approval",
                 "DeleteApprovalAccess": {
                     "key": "Delete Approval Access",
                     "description": "Delete approval access for users."
@@ -3024,7 +3024,7 @@
                 }
             },
             "SigningService": {
-                "category": "Document Signing",
+                "category": "Documents: Signing",
                 "DeleteRequirement": {
                     "key": "Delete Signing Requirement",
                     "description": "Delete a signing requirement."

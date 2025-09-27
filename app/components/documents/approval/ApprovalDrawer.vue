@@ -1,11 +1,31 @@
 <script lang="ts" setup>
-defineProps<{
+import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
+import type { ApprovalTask } from '~~/gen/ts/resources/documents/approval';
+
+const props = defineProps<{
     documentId: number;
 }>();
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const approvalClient = await getDocumentsApprovalClient();
+
+const { data } = useLazyAsyncData(`approval-drawer-${props.documentId}`, () => listTasks());
+
+async function listTasks(): Promise<ApprovalTask[]> {
+    if (!props.documentId) return [];
+
+    const call = approvalClient.listTasks({
+        pagination: { offset: 0 },
+        documentId: props.documentId,
+        statuses: [],
+    });
+    const { response } = await call;
+
+    return response.tasks;
+}
 
 // TODO
 </script>
@@ -40,6 +60,8 @@ defineEmits<{
                         <h3 class="mb-2 text-sm font-semibold">Your pending approvals</h3>
 
                         <UAlert color="gray" variant="soft" title="No pending approvals" class="mt-2" />
+
+                        {{ data }}
                     </div>
                 </div>
             </div>

@@ -165,21 +165,9 @@ func (m *ListTasksRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
-
 	// Field: Pagination
 	if m.Pagination != nil {
 		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: SnapshotDate
-	if m.SnapshotDate != nil {
-		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

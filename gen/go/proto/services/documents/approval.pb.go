@@ -787,14 +787,11 @@ func (*DeleteApprovalAccessResponse) Descriptor() ([]byte, []int) {
 }
 
 type ListTasksRequest struct {
-	state         protoimpl.MessageState         `protogen:"open.v1"`
-	Pagination    *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	state      protoimpl.MessageState      `protogen:"open.v1"`
+	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// Search
 	DocumentId    int64                          `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate  *timestamp.Timestamp           `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
-	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,4,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
-	UserId        int32                          `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"` // Filter "my tasks"
-	Job           string                         `protobuf:"bytes,6,opt,name=job,proto3" json:"job,omitempty"`
-	MinimumGrade  int32                          `protobuf:"varint,7,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,3,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -843,39 +840,11 @@ func (x *ListTasksRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *ListTasksRequest) GetSnapshotDate() *timestamp.Timestamp {
-	if x != nil {
-		return x.SnapshotDate
-	}
-	return nil
-}
-
 func (x *ListTasksRequest) GetStatuses() []documents.ApprovalTaskStatus {
 	if x != nil {
 		return x.Statuses
 	}
 	return nil
-}
-
-func (x *ListTasksRequest) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ListTasksRequest) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *ListTasksRequest) GetMinimumGrade() int32 {
-	if x != nil {
-		return x.MinimumGrade
-	}
-	return 0
 }
 
 type ListTasksResponse struct {
@@ -1204,19 +1173,14 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"-\n" +
 	"\x1bDeleteApprovalAccessRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1e\n" +
-	"\x1cDeleteApprovalAccessResponse\"\xf2\x02\n" +
+	"\x1cDeleteApprovalAccessResponse\"\xc6\x01\n" +
 	"\x10ListTasksRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12H\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12C\n" +
-	"\bstatuses\x18\x04 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\x12\x17\n" +
-	"\auser_id\x18\x05 \x01(\x05R\x06userId\x12\x10\n" +
-	"\x03job\x18\x06 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\a \x01(\x05R\fminimumGradeB\x10\n" +
-	"\x0e_snapshot_date\"\xa1\x01\n" +
+	"documentId\x12C\n" +
+	"\bstatuses\x18\x03 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"\xa1\x01\n" +
 	"\x11ListTasksResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1314,42 +1278,41 @@ var file_services_documents_approval_proto_depIdxs = []int32{
 	27, // 11: services.documents.UpsertApprovalAccessRequest.access:type_name -> resources.documents.ApprovalAccess
 	27, // 12: services.documents.UpsertApprovalAccessResponse.access:type_name -> resources.documents.ApprovalAccess
 	28, // 13: services.documents.ListTasksRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	25, // 14: services.documents.ListTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	29, // 15: services.documents.ListTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
-	30, // 16: services.documents.ListTasksResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	26, // 17: services.documents.ListTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
-	29, // 18: services.documents.DecideTaskRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
-	26, // 19: services.documents.DecideTaskResponse.task:type_name -> resources.documents.ApprovalTask
-	22, // 20: services.documents.DecideTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	26, // 21: services.documents.ReopenTaskResponse.task:type_name -> resources.documents.ApprovalTask
-	22, // 22: services.documents.ReopenTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	0,  // 23: services.documents.ApprovalService.GetPolicy:input_type -> services.documents.GetPolicyRequest
-	2,  // 24: services.documents.ApprovalService.UpsertPolicy:input_type -> services.documents.UpsertPolicyRequest
-	4,  // 25: services.documents.ApprovalService.StartApprovalRound:input_type -> services.documents.StartApprovalRoundRequest
-	6,  // 26: services.documents.ApprovalService.CompleteApprovalRound:input_type -> services.documents.CompleteApprovalRoundRequest
-	8,  // 27: services.documents.ApprovalService.RecomputePolicyCounters:input_type -> services.documents.RecomputePolicyCountersRequest
-	10, // 28: services.documents.ApprovalService.ListApprovalAccess:input_type -> services.documents.ListApprovalAccessRequest
-	12, // 29: services.documents.ApprovalService.UpsertApprovalAccess:input_type -> services.documents.UpsertApprovalAccessRequest
-	14, // 30: services.documents.ApprovalService.DeleteApprovalAccess:input_type -> services.documents.DeleteApprovalAccessRequest
-	16, // 31: services.documents.ApprovalService.ListTasks:input_type -> services.documents.ListTasksRequest
-	18, // 32: services.documents.ApprovalService.DecideTask:input_type -> services.documents.DecideTaskRequest
-	20, // 33: services.documents.ApprovalService.ReopenTask:input_type -> services.documents.ReopenTaskRequest
-	1,  // 34: services.documents.ApprovalService.GetPolicy:output_type -> services.documents.GetPolicyResponse
-	3,  // 35: services.documents.ApprovalService.UpsertPolicy:output_type -> services.documents.UpsertPolicyResponse
-	5,  // 36: services.documents.ApprovalService.StartApprovalRound:output_type -> services.documents.StartApprovalRoundResponse
-	7,  // 37: services.documents.ApprovalService.CompleteApprovalRound:output_type -> services.documents.CompleteApprovalRoundResponse
-	9,  // 38: services.documents.ApprovalService.RecomputePolicyCounters:output_type -> services.documents.RecomputePolicyCountersResponse
-	11, // 39: services.documents.ApprovalService.ListApprovalAccess:output_type -> services.documents.ListApprovalAccessResponse
-	13, // 40: services.documents.ApprovalService.UpsertApprovalAccess:output_type -> services.documents.UpsertApprovalAccessResponse
-	15, // 41: services.documents.ApprovalService.DeleteApprovalAccess:output_type -> services.documents.DeleteApprovalAccessResponse
-	17, // 42: services.documents.ApprovalService.ListTasks:output_type -> services.documents.ListTasksResponse
-	19, // 43: services.documents.ApprovalService.DecideTask:output_type -> services.documents.DecideTaskResponse
-	21, // 44: services.documents.ApprovalService.ReopenTask:output_type -> services.documents.ReopenTaskResponse
-	34, // [34:45] is the sub-list for method output_type
-	23, // [23:34] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	29, // 14: services.documents.ListTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
+	30, // 15: services.documents.ListTasksResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	26, // 16: services.documents.ListTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
+	29, // 17: services.documents.DecideTaskRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
+	26, // 18: services.documents.DecideTaskResponse.task:type_name -> resources.documents.ApprovalTask
+	22, // 19: services.documents.DecideTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	26, // 20: services.documents.ReopenTaskResponse.task:type_name -> resources.documents.ApprovalTask
+	22, // 21: services.documents.ReopenTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	0,  // 22: services.documents.ApprovalService.GetPolicy:input_type -> services.documents.GetPolicyRequest
+	2,  // 23: services.documents.ApprovalService.UpsertPolicy:input_type -> services.documents.UpsertPolicyRequest
+	4,  // 24: services.documents.ApprovalService.StartApprovalRound:input_type -> services.documents.StartApprovalRoundRequest
+	6,  // 25: services.documents.ApprovalService.CompleteApprovalRound:input_type -> services.documents.CompleteApprovalRoundRequest
+	8,  // 26: services.documents.ApprovalService.RecomputePolicyCounters:input_type -> services.documents.RecomputePolicyCountersRequest
+	10, // 27: services.documents.ApprovalService.ListApprovalAccess:input_type -> services.documents.ListApprovalAccessRequest
+	12, // 28: services.documents.ApprovalService.UpsertApprovalAccess:input_type -> services.documents.UpsertApprovalAccessRequest
+	14, // 29: services.documents.ApprovalService.DeleteApprovalAccess:input_type -> services.documents.DeleteApprovalAccessRequest
+	16, // 30: services.documents.ApprovalService.ListTasks:input_type -> services.documents.ListTasksRequest
+	18, // 31: services.documents.ApprovalService.DecideTask:input_type -> services.documents.DecideTaskRequest
+	20, // 32: services.documents.ApprovalService.ReopenTask:input_type -> services.documents.ReopenTaskRequest
+	1,  // 33: services.documents.ApprovalService.GetPolicy:output_type -> services.documents.GetPolicyResponse
+	3,  // 34: services.documents.ApprovalService.UpsertPolicy:output_type -> services.documents.UpsertPolicyResponse
+	5,  // 35: services.documents.ApprovalService.StartApprovalRound:output_type -> services.documents.StartApprovalRoundResponse
+	7,  // 36: services.documents.ApprovalService.CompleteApprovalRound:output_type -> services.documents.CompleteApprovalRoundResponse
+	9,  // 37: services.documents.ApprovalService.RecomputePolicyCounters:output_type -> services.documents.RecomputePolicyCountersResponse
+	11, // 38: services.documents.ApprovalService.ListApprovalAccess:output_type -> services.documents.ListApprovalAccessResponse
+	13, // 39: services.documents.ApprovalService.UpsertApprovalAccess:output_type -> services.documents.UpsertApprovalAccessResponse
+	15, // 40: services.documents.ApprovalService.DeleteApprovalAccess:output_type -> services.documents.DeleteApprovalAccessResponse
+	17, // 41: services.documents.ApprovalService.ListTasks:output_type -> services.documents.ListTasksResponse
+	19, // 42: services.documents.ApprovalService.DecideTask:output_type -> services.documents.DecideTaskResponse
+	21, // 43: services.documents.ApprovalService.ReopenTask:output_type -> services.documents.ReopenTaskResponse
+	33, // [33:44] is the sub-list for method output_type
+	22, // [22:33] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_approval_proto_init() }
@@ -1357,7 +1320,6 @@ func file_services_documents_approval_proto_init() {
 	if File_services_documents_approval_proto != nil {
 		return
 	}
-	file_services_documents_approval_proto_msgTypes[16].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

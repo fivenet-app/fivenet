@@ -202,29 +202,15 @@ export interface ListTasksRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * Search
+     *
      * @generated from protobuf field: int64 document_id = 2
      */
     documentId: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 3
-     */
-    snapshotDate?: Timestamp;
-    /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 4
+     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 3
      */
     statuses: ApprovalTaskStatus[];
-    /**
-     * @generated from protobuf field: int32 user_id = 5
-     */
-    userId: number; // Filter "my tasks"
-    /**
-     * @generated from protobuf field: string job = 6
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 7
-     */
-    minimumGrade: number;
 }
 /**
  * @generated from protobuf message services.documents.ListTasksResponse
@@ -1102,20 +1088,13 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
         super("services.documents.ListTasksRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<ListTasksRequest>): ListTasksRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
         message.statuses = [];
-        message.userId = 0;
-        message.job = "";
-        message.minimumGrade = 0;
         if (value !== undefined)
             reflectionMergePartial<ListTasksRequest>(this, message, value);
         return message;
@@ -1131,24 +1110,12 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
                 case /* int64 document_id */ 2:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* optional resources.timestamp.Timestamp snapshot_date */ 3:
-                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
-                    break;
-                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 4:
+                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
                     else
                         message.statuses.push(reader.int32());
-                    break;
-                case /* int32 user_id */ 5:
-                    message.userId = reader.int32();
-                    break;
-                case /* string job */ 6:
-                    message.job = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 7:
-                    message.minimumGrade = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1168,25 +1135,13 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
         /* int64 document_id = 2; */
         if (message.documentId !== 0)
             writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* optional resources.timestamp.Timestamp snapshot_date = 3; */
-        if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalTaskStatus statuses = 4; */
+        /* repeated resources.documents.ApprovalTaskStatus statuses = 3; */
         if (message.statuses.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
                 writer.int32(message.statuses[i]);
             writer.join();
         }
-        /* int32 user_id = 5; */
-        if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* string job = 6; */
-        if (message.job !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.job);
-        /* int32 minimum_grade = 7; */
-        if (message.minimumGrade !== 0)
-            writer.tag(7, WireType.Varint).int32(message.minimumGrade);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

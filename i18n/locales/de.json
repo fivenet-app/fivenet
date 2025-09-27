@@ -3007,6 +3007,32 @@
                     "key": "Setzen von eigenen Dokumenten-Erinnerungen",
                     "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
                 }
+            },
+            "ApprovalService": {
+                "category": "Dokumenten-System: Genehmigung",
+                "DeleteApprovalAccess": {
+                    "key": "Genehmigungszugriff löschen",
+                    "description": "Löschen des Genehmigungszugriffs für Benutzer."
+                },
+                "ReopenTask": {
+                    "key": "Genehmigung erneut öffnen",
+                    "description": "Eine abgeschlossene Genehmigung erneut öffnen."
+                },
+                "UpsertPolicy": {
+                    "key": "Genehmigungsrichtlinie erstellen oder aktualisieren",
+                    "description": "Genehmigungsrichtlinien für Berufe erstellen oder aktualisieren."
+                }
+            },
+            "SigningService": {
+                "category": "Dokumenten-System: Unterzeichnung",
+                "DeleteRequirement": {
+                    "key": "Signaturanfrage löschen",
+                    "description": "Löschen einer Signaturanfrage."
+                },
+                "UpsertRequirement": {
+                    "key": "Signaturanfrage erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
+                }
             }
         },
         "livemap": {

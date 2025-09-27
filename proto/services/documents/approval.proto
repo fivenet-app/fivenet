@@ -83,14 +83,9 @@ message DeleteApprovalAccessResponse {}
 
 message ListTasksRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-
+  // Search
   int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
-  optional resources.timestamp.Timestamp snapshot_date = 3;
-
-  repeated resources.documents.ApprovalTaskStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
-  int32 user_id = 5; // Filter "my tasks"
-  string job = 6 [(buf.validate.field).string.max_len = 20];
-  int32 minimum_grade = 7;
+  repeated resources.documents.ApprovalTaskStatus statuses = 3 [(buf.validate.field).repeated.max_items = 4];
 }
 
 message ListTasksResponse {

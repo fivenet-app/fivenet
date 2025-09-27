@@ -8532,12 +8532,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `document_id` | [int64](#int64) |  | Search |
 | `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
-| `user_id` | [int32](#int32) |  | Filter "my tasks" |
-| `job` | [string](#string) |  |  |
-| `minimum_grade` | [int32](#int32) |  |  |
 
 
 

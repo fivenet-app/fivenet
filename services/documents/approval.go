@@ -51,26 +51,12 @@ func (s *Server) ListTasks(
 
 	condition := tApprovalTasks.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
 
-	if req.GetSnapshotDate() != nil {
-		snap := req.GetSnapshotDate().AsTime()
-		condition = condition.AND(tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)))
-	}
-
 	if len(req.GetStatuses()) > 0 {
 		vals := make([]mysql.Expression, 0, len(req.GetStatuses()))
 		for _, st := range req.GetStatuses() {
 			vals = append(vals, mysql.Int32(int32(st)))
 		}
 		condition = condition.AND(tApprovalTasks.Status.IN(vals...))
-	}
-	if req.GetUserId() != 0 {
-		condition = condition.AND(tApprovalTasks.UserID.EQ(mysql.Int32(req.GetUserId())))
-	}
-	if job := req.GetJob(); job != "" {
-		condition = condition.AND(tApprovalTasks.Job.EQ(mysql.String(job)))
-	}
-	if grade := req.GetMinimumGrade(); grade != 0 {
-		condition = condition.AND(tApprovalTasks.MinimumGrade.GT_EQ(mysql.Int32(grade)))
 	}
 
 	countStmt := mysql.
