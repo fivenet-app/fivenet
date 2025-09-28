@@ -600,7 +600,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 </UBadge>
 
                                 <UBadge
-                                    v-if="doc.document?.draft"
+                                    v-if="doc.document?.meta?.draft"
                                     class="inline-flex gap-1"
                                     color="info"
                                     size="md"
