@@ -122,7 +122,15 @@ func (g *UserInfo) Plan(ctx context.Context) (*discordtypes.State, []discord.Emb
 
 				if g.checkIfJobIgnored(user.Job) {
 					user.Job = g.job
-					return nil, nil
+
+					// If the user has an ignored job, we don't want to remove the unemployed role if they have it
+					// Additionally we want to prevent a kick if the unemployed mode is set to kick and the user has an ignored job
+					if !slices.Contains(member.RoleIDs, g.unemployedRole.ID) ||
+						settings.GetUserInfoSyncSettings().
+							GetUnemployedMode() !=
+							jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE {
+						return nil, nil
+					}
 				}
 
 				switch settings.GetUserInfoSyncSettings().GetUnemployedMode() {

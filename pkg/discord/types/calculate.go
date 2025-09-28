@@ -39,12 +39,13 @@ func (s *State) Calculate(
 		}
 
 		u := s.Users[member.User.ID]
-		pu, err := s.calculateUserUpdates(ctx, member, u)
+		pu, ebs, err := s.calculateUserUpdates(ctx, member, u)
 		if err != nil {
 			return plan, logs, err
 		}
 
 		plan.Users = append(plan.Users, pu)
+		logs = append(logs, ebs...)
 	}
 
 	plan.Users = slices.DeleteFunc(plan.Users, func(u *User) bool {
@@ -116,7 +117,7 @@ func (s *State) calculateUserUpdates(
 	ctx context.Context,
 	member discord.Member,
 	user *User,
-) (*User, error) {
+) (*User, []discord.Embed, error) {
 	if user == nil {
 		user = &User{
 			ID:    member.User.ID,
@@ -124,15 +125,19 @@ func (s *State) calculateUserUpdates(
 		}
 	}
 
+	embeds := []discord.Embed{}
+
 	for _, fn := range s.UserProcessors {
-		_, err := fn(ctx, s.GuildID, member, user)
+		ebs, err := fn(ctx, s.GuildID, member, user)
 		if err != nil {
-			return nil, fmt.Errorf(
+			return nil, embeds, fmt.Errorf(
 				"error in user processor (dc member id %d). %w",
 				member.User.ID,
 				err,
 			)
 		}
+
+		embeds = append(embeds, ebs...)
 	}
 
 	for _, userRole := range user.Roles.Sum {
@@ -160,5 +165,5 @@ func (s *State) calculateUserUpdates(
 		}
 	}
 
-	return user, nil
+	return user, embeds, nil
 }
