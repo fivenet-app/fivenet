@@ -8526,7 +8526,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ListTasksRequest
+### services.documents.ListApprovalTasksRequest
 
 
 | Field | Type | Label | Description |
@@ -8539,7 +8539,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ListTasksResponse
+### services.documents.ListApprovalTasksResponse
 
 
 | Field | Type | Label | Description |
@@ -8689,7 +8689,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListApprovalAccess` | [ListApprovalAccessRequest](#servicesdocumentsListApprovalAccessRequest) | [ListApprovalAccessResponse](#servicesdocumentsListApprovalAccessResponse) |Access (policy-scoped) |
 | `UpsertApprovalAccess` | [UpsertApprovalAccessRequest](#servicesdocumentsUpsertApprovalAccessRequest) | [UpsertApprovalAccessResponse](#servicesdocumentsUpsertApprovalAccessResponse) | |
 | `DeleteApprovalAccess` | [DeleteApprovalAccessRequest](#servicesdocumentsDeleteApprovalAccessRequest) | [DeleteApprovalAccessResponse](#servicesdocumentsDeleteApprovalAccessResponse) | |
-| `ListTasks` | [ListTasksRequest](#servicesdocumentsListTasksRequest) | [ListTasksResponse](#servicesdocumentsListTasksResponse) |Tasks |
+| `ListApprovalTasks` | [ListApprovalTasksRequest](#servicesdocumentsListApprovalTasksRequest) | [ListApprovalTasksResponse](#servicesdocumentsListApprovalTasksResponse) |Tasks |
 | `DecideTask` | [DecideTaskRequest](#servicesdocumentsDecideTaskRequest) | [DecideTaskResponse](#servicesdocumentsDecideTaskResponse) | |
 | `ReopenTask` | [ReopenTaskRequest](#servicesdocumentsReopenTaskRequest) | [ReopenTaskResponse](#servicesdocumentsReopenTaskResponse) | |
 

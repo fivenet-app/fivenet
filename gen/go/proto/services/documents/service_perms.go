@@ -18,7 +18,7 @@ var PermsRemap = map[string]string{
 	"documents.ApprovalService/DecideTask":              "DocumentsService/ListDocuments",
 	"documents.ApprovalService/GetPolicy":               "DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListApprovalAccess":      "DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListTasks":               "DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalTasks":       "DocumentsService/ListDocuments",
 	"documents.ApprovalService/RecomputePolicyCounters": "documents.ApprovalService/DeleteApprovalAccess",
 	"documents.ApprovalService/StartApprovalRound":      "DocumentsService/ListDocuments",
 	"documents.ApprovalService/UpsertApprovalAccess":    "DocumentsService/ListDocuments",

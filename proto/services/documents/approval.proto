@@ -81,14 +81,14 @@ message DeleteApprovalAccessRequest {
 
 message DeleteApprovalAccessResponse {}
 
-message ListTasksRequest {
+message ListApprovalTasksRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search
   int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
   repeated resources.documents.ApprovalTaskStatus statuses = 3 [(buf.validate.field).repeated.max_items = 4];
 }
 
-message ListTasksResponse {
+message ListApprovalTasksResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
 }
@@ -173,7 +173,7 @@ service ApprovalService {
   }
 
   // Tasks
-  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse) {
+  rpc ListApprovalTasks(ListApprovalTasksRequest) returns (ListApprovalTasksResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       service: "DocumentsService"

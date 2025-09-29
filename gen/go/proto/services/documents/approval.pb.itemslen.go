@@ -4,7 +4,7 @@
 package documents
 
 // ItemsLen returns the length of Tasks.
-func (m *ListTasksResponse) ItemsLen() int {
+func (m *ListApprovalTasksResponse) ItemsLen() int {
 	if m == nil {
 		return 0
 	}

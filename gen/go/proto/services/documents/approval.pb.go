@@ -786,7 +786,7 @@ func (*DeleteApprovalAccessResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{15}
 }
 
-type ListTasksRequest struct {
+type ListApprovalTasksRequest struct {
 	state      protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	// Search
@@ -796,20 +796,20 @@ type ListTasksRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTasksRequest) Reset() {
-	*x = ListTasksRequest{}
+func (x *ListApprovalTasksRequest) Reset() {
+	*x = ListApprovalTasksRequest{}
 	mi := &file_services_documents_approval_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTasksRequest) String() string {
+func (x *ListApprovalTasksRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTasksRequest) ProtoMessage() {}
+func (*ListApprovalTasksRequest) ProtoMessage() {}
 
-func (x *ListTasksRequest) ProtoReflect() protoreflect.Message {
+func (x *ListApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_documents_approval_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -821,33 +821,33 @@ func (x *ListTasksRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTasksRequest.ProtoReflect.Descriptor instead.
-func (*ListTasksRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListApprovalTasksRequest.ProtoReflect.Descriptor instead.
+func (*ListApprovalTasksRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *ListTasksRequest) GetPagination() *database.PaginationRequest {
+func (x *ListApprovalTasksRequest) GetPagination() *database.PaginationRequest {
 	if x != nil {
 		return x.Pagination
 	}
 	return nil
 }
 
-func (x *ListTasksRequest) GetDocumentId() int64 {
+func (x *ListApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
 	}
 	return 0
 }
 
-func (x *ListTasksRequest) GetStatuses() []documents.ApprovalTaskStatus {
+func (x *ListApprovalTasksRequest) GetStatuses() []documents.ApprovalTaskStatus {
 	if x != nil {
 		return x.Statuses
 	}
 	return nil
 }
 
-type ListTasksResponse struct {
+type ListApprovalTasksResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Tasks         []*documents.ApprovalTask    `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
@@ -855,20 +855,20 @@ type ListTasksResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListTasksResponse) Reset() {
-	*x = ListTasksResponse{}
+func (x *ListApprovalTasksResponse) Reset() {
+	*x = ListApprovalTasksResponse{}
 	mi := &file_services_documents_approval_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListTasksResponse) String() string {
+func (x *ListApprovalTasksResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListTasksResponse) ProtoMessage() {}
+func (*ListApprovalTasksResponse) ProtoMessage() {}
 
-func (x *ListTasksResponse) ProtoReflect() protoreflect.Message {
+func (x *ListApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_documents_approval_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -880,19 +880,19 @@ func (x *ListTasksResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListTasksResponse.ProtoReflect.Descriptor instead.
-func (*ListTasksResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListApprovalTasksResponse.ProtoReflect.Descriptor instead.
+func (*ListApprovalTasksResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *ListTasksResponse) GetPagination() *database.PaginationResponse {
+func (x *ListApprovalTasksResponse) GetPagination() *database.PaginationResponse {
 	if x != nil {
 		return x.Pagination
 	}
 	return nil
 }
 
-func (x *ListTasksResponse) GetTasks() []*documents.ApprovalTask {
+func (x *ListApprovalTasksResponse) GetTasks() []*documents.ApprovalTask {
 	if x != nil {
 		return x.Tasks
 	}
@@ -1173,15 +1173,15 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06access\x18\x01 \x01(\v2#.resources.documents.ApprovalAccessR\x06access\"-\n" +
 	"\x1bDeleteApprovalAccessRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1e\n" +
-	"\x1cDeleteApprovalAccessResponse\"\xc6\x01\n" +
-	"\x10ListTasksRequest\x12L\n" +
+	"\x1cDeleteApprovalAccessResponse\"\xce\x01\n" +
+	"\x18ListApprovalTasksRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\bstatuses\x18\x03 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"\xa1\x01\n" +
-	"\x11ListTasksResponse\x12M\n" +
+	"\bstatuses\x18\x03 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"\xa9\x01\n" +
+	"\x19ListApprovalTasksResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
@@ -1201,7 +1201,7 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tR\x06reason\"\x88\x01\n" +
 	"\x12ReopenTaskResponse\x125\n" +
 	"\x04task\x18\x01 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xba\f\n" +
+	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xd2\f\n" +
 	"\x0fApprovalService\x12\x81\x01\n" +
 	"\tGetPolicy\x12$.services.documents.GetPolicyRequest\x1a%.services.documents.GetPolicyResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12i\n" +
 	"\fUpsertPolicy\x12'.services.documents.UpsertPolicyRequest\x1a(.services.documents.UpsertPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9c\x01\n" +
@@ -1210,8 +1210,8 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x17RecomputePolicyCounters\x122.services.documents.RecomputePolicyCountersRequest\x1a3.services.documents.RecomputePolicyCountersResponse\"\x1c\xd2\xf3\x18\x18\b\x01\x1a\x14DeleteApprovalAccess\x12\x9c\x01\n" +
 	"\x12ListApprovalAccess\x12-.services.documents.ListApprovalAccessRequest\x1a..services.documents.ListApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\xa2\x01\n" +
 	"\x14UpsertApprovalAccess\x12/.services.documents.UpsertApprovalAccessRequest\x1a0.services.documents.UpsertApprovalAccessResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
-	"\x14DeleteApprovalAccess\x12/.services.documents.DeleteApprovalAccessRequest\x1a0.services.documents.DeleteApprovalAccessResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x81\x01\n" +
-	"\tListTasks\x12$.services.documents.ListTasksRequest\x1a%.services.documents.ListTasksResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
+	"\x14DeleteApprovalAccess\x12/.services.documents.DeleteApprovalAccessRequest\x1a0.services.documents.DeleteApprovalAccessResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x99\x01\n" +
+	"\x11ListApprovalTasks\x12,.services.documents.ListApprovalTasksRequest\x1a-.services.documents.ListApprovalTasksResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
 	"\n" +
 	"DecideTask\x12%.services.documents.DecideTaskRequest\x1a&.services.documents.DecideTaskResponse\"'\xd2\xf3\x18#\b\x01\x12\x10DocumentsService\x1a\rListDocuments\x12c\n" +
 	"\n" +
@@ -1247,8 +1247,8 @@ var file_services_documents_approval_proto_goTypes = []any{
 	(*UpsertApprovalAccessResponse)(nil),    // 13: services.documents.UpsertApprovalAccessResponse
 	(*DeleteApprovalAccessRequest)(nil),     // 14: services.documents.DeleteApprovalAccessRequest
 	(*DeleteApprovalAccessResponse)(nil),    // 15: services.documents.DeleteApprovalAccessResponse
-	(*ListTasksRequest)(nil),                // 16: services.documents.ListTasksRequest
-	(*ListTasksResponse)(nil),               // 17: services.documents.ListTasksResponse
+	(*ListApprovalTasksRequest)(nil),        // 16: services.documents.ListApprovalTasksRequest
+	(*ListApprovalTasksResponse)(nil),       // 17: services.documents.ListApprovalTasksResponse
 	(*DecideTaskRequest)(nil),               // 18: services.documents.DecideTaskRequest
 	(*DecideTaskResponse)(nil),              // 19: services.documents.DecideTaskResponse
 	(*ReopenTaskRequest)(nil),               // 20: services.documents.ReopenTaskRequest
@@ -1277,10 +1277,10 @@ var file_services_documents_approval_proto_depIdxs = []int32{
 	27, // 10: services.documents.ListApprovalAccessResponse.access:type_name -> resources.documents.ApprovalAccess
 	27, // 11: services.documents.UpsertApprovalAccessRequest.access:type_name -> resources.documents.ApprovalAccess
 	27, // 12: services.documents.UpsertApprovalAccessResponse.access:type_name -> resources.documents.ApprovalAccess
-	28, // 13: services.documents.ListTasksRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	29, // 14: services.documents.ListTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
-	30, // 15: services.documents.ListTasksResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	26, // 16: services.documents.ListTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
+	28, // 13: services.documents.ListApprovalTasksRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	29, // 14: services.documents.ListApprovalTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
+	30, // 15: services.documents.ListApprovalTasksResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	26, // 16: services.documents.ListApprovalTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
 	29, // 17: services.documents.DecideTaskRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
 	26, // 18: services.documents.DecideTaskResponse.task:type_name -> resources.documents.ApprovalTask
 	22, // 19: services.documents.DecideTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
@@ -1294,7 +1294,7 @@ var file_services_documents_approval_proto_depIdxs = []int32{
 	10, // 27: services.documents.ApprovalService.ListApprovalAccess:input_type -> services.documents.ListApprovalAccessRequest
 	12, // 28: services.documents.ApprovalService.UpsertApprovalAccess:input_type -> services.documents.UpsertApprovalAccessRequest
 	14, // 29: services.documents.ApprovalService.DeleteApprovalAccess:input_type -> services.documents.DeleteApprovalAccessRequest
-	16, // 30: services.documents.ApprovalService.ListTasks:input_type -> services.documents.ListTasksRequest
+	16, // 30: services.documents.ApprovalService.ListApprovalTasks:input_type -> services.documents.ListApprovalTasksRequest
 	18, // 31: services.documents.ApprovalService.DecideTask:input_type -> services.documents.DecideTaskRequest
 	20, // 32: services.documents.ApprovalService.ReopenTask:input_type -> services.documents.ReopenTaskRequest
 	1,  // 33: services.documents.ApprovalService.GetPolicy:output_type -> services.documents.GetPolicyResponse
@@ -1305,7 +1305,7 @@ var file_services_documents_approval_proto_depIdxs = []int32{
 	11, // 38: services.documents.ApprovalService.ListApprovalAccess:output_type -> services.documents.ListApprovalAccessResponse
 	13, // 39: services.documents.ApprovalService.UpsertApprovalAccess:output_type -> services.documents.UpsertApprovalAccessResponse
 	15, // 40: services.documents.ApprovalService.DeleteApprovalAccess:output_type -> services.documents.DeleteApprovalAccessResponse
-	17, // 41: services.documents.ApprovalService.ListTasks:output_type -> services.documents.ListTasksResponse
+	17, // 41: services.documents.ApprovalService.ListApprovalTasks:output_type -> services.documents.ListApprovalTasksResponse
 	19, // 42: services.documents.ApprovalService.DecideTask:output_type -> services.documents.DecideTaskResponse
 	21, // 43: services.documents.ApprovalService.ReopenTask:output_type -> services.documents.ReopenTaskResponse
 	33, // [33:44] is the sub-list for method output_type

@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
   `started_at` DATETIME(3),
   `completed_at` DATETIME(3),
 
-  `created_at` datetime(3) NOT NULL,
-  `updated_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   `decided_by_user_grade` int DEFAULT NULL,
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,
-  `created_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `decided_at` datetime(3) DEFAULT NULL,
   `due_at` datetime(3) DEFAULT NULL,
   `decision_count` int NOT NULL DEFAULT 0,
@@ -133,8 +133,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_requirements` (
   `collected_count` int NOT NULL DEFAULT 0,
   `required_count` int NOT NULL DEFAULT 1,
 
-  `created_at` datetime(3) NOT NULL,
-  `updated_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps` (
     END
   )) STORED,
 
-  `created_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
@@ -215,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures` (
   `status` smallint(2) NOT NULL,
   `reason` varchar(255) DEFAULT NULL,
 
-  `created_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `revoked_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),

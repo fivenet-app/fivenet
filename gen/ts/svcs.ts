@@ -181,7 +181,7 @@ export const grpcMethods = [
 	'documents.ApprovalService/ListApprovalAccess',
 	'documents.ApprovalService/UpsertApprovalAccess',
 	'documents.ApprovalService/DeleteApprovalAccess',
-	'documents.ApprovalService/ListTasks',
+	'documents.ApprovalService/ListApprovalTasks',
 	'documents.ApprovalService/DecideTask',
 	'documents.ApprovalService/ReopenTask',
 	'documents.CollabService/JoinRoom',

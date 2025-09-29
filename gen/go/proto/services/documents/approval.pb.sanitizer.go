@@ -160,7 +160,7 @@ func (m *ListApprovalAccessResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListTasksRequest) Sanitize() error {
+func (m *ListApprovalTasksRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -185,7 +185,7 @@ func (m *ListTasksRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListTasksResponse) Sanitize() error {
+func (m *ListApprovalTasksResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

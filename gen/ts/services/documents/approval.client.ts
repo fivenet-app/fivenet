@@ -9,8 +9,8 @@ import type { ReopenTaskResponse } from "./approval";
 import type { ReopenTaskRequest } from "./approval";
 import type { DecideTaskResponse } from "./approval";
 import type { DecideTaskRequest } from "./approval";
-import type { ListTasksResponse } from "./approval";
-import type { ListTasksRequest } from "./approval";
+import type { ListApprovalTasksResponse } from "./approval";
+import type { ListApprovalTasksRequest } from "./approval";
 import type { DeleteApprovalAccessResponse } from "./approval";
 import type { DeleteApprovalAccessRequest } from "./approval";
 import type { UpsertApprovalAccessResponse } from "./approval";
@@ -73,9 +73,9 @@ export interface IApprovalServiceClient {
     /**
      * Tasks
      *
-     * @generated from protobuf rpc: ListTasks
+     * @generated from protobuf rpc: ListApprovalTasks
      */
-    listTasks(input: ListTasksRequest, options?: RpcOptions): UnaryCall<ListTasksRequest, ListTasksResponse>;
+    listApprovalTasks(input: ListApprovalTasksRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksRequest, ListApprovalTasksResponse>;
     /**
      * @generated from protobuf rpc: DecideTask
      */
@@ -157,11 +157,11 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
     /**
      * Tasks
      *
-     * @generated from protobuf rpc: ListTasks
+     * @generated from protobuf rpc: ListApprovalTasks
      */
-    listTasks(input: ListTasksRequest, options?: RpcOptions): UnaryCall<ListTasksRequest, ListTasksResponse> {
+    listApprovalTasks(input: ListApprovalTasksRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksRequest, ListApprovalTasksResponse> {
         const method = this.methods[8], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListTasksRequest, ListTasksResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListApprovalTasksRequest, ListApprovalTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DecideTask

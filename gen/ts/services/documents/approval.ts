@@ -194,9 +194,9 @@ export interface DeleteApprovalAccessRequest {
 export interface DeleteApprovalAccessResponse {
 }
 /**
- * @generated from protobuf message services.documents.ListTasksRequest
+ * @generated from protobuf message services.documents.ListApprovalTasksRequest
  */
-export interface ListTasksRequest {
+export interface ListApprovalTasksRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
      */
@@ -213,9 +213,9 @@ export interface ListTasksRequest {
     statuses: ApprovalTaskStatus[];
 }
 /**
- * @generated from protobuf message services.documents.ListTasksResponse
+ * @generated from protobuf message services.documents.ListApprovalTasksResponse
  */
-export interface ListTasksResponse {
+export interface ListApprovalTasksResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
      */
@@ -1083,23 +1083,23 @@ class DeleteApprovalAccessResponse$Type extends MessageType<DeleteApprovalAccess
  */
 export const DeleteApprovalAccessResponse = new DeleteApprovalAccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
+class ListApprovalTasksRequest$Type extends MessageType<ListApprovalTasksRequest> {
     constructor() {
-        super("services.documents.ListTasksRequest", [
+        super("services.documents.ListApprovalTasksRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
-    create(value?: PartialMessage<ListTasksRequest>): ListTasksRequest {
+    create(value?: PartialMessage<ListApprovalTasksRequest>): ListApprovalTasksRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
         message.statuses = [];
         if (value !== undefined)
-            reflectionMergePartial<ListTasksRequest>(this, message, value);
+            reflectionMergePartial<ListApprovalTasksRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTasksRequest): ListTasksRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalTasksRequest): ListApprovalTasksRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1128,7 +1128,7 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: ListTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListApprovalTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -1149,25 +1149,25 @@ class ListTasksRequest$Type extends MessageType<ListTasksRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListTasksRequest
+ * @generated MessageType for protobuf message services.documents.ListApprovalTasksRequest
  */
-export const ListTasksRequest = new ListTasksRequest$Type();
+export const ListApprovalTasksRequest = new ListApprovalTasksRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListTasksResponse$Type extends MessageType<ListTasksResponse> {
+class ListApprovalTasksResponse$Type extends MessageType<ListApprovalTasksResponse> {
     constructor() {
-        super("services.documents.ListTasksResponse", [
+        super("services.documents.ListApprovalTasksResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
-    create(value?: PartialMessage<ListTasksResponse>): ListTasksResponse {
+    create(value?: PartialMessage<ListApprovalTasksResponse>): ListApprovalTasksResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.tasks = [];
         if (value !== undefined)
-            reflectionMergePartial<ListTasksResponse>(this, message, value);
+            reflectionMergePartial<ListApprovalTasksResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTasksResponse): ListTasksResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalTasksResponse): ListApprovalTasksResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1189,7 +1189,7 @@ class ListTasksResponse$Type extends MessageType<ListTasksResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: ListTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListApprovalTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -1203,9 +1203,9 @@ class ListTasksResponse$Type extends MessageType<ListTasksResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListTasksResponse
+ * @generated MessageType for protobuf message services.documents.ListApprovalTasksResponse
  */
-export const ListTasksResponse = new ListTasksResponse$Type();
+export const ListApprovalTasksResponse = new ListApprovalTasksResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DecideTaskRequest$Type extends MessageType<DecideTaskRequest> {
     constructor() {
@@ -1450,7 +1450,7 @@ export const ApprovalService = new ServiceType("services.documents.ApprovalServi
     { name: "ListApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalAccessRequest, O: ListApprovalAccessResponse },
     { name: "UpsertApprovalAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: UpsertApprovalAccessRequest, O: UpsertApprovalAccessResponse },
     { name: "DeleteApprovalAccess", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteApprovalAccessRequest, O: DeleteApprovalAccessResponse },
-    { name: "ListTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListTasksRequest, O: ListTasksResponse },
+    { name: "ListApprovalTasks", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksRequest, O: ListApprovalTasksResponse },
     { name: "DecideTask", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: DecideTaskRequest, O: DecideTaskResponse },
     { name: "ReopenTask", options: { "codegen.perms.perms": { enabled: true } }, I: ReopenTaskRequest, O: ReopenTaskResponse }
 ], { "codegen.perms.perms_svc": { order: 52, icon: "i-mdi-approval" } });

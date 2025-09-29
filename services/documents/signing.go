@@ -99,7 +99,6 @@ func (s *Server) UpsertRequirement(
 			tSigReq.Required,
 			tSigReq.BindingMode,
 			tSigReq.AllowedTypesMask,
-			tSigReq.CreatedAt,
 		).
 		VALUES(
 			r.GetDocumentId(),
@@ -115,7 +114,6 @@ func (s *Server) UpsertRequirement(
 			tSigReq.Required.SET(mysql.Bool(r.GetRequired())),
 			tSigReq.BindingMode.SET(mysql.Int32(int32(r.GetBindingMode()))),
 			tSigReq.AllowedTypesMask.SET(mysql.RawString("VALUES(`allowed_types_mask`)")),
-			tSigReq.UpdatedAt.SET(mysql.TimestampT(now)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -240,11 +238,7 @@ func (s *Server) ApplySignature(
 	if err != nil {
 		return nil, err
 	}
-	defer func() {
-		if err != nil {
-			_ = tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	now := time.Now()
 	var requirementId *int64
@@ -269,7 +263,6 @@ func (s *Server) ApplySignature(
 			tSignatures.PayloadJSON,
 			tSignatures.StampID,
 			tSignatures.Status,
-			tSignatures.CreatedAt,
 		).
 		VALUES(
 			req.GetDocumentId(),
@@ -281,7 +274,6 @@ func (s *Server) ApplySignature(
 			req.GetPayloadJson(),
 			stampId,
 			int32(documents.SignatureStatus_SIGNATURE_STATUS_VALID),
-			now,
 		)
 
 	if _, err = ins.ExecContext(ctx, tx); err != nil {
