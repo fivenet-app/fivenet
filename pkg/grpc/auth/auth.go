@@ -12,10 +12,12 @@ import (
 )
 
 const (
-	AuthAccIDCtxTag         = "auth.accid"
-	AuthActiveCharIDCtxTag  = "auth.chrid"
-	AuthSubCtxTag           = "auth.sub"
-	AuthActiveCharJobCtxTag = "auth.chrjob"
+	AuthAccIDCtxTag        = "auth.accid"
+	AuthActiveCharIDCtxTag = "auth.chrid"
+	AuthSubCtxTag          = "auth.sub"
+
+	AuthActiveCharJobCtxTag      = "auth.chrjob"
+	AuthActiveCharJobGradeCtxTag = "auth.chrjobg"
 )
 
 const (
@@ -101,6 +103,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, _ string) (context.Context,
 		AuthAccIDCtxTag, tInfo.AccID,
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 		AuthActiveCharJobCtxTag, userInfo.GetJob(),
+		AuthActiveCharJobGradeCtxTag, userInfo.GetJobGrade(),
 	})
 
 	if userInfo.LastChar != nil && userInfo.GetLastChar() != userInfo.GetUserId() &&

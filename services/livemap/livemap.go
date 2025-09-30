@@ -374,10 +374,10 @@ func (s *Server) Stream(
 				}
 
 				if !userOnDuty {
+                    // If the user is (back) on duty, we send the user markers snapshot
 					if um.GetUserId() == userInfo.GetUserId() {
 						userOnDuty = true
-						// If the user is (back) on duty, we send the user markers snapshot
-						if err := s.sendUserMarkers(srv, usersJobs, userInfo, userOnDuty); err != nil {
+						if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
 							return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 						}
 					} else if !userInfo.GetSuperuser() {

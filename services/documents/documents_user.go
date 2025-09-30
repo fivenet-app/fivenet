@@ -159,7 +159,7 @@ func (s *Server) ListUserDocuments(
 		).
 		WHERE(condition).
 		OFFSET(req.GetPagination().GetOffset()).
-		ORDER_BY(tDocRel.CreatedAt.DESC()).
+		ORDER_BY(orderBys...).
 		LIMIT(limit).AsTable("doc_rel")
 
 	stmt := docRel.

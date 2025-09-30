@@ -160,7 +160,7 @@ ${t('common.crime', state.value.selectedPenalties.length)}:
         type: NotificationType.INFO,
     });
 
-    return copyToClipboardWrapper(text);
+    await copyToClipboardWrapper(text);
 }
 
 function reset(): void {
