@@ -236,6 +236,7 @@ const (
 	StampAccessLevel_STAMP_ACCESS_LEVEL_UNSPECIFIED StampAccessLevel = 0
 	StampAccessLevel_STAMP_ACCESS_LEVEL_BLOCKED     StampAccessLevel = 1
 	StampAccessLevel_STAMP_ACCESS_LEVEL_USE         StampAccessLevel = 2
+	StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE      StampAccessLevel = 3
 )
 
 // Enum value maps for StampAccessLevel.
@@ -244,11 +245,13 @@ var (
 		0: "STAMP_ACCESS_LEVEL_UNSPECIFIED",
 		1: "STAMP_ACCESS_LEVEL_BLOCKED",
 		2: "STAMP_ACCESS_LEVEL_USE",
+		3: "STAMP_ACCESS_LEVEL_MANAGE",
 	}
 	StampAccessLevel_value = map[string]int32{
 		"STAMP_ACCESS_LEVEL_UNSPECIFIED": 0,
 		"STAMP_ACCESS_LEVEL_BLOCKED":     1,
 		"STAMP_ACCESS_LEVEL_USE":         2,
+		"STAMP_ACCESS_LEVEL_MANAGE":      3,
 	}
 )
 
@@ -1204,11 +1207,12 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\x1cSIGNATURE_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16SIGNATURE_STATUS_VALID\x10\x01\x12\x1c\n" +
 	"\x18SIGNATURE_STATUS_REVOKED\x10\x02\x12\x1c\n" +
-	"\x18SIGNATURE_STATUS_INVALID\x10\x03*r\n" +
+	"\x18SIGNATURE_STATUS_INVALID\x10\x03*\x91\x01\n" +
 	"\x10StampAccessLevel\x12\"\n" +
 	"\x1eSTAMP_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aSTAMP_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
-	"\x16STAMP_ACCESS_LEVEL_USE\x10\x02BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x16STAMP_ACCESS_LEVEL_USE\x10\x02\x12\x1d\n" +
+	"\x19STAMP_ACCESS_LEVEL_MANAGE\x10\x03BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_signing_proto_rawDescOnce sync.Once

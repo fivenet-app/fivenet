@@ -146,6 +146,8 @@ service ApprovalService {
       name: "ListDocuments"
     };
   }
+
+  // Helpers
   rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse) {
     option (codegen.perms.perms) = {
       enabled: true

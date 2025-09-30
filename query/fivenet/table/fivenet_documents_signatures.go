@@ -17,19 +17,19 @@ type fivenetDocumentsSignaturesTable struct {
 	mysql.Table
 
 	// Columns
-	ID            mysql.ColumnInteger
-	DocumentID    mysql.ColumnInteger
-	SnapshotDate  mysql.ColumnTimestamp
-	RequirementID mysql.ColumnInteger
-	UserID        mysql.ColumnInteger
-	UserJob       mysql.ColumnString
-	Type          mysql.ColumnInteger
-	PayloadJSON   mysql.ColumnString
-	StampID       mysql.ColumnInteger
-	Status        mysql.ColumnInteger
-	Reason        mysql.ColumnString
-	CreatedAt     mysql.ColumnTimestamp
-	RevokedAt     mysql.ColumnTimestamp
+	ID           mysql.ColumnInteger
+	DocumentID   mysql.ColumnInteger
+	SnapshotDate mysql.ColumnTimestamp
+	PolicyID     mysql.ColumnInteger
+	UserID       mysql.ColumnInteger
+	UserJob      mysql.ColumnString
+	Type         mysql.ColumnInteger
+	PayloadJSON  mysql.ColumnString
+	StampID      mysql.ColumnInteger
+	Status       mysql.ColumnInteger
+	Reason       mysql.ColumnString
+	CreatedAt    mysql.ColumnTimestamp
+	RevokedAt    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,41 +71,41 @@ func newFivenetDocumentsSignaturesTable(schemaName, tableName, alias string) *Fi
 
 func newFivenetDocumentsSignaturesTableImpl(schemaName, tableName, alias string) fivenetDocumentsSignaturesTable {
 	var (
-		IDColumn            = mysql.IntegerColumn("id")
-		DocumentIDColumn    = mysql.IntegerColumn("document_id")
-		SnapshotDateColumn  = mysql.TimestampColumn("snapshot_date")
-		RequirementIDColumn = mysql.IntegerColumn("requirement_id")
-		UserIDColumn        = mysql.IntegerColumn("user_id")
-		UserJobColumn       = mysql.StringColumn("user_job")
-		TypeColumn          = mysql.IntegerColumn("type")
-		PayloadJSONColumn   = mysql.StringColumn("payload_json")
-		StampIDColumn       = mysql.IntegerColumn("stamp_id")
-		StatusColumn        = mysql.IntegerColumn("status")
-		ReasonColumn        = mysql.StringColumn("reason")
-		CreatedAtColumn     = mysql.TimestampColumn("created_at")
-		RevokedAtColumn     = mysql.TimestampColumn("revoked_at")
-		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, RequirementIDColumn, UserIDColumn, UserJobColumn, TypeColumn, PayloadJSONColumn, StampIDColumn, StatusColumn, ReasonColumn, CreatedAtColumn, RevokedAtColumn}
-		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, RequirementIDColumn, UserIDColumn, UserJobColumn, TypeColumn, PayloadJSONColumn, StampIDColumn, StatusColumn, ReasonColumn, CreatedAtColumn, RevokedAtColumn}
-		defaultColumns      = mysql.ColumnList{}
+		IDColumn           = mysql.IntegerColumn("id")
+		DocumentIDColumn   = mysql.IntegerColumn("document_id")
+		SnapshotDateColumn = mysql.TimestampColumn("snapshot_date")
+		PolicyIDColumn     = mysql.IntegerColumn("policy_id")
+		UserIDColumn       = mysql.IntegerColumn("user_id")
+		UserJobColumn      = mysql.StringColumn("user_job")
+		TypeColumn         = mysql.IntegerColumn("type")
+		PayloadJSONColumn  = mysql.StringColumn("payload_json")
+		StampIDColumn      = mysql.IntegerColumn("stamp_id")
+		StatusColumn       = mysql.IntegerColumn("status")
+		ReasonColumn       = mysql.StringColumn("reason")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		RevokedAtColumn    = mysql.TimestampColumn("revoked_at")
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, UserIDColumn, UserJobColumn, TypeColumn, PayloadJSONColumn, StampIDColumn, StatusColumn, ReasonColumn, CreatedAtColumn, RevokedAtColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, UserIDColumn, UserJobColumn, TypeColumn, PayloadJSONColumn, StampIDColumn, StatusColumn, ReasonColumn, CreatedAtColumn, RevokedAtColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsSignaturesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:            IDColumn,
-		DocumentID:    DocumentIDColumn,
-		SnapshotDate:  SnapshotDateColumn,
-		RequirementID: RequirementIDColumn,
-		UserID:        UserIDColumn,
-		UserJob:       UserJobColumn,
-		Type:          TypeColumn,
-		PayloadJSON:   PayloadJSONColumn,
-		StampID:       StampIDColumn,
-		Status:        StatusColumn,
-		Reason:        ReasonColumn,
-		CreatedAt:     CreatedAtColumn,
-		RevokedAt:     RevokedAtColumn,
+		ID:           IDColumn,
+		DocumentID:   DocumentIDColumn,
+		SnapshotDate: SnapshotDateColumn,
+		PolicyID:     PolicyIDColumn,
+		UserID:       UserIDColumn,
+		UserJob:      UserJobColumn,
+		Type:         TypeColumn,
+		PayloadJSON:  PayloadJSONColumn,
+		StampID:      StampIDColumn,
+		Status:       StatusColumn,
+		Reason:       ReasonColumn,
+		CreatedAt:    CreatedAtColumn,
+		RevokedAt:    RevokedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

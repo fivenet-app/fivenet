@@ -11,9 +11,9 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-var FivenetDocumentsSignatureRequirements = newFivenetDocumentsSignatureRequirementsTable("", "fivenet_documents_signature_requirements", "")
+var FivenetDocumentsSignaturePolicies = newFivenetDocumentsSignaturePoliciesTable("", "fivenet_documents_signature_policies", "")
 
-type fivenetDocumentsSignatureRequirementsTable struct {
+type fivenetDocumentsSignaturePoliciesTable struct {
 	mysql.Table
 
 	// Columns
@@ -28,47 +28,47 @@ type fivenetDocumentsSignatureRequirementsTable struct {
 	RequiredCount    mysql.ColumnInteger
 	CreatedAt        mysql.ColumnTimestamp
 	UpdatedAt        mysql.ColumnTimestamp
-    DeletedAt        mysql.ColumnTimestamp
+	DeletedAt        mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
 	DefaultColumns mysql.ColumnList
 }
 
-type FivenetDocumentsSignatureRequirementsTable struct {
-	fivenetDocumentsSignatureRequirementsTable
+type FivenetDocumentsSignaturePoliciesTable struct {
+	fivenetDocumentsSignaturePoliciesTable
 
-	NEW fivenetDocumentsSignatureRequirementsTable
+	NEW fivenetDocumentsSignaturePoliciesTable
 }
 
-// AS creates new FivenetDocumentsSignatureRequirementsTable with assigned alias
-func (a FivenetDocumentsSignatureRequirementsTable) AS(alias string) *FivenetDocumentsSignatureRequirementsTable {
-	return newFivenetDocumentsSignatureRequirementsTable(a.SchemaName(), a.TableName(), alias)
+// AS creates new FivenetDocumentsSignaturePoliciesTable with assigned alias
+func (a FivenetDocumentsSignaturePoliciesTable) AS(alias string) *FivenetDocumentsSignaturePoliciesTable {
+	return newFivenetDocumentsSignaturePoliciesTable(a.SchemaName(), a.TableName(), alias)
 }
 
-// Schema creates new FivenetDocumentsSignatureRequirementsTable with assigned schema name
-func (a FivenetDocumentsSignatureRequirementsTable) FromSchema(schemaName string) *FivenetDocumentsSignatureRequirementsTable {
-	return newFivenetDocumentsSignatureRequirementsTable(schemaName, a.TableName(), a.Alias())
+// Schema creates new FivenetDocumentsSignaturePoliciesTable with assigned schema name
+func (a FivenetDocumentsSignaturePoliciesTable) FromSchema(schemaName string) *FivenetDocumentsSignaturePoliciesTable {
+	return newFivenetDocumentsSignaturePoliciesTable(schemaName, a.TableName(), a.Alias())
 }
 
-// WithPrefix creates new FivenetDocumentsSignatureRequirementsTable with assigned table prefix
-func (a FivenetDocumentsSignatureRequirementsTable) WithPrefix(prefix string) *FivenetDocumentsSignatureRequirementsTable {
-	return newFivenetDocumentsSignatureRequirementsTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
+// WithPrefix creates new FivenetDocumentsSignaturePoliciesTable with assigned table prefix
+func (a FivenetDocumentsSignaturePoliciesTable) WithPrefix(prefix string) *FivenetDocumentsSignaturePoliciesTable {
+	return newFivenetDocumentsSignaturePoliciesTable(a.SchemaName(), prefix+a.TableName(), a.TableName())
 }
 
-// WithSuffix creates new FivenetDocumentsSignatureRequirementsTable with assigned table suffix
-func (a FivenetDocumentsSignatureRequirementsTable) WithSuffix(suffix string) *FivenetDocumentsSignatureRequirementsTable {
-	return newFivenetDocumentsSignatureRequirementsTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
+// WithSuffix creates new FivenetDocumentsSignaturePoliciesTable with assigned table suffix
+func (a FivenetDocumentsSignaturePoliciesTable) WithSuffix(suffix string) *FivenetDocumentsSignaturePoliciesTable {
+	return newFivenetDocumentsSignaturePoliciesTable(a.SchemaName(), a.TableName()+suffix, a.TableName())
 }
 
-func newFivenetDocumentsSignatureRequirementsTable(schemaName, tableName, alias string) *FivenetDocumentsSignatureRequirementsTable {
-	return &FivenetDocumentsSignatureRequirementsTable{
-		fivenetDocumentsSignatureRequirementsTable: newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, alias),
-		NEW: newFivenetDocumentsSignatureRequirementsTableImpl("", "new", ""),
+func newFivenetDocumentsSignaturePoliciesTable(schemaName, tableName, alias string) *FivenetDocumentsSignaturePoliciesTable {
+	return &FivenetDocumentsSignaturePoliciesTable{
+		fivenetDocumentsSignaturePoliciesTable: newFivenetDocumentsSignaturePoliciesTableImpl(schemaName, tableName, alias),
+		NEW:                                    newFivenetDocumentsSignaturePoliciesTableImpl("", "new", ""),
 	}
 }
 
-func newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, alias string) fivenetDocumentsSignatureRequirementsTable {
+func newFivenetDocumentsSignaturePoliciesTableImpl(schemaName, tableName, alias string) fivenetDocumentsSignaturePoliciesTable {
 	var (
 		IDColumn               = mysql.IntegerColumn("id")
 		DocumentIDColumn       = mysql.IntegerColumn("document_id")
@@ -81,13 +81,13 @@ func newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, al
 		RequiredCountColumn    = mysql.IntegerColumn("required_count")
 		CreatedAtColumn        = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn        = mysql.TimestampColumn("updated_at")
-        DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
+		DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
 		allColumns             = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
 		mutableColumns         = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		defaultColumns         = mysql.ColumnList{RequiredColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, DeletedAtColumn}
+		defaultColumns         = mysql.ColumnList{RequiredColumn, AllowedTypesMaskColumn, CollectedCountColumn, RequiredCountColumn, CreatedAtColumn}
 	)
 
-	return fivenetDocumentsSignatureRequirementsTable{
+	return fivenetDocumentsSignaturePoliciesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
@@ -102,7 +102,7 @@ func newFivenetDocumentsSignatureRequirementsTableImpl(schemaName, tableName, al
 		RequiredCount:    RequiredCountColumn,
 		CreatedAt:        CreatedAtColumn,
 		UpdatedAt:        UpdatedAtColumn,
-        DeletedAt:        DeletedAtColumn,
+		DeletedAt:        DeletedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

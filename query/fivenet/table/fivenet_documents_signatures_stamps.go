@@ -76,7 +76,7 @@ func newFivenetDocumentsSignaturesStampsTableImpl(schemaName, tableName, alias s
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		allColumns         = mysql.ColumnList{IDColumn, NameColumn, UserIDColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
 		mutableColumns     = mysql.ColumnList{NameColumn, UserIDColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
-		defaultColumns     = mysql.ColumnList{}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsSignaturesStampsTable{

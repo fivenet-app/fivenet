@@ -53,6 +53,8 @@ export interface IApprovalServiceClient {
      */
     completeApprovalRound(input: CompleteApprovalRoundRequest, options?: RpcOptions): UnaryCall<CompleteApprovalRoundRequest, CompleteApprovalRoundResponse>;
     /**
+     * Helpers
+     *
      * @generated from protobuf rpc: RecomputePolicyCounters
      */
     recomputePolicyCounters(input: RecomputePolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputePolicyCountersRequest, RecomputePolicyCountersResponse>;
@@ -125,6 +127,8 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
         return stackIntercept<CompleteApprovalRoundRequest, CompleteApprovalRoundResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Helpers
+     *
      * @generated from protobuf rpc: RecomputePolicyCounters
      */
     recomputePolicyCounters(input: RecomputePolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputePolicyCountersRequest, RecomputePolicyCountersResponse> {

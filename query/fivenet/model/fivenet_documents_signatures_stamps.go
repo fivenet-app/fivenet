@@ -18,6 +18,6 @@ type FivenetDocumentsSignaturesStamps struct {
 	SvgTemplate  string     `json:"svg_template"`
 	VariantsJSON *string    `json:"variants_json"`
 	SortKey      *string    `json:"sort_key"`
-	CreatedAt    time.Time  `json:"created_at"`
+	CreatedAt    *time.Time `json:"created_at"`
 	DeletedAt    *time.Time `json:"deleted_at"`
 }

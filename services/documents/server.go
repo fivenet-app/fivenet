@@ -293,69 +293,69 @@ func NewServer(p Params) *Server {
 
 		signatureAccess: access.NewGrouped[documents.SignatureJobAccess, *documents.SignatureJobAccess, documents.SignatureUserAccess, *documents.SignatureUserAccess, access.DummyQualificationAccess[documents.SignatureAccessLevel], *access.DummyQualificationAccess[documents.SignatureAccessLevel], documents.SignatureAccessLevel](
 			p.DB,
-			table.FivenetDocumentsSignatureRequirements,
+			table.FivenetDocumentsSignaturePolicies,
 			&access.TargetTableColumns{
-				ID:         table.FivenetDocumentsSignatureRequirements.ID,
-				DeletedAt:  table.FivenetDocumentsSignatureRequirements.DeletedAt,
+				ID:         table.FivenetDocumentsSignaturePolicies.ID,
+				DeletedAt:  table.FivenetDocumentsSignaturePolicies.DeletedAt,
 				CreatorID:  nil,
 				CreatorJob: nil,
 			},
 			access.NewJobs[documents.SignatureJobAccess, *documents.SignatureJobAccess, documents.SignatureAccessLevel](
-				table.FivenetDocumentsSignatureRequirementsAccess,
+				table.FivenetDocumentsSignaturePoliciesAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetDocumentsSignatureRequirementsAccess.ID,
-						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.TargetID,
-						Access:   table.FivenetDocumentsSignatureRequirementsAccess.Access,
+						ID:       table.FivenetDocumentsSignaturePoliciesAccess.ID,
+						TargetID: table.FivenetDocumentsSignaturePoliciesAccess.TargetID,
+						Access:   table.FivenetDocumentsSignaturePoliciesAccess.Access,
 					},
-					Job:          table.FivenetDocumentsSignatureRequirementsAccess.Job,
-					MinimumGrade: table.FivenetDocumentsSignatureRequirementsAccess.MinimumGrade,
+					Job:          table.FivenetDocumentsSignaturePoliciesAccess.Job,
+					MinimumGrade: table.FivenetDocumentsSignaturePoliciesAccess.MinimumGrade,
 				},
-				table.FivenetDocumentsSignatureRequirementsAccess.AS("signature_job_access"),
+				table.FivenetDocumentsSignaturePoliciesAccess.AS("signature_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						ID: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_job_access",
 						).ID,
-						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						TargetID: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_job_access",
 						).TargetID,
-						Access: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						Access: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_job_access",
 						).Access,
 					},
-					Job: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+					Job: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 						"signature_job_access",
 					).Job,
-					MinimumGrade: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+					MinimumGrade: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 						"signature_job_access",
 					).MinimumGrade,
 				},
 			),
 			access.NewUsers[documents.SignatureUserAccess, *documents.SignatureUserAccess, documents.SignatureAccessLevel](
-				table.FivenetDocumentsSignatureRequirementsAccess,
+				table.FivenetDocumentsSignaturePoliciesAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetDocumentsSignatureRequirementsAccess.ID,
-						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.TargetID,
-						Access:   table.FivenetDocumentsSignatureRequirementsAccess.Access,
+						ID:       table.FivenetDocumentsSignaturePoliciesAccess.ID,
+						TargetID: table.FivenetDocumentsSignaturePoliciesAccess.TargetID,
+						Access:   table.FivenetDocumentsSignaturePoliciesAccess.Access,
 					},
-					UserId: table.FivenetDocumentsSignatureRequirementsAccess.UserID,
+					UserID: table.FivenetDocumentsSignaturePoliciesAccess.UserID,
 				},
-				table.FivenetDocumentsSignatureRequirementsAccess.AS("signature_user_access"),
+				table.FivenetDocumentsSignaturePoliciesAccess.AS("signature_user_access"),
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						ID: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_user_access",
 						).ID,
-						TargetID: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						TargetID: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_user_access",
 						).TargetID,
-						Access: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+						Access: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 							"signature_user_access",
 						).Access,
 					},
-					UserId: table.FivenetDocumentsSignatureRequirementsAccess.AS(
+					UserID: table.FivenetDocumentsSignaturePoliciesAccess.AS(
 						"signature_user_access",
 					).UserID,
 				},
@@ -368,7 +368,7 @@ func NewServer(p Params) *Server {
 			&access.TargetTableColumns{
 				ID:         table.FivenetDocumentsSignaturesStamps.ID,
 				DeletedAt:  table.FivenetDocumentsSignaturesStamps.DeletedAt,
-				CreatorID:  nil,
+				CreatorID:  table.FivenetDocumentsSignaturesStamps.UserID,
 				CreatorJob: nil,
 			},
 			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](
@@ -471,7 +471,7 @@ func newAccess(
 					TargetID: table.FivenetDocumentsAccess.TargetID,
 					Access:   table.FivenetDocumentsAccess.Access,
 				},
-				UserId: table.FivenetDocumentsAccess.UserID,
+				UserID: table.FivenetDocumentsAccess.UserID,
 			},
 			table.FivenetDocumentsAccess.AS("document_user_access"),
 			&access.UserAccessColumns{
@@ -480,7 +480,7 @@ func newAccess(
 					TargetID: table.FivenetDocumentsAccess.AS("document_user_access").TargetID,
 					Access:   table.FivenetDocumentsAccess.AS("document_user_access").Access,
 				},
-				UserId: table.FivenetDocumentsAccess.AS("document_user_access").UserID,
+				UserID: table.FivenetDocumentsAccess.AS("document_user_access").UserID,
 			},
 		),
 		nil,

@@ -4,7 +4,7 @@
 package documents
 
 // ItemsLen returns the length of Requirements.
-func (m *ListRequirementsResponse) ItemsLen() int {
+func (m *ListSignaturePoliciesResponse) ItemsLen() int {
 	if m == nil {
 		return 0
 	}

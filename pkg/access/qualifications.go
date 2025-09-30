@@ -78,7 +78,7 @@ func (a *Qualifications[U, T, V]) List(
 				a.selectColumns.ID,
 				a.selectColumns.TargetID,
 				a.selectColumns.Access,
-				a.selectColumns.QualificationId,
+				a.selectColumns.QualificationID,
 				tQualifications.ID,
 				tQualifications.Job,
 				tQualifications.Abbreviation,
@@ -90,15 +90,15 @@ func (a *Qualifications[U, T, V]) List(
 			FROM(
 				a.selectTable.
 					INNER_JOIN(tQualifications,
-						tQualifications.ID.EQ(a.selectColumns.QualificationId),
+						tQualifications.ID.EQ(a.selectColumns.QualificationID),
 					).
 					LEFT_JOIN(tQualiResults,
-						tQualiResults.QualificationID.EQ(a.selectColumns.QualificationId),
+						tQualiResults.QualificationID.EQ(a.selectColumns.QualificationID),
 					),
 			).
 			WHERE(mysql.AND(
 				a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
-				a.selectColumns.QualificationId.IS_NOT_NULL(),
+				a.selectColumns.QualificationID.IS_NOT_NULL(),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualiResults.DeletedAt.IS_NULL(),
 				tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
@@ -109,7 +109,7 @@ func (a *Qualifications[U, T, V]) List(
 				a.selectColumns.ID,
 				a.selectColumns.TargetID,
 				a.selectColumns.Access,
-				a.selectColumns.QualificationId,
+				a.selectColumns.QualificationID,
 				tQualifications.ID,
 				tQualifications.Job,
 				tQualifications.Abbreviation,
@@ -118,7 +118,7 @@ func (a *Qualifications[U, T, V]) List(
 			FROM(
 				a.selectTable.
 					INNER_JOIN(tQualifications,
-						tQualifications.ID.EQ(a.selectColumns.QualificationId),
+						tQualifications.ID.EQ(a.selectColumns.QualificationID),
 					),
 			).
 			WHERE(mysql.AND(

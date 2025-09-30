@@ -4127,6 +4127,7 @@ Stamps
 | `STAMP_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
 | `STAMP_ACCESS_LEVEL_BLOCKED` | 1 |  |
 | `STAMP_ACCESS_LEVEL_USE` | 2 |  |
+| `STAMP_ACCESS_LEVEL_MANAGE` | 3 |  |
 
 
  <!-- end enums -->
@@ -8685,7 +8686,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `UpsertPolicy` | [UpsertPolicyRequest](#servicesdocumentsUpsertPolicyRequest) | [UpsertPolicyResponse](#servicesdocumentsUpsertPolicyResponse) | |
 | `StartApprovalRound` | [StartApprovalRoundRequest](#servicesdocumentsStartApprovalRoundRequest) | [StartApprovalRoundResponse](#servicesdocumentsStartApprovalRoundResponse) | |
 | `CompleteApprovalRound` | [CompleteApprovalRoundRequest](#servicesdocumentsCompleteApprovalRoundRequest) | [CompleteApprovalRoundResponse](#servicesdocumentsCompleteApprovalRoundResponse) | |
-| `RecomputePolicyCounters` | [RecomputePolicyCountersRequest](#servicesdocumentsRecomputePolicyCountersRequest) | [RecomputePolicyCountersResponse](#servicesdocumentsRecomputePolicyCountersResponse) | |
+| `RecomputePolicyCounters` | [RecomputePolicyCountersRequest](#servicesdocumentsRecomputePolicyCountersRequest) | [RecomputePolicyCountersResponse](#servicesdocumentsRecomputePolicyCountersResponse) |Helpers |
 | `ListApprovalAccess` | [ListApprovalAccessRequest](#servicesdocumentsListApprovalAccessRequest) | [ListApprovalAccessResponse](#servicesdocumentsListApprovalAccessResponse) |Access (policy-scoped) |
 | `UpsertApprovalAccess` | [UpsertApprovalAccessRequest](#servicesdocumentsUpsertApprovalAccessRequest) | [UpsertApprovalAccessResponse](#servicesdocumentsUpsertApprovalAccessResponse) | |
 | `DeleteApprovalAccess` | [DeleteApprovalAccessRequest](#servicesdocumentsDeleteApprovalAccessRequest) | [DeleteApprovalAccessResponse](#servicesdocumentsDeleteApprovalAccessResponse) | |
@@ -9585,7 +9586,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.DeleteRequirementAccessRequest
+### services.documents.DeleteSignaturePolicyAccessRequest
 
 
 | Field | Type | Label | Description |
@@ -9596,30 +9597,13 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.DeleteRequirementAccessResponse
+### services.documents.DeleteSignaturePolicyAccessResponse
 
 
 
 
 
-### services.documents.DeleteRequirementRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirement_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteRequirementResponse
-
-
-
-
-
-### services.documents.ListRequirementAccessRequest
+### services.documents.DeleteSignaturePolicyRequest
 
 
 | Field | Type | Label | Description |
@@ -9630,18 +9614,30 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ListRequirementAccessResponse
+### services.documents.DeleteSignaturePolicyResponse
+
+
+
+
+
+### services.documents.DeleteStampRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+| `stamp_id` | [int64](#int64) |  |  |
 
 
 
 
 
-### services.documents.ListRequirementsRequest
+### services.documents.DeleteStampResponse
+
+
+
+
+
+### services.documents.ListSignaturePoliciesRequest
 
 
 | Field | Type | Label | Description |
@@ -9654,13 +9650,35 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ListRequirementsResponse
+### services.documents.ListSignaturePoliciesResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
+
+
+
+
+
+### services.documents.ListSignaturePolicyAccessRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirement_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.ListSignaturePolicyAccessResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
 
 
 
@@ -9767,7 +9785,7 @@ Stamps listing — your example wired in as a method
 
 
 
-### services.documents.UpsertRequirementAccessRequest
+### services.documents.UpsertSignaturePolicyAccessRequest
 
 
 | Field | Type | Label | Description |
@@ -9779,7 +9797,7 @@ Stamps listing — your example wired in as a method
 
 
 
-### services.documents.UpsertRequirementAccessResponse
+### services.documents.UpsertSignaturePolicyAccessResponse
 
 
 | Field | Type | Label | Description |
@@ -9790,7 +9808,7 @@ Stamps listing — your example wired in as a method
 
 
 
-### services.documents.UpsertRequirementRequest
+### services.documents.UpsertSignaturePolicyRequest
 
 
 | Field | Type | Label | Description |
@@ -9801,12 +9819,34 @@ Stamps listing — your example wired in as a method
 
 
 
-### services.documents.UpsertRequirementResponse
+### services.documents.UpsertSignaturePolicyResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `requirement` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) |  |  |
+
+
+
+
+
+### services.documents.UpsertStampRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `stamp` | [resources.documents.Stamp](#resourcesdocumentsStamp) |  |  |
+
+
+
+
+
+### services.documents.UpsertStampResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `stamp` | [resources.documents.Stamp](#resourcesdocumentsStamp) |  |  |
 
 
 
@@ -9822,17 +9862,19 @@ Stamps listing — your example wired in as a method
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListRequirements` | [ListRequirementsRequest](#servicesdocumentsListRequirementsRequest) | [ListRequirementsResponse](#servicesdocumentsListRequirementsResponse) |Requirements |
-| `UpsertRequirement` | [UpsertRequirementRequest](#servicesdocumentsUpsertRequirementRequest) | [UpsertRequirementResponse](#servicesdocumentsUpsertRequirementResponse) | |
-| `DeleteRequirement` | [DeleteRequirementRequest](#servicesdocumentsDeleteRequirementRequest) | [DeleteRequirementResponse](#servicesdocumentsDeleteRequirementResponse) | |
-| `ListRequirementAccess` | [ListRequirementAccessRequest](#servicesdocumentsListRequirementAccessRequest) | [ListRequirementAccessResponse](#servicesdocumentsListRequirementAccessResponse) |Requirement ACL |
-| `UpsertRequirementAccess` | [UpsertRequirementAccessRequest](#servicesdocumentsUpsertRequirementAccessRequest) | [UpsertRequirementAccessResponse](#servicesdocumentsUpsertRequirementAccessResponse) | |
-| `DeleteRequirementAccess` | [DeleteRequirementAccessRequest](#servicesdocumentsDeleteRequirementAccessRequest) | [DeleteRequirementAccessResponse](#servicesdocumentsDeleteRequirementAccessResponse) | |
+| `ListSignaturePolicies` | [ListSignaturePoliciesRequest](#servicesdocumentsListSignaturePoliciesRequest) | [ListSignaturePoliciesResponse](#servicesdocumentsListSignaturePoliciesResponse) |Requirements |
+| `UpsertSignaturePolicy` | [UpsertSignaturePolicyRequest](#servicesdocumentsUpsertSignaturePolicyRequest) | [UpsertSignaturePolicyResponse](#servicesdocumentsUpsertSignaturePolicyResponse) | |
+| `DeleteSignaturePolicy` | [DeleteSignaturePolicyRequest](#servicesdocumentsDeleteSignaturePolicyRequest) | [DeleteSignaturePolicyResponse](#servicesdocumentsDeleteSignaturePolicyResponse) | |
+| `ListSignaturePolicyAccess` | [ListSignaturePolicyAccessRequest](#servicesdocumentsListSignaturePolicyAccessRequest) | [ListSignaturePolicyAccessResponse](#servicesdocumentsListSignaturePolicyAccessResponse) |Requirement ACL |
+| `UpsertSignaturePolicyAccess` | [UpsertSignaturePolicyAccessRequest](#servicesdocumentsUpsertSignaturePolicyAccessRequest) | [UpsertSignaturePolicyAccessResponse](#servicesdocumentsUpsertSignaturePolicyAccessResponse) | |
+| `DeleteSignaturePolicyAccess` | [DeleteSignaturePolicyAccessRequest](#servicesdocumentsDeleteSignaturePolicyAccessRequest) | [DeleteSignaturePolicyAccessResponse](#servicesdocumentsDeleteSignaturePolicyAccessResponse) | |
 | `ListSignatures` | [ListSignaturesRequest](#servicesdocumentsListSignaturesRequest) | [ListSignaturesResponse](#servicesdocumentsListSignaturesResponse) |Signatures |
 | `ApplySignature` | [ApplySignatureRequest](#servicesdocumentsApplySignatureRequest) | [ApplySignatureResponse](#servicesdocumentsApplySignatureResponse) | |
 | `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
 | `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
 | `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |Stamps |
+| `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |
+| `DeleteStamp` | [DeleteStampRequest](#servicesdocumentsDeleteStampRequest) | [DeleteStampResponse](#servicesdocumentsDeleteStampResponse) | |
 
  <!-- end services -->
 

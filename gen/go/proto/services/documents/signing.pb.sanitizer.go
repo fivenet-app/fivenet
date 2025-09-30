@@ -53,7 +53,7 @@ func (m *ApplySignatureResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteRequirementAccessRequest) Sanitize() error {
+func (m *DeleteSignaturePolicyAccessRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -63,7 +63,7 @@ func (m *DeleteRequirementAccessRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteRequirementAccessResponse) Sanitize() error {
+func (m *DeleteSignaturePolicyAccessResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -73,7 +73,7 @@ func (m *DeleteRequirementAccessResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteRequirementRequest) Sanitize() error {
+func (m *DeleteSignaturePolicyRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -83,7 +83,7 @@ func (m *DeleteRequirementRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteRequirementResponse) Sanitize() error {
+func (m *DeleteSignaturePolicyResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -93,7 +93,7 @@ func (m *DeleteRequirementResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListRequirementAccessRequest) Sanitize() error {
+func (m *DeleteStampRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -103,18 +103,9 @@ func (m *ListRequirementAccessRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListRequirementAccessResponse) Sanitize() error {
+func (m *DeleteStampResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
@@ -122,7 +113,7 @@ func (m *ListRequirementAccessResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListRequirementsRequest) Sanitize() error {
+func (m *ListSignaturePoliciesRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -150,7 +141,7 @@ func (m *ListRequirementsRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListRequirementsResponse) Sanitize() error {
+func (m *ListSignaturePoliciesResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -174,6 +165,35 @@ func (m *ListRequirementsResponse) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListSignaturePolicyAccessRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListSignaturePolicyAccessResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -357,7 +377,7 @@ func (m *RevokeSignatureResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UpsertRequirementAccessRequest) Sanitize() error {
+func (m *UpsertSignaturePolicyAccessRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -376,7 +396,7 @@ func (m *UpsertRequirementAccessRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UpsertRequirementAccessResponse) Sanitize() error {
+func (m *UpsertSignaturePolicyAccessResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -395,7 +415,7 @@ func (m *UpsertRequirementAccessResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UpsertRequirementRequest) Sanitize() error {
+func (m *UpsertSignaturePolicyRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -414,7 +434,7 @@ func (m *UpsertRequirementRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UpsertRequirementResponse) Sanitize() error {
+func (m *UpsertSignaturePolicyResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -422,6 +442,44 @@ func (m *UpsertRequirementResponse) Sanitize() error {
 	// Field: Requirement
 	if m.Requirement != nil {
 		if v, ok := any(m.GetRequirement()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpsertStampRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Stamp
+	if m.Stamp != nil {
+		if v, ok := any(m.GetStamp()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpsertStampResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Stamp
+	if m.Stamp != nil {
+		if v, ok := any(m.GetStamp()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

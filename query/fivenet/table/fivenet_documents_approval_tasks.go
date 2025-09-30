@@ -92,7 +92,7 @@ func newFivenetDocumentsApprovalTasksTableImpl(schemaName, tableName, alias stri
 		DecisionCountColumn      = mysql.IntegerColumn("decision_count")
 		allColumns               = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, DecidedByUserIDColumn, DecidedByJobColumn, DecidedByUserGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, DecidedAtColumn, DueAtColumn, DecisionCountColumn}
 		mutableColumns           = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, DecidedByUserIDColumn, DecidedByJobColumn, DecidedByUserGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, DecidedAtColumn, DueAtColumn, DecisionCountColumn}
-		defaultColumns           = mysql.ColumnList{DecisionCountColumn}
+		defaultColumns           = mysql.ColumnList{CreatedAtColumn, DecisionCountColumn}
 	)
 
 	return fivenetDocumentsApprovalTasksTable{

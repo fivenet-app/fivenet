@@ -45,15 +45,15 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
 
 	// Service: documents.SigningService
-	"documents.SigningService/ApplySignature":           "DocumentsService/ListDocuments",
-	"documents.SigningService/DeleteRequirementAccess":  "documents.SigningService/UpsertRequirement",
-	"documents.SigningService/ListRequirementAccess":    "DocumentsService/ListDocuments",
-	"documents.SigningService/ListRequirements":         "DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignatures":           "DocumentsService/ListDocuments",
-	"documents.SigningService/ListUsableStamps":         "DocumentsService/ListDocuments",
-	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteRequirement",
-	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteRequirement",
-	"documents.SigningService/UpsertRequirementAccess":  "documents.SigningService/UpsertRequirement",
+	"documents.SigningService/ApplySignature":              "DocumentsService/ListDocuments",
+	"documents.SigningService/DeleteSignaturePolicyAccess": "documents.SigningService/UpsertSignaturePolicy",
+	"documents.SigningService/ListSignaturePolicies":       "DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignaturePolicyAccess":   "DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignatures":              "DocumentsService/ListDocuments",
+	"documents.SigningService/ListUsableStamps":            "DocumentsService/ListDocuments",
+	"documents.SigningService/RecomputeSignatureStatus":    "documents.SigningService/DeleteSignaturePolicy",
+	"documents.SigningService/RevokeSignature":             "documents.SigningService/DeleteSignaturePolicy",
+	"documents.SigningService/UpsertSignaturePolicyAccess": "documents.SigningService/UpsertSignaturePolicy",
 }
 
 func init() {
@@ -276,14 +276,28 @@ func init() {
 		// Service: documents.SigningService
 		{
 			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceDeleteRequirementPerm,
+			Name:     permkeys.SigningServiceDeleteSignaturePolicyPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
 			Icon:     "i-mdi-signature",
 		},
 		{
 			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceUpsertRequirementPerm,
+			Name:     permkeys.SigningServiceDeleteStampPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceUpsertSignaturePolicyPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceUpsertStampPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
 			Icon:     "i-mdi-signature",

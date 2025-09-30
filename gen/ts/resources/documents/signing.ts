@@ -405,7 +405,11 @@ export enum StampAccessLevel {
     /**
      * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_USE = 2;
      */
-    USE = 2
+    USE = 2,
+    /**
+     * @generated from protobuf enum value: STAMP_ACCESS_LEVEL_MANAGE = 3;
+     */
+    MANAGE = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class SignatureTypes$Type extends MessageType<SignatureTypes> {

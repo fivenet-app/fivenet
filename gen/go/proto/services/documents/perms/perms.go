@@ -47,6 +47,8 @@ const (
 	DocumentsServiceToggleDocumentPinTypesPermField    perms.Key  = "Types"
 	DocumentsServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocumentsServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
-	SigningServiceDeleteRequirementPerm                perms.Name = "DeleteRequirement"
-	SigningServiceUpsertRequirementPerm                perms.Name = "UpsertRequirement"
+	SigningServiceDeleteSignaturePolicyPerm            perms.Name = "DeleteSignaturePolicy"
+	SigningServiceDeleteStampPerm                      perms.Name = "DeleteStamp"
+	SigningServiceUpsertSignaturePolicyPerm            perms.Name = "UpsertSignaturePolicy"
+	SigningServiceUpsertStampPerm                      perms.Name = "UpsertStamp"
 )

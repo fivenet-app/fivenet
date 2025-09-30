@@ -22,9 +22,9 @@ import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
- * @generated from protobuf message services.documents.ListRequirementsRequest
+ * @generated from protobuf message services.documents.ListSignaturePoliciesRequest
  */
-export interface ListRequirementsRequest {
+export interface ListSignaturePoliciesRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
      */
@@ -39,9 +39,9 @@ export interface ListRequirementsRequest {
     snapshotDate?: Timestamp;
 }
 /**
- * @generated from protobuf message services.documents.ListRequirementsResponse
+ * @generated from protobuf message services.documents.ListSignaturePoliciesResponse
  */
-export interface ListRequirementsResponse {
+export interface ListSignaturePoliciesResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
      */
@@ -52,59 +52,59 @@ export interface ListRequirementsResponse {
     requirements: SignatureRequirement[];
 }
 /**
- * @generated from protobuf message services.documents.UpsertRequirementRequest
+ * @generated from protobuf message services.documents.UpsertSignaturePolicyRequest
  */
-export interface UpsertRequirementRequest {
+export interface UpsertSignaturePolicyRequest {
     /**
      * @generated from protobuf field: resources.documents.SignatureRequirement requirement = 1
      */
     requirement?: SignatureRequirement;
 }
 /**
- * @generated from protobuf message services.documents.UpsertRequirementResponse
+ * @generated from protobuf message services.documents.UpsertSignaturePolicyResponse
  */
-export interface UpsertRequirementResponse {
+export interface UpsertSignaturePolicyResponse {
     /**
      * @generated from protobuf field: resources.documents.SignatureRequirement requirement = 1
      */
     requirement?: SignatureRequirement;
 }
 /**
- * @generated from protobuf message services.documents.DeleteRequirementRequest
+ * @generated from protobuf message services.documents.DeleteSignaturePolicyRequest
  */
-export interface DeleteRequirementRequest {
+export interface DeleteSignaturePolicyRequest {
     /**
      * @generated from protobuf field: int64 requirement_id = 1
      */
     requirementId: number;
 }
 /**
- * @generated from protobuf message services.documents.DeleteRequirementResponse
+ * @generated from protobuf message services.documents.DeleteSignaturePolicyResponse
  */
-export interface DeleteRequirementResponse {
+export interface DeleteSignaturePolicyResponse {
 }
 /**
- * @generated from protobuf message services.documents.ListRequirementAccessRequest
+ * @generated from protobuf message services.documents.ListSignaturePolicyAccessRequest
  */
-export interface ListRequirementAccessRequest {
+export interface ListSignaturePolicyAccessRequest {
     /**
      * @generated from protobuf field: int64 requirement_id = 1
      */
     requirementId: number;
 }
 /**
- * @generated from protobuf message services.documents.ListRequirementAccessResponse
+ * @generated from protobuf message services.documents.ListSignaturePolicyAccessResponse
  */
-export interface ListRequirementAccessResponse {
+export interface ListSignaturePolicyAccessResponse {
     /**
      * @generated from protobuf field: resources.documents.SignatureAccess access = 1
      */
     access?: SignatureAccess;
 }
 /**
- * @generated from protobuf message services.documents.UpsertRequirementAccessRequest
+ * @generated from protobuf message services.documents.UpsertSignaturePolicyAccessRequest
  */
-export interface UpsertRequirementAccessRequest {
+export interface UpsertSignaturePolicyAccessRequest {
     /**
      * @generated from protobuf field: int64 requirement_id = 1
      */
@@ -115,27 +115,27 @@ export interface UpsertRequirementAccessRequest {
     access?: SignatureAccess;
 }
 /**
- * @generated from protobuf message services.documents.UpsertRequirementAccessResponse
+ * @generated from protobuf message services.documents.UpsertSignaturePolicyAccessResponse
  */
-export interface UpsertRequirementAccessResponse {
+export interface UpsertSignaturePolicyAccessResponse {
     /**
      * @generated from protobuf field: resources.documents.SignatureAccess access = 1
      */
     access?: SignatureAccess;
 }
 /**
- * @generated from protobuf message services.documents.DeleteRequirementAccessRequest
+ * @generated from protobuf message services.documents.DeleteSignaturePolicyAccessRequest
  */
-export interface DeleteRequirementAccessRequest {
+export interface DeleteSignaturePolicyAccessRequest {
     /**
      * @generated from protobuf field: int64 id = 1
      */
     id: number;
 }
 /**
- * @generated from protobuf message services.documents.DeleteRequirementAccessResponse
+ * @generated from protobuf message services.documents.DeleteSignaturePolicyAccessResponse
  */
-export interface DeleteRequirementAccessResponse {
+export interface DeleteSignaturePolicyAccessResponse {
 }
 /**
  * @generated from protobuf message services.documents.ListSignaturesRequest
@@ -301,23 +301,55 @@ export interface ListUsableStampsResponse {
      */
     stamps: Stamp[];
 }
+/**
+ * @generated from protobuf message services.documents.UpsertStampRequest
+ */
+export interface UpsertStampRequest {
+    /**
+     * @generated from protobuf field: resources.documents.Stamp stamp = 1
+     */
+    stamp?: Stamp;
+}
+/**
+ * @generated from protobuf message services.documents.UpsertStampResponse
+ */
+export interface UpsertStampResponse {
+    /**
+     * @generated from protobuf field: resources.documents.Stamp stamp = 1
+     */
+    stamp?: Stamp;
+}
+/**
+ * @generated from protobuf message services.documents.DeleteStampRequest
+ */
+export interface DeleteStampRequest {
+    /**
+     * @generated from protobuf field: int64 stamp_id = 1
+     */
+    stampId: number;
+}
+/**
+ * @generated from protobuf message services.documents.DeleteStampResponse
+ */
+export interface DeleteStampResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
-class ListRequirementsRequest$Type extends MessageType<ListRequirementsRequest> {
+class ListSignaturePoliciesRequest$Type extends MessageType<ListSignaturePoliciesRequest> {
     constructor() {
-        super("services.documents.ListRequirementsRequest", [
+        super("services.documents.ListSignaturePoliciesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
         ]);
     }
-    create(value?: PartialMessage<ListRequirementsRequest>): ListRequirementsRequest {
+    create(value?: PartialMessage<ListSignaturePoliciesRequest>): ListSignaturePoliciesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
         if (value !== undefined)
-            reflectionMergePartial<ListRequirementsRequest>(this, message, value);
+            reflectionMergePartial<ListSignaturePoliciesRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListRequirementsRequest): ListRequirementsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePoliciesRequest): ListSignaturePoliciesRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -342,7 +374,7 @@ class ListRequirementsRequest$Type extends MessageType<ListRequirementsRequest> 
         }
         return message;
     }
-    internalBinaryWrite(message: ListRequirementsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListSignaturePoliciesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -359,25 +391,25 @@ class ListRequirementsRequest$Type extends MessageType<ListRequirementsRequest> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListRequirementsRequest
+ * @generated MessageType for protobuf message services.documents.ListSignaturePoliciesRequest
  */
-export const ListRequirementsRequest = new ListRequirementsRequest$Type();
+export const ListSignaturePoliciesRequest = new ListSignaturePoliciesRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListRequirementsResponse$Type extends MessageType<ListRequirementsResponse> {
+class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePoliciesResponse> {
     constructor() {
-        super("services.documents.ListRequirementsResponse", [
+        super("services.documents.ListSignaturePoliciesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureRequirement, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
-    create(value?: PartialMessage<ListRequirementsResponse>): ListRequirementsResponse {
+    create(value?: PartialMessage<ListSignaturePoliciesResponse>): ListSignaturePoliciesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.requirements = [];
         if (value !== undefined)
-            reflectionMergePartial<ListRequirementsResponse>(this, message, value);
+            reflectionMergePartial<ListSignaturePoliciesResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListRequirementsResponse): ListRequirementsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePoliciesResponse): ListSignaturePoliciesResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -399,7 +431,7 @@ class ListRequirementsResponse$Type extends MessageType<ListRequirementsResponse
         }
         return message;
     }
-    internalBinaryWrite(message: ListRequirementsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListSignaturePoliciesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -413,23 +445,23 @@ class ListRequirementsResponse$Type extends MessageType<ListRequirementsResponse
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListRequirementsResponse
+ * @generated MessageType for protobuf message services.documents.ListSignaturePoliciesResponse
  */
-export const ListRequirementsResponse = new ListRequirementsResponse$Type();
+export const ListSignaturePoliciesResponse = new ListSignaturePoliciesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpsertRequirementRequest$Type extends MessageType<UpsertRequirementRequest> {
+class UpsertSignaturePolicyRequest$Type extends MessageType<UpsertSignaturePolicyRequest> {
     constructor() {
-        super("services.documents.UpsertRequirementRequest", [
+        super("services.documents.UpsertSignaturePolicyRequest", [
             { no: 1, name: "requirement", kind: "message", T: () => SignatureRequirement, options: { "buf.validate.field": { required: true } } }
         ]);
     }
-    create(value?: PartialMessage<UpsertRequirementRequest>): UpsertRequirementRequest {
+    create(value?: PartialMessage<UpsertSignaturePolicyRequest>): UpsertSignaturePolicyRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UpsertRequirementRequest>(this, message, value);
+            reflectionMergePartial<UpsertSignaturePolicyRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertRequirementRequest): UpsertRequirementRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyRequest): UpsertSignaturePolicyRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -448,7 +480,7 @@ class UpsertRequirementRequest$Type extends MessageType<UpsertRequirementRequest
         }
         return message;
     }
-    internalBinaryWrite(message: UpsertRequirementRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UpsertSignaturePolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.documents.SignatureRequirement requirement = 1; */
         if (message.requirement)
             SignatureRequirement.internalBinaryWrite(message.requirement, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -459,23 +491,23 @@ class UpsertRequirementRequest$Type extends MessageType<UpsertRequirementRequest
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.UpsertRequirementRequest
+ * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyRequest
  */
-export const UpsertRequirementRequest = new UpsertRequirementRequest$Type();
+export const UpsertSignaturePolicyRequest = new UpsertSignaturePolicyRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpsertRequirementResponse$Type extends MessageType<UpsertRequirementResponse> {
+class UpsertSignaturePolicyResponse$Type extends MessageType<UpsertSignaturePolicyResponse> {
     constructor() {
-        super("services.documents.UpsertRequirementResponse", [
+        super("services.documents.UpsertSignaturePolicyResponse", [
             { no: 1, name: "requirement", kind: "message", T: () => SignatureRequirement }
         ]);
     }
-    create(value?: PartialMessage<UpsertRequirementResponse>): UpsertRequirementResponse {
+    create(value?: PartialMessage<UpsertSignaturePolicyResponse>): UpsertSignaturePolicyResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UpsertRequirementResponse>(this, message, value);
+            reflectionMergePartial<UpsertSignaturePolicyResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertRequirementResponse): UpsertRequirementResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyResponse): UpsertSignaturePolicyResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -494,7 +526,7 @@ class UpsertRequirementResponse$Type extends MessageType<UpsertRequirementRespon
         }
         return message;
     }
-    internalBinaryWrite(message: UpsertRequirementResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UpsertSignaturePolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.documents.SignatureRequirement requirement = 1; */
         if (message.requirement)
             SignatureRequirement.internalBinaryWrite(message.requirement, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -505,24 +537,24 @@ class UpsertRequirementResponse$Type extends MessageType<UpsertRequirementRespon
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.UpsertRequirementResponse
+ * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyResponse
  */
-export const UpsertRequirementResponse = new UpsertRequirementResponse$Type();
+export const UpsertSignaturePolicyResponse = new UpsertSignaturePolicyResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteRequirementRequest$Type extends MessageType<DeleteRequirementRequest> {
+class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolicyRequest> {
     constructor() {
-        super("services.documents.DeleteRequirementRequest", [
+        super("services.documents.DeleteSignaturePolicyRequest", [
             { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
-    create(value?: PartialMessage<DeleteRequirementRequest>): DeleteRequirementRequest {
+    create(value?: PartialMessage<DeleteSignaturePolicyRequest>): DeleteSignaturePolicyRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.requirementId = 0;
         if (value !== undefined)
-            reflectionMergePartial<DeleteRequirementRequest>(this, message, value);
+            reflectionMergePartial<DeleteSignaturePolicyRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteRequirementRequest): DeleteRequirementRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyRequest): DeleteSignaturePolicyRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -541,7 +573,7 @@ class DeleteRequirementRequest$Type extends MessageType<DeleteRequirementRequest
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteRequirementRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSignaturePolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 requirement_id = 1; */
         if (message.requirementId !== 0)
             writer.tag(1, WireType.Varint).int64(message.requirementId);
@@ -552,21 +584,21 @@ class DeleteRequirementRequest$Type extends MessageType<DeleteRequirementRequest
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DeleteRequirementRequest
+ * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyRequest
  */
-export const DeleteRequirementRequest = new DeleteRequirementRequest$Type();
+export const DeleteSignaturePolicyRequest = new DeleteSignaturePolicyRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteRequirementResponse$Type extends MessageType<DeleteRequirementResponse> {
+class DeleteSignaturePolicyResponse$Type extends MessageType<DeleteSignaturePolicyResponse> {
     constructor() {
-        super("services.documents.DeleteRequirementResponse", []);
+        super("services.documents.DeleteSignaturePolicyResponse", []);
     }
-    create(value?: PartialMessage<DeleteRequirementResponse>): DeleteRequirementResponse {
+    create(value?: PartialMessage<DeleteSignaturePolicyResponse>): DeleteSignaturePolicyResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<DeleteRequirementResponse>(this, message, value);
+            reflectionMergePartial<DeleteSignaturePolicyResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteRequirementResponse): DeleteRequirementResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyResponse): DeleteSignaturePolicyResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -582,7 +614,7 @@ class DeleteRequirementResponse$Type extends MessageType<DeleteRequirementRespon
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteRequirementResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSignaturePolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -590,24 +622,24 @@ class DeleteRequirementResponse$Type extends MessageType<DeleteRequirementRespon
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DeleteRequirementResponse
+ * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyResponse
  */
-export const DeleteRequirementResponse = new DeleteRequirementResponse$Type();
+export const DeleteSignaturePolicyResponse = new DeleteSignaturePolicyResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListRequirementAccessRequest$Type extends MessageType<ListRequirementAccessRequest> {
+class ListSignaturePolicyAccessRequest$Type extends MessageType<ListSignaturePolicyAccessRequest> {
     constructor() {
-        super("services.documents.ListRequirementAccessRequest", [
+        super("services.documents.ListSignaturePolicyAccessRequest", [
             { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
-    create(value?: PartialMessage<ListRequirementAccessRequest>): ListRequirementAccessRequest {
+    create(value?: PartialMessage<ListSignaturePolicyAccessRequest>): ListSignaturePolicyAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.requirementId = 0;
         if (value !== undefined)
-            reflectionMergePartial<ListRequirementAccessRequest>(this, message, value);
+            reflectionMergePartial<ListSignaturePolicyAccessRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListRequirementAccessRequest): ListRequirementAccessRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePolicyAccessRequest): ListSignaturePolicyAccessRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -626,7 +658,7 @@ class ListRequirementAccessRequest$Type extends MessageType<ListRequirementAcces
         }
         return message;
     }
-    internalBinaryWrite(message: ListRequirementAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 requirement_id = 1; */
         if (message.requirementId !== 0)
             writer.tag(1, WireType.Varint).int64(message.requirementId);
@@ -637,23 +669,23 @@ class ListRequirementAccessRequest$Type extends MessageType<ListRequirementAcces
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListRequirementAccessRequest
+ * @generated MessageType for protobuf message services.documents.ListSignaturePolicyAccessRequest
  */
-export const ListRequirementAccessRequest = new ListRequirementAccessRequest$Type();
+export const ListSignaturePolicyAccessRequest = new ListSignaturePolicyAccessRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListRequirementAccessResponse$Type extends MessageType<ListRequirementAccessResponse> {
+class ListSignaturePolicyAccessResponse$Type extends MessageType<ListSignaturePolicyAccessResponse> {
     constructor() {
-        super("services.documents.ListRequirementAccessResponse", [
+        super("services.documents.ListSignaturePolicyAccessResponse", [
             { no: 1, name: "access", kind: "message", T: () => SignatureAccess }
         ]);
     }
-    create(value?: PartialMessage<ListRequirementAccessResponse>): ListRequirementAccessResponse {
+    create(value?: PartialMessage<ListSignaturePolicyAccessResponse>): ListSignaturePolicyAccessResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<ListRequirementAccessResponse>(this, message, value);
+            reflectionMergePartial<ListSignaturePolicyAccessResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListRequirementAccessResponse): ListRequirementAccessResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePolicyAccessResponse): ListSignaturePolicyAccessResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -672,7 +704,7 @@ class ListRequirementAccessResponse$Type extends MessageType<ListRequirementAcce
         }
         return message;
     }
-    internalBinaryWrite(message: ListRequirementAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.documents.SignatureAccess access = 1; */
         if (message.access)
             SignatureAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -683,25 +715,25 @@ class ListRequirementAccessResponse$Type extends MessageType<ListRequirementAcce
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ListRequirementAccessResponse
+ * @generated MessageType for protobuf message services.documents.ListSignaturePolicyAccessResponse
  */
-export const ListRequirementAccessResponse = new ListRequirementAccessResponse$Type();
+export const ListSignaturePolicyAccessResponse = new ListSignaturePolicyAccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementAccessRequest> {
+class UpsertSignaturePolicyAccessRequest$Type extends MessageType<UpsertSignaturePolicyAccessRequest> {
     constructor() {
-        super("services.documents.UpsertRequirementAccessRequest", [
+        super("services.documents.UpsertSignaturePolicyAccessRequest", [
             { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "access", kind: "message", T: () => SignatureAccess, options: { "buf.validate.field": { required: true } } }
         ]);
     }
-    create(value?: PartialMessage<UpsertRequirementAccessRequest>): UpsertRequirementAccessRequest {
+    create(value?: PartialMessage<UpsertSignaturePolicyAccessRequest>): UpsertSignaturePolicyAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.requirementId = 0;
         if (value !== undefined)
-            reflectionMergePartial<UpsertRequirementAccessRequest>(this, message, value);
+            reflectionMergePartial<UpsertSignaturePolicyAccessRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertRequirementAccessRequest): UpsertRequirementAccessRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyAccessRequest): UpsertSignaturePolicyAccessRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -723,7 +755,7 @@ class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementA
         }
         return message;
     }
-    internalBinaryWrite(message: UpsertRequirementAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UpsertSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 requirement_id = 1; */
         if (message.requirementId !== 0)
             writer.tag(1, WireType.Varint).int64(message.requirementId);
@@ -737,23 +769,23 @@ class UpsertRequirementAccessRequest$Type extends MessageType<UpsertRequirementA
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.UpsertRequirementAccessRequest
+ * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyAccessRequest
  */
-export const UpsertRequirementAccessRequest = new UpsertRequirementAccessRequest$Type();
+export const UpsertSignaturePolicyAccessRequest = new UpsertSignaturePolicyAccessRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpsertRequirementAccessResponse$Type extends MessageType<UpsertRequirementAccessResponse> {
+class UpsertSignaturePolicyAccessResponse$Type extends MessageType<UpsertSignaturePolicyAccessResponse> {
     constructor() {
-        super("services.documents.UpsertRequirementAccessResponse", [
+        super("services.documents.UpsertSignaturePolicyAccessResponse", [
             { no: 1, name: "access", kind: "message", T: () => SignatureAccess }
         ]);
     }
-    create(value?: PartialMessage<UpsertRequirementAccessResponse>): UpsertRequirementAccessResponse {
+    create(value?: PartialMessage<UpsertSignaturePolicyAccessResponse>): UpsertSignaturePolicyAccessResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UpsertRequirementAccessResponse>(this, message, value);
+            reflectionMergePartial<UpsertSignaturePolicyAccessResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertRequirementAccessResponse): UpsertRequirementAccessResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyAccessResponse): UpsertSignaturePolicyAccessResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -772,7 +804,7 @@ class UpsertRequirementAccessResponse$Type extends MessageType<UpsertRequirement
         }
         return message;
     }
-    internalBinaryWrite(message: UpsertRequirementAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UpsertSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.documents.SignatureAccess access = 1; */
         if (message.access)
             SignatureAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -783,24 +815,24 @@ class UpsertRequirementAccessResponse$Type extends MessageType<UpsertRequirement
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.UpsertRequirementAccessResponse
+ * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyAccessResponse
  */
-export const UpsertRequirementAccessResponse = new UpsertRequirementAccessResponse$Type();
+export const UpsertSignaturePolicyAccessResponse = new UpsertSignaturePolicyAccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteRequirementAccessRequest$Type extends MessageType<DeleteRequirementAccessRequest> {
+class DeleteSignaturePolicyAccessRequest$Type extends MessageType<DeleteSignaturePolicyAccessRequest> {
     constructor() {
-        super("services.documents.DeleteRequirementAccessRequest", [
+        super("services.documents.DeleteSignaturePolicyAccessRequest", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
-    create(value?: PartialMessage<DeleteRequirementAccessRequest>): DeleteRequirementAccessRequest {
+    create(value?: PartialMessage<DeleteSignaturePolicyAccessRequest>): DeleteSignaturePolicyAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         if (value !== undefined)
-            reflectionMergePartial<DeleteRequirementAccessRequest>(this, message, value);
+            reflectionMergePartial<DeleteSignaturePolicyAccessRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteRequirementAccessRequest): DeleteRequirementAccessRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyAccessRequest): DeleteSignaturePolicyAccessRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -819,7 +851,7 @@ class DeleteRequirementAccessRequest$Type extends MessageType<DeleteRequirementA
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteRequirementAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
@@ -830,21 +862,21 @@ class DeleteRequirementAccessRequest$Type extends MessageType<DeleteRequirementA
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DeleteRequirementAccessRequest
+ * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyAccessRequest
  */
-export const DeleteRequirementAccessRequest = new DeleteRequirementAccessRequest$Type();
+export const DeleteSignaturePolicyAccessRequest = new DeleteSignaturePolicyAccessRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteRequirementAccessResponse$Type extends MessageType<DeleteRequirementAccessResponse> {
+class DeleteSignaturePolicyAccessResponse$Type extends MessageType<DeleteSignaturePolicyAccessResponse> {
     constructor() {
-        super("services.documents.DeleteRequirementAccessResponse", []);
+        super("services.documents.DeleteSignaturePolicyAccessResponse", []);
     }
-    create(value?: PartialMessage<DeleteRequirementAccessResponse>): DeleteRequirementAccessResponse {
+    create(value?: PartialMessage<DeleteSignaturePolicyAccessResponse>): DeleteSignaturePolicyAccessResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<DeleteRequirementAccessResponse>(this, message, value);
+            reflectionMergePartial<DeleteSignaturePolicyAccessResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteRequirementAccessResponse): DeleteRequirementAccessResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyAccessResponse): DeleteSignaturePolicyAccessResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -860,7 +892,7 @@ class DeleteRequirementAccessResponse$Type extends MessageType<DeleteRequirement
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteRequirementAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -868,9 +900,9 @@ class DeleteRequirementAccessResponse$Type extends MessageType<DeleteRequirement
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.DeleteRequirementAccessResponse
+ * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyAccessResponse
  */
-export const DeleteRequirementAccessResponse = new DeleteRequirementAccessResponse$Type();
+export const DeleteSignaturePolicyAccessResponse = new DeleteSignaturePolicyAccessResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
     constructor() {
@@ -1484,19 +1516,198 @@ class ListUsableStampsResponse$Type extends MessageType<ListUsableStampsResponse
  * @generated MessageType for protobuf message services.documents.ListUsableStampsResponse
  */
 export const ListUsableStampsResponse = new ListUsableStampsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertStampRequest$Type extends MessageType<UpsertStampRequest> {
+    constructor() {
+        super("services.documents.UpsertStampRequest", [
+            { no: 1, name: "stamp", kind: "message", T: () => Stamp, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertStampRequest>): UpsertStampRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpsertStampRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertStampRequest): UpsertStampRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.Stamp stamp */ 1:
+                    message.stamp = Stamp.internalBinaryRead(reader, reader.uint32(), options, message.stamp);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpsertStampRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.Stamp stamp = 1; */
+        if (message.stamp)
+            Stamp.internalBinaryWrite(message.stamp, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.UpsertStampRequest
+ */
+export const UpsertStampRequest = new UpsertStampRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpsertStampResponse$Type extends MessageType<UpsertStampResponse> {
+    constructor() {
+        super("services.documents.UpsertStampResponse", [
+            { no: 1, name: "stamp", kind: "message", T: () => Stamp }
+        ]);
+    }
+    create(value?: PartialMessage<UpsertStampResponse>): UpsertStampResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpsertStampResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertStampResponse): UpsertStampResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.Stamp stamp */ 1:
+                    message.stamp = Stamp.internalBinaryRead(reader, reader.uint32(), options, message.stamp);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpsertStampResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.Stamp stamp = 1; */
+        if (message.stamp)
+            Stamp.internalBinaryWrite(message.stamp, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.UpsertStampResponse
+ */
+export const UpsertStampResponse = new UpsertStampResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteStampRequest$Type extends MessageType<DeleteStampRequest> {
+    constructor() {
+        super("services.documents.DeleteStampRequest", [
+            { no: 1, name: "stamp_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteStampRequest>): DeleteStampRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.stampId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DeleteStampRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteStampRequest): DeleteStampRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 stamp_id */ 1:
+                    message.stampId = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteStampRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 stamp_id = 1; */
+        if (message.stampId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.stampId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.DeleteStampRequest
+ */
+export const DeleteStampRequest = new DeleteStampRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteStampResponse$Type extends MessageType<DeleteStampResponse> {
+    constructor() {
+        super("services.documents.DeleteStampResponse", []);
+    }
+    create(value?: PartialMessage<DeleteStampResponse>): DeleteStampResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteStampResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteStampResponse): DeleteStampResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteStampResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.DeleteStampResponse
+ */
+export const DeleteStampResponse = new DeleteStampResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.documents.SigningService
  */
 export const SigningService = new ServiceType("services.documents.SigningService", [
-    { name: "ListRequirements", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementsRequest, O: ListRequirementsResponse },
-    { name: "UpsertRequirement", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertRequirementRequest, O: UpsertRequirementResponse },
-    { name: "DeleteRequirement", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteRequirementRequest, O: DeleteRequirementResponse },
-    { name: "ListRequirementAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListRequirementAccessRequest, O: ListRequirementAccessResponse },
-    { name: "UpsertRequirementAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertRequirement" } }, I: UpsertRequirementAccessRequest, O: UpsertRequirementAccessResponse },
-    { name: "DeleteRequirementAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertRequirement" } }, I: DeleteRequirementAccessRequest, O: DeleteRequirementAccessResponse },
+    { name: "ListSignaturePolicies", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturePoliciesRequest, O: ListSignaturePoliciesResponse },
+    { name: "UpsertSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertSignaturePolicyRequest, O: UpsertSignaturePolicyResponse },
+    { name: "DeleteSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteSignaturePolicyRequest, O: DeleteSignaturePolicyResponse },
+    { name: "ListSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturePolicyAccessRequest, O: ListSignaturePolicyAccessResponse },
+    { name: "UpsertSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertSignaturePolicy" } }, I: UpsertSignaturePolicyAccessRequest, O: UpsertSignaturePolicyAccessResponse },
+    { name: "DeleteSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertSignaturePolicy" } }, I: DeleteSignaturePolicyAccessRequest, O: DeleteSignaturePolicyAccessResponse },
     { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
     { name: "ApplySignature", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ApplySignatureRequest, O: ApplySignatureResponse },
-    { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
-    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteRequirement" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
-    { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse }
+    { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
+    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
+    { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse },
+    { name: "UpsertStamp", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertStampRequest, O: UpsertStampResponse },
+    { name: "DeleteStamp", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteStampRequest, O: DeleteStampResponse }
 ], { "codegen.perms.perms_svc": { order: 57, icon: "i-mdi-signature" } });

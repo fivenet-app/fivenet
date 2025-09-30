@@ -122,7 +122,7 @@ func New(p Params) *UnitDB {
 						TargetID: table.FivenetCentrumUnitsAccess.TargetID,
 						Access:   table.FivenetCentrumUnitsAccess.Access,
 					},
-					QualificationId: table.FivenetCentrumUnitsAccess.QualificationID,
+					QualificationID: table.FivenetCentrumUnitsAccess.QualificationID,
 				},
 				table.FivenetCentrumUnitsAccess.AS("unit_qualification_access"),
 				&access.QualificationAccessColumns{
@@ -137,7 +137,7 @@ func New(p Params) *UnitDB {
 							"unit_qualification_access",
 						).Access,
 					},
-					QualificationId: table.FivenetCentrumUnitsAccess.AS(
+					QualificationID: table.FivenetCentrumUnitsAccess.AS(
 						"unit_qualification_access",
 					).QualificationID,
 				},

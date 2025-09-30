@@ -61,7 +61,7 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([
 			a.selectColumns.ID,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
-			a.selectColumns.UserId,
+			a.selectColumns.UserID,
 			tUsers.ID,
 			tUsers.Job,
 			tUsers.JobGrade,
@@ -73,12 +73,12 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId int64) ([
 		FROM(
 			a.selectTable.
 				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(a.selectColumns.UserId),
+					tUsers.ID.EQ(a.selectColumns.UserID),
 				),
 		).
 		WHERE(mysql.AND(
 			a.selectColumns.TargetID.EQ(mysql.Int64(targetId)),
-			a.selectColumns.UserId.IS_NOT_NULL(),
+			a.selectColumns.UserID.IS_NOT_NULL(),
 		))
 
 	var dest []T

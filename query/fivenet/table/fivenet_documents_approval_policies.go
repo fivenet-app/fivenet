@@ -93,10 +93,10 @@ func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias s
 		CompletedAtColumn        = mysql.TimestampColumn("completed_at")
 		CreatedAtColumn          = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn          = mysql.TimestampColumn("updated_at")
-        DeletedAtColumn          = mysql.TimestampColumn("deleted_at")
+		DeletedAtColumn          = mysql.TimestampColumn("deleted_at")
 		allColumns               = mysql.ColumnList{IDColumn, DocumentIDColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, ActiveSnapshotDateColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
 		mutableColumns           = mysql.ColumnList{DocumentIDColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, ActiveSnapshotDateColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		defaultColumns           = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, DeletedAtColumn}
+		defaultColumns           = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, CreatedAtColumn}
 	)
 
 	return fivenetDocumentsApprovalPoliciesTable{
@@ -120,7 +120,7 @@ func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias s
 		CompletedAt:        CompletedAtColumn,
 		CreatedAt:          CreatedAtColumn,
 		UpdatedAt:          UpdatedAtColumn,
-        DeletedAt:          DeletedAtColumn,
+		DeletedAt:          DeletedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

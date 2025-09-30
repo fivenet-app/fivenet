@@ -18,7 +18,7 @@ type BaseAccessColumns struct {
 type JobAccessColumns struct {
 	BaseAccessColumns
 
-	// Job is the column for the job name or identifier.
+	// Job is the column for the job name.
 	Job mysql.ColumnString
 	// MinimumGrade is the column for the minimum grade required for access.
 	MinimumGrade mysql.ColumnInteger
@@ -28,16 +28,16 @@ type JobAccessColumns struct {
 type UserAccessColumns struct {
 	BaseAccessColumns
 
-	// UserId is the column for the user identifier.
-	UserId mysql.ColumnInteger
+	// UserID is the column for the user id.
+	UserID mysql.ColumnInteger
 }
 
 // QualificationAccessColumns defines columns for qualification-based access control, embedding BaseAccessColumns.
 type QualificationAccessColumns struct {
 	BaseAccessColumns
 
-	// QualificationId is the column for the qualification identifier.
-	QualificationId mysql.ColumnInteger
+	// QualificationID is the column for the qualification id.
+	QualificationID mysql.ColumnInteger
 }
 
 // TargetTableColumns defines common columns for target tables in access control.

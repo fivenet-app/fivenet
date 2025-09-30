@@ -122,7 +122,7 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetMailerEmailsAccess.TargetID,
 						Access:   table.FivenetMailerEmailsAccess.Access,
 					},
-					UserId: table.FivenetMailerEmailsAccess.UserID,
+					UserID: table.FivenetMailerEmailsAccess.UserID,
 				},
 				table.FivenetMailerEmailsAccess.AS("user_access"),
 				&access.UserAccessColumns{
@@ -131,7 +131,7 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetMailerEmailsAccess.AS("user_access").TargetID,
 						Access:   table.FivenetMailerEmailsAccess.AS("user_access").Access,
 					},
-					UserId: table.FivenetMailerEmailsAccess.AS("user_access").UserID,
+					UserID: table.FivenetMailerEmailsAccess.AS("user_access").UserID,
 				},
 			),
 			access.NewQualifications[mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel](
@@ -142,7 +142,7 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetMailerEmailsAccess.TargetID,
 						Access:   table.FivenetMailerEmailsAccess.Access,
 					},
-					QualificationId: table.FivenetMailerEmailsAccess.QualificationID,
+					QualificationID: table.FivenetMailerEmailsAccess.QualificationID,
 				},
 				table.FivenetMailerEmailsAccess.AS("qualification_access"),
 				&access.QualificationAccessColumns{
@@ -153,7 +153,7 @@ func NewServer(p Params) *Server {
 						).TargetID,
 						Access: table.FivenetMailerEmailsAccess.AS("qualification_access").Access,
 					},
-					QualificationId: table.FivenetMailerEmailsAccess.AS(
+					QualificationID: table.FivenetMailerEmailsAccess.AS(
 						"qualification_access",
 					).QualificationID,
 				},

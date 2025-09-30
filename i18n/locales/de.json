@@ -3025,13 +3025,21 @@
             },
             "SigningService": {
                 "category": "Dokumenten-System: Unterzeichnung",
-                "DeleteRequirement": {
+                "DeleteSignaturePolicy": {
                     "key": "Signaturanfrage löschen",
                     "description": "Löschen einer Signaturanfrage."
                 },
-                "UpsertRequirement": {
+                "UpsertSignaturePolicy": {
                     "key": "Signaturanfrage erstellen oder aktualisieren",
                     "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
+                },
+                "UpsertStamp": {
+                    "key": "Stempel erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren eines Stempels."
+                },
+                "DeleteStamp": {
+                    "key": "Stempel löschen",
+                    "description": "Löschen eines Stempels."
                 }
             }
         },

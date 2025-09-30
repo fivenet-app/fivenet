@@ -142,7 +142,7 @@ func NewServer(p Params) *Server {
 					TargetID: table.FivenetWikiPagesAccess.TargetID,
 					Access:   table.FivenetWikiPagesAccess.Access,
 				},
-				UserId: table.FivenetWikiPagesAccess.UserID,
+				UserID: table.FivenetWikiPagesAccess.UserID,
 			},
 			table.FivenetWikiPagesAccess.AS("page_user_access"),
 			&access.UserAccessColumns{
@@ -151,7 +151,7 @@ func NewServer(p Params) *Server {
 					TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
 					Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
 				},
-				UserId: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
+				UserID: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
 			},
 		),
 		nil,

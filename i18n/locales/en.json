@@ -3025,13 +3025,21 @@
             },
             "SigningService": {
                 "category": "Documents: Signing",
-                "DeleteRequirement": {
+                "DeleteSignaturePolicy": {
                     "key": "Delete Signing Requirement",
                     "description": "Delete a signing requirement."
                 },
-                "UpsertRequirement": {
+                "UpsertSignaturePolicy": {
                     "key": "Create or Update Signing Requirement",
                     "description": "Create or update a signing requirement."
+                },
+                "UpsertStamp": {
+                    "key": "Create or Update Stamp",
+                    "description": "Create or update a stamp."
+                },
+                "DeleteStamp": {
+                    "key": "Delete Stamp",
+                    "description": "Delete a stamp."
                 }
             }
         },

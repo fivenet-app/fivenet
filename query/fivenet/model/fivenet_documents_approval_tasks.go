@@ -24,7 +24,7 @@ type FivenetDocumentsApprovalTasks struct {
 	DecidedByUserGrade *int32     `json:"decided_by_user_grade"`
 	Status             int16      `json:"status"`
 	Comment            *string    `json:"comment"`
-	CreatedAt          time.Time  `json:"created_at"`
+	CreatedAt          *time.Time `json:"created_at"`
 	DecidedAt          *time.Time `json:"decided_at"`
 	DueAt              *time.Time `json:"due_at"`
 	DecisionCount      int32      `json:"decision_count"`

@@ -58,7 +58,7 @@ func (s *Server) ListSignatures(
 			tSignatures.ID,
 			tSignatures.DocumentID,
 			tSignatures.SnapshotDate,
-			tSignatures.RequirementID,
+			tSignatures.PolicyID,
 			tSignatures.UserID,
 			tSignatures.UserJob,
 			tSignatures.Type,
@@ -82,23 +82,23 @@ func (s *Server) ListSignatures(
 	return resp, nil
 }
 
-// UpsertRequirement.
-func (s *Server) UpsertRequirement(
+// UpsertSignaturePolicy.
+func (s *Server) UpsertSignaturePolicy(
 	ctx context.Context,
-	req *pbdocuments.UpsertRequirementRequest,
-) (*pbdocuments.UpsertRequirementResponse, error) {
-	tSigReq := table.FivenetDocumentsSignatureRequirements
+	req *pbdocuments.UpsertSignaturePolicyRequest,
+) (*pbdocuments.UpsertSignaturePolicyResponse, error) {
+	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 	now := time.Now()
 	r := req.GetRequirement()
 
-	stmt := tSigReq.
+	stmt := tSigPolicy.
 		INSERT(
-			tSigReq.DocumentID,
-			tSigReq.SnapshotDate,
-			tSigReq.Label,
-			tSigReq.Required,
-			tSigReq.BindingMode,
-			tSigReq.AllowedTypesMask,
+			tSigPolicy.DocumentID,
+			tSigPolicy.SnapshotDate,
+			tSigPolicy.Label,
+			tSigPolicy.Required,
+			tSigPolicy.BindingMode,
+			tSigPolicy.AllowedTypesMask,
 		).
 		VALUES(
 			r.GetDocumentId(),
@@ -110,42 +110,42 @@ func (s *Server) UpsertRequirement(
 			now,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tSigReq.Label.SET(mysql.String(r.GetLabel())),
-			tSigReq.Required.SET(mysql.Bool(r.GetRequired())),
-			tSigReq.BindingMode.SET(mysql.Int32(int32(r.GetBindingMode()))),
-			tSigReq.AllowedTypesMask.SET(mysql.RawString("VALUES(`allowed_types_mask`)")),
+			tSigPolicy.Label.SET(mysql.String(r.GetLabel())),
+			tSigPolicy.Required.SET(mysql.Bool(r.GetRequired())),
+			tSigPolicy.BindingMode.SET(mysql.Int32(int32(r.GetBindingMode()))),
+			tSigPolicy.AllowedTypesMask.SET(mysql.RawString("VALUES(`allowed_types_mask`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
-	return &pbdocuments.UpsertRequirementResponse{Requirement: r}, nil
+	return &pbdocuments.UpsertSignaturePolicyResponse{Requirement: r}, nil
 }
 
-// DeleteRequirement.
-func (s *Server) DeleteRequirement(
+// DeleteSignaturePolicy.
+func (s *Server) DeleteSignaturePolicy(
 	ctx context.Context,
-	req *pbdocuments.DeleteRequirementRequest,
-) (*pbdocuments.DeleteRequirementResponse, error) {
-	tSigReq := table.FivenetDocumentsSignatureRequirements
-	if _, err := tSigReq.
+	req *pbdocuments.DeleteSignaturePolicyRequest,
+) (*pbdocuments.DeleteSignaturePolicyResponse, error) {
+	tSigPolicy := table.FivenetDocumentsSignaturePolicies
+	if _, err := tSigPolicy.
 		DELETE().
-		WHERE(tSigReq.ID.EQ(mysql.Int(req.GetRequirementId()))).
+		WHERE(tSigPolicy.ID.EQ(mysql.Int(req.GetRequirementId()))).
 		LIMIT(1).
 		ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
-	return &pbdocuments.DeleteRequirementResponse{}, nil
+	return &pbdocuments.DeleteSignaturePolicyResponse{}, nil
 }
 
-// ListRequirementAccess.
-func (s *Server) ListRequirementAccess(
+// ListSignaturePolicyAccess.
+func (s *Server) ListSignaturePolicyAccess(
 	ctx context.Context,
-	req *pbdocuments.ListRequirementAccessRequest,
-) (*pbdocuments.ListRequirementAccessResponse, error) {
-	tSigReqAccess := table.FivenetDocumentsSignatureRequirementsAccess
+	req *pbdocuments.ListSignaturePolicyAccessRequest,
+) (*pbdocuments.ListSignaturePolicyAccessResponse, error) {
+	tSigReqAccess := table.FivenetDocumentsSignaturePoliciesAccess
 
 	cond := tSigReqAccess.TargetID.EQ(mysql.Int(req.GetRequirementId()))
 
@@ -167,16 +167,16 @@ func (s *Server) ListRequirementAccess(
 		return nil, err
 	}
 
-	return &pbdocuments.ListRequirementAccessResponse{
+	return &pbdocuments.ListSignaturePolicyAccessResponse{
 		Access: dest,
 	}, nil
 }
 
-// UpsertRequirementAccess.
-func (s *Server) UpsertRequirementAccess(
+// UpsertSignaturePolicyAccess.
+func (s *Server) UpsertSignaturePolicyAccess(
 	ctx context.Context,
-	req *pbdocuments.UpsertRequirementAccessRequest,
-) (*pbdocuments.UpsertRequirementAccessResponse, error) {
+	req *pbdocuments.UpsertSignaturePolicyAccessRequest,
+) (*pbdocuments.UpsertSignaturePolicyAccessResponse, error) {
 	access := req.GetAccess()
 
 	if _, err := s.signatureAccess.HandleAccessChanges(
@@ -200,7 +200,7 @@ func (s *Server) UpsertRequirementAccess(
 		return nil, err
 	}
 
-	return &pbdocuments.UpsertRequirementAccessResponse{
+	return &pbdocuments.UpsertSignaturePolicyAccessResponse{
 		Access: &documents.SignatureAccess{
 			Jobs:  jobs,
 			Users: users,
@@ -208,12 +208,12 @@ func (s *Server) UpsertRequirementAccess(
 	}, nil
 }
 
-// DeleteRequirementAccess.
-func (s *Server) DeleteRequirementAccess(
+// DeleteSignaturePolicyAccess.
+func (s *Server) DeleteSignaturePolicyAccess(
 	ctx context.Context,
-	req *pbdocuments.DeleteRequirementAccessRequest,
-) (*pbdocuments.DeleteRequirementAccessResponse, error) {
-	tSigReqAccess := table.FivenetDocumentsSignatureRequirementsAccess
+	req *pbdocuments.DeleteSignaturePolicyAccessRequest,
+) (*pbdocuments.DeleteSignaturePolicyAccessResponse, error) {
+	tSigReqAccess := table.FivenetDocumentsSignaturePoliciesAccess
 	if _, err := tSigReqAccess.
 		DELETE().
 		WHERE(tSigReqAccess.ID.EQ(mysql.Int(req.GetId()))).
@@ -221,7 +221,7 @@ func (s *Server) DeleteRequirementAccess(
 		ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
-	return &pbdocuments.DeleteRequirementAccessResponse{}, nil
+	return &pbdocuments.DeleteSignaturePolicyAccessResponse{}, nil
 }
 
 // ApplySignature.
@@ -232,7 +232,7 @@ func (s *Server) ApplySignature(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tSignatures := table.FivenetDocumentsSignatures
-	tSigReq := table.FivenetDocumentsSignatureRequirements
+	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -256,7 +256,7 @@ func (s *Server) ApplySignature(
 		INSERT(
 			tSignatures.DocumentID,
 			tSignatures.SnapshotDate,
-			tSignatures.RequirementID,
+			tSignatures.PolicyID,
 			tSignatures.UserID,
 			tSignatures.UserJob,
 			tSignatures.Type,
@@ -282,12 +282,12 @@ func (s *Server) ApplySignature(
 
 	// recompute signed state (required reqs vs valid signatures)
 	var totalReq int64
-	if err = mysql.SELECT(mysql.COUNT(tSigReq.ID)).
-		FROM(tSigReq).
+	if err = mysql.SELECT(mysql.COUNT(tSigPolicy.ID)).
+		FROM(tSigPolicy).
 		WHERE(
-			tSigReq.DocumentID.EQ(mysql.Int64(req.GetDocumentId())).
-				// .AND(tSigReq.SnapshotDate.EQ(mysql.Timestamp(req.GetSnapshotDate().AsTime())))
-				AND(tSigReq.Required.EQ(mysql.Bool(true))),
+			tSigPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId())).
+				// .AND(tSigPolicy.SnapshotDate.EQ(mysql.Timestamp(req.GetSnapshotDate().AsTime())))
+				AND(tSigPolicy.Required.EQ(mysql.Bool(true))),
 		).QueryContext(ctx, tx, &totalReq); err != nil {
 		return nil, err
 	}
@@ -351,17 +351,17 @@ func (s *Server) RecomputeSignatureStatus(
 	req *pbdocuments.RecomputeSignatureStatusRequest,
 ) (*pbdocuments.RecomputeSignatureStatusResponse, error) {
 	tSignatures := table.FivenetDocumentsSignatures
-	tSigReq := table.FivenetDocumentsSignatureRequirements
+	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 
 	// required total
 	var totalReq int64
-	if err := tSigReq.
-		SELECT(mysql.COUNT(tSigReq.ID)).
-		FROM(tSigReq).
+	if err := tSigPolicy.
+		SELECT(mysql.COUNT(tSigPolicy.ID)).
+		FROM(tSigPolicy).
 		WHERE(
-			tSigReq.DocumentID.EQ(mysql.Int(req.GetDocumentId())).
-				// .AND(tSigReq.SnapshotDate.EQ(mysql.TimestampT(req.GetSnapshotDate().AsTime()))).
-				AND(tSigReq.Required.EQ(mysql.Bool(true))),
+			tSigPolicy.DocumentID.EQ(mysql.Int(req.GetDocumentId())).
+				// .AND(tSigPolicy.SnapshotDate.EQ(mysql.TimestampT(req.GetSnapshotDate().AsTime()))).
+				AND(tSigPolicy.Required.EQ(mysql.Bool(true))),
 		).
 		QueryContext(ctx, s.db, &totalReq); err != nil {
 		return nil, err
@@ -380,10 +380,7 @@ func (s *Server) RecomputeSignatureStatus(
 		return nil, err
 	}
 
-	requiredRemaining := totalReq - collectedValid
-	if requiredRemaining < 0 {
-		requiredRemaining = 0
-	}
+	requiredRemaining := max(totalReq-collectedValid, 0)
 
 	return &pbdocuments.RecomputeSignatureStatusResponse{
 		DocumentSigned:    totalReq > 0 && collectedValid >= totalReq,

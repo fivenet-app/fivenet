@@ -41,6 +41,7 @@ type ApprovalServiceClient interface {
 	UpsertPolicy(ctx context.Context, in *UpsertPolicyRequest, opts ...grpc.CallOption) (*UpsertPolicyResponse, error)
 	StartApprovalRound(ctx context.Context, in *StartApprovalRoundRequest, opts ...grpc.CallOption) (*StartApprovalRoundResponse, error)
 	CompleteApprovalRound(ctx context.Context, in *CompleteApprovalRoundRequest, opts ...grpc.CallOption) (*CompleteApprovalRoundResponse, error)
+	// Helpers
 	RecomputePolicyCounters(ctx context.Context, in *RecomputePolicyCountersRequest, opts ...grpc.CallOption) (*RecomputePolicyCountersResponse, error)
 	// Access (policy-scoped)
 	ListApprovalAccess(ctx context.Context, in *ListApprovalAccessRequest, opts ...grpc.CallOption) (*ListApprovalAccessResponse, error)
@@ -179,6 +180,7 @@ type ApprovalServiceServer interface {
 	UpsertPolicy(context.Context, *UpsertPolicyRequest) (*UpsertPolicyResponse, error)
 	StartApprovalRound(context.Context, *StartApprovalRoundRequest) (*StartApprovalRoundResponse, error)
 	CompleteApprovalRound(context.Context, *CompleteApprovalRoundRequest) (*CompleteApprovalRoundResponse, error)
+	// Helpers
 	RecomputePolicyCounters(context.Context, *RecomputePolicyCountersRequest) (*RecomputePolicyCountersResponse, error)
 	// Access (policy-scoped)
 	ListApprovalAccess(context.Context, *ListApprovalAccessRequest) (*ListApprovalAccessResponse, error)
