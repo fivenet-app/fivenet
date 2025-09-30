@@ -77,6 +77,17 @@ const wikiService = await useWikiWiki();
                 </template>
 
                 <template #right>
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton
+                            :label="$t('common.refresh')"
+                            icon="i-mdi-refresh"
+                            :loading="isRequestPending(status)"
+                            @click="() => refresh()"
+                        >
+                            {{ $t('common.refresh') }}
+                        </UButton>
+                    </UTooltip>
+
                     <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
                         <UButton color="neutral" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
                             {{ $t('common.page') }}

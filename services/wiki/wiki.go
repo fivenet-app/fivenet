@@ -134,11 +134,23 @@ func (s *Server) ListPages(
 		tPageShort.Draft,
 		tPageShort.Public,
 	}
-	if req.RootOnly != nil && req.GetRootOnly() {
+	if req.GetRootOnly() {
 		columns = append(columns,
 			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
 			tFiles.ID,
 			tFiles.FilePath,
+		)
+
+		subPage := table.FivenetWikiPages.AS("sub_page")
+
+		// Use a subquery to get the first page per job (by min ID)
+		condition = condition.AND(tPageShort.ID.IN(
+			subPage.
+				SELECT(
+					mysql.MIN(subPage.ID).AS("min_id"),
+				).
+				WHERE(subPage.ParentID.IS_NULL()).
+				GROUP_BY(subPage.Job)),
 		)
 	}
 	if userInfo.GetSuperuser() {
@@ -160,9 +172,8 @@ func (s *Server) ListPages(
 				),
 		).
 		WHERE(condition).
-		OFFSET(req.GetPagination().GetOffset()).
-		// .NULLS_FIRST()
 		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
+		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(defaultWikiUpperLimit)
 
 	pages := []*wiki.PageShort{}
@@ -381,7 +392,7 @@ func (s *Server) CreatePage(
 
 	// No parent ID?
 	// If so, check if there are any existing pages for the user's job and use one as the parent.
-	if req.ParentId == nil || req.GetParentId() <= 0 {
+	if req.GetParentId() <= 0 {
 		tPageShort := table.FivenetWikiPages.AS("page_short")
 
 		parentStmt := tPageShort.
