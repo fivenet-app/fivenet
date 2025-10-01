@@ -77,8 +77,8 @@ func (s *Server) ListPages(
 							tPAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 						),
 					),
-				),
-				))
+				)),
+		)
 
 		condition = condition.AND(mysql.AND(
 			tPageShort.DeletedAt.IS_NULL(),
