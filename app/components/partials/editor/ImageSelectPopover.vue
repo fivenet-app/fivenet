@@ -113,7 +113,7 @@ const formRef = useTemplateRef('formRef');
 
 <template>
     <UPopover v-model:open="open">
-        <UTooltip :text="$t('components.partials.TiptapEditor.image')">
+        <UTooltip :text="$t('components.partials.tiptap_editor.image')">
             <UButton icon="i-mdi-image" color="neutral" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
@@ -125,7 +125,7 @@ const formRef = useTemplateRef('formRef');
                         color="neutral"
                         block
                         icon="i-mdi-images"
-                        :label="$t('components.partials.TiptapEditor.file_list')"
+                        :label="$t('components.partials.tiptap_editor.file_list')"
                         :disabled="disabled || !canSubmit"
                         :loading="disabled || !canSubmit"
                         @click="$emit('openFileList')"

@@ -15,10 +15,10 @@ defineEmits<{
 </script>
 
 <template>
-    <UModal :title="$t('components.partials.TiptapEditor.file_list')">
+    <UModal :title="$t('components.partials.tiptap_editor.file_list')">
         <template #body>
             <div class="mx-auto flex w-full max-w-(--breakpoint-xl) flex-1 flex-col">
-                <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.TiptapEditor.file_list_empty')" />
+                <DataNoDataBlock v-if="files.length === 0" :message="$t('components.partials.tiptap_editor.file_list_empty')" />
 
                 <UPageGrid v-else class="flex-1">
                     <UPageCard
@@ -80,7 +80,7 @@ defineEmits<{
                 <UAlert
                     class="mt-4"
                     icon="i-mdi-information-outline"
-                    :description="$t('components.partials.TiptapEditor.file_list_hint')"
+                    :description="$t('components.partials.tiptap_editor.file_list_hint')"
                 />
             </div>
         </template>

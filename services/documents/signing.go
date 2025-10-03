@@ -2,14 +2,17 @@ package documents
 
 import (
 	"context"
+	"errors"
 	"time"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) ListSignaturePolicies(
@@ -17,6 +20,7 @@ func (s *Server) ListSignaturePolicies(
 	req *pbdocuments.ListSignaturePoliciesRequest,
 ) (*pbdocuments.ListSignaturePoliciesResponse, error) {
 	// TODO
+
 	return nil, nil
 }
 
@@ -27,7 +31,7 @@ func (s *Server) UpsertSignaturePolicy(
 ) (*pbdocuments.UpsertSignaturePolicyResponse, error) {
 	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 	now := time.Now()
-	r := req.GetRequirement()
+	p := req.GetPolicy()
 
 	stmt := tSigPolicy.
 		INSERT(
@@ -39,26 +43,28 @@ func (s *Server) UpsertSignaturePolicy(
 			tSigPolicy.AllowedTypesMask,
 		).
 		VALUES(
-			r.GetDocumentId(),
+			p.GetDocumentId(),
 			now, // TODO: use r.SnapshotDate
-			r.GetLabel(),
-			r.GetRequired(),
-			int32(r.GetBindingMode()),
-			r.GetAllowedTypes(),
+			p.GetLabel(),
+			p.GetRequired(),
+			int32(p.GetBindingMode()),
+			p.GetAllowedTypes(),
 			now,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tSigPolicy.Label.SET(mysql.String(r.GetLabel())),
-			tSigPolicy.Required.SET(mysql.Bool(r.GetRequired())),
-			tSigPolicy.BindingMode.SET(mysql.Int32(int32(r.GetBindingMode()))),
+			tSigPolicy.Label.SET(mysql.String(p.GetLabel())),
+			tSigPolicy.Required.SET(mysql.Bool(p.GetRequired())),
+			tSigPolicy.BindingMode.SET(mysql.Int32(int32(p.GetBindingMode()))),
 			tSigPolicy.AllowedTypesMask.SET(mysql.RawString("VALUES(`allowed_types_mask`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	return &pbdocuments.UpsertSignaturePolicyResponse{Requirement: r}, nil
+	return &pbdocuments.UpsertSignaturePolicyResponse{
+		Policy: p,
+	}, nil
 }
 
 // DeleteSignaturePolicy.
@@ -69,97 +75,13 @@ func (s *Server) DeleteSignaturePolicy(
 	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 	if _, err := tSigPolicy.
 		DELETE().
-		WHERE(tSigPolicy.ID.EQ(mysql.Int(req.GetRequirementId()))).
+		WHERE(tSigPolicy.ID.EQ(mysql.Int(req.GetPolicyId()))).
 		LIMIT(1).
 		ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	return &pbdocuments.DeleteSignaturePolicyResponse{}, nil
-}
-
-// ListSignaturePolicyAccess.
-func (s *Server) ListSignaturePolicyAccess(
-	ctx context.Context,
-	req *pbdocuments.ListSignaturePolicyAccessRequest,
-) (*pbdocuments.ListSignaturePolicyAccessResponse, error) {
-	tSigReqAccess := table.FivenetDocumentsSignaturePoliciesAccess
-
-	cond := tSigReqAccess.TargetID.EQ(mysql.Int(req.GetRequirementId()))
-
-	stmt := tSigReqAccess.
-		SELECT(
-			tSigReqAccess.ID,
-			tSigReqAccess.TargetID,
-			tSigReqAccess.Job,
-			tSigReqAccess.MinimumGrade,
-			tSigReqAccess.Access,
-		).
-		FROM(tSigReqAccess).
-		WHERE(cond).
-		ORDER_BY(tSigReqAccess.ID.ASC()).
-		LIMIT(40)
-
-	var dest *documents.SignatureAccess
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
-	}
-
-	return &pbdocuments.ListSignaturePolicyAccessResponse{
-		Access: dest,
-	}, nil
-}
-
-// UpsertSignaturePolicyAccess.
-func (s *Server) UpsertSignaturePolicyAccess(
-	ctx context.Context,
-	req *pbdocuments.UpsertSignaturePolicyAccessRequest,
-) (*pbdocuments.UpsertSignaturePolicyAccessResponse, error) {
-	access := req.GetAccess()
-
-	if _, err := s.signatureAccess.HandleAccessChanges(
-		ctx,
-		s.db,
-		req.GetRequirementId(),
-		access.GetJobs(),
-		access.GetUsers(),
-		nil,
-	); err != nil {
-		return nil, err
-	}
-
-	jobs, err := s.signatureAccess.Jobs.List(ctx, s.db, req.GetRequirementId())
-	if err != nil {
-		return nil, err
-	}
-
-	users, err := s.signatureAccess.Users.List(ctx, s.db, req.GetRequirementId())
-	if err != nil {
-		return nil, err
-	}
-
-	return &pbdocuments.UpsertSignaturePolicyAccessResponse{
-		Access: &documents.SignatureAccess{
-			Jobs:  jobs,
-			Users: users,
-		},
-	}, nil
-}
-
-// DeleteSignaturePolicyAccess.
-func (s *Server) DeleteSignaturePolicyAccess(
-	ctx context.Context,
-	req *pbdocuments.DeleteSignaturePolicyAccessRequest,
-) (*pbdocuments.DeleteSignaturePolicyAccessResponse, error) {
-	tSigReqAccess := table.FivenetDocumentsSignaturePoliciesAccess
-	if _, err := tSigReqAccess.
-		DELETE().
-		WHERE(tSigReqAccess.ID.EQ(mysql.Int(req.GetId()))).
-		LIMIT(1).
-		ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-	return &pbdocuments.DeleteSignaturePolicyAccessResponse{}, nil
 }
 
 func (s *Server) ListSignatures(
@@ -185,22 +107,8 @@ func (s *Server) ListSignatures(
 		condition = condition.AND(tSignatures.Status.IN(vals...))
 	}
 
-	countStmt := tSignatures.
-		SELECT(mysql.COUNT(tSignatures.ID)).
-		FROM(tSignatures).
-		WHERE(condition)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, err
-	}
-
-	pag, limit := req.GetPagination().GetResponse(DocsDefaultPageSize)
 	resp := &pbdocuments.ListSignaturesResponse{
-		Pagination: pag,
-	}
-	if count.Total <= 0 {
-		return resp, nil
+		Signatures: []*documents.Signature{},
 	}
 
 	stmt := tSignatures.
@@ -208,11 +116,11 @@ func (s *Server) ListSignatures(
 			tSignatures.ID,
 			tSignatures.DocumentID,
 			tSignatures.SnapshotDate,
-			tSignatures.PolicyID,
+			tSignatures.TaskID,
 			tSignatures.UserID,
 			tSignatures.UserJob,
 			tSignatures.Type,
-			tSignatures.PayloadJSON,
+			tSignatures.PayloadSvg,
 			tSignatures.StampID,
 			tSignatures.Status,
 			tSignatures.Reason,
@@ -222,11 +130,12 @@ func (s *Server) ListSignatures(
 		FROM(tSignatures).
 		WHERE(condition).
 		ORDER_BY(tSignatures.CreatedAt.ASC()).
-		OFFSET(pag.GetOffset()).
-		LIMIT(limit)
+		LIMIT(15)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Signatures); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	return resp, nil
@@ -249,10 +158,10 @@ func (s *Server) ApplySignature(
 	defer tx.Rollback()
 
 	now := time.Now()
-	var requirementId *int64
-	if req.GetRequirementId() > 0 {
-		reqId := req.GetRequirementId()
-		requirementId = &reqId
+	var policyId *int64
+	if req.GetPolicyId() > 0 {
+		polId := req.GetPolicyId()
+		policyId = &polId
 	}
 	var stampId *int64
 	if req.GetStampId() > 0 {
@@ -264,22 +173,22 @@ func (s *Server) ApplySignature(
 		INSERT(
 			tSignatures.DocumentID,
 			tSignatures.SnapshotDate,
-			tSignatures.PolicyID,
+			tSignatures.TaskID,
 			tSignatures.UserID,
 			tSignatures.UserJob,
 			tSignatures.Type,
-			tSignatures.PayloadJSON,
+			tSignatures.PayloadSvg,
 			tSignatures.StampID,
 			tSignatures.Status,
 		).
 		VALUES(
 			req.GetDocumentId(),
 			now, // TODO: req.SnapshotDate
-			requirementId,
+			policyId,
 			userInfo.GetUserId(),
 			userInfo.GetJob(),
 			int32(req.GetType()),
-			req.GetPayloadJson(),
+			req.GetPayloadSvg(),
 			stampId,
 			int32(documents.SignatureStatus_SIGNATURE_STATUS_VALID),
 		)
@@ -288,9 +197,10 @@ func (s *Server) ApplySignature(
 		return nil, err
 	}
 
-	// recompute signed state (required reqs vs valid signatures)
+	// Recompute signed state (required reqs vs valid signatures)
 	var totalReq int64
-	if err = mysql.SELECT(mysql.COUNT(tSigPolicy.ID)).
+	if err = mysql.
+		SELECT(mysql.COUNT(tSigPolicy.ID)).
 		FROM(tSigPolicy).
 		WHERE(
 			tSigPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId())).
@@ -301,7 +211,8 @@ func (s *Server) ApplySignature(
 	}
 
 	var haveValid int64
-	if err = mysql.SELECT(mysql.COUNT(tSignatures.ID)).
+	if err = mysql.
+		SELECT(mysql.COUNT(tSignatures.ID)).
 		FROM(tSignatures).
 		WHERE(
 			tSignatures.DocumentID.EQ(mysql.Int64(req.GetDocumentId())).

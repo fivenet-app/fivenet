@@ -19,4 +19,12 @@ type FivenetDocumentsMeta struct {
 	SigRequiredRemaining int32     `json:"sig_required_remaining"`
 	SigRequiredTotal     int32     `json:"sig_required_total"`
 	SigCollectedValid    int32     `json:"sig_collected_valid"`
+	SigPoliciesActive    int32     `json:"sig_policies_active"`
+	ApRequiredTotal      int32     `json:"ap_required_total"`
+	ApCollectedApproved  int32     `json:"ap_collected_approved"`
+	ApRequiredRemaining  int32     `json:"ap_required_remaining"`
+	ApDeclinedCount      int32     `json:"ap_declined_count"`
+	ApPendingCount       int32     `json:"ap_pending_count"`
+	ApAnyDeclined        bool      `json:"ap_any_declined"`
+	ApPoliciesActive     int32     `json:"ap_policies_active"`
 }

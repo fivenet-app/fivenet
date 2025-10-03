@@ -12,29 +12,24 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Stamp } from "../../resources/documents/signing";
+import { Stamp } from "../../resources/documents/stamp";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 import { SignatureType } from "../../resources/documents/signing";
 import { Signature } from "../../resources/documents/signing";
 import { SignatureStatus } from "../../resources/documents/signing";
-import { SignatureAccess } from "../../resources/documents/signing";
-import { SignatureRequirement } from "../../resources/documents/signing";
-import { PaginationResponse } from "../../resources/common/database/database";
+import { SignaturePolicy } from "../../resources/documents/signing";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.documents.ListSignaturePoliciesRequest
  */
 export interface ListSignaturePoliciesRequest {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
-     */
-    pagination?: PaginationRequest;
-    /**
-     * @generated from protobuf field: int64 document_id = 2
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
      */
     snapshotDate?: Timestamp;
 }
@@ -43,40 +38,36 @@ export interface ListSignaturePoliciesRequest {
  */
 export interface ListSignaturePoliciesResponse {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     * @generated from protobuf field: repeated resources.documents.SignaturePolicy policies = 1
      */
-    pagination?: PaginationResponse;
-    /**
-     * @generated from protobuf field: repeated resources.documents.SignatureRequirement requirements = 2
-     */
-    requirements: SignatureRequirement[];
+    policies: SignaturePolicy[];
 }
 /**
  * @generated from protobuf message services.documents.UpsertSignaturePolicyRequest
  */
 export interface UpsertSignaturePolicyRequest {
     /**
-     * @generated from protobuf field: resources.documents.SignatureRequirement requirement = 1
+     * @generated from protobuf field: resources.documents.SignaturePolicy policy = 1
      */
-    requirement?: SignatureRequirement;
+    policy?: SignaturePolicy;
 }
 /**
  * @generated from protobuf message services.documents.UpsertSignaturePolicyResponse
  */
 export interface UpsertSignaturePolicyResponse {
     /**
-     * @generated from protobuf field: resources.documents.SignatureRequirement requirement = 1
+     * @generated from protobuf field: resources.documents.SignaturePolicy policy = 1
      */
-    requirement?: SignatureRequirement;
+    policy?: SignaturePolicy;
 }
 /**
  * @generated from protobuf message services.documents.DeleteSignaturePolicyRequest
  */
 export interface DeleteSignaturePolicyRequest {
     /**
-     * @generated from protobuf field: int64 requirement_id = 1
+     * @generated from protobuf field: int64 policy_id = 1
      */
-    requirementId: number;
+    policyId: number;
 }
 /**
  * @generated from protobuf message services.documents.DeleteSignaturePolicyResponse
@@ -84,69 +75,11 @@ export interface DeleteSignaturePolicyRequest {
 export interface DeleteSignaturePolicyResponse {
 }
 /**
- * @generated from protobuf message services.documents.ListSignaturePolicyAccessRequest
- */
-export interface ListSignaturePolicyAccessRequest {
-    /**
-     * @generated from protobuf field: int64 requirement_id = 1
-     */
-    requirementId: number;
-}
-/**
- * @generated from protobuf message services.documents.ListSignaturePolicyAccessResponse
- */
-export interface ListSignaturePolicyAccessResponse {
-    /**
-     * @generated from protobuf field: resources.documents.SignatureAccess access = 1
-     */
-    access?: SignatureAccess;
-}
-/**
- * @generated from protobuf message services.documents.UpsertSignaturePolicyAccessRequest
- */
-export interface UpsertSignaturePolicyAccessRequest {
-    /**
-     * @generated from protobuf field: int64 requirement_id = 1
-     */
-    requirementId: number;
-    /**
-     * @generated from protobuf field: resources.documents.SignatureAccess access = 2
-     */
-    access?: SignatureAccess;
-}
-/**
- * @generated from protobuf message services.documents.UpsertSignaturePolicyAccessResponse
- */
-export interface UpsertSignaturePolicyAccessResponse {
-    /**
-     * @generated from protobuf field: resources.documents.SignatureAccess access = 1
-     */
-    access?: SignatureAccess;
-}
-/**
- * @generated from protobuf message services.documents.DeleteSignaturePolicyAccessRequest
- */
-export interface DeleteSignaturePolicyAccessRequest {
-    /**
-     * @generated from protobuf field: int64 id = 1
-     */
-    id: number;
-}
-/**
- * @generated from protobuf message services.documents.DeleteSignaturePolicyAccessResponse
- */
-export interface DeleteSignaturePolicyAccessResponse {
-}
-/**
  * @generated from protobuf message services.documents.ListSignaturesRequest
  */
 export interface ListSignaturesRequest {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
-     */
-    pagination?: PaginationRequest;
-    /**
-     * @generated from protobuf field: int64 document_id = 2
+     * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
     /**
@@ -163,11 +96,7 @@ export interface ListSignaturesRequest {
  */
 export interface ListSignaturesResponse {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
-     */
-    pagination?: PaginationResponse;
-    /**
-     * @generated from protobuf field: repeated resources.documents.Signature signatures = 2
+     * @generated from protobuf field: repeated resources.documents.Signature signatures = 1
      */
     signatures: Signature[];
 }
@@ -184,25 +113,21 @@ export interface ApplySignatureRequest {
      */
     snapshotDate?: Timestamp;
     /**
-     * @generated from protobuf field: int64 requirement_id = 3
+     * @generated from protobuf field: int64 policy_id = 3
      */
-    requirementId: number; // 0/omit for acknowledgement
+    policyId: number; // 0/omit for acknowledgement
     /**
      * @generated from protobuf field: resources.documents.SignatureType type = 4
      */
     type: SignatureType;
     /**
-     * @generated from protobuf field: string payload_json = 5
+     * @generated from protobuf field: optional string payload_svg = 5
      */
-    payloadJson: string;
+    payloadSvg?: string;
     /**
-     * @generated from protobuf field: int64 stamp_id = 6
+     * @generated from protobuf field: optional int64 stamp_id = 6
      */
-    stampId: number; // when type=STAMP
-    /**
-     * @generated from protobuf field: string idempotency_key = 10
-     */
-    idempotencyKey: string;
+    stampId?: number; // when type=STAMP
 }
 /**
  * @generated from protobuf message services.documents.ApplySignatureResponse
@@ -238,40 +163,6 @@ export interface RevokeSignatureResponse {
      * @generated from protobuf field: resources.documents.Signature signature = 1
      */
     signature?: Signature;
-}
-/**
- * @generated from protobuf message services.documents.RecomputeSignatureStatusRequest
- */
-export interface RecomputeSignatureStatusRequest {
-    /**
-     * @generated from protobuf field: int64 document_id = 1
-     */
-    documentId: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
-     */
-    snapshotDate?: Timestamp;
-}
-/**
- * @generated from protobuf message services.documents.RecomputeSignatureStatusResponse
- */
-export interface RecomputeSignatureStatusResponse {
-    /**
-     * @generated from protobuf field: bool document_signed = 1
-     */
-    documentSigned: boolean;
-    /**
-     * @generated from protobuf field: int32 required_total = 2
-     */
-    requiredTotal: number;
-    /**
-     * @generated from protobuf field: int32 required_remaining = 3
-     */
-    requiredRemaining: number;
-    /**
-     * @generated from protobuf field: int32 collected_valid = 4
-     */
-    collectedValid: number;
 }
 /**
  * Stamps listing — your example wired in as a method
@@ -333,13 +224,46 @@ export interface DeleteStampRequest {
  */
 export interface DeleteStampResponse {
 }
+/**
+ * @generated from protobuf message services.documents.RecomputeSignatureStatusRequest
+ */
+export interface RecomputeSignatureStatusRequest {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
+     */
+    snapshotDate?: Timestamp;
+}
+/**
+ * @generated from protobuf message services.documents.RecomputeSignatureStatusResponse
+ */
+export interface RecomputeSignatureStatusResponse {
+    /**
+     * @generated from protobuf field: bool document_signed = 1
+     */
+    documentSigned: boolean;
+    /**
+     * @generated from protobuf field: int32 required_total = 2
+     */
+    requiredTotal: number;
+    /**
+     * @generated from protobuf field: int32 required_remaining = 3
+     */
+    requiredRemaining: number;
+    /**
+     * @generated from protobuf field: int32 collected_valid = 4
+     */
+    collectedValid: number;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListSignaturePoliciesRequest$Type extends MessageType<ListSignaturePoliciesRequest> {
     constructor() {
         super("services.documents.ListSignaturePoliciesRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<ListSignaturePoliciesRequest>): ListSignaturePoliciesRequest {
@@ -354,13 +278,10 @@ class ListSignaturePoliciesRequest$Type extends MessageType<ListSignaturePolicie
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationRequest pagination */ 1:
-                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* int64 document_id */ 2:
+                case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                case /* resources.timestamp.Timestamp snapshot_date */ 2:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
                 default:
@@ -375,15 +296,12 @@ class ListSignaturePoliciesRequest$Type extends MessageType<ListSignaturePolicie
         return message;
     }
     internalBinaryWrite(message: ListSignaturePoliciesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationRequest pagination = 1; */
-        if (message.pagination)
-            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 document_id = 2; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 3; */
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.timestamp.Timestamp snapshot_date = 2; */
         if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -398,13 +316,12 @@ export const ListSignaturePoliciesRequest = new ListSignaturePoliciesRequest$Typ
 class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePoliciesResponse> {
     constructor() {
         super("services.documents.ListSignaturePoliciesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureRequirement, options: { "codegen.itemslen.enabled": true } }
+            { no: 1, name: "policies", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignaturePolicy, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListSignaturePoliciesResponse>): ListSignaturePoliciesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.requirements = [];
+        message.policies = [];
         if (value !== undefined)
             reflectionMergePartial<ListSignaturePoliciesResponse>(this, message, value);
         return message;
@@ -414,11 +331,8 @@ class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePolici
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationResponse pagination */ 1:
-                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* repeated resources.documents.SignatureRequirement requirements */ 2:
-                    message.requirements.push(SignatureRequirement.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.documents.SignaturePolicy policies */ 1:
+                    message.policies.push(SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -432,12 +346,9 @@ class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePolici
         return message;
     }
     internalBinaryWrite(message: ListSignaturePoliciesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationResponse pagination = 1; */
-        if (message.pagination)
-            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.SignatureRequirement requirements = 2; */
-        for (let i = 0; i < message.requirements.length; i++)
-            SignatureRequirement.internalBinaryWrite(message.requirements[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignaturePolicy policies = 1; */
+        for (let i = 0; i < message.policies.length; i++)
+            SignaturePolicy.internalBinaryWrite(message.policies[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -452,7 +363,7 @@ export const ListSignaturePoliciesResponse = new ListSignaturePoliciesResponse$T
 class UpsertSignaturePolicyRequest$Type extends MessageType<UpsertSignaturePolicyRequest> {
     constructor() {
         super("services.documents.UpsertSignaturePolicyRequest", [
-            { no: 1, name: "requirement", kind: "message", T: () => SignatureRequirement, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "policy", kind: "message", T: () => SignaturePolicy, options: { "buf.validate.field": { required: true } } }
         ]);
     }
     create(value?: PartialMessage<UpsertSignaturePolicyRequest>): UpsertSignaturePolicyRequest {
@@ -466,8 +377,8 @@ class UpsertSignaturePolicyRequest$Type extends MessageType<UpsertSignaturePolic
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.SignatureRequirement requirement */ 1:
-                    message.requirement = SignatureRequirement.internalBinaryRead(reader, reader.uint32(), options, message.requirement);
+                case /* resources.documents.SignaturePolicy policy */ 1:
+                    message.policy = SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -481,9 +392,9 @@ class UpsertSignaturePolicyRequest$Type extends MessageType<UpsertSignaturePolic
         return message;
     }
     internalBinaryWrite(message: UpsertSignaturePolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.SignatureRequirement requirement = 1; */
-        if (message.requirement)
-            SignatureRequirement.internalBinaryWrite(message.requirement, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.SignaturePolicy policy = 1; */
+        if (message.policy)
+            SignaturePolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -498,7 +409,7 @@ export const UpsertSignaturePolicyRequest = new UpsertSignaturePolicyRequest$Typ
 class UpsertSignaturePolicyResponse$Type extends MessageType<UpsertSignaturePolicyResponse> {
     constructor() {
         super("services.documents.UpsertSignaturePolicyResponse", [
-            { no: 1, name: "requirement", kind: "message", T: () => SignatureRequirement }
+            { no: 1, name: "policy", kind: "message", T: () => SignaturePolicy }
         ]);
     }
     create(value?: PartialMessage<UpsertSignaturePolicyResponse>): UpsertSignaturePolicyResponse {
@@ -512,8 +423,8 @@ class UpsertSignaturePolicyResponse$Type extends MessageType<UpsertSignaturePoli
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.SignatureRequirement requirement */ 1:
-                    message.requirement = SignatureRequirement.internalBinaryRead(reader, reader.uint32(), options, message.requirement);
+                case /* resources.documents.SignaturePolicy policy */ 1:
+                    message.policy = SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -527,9 +438,9 @@ class UpsertSignaturePolicyResponse$Type extends MessageType<UpsertSignaturePoli
         return message;
     }
     internalBinaryWrite(message: UpsertSignaturePolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.SignatureRequirement requirement = 1; */
-        if (message.requirement)
-            SignatureRequirement.internalBinaryWrite(message.requirement, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.SignaturePolicy policy = 1; */
+        if (message.policy)
+            SignaturePolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -544,12 +455,12 @@ export const UpsertSignaturePolicyResponse = new UpsertSignaturePolicyResponse$T
 class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolicyRequest> {
     constructor() {
         super("services.documents.DeleteSignaturePolicyRequest", [
-            { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteSignaturePolicyRequest>): DeleteSignaturePolicyRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.requirementId = 0;
+        message.policyId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteSignaturePolicyRequest>(this, message, value);
         return message;
@@ -559,8 +470,8 @@ class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolic
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 requirement_id */ 1:
-                    message.requirementId = reader.int64().toNumber();
+                case /* int64 policy_id */ 1:
+                    message.policyId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -574,9 +485,9 @@ class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolic
         return message;
     }
     internalBinaryWrite(message: DeleteSignaturePolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 requirement_id = 1; */
-        if (message.requirementId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.requirementId);
+        /* int64 policy_id = 1; */
+        if (message.policyId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.policyId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -626,289 +537,10 @@ class DeleteSignaturePolicyResponse$Type extends MessageType<DeleteSignaturePoli
  */
 export const DeleteSignaturePolicyResponse = new DeleteSignaturePolicyResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListSignaturePolicyAccessRequest$Type extends MessageType<ListSignaturePolicyAccessRequest> {
-    constructor() {
-        super("services.documents.ListSignaturePolicyAccessRequest", [
-            { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<ListSignaturePolicyAccessRequest>): ListSignaturePolicyAccessRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.requirementId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<ListSignaturePolicyAccessRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePolicyAccessRequest): ListSignaturePolicyAccessRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 requirement_id */ 1:
-                    message.requirementId = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ListSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 requirement_id = 1; */
-        if (message.requirementId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.requirementId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.ListSignaturePolicyAccessRequest
- */
-export const ListSignaturePolicyAccessRequest = new ListSignaturePolicyAccessRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ListSignaturePolicyAccessResponse$Type extends MessageType<ListSignaturePolicyAccessResponse> {
-    constructor() {
-        super("services.documents.ListSignaturePolicyAccessResponse", [
-            { no: 1, name: "access", kind: "message", T: () => SignatureAccess }
-        ]);
-    }
-    create(value?: PartialMessage<ListSignaturePolicyAccessResponse>): ListSignaturePolicyAccessResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<ListSignaturePolicyAccessResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignaturePolicyAccessResponse): ListSignaturePolicyAccessResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.documents.SignatureAccess access */ 1:
-                    message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ListSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.SignatureAccess access = 1; */
-        if (message.access)
-            SignatureAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.ListSignaturePolicyAccessResponse
- */
-export const ListSignaturePolicyAccessResponse = new ListSignaturePolicyAccessResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpsertSignaturePolicyAccessRequest$Type extends MessageType<UpsertSignaturePolicyAccessRequest> {
-    constructor() {
-        super("services.documents.UpsertSignaturePolicyAccessRequest", [
-            { no: 1, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "access", kind: "message", T: () => SignatureAccess, options: { "buf.validate.field": { required: true } } }
-        ]);
-    }
-    create(value?: PartialMessage<UpsertSignaturePolicyAccessRequest>): UpsertSignaturePolicyAccessRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.requirementId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<UpsertSignaturePolicyAccessRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyAccessRequest): UpsertSignaturePolicyAccessRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 requirement_id */ 1:
-                    message.requirementId = reader.int64().toNumber();
-                    break;
-                case /* resources.documents.SignatureAccess access */ 2:
-                    message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpsertSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 requirement_id = 1; */
-        if (message.requirementId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.requirementId);
-        /* resources.documents.SignatureAccess access = 2; */
-        if (message.access)
-            SignatureAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyAccessRequest
- */
-export const UpsertSignaturePolicyAccessRequest = new UpsertSignaturePolicyAccessRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpsertSignaturePolicyAccessResponse$Type extends MessageType<UpsertSignaturePolicyAccessResponse> {
-    constructor() {
-        super("services.documents.UpsertSignaturePolicyAccessResponse", [
-            { no: 1, name: "access", kind: "message", T: () => SignatureAccess }
-        ]);
-    }
-    create(value?: PartialMessage<UpsertSignaturePolicyAccessResponse>): UpsertSignaturePolicyAccessResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<UpsertSignaturePolicyAccessResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpsertSignaturePolicyAccessResponse): UpsertSignaturePolicyAccessResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.documents.SignatureAccess access */ 1:
-                    message.access = SignatureAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpsertSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.SignatureAccess access = 1; */
-        if (message.access)
-            SignatureAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.UpsertSignaturePolicyAccessResponse
- */
-export const UpsertSignaturePolicyAccessResponse = new UpsertSignaturePolicyAccessResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteSignaturePolicyAccessRequest$Type extends MessageType<DeleteSignaturePolicyAccessRequest> {
-    constructor() {
-        super("services.documents.DeleteSignaturePolicyAccessRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DeleteSignaturePolicyAccessRequest>): DeleteSignaturePolicyAccessRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        if (value !== undefined)
-            reflectionMergePartial<DeleteSignaturePolicyAccessRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyAccessRequest): DeleteSignaturePolicyAccessRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 id */ 1:
-                    message.id = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteSignaturePolicyAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).int64(message.id);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyAccessRequest
- */
-export const DeleteSignaturePolicyAccessRequest = new DeleteSignaturePolicyAccessRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteSignaturePolicyAccessResponse$Type extends MessageType<DeleteSignaturePolicyAccessResponse> {
-    constructor() {
-        super("services.documents.DeleteSignaturePolicyAccessResponse", []);
-    }
-    create(value?: PartialMessage<DeleteSignaturePolicyAccessResponse>): DeleteSignaturePolicyAccessResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<DeleteSignaturePolicyAccessResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSignaturePolicyAccessResponse): DeleteSignaturePolicyAccessResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteSignaturePolicyAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.DeleteSignaturePolicyAccessResponse
- */
-export const DeleteSignaturePolicyAccessResponse = new DeleteSignaturePolicyAccessResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
     constructor() {
         super("services.documents.ListSignaturesRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
             { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
@@ -926,10 +558,7 @@ class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationRequest pagination */ 1:
-                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* int64 document_id */ 2:
+                case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp snapshot_date */ 3:
@@ -954,12 +583,9 @@ class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
         return message;
     }
     internalBinaryWrite(message: ListSignaturesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationRequest pagination = 1; */
-        if (message.pagination)
-            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 document_id = 2; */
+        /* int64 document_id = 1; */
         if (message.documentId !== 0)
-            writer.tag(2, WireType.Varint).int64(message.documentId);
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -984,8 +610,7 @@ export const ListSignaturesRequest = new ListSignaturesRequest$Type();
 class ListSignaturesResponse$Type extends MessageType<ListSignaturesResponse> {
     constructor() {
         super("services.documents.ListSignaturesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature, options: { "codegen.itemslen.enabled": true } }
+            { no: 1, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListSignaturesResponse>): ListSignaturesResponse {
@@ -1000,10 +625,7 @@ class ListSignaturesResponse$Type extends MessageType<ListSignaturesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationResponse pagination */ 1:
-                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* repeated resources.documents.Signature signatures */ 2:
+                case /* repeated resources.documents.Signature signatures */ 1:
                     message.signatures.push(Signature.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1018,12 +640,9 @@ class ListSignaturesResponse$Type extends MessageType<ListSignaturesResponse> {
         return message;
     }
     internalBinaryWrite(message: ListSignaturesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationResponse pagination = 1; */
-        if (message.pagination)
-            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.Signature signatures = 2; */
+        /* repeated resources.documents.Signature signatures = 1; */
         for (let i = 0; i < message.signatures.length; i++)
-            Signature.internalBinaryWrite(message.signatures[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Signature.internalBinaryWrite(message.signatures[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1040,21 +659,17 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
         super("services.documents.ApplySignatureRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
-            { no: 3, name: "requirement_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 5, name: "payload_json", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
-            { no: 6, name: "stamp_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 10, name: "idempotency_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } }
+            { no: 5, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
+            { no: 6, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ApplySignatureRequest>): ApplySignatureRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = 0;
-        message.requirementId = 0;
+        message.policyId = 0;
         message.type = 0;
-        message.payloadJson = "";
-        message.stampId = 0;
-        message.idempotencyKey = "";
         if (value !== undefined)
             reflectionMergePartial<ApplySignatureRequest>(this, message, value);
         return message;
@@ -1070,20 +685,17 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
                 case /* optional resources.timestamp.Timestamp snapshot_date */ 2:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* int64 requirement_id */ 3:
-                    message.requirementId = reader.int64().toNumber();
+                case /* int64 policy_id */ 3:
+                    message.policyId = reader.int64().toNumber();
                     break;
                 case /* resources.documents.SignatureType type */ 4:
                     message.type = reader.int32();
                     break;
-                case /* string payload_json */ 5:
-                    message.payloadJson = reader.string();
+                case /* optional string payload_svg */ 5:
+                    message.payloadSvg = reader.string();
                     break;
-                case /* int64 stamp_id */ 6:
+                case /* optional int64 stamp_id */ 6:
                     message.stampId = reader.int64().toNumber();
-                    break;
-                case /* string idempotency_key */ 10:
-                    message.idempotencyKey = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1103,21 +715,18 @@ class ApplySignatureRequest$Type extends MessageType<ApplySignatureRequest> {
         /* optional resources.timestamp.Timestamp snapshot_date = 2; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int64 requirement_id = 3; */
-        if (message.requirementId !== 0)
-            writer.tag(3, WireType.Varint).int64(message.requirementId);
+        /* int64 policy_id = 3; */
+        if (message.policyId !== 0)
+            writer.tag(3, WireType.Varint).int64(message.policyId);
         /* resources.documents.SignatureType type = 4; */
         if (message.type !== 0)
             writer.tag(4, WireType.Varint).int32(message.type);
-        /* string payload_json = 5; */
-        if (message.payloadJson !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.payloadJson);
-        /* int64 stamp_id = 6; */
-        if (message.stampId !== 0)
+        /* optional string payload_svg = 5; */
+        if (message.payloadSvg !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.payloadSvg);
+        /* optional int64 stamp_id = 6; */
+        if (message.stampId !== undefined)
             writer.tag(6, WireType.Varint).int64(message.stampId);
-        /* string idempotency_key = 10; */
-        if (message.idempotencyKey !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.idempotencyKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1283,131 +892,6 @@ class RevokeSignatureResponse$Type extends MessageType<RevokeSignatureResponse> 
  * @generated MessageType for protobuf message services.documents.RevokeSignatureResponse
  */
 export const RevokeSignatureResponse = new RevokeSignatureResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatureStatusRequest> {
-    constructor() {
-        super("services.documents.RecomputeSignatureStatusRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
-        ]);
-    }
-    create(value?: PartialMessage<RecomputeSignatureStatusRequest>): RecomputeSignatureStatusRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<RecomputeSignatureStatusRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputeSignatureStatusRequest): RecomputeSignatureStatusRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 document_id */ 1:
-                    message.documentId = reader.int64().toNumber();
-                    break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 2:
-                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: RecomputeSignatureStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 2; */
-        if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.RecomputeSignatureStatusRequest
- */
-export const RecomputeSignatureStatusRequest = new RecomputeSignatureStatusRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class RecomputeSignatureStatusResponse$Type extends MessageType<RecomputeSignatureStatusResponse> {
-    constructor() {
-        super("services.documents.RecomputeSignatureStatusResponse", [
-            { no: 1, name: "document_signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "required_total", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "required_remaining", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "collected_valid", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-    create(value?: PartialMessage<RecomputeSignatureStatusResponse>): RecomputeSignatureStatusResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentSigned = false;
-        message.requiredTotal = 0;
-        message.requiredRemaining = 0;
-        message.collectedValid = 0;
-        if (value !== undefined)
-            reflectionMergePartial<RecomputeSignatureStatusResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputeSignatureStatusResponse): RecomputeSignatureStatusResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool document_signed */ 1:
-                    message.documentSigned = reader.bool();
-                    break;
-                case /* int32 required_total */ 2:
-                    message.requiredTotal = reader.int32();
-                    break;
-                case /* int32 required_remaining */ 3:
-                    message.requiredRemaining = reader.int32();
-                    break;
-                case /* int32 collected_valid */ 4:
-                    message.collectedValid = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: RecomputeSignatureStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool document_signed = 1; */
-        if (message.documentSigned !== false)
-            writer.tag(1, WireType.Varint).bool(message.documentSigned);
-        /* int32 required_total = 2; */
-        if (message.requiredTotal !== 0)
-            writer.tag(2, WireType.Varint).int32(message.requiredTotal);
-        /* int32 required_remaining = 3; */
-        if (message.requiredRemaining !== 0)
-            writer.tag(3, WireType.Varint).int32(message.requiredRemaining);
-        /* int32 collected_valid = 4; */
-        if (message.collectedValid !== 0)
-            writer.tag(4, WireType.Varint).int32(message.collectedValid);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.documents.RecomputeSignatureStatusResponse
- */
-export const RecomputeSignatureStatusResponse = new RecomputeSignatureStatusResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListUsableStampsRequest$Type extends MessageType<ListUsableStampsRequest> {
     constructor() {
@@ -1693,21 +1177,143 @@ class DeleteStampResponse$Type extends MessageType<DeleteStampResponse> {
  * @generated MessageType for protobuf message services.documents.DeleteStampResponse
  */
 export const DeleteStampResponse = new DeleteStampResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatureStatusRequest> {
+    constructor() {
+        super("services.documents.RecomputeSignatureStatusRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<RecomputeSignatureStatusRequest>): RecomputeSignatureStatusRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RecomputeSignatureStatusRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputeSignatureStatusRequest): RecomputeSignatureStatusRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp snapshot_date */ 2:
+                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RecomputeSignatureStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* resources.timestamp.Timestamp snapshot_date = 2; */
+        if (message.snapshotDate)
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.RecomputeSignatureStatusRequest
+ */
+export const RecomputeSignatureStatusRequest = new RecomputeSignatureStatusRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RecomputeSignatureStatusResponse$Type extends MessageType<RecomputeSignatureStatusResponse> {
+    constructor() {
+        super("services.documents.RecomputeSignatureStatusResponse", [
+            { no: 1, name: "document_signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "required_total", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "required_remaining", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "collected_valid", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RecomputeSignatureStatusResponse>): RecomputeSignatureStatusResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentSigned = false;
+        message.requiredTotal = 0;
+        message.requiredRemaining = 0;
+        message.collectedValid = 0;
+        if (value !== undefined)
+            reflectionMergePartial<RecomputeSignatureStatusResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RecomputeSignatureStatusResponse): RecomputeSignatureStatusResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool document_signed */ 1:
+                    message.documentSigned = reader.bool();
+                    break;
+                case /* int32 required_total */ 2:
+                    message.requiredTotal = reader.int32();
+                    break;
+                case /* int32 required_remaining */ 3:
+                    message.requiredRemaining = reader.int32();
+                    break;
+                case /* int32 collected_valid */ 4:
+                    message.collectedValid = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RecomputeSignatureStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool document_signed = 1; */
+        if (message.documentSigned !== false)
+            writer.tag(1, WireType.Varint).bool(message.documentSigned);
+        /* int32 required_total = 2; */
+        if (message.requiredTotal !== 0)
+            writer.tag(2, WireType.Varint).int32(message.requiredTotal);
+        /* int32 required_remaining = 3; */
+        if (message.requiredRemaining !== 0)
+            writer.tag(3, WireType.Varint).int32(message.requiredRemaining);
+        /* int32 collected_valid = 4; */
+        if (message.collectedValid !== 0)
+            writer.tag(4, WireType.Varint).int32(message.collectedValid);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.RecomputeSignatureStatusResponse
+ */
+export const RecomputeSignatureStatusResponse = new RecomputeSignatureStatusResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.documents.SigningService
  */
 export const SigningService = new ServiceType("services.documents.SigningService", [
-    { name: "ListSignaturePolicies", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturePoliciesRequest, O: ListSignaturePoliciesResponse },
+    { name: "ListSignaturePolicies", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListSignaturePoliciesRequest, O: ListSignaturePoliciesResponse },
     { name: "UpsertSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertSignaturePolicyRequest, O: UpsertSignaturePolicyResponse },
     { name: "DeleteSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteSignaturePolicyRequest, O: DeleteSignaturePolicyResponse },
-    { name: "ListSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturePolicyAccessRequest, O: ListSignaturePolicyAccessResponse },
-    { name: "UpsertSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertSignaturePolicy" } }, I: UpsertSignaturePolicyAccessRequest, O: UpsertSignaturePolicyAccessResponse },
-    { name: "DeleteSignaturePolicyAccess", options: { "codegen.perms.perms": { enabled: true, name: "UpsertSignaturePolicy" } }, I: DeleteSignaturePolicyAccessRequest, O: DeleteSignaturePolicyAccessResponse },
-    { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
-    { name: "ApplySignature", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ApplySignatureRequest, O: ApplySignatureResponse },
+    { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
+    { name: "ApplySignature", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ApplySignatureRequest, O: ApplySignatureResponse },
     { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
-    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
-    { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse },
+    { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse },
     { name: "UpsertStamp", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertStampRequest, O: UpsertStampResponse },
-    { name: "DeleteStamp", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteStampRequest, O: DeleteStampResponse }
+    { name: "DeleteStamp", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteStampRequest, O: DeleteStampResponse },
+    { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse }
 ], { "codegen.perms.perms_svc": { order: 57, icon: "i-mdi-signature" } });

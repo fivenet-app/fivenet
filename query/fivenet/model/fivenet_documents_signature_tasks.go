@@ -26,4 +26,6 @@ type FivenetDocumentsSignatureTasks struct {
 	CreatedAt    *time.Time `json:"created_at"`
 	CompletedAt  *time.Time `json:"completed_at"`
 	SignatureID  *int64     `json:"signature_id"`
+	CreatorID    *int32     `json:"creator_id"`
+	CreatorJob   *string    `json:"creator_job"`
 }

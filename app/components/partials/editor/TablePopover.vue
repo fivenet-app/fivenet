@@ -39,7 +39,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
 
 <template>
     <UPopover>
-        <UTooltip :text="$t('components.partials.TiptapEditor.table')">
+        <UTooltip :text="$t('components.partials.tiptap_editor.table')">
             <UButton
                 :class="{ 'bg-neutral-300 dark:bg-neutral-900': editor.isActive('table') }"
                 color="neutral"

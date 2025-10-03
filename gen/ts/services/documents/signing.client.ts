@@ -5,26 +5,20 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SigningService } from "./signing";
+import type { RecomputeSignatureStatusResponse } from "./signing";
+import type { RecomputeSignatureStatusRequest } from "./signing";
 import type { DeleteStampResponse } from "./signing";
 import type { DeleteStampRequest } from "./signing";
 import type { UpsertStampResponse } from "./signing";
 import type { UpsertStampRequest } from "./signing";
 import type { ListUsableStampsResponse } from "./signing";
 import type { ListUsableStampsRequest } from "./signing";
-import type { RecomputeSignatureStatusResponse } from "./signing";
-import type { RecomputeSignatureStatusRequest } from "./signing";
 import type { RevokeSignatureResponse } from "./signing";
 import type { RevokeSignatureRequest } from "./signing";
 import type { ApplySignatureResponse } from "./signing";
 import type { ApplySignatureRequest } from "./signing";
 import type { ListSignaturesResponse } from "./signing";
 import type { ListSignaturesRequest } from "./signing";
-import type { DeleteSignaturePolicyAccessResponse } from "./signing";
-import type { DeleteSignaturePolicyAccessRequest } from "./signing";
-import type { UpsertSignaturePolicyAccessResponse } from "./signing";
-import type { UpsertSignaturePolicyAccessRequest } from "./signing";
-import type { ListSignaturePolicyAccessResponse } from "./signing";
-import type { ListSignaturePolicyAccessRequest } from "./signing";
 import type { DeleteSignaturePolicyResponse } from "./signing";
 import type { DeleteSignaturePolicyRequest } from "./signing";
 import type { UpsertSignaturePolicyResponse } from "./signing";
@@ -53,20 +47,6 @@ export interface ISigningServiceClient {
      */
     deleteSignaturePolicy(input: DeleteSignaturePolicyRequest, options?: RpcOptions): UnaryCall<DeleteSignaturePolicyRequest, DeleteSignaturePolicyResponse>;
     /**
-     * Requirement ACL
-     *
-     * @generated from protobuf rpc: ListSignaturePolicyAccess
-     */
-    listSignaturePolicyAccess(input: ListSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<ListSignaturePolicyAccessRequest, ListSignaturePolicyAccessResponse>;
-    /**
-     * @generated from protobuf rpc: UpsertSignaturePolicyAccess
-     */
-    upsertSignaturePolicyAccess(input: UpsertSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<UpsertSignaturePolicyAccessRequest, UpsertSignaturePolicyAccessResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteSignaturePolicyAccess
-     */
-    deleteSignaturePolicyAccess(input: DeleteSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<DeleteSignaturePolicyAccessRequest, DeleteSignaturePolicyAccessResponse>;
-    /**
      * Signatures
      *
      * @generated from protobuf rpc: ListSignatures
@@ -81,12 +61,6 @@ export interface ISigningServiceClient {
      */
     revokeSignature(input: RevokeSignatureRequest, options?: RpcOptions): UnaryCall<RevokeSignatureRequest, RevokeSignatureResponse>;
     /**
-     * Helpers
-     *
-     * @generated from protobuf rpc: RecomputeSignatureStatus
-     */
-    recomputeSignatureStatus(input: RecomputeSignatureStatusRequest, options?: RpcOptions): UnaryCall<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse>;
-    /**
      * Stamps
      *
      * @generated from protobuf rpc: ListUsableStamps
@@ -100,6 +74,12 @@ export interface ISigningServiceClient {
      * @generated from protobuf rpc: DeleteStamp
      */
     deleteStamp(input: DeleteStampRequest, options?: RpcOptions): UnaryCall<DeleteStampRequest, DeleteStampResponse>;
+    /**
+     * Helpers
+     *
+     * @generated from protobuf rpc: RecomputeSignatureStatus
+     */
+    recomputeSignatureStatus(input: RecomputeSignatureStatusRequest, options?: RpcOptions): UnaryCall<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse>;
 }
 /**
  * @generated from protobuf service services.documents.SigningService
@@ -134,50 +114,50 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
         return stackIntercept<DeleteSignaturePolicyRequest, DeleteSignaturePolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * Requirement ACL
-     *
-     * @generated from protobuf rpc: ListSignaturePolicyAccess
-     */
-    listSignaturePolicyAccess(input: ListSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<ListSignaturePolicyAccessRequest, ListSignaturePolicyAccessResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListSignaturePolicyAccessRequest, ListSignaturePolicyAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpsertSignaturePolicyAccess
-     */
-    upsertSignaturePolicyAccess(input: UpsertSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<UpsertSignaturePolicyAccessRequest, UpsertSignaturePolicyAccessResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpsertSignaturePolicyAccessRequest, UpsertSignaturePolicyAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteSignaturePolicyAccess
-     */
-    deleteSignaturePolicyAccess(input: DeleteSignaturePolicyAccessRequest, options?: RpcOptions): UnaryCall<DeleteSignaturePolicyAccessRequest, DeleteSignaturePolicyAccessResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteSignaturePolicyAccessRequest, DeleteSignaturePolicyAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * Signatures
      *
      * @generated from protobuf rpc: ListSignatures
      */
     listSignatures(input: ListSignaturesRequest, options?: RpcOptions): UnaryCall<ListSignaturesRequest, ListSignaturesResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListSignaturesRequest, ListSignaturesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ApplySignature
      */
     applySignature(input: ApplySignatureRequest, options?: RpcOptions): UnaryCall<ApplySignatureRequest, ApplySignatureResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<ApplySignatureRequest, ApplySignatureResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeSignature
      */
     revokeSignature(input: RevokeSignatureRequest, options?: RpcOptions): UnaryCall<RevokeSignatureRequest, RevokeSignatureResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<RevokeSignatureRequest, RevokeSignatureResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * Stamps
+     *
+     * @generated from protobuf rpc: ListUsableStamps
+     */
+    listUsableStamps(input: ListUsableStampsRequest, options?: RpcOptions): UnaryCall<ListUsableStampsRequest, ListUsableStampsResponse> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListUsableStampsRequest, ListUsableStampsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpsertStamp
+     */
+    upsertStamp(input: UpsertStampRequest, options?: RpcOptions): UnaryCall<UpsertStampRequest, UpsertStampResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpsertStampRequest, UpsertStampResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteStamp
+     */
+    deleteStamp(input: DeleteStampRequest, options?: RpcOptions): UnaryCall<DeleteStampRequest, DeleteStampResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteStampRequest, DeleteStampResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * Helpers
@@ -187,28 +167,5 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
     recomputeSignatureStatus(input: RecomputeSignatureStatusRequest, options?: RpcOptions): UnaryCall<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * Stamps
-     *
-     * @generated from protobuf rpc: ListUsableStamps
-     */
-    listUsableStamps(input: ListUsableStampsRequest, options?: RpcOptions): UnaryCall<ListUsableStampsRequest, ListUsableStampsResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListUsableStampsRequest, ListUsableStampsResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpsertStamp
-     */
-    upsertStamp(input: UpsertStampRequest, options?: RpcOptions): UnaryCall<UpsertStampRequest, UpsertStampResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpsertStampRequest, UpsertStampResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteStamp
-     */
-    deleteStamp(input: DeleteStampRequest, options?: RpcOptions): UnaryCall<DeleteStampRequest, DeleteStampResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteStampRequest, DeleteStampResponse>("unary", this._transport, method, opt, input);
     }
 }

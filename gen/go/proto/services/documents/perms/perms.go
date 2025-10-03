@@ -16,9 +16,8 @@ const (
 	DocumentsServicePerm perms.Category = "documents.DocumentsService"
 	SigningServicePerm   perms.Category = "documents.SigningService"
 
-	ApprovalServiceDeleteApprovalAccessPerm            perms.Name = "DeleteApprovalAccess"
-	ApprovalServiceReopenTaskPerm                      perms.Name = "ReopenTask"
-	ApprovalServiceUpsertPolicyPerm                    perms.Name = "UpsertPolicy"
+	ApprovalServiceReopenApprovalTaskPerm              perms.Name = "ReopenApprovalTask"
+	ApprovalServiceUpsertApprovalPolicyPerm            perms.Name = "UpsertApprovalPolicy"
 	DocumentsServiceAddDocumentReferencePerm           perms.Name = "AddDocumentReference"
 	DocumentsServiceAddDocumentRelationPerm            perms.Name = "AddDocumentRelation"
 	DocumentsServiceChangeDocumentOwnerPerm            perms.Name = "ChangeDocumentOwner"

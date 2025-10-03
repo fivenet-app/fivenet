@@ -24,6 +24,14 @@ type fivenetDocumentsMetaTable struct {
 	SigRequiredRemaining mysql.ColumnInteger
 	SigRequiredTotal     mysql.ColumnInteger
 	SigCollectedValid    mysql.ColumnInteger
+	SigPoliciesActive    mysql.ColumnInteger
+	ApRequiredTotal      mysql.ColumnInteger
+	ApCollectedApproved  mysql.ColumnInteger
+	ApRequiredRemaining  mysql.ColumnInteger
+	ApDeclinedCount      mysql.ColumnInteger
+	ApPendingCount       mysql.ColumnInteger
+	ApAnyDeclined        mysql.ColumnBool
+	ApPoliciesActive     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -72,9 +80,17 @@ func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fiven
 		SigRequiredRemainingColumn = mysql.IntegerColumn("sig_required_remaining")
 		SigRequiredTotalColumn     = mysql.IntegerColumn("sig_required_total")
 		SigCollectedValidColumn    = mysql.IntegerColumn("sig_collected_valid")
-		allColumns                 = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn}
-		mutableColumns             = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn}
-		defaultColumns             = mysql.ColumnList{ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn}
+		SigPoliciesActiveColumn    = mysql.IntegerColumn("sig_policies_active")
+		ApRequiredTotalColumn      = mysql.IntegerColumn("ap_required_total")
+		ApCollectedApprovedColumn  = mysql.IntegerColumn("ap_collected_approved")
+		ApRequiredRemainingColumn  = mysql.IntegerColumn("ap_required_remaining")
+		ApDeclinedCountColumn      = mysql.IntegerColumn("ap_declined_count")
+		ApPendingCountColumn       = mysql.IntegerColumn("ap_pending_count")
+		ApAnyDeclinedColumn        = mysql.BoolColumn("ap_any_declined")
+		ApPoliciesActiveColumn     = mysql.IntegerColumn("ap_policies_active")
+		allColumns                 = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		mutableColumns             = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		defaultColumns             = mysql.ColumnList{ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
 	)
 
 	return fivenetDocumentsMetaTable{
@@ -88,6 +104,14 @@ func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fiven
 		SigRequiredRemaining: SigRequiredRemainingColumn,
 		SigRequiredTotal:     SigRequiredTotalColumn,
 		SigCollectedValid:    SigCollectedValidColumn,
+		SigPoliciesActive:    SigPoliciesActiveColumn,
+		ApRequiredTotal:      ApRequiredTotalColumn,
+		ApCollectedApproved:  ApCollectedApprovedColumn,
+		ApRequiredRemaining:  ApRequiredRemainingColumn,
+		ApDeclinedCount:      ApDeclinedCountColumn,
+		ApPendingCount:       ApPendingCountColumn,
+		ApAnyDeclined:        ApAnyDeclinedColumn,
+		ApPoliciesActive:     ApPoliciesActiveColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

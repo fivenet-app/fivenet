@@ -7,78 +7,53 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/signing.proto";
+import "resources/documents/stamp.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
 message ListSignaturePoliciesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
 }
 
 message ListSignaturePoliciesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.SignatureRequirement requirements = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.SignaturePolicy policies = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message UpsertSignaturePolicyRequest {
-  resources.documents.SignatureRequirement requirement = 1 [(buf.validate.field).required = true];
+  resources.documents.SignaturePolicy policy = 1 [(buf.validate.field).required = true];
 }
 
 message UpsertSignaturePolicyResponse {
-  resources.documents.SignatureRequirement requirement = 1;
+  resources.documents.SignaturePolicy policy = 1;
 }
 
 message DeleteSignaturePolicyRequest {
-  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
 message DeleteSignaturePolicyResponse {}
 
-message ListSignaturePolicyAccessRequest {
-  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message ListSignaturePolicyAccessResponse {
-  resources.documents.SignatureAccess access = 1;
-}
-
-message UpsertSignaturePolicyAccessRequest {
-  int64 requirement_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.documents.SignatureAccess access = 2 [(buf.validate.field).required = true];
-}
-
-message UpsertSignaturePolicyAccessResponse {
-  resources.documents.SignatureAccess access = 1;
-}
-
-message DeleteSignaturePolicyAccessRequest {
-  int64 id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message DeleteSignaturePolicyAccessResponse {}
-
 message ListSignaturesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+
   resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
   repeated resources.documents.SignatureStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
 }
 
 message ListSignaturesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.Signature signatures = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.Signature signatures = 1 [(codegen.itemslen.enabled) = true];
 }
 
 message ApplySignatureRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   optional resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
-  int64 requirement_id = 3; // 0/omit for acknowledgement
+  int64 policy_id = 3; // 0/omit for acknowledgement
+
   resources.documents.SignatureType type = 4 [(buf.validate.field).enum.defined_only = true];
-  string payload_json = 5 [(buf.validate.field).string.min_len = 1];
-  int64 stamp_id = 6; // when type=STAMP
-  string idempotency_key = 10 [(buf.validate.field).string.max_len = 64];
+  optional string payload_svg = 5 [(buf.validate.field).string.min_len = 1];
+  optional int64 stamp_id = 6; // when type=STAMP
 }
 
 message ApplySignatureResponse {
@@ -93,18 +68,6 @@ message RevokeSignatureRequest {
 
 message RevokeSignatureResponse {
   resources.documents.Signature signature = 1;
-}
-
-message RecomputeSignatureStatusRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
-}
-
-message RecomputeSignatureStatusResponse {
-  bool document_signed = 1;
-  int32 required_total = 2;
-  int32 required_remaining = 3;
-  int32 collected_valid = 4;
 }
 
 // Stamps listing — your example wired in as a method
@@ -132,6 +95,18 @@ message DeleteStampRequest {
 
 message DeleteStampResponse {}
 
+message RecomputeSignatureStatusRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
+}
+
+message RecomputeSignatureStatusResponse {
+  bool document_signed = 1;
+  int32 required_total = 2;
+  int32 required_remaining = 3;
+  int32 collected_valid = 4;
+}
+
 service SigningService {
   option (codegen.perms.perms_svc) = {
     order: 57
@@ -142,7 +117,7 @@ service SigningService {
   rpc ListSignaturePolicies(ListSignaturePoliciesRequest) returns (ListSignaturePoliciesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -153,39 +128,18 @@ service SigningService {
     option (codegen.perms.perms) = {enabled: true};
   }
 
-  // Requirement ACL
-  rpc ListSignaturePolicyAccess(ListSignaturePolicyAccessRequest) returns (ListSignaturePolicyAccessResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
-  }
-  rpc UpsertSignaturePolicyAccess(UpsertSignaturePolicyAccessRequest) returns (UpsertSignaturePolicyAccessResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertSignaturePolicy"
-    };
-  }
-  rpc DeleteSignaturePolicyAccess(DeleteSignaturePolicyAccessRequest) returns (DeleteSignaturePolicyAccessResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertSignaturePolicy"
-    };
-  }
-
   // Signatures
   rpc ListSignatures(ListSignaturesRequest) returns (ListSignaturesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
   rpc ApplySignature(ApplySignatureRequest) returns (ApplySignatureResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -196,19 +150,11 @@ service SigningService {
     };
   }
 
-  // Helpers
-  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "DeleteSignaturePolicy"
-    };
-  }
-
   // Stamps
   rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
@@ -219,5 +165,13 @@ service SigningService {
 
   rpc DeleteStamp(DeleteStampRequest) returns (DeleteStampResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Helpers
+  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "DeleteSignaturePolicy"
+    };
   }
 }

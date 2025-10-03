@@ -22,6 +22,11 @@ func (s *Server) ListUsableStamps(
 	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
 	tStampAccess := table.FivenetDocumentsSignaturesStampsAccess.AS("stamp_access")
 
+	deletedAtCond := mysql.Bool(true)
+	if !userInfo.GetSuperuser() {
+		deletedAtCond = tStamp.DeletedAt.IS_NULL()
+	}
+
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
 		existsAccess = mysql.EXISTS(
@@ -46,15 +51,17 @@ func (s *Server) ListUsableStamps(
 	}
 
 	condition := mysql.AND(
-		tStamp.DeletedAt.IS_NULL(),
+		deletedAtCond,
 		mysql.OR(
-			tStamp.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+			tStamp.OwnerID.EQ(mysql.Int32(userInfo.GetUserId())),
 			existsAccess,
 		),
 	)
 
 	countStmt := mysql.
-		SELECT(mysql.COUNT(tStamp.ID)).
+		SELECT(
+			mysql.COUNT(tStamp.ID).AS("data_count.total"),
+		).
 		FROM(tStamp).
 		WHERE(condition)
 
@@ -76,7 +83,7 @@ func (s *Server) ListUsableStamps(
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
-			tStamp.UserID,
+			tStamp.OwnerID,
 			tStamp.SvgTemplate,
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
@@ -94,13 +101,120 @@ func (s *Server) ListUsableStamps(
 	return resp, nil
 }
 
+func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp, error) {
+	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
+
+	stmt := mysql.
+		SELECT(
+			tStamp.ID,
+			tStamp.Name,
+			tStamp.OwnerID,
+			tStamp.SvgTemplate,
+			tStamp.VariantsJSON,
+			tStamp.CreatedAt,
+		).
+		FROM(tStamp).
+		WHERE(mysql.AND(
+			tStamp.ID.EQ(mysql.Int64(stampID)),
+		)).
+		LIMIT(1)
+
+	var stamp documents.Stamp
+	if err := stmt.QueryContext(ctx, s.db, &stamp); err != nil {
+		return nil, err
+	}
+
+	if stamp.Id == 0 {
+		return nil, nil
+	}
+
+	return &stamp, nil
+}
+
 func (s *Server) UpsertStamp(
 	ctx context.Context,
 	req *pbdocuments.UpsertStampRequest,
 ) (*pbdocuments.UpsertStampResponse, error) {
-	// TODO implement
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	return nil, nil
+	tStamp := table.FivenetDocumentsSignaturesStamps
+
+	st := req.GetStamp()
+
+	if st.GetId() != 0 {
+		check, err := s.signingStampAccess.CanUserAccessTarget(
+			ctx,
+			st.GetId(),
+			userInfo,
+			documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+		)
+		if err != nil {
+			return nil, err
+		}
+		if !check {
+			return nil, errorsdocuments.ErrPermissionDenied
+		}
+
+		stmt := tStamp.
+			UPDATE(
+				tStamp.Name,
+				tStamp.SvgTemplate,
+				tStamp.VariantsJSON,
+			).
+			SET(
+				mysql.String(st.GetJob()),
+				mysql.String(st.GetSvgTemplate()),
+				nil,
+			).
+			WHERE(tStamp.ID.EQ(mysql.Int64(st.GetId()))).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
+		if _, err := s.signingStampAccess.HandleAccessChanges(ctx, s.db, st.GetId(), st.Access.Jobs, nil, nil); err != nil {
+			return nil, err
+		}
+	} else {
+		// Create new stamp in db
+
+		ownerId := mysql.NULL
+		if st.GetOwnerId() > 0 {
+			ownerId = mysql.Int32(st.GetOwnerId())
+		}
+
+		stmt := tStamp.
+			INSERT(
+				tStamp.Name,
+				tStamp.SvgTemplate,
+				tStamp.VariantsJSON,
+				tStamp.OwnerID,
+			).
+			VALUES(
+				st.GetJob(),
+				st.GetSvgTemplate(),
+				nil,
+				ownerId,
+			)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
+		if _, err := s.signingStampAccess.HandleAccessChanges(ctx, s.db, st.GetId(), st.Access.Jobs, nil, nil); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	stamp, err := s.getStamp(ctx, st.GetId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return &pbdocuments.UpsertStampResponse{
+		Stamp: stamp,
+	}, nil
 }
 
 func (s *Server) DeleteStamp(
@@ -109,7 +223,7 @@ func (s *Server) DeleteStamp(
 ) (*pbdocuments.DeleteStampResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.signatureStampAccess.CanUserAccessTarget(
+	check, err := s.signingStampAccess.CanUserAccessTarget(
 		ctx,
 		req.GetStampId(),
 		userInfo,

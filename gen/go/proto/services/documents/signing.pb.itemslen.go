@@ -3,12 +3,12 @@
 
 package documents
 
-// ItemsLen returns the length of Requirements.
+// ItemsLen returns the length of Policies.
 func (m *ListSignaturePoliciesResponse) ItemsLen() int {
 	if m == nil {
 		return 0
 	}
-	return len(m.GetRequirements())
+	return len(m.GetPolicies())
 }
 
 // ItemsLen returns the length of Signatures.

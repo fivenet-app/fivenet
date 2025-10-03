@@ -19,17 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ApprovalService_GetPolicy_FullMethodName               = "/services.documents.ApprovalService/GetPolicy"
-	ApprovalService_UpsertPolicy_FullMethodName            = "/services.documents.ApprovalService/UpsertPolicy"
-	ApprovalService_StartApprovalRound_FullMethodName      = "/services.documents.ApprovalService/StartApprovalRound"
-	ApprovalService_CompleteApprovalRound_FullMethodName   = "/services.documents.ApprovalService/CompleteApprovalRound"
-	ApprovalService_RecomputePolicyCounters_FullMethodName = "/services.documents.ApprovalService/RecomputePolicyCounters"
-	ApprovalService_ListApprovalAccess_FullMethodName      = "/services.documents.ApprovalService/ListApprovalAccess"
-	ApprovalService_UpsertApprovalAccess_FullMethodName    = "/services.documents.ApprovalService/UpsertApprovalAccess"
-	ApprovalService_DeleteApprovalAccess_FullMethodName    = "/services.documents.ApprovalService/DeleteApprovalAccess"
-	ApprovalService_ListApprovalTasks_FullMethodName       = "/services.documents.ApprovalService/ListApprovalTasks"
-	ApprovalService_DecideTask_FullMethodName              = "/services.documents.ApprovalService/DecideTask"
-	ApprovalService_ReopenTask_FullMethodName              = "/services.documents.ApprovalService/ReopenTask"
+	ApprovalService_GetApprovalPolicy_FullMethodName               = "/services.documents.ApprovalService/GetApprovalPolicy"
+	ApprovalService_UpsertApprovalPolicy_FullMethodName            = "/services.documents.ApprovalService/UpsertApprovalPolicy"
+	ApprovalService_StartApprovalRound_FullMethodName              = "/services.documents.ApprovalService/StartApprovalRound"
+	ApprovalService_CompleteApprovalRound_FullMethodName           = "/services.documents.ApprovalService/CompleteApprovalRound"
+	ApprovalService_ListApprovalTasks_FullMethodName               = "/services.documents.ApprovalService/ListApprovalTasks"
+	ApprovalService_DecideApprovalTask_FullMethodName              = "/services.documents.ApprovalService/DecideApprovalTask"
+	ApprovalService_ReopenApprovalTask_FullMethodName              = "/services.documents.ApprovalService/ReopenApprovalTask"
+	ApprovalService_RecomputeApprovalPolicyCounters_FullMethodName = "/services.documents.ApprovalService/RecomputeApprovalPolicyCounters"
 )
 
 // ApprovalServiceClient is the client API for ApprovalService service.
@@ -37,20 +34,16 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApprovalServiceClient interface {
 	// Policy
-	GetPolicy(ctx context.Context, in *GetPolicyRequest, opts ...grpc.CallOption) (*GetPolicyResponse, error)
-	UpsertPolicy(ctx context.Context, in *UpsertPolicyRequest, opts ...grpc.CallOption) (*UpsertPolicyResponse, error)
+	GetApprovalPolicy(ctx context.Context, in *GetApprovalPolicyRequest, opts ...grpc.CallOption) (*GetApprovalPolicyResponse, error)
+	UpsertApprovalPolicy(ctx context.Context, in *UpsertApprovalPolicyRequest, opts ...grpc.CallOption) (*UpsertApprovalPolicyResponse, error)
 	StartApprovalRound(ctx context.Context, in *StartApprovalRoundRequest, opts ...grpc.CallOption) (*StartApprovalRoundResponse, error)
 	CompleteApprovalRound(ctx context.Context, in *CompleteApprovalRoundRequest, opts ...grpc.CallOption) (*CompleteApprovalRoundResponse, error)
-	// Helpers
-	RecomputePolicyCounters(ctx context.Context, in *RecomputePolicyCountersRequest, opts ...grpc.CallOption) (*RecomputePolicyCountersResponse, error)
-	// Access (policy-scoped)
-	ListApprovalAccess(ctx context.Context, in *ListApprovalAccessRequest, opts ...grpc.CallOption) (*ListApprovalAccessResponse, error)
-	UpsertApprovalAccess(ctx context.Context, in *UpsertApprovalAccessRequest, opts ...grpc.CallOption) (*UpsertApprovalAccessResponse, error)
-	DeleteApprovalAccess(ctx context.Context, in *DeleteApprovalAccessRequest, opts ...grpc.CallOption) (*DeleteApprovalAccessResponse, error)
 	// Tasks
 	ListApprovalTasks(ctx context.Context, in *ListApprovalTasksRequest, opts ...grpc.CallOption) (*ListApprovalTasksResponse, error)
-	DecideTask(ctx context.Context, in *DecideTaskRequest, opts ...grpc.CallOption) (*DecideTaskResponse, error)
-	ReopenTask(ctx context.Context, in *ReopenTaskRequest, opts ...grpc.CallOption) (*ReopenTaskResponse, error)
+	DecideApprovalTask(ctx context.Context, in *DecideApprovalTaskRequest, opts ...grpc.CallOption) (*DecideApprovalTaskResponse, error)
+	ReopenApprovalTask(ctx context.Context, in *ReopenApprovalTaskRequest, opts ...grpc.CallOption) (*ReopenApprovalTaskResponse, error)
+	// Helpers
+	RecomputeApprovalPolicyCounters(ctx context.Context, in *RecomputeApprovalPolicyCountersRequest, opts ...grpc.CallOption) (*RecomputeApprovalPolicyCountersResponse, error)
 }
 
 type approvalServiceClient struct {
@@ -61,20 +54,20 @@ func NewApprovalServiceClient(cc grpc.ClientConnInterface) ApprovalServiceClient
 	return &approvalServiceClient{cc}
 }
 
-func (c *approvalServiceClient) GetPolicy(ctx context.Context, in *GetPolicyRequest, opts ...grpc.CallOption) (*GetPolicyResponse, error) {
+func (c *approvalServiceClient) GetApprovalPolicy(ctx context.Context, in *GetApprovalPolicyRequest, opts ...grpc.CallOption) (*GetApprovalPolicyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPolicyResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_GetPolicy_FullMethodName, in, out, cOpts...)
+	out := new(GetApprovalPolicyResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_GetApprovalPolicy_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *approvalServiceClient) UpsertPolicy(ctx context.Context, in *UpsertPolicyRequest, opts ...grpc.CallOption) (*UpsertPolicyResponse, error) {
+func (c *approvalServiceClient) UpsertApprovalPolicy(ctx context.Context, in *UpsertApprovalPolicyRequest, opts ...grpc.CallOption) (*UpsertApprovalPolicyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertPolicyResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_UpsertPolicy_FullMethodName, in, out, cOpts...)
+	out := new(UpsertApprovalPolicyResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_UpsertApprovalPolicy_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,46 +94,6 @@ func (c *approvalServiceClient) CompleteApprovalRound(ctx context.Context, in *C
 	return out, nil
 }
 
-func (c *approvalServiceClient) RecomputePolicyCounters(ctx context.Context, in *RecomputePolicyCountersRequest, opts ...grpc.CallOption) (*RecomputePolicyCountersResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RecomputePolicyCountersResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_RecomputePolicyCounters_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *approvalServiceClient) ListApprovalAccess(ctx context.Context, in *ListApprovalAccessRequest, opts ...grpc.CallOption) (*ListApprovalAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListApprovalAccessResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_ListApprovalAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *approvalServiceClient) UpsertApprovalAccess(ctx context.Context, in *UpsertApprovalAccessRequest, opts ...grpc.CallOption) (*UpsertApprovalAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertApprovalAccessResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_UpsertApprovalAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *approvalServiceClient) DeleteApprovalAccess(ctx context.Context, in *DeleteApprovalAccessRequest, opts ...grpc.CallOption) (*DeleteApprovalAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteApprovalAccessResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_DeleteApprovalAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *approvalServiceClient) ListApprovalTasks(ctx context.Context, in *ListApprovalTasksRequest, opts ...grpc.CallOption) (*ListApprovalTasksResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListApprovalTasksResponse)
@@ -151,20 +104,30 @@ func (c *approvalServiceClient) ListApprovalTasks(ctx context.Context, in *ListA
 	return out, nil
 }
 
-func (c *approvalServiceClient) DecideTask(ctx context.Context, in *DecideTaskRequest, opts ...grpc.CallOption) (*DecideTaskResponse, error) {
+func (c *approvalServiceClient) DecideApprovalTask(ctx context.Context, in *DecideApprovalTaskRequest, opts ...grpc.CallOption) (*DecideApprovalTaskResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DecideTaskResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_DecideTask_FullMethodName, in, out, cOpts...)
+	out := new(DecideApprovalTaskResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_DecideApprovalTask_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *approvalServiceClient) ReopenTask(ctx context.Context, in *ReopenTaskRequest, opts ...grpc.CallOption) (*ReopenTaskResponse, error) {
+func (c *approvalServiceClient) ReopenApprovalTask(ctx context.Context, in *ReopenApprovalTaskRequest, opts ...grpc.CallOption) (*ReopenApprovalTaskResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReopenTaskResponse)
-	err := c.cc.Invoke(ctx, ApprovalService_ReopenTask_FullMethodName, in, out, cOpts...)
+	out := new(ReopenApprovalTaskResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_ReopenApprovalTask_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *approvalServiceClient) RecomputeApprovalPolicyCounters(ctx context.Context, in *RecomputeApprovalPolicyCountersRequest, opts ...grpc.CallOption) (*RecomputeApprovalPolicyCountersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecomputeApprovalPolicyCountersResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_RecomputeApprovalPolicyCounters_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -176,20 +139,16 @@ func (c *approvalServiceClient) ReopenTask(ctx context.Context, in *ReopenTaskRe
 // for forward compatibility.
 type ApprovalServiceServer interface {
 	// Policy
-	GetPolicy(context.Context, *GetPolicyRequest) (*GetPolicyResponse, error)
-	UpsertPolicy(context.Context, *UpsertPolicyRequest) (*UpsertPolicyResponse, error)
+	GetApprovalPolicy(context.Context, *GetApprovalPolicyRequest) (*GetApprovalPolicyResponse, error)
+	UpsertApprovalPolicy(context.Context, *UpsertApprovalPolicyRequest) (*UpsertApprovalPolicyResponse, error)
 	StartApprovalRound(context.Context, *StartApprovalRoundRequest) (*StartApprovalRoundResponse, error)
 	CompleteApprovalRound(context.Context, *CompleteApprovalRoundRequest) (*CompleteApprovalRoundResponse, error)
-	// Helpers
-	RecomputePolicyCounters(context.Context, *RecomputePolicyCountersRequest) (*RecomputePolicyCountersResponse, error)
-	// Access (policy-scoped)
-	ListApprovalAccess(context.Context, *ListApprovalAccessRequest) (*ListApprovalAccessResponse, error)
-	UpsertApprovalAccess(context.Context, *UpsertApprovalAccessRequest) (*UpsertApprovalAccessResponse, error)
-	DeleteApprovalAccess(context.Context, *DeleteApprovalAccessRequest) (*DeleteApprovalAccessResponse, error)
 	// Tasks
 	ListApprovalTasks(context.Context, *ListApprovalTasksRequest) (*ListApprovalTasksResponse, error)
-	DecideTask(context.Context, *DecideTaskRequest) (*DecideTaskResponse, error)
-	ReopenTask(context.Context, *ReopenTaskRequest) (*ReopenTaskResponse, error)
+	DecideApprovalTask(context.Context, *DecideApprovalTaskRequest) (*DecideApprovalTaskResponse, error)
+	ReopenApprovalTask(context.Context, *ReopenApprovalTaskRequest) (*ReopenApprovalTaskResponse, error)
+	// Helpers
+	RecomputeApprovalPolicyCounters(context.Context, *RecomputeApprovalPolicyCountersRequest) (*RecomputeApprovalPolicyCountersResponse, error)
 	mustEmbedUnimplementedApprovalServiceServer()
 }
 
@@ -200,11 +159,11 @@ type ApprovalServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedApprovalServiceServer struct{}
 
-func (UnimplementedApprovalServiceServer) GetPolicy(context.Context, *GetPolicyRequest) (*GetPolicyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPolicy not implemented")
+func (UnimplementedApprovalServiceServer) GetApprovalPolicy(context.Context, *GetApprovalPolicyRequest) (*GetApprovalPolicyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetApprovalPolicy not implemented")
 }
-func (UnimplementedApprovalServiceServer) UpsertPolicy(context.Context, *UpsertPolicyRequest) (*UpsertPolicyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertPolicy not implemented")
+func (UnimplementedApprovalServiceServer) UpsertApprovalPolicy(context.Context, *UpsertApprovalPolicyRequest) (*UpsertApprovalPolicyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpsertApprovalPolicy not implemented")
 }
 func (UnimplementedApprovalServiceServer) StartApprovalRound(context.Context, *StartApprovalRoundRequest) (*StartApprovalRoundResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartApprovalRound not implemented")
@@ -212,26 +171,17 @@ func (UnimplementedApprovalServiceServer) StartApprovalRound(context.Context, *S
 func (UnimplementedApprovalServiceServer) CompleteApprovalRound(context.Context, *CompleteApprovalRoundRequest) (*CompleteApprovalRoundResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteApprovalRound not implemented")
 }
-func (UnimplementedApprovalServiceServer) RecomputePolicyCounters(context.Context, *RecomputePolicyCountersRequest) (*RecomputePolicyCountersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RecomputePolicyCounters not implemented")
-}
-func (UnimplementedApprovalServiceServer) ListApprovalAccess(context.Context, *ListApprovalAccessRequest) (*ListApprovalAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListApprovalAccess not implemented")
-}
-func (UnimplementedApprovalServiceServer) UpsertApprovalAccess(context.Context, *UpsertApprovalAccessRequest) (*UpsertApprovalAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertApprovalAccess not implemented")
-}
-func (UnimplementedApprovalServiceServer) DeleteApprovalAccess(context.Context, *DeleteApprovalAccessRequest) (*DeleteApprovalAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteApprovalAccess not implemented")
-}
 func (UnimplementedApprovalServiceServer) ListApprovalTasks(context.Context, *ListApprovalTasksRequest) (*ListApprovalTasksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListApprovalTasks not implemented")
 }
-func (UnimplementedApprovalServiceServer) DecideTask(context.Context, *DecideTaskRequest) (*DecideTaskResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DecideTask not implemented")
+func (UnimplementedApprovalServiceServer) DecideApprovalTask(context.Context, *DecideApprovalTaskRequest) (*DecideApprovalTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DecideApprovalTask not implemented")
 }
-func (UnimplementedApprovalServiceServer) ReopenTask(context.Context, *ReopenTaskRequest) (*ReopenTaskResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReopenTask not implemented")
+func (UnimplementedApprovalServiceServer) ReopenApprovalTask(context.Context, *ReopenApprovalTaskRequest) (*ReopenApprovalTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReopenApprovalTask not implemented")
+}
+func (UnimplementedApprovalServiceServer) RecomputeApprovalPolicyCounters(context.Context, *RecomputeApprovalPolicyCountersRequest) (*RecomputeApprovalPolicyCountersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecomputeApprovalPolicyCounters not implemented")
 }
 func (UnimplementedApprovalServiceServer) mustEmbedUnimplementedApprovalServiceServer() {}
 func (UnimplementedApprovalServiceServer) testEmbeddedByValue()                         {}
@@ -254,38 +204,38 @@ func RegisterApprovalServiceServer(s grpc.ServiceRegistrar, srv ApprovalServiceS
 	s.RegisterService(&ApprovalService_ServiceDesc, srv)
 }
 
-func _ApprovalService_GetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPolicyRequest)
+func _ApprovalService_GetApprovalPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetApprovalPolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApprovalServiceServer).GetPolicy(ctx, in)
+		return srv.(ApprovalServiceServer).GetApprovalPolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ApprovalService_GetPolicy_FullMethodName,
+		FullMethod: ApprovalService_GetApprovalPolicy_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).GetPolicy(ctx, req.(*GetPolicyRequest))
+		return srv.(ApprovalServiceServer).GetApprovalPolicy(ctx, req.(*GetApprovalPolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApprovalService_UpsertPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertPolicyRequest)
+func _ApprovalService_UpsertApprovalPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertApprovalPolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApprovalServiceServer).UpsertPolicy(ctx, in)
+		return srv.(ApprovalServiceServer).UpsertApprovalPolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ApprovalService_UpsertPolicy_FullMethodName,
+		FullMethod: ApprovalService_UpsertApprovalPolicy_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).UpsertPolicy(ctx, req.(*UpsertPolicyRequest))
+		return srv.(ApprovalServiceServer).UpsertApprovalPolicy(ctx, req.(*UpsertApprovalPolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -326,78 +276,6 @@ func _ApprovalService_CompleteApprovalRound_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApprovalService_RecomputePolicyCounters_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecomputePolicyCountersRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApprovalServiceServer).RecomputePolicyCounters(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ApprovalService_RecomputePolicyCounters_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).RecomputePolicyCounters(ctx, req.(*RecomputePolicyCountersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ApprovalService_ListApprovalAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListApprovalAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApprovalServiceServer).ListApprovalAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ApprovalService_ListApprovalAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).ListApprovalAccess(ctx, req.(*ListApprovalAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ApprovalService_UpsertApprovalAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertApprovalAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApprovalServiceServer).UpsertApprovalAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ApprovalService_UpsertApprovalAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).UpsertApprovalAccess(ctx, req.(*UpsertApprovalAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ApprovalService_DeleteApprovalAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteApprovalAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ApprovalServiceServer).DeleteApprovalAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ApprovalService_DeleteApprovalAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).DeleteApprovalAccess(ctx, req.(*DeleteApprovalAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ApprovalService_ListApprovalTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListApprovalTasksRequest)
 	if err := dec(in); err != nil {
@@ -416,38 +294,56 @@ func _ApprovalService_ListApprovalTasks_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApprovalService_DecideTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DecideTaskRequest)
+func _ApprovalService_DecideApprovalTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DecideApprovalTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApprovalServiceServer).DecideTask(ctx, in)
+		return srv.(ApprovalServiceServer).DecideApprovalTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ApprovalService_DecideTask_FullMethodName,
+		FullMethod: ApprovalService_DecideApprovalTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).DecideTask(ctx, req.(*DecideTaskRequest))
+		return srv.(ApprovalServiceServer).DecideApprovalTask(ctx, req.(*DecideApprovalTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApprovalService_ReopenTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReopenTaskRequest)
+func _ApprovalService_ReopenApprovalTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReopenApprovalTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApprovalServiceServer).ReopenTask(ctx, in)
+		return srv.(ApprovalServiceServer).ReopenApprovalTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ApprovalService_ReopenTask_FullMethodName,
+		FullMethod: ApprovalService_ReopenApprovalTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApprovalServiceServer).ReopenTask(ctx, req.(*ReopenTaskRequest))
+		return srv.(ApprovalServiceServer).ReopenApprovalTask(ctx, req.(*ReopenApprovalTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ApprovalService_RecomputeApprovalPolicyCounters_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecomputeApprovalPolicyCountersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalServiceServer).RecomputeApprovalPolicyCounters(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalService_RecomputeApprovalPolicyCounters_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalServiceServer).RecomputeApprovalPolicyCounters(ctx, req.(*RecomputeApprovalPolicyCountersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -460,12 +356,12 @@ var ApprovalService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ApprovalServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPolicy",
-			Handler:    _ApprovalService_GetPolicy_Handler,
+			MethodName: "GetApprovalPolicy",
+			Handler:    _ApprovalService_GetApprovalPolicy_Handler,
 		},
 		{
-			MethodName: "UpsertPolicy",
-			Handler:    _ApprovalService_UpsertPolicy_Handler,
+			MethodName: "UpsertApprovalPolicy",
+			Handler:    _ApprovalService_UpsertApprovalPolicy_Handler,
 		},
 		{
 			MethodName: "StartApprovalRound",
@@ -476,32 +372,20 @@ var ApprovalService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ApprovalService_CompleteApprovalRound_Handler,
 		},
 		{
-			MethodName: "RecomputePolicyCounters",
-			Handler:    _ApprovalService_RecomputePolicyCounters_Handler,
-		},
-		{
-			MethodName: "ListApprovalAccess",
-			Handler:    _ApprovalService_ListApprovalAccess_Handler,
-		},
-		{
-			MethodName: "UpsertApprovalAccess",
-			Handler:    _ApprovalService_UpsertApprovalAccess_Handler,
-		},
-		{
-			MethodName: "DeleteApprovalAccess",
-			Handler:    _ApprovalService_DeleteApprovalAccess_Handler,
-		},
-		{
 			MethodName: "ListApprovalTasks",
 			Handler:    _ApprovalService_ListApprovalTasks_Handler,
 		},
 		{
-			MethodName: "DecideTask",
-			Handler:    _ApprovalService_DecideTask_Handler,
+			MethodName: "DecideApprovalTask",
+			Handler:    _ApprovalService_DecideApprovalTask_Handler,
 		},
 		{
-			MethodName: "ReopenTask",
-			Handler:    _ApprovalService_ReopenTask_Handler,
+			MethodName: "ReopenApprovalTask",
+			Handler:    _ApprovalService_ReopenApprovalTask_Handler,
+		},
+		{
+			MethodName: "RecomputeApprovalPolicyCounters",
+			Handler:    _ApprovalService_RecomputeApprovalPolicyCounters_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

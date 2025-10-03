@@ -8,7 +8,7 @@ defineEmits(['update:modelValue']);
     <UButtonGroup>
         <UButton
             :disabled="modelValue === 'left'"
-            :title="$t('components.partials.TiptapEditor.align_left')"
+            :title="$t('components.partials.tiptap_editor.align_left')"
             color="neutral"
             @click="$emit('update:modelValue', 'left')"
         >
@@ -17,7 +17,7 @@ defineEmits(['update:modelValue']);
 
         <UButton
             :disabled="modelValue === 'center'"
-            :title="$t('components.partials.TiptapEditor.align_center')"
+            :title="$t('components.partials.tiptap_editor.align_center')"
             color="neutral"
             @click="$emit('update:modelValue', 'center')"
         >
@@ -26,7 +26,7 @@ defineEmits(['update:modelValue']);
 
         <UButton
             :disabled="modelValue === 'right'"
-            :title="$t('components.partials.TiptapEditor.align_right')"
+            :title="$t('components.partials.tiptap_editor.align_right')"
             color="neutral"
             @click="$emit('update:modelValue', 'right')"
         >

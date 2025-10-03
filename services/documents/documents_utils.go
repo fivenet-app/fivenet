@@ -105,7 +105,7 @@ func (s *Server) listDocumentsQuery(
 			tDCategory.Icon,
 			tDocumentShort.Title,
 			tDocumentShort.ContentType,
-			// tDocumentShort.Summary.AS("document_short.content"), // Summary is unused at the moment
+			// tDocumentShort.Summary.AS("document_short.content"), // Summary is currently unused
 			tDocumentShort.CreatorID,
 			tDocumentShort.TemplateID,
 			tCreator.ID,
@@ -123,6 +123,20 @@ func (s *Server) listDocumentsQuery(
 			tDWorkflow.DocumentID,
 			tDWorkflow.AutoCloseTime,
 			tDWorkflow.NextReminderTime,
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.Signed,
+			tDMeta.SigRequiredRemaining,
+			tDMeta.SigRequiredTotal,
+			tDMeta.SigCollectedValid,
+			tDMeta.SigPoliciesActive,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
 		)
 
 		if userInfo.GetSuperuser() {
@@ -150,19 +164,21 @@ func (s *Server) listDocumentsQuery(
 			columns[0],
 			columns[1:],
 		).
-		FROM(
-			docIDs.
-				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
-				LEFT_JOIN(tDCategory,
-					tDocumentShort.CategoryID.EQ(tDCategory.ID).
-						AND(tDCategory.DeletedAt.IS_NULL()),
-				).
-				LEFT_JOIN(tCreator,
-					tDocumentShort.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tDWorkflow,
-					tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
-				),
+		FROM(docIDs.
+			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
+			LEFT_JOIN(tDCategory,
+				tDocumentShort.CategoryID.EQ(tDCategory.ID).
+					AND(tDCategory.DeletedAt.IS_NULL()),
+			).
+			LEFT_JOIN(tCreator,
+				tDocumentShort.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tDWorkflow,
+				tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
+			).
+			LEFT_JOIN(tDMeta,
+				tDMeta.DocumentID.EQ(tDocumentShort.ID),
+			),
 		).
 		WHERE(mysql.AND(
 			wheres...,
@@ -268,6 +284,20 @@ func (s *Server) getDocumentQuery(
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.Signed,
+			tDMeta.SigRequiredRemaining,
+			tDMeta.SigRequiredTotal,
+			tDMeta.SigCollectedValid,
+			tDMeta.SigPoliciesActive,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
 		)
 
 		if withContent {
@@ -310,6 +340,9 @@ func (s *Server) getDocumentQuery(
 			LEFT_JOIN(tUserWorkflow,
 				tUserWorkflow.DocumentID.EQ(tDocument.ID).
 					AND(tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+			).
+			LEFT_JOIN(tDMeta,
+				tDMeta.DocumentID.EQ(tDocument.ID),
 			),
 		).
 		WHERE(mysql.AND(
@@ -337,7 +370,8 @@ func (s *Server) updateDocumentOwner(
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(documentId)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

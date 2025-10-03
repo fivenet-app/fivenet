@@ -36,6 +36,7 @@ var (
 	tUserProps     = table.FivenetUserProps
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("document_short")
+	tDMeta         = table.FivenetDocumentsMeta.AS("meta")
 	tDAccess       = table.FivenetDocumentsAccess.AS("job_access")
 )
 
@@ -522,6 +523,7 @@ func (s *Server) UpdateDocument(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
+
 	var onlyUpdateAccess bool
 	if !check && !userInfo.GetSuperuser() {
 		onlyUpdateAccess, err = s.access.CanUserAccessTarget(

@@ -387,7 +387,9 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 @click="
                                     () => {
                                         approvalDrawer.open({
+                                            modelValue: doc?.document?.approvalPolicy,
                                             documentId: documentId,
+                                            'onUpdate:modelValue': ($event) => (doc!.document!.approvalPolicy = $event),
                                         });
                                     }
                                 "
@@ -519,6 +521,24 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         <CategoryBadge :category="doc.document?.category" />
 
                         <OpenClosedBadge :closed="doc.document?.meta?.closed" size="md" />
+
+                        <UBadge
+                            v-if="doc.document?.meta?.approved"
+                            class="inline-flex gap-1"
+                            size="md"
+                            color="info"
+                            icon="i-mdi-approval"
+                            :label="doc.document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
+                        />
+
+                        <UBadge
+                            v-if="doc.document?.meta?.signed"
+                            class="inline-flex gap-1"
+                            size="md"
+                            color="info"
+                            icon="i-mdi-signature"
+                            :label="doc.document?.meta?.signed ? $t('common.signed') : $t('common.unsigned')"
+                        />
 
                         <UBadge
                             v-if="doc.document?.meta?.state"

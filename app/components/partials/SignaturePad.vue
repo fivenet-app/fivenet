@@ -104,7 +104,7 @@ function handleSaveSignature() {
                     <div class="my-2 flex w-full flex-col space-y-4">
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
-                            :label="$t('components.partials.SignaturePad.min_stroke_width')"
+                            :label="$t('components.partials.signature_pad.min_stroke_width')"
                         >
                             <USlider v-model="signatureSettings.minStrokeWidth" :min="1" :max="10" />
                             <p>{{ signatureSettings.minStrokeWidth }}</p>
@@ -112,7 +112,7 @@ function handleSaveSignature() {
 
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
-                            :label="$t('components.partials.SignaturePad.max_stroke_width')"
+                            :label="$t('components.partials.signature_pad.max_stroke_width')"
                         >
                             <USlider v-model="signatureSettings.maxStrokeWidth" :min="1" :max="10" />
                             <p>{{ signatureSettings.maxStrokeWidth }}</p>

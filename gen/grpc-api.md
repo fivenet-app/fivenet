@@ -3391,30 +3391,27 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 ## resources/documents/approval.proto
 
 
-### resources.documents.ApprovalAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [ApprovalJobAccess](#resourcesdocumentsApprovalJobAccess) | repeated |  |
-
-
-
-
-
-### resources.documents.ApprovalJobAccess
+### resources.documents.Approval
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [ApprovalAccessLevel](#resourcesdocumentsApprovalAccessLevel) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `policy_id` | [int64](#int64) | optional | Link to originating policy (if any) |
+| `user_id` | [int32](#int32) | optional |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `user_job` | [string](#string) | optional |  |
+| `user_job_label` | [string](#string) | optional |  |
+| `user_grade` | [int32](#int32) | optional |  |
+| `user_grade_label` | [string](#string) | optional |  |
+| `status` | [ApprovalStatus](#resourcesdocumentsApprovalStatus) |  |  |
+| `comment` | [string](#string) | optional |  |
+| `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `revoked_reason` | [string](#string) | optional |  |
 
 
 
@@ -3427,21 +3424,21 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
 | `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
 | `required_count` | [int32](#int32) |  |  |
-| `active_snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `access` | [ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
-| `assigned_count` | [int32](#int32) |  | Optional cached aggregates (service maintained) |
+| `assigned_count` | [int32](#int32) |  |  |
 | `approved_count` | [int32](#int32) |  |  |
 | `declined_count` | [int32](#int32) |  |  |
 | `pending_count` | [int32](#int32) |  |  |
 | `any_declined` | [bool](#bool) |  |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -3453,40 +3450,33 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `assignee_kind` | [ApprovalAssigneeKind](#resourcesdocumentsApprovalAssigneeKind) |  |  |
 | `user_id` | [int32](#int32) | optional |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `job` | [string](#string) | optional |  |
+| `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) | optional |  |
-| `decided_by_user_id` | [int32](#int32) | optional | Who actually decided (for group tasks or audit) |
-| `decided_by_job` | [string](#string) | optional |  |
-| `decided_by_user_grade` | [int32](#int32) | optional |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
 | `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
 | `comment` | [string](#string) | optional | Optional comment on approve/decline |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `decision_count` | [int32](#int32) |  |  |
+| `approval_id` | [int64](#int64) | optional |  |
 | `creator_id` | [int32](#int32) |  |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `creator_job` | [string](#string) |  | Snapshot of why this user was assigned (for audit stability) |
-| `job_label` | [string](#string) | optional |  |
-| `creator_job_grade` | [int32](#int32) |  |  |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
 
 
 
 
  <!-- end messages -->
-
-
-### resources.documents.ApprovalAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `APPROVAL_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `APPROVAL_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `APPROVAL_ACCESS_LEVEL_USE` | 2 |  |
-
 
 
 ### resources.documents.ApprovalAssigneeKind
@@ -3506,6 +3496,17 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `APPROVAL_RULE_KIND_UNSPECIFIED` | 0 |  |
 | `APPROVAL_RULE_KIND_REQUIRE_ALL` | 1 |  |
 | `APPROVAL_RULE_KIND_QUORUM_ANY` | 2 |  |
+
+
+
+### resources.documents.ApprovalStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_STATUS_UNSPECIFIED` | 0 |  |
+| `APPROVAL_STATUS_APPROVED` | 1 |  |
+| `APPROVAL_STATUS_DECLINED` | 2 |  |
+| `APPROVAL_STATUS_REVOKED` | 3 |  |
 
 
 
@@ -3746,11 +3747,18 @@ Policy snapshot applied to a specific version
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
 | `state` | [string](#string) |  |  |
-| `approved` | [bool](#bool) |  |  |
+| `approved` | [bool](#bool) |  | Overall aggregates - At least one approval policy fully satisfied |
 | `signed` | [bool](#bool) |  |  |
-| `sig_required_remaining` | [int32](#int32) | optional |  |
+| `sig_required_remaining` | [int32](#int32) | optional | Signature rollups |
 | `sig_required_total` | [int32](#int32) | optional |  |
 | `sig_collected_valid` | [int32](#int32) | optional |  |
+| `apr_required_total` | [int32](#int32) | optional | Total approvals needed across policies |
+| `apr_collected_approved` | [int32](#int32) | optional | Approvals collected |
+| `apr_required_remaining` | [int32](#int32) | optional | How many left to satisfy |
+| `apr_declined_count` | [int32](#int32) | optional | Number of declines |
+| `apr_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
+| `apr_any_declined` | [bool](#bool) | optional | Quick flag if any declines |
+| `apr_policies_active` | [int32](#int32) | optional | Number of active approval policies |
 
 
 
@@ -3939,7 +3947,7 @@ Policy snapshot applied to a specific version
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
-| `payload_json` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
+| `payload_svg` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
 | `stamp_id` | [int64](#int64) | optional | if type == STAMP |
 | `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
 | `reason` | [string](#string) | optional | Revoke/Invalid reason |
@@ -3950,37 +3958,7 @@ Policy snapshot applied to a specific version
 
 
 
-### resources.documents.SignatureAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [SignatureJobAccess](#resourcesdocumentsSignatureJobAccess) | repeated |  |
-| `users` | [SignatureUserAccess](#resourcesdocumentsSignatureUserAccess) | repeated |  |
-
-
-
-
-
-### resources.documents.SignatureJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [SignatureAccessLevel](#resourcesdocumentsSignatureAccessLevel) |  |  |
-
-
-
-
-
-### resources.documents.SignatureRequirement
+### resources.documents.SignaturePolicy
 
 
 | Field | Type | Label | Description |
@@ -3992,9 +3970,35 @@ Policy snapshot applied to a specific version
 | `required` | [bool](#bool) |  |  |
 | `binding_mode` | [SignatureBindingMode](#resourcesdocumentsSignatureBindingMode) |  |  |
 | `allowed_types` | [SignatureTypes](#resourcesdocumentsSignatureTypes) |  |  |
-| `access` | [SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.documents.SignatureTask
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `assignee_kind` | [SignatureAssigneeKind](#resourcesdocumentsSignatureAssigneeKind) |  | Who is the task for? 1=USER, 2=JOB |
+| `user_id` | [int32](#int32) | optional | USER assignment |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `job` | [string](#string) | optional | JOB assignment (claimable by any eligible user) |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) | optional |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
+| `status` | [SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
+| `reason` | [string](#string) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `signature_id` | [int64](#int64) | optional |  |
 
 
 
@@ -4010,22 +4014,70 @@ Policy snapshot applied to a specific version
 
 
 
+ <!-- end messages -->
 
-### resources.documents.SignatureUserAccess
 
+### resources.documents.SignatureAssigneeKind
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `access` | [SignatureAccessLevel](#resourcesdocumentsSignatureAccessLevel) |  |  |
-| `required` | [bool](#bool) | optional |  |
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_ASSIGNEE_KIND_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_ASSIGNEE_KIND_USER` | 1 |  |
+| `SIGNATURE_ASSIGNEE_KIND_JOB_GRADE` | 2 |  |
 
 
 
+### resources.documents.SignatureBindingMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
+| `SIGNATURE_BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
+
+
+
+### resources.documents.SignatureStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_STATUS_VALID` | 1 |  |
+| `SIGNATURE_STATUS_REVOKED` | 2 |  |
+| `SIGNATURE_STATUS_INVALID` | 3 |  |
+
+
+
+### resources.documents.SignatureTaskStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_TASK_STATUS_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_TASK_STATUS_PENDING` | 1 |  |
+| `SIGNATURE_TASK_STATUS_COMPLETED` | 2 |  |
+| `SIGNATURE_TASK_STATUS_EXPIRED` | 3 |  |
+
+
+
+### resources.documents.SignatureType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_TYPE_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_TYPE_FREEHAND` | 1 |  |
+| `SIGNATURE_TYPE_TYPED` | 2 |  |
+| `SIGNATURE_TYPE_STAMP` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/stamp.proto
 
 
 ### resources.documents.Stamp
@@ -4036,8 +4088,9 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `owner_id` | [int32](#int32) |  |  |
+| `owner_id` | [int32](#int32) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `name` | [string](#string) |  |  |
 | `svg_template` | [string](#string) |  | Parameterized SVG with slots |
 | `access` | [StampAccess](#resourcesdocumentsStampAccess) |  |  |
 
@@ -4076,51 +4129,7 @@ Policy snapshot applied to a specific version
  <!-- end messages -->
 
 
-### resources.documents.SignatureAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `SIGNATURE_ACCESS_LEVEL_SIGN` | 2 |  |
-
-
-
-### resources.documents.SignatureBindingMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
-| `SIGNATURE_BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
-
-
-
-### resources.documents.SignatureStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_STATUS_VALID` | 1 |  |
-| `SIGNATURE_STATUS_REVOKED` | 2 |  |
-| `SIGNATURE_STATUS_INVALID` | 3 |  |
-
-
-
-### resources.documents.SignatureType
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_TYPE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_TYPE_FREEHAND` | 1 |  |
-| `SIGNATURE_TYPE_TYPED` | 2 |  |
-| `SIGNATURE_TYPE_STAMP` | 3 |  |
-
-
-
 ### resources.documents.StampAccessLevel
-Stamps
-
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
@@ -8440,50 +8449,33 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.DecideTaskRequest
+### services.documents.DecideApprovalTaskRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `document_id` | [int64](#int64) |  |  |
 | `task_id` | [int64](#int64) |  |  |
 | `new_status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  | APPROVED or DECLINED |
 | `comment` | [string](#string) |  |  |
-| `idempotency_key` | [string](#string) |  |  |
 
 
 
 
 
-### services.documents.DecideTaskResponse
+### services.documents.DecideApprovalTaskResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `task` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
-| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  | counters updated |
+| `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  | Counters updated |
 
 
 
 
 
-### services.documents.DeleteApprovalAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteApprovalAccessResponse
-
-
-
-
-
-### services.documents.GetPolicyRequest
+### services.documents.GetApprovalPolicyRequest
 
 
 | Field | Type | Label | Description |
@@ -8494,34 +8486,12 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.GetPolicyResponse
+### services.documents.GetApprovalPolicyResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
-
-
-
-
-
-### services.documents.ListApprovalAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.ListApprovalAccessResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
 
 
 
@@ -8532,9 +8502,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [int64](#int64) |  | Search |
-| `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
+| `document_id` | [int64](#int64) |  |  |
+| `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated | Search |
 
 
 
@@ -8545,14 +8514,13 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
 
 
 
 
 
-### services.documents.RecomputePolicyCountersRequest
+### services.documents.RecomputeApprovalPolicyCountersRequest
 
 
 | Field | Type | Label | Description |
@@ -8563,7 +8531,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.RecomputePolicyCountersResponse
+### services.documents.RecomputeApprovalPolicyCountersResponse
 
 
 | Field | Type | Label | Description |
@@ -8574,7 +8542,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ReopenTaskRequest
+### services.documents.ReopenApprovalTaskRequest
 
 
 | Field | Type | Label | Description |
@@ -8586,7 +8554,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.ReopenTaskResponse
+### services.documents.ReopenApprovalTaskResponse
 
 
 | Field | Type | Label | Description |
@@ -8604,8 +8572,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | if omitted, server uses now |
-| `regen_tasks` | [bool](#bool) |  | re-materialize tasks from ACL |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | If omitted, server uses now |
 
 
 
@@ -8623,45 +8590,22 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.UpsertApprovalAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
-
-
-
-
-
-### services.documents.UpsertApprovalAccessResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.ApprovalAccess](#resourcesdocumentsApprovalAccess) |  |  |
-
-
-
-
-
-### services.documents.UpsertPolicyRequest
+### services.documents.UpsertApprovalPolicyRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `rule_kind` | [resources.documents.ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
-| `required_count` | [int32](#int32) |  | used if QUORUM_ANY |
+| `required_count` | [int32](#int32) |  | Used if rule_kind=QUORUM_ANY |
 | `on_edit_behavior` | [resources.documents.OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
 
 
-### services.documents.UpsertPolicyResponse
+### services.documents.UpsertApprovalPolicyResponse
 
 
 | Field | Type | Label | Description |
@@ -8682,17 +8626,14 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `GetPolicy` | [GetPolicyRequest](#servicesdocumentsGetPolicyRequest) | [GetPolicyResponse](#servicesdocumentsGetPolicyResponse) |Policy |
-| `UpsertPolicy` | [UpsertPolicyRequest](#servicesdocumentsUpsertPolicyRequest) | [UpsertPolicyResponse](#servicesdocumentsUpsertPolicyResponse) | |
+| `GetApprovalPolicy` | [GetApprovalPolicyRequest](#servicesdocumentsGetApprovalPolicyRequest) | [GetApprovalPolicyResponse](#servicesdocumentsGetApprovalPolicyResponse) |Policy |
+| `UpsertApprovalPolicy` | [UpsertApprovalPolicyRequest](#servicesdocumentsUpsertApprovalPolicyRequest) | [UpsertApprovalPolicyResponse](#servicesdocumentsUpsertApprovalPolicyResponse) | |
 | `StartApprovalRound` | [StartApprovalRoundRequest](#servicesdocumentsStartApprovalRoundRequest) | [StartApprovalRoundResponse](#servicesdocumentsStartApprovalRoundResponse) | |
 | `CompleteApprovalRound` | [CompleteApprovalRoundRequest](#servicesdocumentsCompleteApprovalRoundRequest) | [CompleteApprovalRoundResponse](#servicesdocumentsCompleteApprovalRoundResponse) | |
-| `RecomputePolicyCounters` | [RecomputePolicyCountersRequest](#servicesdocumentsRecomputePolicyCountersRequest) | [RecomputePolicyCountersResponse](#servicesdocumentsRecomputePolicyCountersResponse) |Helpers |
-| `ListApprovalAccess` | [ListApprovalAccessRequest](#servicesdocumentsListApprovalAccessRequest) | [ListApprovalAccessResponse](#servicesdocumentsListApprovalAccessResponse) |Access (policy-scoped) |
-| `UpsertApprovalAccess` | [UpsertApprovalAccessRequest](#servicesdocumentsUpsertApprovalAccessRequest) | [UpsertApprovalAccessResponse](#servicesdocumentsUpsertApprovalAccessResponse) | |
-| `DeleteApprovalAccess` | [DeleteApprovalAccessRequest](#servicesdocumentsDeleteApprovalAccessRequest) | [DeleteApprovalAccessResponse](#servicesdocumentsDeleteApprovalAccessResponse) | |
 | `ListApprovalTasks` | [ListApprovalTasksRequest](#servicesdocumentsListApprovalTasksRequest) | [ListApprovalTasksResponse](#servicesdocumentsListApprovalTasksResponse) |Tasks |
-| `DecideTask` | [DecideTaskRequest](#servicesdocumentsDecideTaskRequest) | [DecideTaskResponse](#servicesdocumentsDecideTaskResponse) | |
-| `ReopenTask` | [ReopenTaskRequest](#servicesdocumentsReopenTaskRequest) | [ReopenTaskResponse](#servicesdocumentsReopenTaskResponse) | |
+| `DecideApprovalTask` | [DecideApprovalTaskRequest](#servicesdocumentsDecideApprovalTaskRequest) | [DecideApprovalTaskResponse](#servicesdocumentsDecideApprovalTaskResponse) | |
+| `ReopenApprovalTask` | [ReopenApprovalTaskRequest](#servicesdocumentsReopenApprovalTaskRequest) | [ReopenApprovalTaskResponse](#servicesdocumentsReopenApprovalTaskResponse) | |
+| `RecomputeApprovalPolicyCounters` | [RecomputeApprovalPolicyCountersRequest](#servicesdocumentsRecomputeApprovalPolicyCountersRequest) | [RecomputeApprovalPolicyCountersResponse](#servicesdocumentsRecomputeApprovalPolicyCountersResponse) |Helpers |
 
  <!-- end services -->
 
@@ -9564,11 +9505,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `requirement_id` | [int64](#int64) |  | 0/omit for acknowledgement |
+| `policy_id` | [int64](#int64) |  | 0/omit for acknowledgement |
 | `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
-| `payload_json` | [string](#string) |  |  |
-| `stamp_id` | [int64](#int64) |  | when type=STAMP |
-| `idempotency_key` | [string](#string) |  |  |
+| `payload_svg` | [string](#string) | optional |  |
+| `stamp_id` | [int64](#int64) | optional | when type=STAMP |
 
 
 
@@ -9586,29 +9526,12 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-### services.documents.DeleteSignaturePolicyAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteSignaturePolicyAccessResponse
-
-
-
-
-
 ### services.documents.DeleteSignaturePolicyRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `requirement_id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) |  |  |
 
 
 
@@ -9642,7 +9565,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 
@@ -9655,30 +9577,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `requirements` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) | repeated |  |
-
-
-
-
-
-### services.documents.ListSignaturePolicyAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirement_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.ListSignaturePolicyAccessResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
+| `policies` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) | repeated |  |
 
 
 
@@ -9689,7 +9588,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `statuses` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | repeated |  |
@@ -9703,7 +9601,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `signatures` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated |  |
 
 
@@ -9785,35 +9682,12 @@ Stamps listing — your example wired in as a method
 
 
 
-### services.documents.UpsertSignaturePolicyAccessRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirement_id` | [int64](#int64) |  |  |
-| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
-
-
-
-
-
-### services.documents.UpsertSignaturePolicyAccessResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.SignatureAccess](#resourcesdocumentsSignatureAccess) |  |  |
-
-
-
-
-
 ### services.documents.UpsertSignaturePolicyRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `requirement` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) |  |  |
+| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
 
 
 
@@ -9824,7 +9698,7 @@ Stamps listing — your example wired in as a method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `requirement` | [resources.documents.SignatureRequirement](#resourcesdocumentsSignatureRequirement) |  |  |
+| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
 
 
 
@@ -9865,16 +9739,13 @@ Stamps listing — your example wired in as a method
 | `ListSignaturePolicies` | [ListSignaturePoliciesRequest](#servicesdocumentsListSignaturePoliciesRequest) | [ListSignaturePoliciesResponse](#servicesdocumentsListSignaturePoliciesResponse) |Requirements |
 | `UpsertSignaturePolicy` | [UpsertSignaturePolicyRequest](#servicesdocumentsUpsertSignaturePolicyRequest) | [UpsertSignaturePolicyResponse](#servicesdocumentsUpsertSignaturePolicyResponse) | |
 | `DeleteSignaturePolicy` | [DeleteSignaturePolicyRequest](#servicesdocumentsDeleteSignaturePolicyRequest) | [DeleteSignaturePolicyResponse](#servicesdocumentsDeleteSignaturePolicyResponse) | |
-| `ListSignaturePolicyAccess` | [ListSignaturePolicyAccessRequest](#servicesdocumentsListSignaturePolicyAccessRequest) | [ListSignaturePolicyAccessResponse](#servicesdocumentsListSignaturePolicyAccessResponse) |Requirement ACL |
-| `UpsertSignaturePolicyAccess` | [UpsertSignaturePolicyAccessRequest](#servicesdocumentsUpsertSignaturePolicyAccessRequest) | [UpsertSignaturePolicyAccessResponse](#servicesdocumentsUpsertSignaturePolicyAccessResponse) | |
-| `DeleteSignaturePolicyAccess` | [DeleteSignaturePolicyAccessRequest](#servicesdocumentsDeleteSignaturePolicyAccessRequest) | [DeleteSignaturePolicyAccessResponse](#servicesdocumentsDeleteSignaturePolicyAccessResponse) | |
 | `ListSignatures` | [ListSignaturesRequest](#servicesdocumentsListSignaturesRequest) | [ListSignaturesResponse](#servicesdocumentsListSignaturesResponse) |Signatures |
 | `ApplySignature` | [ApplySignatureRequest](#servicesdocumentsApplySignatureRequest) | [ApplySignatureResponse](#servicesdocumentsApplySignatureResponse) | |
 | `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
-| `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
 | `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |Stamps |
 | `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |
 | `DeleteStamp` | [DeleteStampRequest](#servicesdocumentsDeleteStampRequest) | [DeleteStampResponse](#servicesdocumentsDeleteStampResponse) | |
+| `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
 
  <!-- end services -->
 

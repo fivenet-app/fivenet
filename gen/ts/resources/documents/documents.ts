@@ -202,6 +202,8 @@ export interface DocumentMeta {
      */
     state: string;
     /**
+     * Overall aggregates - At least one approval policy fully satisfied
+     *
      * @generated from protobuf field: bool approved = 6
      */
     approved: boolean;
@@ -210,6 +212,8 @@ export interface DocumentMeta {
      */
     signed: boolean;
     /**
+     * Signature rollups
+     *
      * @generated from protobuf field: optional int32 sig_required_remaining = 8
      */
     sigRequiredRemaining?: number;
@@ -221,6 +225,50 @@ export interface DocumentMeta {
      * @generated from protobuf field: optional int32 sig_collected_valid = 10
      */
     sigCollectedValid?: number;
+    // Approval rollups
+
+    /**
+     * Total approvals needed across policies
+     *
+     * @generated from protobuf field: optional int32 apr_required_total = 11
+     */
+    aprRequiredTotal?: number;
+    /**
+     * Approvals collected
+     *
+     * @generated from protobuf field: optional int32 apr_collected_approved = 12
+     */
+    aprCollectedApproved?: number;
+    /**
+     * How many left to satisfy
+     *
+     * @generated from protobuf field: optional int32 apr_required_remaining = 13
+     */
+    aprRequiredRemaining?: number;
+    /**
+     * Number of declines
+     *
+     * @generated from protobuf field: optional int32 apr_declined_count = 14
+     */
+    aprDeclinedCount?: number;
+    /**
+     * Tasks still pending (optional)
+     *
+     * @generated from protobuf field: optional int32 apr_pending_count = 15
+     */
+    aprPendingCount?: number;
+    /**
+     * Quick flag if any declines
+     *
+     * @generated from protobuf field: optional bool apr_any_declined = 16
+     */
+    aprAnyDeclined?: boolean;
+    /**
+     * Number of active approval policies
+     *
+     * @generated from protobuf field: optional int32 apr_policies_active = 17
+     */
+    aprPoliciesActive?: number;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -779,7 +827,14 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
             { no: 7, name: "signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "sig_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 9, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 10, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "apr_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "apr_collected_approved", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "apr_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "apr_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "apr_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "apr_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 17, name: "apr_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
@@ -830,6 +885,27 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
                 case /* optional int32 sig_collected_valid */ 10:
                     message.sigCollectedValid = reader.int32();
                     break;
+                case /* optional int32 apr_required_total */ 11:
+                    message.aprRequiredTotal = reader.int32();
+                    break;
+                case /* optional int32 apr_collected_approved */ 12:
+                    message.aprCollectedApproved = reader.int32();
+                    break;
+                case /* optional int32 apr_required_remaining */ 13:
+                    message.aprRequiredRemaining = reader.int32();
+                    break;
+                case /* optional int32 apr_declined_count */ 14:
+                    message.aprDeclinedCount = reader.int32();
+                    break;
+                case /* optional int32 apr_pending_count */ 15:
+                    message.aprPendingCount = reader.int32();
+                    break;
+                case /* optional bool apr_any_declined */ 16:
+                    message.aprAnyDeclined = reader.bool();
+                    break;
+                case /* optional int32 apr_policies_active */ 17:
+                    message.aprPoliciesActive = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -872,6 +948,27 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         /* optional int32 sig_collected_valid = 10; */
         if (message.sigCollectedValid !== undefined)
             writer.tag(10, WireType.Varint).int32(message.sigCollectedValid);
+        /* optional int32 apr_required_total = 11; */
+        if (message.aprRequiredTotal !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.aprRequiredTotal);
+        /* optional int32 apr_collected_approved = 12; */
+        if (message.aprCollectedApproved !== undefined)
+            writer.tag(12, WireType.Varint).int32(message.aprCollectedApproved);
+        /* optional int32 apr_required_remaining = 13; */
+        if (message.aprRequiredRemaining !== undefined)
+            writer.tag(13, WireType.Varint).int32(message.aprRequiredRemaining);
+        /* optional int32 apr_declined_count = 14; */
+        if (message.aprDeclinedCount !== undefined)
+            writer.tag(14, WireType.Varint).int32(message.aprDeclinedCount);
+        /* optional int32 apr_pending_count = 15; */
+        if (message.aprPendingCount !== undefined)
+            writer.tag(15, WireType.Varint).int32(message.aprPendingCount);
+        /* optional bool apr_any_declined = 16; */
+        if (message.aprAnyDeclined !== undefined)
+            writer.tag(16, WireType.Varint).bool(message.aprAnyDeclined);
+        /* optional int32 apr_policies_active = 17; */
+        if (message.aprPoliciesActive !== undefined)
+            writer.tag(17, WireType.Varint).int32(message.aprPoliciesActive);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

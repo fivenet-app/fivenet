@@ -5,36 +5,36 @@ package services.documents;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
-import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
-message GetPolicyRequest {
+message GetApprovalPolicyRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
-message GetPolicyResponse {
+message GetApprovalPolicyResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
 
-message UpsertPolicyRequest {
+message UpsertApprovalPolicyRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   resources.documents.ApprovalRuleKind rule_kind = 2 [(buf.validate.field).enum.defined_only = true];
-  int32 required_count = 3; // used if QUORUM_ANY
+  // Used if rule_kind=QUORUM_ANY
+  int32 required_count = 3;
   resources.documents.OnEditBehavior on_edit_behavior = 4 [(buf.validate.field).enum.defined_only = true];
-  resources.timestamp.Timestamp due_at = 5;
+  optional resources.timestamp.Timestamp due_at = 5;
 }
 
-message UpsertPolicyResponse {
+message UpsertApprovalPolicyResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
 
 message StartApprovalRoundRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 2; // if omitted, server uses now
-  bool regen_tasks = 3; // re-materialize tasks from ACL
+  // If omitted, server uses now
+  resources.timestamp.Timestamp snapshot_date = 2;
 }
 
 message StartApprovalRoundResponse {
@@ -50,69 +50,44 @@ message CompleteApprovalRoundResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
 
-message RecomputePolicyCountersRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message RecomputePolicyCountersResponse {
-  resources.documents.ApprovalPolicy policy = 1;
-}
-
-message ListApprovalAccessRequest {
-  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message ListApprovalAccessResponse {
-  resources.documents.ApprovalAccess access = 1;
-}
-
-message UpsertApprovalAccessRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.documents.ApprovalAccess access = 2 [(buf.validate.field).required = true];
-}
-
-message UpsertApprovalAccessResponse {
-  resources.documents.ApprovalAccess access = 1;
-}
-
-message DeleteApprovalAccessRequest {
-  int64 id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message DeleteApprovalAccessResponse {}
-
 message ListApprovalTasksRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   // Search
-  int64 document_id = 2 [(buf.validate.field).int64.gt = 0];
-  repeated resources.documents.ApprovalTaskStatus statuses = 3 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
 }
 
 message ListApprovalTasksResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.ApprovalTask tasks = 1 [(codegen.itemslen.enabled) = true];
 }
 
-message DecideTaskRequest {
-  int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.documents.ApprovalTaskStatus new_status = 2 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
-  string comment = 3 [(buf.validate.field).string.max_len = 500];
-  string idempotency_key = 10 [(buf.validate.field).string.max_len = 64];
+message DecideApprovalTaskRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+  resources.documents.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  string comment = 4 [(buf.validate.field).string.max_len = 500];
 }
 
-message DecideTaskResponse {
+message DecideApprovalTaskResponse {
   resources.documents.ApprovalTask task = 1;
-  resources.documents.ApprovalPolicy policy = 2; // counters updated
+  resources.documents.ApprovalPolicy policy = 2; // Counters updated
 }
 
-message ReopenTaskRequest {
+message ReopenApprovalTaskRequest {
   int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
   string reason = 2 [(buf.validate.field).string.max_len = 255];
 }
 
-message ReopenTaskResponse {
+message ReopenApprovalTaskResponse {
   resources.documents.ApprovalTask task = 1;
   resources.documents.ApprovalPolicy policy = 2;
+}
+
+message RecomputeApprovalPolicyCountersRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message RecomputeApprovalPolicyCountersResponse {
+  resources.documents.ApprovalPolicy policy = 1;
 }
 
 service ApprovalService {
@@ -122,74 +97,55 @@ service ApprovalService {
   };
 
   // Policy
-  rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse) {
+  rpc GetApprovalPolicy(GetApprovalPolicyRequest) returns (GetApprovalPolicyResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
-  rpc UpsertPolicy(UpsertPolicyRequest) returns (UpsertPolicyResponse) {
+  rpc UpsertApprovalPolicy(UpsertApprovalPolicyRequest) returns (UpsertApprovalPolicyResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
   rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
   rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
-  }
-
-  // Helpers
-  rpc RecomputePolicyCounters(RecomputePolicyCountersRequest) returns (RecomputePolicyCountersResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "DeleteApprovalAccess"
-    };
-  }
-
-  // Access (policy-scoped)
-  rpc ListApprovalAccess(ListApprovalAccessRequest) returns (ListApprovalAccessResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
-  }
-  rpc UpsertApprovalAccess(UpsertApprovalAccessRequest) returns (UpsertApprovalAccessResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "DocumentsService"
-      name: "ListDocuments"
-    };
-  }
-  rpc DeleteApprovalAccess(DeleteApprovalAccessRequest) returns (DeleteApprovalAccessResponse) {
-    option (codegen.perms.perms) = {enabled: true};
   }
 
   // Tasks
   rpc ListApprovalTasks(ListApprovalTasksRequest) returns (ListApprovalTasksResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
-  rpc DecideTask(DecideTaskRequest) returns (DecideTaskResponse) {
+  rpc DecideApprovalTask(DecideApprovalTaskRequest) returns (DecideApprovalTaskResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      service: "DocumentsService"
+      service: "documents.DocumentsService"
       name: "ListDocuments"
     };
   }
-  rpc ReopenTask(ReopenTaskRequest) returns (ReopenTaskResponse) {
+  rpc ReopenApprovalTask(ReopenApprovalTaskRequest) returns (ReopenApprovalTaskResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Helpers
+  rpc RecomputeApprovalPolicyCounters(RecomputeApprovalPolicyCountersRequest) returns (RecomputeApprovalPolicyCountersResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpsertApprovalPolicy"
+    };
   }
 }

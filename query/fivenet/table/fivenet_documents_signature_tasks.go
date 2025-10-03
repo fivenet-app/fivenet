@@ -31,6 +31,8 @@ type fivenetDocumentsSignatureTasksTable struct {
 	CreatedAt    mysql.ColumnTimestamp
 	CompletedAt  mysql.ColumnTimestamp
 	SignatureID  mysql.ColumnInteger
+	CreatorID    mysql.ColumnInteger
+	CreatorJob   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -86,8 +88,10 @@ func newFivenetDocumentsSignatureTasksTableImpl(schemaName, tableName, alias str
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		CompletedAtColumn  = mysql.TimestampColumn("completed_at")
 		SignatureIDColumn  = mysql.IntegerColumn("signature_id")
-		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn}
-		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn}
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn   = mysql.StringColumn("creator_job")
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -109,6 +113,8 @@ func newFivenetDocumentsSignatureTasksTableImpl(schemaName, tableName, alias str
 		CreatedAt:    CreatedAtColumn,
 		CompletedAt:  CompletedAtColumn,
 		SignatureID:  SignatureIDColumn,
+		CreatorID:    CreatorIDColumn,
+		CreatorJob:   CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

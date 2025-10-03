@@ -1,6 +1,15 @@
 <script lang="ts" setup>
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import type { ApprovalTask } from '~~/gen/ts/resources/documents/approval';
+import {
+    ApprovalRuleKind,
+    ApprovalTaskStatus,
+    OnEditBehavior,
+    type ApprovalPolicy,
+} from '~~/gen/ts/resources/documents/approval';
+import ApprovalTaskList from './ApprovalTaskList.vue';
+import PolicyForm from './PolicyForm.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -10,24 +19,39 @@ defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const overlay = useOverlay();
+
 const approvalClient = await getDocumentsApprovalClient();
 
-const { data } = useLazyAsyncData(`approval-drawer-${props.documentId}`, () => listTasks());
+const { data, status, error, refresh } = useLazyAsyncData(
+    () => `approval-drawer-${props.documentId}`,
+    () => getPolicy(),
+);
 
-async function listTasks(): Promise<ApprovalTask[]> {
-    if (!props.documentId) return [];
-
-    const call = approvalClient.listTasks({
-        pagination: { offset: 0 },
+async function getPolicy(): Promise<ApprovalPolicy | undefined> {
+    const call = approvalClient.getApprovalPolicy({
         documentId: props.documentId,
-        statuses: [],
     });
     const { response } = await call;
 
-    return response.tasks;
+    return response.policy;
 }
 
-// TODO
+async function decideApprovalTask(approve: boolean) {
+    const call = approvalClient.decideApprovalTask({
+        documentId: props.documentId,
+        taskId: 1,
+        newStatus: approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
+        comment: '',
+    });
+    await call;
+}
+
+const policyForm = overlay.create(PolicyForm, {
+    props: {
+        documentId: props.documentId,
+    },
+});
 </script>
 
 <template>
@@ -36,7 +60,7 @@ async function listTasks(): Promise<ApprovalTask[]> {
         :overlay="false"
         handle-only
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ content: 'min-h-[50%]', title: 'flex flex-row gap-2' }"
+        :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.approve') }}</span>
@@ -46,23 +70,74 @@ async function listTasks(): Promise<ApprovalTask[]> {
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <div class="flex flex-1 flex-col sm:flex-row sm:gap-4">
-                    <div class="basis-1/4">
-                        <div class="mb-2 inline-flex items-center justify-between gap-2">
-                            <p class="shrink-0 text-lg font-medium">1/2 Approvals</p>
+                    <DataPendingBlock
+                        v-if="isRequestPending(status)"
+                        :message="$t('common.loading', [$t('common.approvals')])"
+                    />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.approvals')])"
+                        :error="error"
+                        :retry="refresh"
+                    />
 
-                            <UButton icon="i-mdi-refresh" size="sm" :label="$t('common.refresh')" />
+                    <template v-else>
+                        <div class="basis-1/4">
+                            <UCard>
+                                <div v-if="data" class="flex flex-col gap-2">
+                                    <div class="inline-flex items-center justify-between gap-2">
+                                        <p class="shrink-0 text-lg font-medium">
+                                            {{ data?.approvedCount }}/{{ data?.requiredCount }} Approvals
+                                        </p>
+
+                                        <UTooltip :text="$t('common.refresh')">
+                                            <UButton
+                                                icon="i-mdi-refresh"
+                                                size="sm"
+                                                variant="link"
+                                                :loading="!data && isRequestPending(status)"
+                                                @click="() => refresh()"
+                                            />
+                                        </UTooltip>
+                                    </div>
+
+                                    <UBadge
+                                        :label="$t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[data?.ruleKind ?? 0]}`)"
+                                        color="neutral"
+                                        variant="outline"
+                                    />
+                                    <UBadge
+                                        :label="
+                                            $t(`enums.documents.OnEditBehavior.${OnEditBehavior[data?.onEditBehavior ?? 0]}`)
+                                        "
+                                        color="info"
+                                        variant="outline"
+                                    />
+                                </div>
+
+                                <template #footer>
+                                    <div class="flex flex-1">
+                                        <UButton
+                                            block
+                                            :label="$t('common.policy')"
+                                            :trailing-icon="data ? 'i-mdi-pencil' : 'i-mdi-plus'"
+                                            @click="
+                                                policyForm.open({
+                                                    documentId: props.documentId,
+                                                    modelValue: data,
+                                                    'onUpdate:modelValue': () => refresh(),
+                                                })
+                                            "
+                                        />
+                                    </div>
+                                </template>
+                            </UCard>
                         </div>
 
-                        <p class="text-md">Approvals required</p>
-                    </div>
-
-                    <div class="basis-3/4">
-                        <h3 class="mb-2 text-sm font-semibold">Your pending approvals</h3>
-
-                        <UAlert color="gray" variant="soft" title="No pending approvals" class="mt-2" />
-
-                        {{ data }}
-                    </div>
+                        <div class="basis-3/4">
+                            <ApprovalTaskList :document-id="documentId" />
+                        </div>
+                    </template>
                 </div>
             </div>
         </template>
@@ -70,8 +145,22 @@ async function listTasks(): Promise<ApprovalTask[]> {
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col">
                 <UButtonGroup class="w-full flex-1">
-                    <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
-                    <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
+                    <UButton
+                        color="success"
+                        icon="i-mdi-check-bold"
+                        block
+                        size="lg"
+                        :label="$t('common.approve')"
+                        @click="() => decideApprovalTask(true)"
+                    />
+                    <UButton
+                        color="red"
+                        icon="i-mdi-close-bold"
+                        block
+                        size="lg"
+                        :label="$t('common.decline')"
+                        @click="() => decideApprovalTask(false)"
+                    />
                 </UButtonGroup>
             </div>
         </template>

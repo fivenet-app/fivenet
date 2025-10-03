@@ -703,7 +703,17 @@
         "directory": "Verzeichnis | Verzeichnisse",
         "undo": "Rückgängig machen",
         "redo": "Wiederholen",
-        "sign": "Unterschreiben"
+        "sign": "Unterschreiben",
+        "approved": "Genehmigt",
+        "unapproved": "Nicht genehmigt",
+        "signed": "Unterschrieben",
+        "unsigned": "Nicht unterschrieben",
+        "stamp": "Stempel",
+        "due_at": "Fällig am",
+        "approvals": "Genehmigungen",
+        "continue": "Fortfahren",
+        "policy": "Richtlinie",
+        "task": "Aufgabe | Aufgaben"
     },
     "components": {
         "partials": {
@@ -723,7 +733,7 @@
                 "page_count": "Seite {current} à {size} Einträge",
                 "page_count_with_total": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
             },
-            "TiptapEditor": {
+            "tiptap_editor": {
                 "clear": "Löschen",
                 "previous": "Vorherige",
                 "next": "Nächste",
@@ -803,7 +813,7 @@
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen"
             },
-            "SignaturePad": {
+            "signature_pad": {
                 "pen_color": "Stiftfarbe",
                 "min_stroke_width": "Minimale Strichstärke",
                 "max_stroke_width": "Maximale Strichstärke"
@@ -877,7 +887,7 @@
                 "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
                 "callback_message": "Hier Zugriff beantragen"
             },
-            "TemplateWorkflowEditor": {
+            "template_workflow_editor": {
                 "reminder": {
                     "description": "Dokumenten-Erinnerungen, werden nur an den Besitzer/Ersteller des Dokumentes geschickt. Die Erinnerungen werden in Reihenfolge verschickt, jeweils aufbauend auf der vorherigen Erinnerung. E.g., Erinnerung 1 (3 Tage) wird 3 Tage nach Dokumenten-Erstellung/letzter Aktualisierung verschickt, Erinnerung 2 (2 Tage) wird so gesehen erst in 5 Tagen verschickt.\nDie Erinnerungen starten wieder bei der Ersten sollte das zwischendurch Dokument aktualisiert worden sein."
                 },
@@ -887,6 +897,17 @@
                 "max_reminder_count": {
                     "title": "Maximale Anzahl gesendeter Erinnerungen",
                     "description": "Die maximale Anzahl an Erinnerungen, die an den Ersteller eines Dokuments gesendet werden. Wenn das Maximum (10) erreicht ist, werden keine weiteren Erinnerungen gesendet."
+                }
+            },
+            "approval": {
+                "policy_form": {
+                    "rule_kind": "Regeltyp",
+                    "on_edit_behavior": "Bearbeitungsverhalten",
+                    "required_signatures": "Erforderliche Unterschriften"
+                },
+                "tasks": "Genehmigungsaufgaben",
+                "task_form": {
+                    "title": "Aufgaben"
                 }
             }
         },
@@ -2496,6 +2517,41 @@
                 "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beantragt | Dokument-Besitzer Wechsel",
                 "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument",
                 "DRAFT_TOGGLED": "Entwurfstatus aktualisiert"
+            },
+            "OnEditBehavior": {
+                "UNSPECIFIED": "Unbestimmt",
+                "RESET": "Genehmigungen bei Bearbeitung zurücksetzen",
+                "KEEP_PROGRESS": "Genehmigungen bei Bearbeitung beibehalten"
+            },
+            "ApprovalRuleKind": {
+                "UNSPECIFIED": "Unbestimmt",
+                "REQUIRE_ALL": "Alle erforderlich",
+                "QUORUM_ANY": "Quorum"
+            },
+            "ApprovalTaskStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "APPROVED": "Genehmigt",
+                "DECLINED": "Abgelehnt",
+                "EXPIRED": "Abgelaufen",
+                "CANCELLED": "Storniert"
+            },
+            "SignatureType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "FREEHAND": "Freihand",
+                "TYPED": "Getippt",
+                "STAMP": "Stempel"
+            },
+            "SignatureBindingMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BINDING": "Verbindlich",
+                "NONBINDING": "Nicht verbindlich"
+            },
+            "StampAccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "USE": "Verwenden",
+                "MANAGE": "Verwalten"
             }
         },
         "settings": {
@@ -3010,15 +3066,11 @@
             },
             "ApprovalService": {
                 "category": "Dokumenten-System: Genehmigung",
-                "DeleteApprovalAccess": {
-                    "key": "Genehmigungszugriff löschen",
-                    "description": "Löschen des Genehmigungszugriffs für Benutzer."
-                },
-                "ReopenTask": {
+                "ReopenApprovalTask": {
                     "key": "Genehmigung erneut öffnen",
                     "description": "Eine abgeschlossene Genehmigung erneut öffnen."
                 },
-                "UpsertPolicy": {
+                "UpsertApprovalPolicy": {
                     "key": "Genehmigungsrichtlinie erstellen oder aktualisieren",
                     "description": "Genehmigungsrichtlinien für Berufe erstellen oder aktualisieren."
                 }

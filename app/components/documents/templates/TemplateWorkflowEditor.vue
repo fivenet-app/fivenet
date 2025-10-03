@@ -25,7 +25,7 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 
         <UFormField
             name="workflow.autoClose.autoCloseSettings"
-            :description="$t('components.documents.TemplateWorkflowEditor.auto_close.description')"
+            :description="$t('components.documents.template_workflow_editor.auto_close.description')"
         >
             <div class="flex items-center gap-1">
                 <UFormField name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
@@ -64,7 +64,7 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
         <UFormField
             name="workflow.reminders.reminders"
             :label="$t('common.reminder', 2)"
-            :description="$t('components.documents.TemplateWorkflowEditor.reminder.description')"
+            :description="$t('components.documents.template_workflow_editor.reminder.description')"
         >
             <div class="flex flex-col gap-1">
                 <VueDraggable
@@ -140,8 +140,8 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
 
         <UFormField
             name="workflow.reminders.reminderSettings.maxReminderCount"
-            :label="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.title')"
-            :description="$t('components.documents.TemplateWorkflowEditor.max_reminder_count.description')"
+            :label="$t('components.documents.template_workflow_editor.max_reminder_count.title')"
+            :description="$t('components.documents.template_workflow_editor.max_reminder_count.description')"
         >
             <UInputNumber v-model="workflow.reminders.reminderSettings.maxReminderCount" :min="1" :max="10" :step="1" />
         </UFormField>

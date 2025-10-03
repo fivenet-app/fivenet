@@ -6,7 +6,6 @@ import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
@@ -36,45 +35,7 @@ message SignatureTypes {
   }];
 }
 
-enum SignatureAccessLevel {
-  SIGNATURE_ACCESS_LEVEL_UNSPECIFIED = 0;
-  SIGNATURE_ACCESS_LEVEL_BLOCKED = 1;
-  SIGNATURE_ACCESS_LEVEL_SIGN = 2;
-}
-
-message SignatureAccess {
-  repeated SignatureJobAccess jobs = 1 [
-    (buf.validate.field).repeated.max_items = 20,
-    (tagger.tags) = "alias:\"job_access\""
-  ];
-  repeated SignatureUserAccess users = 2 [
-    (buf.validate.field).repeated.max_items = 20,
-    (tagger.tags) = "alias:\"user_access\""
-  ];
-}
-
-message SignatureJobAccess {
-  int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3;
-  string job = 4 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
-  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
-  SignatureAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
-}
-
-message SignatureUserAccess {
-  int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3;
-  int32 user_id = 4 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort user = 5;
-  SignatureAccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
-  optional bool required = 7;
-}
-
-message SignatureRequirement {
+message SignaturePolicy {
   int64 id = 1;
   int64 document_id = 2;
 
@@ -87,10 +48,53 @@ message SignatureRequirement {
   SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
   SignatureTypes allowed_types = 7;
 
-  SignatureAccess access = 8;
+  resources.timestamp.Timestamp created_at = 8;
+  resources.timestamp.Timestamp updated_at = 9;
+}
 
-  resources.timestamp.Timestamp created_at = 9;
-  resources.timestamp.Timestamp updated_at = 10;
+enum SignatureAssigneeKind {
+  SIGNATURE_ASSIGNEE_KIND_UNSPECIFIED = 0;
+  SIGNATURE_ASSIGNEE_KIND_USER = 1;
+  SIGNATURE_ASSIGNEE_KIND_JOB_GRADE = 2;
+}
+
+enum SignatureTaskStatus {
+  SIGNATURE_TASK_STATUS_UNSPECIFIED = 0;
+  SIGNATURE_TASK_STATUS_PENDING = 1;
+  SIGNATURE_TASK_STATUS_COMPLETED = 2;
+  SIGNATURE_TASK_STATUS_EXPIRED = 3;
+}
+
+message SignatureTask {
+  int64 id = 1;
+  int64 policy_id = 2;
+  int64 document_id = 3;
+
+  resources.timestamp.Timestamp snapshot_date = 4;
+
+  // Who is the task for? 1=USER, 2=JOB
+  SignatureAssigneeKind assignee_kind = 5 [(buf.validate.field).enum.defined_only = true];
+
+  // USER assignment
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  // JOB assignment (claimable by any eligible user)
+  optional string job = 8 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 9 [(buf.validate.field).string.max_len = 20];
+  optional int32 minimum_grade = 10;
+  optional string job_grade_label = 11 [(buf.validate.field).string.max_len = 20];
+
+  // >=1; meaningful only for Job tasks; always 1 for User
+  int32 slot_no = 12;
+
+  SignatureTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
+  optional string reason = 14 [(buf.validate.field).string.max_len = 255];
+
+  resources.timestamp.Timestamp created_at = 15;
+  optional resources.timestamp.Timestamp completed_at = 16;
+
+  optional int64 signature_id = 17;
 }
 
 enum SignatureStatus {
@@ -115,7 +119,7 @@ message Signature {
 
   SignatureType type = 9 [(buf.validate.field).enum.defined_only = true];
   // SVG path, typed preview, stamp fill, etc.
-  string payload_json = 10;
+  string payload_svg = 10;
   // if type == STAMP
   optional int64 stamp_id = 11;
 
@@ -125,43 +129,4 @@ message Signature {
 
   resources.timestamp.Timestamp created_at = 14;
   optional resources.timestamp.Timestamp revoked_at = 15;
-}
-
-// Stamps
-enum StampAccessLevel {
-  STAMP_ACCESS_LEVEL_UNSPECIFIED = 0;
-  STAMP_ACCESS_LEVEL_BLOCKED = 1;
-  STAMP_ACCESS_LEVEL_USE = 2;
-  STAMP_ACCESS_LEVEL_MANAGE = 3;
-}
-
-message Stamp {
-  int64 id = 1;
-  string job = 2 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 3;
-  int32 owner_id = 4;
-  resources.timestamp.Timestamp created_at = 5;
-
-  // Parameterized SVG with slots
-  string svg_template = 6;
-
-  StampAccess access = 7;
-}
-
-message StampAccess {
-  repeated StampJobAccess jobs = 1 [
-    (buf.validate.field).repeated.max_items = 20,
-    (tagger.tags) = "alias:\"job_access\""
-  ];
-}
-
-message StampJobAccess {
-  int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 target_id = 3;
-  string job = 4 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
-  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
-  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
-  StampAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
 }

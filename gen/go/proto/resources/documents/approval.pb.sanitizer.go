@@ -9,31 +9,14 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ApprovalAccess) Sanitize() error {
+func (m *Approval) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Jobs
-	for idx, item := range m.Jobs {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ApprovalJobAccess) Sanitize() error {
-	if m == nil {
-		return nil
+	// Field: Comment
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
 	}
 
 	// Field: CreatedAt
@@ -45,17 +28,51 @@ func (m *ApprovalJobAccess) Sanitize() error {
 		}
 	}
 
-	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
-
-	// Field: JobGradeLabel
-	if m.JobGradeLabel != nil {
-		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	// Field: RevokedAt
+	if m.RevokedAt != nil {
+		if v, ok := any(m.GetRevokedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
-	// Field: JobLabel
-	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	// Field: RevokedReason
+	if m.RevokedReason != nil {
+		*m.RevokedReason = htmlsanitizer.Sanitize(*m.RevokedReason)
+	}
+
+	// Field: SnapshotDate
+	if m.SnapshotDate != nil {
+		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UserGradeLabel
+	if m.UserGradeLabel != nil {
+		*m.UserGradeLabel = htmlsanitizer.Sanitize(*m.UserGradeLabel)
+	}
+
+	// Field: UserJob
+	if m.UserJob != nil {
+		*m.UserJob = htmlsanitizer.Sanitize(*m.UserJob)
+	}
+
+	// Field: UserJobLabel
+	if m.UserJobLabel != nil {
+		*m.UserJobLabel = htmlsanitizer.Sanitize(*m.UserJobLabel)
 	}
 
 	return nil
@@ -66,24 +83,6 @@ func (m *ApprovalJobAccess) Sanitize() error {
 func (m *ApprovalPolicy) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: ActiveSnapshotDate
-	if m.ActiveSnapshotDate != nil {
-		if v, ok := any(m.GetActiveSnapshotDate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: CompletedAt
@@ -104,9 +103,27 @@ func (m *ApprovalPolicy) Sanitize() error {
 		}
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: DueAt
 	if m.DueAt != nil {
 		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: SnapshotDate
+	if m.SnapshotDate != nil {
+		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -167,6 +184,11 @@ func (m *ApprovalTask) Sanitize() error {
 	// Field: CreatorJob
 	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
 
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
 	// Field: DecidedAt
 	if m.DecidedAt != nil {
 		if v, ok := any(m.GetDecidedAt()).(interface{ Sanitize() error }); ok {
@@ -174,11 +196,6 @@ func (m *ApprovalTask) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: DecidedByJob
-	if m.DecidedByJob != nil {
-		*m.DecidedByJob = htmlsanitizer.Sanitize(*m.DecidedByJob)
 	}
 
 	// Field: DueAt
@@ -195,6 +212,11 @@ func (m *ApprovalTask) Sanitize() error {
 		*m.Job = htmlsanitizer.Sanitize(*m.Job)
 	}
 
+	// Field: JobGradeLabel
+	if m.JobGradeLabel != nil {
+		*m.JobGradeLabel = htmlsanitizer.Sanitize(*m.JobGradeLabel)
+	}
+
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
@@ -203,6 +225,15 @@ func (m *ApprovalTask) Sanitize() error {
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -14,11 +14,10 @@ func (m *ApplySignatureRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: IdempotencyKey
-	m.IdempotencyKey = htmlsanitizer.Sanitize(m.IdempotencyKey)
-
-	// Field: PayloadJson
-	m.PayloadJson = htmlsanitizer.Sanitize(m.PayloadJson)
+	// Field: PayloadSvg
+	if m.PayloadSvg != nil {
+		*m.PayloadSvg = htmlsanitizer.Sanitize(*m.PayloadSvg)
+	}
 
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
@@ -46,26 +45,6 @@ func (m *ApplySignatureResponse) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteSignaturePolicyAccessRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DeleteSignaturePolicyAccessResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil
@@ -118,15 +97,6 @@ func (m *ListSignaturePoliciesRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
@@ -146,17 +116,8 @@ func (m *ListSignaturePoliciesResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Requirements
-	for idx, item := range m.Requirements {
+	// Field: Policies
+	for idx, item := range m.Policies {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -172,47 +133,9 @@ func (m *ListSignaturePoliciesResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ListSignaturePolicyAccessRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *ListSignaturePolicyAccessResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *ListSignaturesRequest) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: SnapshotDate
@@ -238,15 +161,6 @@ func (m *ListSignaturesRequest) Sanitize() error {
 func (m *ListSignaturesResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Pagination
-	if m.Pagination != nil {
-		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: Signatures
@@ -377,52 +291,14 @@ func (m *RevokeSignatureResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *UpsertSignaturePolicyAccessRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpsertSignaturePolicyAccessResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *UpsertSignaturePolicyRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Requirement
-	if m.Requirement != nil {
-		if v, ok := any(m.GetRequirement()).(interface{ Sanitize() error }); ok {
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -439,9 +315,9 @@ func (m *UpsertSignaturePolicyResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Requirement
-	if m.Requirement != nil {
-		if v, ok := any(m.GetRequirement()).(interface{ Sanitize() error }); ok {
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

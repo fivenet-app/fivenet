@@ -58,14 +58,14 @@ const insertCustom = () => {
 
 <template>
     <UPopover>
-        <UTooltip :text="$t('components.partials.TiptapEditor.extensions.template_var.title')">
+        <UTooltip :text="$t('components.partials.tiptap_editor.extensions.template_var.title')">
             <UButton color="neutral" variant="ghost" icon="i-mdi-variable" :disabled="disabled" />
         </UTooltip>
 
         <template #content>
             <div class="flex flex-1 flex-col gap-1 p-4">
                 <h3 class="block font-medium">
-                    {{ $t('components.partials.TiptapEditor.extensions.template_var.title') }}
+                    {{ $t('components.partials.tiptap_editor.extensions.template_var.title') }}
                 </h3>
 
                 <UFormField :label="$t('common.category', 1)">
@@ -84,14 +84,14 @@ const insertCustom = () => {
                 <div class="flex flex-row gap-2">
                     <UFormField
                         class="justify-center"
-                        :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_left')"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
                     >
                         <UCheckbox v-model="leftTrim" />
                     </UFormField>
 
                     <UFormField
                         class="justify-center"
-                        :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_right')"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
                     >
                         <UCheckbox v-model="rightTrim" />
                     </UFormField>
@@ -106,18 +106,18 @@ const insertCustom = () => {
                     />
                 </UFormField>
 
-                <UFormField :label="$t('components.partials.TiptapEditor.extensions.template_var.custom_template')">
+                <UFormField :label="$t('components.partials.tiptap_editor.extensions.template_var.custom_template')">
                     <UInput
                         v-model="customInput"
                         class="w-full"
-                        :placeholder="$t('components.partials.TiptapEditor.extensions.template_var.custom_placeholder')"
+                        :placeholder="$t('components.partials.tiptap_editor.extensions.template_var.custom_placeholder')"
                     />
                 </UFormField>
 
                 <UFormField>
                     <UButton
                         block
-                        :label="$t('components.partials.TiptapEditor.extensions.template_var.insert_custom')"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.insert_custom')"
                         :disabled="!customInput"
                         @click="insertCustom"
                     />

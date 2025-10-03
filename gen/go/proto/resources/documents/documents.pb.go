@@ -503,19 +503,35 @@ func (x *DocumentShort) GetWorkflowUser() *WorkflowUserState {
 }
 
 type DocumentMeta struct {
-	state                protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId           int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Closed               bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft                bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public               bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
-	State                string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
-	Approved             bool                   `protobuf:"varint,6,opt,name=approved,proto3" json:"approved,omitempty"`
-	Signed               bool                   `protobuf:"varint,7,opt,name=signed,proto3" json:"signed,omitempty"`
-	SigRequiredRemaining *int32                 `protobuf:"varint,8,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
-	SigRequiredTotal     *int32                 `protobuf:"varint,9,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
-	SigCollectedValid    *int32                 `protobuf:"varint,10,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Closed     bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft      bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public     bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
+	State      string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	// Overall aggregates - At least one approval policy fully satisfied
+	Approved bool `protobuf:"varint,6,opt,name=approved,proto3" json:"approved,omitempty"`
+	Signed   bool `protobuf:"varint,7,opt,name=signed,proto3" json:"signed,omitempty"`
+	// Signature rollups
+	SigRequiredRemaining *int32 `protobuf:"varint,8,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
+	SigRequiredTotal     *int32 `protobuf:"varint,9,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
+	SigCollectedValid    *int32 `protobuf:"varint,10,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
+	// Total approvals needed across policies
+	AprRequiredTotal *int32 `protobuf:"varint,11,opt,name=apr_required_total,json=aprRequiredTotal,proto3,oneof" json:"apr_required_total,omitempty"`
+	// Approvals collected
+	AprCollectedApproved *int32 `protobuf:"varint,12,opt,name=apr_collected_approved,json=aprCollectedApproved,proto3,oneof" json:"apr_collected_approved,omitempty"`
+	// How many left to satisfy
+	AprRequiredRemaining *int32 `protobuf:"varint,13,opt,name=apr_required_remaining,json=aprRequiredRemaining,proto3,oneof" json:"apr_required_remaining,omitempty"`
+	// Number of declines
+	AprDeclinedCount *int32 `protobuf:"varint,14,opt,name=apr_declined_count,json=aprDeclinedCount,proto3,oneof" json:"apr_declined_count,omitempty"`
+	// Tasks still pending (optional)
+	AprPendingCount *int32 `protobuf:"varint,15,opt,name=apr_pending_count,json=aprPendingCount,proto3,oneof" json:"apr_pending_count,omitempty"`
+	// Quick flag if any declines
+	AprAnyDeclined *bool `protobuf:"varint,16,opt,name=apr_any_declined,json=aprAnyDeclined,proto3,oneof" json:"apr_any_declined,omitempty"`
+	// Number of active approval policies
+	AprPoliciesActive *int32 `protobuf:"varint,17,opt,name=apr_policies_active,json=aprPoliciesActive,proto3,oneof" json:"apr_policies_active,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *DocumentMeta) Reset() {
@@ -614,6 +630,55 @@ func (x *DocumentMeta) GetSigRequiredTotal() int32 {
 func (x *DocumentMeta) GetSigCollectedValid() int32 {
 	if x != nil && x.SigCollectedValid != nil {
 		return *x.SigCollectedValid
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprRequiredTotal() int32 {
+	if x != nil && x.AprRequiredTotal != nil {
+		return *x.AprRequiredTotal
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprCollectedApproved() int32 {
+	if x != nil && x.AprCollectedApproved != nil {
+		return *x.AprCollectedApproved
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprRequiredRemaining() int32 {
+	if x != nil && x.AprRequiredRemaining != nil {
+		return *x.AprRequiredRemaining
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprDeclinedCount() int32 {
+	if x != nil && x.AprDeclinedCount != nil {
+		return *x.AprDeclinedCount
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprPendingCount() int32 {
+	if x != nil && x.AprPendingCount != nil {
+		return *x.AprPendingCount
+	}
+	return 0
+}
+
+func (x *DocumentMeta) GetAprAnyDeclined() bool {
+	if x != nil && x.AprAnyDeclined != nil {
+		return *x.AprAnyDeclined
+	}
+	return false
+}
+
+func (x *DocumentMeta) GetAprPoliciesActive() int32 {
+	if x != nil && x.AprPoliciesActive != nil {
+		return *x.AprPoliciesActive
 	}
 	return 0
 }
@@ -1109,7 +1174,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xb4\x03\n" +
+	"\x0e_workflow_user\"\xcc\a\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x16\n" +
@@ -1122,10 +1187,24 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x16sig_required_remaining\x18\b \x01(\x05H\x00R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
 	"\x12sig_required_total\x18\t \x01(\x05H\x01R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
 	"\x13sig_collected_valid\x18\n" +
-	" \x01(\x05H\x02R\x11sigCollectedValid\x88\x01\x01B\x19\n" +
+	" \x01(\x05H\x02R\x11sigCollectedValid\x88\x01\x01\x121\n" +
+	"\x12apr_required_total\x18\v \x01(\x05H\x03R\x10aprRequiredTotal\x88\x01\x01\x129\n" +
+	"\x16apr_collected_approved\x18\f \x01(\x05H\x04R\x14aprCollectedApproved\x88\x01\x01\x129\n" +
+	"\x16apr_required_remaining\x18\r \x01(\x05H\x05R\x14aprRequiredRemaining\x88\x01\x01\x121\n" +
+	"\x12apr_declined_count\x18\x0e \x01(\x05H\x06R\x10aprDeclinedCount\x88\x01\x01\x12/\n" +
+	"\x11apr_pending_count\x18\x0f \x01(\x05H\aR\x0faprPendingCount\x88\x01\x01\x12-\n" +
+	"\x10apr_any_declined\x18\x10 \x01(\bH\bR\x0eaprAnyDeclined\x88\x01\x01\x123\n" +
+	"\x13apr_policies_active\x18\x11 \x01(\x05H\tR\x11aprPoliciesActive\x88\x01\x01B\x19\n" +
 	"\x17_sig_required_remainingB\x15\n" +
 	"\x13_sig_required_totalB\x16\n" +
-	"\x14_sig_collected_valid\"\x95\x06\n" +
+	"\x14_sig_collected_validB\x15\n" +
+	"\x13_apr_required_totalB\x19\n" +
+	"\x17_apr_collected_approvedB\x19\n" +
+	"\x17_apr_required_remainingB\x15\n" +
+	"\x13_apr_declined_countB\x14\n" +
+	"\x12_apr_pending_countB\x13\n" +
+	"\x11_apr_any_declinedB\x16\n" +
+	"\x14_apr_policies_active\"\x95\x06\n" +
 	"\x11DocumentReference\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +

@@ -17,24 +17,24 @@ type fivenetDocumentsApprovalPoliciesTable struct {
 	mysql.Table
 
 	// Columns
-	ID                 mysql.ColumnInteger
-	DocumentID         mysql.ColumnInteger
-	OnEditBehavior     mysql.ColumnInteger
-	RuleKind           mysql.ColumnInteger
-	RequiredCount      mysql.ColumnInteger
-	QuorumAny          mysql.ColumnInteger
-	DueAt              mysql.ColumnTimestamp
-	ActiveSnapshotDate mysql.ColumnTimestamp
-	AssignedCount      mysql.ColumnInteger
-	ApprovedCount      mysql.ColumnInteger
-	DeclinedCount      mysql.ColumnInteger
-	PendingCount       mysql.ColumnInteger
-	AnyDeclined        mysql.ColumnBool
-	StartedAt          mysql.ColumnTimestamp
-	CompletedAt        mysql.ColumnTimestamp
-	CreatedAt          mysql.ColumnTimestamp
-	UpdatedAt          mysql.ColumnTimestamp
-	DeletedAt          mysql.ColumnTimestamp
+	ID             mysql.ColumnInteger
+	DocumentID     mysql.ColumnInteger
+	SnapshotDate   mysql.ColumnTimestamp
+	OnEditBehavior mysql.ColumnInteger
+	RuleKind       mysql.ColumnInteger
+	RequiredCount  mysql.ColumnInteger
+	QuorumAny      mysql.ColumnInteger
+	DueAt          mysql.ColumnTimestamp
+	AssignedCount  mysql.ColumnInteger
+	ApprovedCount  mysql.ColumnInteger
+	DeclinedCount  mysql.ColumnInteger
+	PendingCount   mysql.ColumnInteger
+	AnyDeclined    mysql.ColumnBool
+	StartedAt      mysql.ColumnTimestamp
+	CompletedAt    mysql.ColumnTimestamp
+	CreatedAt      mysql.ColumnTimestamp
+	UpdatedAt      mysql.ColumnTimestamp
+	DeletedAt      mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,51 +76,51 @@ func newFivenetDocumentsApprovalPoliciesTable(schemaName, tableName, alias strin
 
 func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias string) fivenetDocumentsApprovalPoliciesTable {
 	var (
-		IDColumn                 = mysql.IntegerColumn("id")
-		DocumentIDColumn         = mysql.IntegerColumn("document_id")
-		OnEditBehaviorColumn     = mysql.IntegerColumn("on_edit_behavior")
-		RuleKindColumn           = mysql.IntegerColumn("rule_kind")
-		RequiredCountColumn      = mysql.IntegerColumn("required_count")
-		QuorumAnyColumn          = mysql.IntegerColumn("quorum_any")
-		DueAtColumn              = mysql.TimestampColumn("due_at")
-		ActiveSnapshotDateColumn = mysql.TimestampColumn("active_snapshot_date")
-		AssignedCountColumn      = mysql.IntegerColumn("assigned_count")
-		ApprovedCountColumn      = mysql.IntegerColumn("approved_count")
-		DeclinedCountColumn      = mysql.IntegerColumn("declined_count")
-		PendingCountColumn       = mysql.IntegerColumn("pending_count")
-		AnyDeclinedColumn        = mysql.BoolColumn("any_declined")
-		StartedAtColumn          = mysql.TimestampColumn("started_at")
-		CompletedAtColumn        = mysql.TimestampColumn("completed_at")
-		CreatedAtColumn          = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn          = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn          = mysql.TimestampColumn("deleted_at")
-		allColumns               = mysql.ColumnList{IDColumn, DocumentIDColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, ActiveSnapshotDateColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		mutableColumns           = mysql.ColumnList{DocumentIDColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, ActiveSnapshotDateColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		defaultColumns           = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, CreatedAtColumn}
+		IDColumn             = mysql.IntegerColumn("id")
+		DocumentIDColumn     = mysql.IntegerColumn("document_id")
+		SnapshotDateColumn   = mysql.TimestampColumn("snapshot_date")
+		OnEditBehaviorColumn = mysql.IntegerColumn("on_edit_behavior")
+		RuleKindColumn       = mysql.IntegerColumn("rule_kind")
+		RequiredCountColumn  = mysql.IntegerColumn("required_count")
+		QuorumAnyColumn      = mysql.IntegerColumn("quorum_any")
+		DueAtColumn          = mysql.TimestampColumn("due_at")
+		AssignedCountColumn  = mysql.IntegerColumn("assigned_count")
+		ApprovedCountColumn  = mysql.IntegerColumn("approved_count")
+		DeclinedCountColumn  = mysql.IntegerColumn("declined_count")
+		PendingCountColumn   = mysql.IntegerColumn("pending_count")
+		AnyDeclinedColumn    = mysql.BoolColumn("any_declined")
+		StartedAtColumn      = mysql.TimestampColumn("started_at")
+		CompletedAtColumn    = mysql.TimestampColumn("completed_at")
+		CreatedAtColumn      = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
+		allColumns           = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns       = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, QuorumAnyColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns       = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, CreatedAtColumn}
 	)
 
 	return fivenetDocumentsApprovalPoliciesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:                 IDColumn,
-		DocumentID:         DocumentIDColumn,
-		OnEditBehavior:     OnEditBehaviorColumn,
-		RuleKind:           RuleKindColumn,
-		RequiredCount:      RequiredCountColumn,
-		QuorumAny:          QuorumAnyColumn,
-		DueAt:              DueAtColumn,
-		ActiveSnapshotDate: ActiveSnapshotDateColumn,
-		AssignedCount:      AssignedCountColumn,
-		ApprovedCount:      ApprovedCountColumn,
-		DeclinedCount:      DeclinedCountColumn,
-		PendingCount:       PendingCountColumn,
-		AnyDeclined:        AnyDeclinedColumn,
-		StartedAt:          StartedAtColumn,
-		CompletedAt:        CompletedAtColumn,
-		CreatedAt:          CreatedAtColumn,
-		UpdatedAt:          UpdatedAtColumn,
-		DeletedAt:          DeletedAtColumn,
+		ID:             IDColumn,
+		DocumentID:     DocumentIDColumn,
+		SnapshotDate:   SnapshotDateColumn,
+		OnEditBehavior: OnEditBehaviorColumn,
+		RuleKind:       RuleKindColumn,
+		RequiredCount:  RequiredCountColumn,
+		QuorumAny:      QuorumAnyColumn,
+		DueAt:          DueAtColumn,
+		AssignedCount:  AssignedCountColumn,
+		ApprovedCount:  ApprovedCountColumn,
+		DeclinedCount:  DeclinedCountColumn,
+		PendingCount:   PendingCountColumn,
+		AnyDeclined:    AnyDeclinedColumn,
+		StartedAt:      StartedAtColumn,
+		CompletedAt:    CompletedAtColumn,
+		CreatedAt:      CreatedAtColumn,
+		UpdatedAt:      UpdatedAtColumn,
+		DeletedAt:      DeletedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

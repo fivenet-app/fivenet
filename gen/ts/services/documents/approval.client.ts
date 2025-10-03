@@ -5,29 +5,23 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { ApprovalService } from "./approval";
-import type { ReopenTaskResponse } from "./approval";
-import type { ReopenTaskRequest } from "./approval";
-import type { DecideTaskResponse } from "./approval";
-import type { DecideTaskRequest } from "./approval";
+import type { RecomputeApprovalPolicyCountersResponse } from "./approval";
+import type { RecomputeApprovalPolicyCountersRequest } from "./approval";
+import type { ReopenApprovalTaskResponse } from "./approval";
+import type { ReopenApprovalTaskRequest } from "./approval";
+import type { DecideApprovalTaskResponse } from "./approval";
+import type { DecideApprovalTaskRequest } from "./approval";
 import type { ListApprovalTasksResponse } from "./approval";
 import type { ListApprovalTasksRequest } from "./approval";
-import type { DeleteApprovalAccessResponse } from "./approval";
-import type { DeleteApprovalAccessRequest } from "./approval";
-import type { UpsertApprovalAccessResponse } from "./approval";
-import type { UpsertApprovalAccessRequest } from "./approval";
-import type { ListApprovalAccessResponse } from "./approval";
-import type { ListApprovalAccessRequest } from "./approval";
-import type { RecomputePolicyCountersResponse } from "./approval";
-import type { RecomputePolicyCountersRequest } from "./approval";
 import type { CompleteApprovalRoundResponse } from "./approval";
 import type { CompleteApprovalRoundRequest } from "./approval";
 import type { StartApprovalRoundResponse } from "./approval";
 import type { StartApprovalRoundRequest } from "./approval";
-import type { UpsertPolicyResponse } from "./approval";
-import type { UpsertPolicyRequest } from "./approval";
+import type { UpsertApprovalPolicyResponse } from "./approval";
+import type { UpsertApprovalPolicyRequest } from "./approval";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { GetPolicyResponse } from "./approval";
-import type { GetPolicyRequest } from "./approval";
+import type { GetApprovalPolicyResponse } from "./approval";
+import type { GetApprovalPolicyRequest } from "./approval";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -37,13 +31,13 @@ export interface IApprovalServiceClient {
     /**
      * Policy
      *
-     * @generated from protobuf rpc: GetPolicy
+     * @generated from protobuf rpc: GetApprovalPolicy
      */
-    getPolicy(input: GetPolicyRequest, options?: RpcOptions): UnaryCall<GetPolicyRequest, GetPolicyResponse>;
+    getApprovalPolicy(input: GetApprovalPolicyRequest, options?: RpcOptions): UnaryCall<GetApprovalPolicyRequest, GetApprovalPolicyResponse>;
     /**
-     * @generated from protobuf rpc: UpsertPolicy
+     * @generated from protobuf rpc: UpsertApprovalPolicy
      */
-    upsertPolicy(input: UpsertPolicyRequest, options?: RpcOptions): UnaryCall<UpsertPolicyRequest, UpsertPolicyResponse>;
+    upsertApprovalPolicy(input: UpsertApprovalPolicyRequest, options?: RpcOptions): UnaryCall<UpsertApprovalPolicyRequest, UpsertApprovalPolicyResponse>;
     /**
      * @generated from protobuf rpc: StartApprovalRound
      */
@@ -53,39 +47,25 @@ export interface IApprovalServiceClient {
      */
     completeApprovalRound(input: CompleteApprovalRoundRequest, options?: RpcOptions): UnaryCall<CompleteApprovalRoundRequest, CompleteApprovalRoundResponse>;
     /**
-     * Helpers
-     *
-     * @generated from protobuf rpc: RecomputePolicyCounters
-     */
-    recomputePolicyCounters(input: RecomputePolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputePolicyCountersRequest, RecomputePolicyCountersResponse>;
-    /**
-     * Access (policy-scoped)
-     *
-     * @generated from protobuf rpc: ListApprovalAccess
-     */
-    listApprovalAccess(input: ListApprovalAccessRequest, options?: RpcOptions): UnaryCall<ListApprovalAccessRequest, ListApprovalAccessResponse>;
-    /**
-     * @generated from protobuf rpc: UpsertApprovalAccess
-     */
-    upsertApprovalAccess(input: UpsertApprovalAccessRequest, options?: RpcOptions): UnaryCall<UpsertApprovalAccessRequest, UpsertApprovalAccessResponse>;
-    /**
-     * @generated from protobuf rpc: DeleteApprovalAccess
-     */
-    deleteApprovalAccess(input: DeleteApprovalAccessRequest, options?: RpcOptions): UnaryCall<DeleteApprovalAccessRequest, DeleteApprovalAccessResponse>;
-    /**
      * Tasks
      *
      * @generated from protobuf rpc: ListApprovalTasks
      */
     listApprovalTasks(input: ListApprovalTasksRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksRequest, ListApprovalTasksResponse>;
     /**
-     * @generated from protobuf rpc: DecideTask
+     * @generated from protobuf rpc: DecideApprovalTask
      */
-    decideTask(input: DecideTaskRequest, options?: RpcOptions): UnaryCall<DecideTaskRequest, DecideTaskResponse>;
+    decideApprovalTask(input: DecideApprovalTaskRequest, options?: RpcOptions): UnaryCall<DecideApprovalTaskRequest, DecideApprovalTaskResponse>;
     /**
-     * @generated from protobuf rpc: ReopenTask
+     * @generated from protobuf rpc: ReopenApprovalTask
      */
-    reopenTask(input: ReopenTaskRequest, options?: RpcOptions): UnaryCall<ReopenTaskRequest, ReopenTaskResponse>;
+    reopenApprovalTask(input: ReopenApprovalTaskRequest, options?: RpcOptions): UnaryCall<ReopenApprovalTaskRequest, ReopenApprovalTaskResponse>;
+    /**
+     * Helpers
+     *
+     * @generated from protobuf rpc: RecomputeApprovalPolicyCounters
+     */
+    recomputeApprovalPolicyCounters(input: RecomputeApprovalPolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputeApprovalPolicyCountersRequest, RecomputeApprovalPolicyCountersResponse>;
 }
 /**
  * @generated from protobuf service services.documents.ApprovalService
@@ -99,18 +79,18 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
     /**
      * Policy
      *
-     * @generated from protobuf rpc: GetPolicy
+     * @generated from protobuf rpc: GetApprovalPolicy
      */
-    getPolicy(input: GetPolicyRequest, options?: RpcOptions): UnaryCall<GetPolicyRequest, GetPolicyResponse> {
+    getApprovalPolicy(input: GetApprovalPolicyRequest, options?: RpcOptions): UnaryCall<GetApprovalPolicyRequest, GetApprovalPolicyResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetPolicyRequest, GetPolicyResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<GetApprovalPolicyRequest, GetApprovalPolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: UpsertPolicy
+     * @generated from protobuf rpc: UpsertApprovalPolicy
      */
-    upsertPolicy(input: UpsertPolicyRequest, options?: RpcOptions): UnaryCall<UpsertPolicyRequest, UpsertPolicyResponse> {
+    upsertApprovalPolicy(input: UpsertApprovalPolicyRequest, options?: RpcOptions): UnaryCall<UpsertApprovalPolicyRequest, UpsertApprovalPolicyResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpsertPolicyRequest, UpsertPolicyResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<UpsertApprovalPolicyRequest, UpsertApprovalPolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: StartApprovalRound
@@ -127,58 +107,35 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
         return stackIntercept<CompleteApprovalRoundRequest, CompleteApprovalRoundResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * Helpers
-     *
-     * @generated from protobuf rpc: RecomputePolicyCounters
-     */
-    recomputePolicyCounters(input: RecomputePolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputePolicyCountersRequest, RecomputePolicyCountersResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<RecomputePolicyCountersRequest, RecomputePolicyCountersResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * Access (policy-scoped)
-     *
-     * @generated from protobuf rpc: ListApprovalAccess
-     */
-    listApprovalAccess(input: ListApprovalAccessRequest, options?: RpcOptions): UnaryCall<ListApprovalAccessRequest, ListApprovalAccessResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListApprovalAccessRequest, ListApprovalAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: UpsertApprovalAccess
-     */
-    upsertApprovalAccess(input: UpsertApprovalAccessRequest, options?: RpcOptions): UnaryCall<UpsertApprovalAccessRequest, UpsertApprovalAccessResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpsertApprovalAccessRequest, UpsertApprovalAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @generated from protobuf rpc: DeleteApprovalAccess
-     */
-    deleteApprovalAccess(input: DeleteApprovalAccessRequest, options?: RpcOptions): UnaryCall<DeleteApprovalAccessRequest, DeleteApprovalAccessResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteApprovalAccessRequest, DeleteApprovalAccessResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * Tasks
      *
      * @generated from protobuf rpc: ListApprovalTasks
      */
     listApprovalTasks(input: ListApprovalTasksRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksRequest, ListApprovalTasksResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListApprovalTasksRequest, ListApprovalTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: DecideTask
+     * @generated from protobuf rpc: DecideApprovalTask
      */
-    decideTask(input: DecideTaskRequest, options?: RpcOptions): UnaryCall<DecideTaskRequest, DecideTaskResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DecideTaskRequest, DecideTaskResponse>("unary", this._transport, method, opt, input);
+    decideApprovalTask(input: DecideApprovalTaskRequest, options?: RpcOptions): UnaryCall<DecideApprovalTaskRequest, DecideApprovalTaskResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DecideApprovalTaskRequest, DecideApprovalTaskResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: ReopenTask
+     * @generated from protobuf rpc: ReopenApprovalTask
      */
-    reopenTask(input: ReopenTaskRequest, options?: RpcOptions): UnaryCall<ReopenTaskRequest, ReopenTaskResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ReopenTaskRequest, ReopenTaskResponse>("unary", this._transport, method, opt, input);
+    reopenApprovalTask(input: ReopenApprovalTaskRequest, options?: RpcOptions): UnaryCall<ReopenApprovalTaskRequest, ReopenApprovalTaskResponse> {
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ReopenApprovalTaskRequest, ReopenApprovalTaskResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * Helpers
+     *
+     * @generated from protobuf rpc: RecomputeApprovalPolicyCounters
+     */
+    recomputeApprovalPolicyCounters(input: RecomputeApprovalPolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputeApprovalPolicyCountersRequest, RecomputeApprovalPolicyCountersResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RecomputeApprovalPolicyCountersRequest, RecomputeApprovalPolicyCountersResponse>("unary", this._transport, method, opt, input);
     }
 }

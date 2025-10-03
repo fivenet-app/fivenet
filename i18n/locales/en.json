@@ -703,7 +703,17 @@
         "directory": "Directory | Directories",
         "undo": "Undo",
         "redo": "Redo",
-        "sign": "Sign"
+        "sign": "Sign",
+        "approved": "Approved",
+        "unapproved": "Unapproved",
+        "signed": "Signed",
+        "unsigned": "Unsigned",
+        "stamp": "Stamp | Stamps",
+        "due_at": "Due at",
+        "approvals": "Approvals",
+        "continue": "Continue",
+        "policy": "Policy",
+        "task": "Task | Tasks"
     },
     "components": {
         "partials": {
@@ -723,7 +733,7 @@
                 "page_count": "Page {current} à {size} records",
                 "page_count_with_total": "Page {current} of {maxPage} à {size} records (Total {total})"
             },
-            "TiptapEditor": {
+            "tiptap_editor": {
                 "clear": "Clear",
                 "previous": "Previous",
                 "next": "Next",
@@ -803,7 +813,7 @@
                 },
                 "invisible_characters": "Show/Hide Invisible Characters"
             },
-            "SignaturePad": {
+            "signature_pad": {
                 "pen_color": "Pen Color",
                 "min_stroke_width": "Min Stroke Width",
                 "max_stroke_width": "Max Stroke Width"
@@ -877,7 +887,7 @@
                 "message": "But you can request access to this document using the button below.",
                 "callback_message": "Request Access here"
             },
-            "TemplateWorkflowEditor": {
+            "template_workflow_editor": {
                 "reminder": {
                     "description": "Document reminders are only sent to the owner/creator of the document. The reminders are sent in sequence, each based on the previous reminder. E.g., reminder 1 (3 days) will be sent 3 days after document creation/last update, reminder 2 (2 days) will be sent in 5 days.\nThe reminders start again with the first reminder if the document has been updated in the meantime."
                 },
@@ -887,6 +897,18 @@
                 "max_reminder_count": {
                     "title": "Maximum number of sent reminders",
                     "description": "The maximum number of reminders that will be sent to the creator of a document. If the maximum (10) is reached, no further reminders will be sent."
+                }
+            },
+            "approval": {
+                "policy_form": {
+                    "title": "Approval Request Policy",
+                    "rule_kind": "Rule Kind",
+                    "on_edit_behavior": "On Edit Behavior",
+                    "required_signatures": "Required Signatures"
+                },
+                "tasks": "Approval Tasks",
+                "task_form": {
+                    "title": "Tasks"
                 }
             }
         },
@@ -2496,6 +2518,41 @@
                 "UNSPECIFIED": "Unspecified",
                 "REQUESTED_OWNER_CHANGE": "Document owner change requested",
                 "REQUESTED_OPENING": "Document open requested"
+            },
+            "OnEditBehavior": {
+                "UNSPECIFIED": "Unspecified",
+                "RESET": "Reset approvals on edit",
+                "KEEP_PROGRESS": "Keep approvals on edit"
+            },
+            "ApprovalRuleKind": {
+                "UNSPECIFIED": "Unspecified",
+                "REQUIRE_ALL": "Require all",
+                "QUORUM_ANY": "Quorum"
+            },
+            "ApprovalTaskStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "APPROVED": "Approved",
+                "DECLINED": "Declined",
+                "EXPIRED": "Expired",
+                "CANCELLED": "Cancelled"
+            },
+            "SignatureType": {
+                "UNSPECIFIED": "Unspecified",
+                "FREEHAND": "Freehand",
+                "TYPED": "Typed",
+                "STAMP": "Stamp"
+            },
+            "SignatureBindingMode": {
+                "UNSPECIFIED": "Unspecified",
+                "BINDING": "Binding",
+                "NONBINDING": "Non-binding"
+            },
+            "StampAccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "USE": "Use",
+                "MANAGE": "Manage"
             }
         },
         "settings": {
@@ -3010,15 +3067,11 @@
             },
             "ApprovalService": {
                 "category": "Documents: Approval",
-                "DeleteApprovalAccess": {
-                    "key": "Delete Approval Access",
-                    "description": "Delete approval access for users."
-                },
-                "ReopenTask": {
+                "ReopenApprovalTask": {
                     "key": "Reopen Task",
                     "description": "Reopen a completed task."
                 },
-                "UpsertPolicy": {
+                "UpsertApprovalPolicy": {
                     "key": "Create or Update Approval Policy",
                     "description": "Create or update approval policies for jobs."
                 }

@@ -85,12 +85,31 @@ message DocumentMeta {
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 
+  // Overall aggregates - At least one approval policy fully satisfied
   bool approved = 6;
   bool signed = 7;
 
+  // Signature rollups
   optional int32 sig_required_remaining = 8;
   optional int32 sig_required_total = 9;
   optional int32 sig_collected_valid = 10;
+
+  // Approval rollups
+
+  // Total approvals needed across policies
+  optional int32 apr_required_total = 11;
+  // Approvals collected
+  optional int32 apr_collected_approved = 12;
+  // How many left to satisfy
+  optional int32 apr_required_remaining = 13;
+  // Number of declines
+  optional int32 apr_declined_count = 14;
+  // Tasks still pending (optional)
+  optional int32 apr_pending_count = 15;
+  // Quick flag if any declines
+  optional bool apr_any_declined = 16;
+  // Number of active approval policies
+  optional int32 apr_policies_active = 17;
 }
 
 enum DocReference {

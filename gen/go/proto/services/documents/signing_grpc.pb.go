@@ -19,19 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SigningService_ListSignaturePolicies_FullMethodName       = "/services.documents.SigningService/ListSignaturePolicies"
-	SigningService_UpsertSignaturePolicy_FullMethodName       = "/services.documents.SigningService/UpsertSignaturePolicy"
-	SigningService_DeleteSignaturePolicy_FullMethodName       = "/services.documents.SigningService/DeleteSignaturePolicy"
-	SigningService_ListSignaturePolicyAccess_FullMethodName   = "/services.documents.SigningService/ListSignaturePolicyAccess"
-	SigningService_UpsertSignaturePolicyAccess_FullMethodName = "/services.documents.SigningService/UpsertSignaturePolicyAccess"
-	SigningService_DeleteSignaturePolicyAccess_FullMethodName = "/services.documents.SigningService/DeleteSignaturePolicyAccess"
-	SigningService_ListSignatures_FullMethodName              = "/services.documents.SigningService/ListSignatures"
-	SigningService_ApplySignature_FullMethodName              = "/services.documents.SigningService/ApplySignature"
-	SigningService_RevokeSignature_FullMethodName             = "/services.documents.SigningService/RevokeSignature"
-	SigningService_RecomputeSignatureStatus_FullMethodName    = "/services.documents.SigningService/RecomputeSignatureStatus"
-	SigningService_ListUsableStamps_FullMethodName            = "/services.documents.SigningService/ListUsableStamps"
-	SigningService_UpsertStamp_FullMethodName                 = "/services.documents.SigningService/UpsertStamp"
-	SigningService_DeleteStamp_FullMethodName                 = "/services.documents.SigningService/DeleteStamp"
+	SigningService_ListSignaturePolicies_FullMethodName    = "/services.documents.SigningService/ListSignaturePolicies"
+	SigningService_UpsertSignaturePolicy_FullMethodName    = "/services.documents.SigningService/UpsertSignaturePolicy"
+	SigningService_DeleteSignaturePolicy_FullMethodName    = "/services.documents.SigningService/DeleteSignaturePolicy"
+	SigningService_ListSignatures_FullMethodName           = "/services.documents.SigningService/ListSignatures"
+	SigningService_ApplySignature_FullMethodName           = "/services.documents.SigningService/ApplySignature"
+	SigningService_RevokeSignature_FullMethodName          = "/services.documents.SigningService/RevokeSignature"
+	SigningService_ListUsableStamps_FullMethodName         = "/services.documents.SigningService/ListUsableStamps"
+	SigningService_UpsertStamp_FullMethodName              = "/services.documents.SigningService/UpsertStamp"
+	SigningService_DeleteStamp_FullMethodName              = "/services.documents.SigningService/DeleteStamp"
+	SigningService_RecomputeSignatureStatus_FullMethodName = "/services.documents.SigningService/RecomputeSignatureStatus"
 )
 
 // SigningServiceClient is the client API for SigningService service.
@@ -42,20 +39,16 @@ type SigningServiceClient interface {
 	ListSignaturePolicies(ctx context.Context, in *ListSignaturePoliciesRequest, opts ...grpc.CallOption) (*ListSignaturePoliciesResponse, error)
 	UpsertSignaturePolicy(ctx context.Context, in *UpsertSignaturePolicyRequest, opts ...grpc.CallOption) (*UpsertSignaturePolicyResponse, error)
 	DeleteSignaturePolicy(ctx context.Context, in *DeleteSignaturePolicyRequest, opts ...grpc.CallOption) (*DeleteSignaturePolicyResponse, error)
-	// Requirement ACL
-	ListSignaturePolicyAccess(ctx context.Context, in *ListSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*ListSignaturePolicyAccessResponse, error)
-	UpsertSignaturePolicyAccess(ctx context.Context, in *UpsertSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*UpsertSignaturePolicyAccessResponse, error)
-	DeleteSignaturePolicyAccess(ctx context.Context, in *DeleteSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*DeleteSignaturePolicyAccessResponse, error)
 	// Signatures
 	ListSignatures(ctx context.Context, in *ListSignaturesRequest, opts ...grpc.CallOption) (*ListSignaturesResponse, error)
 	ApplySignature(ctx context.Context, in *ApplySignatureRequest, opts ...grpc.CallOption) (*ApplySignatureResponse, error)
 	RevokeSignature(ctx context.Context, in *RevokeSignatureRequest, opts ...grpc.CallOption) (*RevokeSignatureResponse, error)
-	// Helpers
-	RecomputeSignatureStatus(ctx context.Context, in *RecomputeSignatureStatusRequest, opts ...grpc.CallOption) (*RecomputeSignatureStatusResponse, error)
 	// Stamps
 	ListUsableStamps(ctx context.Context, in *ListUsableStampsRequest, opts ...grpc.CallOption) (*ListUsableStampsResponse, error)
 	UpsertStamp(ctx context.Context, in *UpsertStampRequest, opts ...grpc.CallOption) (*UpsertStampResponse, error)
 	DeleteStamp(ctx context.Context, in *DeleteStampRequest, opts ...grpc.CallOption) (*DeleteStampResponse, error)
+	// Helpers
+	RecomputeSignatureStatus(ctx context.Context, in *RecomputeSignatureStatusRequest, opts ...grpc.CallOption) (*RecomputeSignatureStatusResponse, error)
 }
 
 type signingServiceClient struct {
@@ -96,36 +89,6 @@ func (c *signingServiceClient) DeleteSignaturePolicy(ctx context.Context, in *De
 	return out, nil
 }
 
-func (c *signingServiceClient) ListSignaturePolicyAccess(ctx context.Context, in *ListSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*ListSignaturePolicyAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListSignaturePolicyAccessResponse)
-	err := c.cc.Invoke(ctx, SigningService_ListSignaturePolicyAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *signingServiceClient) UpsertSignaturePolicyAccess(ctx context.Context, in *UpsertSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*UpsertSignaturePolicyAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpsertSignaturePolicyAccessResponse)
-	err := c.cc.Invoke(ctx, SigningService_UpsertSignaturePolicyAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *signingServiceClient) DeleteSignaturePolicyAccess(ctx context.Context, in *DeleteSignaturePolicyAccessRequest, opts ...grpc.CallOption) (*DeleteSignaturePolicyAccessResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteSignaturePolicyAccessResponse)
-	err := c.cc.Invoke(ctx, SigningService_DeleteSignaturePolicyAccess_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *signingServiceClient) ListSignatures(ctx context.Context, in *ListSignaturesRequest, opts ...grpc.CallOption) (*ListSignaturesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListSignaturesResponse)
@@ -150,16 +113,6 @@ func (c *signingServiceClient) RevokeSignature(ctx context.Context, in *RevokeSi
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RevokeSignatureResponse)
 	err := c.cc.Invoke(ctx, SigningService_RevokeSignature_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *signingServiceClient) RecomputeSignatureStatus(ctx context.Context, in *RecomputeSignatureStatusRequest, opts ...grpc.CallOption) (*RecomputeSignatureStatusResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RecomputeSignatureStatusResponse)
-	err := c.cc.Invoke(ctx, SigningService_RecomputeSignatureStatus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -196,6 +149,16 @@ func (c *signingServiceClient) DeleteStamp(ctx context.Context, in *DeleteStampR
 	return out, nil
 }
 
+func (c *signingServiceClient) RecomputeSignatureStatus(ctx context.Context, in *RecomputeSignatureStatusRequest, opts ...grpc.CallOption) (*RecomputeSignatureStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecomputeSignatureStatusResponse)
+	err := c.cc.Invoke(ctx, SigningService_RecomputeSignatureStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SigningServiceServer is the server API for SigningService service.
 // All implementations must embed UnimplementedSigningServiceServer
 // for forward compatibility.
@@ -204,20 +167,16 @@ type SigningServiceServer interface {
 	ListSignaturePolicies(context.Context, *ListSignaturePoliciesRequest) (*ListSignaturePoliciesResponse, error)
 	UpsertSignaturePolicy(context.Context, *UpsertSignaturePolicyRequest) (*UpsertSignaturePolicyResponse, error)
 	DeleteSignaturePolicy(context.Context, *DeleteSignaturePolicyRequest) (*DeleteSignaturePolicyResponse, error)
-	// Requirement ACL
-	ListSignaturePolicyAccess(context.Context, *ListSignaturePolicyAccessRequest) (*ListSignaturePolicyAccessResponse, error)
-	UpsertSignaturePolicyAccess(context.Context, *UpsertSignaturePolicyAccessRequest) (*UpsertSignaturePolicyAccessResponse, error)
-	DeleteSignaturePolicyAccess(context.Context, *DeleteSignaturePolicyAccessRequest) (*DeleteSignaturePolicyAccessResponse, error)
 	// Signatures
 	ListSignatures(context.Context, *ListSignaturesRequest) (*ListSignaturesResponse, error)
 	ApplySignature(context.Context, *ApplySignatureRequest) (*ApplySignatureResponse, error)
 	RevokeSignature(context.Context, *RevokeSignatureRequest) (*RevokeSignatureResponse, error)
-	// Helpers
-	RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error)
 	// Stamps
 	ListUsableStamps(context.Context, *ListUsableStampsRequest) (*ListUsableStampsResponse, error)
 	UpsertStamp(context.Context, *UpsertStampRequest) (*UpsertStampResponse, error)
 	DeleteStamp(context.Context, *DeleteStampRequest) (*DeleteStampResponse, error)
+	// Helpers
+	RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error)
 	mustEmbedUnimplementedSigningServiceServer()
 }
 
@@ -237,15 +196,6 @@ func (UnimplementedSigningServiceServer) UpsertSignaturePolicy(context.Context, 
 func (UnimplementedSigningServiceServer) DeleteSignaturePolicy(context.Context, *DeleteSignaturePolicyRequest) (*DeleteSignaturePolicyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSignaturePolicy not implemented")
 }
-func (UnimplementedSigningServiceServer) ListSignaturePolicyAccess(context.Context, *ListSignaturePolicyAccessRequest) (*ListSignaturePolicyAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSignaturePolicyAccess not implemented")
-}
-func (UnimplementedSigningServiceServer) UpsertSignaturePolicyAccess(context.Context, *UpsertSignaturePolicyAccessRequest) (*UpsertSignaturePolicyAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpsertSignaturePolicyAccess not implemented")
-}
-func (UnimplementedSigningServiceServer) DeleteSignaturePolicyAccess(context.Context, *DeleteSignaturePolicyAccessRequest) (*DeleteSignaturePolicyAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSignaturePolicyAccess not implemented")
-}
 func (UnimplementedSigningServiceServer) ListSignatures(context.Context, *ListSignaturesRequest) (*ListSignaturesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSignatures not implemented")
 }
@@ -255,9 +205,6 @@ func (UnimplementedSigningServiceServer) ApplySignature(context.Context, *ApplyS
 func (UnimplementedSigningServiceServer) RevokeSignature(context.Context, *RevokeSignatureRequest) (*RevokeSignatureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokeSignature not implemented")
 }
-func (UnimplementedSigningServiceServer) RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RecomputeSignatureStatus not implemented")
-}
 func (UnimplementedSigningServiceServer) ListUsableStamps(context.Context, *ListUsableStampsRequest) (*ListUsableStampsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUsableStamps not implemented")
 }
@@ -266,6 +213,9 @@ func (UnimplementedSigningServiceServer) UpsertStamp(context.Context, *UpsertSta
 }
 func (UnimplementedSigningServiceServer) DeleteStamp(context.Context, *DeleteStampRequest) (*DeleteStampResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteStamp not implemented")
+}
+func (UnimplementedSigningServiceServer) RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecomputeSignatureStatus not implemented")
 }
 func (UnimplementedSigningServiceServer) mustEmbedUnimplementedSigningServiceServer() {}
 func (UnimplementedSigningServiceServer) testEmbeddedByValue()                        {}
@@ -342,60 +292,6 @@ func _SigningService_DeleteSignaturePolicy_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SigningService_ListSignaturePolicyAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSignaturePolicyAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SigningServiceServer).ListSignaturePolicyAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SigningService_ListSignaturePolicyAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SigningServiceServer).ListSignaturePolicyAccess(ctx, req.(*ListSignaturePolicyAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SigningService_UpsertSignaturePolicyAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpsertSignaturePolicyAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SigningServiceServer).UpsertSignaturePolicyAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SigningService_UpsertSignaturePolicyAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SigningServiceServer).UpsertSignaturePolicyAccess(ctx, req.(*UpsertSignaturePolicyAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SigningService_DeleteSignaturePolicyAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteSignaturePolicyAccessRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SigningServiceServer).DeleteSignaturePolicyAccess(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SigningService_DeleteSignaturePolicyAccess_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SigningServiceServer).DeleteSignaturePolicyAccess(ctx, req.(*DeleteSignaturePolicyAccessRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SigningService_ListSignatures_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListSignaturesRequest)
 	if err := dec(in); err != nil {
@@ -446,24 +342,6 @@ func _SigningService_RevokeSignature_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SigningServiceServer).RevokeSignature(ctx, req.(*RevokeSignatureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _SigningService_RecomputeSignatureStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RecomputeSignatureStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SigningServiceServer).RecomputeSignatureStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SigningService_RecomputeSignatureStatus_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SigningServiceServer).RecomputeSignatureStatus(ctx, req.(*RecomputeSignatureStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -522,6 +400,24 @@ func _SigningService_DeleteStamp_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SigningService_RecomputeSignatureStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecomputeSignatureStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SigningServiceServer).RecomputeSignatureStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SigningService_RecomputeSignatureStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SigningServiceServer).RecomputeSignatureStatus(ctx, req.(*RecomputeSignatureStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SigningService_ServiceDesc is the grpc.ServiceDesc for SigningService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -542,18 +438,6 @@ var SigningService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SigningService_DeleteSignaturePolicy_Handler,
 		},
 		{
-			MethodName: "ListSignaturePolicyAccess",
-			Handler:    _SigningService_ListSignaturePolicyAccess_Handler,
-		},
-		{
-			MethodName: "UpsertSignaturePolicyAccess",
-			Handler:    _SigningService_UpsertSignaturePolicyAccess_Handler,
-		},
-		{
-			MethodName: "DeleteSignaturePolicyAccess",
-			Handler:    _SigningService_DeleteSignaturePolicyAccess_Handler,
-		},
-		{
 			MethodName: "ListSignatures",
 			Handler:    _SigningService_ListSignatures_Handler,
 		},
@@ -566,10 +450,6 @@ var SigningService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SigningService_RevokeSignature_Handler,
 		},
 		{
-			MethodName: "RecomputeSignatureStatus",
-			Handler:    _SigningService_RecomputeSignatureStatus_Handler,
-		},
-		{
 			MethodName: "ListUsableStamps",
 			Handler:    _SigningService_ListUsableStamps_Handler,
 		},
@@ -580,6 +460,10 @@ var SigningService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteStamp",
 			Handler:    _SigningService_DeleteStamp_Handler,
+		},
+		{
+			MethodName: "RecomputeSignatureStatus",
+			Handler:    _SigningService_RecomputeSignatureStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

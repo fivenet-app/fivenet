@@ -12,22 +12,22 @@ import (
 )
 
 type FivenetDocumentsApprovalPolicies struct {
-	ID                 int64      `sql:"primary_key" json:"id"`
-	DocumentID         int64      `json:"document_id"`
-	OnEditBehavior     int16      `json:"on_edit_behavior"`
-	RuleKind           *int16     `json:"rule_kind"`
-	RequiredCount      int32      `json:"required_count"`
-	QuorumAny          *int32     `json:"quorum_any"`
-	DueAt              *time.Time `json:"due_at"`
-	ActiveSnapshotDate time.Time  `json:"active_snapshot_date"`
-	AssignedCount      int32      `json:"assigned_count"`
-	ApprovedCount      int32      `json:"approved_count"`
-	DeclinedCount      int32      `json:"declined_count"`
-	PendingCount       int32      `json:"pending_count"`
-	AnyDeclined        bool       `json:"any_declined"`
-	StartedAt          *time.Time `json:"started_at"`
-	CompletedAt        *time.Time `json:"completed_at"`
-	CreatedAt          *time.Time `json:"created_at"`
-	UpdatedAt          *time.Time `json:"updated_at"`
-	DeletedAt          *time.Time `json:"deleted_at"`
+	ID             int64      `sql:"primary_key" json:"id"`
+	DocumentID     int64      `json:"document_id"`
+	SnapshotDate   time.Time  `json:"snapshot_date"`
+	OnEditBehavior int16      `json:"on_edit_behavior"`
+	RuleKind       *int16     `json:"rule_kind"`
+	RequiredCount  int32      `json:"required_count"`
+	QuorumAny      *int32     `json:"quorum_any"`
+	DueAt          *time.Time `json:"due_at"`
+	AssignedCount  int32      `json:"assigned_count"`
+	ApprovedCount  int32      `json:"approved_count"`
+	DeclinedCount  int32      `json:"declined_count"`
+	PendingCount   int32      `json:"pending_count"`
+	AnyDeclined    bool       `json:"any_declined"`
+	StartedAt      *time.Time `json:"started_at"`
+	CompletedAt    *time.Time `json:"completed_at"`
+	CreatedAt      *time.Time `json:"created_at"`
+	UpdatedAt      *time.Time `json:"updated_at"`
+	DeletedAt      *time.Time `json:"deleted_at"`
 }

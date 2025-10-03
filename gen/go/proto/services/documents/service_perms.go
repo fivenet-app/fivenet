@@ -14,14 +14,12 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: documents.ApprovalService
-	"documents.ApprovalService/CompleteApprovalRound":   "DocumentsService/ListDocuments",
-	"documents.ApprovalService/DecideTask":              "DocumentsService/ListDocuments",
-	"documents.ApprovalService/GetPolicy":               "DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovalAccess":      "DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovalTasks":       "DocumentsService/ListDocuments",
-	"documents.ApprovalService/RecomputePolicyCounters": "documents.ApprovalService/DeleteApprovalAccess",
-	"documents.ApprovalService/StartApprovalRound":      "DocumentsService/ListDocuments",
-	"documents.ApprovalService/UpsertApprovalAccess":    "DocumentsService/ListDocuments",
+	"documents.ApprovalService/CompleteApprovalRound":           "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/DecideApprovalTask":              "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/GetApprovalPolicy":               "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovalTasks":               "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/RecomputeApprovalPolicyCounters": "documents.ApprovalService/UpsertApprovalPolicy",
+	"documents.ApprovalService/StartApprovalRound":              "documents.DocumentsService/ListDocuments",
 
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
@@ -45,15 +43,12 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
 
 	// Service: documents.SigningService
-	"documents.SigningService/ApplySignature":              "DocumentsService/ListDocuments",
-	"documents.SigningService/DeleteSignaturePolicyAccess": "documents.SigningService/UpsertSignaturePolicy",
-	"documents.SigningService/ListSignaturePolicies":       "DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignaturePolicyAccess":   "DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignatures":              "DocumentsService/ListDocuments",
-	"documents.SigningService/ListUsableStamps":            "DocumentsService/ListDocuments",
-	"documents.SigningService/RecomputeSignatureStatus":    "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/RevokeSignature":             "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/UpsertSignaturePolicyAccess": "documents.SigningService/UpsertSignaturePolicy",
+	"documents.SigningService/ApplySignature":           "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignaturePolicies":    "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignatures":           "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/ListUsableStamps":         "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteSignaturePolicy",
+	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteSignaturePolicy",
 }
 
 func init() {
@@ -62,21 +57,14 @@ func init() {
 		// Service: documents.ApprovalService
 		{
 			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceDeleteApprovalAccessPerm,
+			Name:     permkeys.ApprovalServiceReopenApprovalTaskPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5200,
 			Icon:     "i-mdi-approval",
 		},
 		{
 			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceReopenTaskPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5200,
-			Icon:     "i-mdi-approval",
-		},
-		{
-			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceUpsertPolicyPerm,
+			Name:     permkeys.ApprovalServiceUpsertApprovalPolicyPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5200,
 			Icon:     "i-mdi-approval",
