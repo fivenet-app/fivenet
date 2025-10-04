@@ -199,7 +199,7 @@ func (s *Server) validateLabels(
 			tCitizensLabelsJob.Job.IN(jobsExp...),
 			tCitizensLabelsJob.ID.IN(idsExp...),
 		)).
-		LIMIT(10)
+		LIMIT(25)
 
 	var count database.DataCount
 	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -252,9 +252,7 @@ func (s *Server) getUserLabels(
 			tUserLabels.UserID.EQ(mysql.Int32(userId)),
 			tCitizensLabelsJob.Job.IN(jobsExp...),
 		)).
-		ORDER_BY(
-			tCitizensLabelsJob.SortKey.ASC(),
-		)
+		ORDER_BY(tCitizensLabelsJob.SortKey.ASC())
 
 	list := &users.Labels{
 		List: []*users.Label{},

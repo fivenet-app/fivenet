@@ -24,7 +24,7 @@ const schema = z.object({
             color: z.coerce.string().length(7),
         })
         .array()
-        .max(15)
+        .max(50)
         .default([]),
 });
 
@@ -71,7 +71,7 @@ const formRef = useTemplateRef('formRef');
                 <UFormField
                     v-if="state && can('citizens.CitizensService/ManageLabels').value"
                     class="grid items-center gap-2"
-                    name="citizenAttributes.list"
+                    name="labels"
                     :ui="{ container: '' }"
                 >
                     <div class="flex flex-col gap-1">

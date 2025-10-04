@@ -854,7 +854,7 @@ export const DeleteMugshotResponse = new DeleteMugshotResponse$Type();
 class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
     constructor() {
         super("services.citizens.ManageLabelsRequest", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
+            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<ManageLabelsRequest>): ManageLabelsRequest {

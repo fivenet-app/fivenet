@@ -86,7 +86,7 @@ message GetColleagueLabelsResponse {
 }
 
 message ManageLabelsRequest {
-  repeated resources.jobs.Label labels = 1;
+  repeated resources.jobs.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ManageLabelsResponse {

@@ -89,7 +89,7 @@ message DeleteMugshotRequest {
 message DeleteMugshotResponse {}
 
 message ManageLabelsRequest {
-  repeated resources.users.Label labels = 1;
+  repeated resources.users.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ManageLabelsResponse {
