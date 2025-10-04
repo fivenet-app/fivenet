@@ -340,6 +340,8 @@ function setFromProps(): void {
     if (qualification.value.access) {
         state.access = qualification.value.access;
     }
+    state.labelSyncEnabled = qualification.value.labelSyncEnabled;
+    state.labelSyncFormat = qualification.value.labelSyncFormat || '%abbr%: %name%';
     state.files = qualification.value.files;
     state.requirements = qualification.value.requirements;
 }

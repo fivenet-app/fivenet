@@ -369,7 +369,7 @@ const editor = useEditor({
     },
     onUpdate: () => {
         modelValue.value = unref(editor)?.getHTML() ?? '';
-        /* TODO
+        /* TODO switch to JSON output
         console.log('Editor JSON: ', unref(editor)?.getJSON());
         */
     },
@@ -637,7 +637,6 @@ onMounted(() => {
 });
 
 onBeforeRouteLeave(() => {
-    unref(editor)?.destroy();
     yjsProvider?.destroy();
 });
 </script>
