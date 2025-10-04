@@ -14,12 +14,14 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: documents.ApprovalService
-	"documents.ApprovalService/CompleteApprovalRound":           "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/DecideApprovalTask":              "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/GetApprovalPolicy":               "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/DecideApproval":                  "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/DeleteApprovalTasks":             "documents.ApprovalService/UpsertApprovalPolicy",
+	"documents.ApprovalService/ListApprovalPolicies":            "documents.DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListApprovalTasks":               "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/ListApprovals":                   "documents.DocumentsService/ListDocuments",
 	"documents.ApprovalService/RecomputeApprovalPolicyCounters": "documents.ApprovalService/UpsertApprovalPolicy",
-	"documents.ApprovalService/StartApprovalRound":              "documents.DocumentsService/ListDocuments",
+	"documents.ApprovalService/RevokeApproval":                  "documents.ApprovalService/UpsertApprovalPolicy",
+	"documents.ApprovalService/UpsertApprovalTasks":             "documents.ApprovalService/UpsertApprovalPolicy",
 
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
@@ -43,12 +45,16 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
 
 	// Service: documents.SigningService
-	"documents.SigningService/ApplySignature":           "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/DecideSignature":          "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/DeleteSignatureTasks":     "documents.SigningService/DeleteSignaturePolicy",
 	"documents.SigningService/ListSignaturePolicies":    "documents.DocumentsService/ListDocuments",
+	"documents.SigningService/ListSignatureTasks":       "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/ListSignatures":           "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/ListUsableStamps":         "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteSignaturePolicy",
+	"documents.SigningService/ReopenSignature":          "documents.SigningService/DeleteSignaturePolicy",
 	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteSignaturePolicy",
+	"documents.SigningService/UpsertSignatureTasks":     "documents.SigningService/UpsertSignaturePolicy",
 }
 
 func init() {

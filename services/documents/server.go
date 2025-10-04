@@ -249,7 +249,7 @@ func NewServer(p Params) *Server {
 			&access.TargetTableColumns{
 				ID:         table.FivenetDocumentsSignaturesStamps.ID,
 				DeletedAt:  table.FivenetDocumentsSignaturesStamps.DeletedAt,
-				CreatorID:  table.FivenetDocumentsSignaturesStamps.OwnerID,
+				CreatorID:  table.FivenetDocumentsSignaturesStamps.UserID,
 				CreatorJob: nil,
 			},
 			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](

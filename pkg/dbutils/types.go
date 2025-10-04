@@ -1,0 +1,16 @@
+package dbutils
+
+import (
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/go-jet/jet/v2/mysql"
+)
+
+// TimestampToMySQL converts a google.protobuf.Timestamp (wrapped in your resources.documents types)
+// to a Jet mysql expression that can be NULL.
+func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
+	if ts == nil {
+		return mysql.NULL
+	}
+
+	return mysql.TimestampT(ts.AsTime())
+}

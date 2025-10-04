@@ -10,49 +10,24 @@ import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
-message GetApprovalPolicyRequest {
+message ListApprovalPoliciesRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
-message GetApprovalPolicyResponse {
+message ListApprovalPoliciesResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
 
 message UpsertApprovalPolicyRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.documents.ApprovalRuleKind rule_kind = 2 [(buf.validate.field).enum.defined_only = true];
-  // Used if rule_kind=QUORUM_ANY
-  int32 required_count = 3;
-  resources.documents.OnEditBehavior on_edit_behavior = 4 [(buf.validate.field).enum.defined_only = true];
-  optional resources.timestamp.Timestamp due_at = 5;
+  resources.documents.ApprovalPolicy policy = 1 [(buf.validate.field).required = true];
 }
 
 message UpsertApprovalPolicyResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
 
-message StartApprovalRoundRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  // If omitted, server uses now
-  resources.timestamp.Timestamp snapshot_date = 2;
-}
-
-message StartApprovalRoundResponse {
-  resources.documents.ApprovalPolicy policy = 1;
-  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
-}
-
-message CompleteApprovalRoundRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-}
-
-message CompleteApprovalRoundResponse {
-  resources.documents.ApprovalPolicy policy = 1;
-}
-
 message ListApprovalTasksRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  // Search
   repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
 }
 
@@ -60,26 +35,101 @@ message ListApprovalTasksResponse {
   repeated resources.documents.ApprovalTask tasks = 1 [(codegen.itemslen.enabled) = true];
 }
 
-message DecideApprovalTaskRequest {
-  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+// A declarative "ensure" for tasks under one policy/snapshot.
+// Exactly one target must be set: user_id OR (job + minimum_grade).
+message ApprovalTaskSeed {
+  // If set -> USER task; slots is forced to 1
+  int32 user_id = 1;
+  // If user_id == 0 -> JOB task
+  string job = 2;
+  int32 minimum_grade = 3;
+
+  // Only for JOB tasks; number of PENDING slots to ensure (>=1)
+  int32 slots = 4;
+  // Optional default due date for created slots
+  optional resources.timestamp.Timestamp due_at = 5;
+  // Optional note set on created tasks
+  optional string comment = 6;
+}
+
+// Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
+// Identity rules (server-side):
+//  - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
+//  - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+// For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
+message UpsertApprovalTasksRequest {
+  int64 policy_id = 1;
+  // If empty, use policy.snapshot_date
+  optional resources.timestamp.Timestamp snapshot_date = 2;
+  repeated ApprovalTaskSeed seeds = 3;
+}
+
+message UpsertApprovalTasksResponse {
+  // Number of new task rows inserted
+  int32 tasks_created = 1;
+  // Number of requested targets already satisfied (no-op)
+  int32 tasks_ensured = 2;
+  // Echo (optional convenience)
+  resources.documents.ApprovalPolicy policy = 3;
+}
+
+message DeleteApprovalTasksRequest {
+  int64 policy_id = 1;
+  repeated int64 task_ids = 2 [(buf.validate.field).repeated.min_items = 1];
+  // If true, ignore task_ids and delete all PENDING tasks under this policy
+  bool delete_all_pending = 3;
+}
+
+message DeleteApprovalTasksResponse {}
+
+// List approvals (artifacts) for a policy/snapshot.
+// If snapshot_date is unset, server defaults to policy.snapshot_date.
+message ListApprovalsRequest {
+  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 3;
+  // Optional filters
+  optional resources.documents.ApprovalStatus status = 4;
+  // Filter by signer
+  optional int32 user_id = 5;
+}
+
+message ListApprovalsResponse {
+  repeated resources.documents.Approval approvals = 1;
+}
+
+message RevokeApprovalRequest {
+  int64 approval_id = 1 [(buf.validate.field).int64.gt = 0];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message RevokeApprovalResponse {
+  resources.documents.Approval approval = 1;
+}
+
+message DecideApprovalRequest {
+  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+
   resources.documents.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
   string comment = 4 [(buf.validate.field).string.max_len = 500];
 }
 
-message DecideApprovalTaskResponse {
-  resources.documents.ApprovalTask task = 1;
-  resources.documents.ApprovalPolicy policy = 2; // Counters updated
+message DecideApprovalResponse {
+  resources.documents.Approval approval = 1;
+  resources.documents.ApprovalTask task = 2;
+  resources.documents.ApprovalPolicy policy = 3;
 }
 
 message ReopenApprovalTaskRequest {
   int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
-  string reason = 2 [(buf.validate.field).string.max_len = 255];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message ReopenApprovalTaskResponse {
-  resources.documents.ApprovalTask task = 1;
-  resources.documents.ApprovalPolicy policy = 2;
+  resources.documents.Approval approval = 1;
+  resources.documents.ApprovalTask task = 2;
+  resources.documents.ApprovalPolicy policy = 3;
 }
 
 message RecomputeApprovalPolicyCountersRequest {
@@ -96,8 +146,8 @@ service ApprovalService {
     icon: "i-mdi-approval"
   };
 
-  // Policy
-  rpc GetApprovalPolicy(GetApprovalPolicyRequest) returns (GetApprovalPolicyResponse) {
+  // Policies
+  rpc ListApprovalPolicies(ListApprovalPoliciesRequest) returns (ListApprovalPoliciesResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       service: "documents.DocumentsService"
@@ -106,20 +156,6 @@ service ApprovalService {
   }
   rpc UpsertApprovalPolicy(UpsertApprovalPolicyRequest) returns (UpsertApprovalPolicyResponse) {
     option (codegen.perms.perms) = {enabled: true};
-  }
-  rpc StartApprovalRound(StartApprovalRoundRequest) returns (StartApprovalRoundResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "documents.DocumentsService"
-      name: "ListDocuments"
-    };
-  }
-  rpc CompleteApprovalRound(CompleteApprovalRoundRequest) returns (CompleteApprovalRoundResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "documents.DocumentsService"
-      name: "ListDocuments"
-    };
   }
 
   // Tasks
@@ -130,7 +166,34 @@ service ApprovalService {
       name: "ListDocuments"
     };
   }
-  rpc DecideApprovalTask(DecideApprovalTaskRequest) returns (DecideApprovalTaskResponse) {
+  rpc UpsertApprovalTasks(UpsertApprovalTasksRequest) returns (UpsertApprovalTasksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpsertApprovalPolicy"
+    };
+  }
+  rpc DeleteApprovalTasks(DeleteApprovalTasksRequest) returns (DeleteApprovalTasksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpsertApprovalPolicy"
+    };
+  }
+
+  // Approval
+  rpc ListApprovals(ListApprovalsRequest) returns (ListApprovalsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc RevokeApproval(RevokeApprovalRequest) returns (RevokeApprovalResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "UpsertApprovalPolicy"
+    };
+  }
+  rpc DecideApproval(DecideApprovalRequest) returns (DecideApprovalResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       service: "documents.DocumentsService"

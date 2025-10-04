@@ -17,19 +17,18 @@ type fivenetDocumentsApprovalsTable struct {
 	mysql.Table
 
 	// Columns
-	ID            mysql.ColumnInteger
-	DocumentID    mysql.ColumnInteger
-	SnapshotDate  mysql.ColumnTimestamp
-	PolicyID      mysql.ColumnInteger
-	UserID        mysql.ColumnInteger
-	UserJob       mysql.ColumnString
-	UserJobGrade  mysql.ColumnInteger
-	Status        mysql.ColumnInteger
-	Comment       mysql.ColumnString
-	TaskID        mysql.ColumnInteger
-	CreatedAt     mysql.ColumnTimestamp
-	RevokedAt     mysql.ColumnTimestamp
-	RevokedReason mysql.ColumnString
+	ID           mysql.ColumnInteger
+	DocumentID   mysql.ColumnInteger
+	SnapshotDate mysql.ColumnTimestamp
+	PolicyID     mysql.ColumnInteger
+	TaskID       mysql.ColumnInteger
+	UserID       mysql.ColumnInteger
+	UserJob      mysql.ColumnString
+	UserJobGrade mysql.ColumnInteger
+	Status       mysql.ColumnInteger
+	Comment      mysql.ColumnString
+	CreatedAt    mysql.ColumnTimestamp
+	RevokedAt    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,41 +70,39 @@ func newFivenetDocumentsApprovalsTable(schemaName, tableName, alias string) *Fiv
 
 func newFivenetDocumentsApprovalsTableImpl(schemaName, tableName, alias string) fivenetDocumentsApprovalsTable {
 	var (
-		IDColumn            = mysql.IntegerColumn("id")
-		DocumentIDColumn    = mysql.IntegerColumn("document_id")
-		SnapshotDateColumn  = mysql.TimestampColumn("snapshot_date")
-		PolicyIDColumn      = mysql.IntegerColumn("policy_id")
-		UserIDColumn        = mysql.IntegerColumn("user_id")
-		UserJobColumn       = mysql.StringColumn("user_job")
-		UserJobGradeColumn  = mysql.IntegerColumn("user_job_grade")
-		StatusColumn        = mysql.IntegerColumn("status")
-		CommentColumn       = mysql.StringColumn("comment")
-		TaskIDColumn        = mysql.IntegerColumn("task_id")
-		CreatedAtColumn     = mysql.TimestampColumn("created_at")
-		RevokedAtColumn     = mysql.TimestampColumn("revoked_at")
-		RevokedReasonColumn = mysql.StringColumn("revoked_reason")
-		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, TaskIDColumn, CreatedAtColumn, RevokedAtColumn, RevokedReasonColumn}
-		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, TaskIDColumn, CreatedAtColumn, RevokedAtColumn, RevokedReasonColumn}
-		defaultColumns      = mysql.ColumnList{}
+		IDColumn           = mysql.IntegerColumn("id")
+		DocumentIDColumn   = mysql.IntegerColumn("document_id")
+		SnapshotDateColumn = mysql.TimestampColumn("snapshot_date")
+		PolicyIDColumn     = mysql.IntegerColumn("policy_id")
+		TaskIDColumn       = mysql.IntegerColumn("task_id")
+		UserIDColumn       = mysql.IntegerColumn("user_id")
+		UserJobColumn      = mysql.StringColumn("user_job")
+		UserJobGradeColumn = mysql.IntegerColumn("user_job_grade")
+		StatusColumn       = mysql.IntegerColumn("status")
+		CommentColumn      = mysql.StringColumn("comment")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		RevokedAtColumn    = mysql.TimestampColumn("revoked_at")
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetDocumentsApprovalsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:            IDColumn,
-		DocumentID:    DocumentIDColumn,
-		SnapshotDate:  SnapshotDateColumn,
-		PolicyID:      PolicyIDColumn,
-		UserID:        UserIDColumn,
-		UserJob:       UserJobColumn,
-		UserJobGrade:  UserJobGradeColumn,
-		Status:        StatusColumn,
-		Comment:       CommentColumn,
-		TaskID:        TaskIDColumn,
-		CreatedAt:     CreatedAtColumn,
-		RevokedAt:     RevokedAtColumn,
-		RevokedReason: RevokedReasonColumn,
+		ID:           IDColumn,
+		DocumentID:   DocumentIDColumn,
+		SnapshotDate: SnapshotDateColumn,
+		PolicyID:     PolicyIDColumn,
+		TaskID:       TaskIDColumn,
+		UserID:       UserIDColumn,
+		UserJob:      UserJobColumn,
+		UserJobGrade: UserJobGradeColumn,
+		Status:       StatusColumn,
+		Comment:      CommentColumn,
+		CreatedAt:    CreatedAtColumn,
+		RevokedAt:    RevokedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

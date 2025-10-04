@@ -38,13 +38,9 @@ export interface ApprovalPolicy {
      */
     ruleKind: ApprovalRuleKind;
     /**
-     * @generated from protobuf field: int32 required_count = 6
+     * @generated from protobuf field: optional int32 required_count = 6
      */
-    requiredCount: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 7
-     */
-    dueAt?: Timestamp;
+    requiredCount?: number;
     /**
      * @generated from protobuf field: int32 assigned_count = 8
      */
@@ -186,6 +182,10 @@ export interface ApprovalTask {
      * @generated from protobuf field: optional string creator_job_label = 23
      */
     creatorJobLabel?: string;
+    /**
+     * @generated from protobuf field: repeated resources.documents.Approval approvals = 24
+     */
+    approvals: Approval[];
 }
 /**
  * @generated from protobuf message resources.documents.Approval
@@ -210,43 +210,43 @@ export interface Approval {
      */
     policyId?: number;
     /**
-     * @generated from protobuf field: optional int32 user_id = 5
+     * Link to originating task (if any)
+     *
+     * @generated from protobuf field: optional int64 task_id = 5
+     */
+    taskId?: number;
+    /**
+     * @generated from protobuf field: optional int32 user_id = 6
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 6
+     * @generated from protobuf field: optional resources.users.UserShort user = 7
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional string user_job = 7
+     * @generated from protobuf field: optional string user_job = 8
      */
     userJob?: string;
     /**
-     * @generated from protobuf field: optional string user_job_label = 8
+     * @generated from protobuf field: optional string user_job_label = 9
      */
     userJobLabel?: string;
     /**
-     * @generated from protobuf field: optional int32 user_grade = 9
+     * @generated from protobuf field: optional int32 user_grade = 10
      */
     userGrade?: number;
     /**
-     * @generated from protobuf field: optional string user_grade_label = 10
+     * @generated from protobuf field: optional string user_grade_label = 11
      */
     userGradeLabel?: string;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalStatus status = 11
+     * @generated from protobuf field: resources.documents.ApprovalStatus status = 12
      */
     status: ApprovalStatus;
     /**
-     * @generated from protobuf field: optional string comment = 12
+     * @generated from protobuf field: optional string comment = 13
      */
     comment?: string;
-    /**
-     * Link to originating task (if any)
-     *
-     * @generated from protobuf field: optional int64 task_id = 13
-     */
-    taskId?: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 14
      */
@@ -255,10 +255,6 @@ export interface Approval {
      * @generated from protobuf field: optional resources.timestamp.Timestamp revoked_at = 15
      */
     revokedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional string revoked_reason = 16
-     */
-    revokedReason?: string;
 }
 /**
  * Policy snapshot applied to a specific version
@@ -376,8 +372,7 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
             { no: 4, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 6, name: "required_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
-            { no: 7, name: "due_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "required_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
             { no: 8, name: "assigned_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 9, name: "approved_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "declined_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -396,7 +391,6 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
         message.documentId = 0;
         message.onEditBehavior = 0;
         message.ruleKind = 0;
-        message.requiredCount = 0;
         message.assignedCount = 0;
         message.approvedCount = 0;
         message.declinedCount = 0;
@@ -426,11 +420,8 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
                 case /* resources.documents.ApprovalRuleKind rule_kind */ 5:
                     message.ruleKind = reader.int32();
                     break;
-                case /* int32 required_count */ 6:
+                case /* optional int32 required_count */ 6:
                     message.requiredCount = reader.int32();
-                    break;
-                case /* optional resources.timestamp.Timestamp due_at */ 7:
-                    message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
                     break;
                 case /* int32 assigned_count */ 8:
                     message.assignedCount = reader.int32();
@@ -489,12 +480,9 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
         /* resources.documents.ApprovalRuleKind rule_kind = 5; */
         if (message.ruleKind !== 0)
             writer.tag(5, WireType.Varint).int32(message.ruleKind);
-        /* int32 required_count = 6; */
-        if (message.requiredCount !== 0)
+        /* optional int32 required_count = 6; */
+        if (message.requiredCount !== undefined)
             writer.tag(6, WireType.Varint).int32(message.requiredCount);
-        /* optional resources.timestamp.Timestamp due_at = 7; */
-        if (message.dueAt)
-            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* int32 assigned_count = 8; */
         if (message.assignedCount !== 0)
             writer.tag(8, WireType.Varint).int32(message.assignedCount);
@@ -561,7 +549,8 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
             { no: 20, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 21, name: "creator", kind: "message", T: () => UserShort },
             { no: 22, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 23, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 23, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 24, name: "approvals", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Approval, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }
         ]);
     }
     create(value?: PartialMessage<ApprovalTask>): ApprovalTask {
@@ -575,6 +564,7 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
         message.decisionCount = 0;
         message.creatorId = 0;
         message.creatorJob = "";
+        message.approvals = [];
         if (value !== undefined)
             reflectionMergePartial<ApprovalTask>(this, message, value);
         return message;
@@ -652,6 +642,9 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
                     break;
                 case /* optional string creator_job_label */ 23:
                     message.creatorJobLabel = reader.string();
+                    break;
+                case /* repeated resources.documents.Approval approvals */ 24:
+                    message.approvals.push(Approval.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -734,6 +727,9 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
         /* optional string creator_job_label = 23; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(23, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* repeated resources.documents.Approval approvals = 24; */
+        for (let i = 0; i < message.approvals.length; i++)
+            Approval.internalBinaryWrite(message.approvals[i], writer.tag(24, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -752,18 +748,17 @@ class Approval$Type extends MessageType<Approval> {
             { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
             { no: 4, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "user_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "user_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "user_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 12, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 13, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "user", kind: "message", T: () => UserShort },
+            { no: 8, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "user_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "user_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "user_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 12, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 13, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
             { no: 14, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 15, name: "revoked_at", kind: "message", T: () => Timestamp },
-            { no: 16, name: "revoked_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 15, name: "revoked_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<Approval>): Approval {
@@ -792,41 +787,38 @@ class Approval$Type extends MessageType<Approval> {
                 case /* optional int64 policy_id */ 4:
                     message.policyId = reader.int64().toNumber();
                     break;
-                case /* optional int32 user_id */ 5:
+                case /* optional int64 task_id */ 5:
+                    message.taskId = reader.int64().toNumber();
+                    break;
+                case /* optional int32 user_id */ 6:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 6:
+                case /* optional resources.users.UserShort user */ 7:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional string user_job */ 7:
+                case /* optional string user_job */ 8:
                     message.userJob = reader.string();
                     break;
-                case /* optional string user_job_label */ 8:
+                case /* optional string user_job_label */ 9:
                     message.userJobLabel = reader.string();
                     break;
-                case /* optional int32 user_grade */ 9:
+                case /* optional int32 user_grade */ 10:
                     message.userGrade = reader.int32();
                     break;
-                case /* optional string user_grade_label */ 10:
+                case /* optional string user_grade_label */ 11:
                     message.userGradeLabel = reader.string();
                     break;
-                case /* resources.documents.ApprovalStatus status */ 11:
+                case /* resources.documents.ApprovalStatus status */ 12:
                     message.status = reader.int32();
                     break;
-                case /* optional string comment */ 12:
+                case /* optional string comment */ 13:
                     message.comment = reader.string();
-                    break;
-                case /* optional int64 task_id */ 13:
-                    message.taskId = reader.int64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 14:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 case /* optional resources.timestamp.Timestamp revoked_at */ 15:
                     message.revokedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.revokedAt);
-                    break;
-                case /* optional string revoked_reason */ 16:
-                    message.revokedReason = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -852,42 +844,39 @@ class Approval$Type extends MessageType<Approval> {
         /* optional int64 policy_id = 4; */
         if (message.policyId !== undefined)
             writer.tag(4, WireType.Varint).int64(message.policyId);
-        /* optional int32 user_id = 5; */
-        if (message.userId !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 6; */
-        if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional string user_job = 7; */
-        if (message.userJob !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.userJob);
-        /* optional string user_job_label = 8; */
-        if (message.userJobLabel !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.userJobLabel);
-        /* optional int32 user_grade = 9; */
-        if (message.userGrade !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.userGrade);
-        /* optional string user_grade_label = 10; */
-        if (message.userGradeLabel !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.userGradeLabel);
-        /* resources.documents.ApprovalStatus status = 11; */
-        if (message.status !== 0)
-            writer.tag(11, WireType.Varint).int32(message.status);
-        /* optional string comment = 12; */
-        if (message.comment !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.comment);
-        /* optional int64 task_id = 13; */
+        /* optional int64 task_id = 5; */
         if (message.taskId !== undefined)
-            writer.tag(13, WireType.Varint).int64(message.taskId);
+            writer.tag(5, WireType.Varint).int64(message.taskId);
+        /* optional int32 user_id = 6; */
+        if (message.userId !== undefined)
+            writer.tag(6, WireType.Varint).int32(message.userId);
+        /* optional resources.users.UserShort user = 7; */
+        if (message.user)
+            UserShort.internalBinaryWrite(message.user, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional string user_job = 8; */
+        if (message.userJob !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.userJob);
+        /* optional string user_job_label = 9; */
+        if (message.userJobLabel !== undefined)
+            writer.tag(9, WireType.LengthDelimited).string(message.userJobLabel);
+        /* optional int32 user_grade = 10; */
+        if (message.userGrade !== undefined)
+            writer.tag(10, WireType.Varint).int32(message.userGrade);
+        /* optional string user_grade_label = 11; */
+        if (message.userGradeLabel !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.userGradeLabel);
+        /* resources.documents.ApprovalStatus status = 12; */
+        if (message.status !== 0)
+            writer.tag(12, WireType.Varint).int32(message.status);
+        /* optional string comment = 13; */
+        if (message.comment !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.comment);
         /* resources.timestamp.Timestamp created_at = 14; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp revoked_at = 15; */
         if (message.revokedAt)
             Timestamp.internalBinaryWrite(message.revokedAt, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* optional string revoked_reason = 16; */
-        if (message.revokedReason !== undefined)
-            writer.tag(16, WireType.LengthDelimited).string(message.revokedReason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

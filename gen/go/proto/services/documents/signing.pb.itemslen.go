@@ -12,7 +12,7 @@ func (m *ListSignaturePoliciesResponse) ItemsLen() int {
 }
 
 // ItemsLen returns the length of Signatures.
-func (m *ListSignaturesResponse) ItemsLen() int {
+func (m *ListSignatureTasksResponse) ItemsLen() int {
 	if m == nil {
 		return 0
 	}

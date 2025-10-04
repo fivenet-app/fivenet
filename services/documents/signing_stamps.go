@@ -53,7 +53,7 @@ func (s *Server) ListUsableStamps(
 	condition := mysql.AND(
 		deletedAtCond,
 		mysql.OR(
-			tStamp.OwnerID.EQ(mysql.Int32(userInfo.GetUserId())),
+			tStamp.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			existsAccess,
 		),
 	)
@@ -83,7 +83,7 @@ func (s *Server) ListUsableStamps(
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
-			tStamp.OwnerID,
+			tStamp.UserID,
 			tStamp.SvgTemplate,
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
@@ -108,7 +108,7 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp,
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
-			tStamp.OwnerID,
+			tStamp.UserID,
 			tStamp.SvgTemplate,
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
@@ -189,7 +189,7 @@ func (s *Server) UpsertStamp(
 				tStamp.Name,
 				tStamp.SvgTemplate,
 				tStamp.VariantsJSON,
-				tStamp.OwnerID,
+				tStamp.UserID,
 			).
 			VALUES(
 				st.GetJob(),

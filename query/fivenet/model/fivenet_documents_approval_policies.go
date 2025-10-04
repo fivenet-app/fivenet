@@ -19,7 +19,6 @@ type FivenetDocumentsApprovalPolicies struct {
 	RuleKind       *int16     `json:"rule_kind"`
 	RequiredCount  int32      `json:"required_count"`
 	QuorumAny      *int32     `json:"quorum_any"`
-	DueAt          *time.Time `json:"due_at"`
 	AssignedCount  int32      `json:"assigned_count"`
 	ApprovedCount  int32      `json:"approved_count"`
 	DeclinedCount  int32      `json:"declined_count"`

@@ -37,11 +37,6 @@ func (m *Approval) Sanitize() error {
 		}
 	}
 
-	// Field: RevokedReason
-	if m.RevokedReason != nil {
-		*m.RevokedReason = htmlsanitizer.Sanitize(*m.RevokedReason)
-	}
-
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
@@ -112,15 +107,6 @@ func (m *ApprovalPolicy) Sanitize() error {
 		}
 	}
 
-	// Field: DueAt
-	if m.DueAt != nil {
-		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
@@ -156,6 +142,18 @@ func (m *ApprovalPolicy) Sanitize() error {
 func (m *ApprovalTask) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Approvals
+	for idx, item := range m.Approvals {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: Comment

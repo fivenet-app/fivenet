@@ -9,36 +9,34 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *CompleteApprovalRoundRequest) Sanitize() error {
+func (m *ApprovalTaskSeed) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *CompleteApprovalRoundResponse) Sanitize() error {
-	if m == nil {
-		return nil
+	// Field: Comment
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
 	}
 
-	// Field: Policy
-	if m.Policy != nil {
-		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+	// Field: DueAt
+	if m.DueAt != nil {
+		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 	}
 
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
 	return nil
 }
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DecideApprovalTaskRequest) Sanitize() error {
+func (m *DecideApprovalRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -51,9 +49,18 @@ func (m *DecideApprovalTaskRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DecideApprovalTaskResponse) Sanitize() error {
+func (m *DecideApprovalResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Approval
+	if m.Approval != nil {
+		if v, ok := any(m.GetApproval()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Policy
@@ -79,7 +86,7 @@ func (m *DecideApprovalTaskResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *GetApprovalPolicyRequest) Sanitize() error {
+func (m *DeleteApprovalTasksRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -89,7 +96,27 @@ func (m *GetApprovalPolicyRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *GetApprovalPolicyResponse) Sanitize() error {
+func (m *DeleteApprovalTasksResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListApprovalPoliciesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListApprovalPoliciesResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -146,6 +173,47 @@ func (m *ListApprovalTasksResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListApprovalsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: SnapshotDate
+	if m.SnapshotDate != nil {
+		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListApprovalsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Approvals
+	for idx, item := range m.Approvals {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *RecomputeApprovalPolicyCountersRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -180,8 +248,8 @@ func (m *ReopenApprovalTaskRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+	// Field: Comment
+	m.Comment = htmlsanitizer.Sanitize(m.Comment)
 
 	return nil
 }
@@ -191,6 +259,15 @@ func (m *ReopenApprovalTaskRequest) Sanitize() error {
 func (m *ReopenApprovalTaskResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Approval
+	if m.Approval != nil {
+		if v, ok := any(m.GetApproval()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Policy
@@ -216,9 +293,91 @@ func (m *ReopenApprovalTaskResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *StartApprovalRoundRequest) Sanitize() error {
+func (m *RevokeApprovalRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Comment
+	m.Comment = htmlsanitizer.Sanitize(m.Comment)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *RevokeApprovalResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Approval
+	if m.Approval != nil {
+		if v, ok := any(m.GetApproval()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpsertApprovalPolicyRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpsertApprovalPolicyResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *UpsertApprovalTasksRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Seeds
+	for idx, item := range m.Seeds {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: SnapshotDate
@@ -235,57 +394,7 @@ func (m *StartApprovalRoundRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *StartApprovalRoundResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Policy
-	if m.Policy != nil {
-		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Tasks
-	for idx, item := range m.Tasks {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpsertApprovalPolicyRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: DueAt
-	if m.DueAt != nil {
-		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *UpsertApprovalPolicyResponse) Sanitize() error {
+func (m *UpsertApprovalTasksResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

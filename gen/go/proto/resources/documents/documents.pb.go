@@ -503,33 +503,36 @@ func (x *DocumentShort) GetWorkflowUser() *WorkflowUserState {
 }
 
 type DocumentMeta struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Closed     bool                   `protobuf:"varint,2,opt,name=closed,proto3" json:"closed,omitempty"`
-	Draft      bool                   `protobuf:"varint,3,opt,name=draft,proto3" json:"draft,omitempty"`
-	Public     bool                   `protobuf:"varint,4,opt,name=public,proto3" json:"public,omitempty"`
-	State      string                 `protobuf:"bytes,5,opt,name=state,proto3" json:"state,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RecomputedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=recomputed_at,json=recomputedAt,proto3,oneof" json:"recomputed_at,omitempty"`
+	Closed       bool                   `protobuf:"varint,3,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft        bool                   `protobuf:"varint,4,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public       bool                   `protobuf:"varint,5,opt,name=public,proto3" json:"public,omitempty"`
+	State        string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
 	// Overall aggregates - At least one approval policy fully satisfied
-	Approved bool `protobuf:"varint,6,opt,name=approved,proto3" json:"approved,omitempty"`
-	Signed   bool `protobuf:"varint,7,opt,name=signed,proto3" json:"signed,omitempty"`
-	// Signature rollups
-	SigRequiredRemaining *int32 `protobuf:"varint,8,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
-	SigRequiredTotal     *int32 `protobuf:"varint,9,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
-	SigCollectedValid    *int32 `protobuf:"varint,10,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
+	Approved *bool `protobuf:"varint,7,opt,name=approved,proto3,oneof" json:"approved,omitempty"`
+	Signed   *bool `protobuf:"varint,8,opt,name=signed,proto3,oneof" json:"signed,omitempty"`
+	// How many signatures still needed to satisfy all policies
+	SigRequiredRemaining *int32 `protobuf:"varint,9,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
+	// Total signatures needed across policies
+	SigRequiredTotal *int32 `protobuf:"varint,10,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
+	// Signatures collected
+	SigCollectedValid *int32 `protobuf:"varint,11,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
 	// Total approvals needed across policies
-	AprRequiredTotal *int32 `protobuf:"varint,11,opt,name=apr_required_total,json=aprRequiredTotal,proto3,oneof" json:"apr_required_total,omitempty"`
+	AprRequiredTotal *int32 `protobuf:"varint,12,opt,name=apr_required_total,json=aprRequiredTotal,proto3,oneof" json:"apr_required_total,omitempty"`
 	// Approvals collected
-	AprCollectedApproved *int32 `protobuf:"varint,12,opt,name=apr_collected_approved,json=aprCollectedApproved,proto3,oneof" json:"apr_collected_approved,omitempty"`
+	AprCollectedApproved *int32 `protobuf:"varint,13,opt,name=apr_collected_approved,json=aprCollectedApproved,proto3,oneof" json:"apr_collected_approved,omitempty"`
 	// How many left to satisfy
-	AprRequiredRemaining *int32 `protobuf:"varint,13,opt,name=apr_required_remaining,json=aprRequiredRemaining,proto3,oneof" json:"apr_required_remaining,omitempty"`
+	AprRequiredRemaining *int32 `protobuf:"varint,14,opt,name=apr_required_remaining,json=aprRequiredRemaining,proto3,oneof" json:"apr_required_remaining,omitempty"`
 	// Number of declines
-	AprDeclinedCount *int32 `protobuf:"varint,14,opt,name=apr_declined_count,json=aprDeclinedCount,proto3,oneof" json:"apr_declined_count,omitempty"`
+	AprDeclinedCount *int32 `protobuf:"varint,15,opt,name=apr_declined_count,json=aprDeclinedCount,proto3,oneof" json:"apr_declined_count,omitempty"`
 	// Tasks still pending (optional)
-	AprPendingCount *int32 `protobuf:"varint,15,opt,name=apr_pending_count,json=aprPendingCount,proto3,oneof" json:"apr_pending_count,omitempty"`
+	AprPendingCount *int32 `protobuf:"varint,16,opt,name=apr_pending_count,json=aprPendingCount,proto3,oneof" json:"apr_pending_count,omitempty"`
 	// Quick flag if any declines
-	AprAnyDeclined *bool `protobuf:"varint,16,opt,name=apr_any_declined,json=aprAnyDeclined,proto3,oneof" json:"apr_any_declined,omitempty"`
+	AprAnyDeclined *bool `protobuf:"varint,17,opt,name=apr_any_declined,json=aprAnyDeclined,proto3,oneof" json:"apr_any_declined,omitempty"`
 	// Number of active approval policies
-	AprPoliciesActive *int32 `protobuf:"varint,17,opt,name=apr_policies_active,json=aprPoliciesActive,proto3,oneof" json:"apr_policies_active,omitempty"`
+	AprPoliciesActive *int32 `protobuf:"varint,18,opt,name=apr_policies_active,json=aprPoliciesActive,proto3,oneof" json:"apr_policies_active,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -571,6 +574,13 @@ func (x *DocumentMeta) GetDocumentId() int64 {
 	return 0
 }
 
+func (x *DocumentMeta) GetRecomputedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.RecomputedAt
+	}
+	return nil
+}
+
 func (x *DocumentMeta) GetClosed() bool {
 	if x != nil {
 		return x.Closed
@@ -600,15 +610,15 @@ func (x *DocumentMeta) GetState() string {
 }
 
 func (x *DocumentMeta) GetApproved() bool {
-	if x != nil {
-		return x.Approved
+	if x != nil && x.Approved != nil {
+		return *x.Approved
 	}
 	return false
 }
 
 func (x *DocumentMeta) GetSigned() bool {
-	if x != nil {
-		return x.Signed
+	if x != nil && x.Signed != nil {
+		return *x.Signed
 	}
 	return false
 }
@@ -1174,27 +1184,32 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xcc\a\n" +
+	"\x0e_workflow_user\"\xca\b\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12\x16\n" +
-	"\x06closed\x18\x02 \x01(\bR\x06closed\x12\x14\n" +
-	"\x05draft\x18\x03 \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\x04 \x01(\bR\x06public\x12\x1c\n" +
-	"\x05state\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x1a\n" +
-	"\bapproved\x18\x06 \x01(\bR\bapproved\x12\x16\n" +
-	"\x06signed\x18\a \x01(\bR\x06signed\x129\n" +
-	"\x16sig_required_remaining\x18\b \x01(\x05H\x00R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
-	"\x12sig_required_total\x18\t \x01(\x05H\x01R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
-	"\x13sig_collected_valid\x18\n" +
-	" \x01(\x05H\x02R\x11sigCollectedValid\x88\x01\x01\x121\n" +
-	"\x12apr_required_total\x18\v \x01(\x05H\x03R\x10aprRequiredTotal\x88\x01\x01\x129\n" +
-	"\x16apr_collected_approved\x18\f \x01(\x05H\x04R\x14aprCollectedApproved\x88\x01\x01\x129\n" +
-	"\x16apr_required_remaining\x18\r \x01(\x05H\x05R\x14aprRequiredRemaining\x88\x01\x01\x121\n" +
-	"\x12apr_declined_count\x18\x0e \x01(\x05H\x06R\x10aprDeclinedCount\x88\x01\x01\x12/\n" +
-	"\x11apr_pending_count\x18\x0f \x01(\x05H\aR\x0faprPendingCount\x88\x01\x01\x12-\n" +
-	"\x10apr_any_declined\x18\x10 \x01(\bH\bR\x0eaprAnyDeclined\x88\x01\x01\x123\n" +
-	"\x13apr_policies_active\x18\x11 \x01(\x05H\tR\x11aprPoliciesActive\x88\x01\x01B\x19\n" +
+	"documentId\x12H\n" +
+	"\rrecomputed_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\frecomputedAt\x88\x01\x01\x12\x16\n" +
+	"\x06closed\x18\x03 \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\x04 \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\x05 \x01(\bR\x06public\x12\x1c\n" +
+	"\x05state\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x1f\n" +
+	"\bapproved\x18\a \x01(\bH\x01R\bapproved\x88\x01\x01\x12\x1b\n" +
+	"\x06signed\x18\b \x01(\bH\x02R\x06signed\x88\x01\x01\x129\n" +
+	"\x16sig_required_remaining\x18\t \x01(\x05H\x03R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
+	"\x12sig_required_total\x18\n" +
+	" \x01(\x05H\x04R\x10sigRequiredTotal\x88\x01\x01\x123\n" +
+	"\x13sig_collected_valid\x18\v \x01(\x05H\x05R\x11sigCollectedValid\x88\x01\x01\x121\n" +
+	"\x12apr_required_total\x18\f \x01(\x05H\x06R\x10aprRequiredTotal\x88\x01\x01\x129\n" +
+	"\x16apr_collected_approved\x18\r \x01(\x05H\aR\x14aprCollectedApproved\x88\x01\x01\x129\n" +
+	"\x16apr_required_remaining\x18\x0e \x01(\x05H\bR\x14aprRequiredRemaining\x88\x01\x01\x121\n" +
+	"\x12apr_declined_count\x18\x0f \x01(\x05H\tR\x10aprDeclinedCount\x88\x01\x01\x12/\n" +
+	"\x11apr_pending_count\x18\x10 \x01(\x05H\n" +
+	"R\x0faprPendingCount\x88\x01\x01\x12-\n" +
+	"\x10apr_any_declined\x18\x11 \x01(\bH\vR\x0eaprAnyDeclined\x88\x01\x01\x123\n" +
+	"\x13apr_policies_active\x18\x12 \x01(\x05H\fR\x11aprPoliciesActive\x88\x01\x01B\x10\n" +
+	"\x0e_recomputed_atB\v\n" +
+	"\t_approvedB\t\n" +
+	"\a_signedB\x19\n" +
 	"\x17_sig_required_remainingB\x15\n" +
 	"\x13_sig_required_totalB\x16\n" +
 	"\x14_sig_collected_validB\x15\n" +
@@ -1340,28 +1355,29 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	14, // 20: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
 	7,  // 21: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
 	8,  // 22: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
-	9,  // 23: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 24: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
-	0,  // 25: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
-	3,  // 26: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
-	13, // 27: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
-	9,  // 28: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 29: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
-	13, // 30: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
-	1,  // 31: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
-	13, // 32: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
-	9,  // 33: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
-	9,  // 34: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
-	16, // 35: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
-	3,  // 36: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
-	9,  // 37: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
-	16, // 38: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
-	3,  // 39: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
-	40, // [40:40] is the sub-list for method output_type
-	40, // [40:40] is the sub-list for method input_type
-	40, // [40:40] is the sub-list for extension type_name
-	40, // [40:40] is the sub-list for extension extendee
-	0,  // [0:40] is the sub-list for field type_name
+	9,  // 23: resources.documents.DocumentMeta.recomputed_at:type_name -> resources.timestamp.Timestamp
+	9,  // 24: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 25: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
+	0,  // 26: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
+	3,  // 27: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
+	13, // 28: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
+	9,  // 29: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 30: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
+	13, // 31: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
+	1,  // 32: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
+	13, // 33: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
+	9,  // 34: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
+	9,  // 35: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
+	16, // 36: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
+	3,  // 37: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
+	9,  // 38: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
+	16, // 39: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
+	3,  // 40: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
+	41, // [41:41] is the sub-list for method output_type
+	41, // [41:41] is the sub-list for method input_type
+	41, // [41:41] is the sub-list for extension type_name
+	41, // [41:41] is the sub-list for extension extendee
+	0,  // [0:41] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_documents_proto_init() }

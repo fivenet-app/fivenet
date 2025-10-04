@@ -4,17 +4,39 @@ import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 
 const props = defineProps<{
-    documentId: number;
+    policyId: number;
 }>();
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const { game } = useAppConfig();
+
 const approvalClient = await getDocumentsApprovalClient();
 
 const schema = z.object({
-    tasks: z.object({}).array().min(1),
+    tasks: z
+        .union([
+            z.object({
+                userId: z.coerce.number(),
+                job: z.coerce.string().max(255).optional().default(''),
+                minimumGrade: z.coerce.number().min(1).optional().default(game.startJobGrade),
+                slots: z.coerce.number().min(1).max(10).optional().default(1),
+                dueAt: z.date().optional(),
+                comment: z.coerce.string().max(255).optional(),
+            }),
+            z.object({
+                userId: z.coerce.number().optional().default(0),
+                job: z.coerce.string().max(255),
+                minimumGrade: z.coerce.number().min(game.startJobGrade).default(game.startJobGrade),
+                slots: z.coerce.number().min(1).max(10).optional().default(1),
+                dueAt: z.date().optional(),
+                comment: z.coerce.string().max(255).optional(),
+            }),
+        ])
+        .array()
+        .min(1),
 });
 
 type Schema = z.output<typeof schema>;
@@ -26,12 +48,20 @@ const state = reactive<Schema>({
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await upsertPolicy(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await upsertApprovalTasks(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-async function upsertPolicy(values: Schema): Promise<void> {
-    const call = approvalClient.startApprovalRound({
-        documentId: props.documentId,
+async function upsertApprovalTasks(values: Schema): Promise<void> {
+    const call = approvalClient.upsertApprovalTasks({
+        policyId: props.policyId,
+        seeds: values.tasks.map((task) => ({
+            userId: task.userId,
+            job: task.job,
+            minimumGrade: task.minimumGrade,
+            slots: task.slots,
+            dueAt: task.dueAt ? toTimestamp(task.dueAt) : undefined,
+            comment: task.comment,
+        })),
     });
     await call;
 
@@ -39,7 +69,12 @@ async function upsertPolicy(values: Schema): Promise<void> {
 }
 
 function addNewTask(): void {
-    state.tasks.push({});
+    state.tasks.push({
+        userId: 0,
+        job: '',
+        minimumGrade: game.startJobGrade,
+        slots: 1,
+    });
 }
 
 function removeTask(idx: number): void {

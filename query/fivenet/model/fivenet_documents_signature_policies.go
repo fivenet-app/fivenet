@@ -19,8 +19,6 @@ type FivenetDocumentsSignaturePolicies struct {
 	Required         bool       `json:"required"`
 	BindingMode      int16      `json:"binding_mode"`
 	AllowedTypesMask string     `json:"allowed_types_mask"`
-	CollectedCount   int32      `json:"collected_count"`
-	RequiredCount    int32      `json:"required_count"`
 	CreatedAt        *time.Time `json:"created_at"`
 	UpdatedAt        *time.Time `json:"updated_at"`
 	DeletedAt        *time.Time `json:"deleted_at"`

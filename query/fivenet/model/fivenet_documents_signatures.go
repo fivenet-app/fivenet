@@ -15,6 +15,8 @@ type FivenetDocumentsSignatures struct {
 	ID           int64      `sql:"primary_key" json:"id"`
 	DocumentID   int64      `json:"document_id"`
 	SnapshotDate time.Time  `json:"snapshot_date"`
+	PolicyID     *int64     `json:"policy_id"`
+	TaskID       *int64     `json:"task_id"`
 	UserID       int32      `json:"user_id"`
 	UserJob      string     `json:"user_job"`
 	UserJobGrade *int32     `json:"user_job_grade"`
@@ -22,8 +24,7 @@ type FivenetDocumentsSignatures struct {
 	PayloadSvg   string     `json:"payload_svg"`
 	StampID      *int64     `json:"stamp_id"`
 	Status       int16      `json:"status"`
-	Reason       *string    `json:"reason"`
-	TaskID       *int64     `json:"task_id"`
+	Comment      *string    `json:"comment"`
 	CreatedAt    *time.Time `json:"created_at"`
 	RevokedAt    *time.Time `json:"revoked_at"`
 }

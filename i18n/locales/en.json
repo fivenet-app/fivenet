@@ -2548,6 +2548,12 @@
                 "BINDING": "Binding",
                 "NONBINDING": "Non-binding"
             },
+            "SignatureTaskStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "SIGNED": "Signed",
+                "EXPIRED": "Expired"
+            },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",

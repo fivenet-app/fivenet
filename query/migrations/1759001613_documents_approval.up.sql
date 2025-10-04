@@ -40,10 +40,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
 
 CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `policy_id` bigint(20) unsigned NOT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
-
   `snapshot_date` datetime(3) NOT NULL,
+  `policy_id` bigint(20) unsigned NOT NULL,
 
   -- Who is the task for? 1=USER, 2=JOB
   `assignee_kind` smallint(2) NOT NULL,
@@ -53,15 +52,15 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   -- Job assignment
   `job` varchar(20) DEFAULT NULL,
   `minimum_grade` int DEFAULT NULL,
-
   `slot_no` INT NOT NULL DEFAULT 1,
 
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
-  `decided_at` datetime(3) DEFAULT NULL,
   `due_at` datetime(3) DEFAULT NULL,
   `decision_count` int NOT NULL DEFAULT 0,
+
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `decided_at` datetime(3) DEFAULT NULL,
 
   `approval_id` bigint(20) unsigned DEFAULT NULL,
 
@@ -75,13 +74,13 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_tasks` (
   -- And prevent duplicates for the same group target within a task
   UNIQUE KEY `uq_fivenet_doc_approval_task_job_pol_slot` (`policy_id`, `document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `slot_no`),
 
-  KEY `idx_fivenet_doc_apptsk_access_check` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `status`),
   KEY `idx_fivenet_doc_apptsk_doc_snap_status` (`document_id`, `snapshot_date`, `status`),
   KEY `idx_fivenet_doc_apptsk_policy_status` (`policy_id`, `status`),
   KEY `idx_fivenet_doc_apptsk_user_status_created` (`user_id`, `status`, `created_at`),
+  KEY `idx_fivenet_doc_apptsk_access_check` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `status`),
 
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_apptsk_task_policy` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_apptsk_task_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_doc_apptsk_task_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -89,8 +88,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
   `snapshot_date` datetime(3) NOT NULL,
-
   `policy_id` bigint(20) unsigned DEFAULT NULL,
+  -- Link to the task that produced it (if any)
+  `task_id` bigint(20) unsigned DEFAULT NULL,
 
   `user_id` int(11) NOT NULL,
   `user_job` varchar(20) NOT NULL,
@@ -100,28 +100,25 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,
 
-  -- Link to the task that produced it (if any)
-  `task_id` bigint(20) unsigned DEFAULT NULL,
-
   `created_at` datetime(3) NOT NULL,
   `revoked_at` datetime(3) DEFAULT NULL,
-  `revoked_reason` varchar(255) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
 
-  UNIQUE KEY `uq_fivenet_doc_approval_user_round` (`document_id`, `snapshot_date`, `user_id`),
+  UNIQUE KEY `uq_fivenet_doc_approval_user_round` (`policy_id`, `snapshot_date`, `user_id`),
+
+  KEY `idx_fivenet_doc_approval_user_created` (`user_id`, `created_at`),
+  KEY `idx_fivenet_doc_approval_user_doc` (`user_id`, `document_id`),
   KEY `idx_fivenet_doc_approval_policy_status` (`policy_id`,`status`),
   KEY `idx_fivenet_doc_approval_doc_snap_status` (`document_id`, `snapshot_date`, `status`),
-  KEY `idx_fivenet_doc_approval_user_created` (`user_id`, `created_at`),
-  KEY `idx_fivenet_doc_approval_user_doc` (`user_id`,`document_id`),
 
   CONSTRAINT `fk_fivenet_doc_approvals_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_approvals_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_doc_approvals_task_id` FOREIGN KEY (`task_id`) REFERENCES `fivenet_documents_approval_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_approvals_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_approvals_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_approval_policies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_doc_approvals_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 ALTER TABLE `fivenet_documents_approval_tasks`
-  ADD CONSTRAINT `fk_fivenet_doc_apptsk_task_approval` FOREIGN KEY (`approval_id`) REFERENCES `fivenet_documents_approvals` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_doc_apptsk_task_approval_id` FOREIGN KEY (`approval_id`) REFERENCES `fivenet_documents_approvals` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 COMMIT;

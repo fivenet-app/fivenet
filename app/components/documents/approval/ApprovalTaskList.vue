@@ -37,6 +37,9 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
                 <h3 class="flex-1 text-base leading-6 font-semibold">
                     {{ $t('components.documents.approval.tasks') }}
                 </h3>
+
+                <slot name="header" />
+
                 <UButton variant="link" icon="i-mdi-refresh" @click="() => refresh()" />
             </div>
         </template>

@@ -25,11 +25,12 @@ type fivenetDocumentsSignatureTasksTable struct {
 	UserID       mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
+	SlotNo       mysql.ColumnInteger
 	Status       mysql.ColumnInteger
 	Comment      mysql.ColumnString
-	DueAt        mysql.ColumnTimestamp
 	CreatedAt    mysql.ColumnTimestamp
 	CompletedAt  mysql.ColumnTimestamp
+	DueAt        mysql.ColumnTimestamp
 	SignatureID  mysql.ColumnInteger
 	CreatorID    mysql.ColumnInteger
 	CreatorJob   mysql.ColumnString
@@ -82,17 +83,18 @@ func newFivenetDocumentsSignatureTasksTableImpl(schemaName, tableName, alias str
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
+		SlotNoColumn       = mysql.IntegerColumn("slot_no")
 		StatusColumn       = mysql.IntegerColumn("status")
 		CommentColumn      = mysql.StringColumn("comment")
-		DueAtColumn        = mysql.TimestampColumn("due_at")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		CompletedAtColumn  = mysql.TimestampColumn("completed_at")
+		DueAtColumn        = mysql.TimestampColumn("due_at")
 		SignatureIDColumn  = mysql.IntegerColumn("signature_id")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, StatusColumn, CommentColumn, DueAtColumn, CreatedAtColumn, CompletedAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns     = mysql.ColumnList{SlotNoColumn, CreatedAtColumn}
 	)
 
 	return fivenetDocumentsSignatureTasksTable{
@@ -107,11 +109,12 @@ func newFivenetDocumentsSignatureTasksTableImpl(schemaName, tableName, alias str
 		UserID:       UserIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
+		SlotNo:       SlotNoColumn,
 		Status:       StatusColumn,
 		Comment:      CommentColumn,
-		DueAt:        DueAtColumn,
 		CreatedAt:    CreatedAtColumn,
 		CompletedAt:  CompletedAtColumn,
+		DueAt:        DueAtColumn,
 		SignatureID:  SignatureIDColumn,
 		CreatorID:    CreatorIDColumn,
 		CreatorJob:   CreatorJobColumn,

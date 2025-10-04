@@ -14,6 +14,11 @@ func (m *Signature) Sanitize() error {
 		return nil
 	}
 
+	// Field: Comment
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+	}
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -23,21 +28,8 @@ func (m *Signature) Sanitize() error {
 		}
 	}
 
-	// Field: Job
-	m.Job = htmlsanitizer.Sanitize(m.Job)
-
-	// Field: JobLabel
-	if m.JobLabel != nil {
-		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
-	}
-
 	// Field: PayloadSvg
 	m.PayloadSvg = htmlsanitizer.Sanitize(m.PayloadSvg)
-
-	// Field: Reason
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
-	}
 
 	// Field: RevokedAt
 	if m.RevokedAt != nil {
@@ -64,6 +56,21 @@ func (m *Signature) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: UserGradeLabel
+	if m.UserGradeLabel != nil {
+		*m.UserGradeLabel = htmlsanitizer.Sanitize(*m.UserGradeLabel)
+	}
+
+	// Field: UserJob
+	if m.UserJob != nil {
+		*m.UserJob = htmlsanitizer.Sanitize(*m.UserJob)
+	}
+
+	// Field: UserJobLabel
+	if m.UserJobLabel != nil {
+		*m.UserJobLabel = htmlsanitizer.Sanitize(*m.UserJobLabel)
 	}
 
 	return nil
@@ -125,6 +132,11 @@ func (m *SignatureTask) Sanitize() error {
 		return nil
 	}
 
+	// Field: Comment
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+	}
+
 	// Field: CompletedAt
 	if m.CompletedAt != nil {
 		if v, ok := any(m.GetCompletedAt()).(interface{ Sanitize() error }); ok {
@@ -137,6 +149,32 @@ func (m *SignatureTask) Sanitize() error {
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatorJob
+	m.CreatorJob = htmlsanitizer.Sanitize(m.CreatorJob)
+
+	// Field: CreatorJobLabel
+	if m.CreatorJobLabel != nil {
+		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
+	}
+
+	// Field: DueAt
+	if m.DueAt != nil {
+		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -158,9 +196,16 @@ func (m *SignatureTask) Sanitize() error {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
 	}
 
-	// Field: Reason
-	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	// Field: Signatures
+	for idx, item := range m.Signatures {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: SnapshotDate

@@ -2547,6 +2547,12 @@
                 "BINDING": "Verbindlich",
                 "NONBINDING": "Nicht verbindlich"
             },
+            "SignatureTaskStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "SIGNED": "Unterschrieben",
+                "EXPIRED": "Abgelaufen"
+            },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",

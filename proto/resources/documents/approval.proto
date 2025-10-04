@@ -32,8 +32,7 @@ message ApprovalPolicy {
   OnEditBehavior on_edit_behavior = 4 [(buf.validate.field).enum.defined_only = true];
 
   ApprovalRuleKind rule_kind = 5 [(buf.validate.field).enum.defined_only = true];
-  int32 required_count = 6 [(buf.validate.field).int32.gte = 1];
-  optional resources.timestamp.Timestamp due_at = 7;
+  optional int32 required_count = 6 [(buf.validate.field).int32.gte = 1];
 
   int32 assigned_count = 8;
   int32 approved_count = 9;
@@ -99,6 +98,8 @@ message ApprovalTask {
   optional resources.users.UserShort creator = 21;
   string creator_job = 22 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 23;
+
+  repeated Approval approvals = 24 [(buf.validate.field).repeated.max_items = 15];
 }
 
 enum ApprovalStatus {
@@ -116,21 +117,20 @@ message Approval {
   // Link to originating policy (if any)
   optional int64 policy_id = 4;
 
-  optional int32 user_id = 5;
-  optional resources.users.UserShort user = 6;
-
-  optional string user_job = 7;
-  optional string user_job_label = 8;
-  optional int32 user_grade = 9;
-  optional string user_grade_label = 10;
-
-  ApprovalStatus status = 11 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 12 [(buf.validate.field).string.max_len = 255];
-
   // Link to originating task (if any)
-  optional int64 task_id = 13;
+  optional int64 task_id = 5;
+
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  optional string user_job = 8;
+  optional string user_job_label = 9;
+  optional int32 user_grade = 10;
+  optional string user_grade_label = 11;
+
+  ApprovalStatus status = 12 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 13 [(buf.validate.field).string.max_len = 500];
 
   resources.timestamp.Timestamp created_at = 14;
   optional resources.timestamp.Timestamp revoked_at = 15;
-  optional string revoked_reason = 16 [(buf.validate.field).string.max_len = 255];
 }

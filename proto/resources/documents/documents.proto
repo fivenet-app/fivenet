@@ -77,39 +77,45 @@ message DocumentShort {
 message DocumentMeta {
   int64 document_id = 1;
 
-  bool closed = 2;
-  bool draft = 3;
-  bool public = 4;
-  string state = 5 [
+  optional resources.timestamp.Timestamp recomputed_at = 2;
+
+  bool closed = 3;
+  bool draft = 4;
+  bool public = 5;
+  string state = 6 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 
   // Overall aggregates - At least one approval policy fully satisfied
-  bool approved = 6;
-  bool signed = 7;
+  optional bool approved = 7;
+  optional bool signed = 8;
 
   // Signature rollups
-  optional int32 sig_required_remaining = 8;
-  optional int32 sig_required_total = 9;
-  optional int32 sig_collected_valid = 10;
+
+  // How many signatures still needed to satisfy all policies
+  optional int32 sig_required_remaining = 9;
+  // Total signatures needed across policies
+  optional int32 sig_required_total = 10;
+  // Signatures collected
+  optional int32 sig_collected_valid = 11;
 
   // Approval rollups
 
   // Total approvals needed across policies
-  optional int32 apr_required_total = 11;
+  optional int32 apr_required_total = 12;
   // Approvals collected
-  optional int32 apr_collected_approved = 12;
+  optional int32 apr_collected_approved = 13;
   // How many left to satisfy
-  optional int32 apr_required_remaining = 13;
+  optional int32 apr_required_remaining = 14;
   // Number of declines
-  optional int32 apr_declined_count = 14;
+  optional int32 apr_declined_count = 15;
   // Tasks still pending (optional)
-  optional int32 apr_pending_count = 15;
+  optional int32 apr_pending_count = 16;
   // Quick flag if any declines
-  optional bool apr_any_declined = 16;
+  optional bool apr_any_declined = 17;
   // Number of active approval policies
-  optional int32 apr_policies_active = 17;
+  optional int32 apr_policies_active = 18;
 }
 
 enum DocReference {

@@ -142,6 +142,15 @@ func (m *DocumentMeta) Sanitize() error {
 		return nil
 	}
 
+	// Field: RecomputedAt
+	if m.RecomputedAt != nil {
+		if v, ok := any(m.GetRecomputedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: State
 	m.State = htmlsanitizer.Sanitize(m.State)
 

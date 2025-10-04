@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(120) NOT NULL,
 
-  `owner_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
 
   `svg_template` mediumtext NOT NULL,
   -- Parameterized SVG with slots (if any)
@@ -24,12 +24,12 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps` (
 
   PRIMARY KEY (`id`),
 
-  KEY `idx_fivenet_doc_sig_stamp_user` (`owner_id`),
-  KEY `idx_fivenet_doc_sig_stamp_sort_key` (`sort_key`),
-  KEY `idx_fivenet_doc_sig_stamp_created` (`created_at`),
-  KEY `idx_fivenet_doc_sig_stamp_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_doc_signs_stamps_user_id` (`user_id`),
+  KEY `idx_fivenet_doc_signs_stamps_sort_key` (`sort_key`),
+  KEY `idx_fivenet_doc_signs_stamps_created_at` (`created_at`),
+  KEY `idx_fivenet_doc_signs_stamps_deleted_at` (`deleted_at`),
 
-  CONSTRAINT `fk_fivenet_documents_signatures_stamp_user` FOREIGN KEY (`owner_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_signatures_stamp_user` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures_stamps_access` (
@@ -56,12 +56,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_policies` (
 
   `label` varchar(120) DEFAULT NULL,
   `required` tinyint(1) NOT NULL DEFAULT 1,
-
   `binding_mode` smallint(2) NOT NULL,
   `allowed_types_mask` varchar(120) NOT NULL DEFAULT '[]',
-
-  `collected_count` int NOT NULL DEFAULT 0,
-  `required_count` int NOT NULL DEFAULT 1,
 
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
@@ -80,7 +76,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_tasks` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
   `snapshot_date` datetime(3) NOT NULL,
-
   `policy_id` bigint(20) unsigned NOT NULL,
 
   -- Who is the task for? 1=USER, 2=JOB
@@ -91,13 +86,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_tasks` (
   -- Job assignment
   `job` varchar(20) DEFAULT NULL,
   `minimum_grade` int DEFAULT NULL,
+  `slot_no`       int NOT NULL DEFAULT 1,
 
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,
-  `due_at` datetime(3) DEFAULT NULL,
 
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `completed_at` datetime(3) DEFAULT NULL,
+  `due_at` datetime(3) DEFAULT NULL,
 
   `signature_id` bigint(20) unsigned DEFAULT NULL,
 
@@ -109,15 +105,15 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signature_tasks` (
   -- Prevent duplicates for the same user within a task
   UNIQUE KEY `uq_fivenet_doc_sig_tsk_user_round` (`policy_id`, `document_id`, `snapshot_date`, `assignee_kind`, `user_id`),
   -- And prevent duplicates for the same group target within a task
-  UNIQUE KEY `uq_fivenet_doc_sig_tsk_group_round` (`policy_id`, `document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`),
+  UNIQUE KEY `uq_fivenet_doc_sig_tsk_group_round` (`policy_id`, `document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `slot_no`),
 
-  KEY `idx_fivenet_doc_sigtsk_access_check` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `status`),
-  KEY `idx_fivenet_doc_sigtsk_doc_snap_status` (`document_id`, `snapshot_date`, `status`),
-  KEY `idx_fivenet_doc_sigtsk_policy_status` (`policy_id`, `status`),
-  KEY `idx_fivenet_doc_sigtsk_user_status_created` (`user_id`, `status`, `created_at`),
+  KEY `idx_fivenet_doc_sigtsks_doc_snap_status` (`document_id`, `snapshot_date`, `status`),
+  KEY `idx_fivenet_doc_sigtsks_policy_id_status` (`policy_id`, `status`),
+  KEY `idx_fivenet_doc_sigtsks_user_status_create` (`user_id`, `status`, `created_at`),
+  KEY `idx_fivenet_doc_sigtsks_access_check` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `status`),
 
-  CONSTRAINT `fk_fivenet_doc_sig_task_doc` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_sig_task_policy` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_signature_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signature_tasks_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signature_tasks_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_signature_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_doc_signature_tasks_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -125,6 +121,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `document_id` bigint(20) unsigned NOT NULL,
   `snapshot_date` datetime(3) NOT NULL,
+  `policy_id` bigint(20) unsigned DEFAULT NULL,
+  -- Link to the task that produced it (if any)
+  `task_id` bigint(20) unsigned DEFAULT NULL,
 
   `user_id` int(11) NOT NULL,
   `user_job` varchar(20) NOT NULL,
@@ -136,27 +135,26 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_signatures` (
 
   -- 1=VALID, 2=REVOKED, 3=EXPIRED, 4=INVALID
   `status` smallint(2) NOT NULL,
-  `reason` varchar(255) DEFAULT NULL,
-
-  -- Link to the task that produced it (if any)
-  `task_id` bigint(20) unsigned DEFAULT NULL,
+  `comment` varchar(500) DEFAULT NULL,
 
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `revoked_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),
 
-  UNIQUE KEY `uq_fivenet_doc_signature_user_round` (`document_id`, `snapshot_date`, `user_id`),
+  UNIQUE KEY `uq_fivenet_doc_signature_user_round` (`policy_id`, `snapshot_date`, `user_id`),
+
   KEY `idx_fivenet_doc_sig_doc_snapshot_status` (`document_id`, `snapshot_date`, `status`),
   KEY `idx_fivenet_doc_sig_user_created` (`user_id`, `created_at`),
 
-  CONSTRAINT `fk_fivenet_doc_signatures_documents` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_signatures_task` FOREIGN KEY (`task_id`) REFERENCES `fivenet_documents_signature_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_signatures_stamp` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_signatures_stamps` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_doc_signatures_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_doc_signatures_doc_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signatures_policy_id` FOREIGN KEY (`policy_id`) REFERENCES `fivenet_documents_signature_policies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signatures_task_id` FOREIGN KEY (`task_id`) REFERENCES `fivenet_documents_signature_tasks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signatures_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_doc_signatures_stamp_id` FOREIGN KEY (`stamp_id`) REFERENCES `fivenet_documents_signatures_stamps` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 ALTER TABLE `fivenet_documents_signature_tasks`
-  ADD CONSTRAINT `fk_fivenet_doc_sigtsk_signature` FOREIGN KEY (`signature_id`) REFERENCES `fivenet_documents_signatures` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_fivenet_doc_sigtsks_signature_id` FOREIGN KEY (`signature_id`) REFERENCES `fivenet_documents_signatures` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 COMMIT;

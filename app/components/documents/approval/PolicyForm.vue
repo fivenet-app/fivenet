@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
-import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
-import TaskForm from './TaskForm.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -17,8 +15,6 @@ defineEmits<{
 const policy = defineModel<ApprovalPolicy | undefined>();
 
 const { t } = useI18n();
-
-const overlay = useOverlay();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -45,7 +41,6 @@ const schema = z.object({
     ruleKind: z.enum(ApprovalRuleKind).default(ApprovalRuleKind.REQUIRE_ALL),
     onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
     requiredCount: z.number().min(0).max(10).default(0),
-    dueAt: z.date().min(new Date()).optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -54,7 +49,6 @@ const state = reactive<Schema>({
     ruleKind: ApprovalRuleKind.REQUIRE_ALL,
     onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
     requiredCount: 2,
-    dueAt: undefined,
 });
 
 function setFromProps(): void {
@@ -62,14 +56,12 @@ function setFromProps(): void {
         state.ruleKind = ApprovalRuleKind.REQUIRE_ALL;
         state.onEditBehavior = OnEditBehavior.KEEP_PROGRESS;
         state.requiredCount = 2;
-        state.dueAt = undefined;
         return;
     }
 
     state.ruleKind = policy.value.ruleKind;
     state.onEditBehavior = policy.value.onEditBehavior;
     state.requiredCount = policy.value.requiredCount ?? 0;
-    state.dueAt = policy.value.dueAt ? toDate(policy.value.dueAt) : undefined;
 }
 
 setFromProps();
@@ -83,22 +75,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 async function upsertPolicy(values: Schema): Promise<void> {
     const call = approvalClient.upsertApprovalPolicy({
-        documentId: props.documentId,
-        ruleKind: values.ruleKind,
-        onEditBehavior: values.onEditBehavior,
-        requiredCount: values.requiredCount,
-        dueAt: values.dueAt ? toTimestamp(values.dueAt) : undefined,
+        policy: {
+            id: policy.value?.id ?? 0,
+            documentId: props.documentId,
+            ruleKind: values.ruleKind,
+            onEditBehavior: values.onEditBehavior,
+            requiredCount: values.ruleKind === ApprovalRuleKind.QUORUM_ANY ? values.requiredCount : undefined,
+
+            assignedCount: 0,
+            approvedCount: 0,
+            declinedCount: 0,
+            pendingCount: 0,
+            anyDeclined: false,
+        },
     });
     const { response } = await call;
 
     policy.value = response.policy;
 }
-
-const taskFormDrawer = overlay.create(TaskForm, {
-    props: {
-        documentId: props.documentId,
-    },
-});
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -166,10 +160,6 @@ const formRef = useTemplateRef('formRef');
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                             </USelectMenu>
                         </UFormField>
-
-                        <UFormField name="dueAt" :label="$t('common.due_at')">
-                            <InputDatePicker v-model="state.dueAt" class="w-full" />
-                        </UFormField>
                     </UForm>
 
                     <template #footer>
@@ -180,15 +170,6 @@ const formRef = useTemplateRef('formRef');
                                 class="w-full"
                                 :label="$t('common.save')"
                                 @click="formRef?.submit()"
-                            />
-
-                            <UButton
-                                :disabled="!canSubmit"
-                                block
-                                class="w-full"
-                                :label="$t('common.continue')"
-                                trailing-icon="i-mdi-arrow-forward"
-                                @click="taskFormDrawer.open()"
                             />
                         </UButtonGroup>
                     </template>

@@ -61,7 +61,7 @@ enum SignatureAssigneeKind {
 enum SignatureTaskStatus {
   SIGNATURE_TASK_STATUS_UNSPECIFIED = 0;
   SIGNATURE_TASK_STATUS_PENDING = 1;
-  SIGNATURE_TASK_STATUS_COMPLETED = 2;
+  SIGNATURE_TASK_STATUS_SIGNED = 2;
   SIGNATURE_TASK_STATUS_EXPIRED = 3;
 }
 
@@ -89,12 +89,20 @@ message SignatureTask {
   int32 slot_no = 12;
 
   SignatureTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
-  optional string reason = 14 [(buf.validate.field).string.max_len = 255];
+  optional string comment = 14 [(buf.validate.field).string.max_len = 255];
 
   resources.timestamp.Timestamp created_at = 15;
   optional resources.timestamp.Timestamp completed_at = 16;
+  optional resources.timestamp.Timestamp due_at = 17;
 
-  optional int64 signature_id = 17;
+  optional int64 signature_id = 18;
+
+  int32 creator_id = 19;
+  optional resources.users.UserShort creator = 20;
+  string creator_job = 21 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 22;
+
+  repeated Signature signatures = 23 [(buf.validate.field).repeated.max_items = 15];
 }
 
 enum SignatureStatus {
@@ -107,26 +115,31 @@ enum SignatureStatus {
 message Signature {
   int64 id = 1;
   int64 document_id = 2;
-  // version_id whose hash was shown
   resources.timestamp.Timestamp snapshot_date = 3;
-  // Null/Empty for optional acknowledgements
-  optional int64 requirement_id = 4;
 
-  int32 user_id = 5;
-  optional resources.users.UserShort user = 6;
-  string job = 7 [(buf.validate.field).string.max_len = 20];
-  optional string job_label = 8 [(buf.validate.field).string.max_len = 50];
+  // Link to originating policy (if any)
+  optional int64 policy_id = 4;
 
-  SignatureType type = 9 [(buf.validate.field).enum.defined_only = true];
+  // Link to originating task (if any)
+  optional int64 task_id = 5;
+
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  optional string user_job = 8;
+  optional string user_job_label = 9;
+  optional int32 user_grade = 10;
+  optional string user_grade_label = 11;
+
+  SignatureType type = 12 [(buf.validate.field).enum.defined_only = true];
   // SVG path, typed preview, stamp fill, etc.
-  string payload_svg = 10;
+  string payload_svg = 13;
   // if type == STAMP
-  optional int64 stamp_id = 11;
+  optional int64 stamp_id = 14;
 
-  SignatureStatus status = 12 [(buf.validate.field).enum.defined_only = true];
-  // Revoke/Invalid reason
-  optional string reason = 13;
+  SignatureStatus status = 15 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 16 [(buf.validate.field).string.max_len = 500];
 
-  resources.timestamp.Timestamp created_at = 14;
-  optional resources.timestamp.Timestamp revoked_at = 15;
+  resources.timestamp.Timestamp created_at = 17;
+  optional resources.timestamp.Timestamp revoked_at = 18;
 }

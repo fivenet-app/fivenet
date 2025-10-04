@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import {
@@ -10,6 +11,7 @@ import {
 } from '~~/gen/ts/resources/documents/approval';
 import ApprovalTaskList from './ApprovalTaskList.vue';
 import PolicyForm from './PolicyForm.vue';
+import TaskForm from './TaskForm.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -29,7 +31,7 @@ const { data, status, error, refresh } = useLazyAsyncData(
 );
 
 async function getPolicy(): Promise<ApprovalPolicy | undefined> {
-    const call = approvalClient.getApprovalPolicy({
+    const call = approvalClient.listApprovalPolicies({
         documentId: props.documentId,
     });
     const { response } = await call;
@@ -37,10 +39,11 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
     return response.policy;
 }
 
-async function decideApprovalTask(approve: boolean) {
-    const call = approvalClient.decideApprovalTask({
-        documentId: props.documentId,
-        taskId: 1,
+async function decideApproval(approve: boolean) {
+    if (!data.value) return;
+
+    const call = approvalClient.decideApproval({
+        policyId: data.value.id,
         newStatus: approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
         comment: '',
     });
@@ -52,6 +55,8 @@ const policyForm = overlay.create(PolicyForm, {
         documentId: props.documentId,
     },
 });
+
+const taskFormDrawer = overlay.create(TaskForm);
 </script>
 
 <template>
@@ -83,7 +88,7 @@ const policyForm = overlay.create(PolicyForm, {
 
                     <template v-else>
                         <div class="basis-1/4">
-                            <UCard>
+                            <UCard :ui="{ body: 'p-0 sm:p-0', footer: 'p-2 sm:px-2' }">
                                 <div v-if="data" class="flex flex-col gap-2">
                                     <div class="inline-flex items-center justify-between gap-2">
                                         <p class="shrink-0 text-lg font-medium">
@@ -115,6 +120,10 @@ const policyForm = overlay.create(PolicyForm, {
                                     />
                                 </div>
 
+                                <div v-else>
+                                    <DataNoDataBlock icon="i-mdi-approval" :type="$t('common.policy')" />
+                                </div>
+
                                 <template #footer>
                                     <div class="flex flex-1">
                                         <UButton
@@ -135,7 +144,17 @@ const policyForm = overlay.create(PolicyForm, {
                         </div>
 
                         <div class="basis-3/4">
-                            <ApprovalTaskList :document-id="documentId" />
+                            <ApprovalTaskList :document-id="documentId">
+                                <template #header>
+                                    <UButton
+                                        :disabled="!data"
+                                        variant="link"
+                                        :label="$t('common.create')"
+                                        trailing-icon="i-mdi-task-add"
+                                        @click="taskFormDrawer.open({ policyId: data?.id ?? 0 })"
+                                    />
+                                </template>
+                            </ApprovalTaskList>
                         </div>
                     </template>
                 </div>
@@ -151,7 +170,7 @@ const policyForm = overlay.create(PolicyForm, {
                         block
                         size="lg"
                         :label="$t('common.approve')"
-                        @click="() => decideApprovalTask(true)"
+                        @click="() => decideApproval(true)"
                     />
                     <UButton
                         color="red"
@@ -159,7 +178,7 @@ const policyForm = overlay.create(PolicyForm, {
                         block
                         size="lg"
                         :label="$t('common.decline')"
-                        @click="() => decideApprovalTask(false)"
+                        @click="() => decideApproval(false)"
                     />
                 </UButtonGroup>
             </div>
