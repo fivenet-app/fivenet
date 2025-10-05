@@ -181,7 +181,7 @@ if (props.hideGrade) {
                     :placeholder="$t('common.citizen', 1)"
                 >
                     <template v-if="selectedUser" #default>
-                        {{ usersToLabel([selectedUser]) }}
+                        {{ userToLabel(selectedUser) }}
                     </template>
 
                     <template #item-label="{ item }">

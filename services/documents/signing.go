@@ -59,9 +59,9 @@ func (s *Server) UpsertSignaturePolicy(
 	ctx context.Context,
 	req *pbdocuments.UpsertSignaturePolicyRequest,
 ) (*pbdocuments.UpsertSignaturePolicyResponse, error) {
-	tSigPolicy := table.FivenetDocumentsSignaturePolicies
-	now := time.Now()
 	p := req.GetPolicy()
+
+	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 
 	stmt := tSigPolicy.
 		INSERT(
@@ -74,7 +74,7 @@ func (s *Server) UpsertSignaturePolicy(
 		).
 		VALUES(
 			p.GetDocumentId(),
-			now,
+			mysql.CURRENT_TIMESTAMP(),
 			p.GetLabel(),
 			p.GetRequired(),
 			int32(p.GetBindingMode()),
@@ -172,11 +172,15 @@ func (s *Server) UpsertSignatureTasks(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Resolve policy & snapshot
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
 
 	var pol documents.SignaturePolicy
 	if err := tSignaturePolicy.
-		SELECT(tSignaturePolicy.ID, tSignaturePolicy.DocumentID, tSignaturePolicy.SnapshotDate).
+		SELECT(
+			tSignaturePolicy.ID,
+			tSignaturePolicy.DocumentID,
+			tSignaturePolicy.SnapshotDate,
+		).
 		FROM(tSignaturePolicy).
 		WHERE(tSignaturePolicy.ID.EQ(mysql.Int64(req.GetPolicyId()))).
 		LIMIT(1).
@@ -211,7 +215,6 @@ func (s *Server) UpsertSignatureTasks(
 
 	created := int32(0)
 	ensured := int32(0)
-	now := time.Now().UTC()
 
 	for _, seed := range req.GetSeeds() {
 		isUser := seed.GetUserId() != 0
@@ -236,17 +239,20 @@ func (s *Server) UpsertSignatureTasks(
 				continue
 			}
 			// insert USER task with slot_no=1
-			if _, err := tTasks.INSERT(
-				tTasks.DocumentID, tTasks.SnapshotDate, tTasks.PolicyID,
-				tTasks.AssigneeKind, tTasks.UserID, tTasks.SlotNo,
-				tTasks.Status, tTasks.Comment, tTasks.CreatedAt, tTasks.DueAt,
-				tTasks.CreatorID, tTasks.CreatorJob,
-			).VALUES(
-				pol.GetDocumentId(), snap, pol.GetId(),
-				int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_USER), seed.GetUserId(), 1,
-				int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING), seed.GetComment(), now, dbutils.TimestampToMySQL(seed.GetDueAt()),
-				int32(userInfo.GetUserId()), userInfo.GetJob(),
-			).ExecContext(ctx, tx); err != nil {
+			if _, err := tTasks.
+				INSERT(
+					tTasks.DocumentID, tTasks.SnapshotDate, tTasks.PolicyID,
+					tTasks.AssigneeKind, tTasks.UserID, tTasks.SlotNo,
+					tTasks.Status, tTasks.Comment, tTasks.DueAt,
+					tTasks.CreatorID, tTasks.CreatorJob,
+				).
+				VALUES(
+					pol.GetDocumentId(), snap, pol.GetId(),
+					int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_USER), seed.GetUserId(), 1,
+					int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING), seed.GetComment(), dbutils.TimestampToMySQL(seed.GetDueAt()),
+					userInfo.GetUserId(), userInfo.GetJob(),
+				).
+				ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 			created++
@@ -284,7 +290,7 @@ func (s *Server) UpsertSignatureTasks(
 			INSERT(
 				tTasks.DocumentID, tTasks.SnapshotDate, tTasks.PolicyID,
 				tTasks.AssigneeKind, tTasks.Job, tTasks.MinimumGrade, tTasks.SlotNo,
-				tTasks.Status, tTasks.Comment, tTasks.CreatedAt, tTasks.DueAt,
+				tTasks.Status, tTasks.Comment, tTasks.DueAt,
 				tTasks.CreatorID, tTasks.CreatorJob,
 			)
 		for slot := have.C + 1; slot <= slots; slot++ {
@@ -303,9 +309,8 @@ func (s *Server) UpsertSignatureTasks(
 						documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING,
 					),
 					seed.GetComment(),
-					now,
 					dbutils.TimestampToMySQL(seed.GetDueAt()),
-					int32(userInfo.GetUserId()),
+					userInfo.GetUserId(),
 					userInfo.GetJob(),
 				)
 		}
@@ -338,7 +343,7 @@ func (s *Server) DeleteSignatureTasks(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.sig.policy_id", req.GetPolicyId()})
 
 	// Resolve policy & snapshot
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
 	var pol documents.SignaturePolicy
 	if err := tSignaturePolicy.
 		SELECT(
@@ -371,14 +376,24 @@ func (s *Server) DeleteSignatureTasks(
 
 	tTasks := table.FivenetDocumentsSignatureTasks
 	condition := tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())).
-		AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap))).
-		AND(tTasks.Status.EQ(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING))))
+		AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap)))
 
 	// Delete all pending?
 	if req.GetDeleteAllPending() {
-		condition = tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())).
-			AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap))).
-			AND(tTasks.Status.EQ(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING))))
+		condition = condition.
+			AND(
+				tTasks.Status.EQ(
+					mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING)),
+				),
+			)
+	} else if len(req.TaskIds) > 0 {
+		ids := make([]mysql.Expression, 0, len(req.TaskIds))
+		for _, id := range req.TaskIds {
+			ids = append(ids, mysql.Int64(id))
+		}
+		condition = condition.AND(tTasks.ID.IN(ids...))
+	} else {
+		return &pbdocuments.DeleteSignatureTasksResponse{}, nil
 	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -506,8 +521,8 @@ func (s *Server) RevokeSignature(
 ) (*pbdocuments.RevokeSignatureResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tSignatures := table.FivenetDocumentsSignatures
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+	tSignatures := table.FivenetDocumentsSignatures.AS("signature")
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
 
 	// Load the signature (and related policy/doc)
 	var sig documents.Signature
@@ -547,12 +562,12 @@ func (s *Server) RevokeSignature(
 	}
 	defer tx.Rollback()
 
-	now := time.Now().UTC()
+	tSignatures = table.FivenetDocumentsSignatures
 	if _, err := tSignatures.
 		UPDATE().
 		SET(
 			tSignatures.Status.SET(mysql.Int32(int32(documents.SignatureStatus_SIGNATURE_STATUS_REVOKED))),
-			tSignatures.RevokedAt.SET(mysql.TimestampT(now)),
+			tSignatures.RevokedAt.SET(mysql.CURRENT_TIMESTAMP()),
 			tSignatures.Comment.SET(mysql.String(req.GetComment())),
 		).
 		WHERE(tSignatures.ID.EQ(mysql.Int64(req.GetSignatureId()))).
@@ -561,7 +576,8 @@ func (s *Server) RevokeSignature(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	// reload artifact for response
+	// Reload artifact for response
+	tSignatures = table.FivenetDocumentsSignatures
 	if err := tSignatures.
 		SELECT(
 			tSignatures.ID, tSignatures.DocumentID, tSignatures.PolicyID, tSignatures.SnapshotDate,
@@ -610,7 +626,8 @@ func (s *Server) DecideSignature(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Resolve policy & base snapshot
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
+
 	var pol documents.SignaturePolicy
 	if err := tSignaturePolicy.
 		SELECT(
@@ -627,6 +644,7 @@ func (s *Server) DecideSignature(
 		QueryContext(ctx, s.db, &pol); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+	// TODO allow ad-hoc approvals even if no policy exists.
 	if pol.Id == 0 {
 		return nil, errswrap.NewError(nil, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
@@ -644,8 +662,8 @@ func (s *Server) DecideSignature(
 
 	snap := pol.GetSnapshotDate().AsTime()
 
-	tTasks := table.FivenetDocumentsSignatureTasks
-	tSigs := table.FivenetDocumentsSignatures
+	tSignatureTasks := table.FivenetDocumentsSignatureTasks
+	tSignatures := table.FivenetDocumentsSignatures
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -654,34 +672,34 @@ func (s *Server) DecideSignature(
 	defer tx.Rollback()
 
 	var decidedTask *documents.SignatureTask
-	now := time.Now().UTC()
+	now := time.Now()
 
 	// If task_id provided, validate and mark decided later
 	if req.GetTaskId() > 0 {
 		// Load the task row into the protobuf message directly
 		decidedTask = &documents.SignatureTask{}
-		if err := tTasks.
+		if err := tSignatureTasks.
 			SELECT(
-				tTasks.ID,
-				tTasks.DocumentID,
-				tTasks.PolicyID,
-				tTasks.SnapshotDate,
-				tTasks.AssigneeKind,
-				tTasks.UserID,
-				tTasks.Job,
-				tTasks.MinimumGrade,
-				tTasks.SlotNo,
-				tTasks.Status,
-				tTasks.Comment,
-				tTasks.CreatedAt,
-				tTasks.CompletedAt,
-				tTasks.DueAt,
-				tTasks.CreatorID,
-				tTasks.CreatorJob,
-				tTasks.SignatureID,
+				tSignatureTasks.ID,
+				tSignatureTasks.DocumentID,
+				tSignatureTasks.PolicyID,
+				tSignatureTasks.SnapshotDate,
+				tSignatureTasks.AssigneeKind,
+				tSignatureTasks.UserID,
+				tSignatureTasks.Job,
+				tSignatureTasks.MinimumGrade,
+				tSignatureTasks.SlotNo,
+				tSignatureTasks.Status,
+				tSignatureTasks.Comment,
+				tSignatureTasks.CreatedAt,
+				tSignatureTasks.CompletedAt,
+				tSignatureTasks.DueAt,
+				tSignatureTasks.CreatorID,
+				tSignatureTasks.CreatorJob,
+				tSignatureTasks.SignatureID,
 			).
-			FROM(tTasks).
-			WHERE(tTasks.ID.EQ(mysql.Int64(req.GetTaskId()))).
+			FROM(tSignatureTasks).
+			WHERE(tSignatureTasks.ID.EQ(mysql.Int64(req.GetTaskId()))).
 			LIMIT(1).
 			QueryContext(ctx, tx, decidedTask); err != nil {
 			if errors.Is(err, qrm.ErrNoRows) {
@@ -705,21 +723,21 @@ func (s *Server) DecideSignature(
 
 	// Insert/Upsert artifact (unique by policy_id + snapshot_date + user_id)
 	newSig := &documents.Signature{}
-	ins := tSigs.
+	ins := tSignatures.
 		INSERT(
-			tSigs.DocumentID,
-			tSigs.SnapshotDate,
-			tSigs.PolicyID,
-			tSigs.UserID,
-			tSigs.UserJob,
-			tSigs.UserJobGrade,
-			tSigs.Type,
-			tSigs.PayloadSvg,
-			tSigs.StampID,
-			tSigs.Status,
-			tSigs.Comment,
-			tSigs.TaskID,
-			tSigs.CreatedAt,
+			tSignatures.DocumentID,
+			tSignatures.SnapshotDate,
+			tSignatures.PolicyID,
+			tSignatures.UserID,
+			tSignatures.UserJob,
+			tSignatures.UserJobGrade,
+			tSignatures.Type,
+			tSignatures.PayloadSvg,
+			tSignatures.StampID,
+			tSignatures.Status,
+			tSignatures.Comment,
+			tSignatures.TaskID,
+			tSignatures.CreatedAt,
 		).
 		VALUES(
 			pol.GetDocumentId(), snap, pol.GetId(),
@@ -730,41 +748,42 @@ func (s *Server) DecideSignature(
 			), req.GetComment(), nilOrInt64(req.GetTaskId()), now,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tSigs.Type.SET(mysql.Int32(int32(req.GetType()))),
-			tSigs.PayloadSvg.SET(mysql.String(req.GetPayloadSvg())),
-			tSigs.StampID.SET(nilOrInt64(req.GetStampId())),
-			tSigs.Status.SET(mysql.Int32(int32(documents.SignatureStatus_SIGNATURE_STATUS_VALID))),
-			tSigs.Comment.SET(mysql.String(req.GetComment())),
-			tSigs.TaskID.SET(nilOrInt64(req.GetTaskId())),
+			tSignatures.Type.SET(mysql.Int32(int32(req.GetType()))),
+			tSignatures.PayloadSvg.SET(mysql.String(req.GetPayloadSvg())),
+			tSignatures.StampID.SET(nilOrInt64(req.GetStampId())),
+			tSignatures.Status.SET(mysql.Int32(int32(documents.SignatureStatus_SIGNATURE_STATUS_VALID))),
+			tSignatures.Comment.SET(mysql.String(req.GetComment())),
+			tSignatures.TaskID.SET(nilOrInt64(req.GetTaskId())),
 		)
 	if _, err := ins.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Read back the artifact row (protobuf hydration)
-	if err := tSigs.
+	tSignatures = table.FivenetDocumentsSignatures
+	if err := tSignatures.
 		SELECT(
-			tSigs.ID,
-			tSigs.DocumentID,
-			tSigs.PolicyID,
-			tSigs.SnapshotDate,
-			tSigs.UserID,
-			tSigs.UserJob,
-			tSigs.UserJobGrade,
-			tSigs.Type,
-			tSigs.PayloadSvg,
-			tSigs.StampID,
-			tSigs.Status,
-			tSigs.Comment,
-			tSigs.TaskID,
-			tSigs.CreatedAt,
-			tSigs.RevokedAt,
+			tSignatures.ID,
+			tSignatures.DocumentID,
+			tSignatures.PolicyID,
+			tSignatures.SnapshotDate,
+			tSignatures.UserID,
+			tSignatures.UserJob,
+			tSignatures.UserJobGrade,
+			tSignatures.Type,
+			tSignatures.PayloadSvg,
+			tSignatures.StampID,
+			tSignatures.Status,
+			tSignatures.Comment,
+			tSignatures.TaskID,
+			tSignatures.CreatedAt,
+			tSignatures.RevokedAt,
 		).
-		FROM(tSigs).
+		FROM(tSignatures).
 		WHERE(
-			tSigs.PolicyID.EQ(mysql.Int64(pol.GetId())).
-				AND(tSigs.SnapshotDate.EQ(mysql.TimestampT(snap))).
-				AND(tSigs.UserID.EQ(mysql.Int32(int32(userInfo.GetUserId())))),
+			tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())).
+				AND(tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap))).
+				AND(tSignatures.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
 		).
 		LIMIT(1).
 		QueryContext(ctx, tx, newSig); err != nil {
@@ -773,14 +792,15 @@ func (s *Server) DecideSignature(
 
 	// If task_id provided, mark the task completed and link the signature id
 	if req.GetTaskId() > 0 && decidedTask != nil {
-		if _, err := tTasks.
+		tSignatureTasks = table.FivenetDocumentsSignatureTasks
+		if _, err := tSignatureTasks.
 			UPDATE().
 			SET(
-				tTasks.Status.SET(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_SIGNED))),
-				tTasks.CompletedAt.SET(mysql.TimestampT(now)),
-				tTasks.SignatureID.SET(mysql.Int64(newSig.GetId())),
+				tSignatureTasks.Status.SET(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_SIGNED))),
+				tSignatureTasks.CompletedAt.SET(mysql.TimestampT(now)),
+				tSignatureTasks.SignatureID.SET(mysql.Int64(newSig.GetId())),
 			).
-			WHERE(tTasks.ID.EQ(mysql.Int64(req.GetTaskId()))).
+			WHERE(tSignatureTasks.ID.EQ(mysql.Int64(req.GetTaskId()))).
 			LIMIT(1).
 			ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -814,8 +834,8 @@ func (s *Server) ReopenSignature(
 ) (*pbdocuments.ReopenSignatureResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tSignatures := table.FivenetDocumentsSignatures
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+	tSignatures := table.FivenetDocumentsSignatures.AS("signature")
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
 
 	// Load signature
 	var sig documents.Signature
@@ -850,7 +870,12 @@ func (s *Server) ReopenSignature(
 
 	// Resolve policy for recompute
 	var pol documents.SignaturePolicy
-	if err := tSignaturePolicy.SELECT(tSignaturePolicy.ID, tSignaturePolicy.DocumentID, tSignaturePolicy.SnapshotDate).
+	if err := tSignaturePolicy.
+		SELECT(
+			tSignaturePolicy.ID,
+			tSignaturePolicy.DocumentID,
+			tSignaturePolicy.SnapshotDate,
+		).
 		FROM(tSignaturePolicy).
 		WHERE(tSignaturePolicy.ID.EQ(mysql.Int64(sig.GetPolicyId()))).
 		LIMIT(1).
@@ -860,6 +885,8 @@ func (s *Server) ReopenSignature(
 	if pol.Id == 0 {
 		return nil, errswrap.NewError(nil, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
+
+	tSignatures = table.FivenetDocumentsSignatures
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -882,6 +909,7 @@ func (s *Server) ReopenSignature(
 	}
 
 	// Reload for response
+	tSignatures = table.FivenetDocumentsSignatures
 	if err := tSignatures.
 		SELECT(
 			tSignatures.ID, tSignatures.DocumentID, tSignatures.PolicyID, tSignatures.SnapshotDate,
@@ -973,7 +1001,7 @@ func (s *Server) recomputeSignaturePolicyTx(
 	var reqTotal struct{ N int32 }
 	if err := tSignaturePolicy.
 		SELECT(
-			mysql.Raw("SUM(required = 1) AS N"),
+			mysql.Raw("SUM(required = 1)").AS("N"),
 		).
 		FROM(tSignaturePolicy).
 		WHERE(
@@ -1015,10 +1043,13 @@ func (s *Server) recomputeSignaturePolicyTx(
 			tDocumentsMeta.SigPoliciesActive,
 		).
 		VALUES(
-			documentID, time.Now().UTC(), docSigned,
-			reqTotal.N, collected.N, requiredRemaining,
+			documentID,
+			mysql.CURRENT_TIMESTAMP(),
+			docSigned,
+			reqTotal.N,
+			collected.N,
+			requiredRemaining,
 			1, // if you later have multiple policies, compute actual active count
-			snap,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tDocumentsMeta.RecomputedAt.SET(mysql.CURRENT_TIMESTAMP()),

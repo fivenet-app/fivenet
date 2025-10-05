@@ -533,7 +533,7 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
             { no: 9, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 10, name: "minimum_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 12, name: "slot_no", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "slot_no", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 13, name: "status", kind: "enum", T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 14, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 15, name: "created_at", kind: "message", T: () => Timestamp },

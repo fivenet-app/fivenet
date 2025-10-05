@@ -151,7 +151,7 @@ const formRef = useTemplateRef('formRef');
         :title="$t('common.request', 2)"
         :overlay="false"
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ title: 'flex flex-row gap-2' }"
+        :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.request', 2) }}</span>

@@ -20,7 +20,7 @@ const signature = ref('');
         :overlay="false"
         handle-only
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ content: 'min-h-[50%]', title: 'flex flex-row gap-2' }"
+        :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.sign') }}</span>
@@ -32,6 +32,20 @@ const signature = ref('');
                 Signing Drawer
 
                 <SignaturePad v-model="signature" />
+            </div>
+        </template>
+
+        <template #footer>
+            <div class="mx-auto w-full max-w-[80%] min-w-3/4">
+                <UButtonGroup class="w-full flex-1">
+                    <UButton
+                        class="flex-1"
+                        color="neutral"
+                        block
+                        :label="$t('common.close', 1)"
+                        @click="$emit('close', false)"
+                    />
+                </UButtonGroup>
             </div>
         </template>
     </UDrawer>

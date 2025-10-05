@@ -2,16 +2,28 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
+import { ApprovalAssigneeKind, type ApprovalTask } from '~~/gen/ts/resources/documents/approval';
+import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import TaskFormEntry from './TaskFormEntry.vue';
 
 const props = defineProps<{
     policyId: number;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
+const tasks = defineModel<ApprovalTask[]>();
+
 const { game } = useAppConfig();
+
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
+
+const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -19,24 +31,26 @@ const schema = z.object({
     tasks: z
         .union([
             z.object({
+                ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
                 userId: z.coerce.number(),
-                job: z.coerce.string().max(255).optional().default(''),
-                minimumGrade: z.coerce.number().min(1).optional().default(game.startJobGrade),
+                job: z.custom<Job>().optional(),
+                minimumGrade: z.custom<JobGrade>().optional(),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
             }),
             z.object({
+                ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
                 userId: z.coerce.number().optional().default(0),
-                job: z.coerce.string().max(255),
-                minimumGrade: z.coerce.number().min(game.startJobGrade).default(game.startJobGrade),
+                job: z.custom<Job>(),
+                minimumGrade: z.custom<JobGrade>(),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
             }),
         ])
         .array()
-        .min(1),
+        .max(10),
 });
 
 type Schema = z.output<typeof schema>;
@@ -45,34 +59,64 @@ const state = reactive<Schema>({
     tasks: [],
 });
 
+function setFromProps(): void {
+    if (tasks.value && tasks.value.length > 0) {
+        state.tasks = tasks.value.map((t) => ({
+            ruleKind: t.job ? ApprovalAssigneeKind.JOB_GRADE : ApprovalAssigneeKind.USER,
+            userId: t.userId ?? 0,
+            job: { name: t.job ?? '', label: t.jobLabel ?? '', grades: [] },
+            minimumGrade: { jobName: t.job ?? '', grade: t.minimumGrade ?? 0, label: t.jobGradeLabel ?? '' },
+            slots: t.slotNo,
+            dueAt: t.dueAt ? toDate(t.dueAt) : undefined,
+            comment: t.comment,
+        }));
+    } else {
+        state.tasks = [];
+    }
+}
+
+setFromProps();
+watch(tasks, () => setFromProps());
+
+async function upsertApprovalTasks(values: Schema): Promise<void> {
+    try {
+        const call = approvalClient.upsertApprovalTasks({
+            policyId: props.policyId,
+            seeds: values.tasks.map((task) => ({
+                userId: task.userId,
+                job: task.job?.name ?? '',
+                minimumGrade: task.minimumGrade?.grade ?? game.startJobGrade,
+                slots: task.slots,
+                dueAt: task.dueAt ? toTimestamp(task.dueAt) : undefined,
+                comment: task.comment,
+            })),
+        });
+        await call;
+
+        emits('close', false);
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+    }
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await upsertApprovalTasks(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-async function upsertApprovalTasks(values: Schema): Promise<void> {
-    const call = approvalClient.upsertApprovalTasks({
-        policyId: props.policyId,
-        seeds: values.tasks.map((task) => ({
-            userId: task.userId,
-            job: task.job,
-            minimumGrade: task.minimumGrade,
-            slots: task.slots,
-            dueAt: task.dueAt ? toTimestamp(task.dueAt) : undefined,
-            comment: task.comment,
-        })),
-    });
-    await call;
-
-    // TODO
-}
-
 function addNewTask(): void {
     state.tasks.push({
+        ruleKind: ApprovalAssigneeKind.JOB_GRADE,
         userId: 0,
-        job: '',
-        minimumGrade: game.startJobGrade,
+        job: undefined,
+        minimumGrade: undefined,
         slots: 1,
     });
 }
@@ -82,6 +126,8 @@ function removeTask(idx: number): void {
 }
 
 const formRef = useTemplateRef('formRef');
+
+onBeforeMount(async () => listJobs());
 </script>
 
 <template>
@@ -96,8 +142,6 @@ const formRef = useTemplateRef('formRef');
             <div class="inline-flex flex-1 items-center gap-1">
                 <span>{{ $t('common.approve') }}</span>
                 <UIcon name="i-mdi-slash-forward" />
-                <span>{{ $t('common.policy') }}</span>
-                <UIcon name="i-mdi-slash-forward" />
                 <span>{{ $t('components.documents.approval.task_form.title') }}</span>
             </div>
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
@@ -106,30 +150,14 @@ const formRef = useTemplateRef('formRef');
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
                 <UCard :ui="{ body: 'p-4 sm:p-4', footer: 'p-4 sm:px-4' }">
-                    <template #header>
-                        <div class="flex items-center justify-between gap-1">
-                            <h3 class="flex-1 text-base leading-6 font-semibold">
-                                {{ $t('components.documents.approval.task_form.title') }}
-                            </h3>
-                        </div>
-                    </template>
-
                     <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                         <div class="flex flex-col gap-1 divide-y divide-default md:divide-y-0">
                             <div
-                                v-for="(task, idx) in state.tasks"
+                                v-for="(_, idx) in state.tasks"
                                 :key="idx"
                                 class="flex flex-1 flex-col gap-1 pb-2 md:flex-row md:pb-0"
                             >
-                                <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-                                    <UFormField
-                                        name="ruleKind"
-                                        :label="$t('components.documents.approval.policy_form.rule_kind')"
-                                    >
-                                        TODO
-                                        {{ task }}
-                                    </UFormField>
-                                </div>
+                                <TaskFormEntry v-model="state.tasks[idx]!" :jobs="jobs" class="flex-1" />
 
                                 <UFormField class="md:mt-1" :ui="{ container: 'flex justify-end-safe md:inline' }">
                                     <UTooltip :text="$t('components.access.remove_entry')">

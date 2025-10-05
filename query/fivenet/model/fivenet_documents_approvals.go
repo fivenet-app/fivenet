@@ -22,6 +22,6 @@ type FivenetDocumentsApprovals struct {
 	UserJobGrade *int32     `json:"user_job_grade"`
 	Status       int16      `json:"status"`
 	Comment      *string    `json:"comment"`
-	CreatedAt    time.Time  `json:"created_at"`
+	CreatedAt    *time.Time `json:"created_at"`
 	RevokedAt    *time.Time `json:"revoked_at"`
 }

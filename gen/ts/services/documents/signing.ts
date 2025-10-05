@@ -290,33 +290,37 @@ export interface RevokeSignatureResponse {
  */
 export interface DecideSignatureRequest {
     /**
-     * @generated from protobuf field: int64 policy_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    policyId: number;
+    documentId: number;
     /**
-     * @generated from protobuf field: optional int64 task_id = 2
+     * @generated from protobuf field: optional int64 policy_id = 2
+     */
+    policyId?: number;
+    /**
+     * @generated from protobuf field: optional int64 task_id = 3
      */
     taskId?: number;
     /**
-     * @generated from protobuf field: resources.documents.SignatureTaskStatus new_status = 3
+     * @generated from protobuf field: resources.documents.SignatureTaskStatus new_status = 4
      */
     newStatus: SignatureTaskStatus;
     /**
-     * @generated from protobuf field: string comment = 4
+     * @generated from protobuf field: string comment = 5
      */
     comment: string;
     /**
-     * @generated from protobuf field: resources.documents.SignatureType type = 5
+     * @generated from protobuf field: resources.documents.SignatureType type = 6
      */
     type: SignatureType;
     /**
-     * @generated from protobuf field: optional string payload_svg = 6
+     * @generated from protobuf field: optional string payload_svg = 7
      */
     payloadSvg?: string;
     /**
      * When type=STAMP
      *
-     * @generated from protobuf field: optional int64 stamp_id = 7
+     * @generated from protobuf field: optional int64 stamp_id = 8
      */
     stampId?: number;
 }
@@ -860,7 +864,7 @@ class SignatureTaskSeed$Type extends MessageType<SignatureTaskSeed> {
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 5, name: "due_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -1398,18 +1402,19 @@ export const RevokeSignatureResponse = new RevokeSignatureResponse$Type();
 class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
     constructor() {
         super("services.documents.DecideSignatureRequest", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "new_status", kind: "enum", T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
-            { no: 5, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 6, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
-            { no: 7, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 4, name: "new_status", kind: "enum", T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 5, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
+            { no: 6, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 7, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
+            { no: 8, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DecideSignatureRequest>): DecideSignatureRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = 0;
+        message.documentId = 0;
         message.newStatus = 0;
         message.comment = "";
         message.type = 0;
@@ -1422,25 +1427,28 @@ class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 policy_id */ 1:
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 policy_id */ 2:
                     message.policyId = reader.int64().toNumber();
                     break;
-                case /* optional int64 task_id */ 2:
+                case /* optional int64 task_id */ 3:
                     message.taskId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.SignatureTaskStatus new_status */ 3:
+                case /* resources.documents.SignatureTaskStatus new_status */ 4:
                     message.newStatus = reader.int32();
                     break;
-                case /* string comment */ 4:
+                case /* string comment */ 5:
                     message.comment = reader.string();
                     break;
-                case /* resources.documents.SignatureType type */ 5:
+                case /* resources.documents.SignatureType type */ 6:
                     message.type = reader.int32();
                     break;
-                case /* optional string payload_svg */ 6:
+                case /* optional string payload_svg */ 7:
                     message.payloadSvg = reader.string();
                     break;
-                case /* optional int64 stamp_id */ 7:
+                case /* optional int64 stamp_id */ 8:
                     message.stampId = reader.int64().toNumber();
                     break;
                 default:
@@ -1455,27 +1463,30 @@ class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
         return message;
     }
     internalBinaryWrite(message: DecideSignatureRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 policy_id = 1; */
-        if (message.policyId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.policyId);
-        /* optional int64 task_id = 2; */
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* optional int64 policy_id = 2; */
+        if (message.policyId !== undefined)
+            writer.tag(2, WireType.Varint).int64(message.policyId);
+        /* optional int64 task_id = 3; */
         if (message.taskId !== undefined)
-            writer.tag(2, WireType.Varint).int64(message.taskId);
-        /* resources.documents.SignatureTaskStatus new_status = 3; */
+            writer.tag(3, WireType.Varint).int64(message.taskId);
+        /* resources.documents.SignatureTaskStatus new_status = 4; */
         if (message.newStatus !== 0)
-            writer.tag(3, WireType.Varint).int32(message.newStatus);
-        /* string comment = 4; */
+            writer.tag(4, WireType.Varint).int32(message.newStatus);
+        /* string comment = 5; */
         if (message.comment !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.comment);
-        /* resources.documents.SignatureType type = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.comment);
+        /* resources.documents.SignatureType type = 6; */
         if (message.type !== 0)
-            writer.tag(5, WireType.Varint).int32(message.type);
-        /* optional string payload_svg = 6; */
+            writer.tag(6, WireType.Varint).int32(message.type);
+        /* optional string payload_svg = 7; */
         if (message.payloadSvg !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.payloadSvg);
-        /* optional int64 stamp_id = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.payloadSvg);
+        /* optional int64 stamp_id = 8; */
         if (message.stampId !== undefined)
-            writer.tag(7, WireType.Varint).int64(message.stampId);
+            writer.tag(8, WireType.Varint).int64(message.stampId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

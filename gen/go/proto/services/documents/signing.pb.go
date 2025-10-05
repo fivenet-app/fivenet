@@ -943,14 +943,15 @@ func (x *RevokeSignatureResponse) GetSignature() *documents.Signature {
 
 type DecideSignatureRequest struct {
 	state      protoimpl.MessageState        `protogen:"open.v1"`
-	PolicyId   int64                         `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
-	TaskId     *int64                        `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus  documents.SignatureTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.SignatureTaskStatus" json:"new_status,omitempty"`
-	Comment    string                        `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
-	Type       documents.SignatureType       `protobuf:"varint,5,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
-	PayloadSvg *string                       `protobuf:"bytes,6,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
+	DocumentId int64                         `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	PolicyId   *int64                        `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	TaskId     *int64                        `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus  documents.SignatureTaskStatus `protobuf:"varint,4,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.SignatureTaskStatus" json:"new_status,omitempty"`
+	Comment    string                        `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	Type       documents.SignatureType       `protobuf:"varint,6,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
+	PayloadSvg *string                       `protobuf:"bytes,7,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
 	// When type=STAMP
-	StampId       *int64 `protobuf:"varint,7,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
+	StampId       *int64 `protobuf:"varint,8,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -985,9 +986,16 @@ func (*DecideSignatureRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *DecideSignatureRequest) GetPolicyId() int64 {
+func (x *DecideSignatureRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *DecideSignatureRequest) GetPolicyId() int64 {
+	if x != nil && x.PolicyId != nil {
+		return *x.PolicyId
 	}
 	return 0
 }
@@ -1656,17 +1664,21 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\fsignature_id\x18\x01 \x01(\x03R\vsignatureId\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"W\n" +
 	"\x17RevokeSignatureResponse\x12<\n" +
-	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\xdd\x02\n" +
-	"\x16DecideSignatureRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12\x1c\n" +
-	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12G\n" +
+	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\x91\x03\n" +
+	"\x16DecideSignatureRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12 \n" +
+	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
+	"\atask_id\x18\x03 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12G\n" +
 	"\n" +
-	"new_status\x18\x03 \x01(\x0e2(.resources.documents.SignatureTaskStatusR\tnewStatus\x12\x18\n" +
-	"\acomment\x18\x04 \x01(\tR\acomment\x126\n" +
-	"\x04type\x18\x05 \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12$\n" +
-	"\vpayload_svg\x18\x06 \x01(\tH\x01R\n" +
+	"new_status\x18\x04 \x01(\x0e2(.resources.documents.SignatureTaskStatusR\tnewStatus\x12\x18\n" +
+	"\acomment\x18\x05 \x01(\tR\acomment\x126\n" +
+	"\x04type\x18\x06 \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12$\n" +
+	"\vpayload_svg\x18\a \x01(\tH\x02R\n" +
 	"payloadSvg\x88\x01\x01\x12\x1e\n" +
-	"\bstamp_id\x18\a \x01(\x03H\x02R\astampId\x88\x01\x01B\n" +
+	"\bstamp_id\x18\b \x01(\x03H\x03R\astampId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_policy_idB\n" +
 	"\n" +
 	"\b_task_idB\x0e\n" +
 	"\f_payload_svgB\v\n" +

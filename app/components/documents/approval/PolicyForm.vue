@@ -3,18 +3,21 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId: number;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
 const policy = defineModel<ApprovalPolicy | undefined>();
 
 const { t } = useI18n();
+
+const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -67,12 +70,6 @@ function setFromProps(): void {
 setFromProps();
 watch(policy, () => setFromProps());
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await upsertPolicy(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
-
 async function upsertPolicy(values: Schema): Promise<void> {
     const call = approvalClient.upsertApprovalPolicy({
         policy: {
@@ -92,7 +89,21 @@ async function upsertPolicy(values: Schema): Promise<void> {
     const { response } = await call;
 
     policy.value = response.policy;
+
+    emits('close', true);
+
+    notifications.add({
+        title: { key: 'notifications.action_successful.title', parameters: {} },
+        description: { key: 'notifications.action_successful.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
 }
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+    await upsertPolicy(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 
 const formRef = useTemplateRef('formRef');
 </script>

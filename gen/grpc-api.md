@@ -8459,7 +8459,8 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `new_status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  | APPROVED or DECLINED |
 | `comment` | [string](#string) |  |  |
@@ -9582,7 +9583,8 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `new_status` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
 | `comment` | [string](#string) |  |  |

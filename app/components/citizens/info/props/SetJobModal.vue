@@ -22,7 +22,6 @@ const { game } = useAppConfig();
 const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
-
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 

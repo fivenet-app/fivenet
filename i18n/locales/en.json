@@ -713,7 +713,8 @@
         "approvals": "Approvals",
         "continue": "Continue",
         "policy": "Policy",
-        "task": "Task | Tasks"
+        "task": "Task | Tasks",
+        "no_comment": "No comment provided."
     },
     "components": {
         "partials": {
@@ -909,7 +910,8 @@
                 "tasks": "Approval Tasks",
                 "task_form": {
                     "title": "Tasks"
-                }
+                },
+                "slots": "Approval Slots"
             }
         },
         "livemap": {

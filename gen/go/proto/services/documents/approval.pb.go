@@ -837,10 +837,11 @@ func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
 
 type DecideApprovalRequest struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
-	PolicyId      int64                        `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
-	TaskId        *int64                       `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus     documents.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
-	Comment       string                       `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	DocumentId    int64                        `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	PolicyId      *int64                       `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	TaskId        *int64                       `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus     documents.ApprovalTaskStatus `protobuf:"varint,4,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
+	Comment       string                       `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -875,9 +876,16 @@ func (*DecideApprovalRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *DecideApprovalRequest) GetPolicyId() int64 {
+func (x *DecideApprovalRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *DecideApprovalRequest) GetPolicyId() int64 {
+	if x != nil && x.PolicyId != nil {
+		return *x.PolicyId
 	}
 	return 0
 }
@@ -1226,13 +1234,17 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"approvalId\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"S\n" +
 	"\x16RevokeApprovalResponse\x129\n" +
-	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xc0\x01\n" +
-	"\x15DecideApprovalRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12\x1c\n" +
-	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12F\n" +
+	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xf4\x01\n" +
+	"\x15DecideApprovalRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12 \n" +
+	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
+	"\atask_id\x18\x03 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12F\n" +
 	"\n" +
-	"new_status\x18\x03 \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\tnewStatus\x12\x18\n" +
-	"\acomment\x18\x04 \x01(\tR\acommentB\n" +
+	"new_status\x18\x04 \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\tnewStatus\x12\x18\n" +
+	"\acomment\x18\x05 \x01(\tR\acommentB\f\n" +
+	"\n" +
+	"_policy_idB\n" +
 	"\n" +
 	"\b_task_id\"\xc7\x01\n" +
 	"\x16DecideApprovalResponse\x129\n" +

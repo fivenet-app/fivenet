@@ -713,7 +713,8 @@
         "approvals": "Genehmigungen",
         "continue": "Fortfahren",
         "policy": "Richtlinie",
-        "task": "Aufgabe | Aufgaben"
+        "task": "Aufgabe | Aufgaben",
+        "no_comment": "Kein Kommentar angegeben."
     },
     "components": {
         "partials": {
@@ -908,7 +909,8 @@
                 "tasks": "Genehmigungsaufgaben",
                 "task_form": {
                     "title": "Aufgaben"
-                }
+                },
+                "slots": "Genehmigungs-Slots"
             }
         },
         "livemap": {

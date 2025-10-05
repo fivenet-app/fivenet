@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,
 
-  `created_at` datetime(3) NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `revoked_at` datetime(3) DEFAULT NULL,
 
   PRIMARY KEY (`id`),

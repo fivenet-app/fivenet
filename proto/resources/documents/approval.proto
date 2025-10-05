@@ -81,7 +81,10 @@ message ApprovalTask {
   optional string job_grade_label = 11 [(buf.validate.field).string.max_len = 20];
 
   // >=1; meaningful only for Job tasks; always 1 for User
-  int32 slot_no = 12;
+  int32 slot_no = 12 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
 
   ApprovalTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
   // Optional comment on approve/decline

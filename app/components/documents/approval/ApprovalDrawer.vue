@@ -3,15 +3,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import {
-    ApprovalRuleKind,
-    ApprovalTaskStatus,
-    OnEditBehavior,
-    type ApprovalPolicy,
-} from '~~/gen/ts/resources/documents/approval';
-import ApprovalTaskList from './ApprovalTaskList.vue';
+import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
 import PolicyForm from './PolicyForm.vue';
+import TaskDecideDrawer from './TaskDecideDrawer.vue';
 import TaskForm from './TaskForm.vue';
+import TaskList from './TaskList.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -37,17 +33,6 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
     const { response } = await call;
 
     return response.policy;
-}
-
-async function decideApproval(approve: boolean) {
-    if (!data.value) return;
-
-    const call = approvalClient.decideApproval({
-        policyId: data.value.id,
-        newStatus: approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
-        comment: '',
-    });
-    await call;
 }
 
 const policyForm = overlay.create(PolicyForm, {
@@ -88,11 +73,11 @@ const taskFormDrawer = overlay.create(TaskForm);
 
                     <template v-else>
                         <div class="basis-1/4">
-                            <UCard :ui="{ body: 'p-0 sm:p-0', footer: 'p-2 sm:px-2' }">
+                            <UCard :ui="{ body: 'p-2 sm:p-2', footer: 'p-2 sm:px-2' }">
                                 <div v-if="data" class="flex flex-col gap-2">
                                     <div class="inline-flex items-center justify-between gap-2">
                                         <p class="shrink-0 text-lg font-medium">
-                                            {{ data?.approvedCount }}/{{ data?.requiredCount }} Approvals
+                                            {{ data?.approvedCount }}/{{ data?.requiredCount }} {{ $t('common.approvals') }}
                                         </p>
 
                                         <UTooltip :text="$t('common.refresh')">
@@ -144,7 +129,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                         </div>
 
                         <div class="basis-3/4">
-                            <ApprovalTaskList :document-id="documentId">
+                            <TaskList :document-id="documentId" :policy-id="data?.id ?? 0">
                                 <template #header>
                                     <UButton
                                         :disabled="!data"
@@ -154,7 +139,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         @click="taskFormDrawer.open({ policyId: data?.id ?? 0 })"
                                     />
                                 </template>
-                            </ApprovalTaskList>
+                            </TaskList>
                         </div>
                     </template>
                 </div>
@@ -162,23 +147,24 @@ const taskFormDrawer = overlay.create(TaskForm);
         </template>
 
         <template #footer>
-            <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col">
+            <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
+                <UButtonGroup class="w-full flex-1">
+                    <TaskDecideDrawer :document-id="documentId" :policy-id="data?.id ?? 0" :approve="true">
+                        <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
+                    </TaskDecideDrawer>
+
+                    <TaskDecideDrawer :document-id="documentId" :policy-id="data?.id ?? 0" :approve="false">
+                        <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
+                    </TaskDecideDrawer>
+                </UButtonGroup>
+
                 <UButtonGroup class="w-full flex-1">
                     <UButton
-                        color="success"
-                        icon="i-mdi-check-bold"
+                        class="flex-1"
+                        color="neutral"
                         block
-                        size="lg"
-                        :label="$t('common.approve')"
-                        @click="() => decideApproval(true)"
-                    />
-                    <UButton
-                        color="red"
-                        icon="i-mdi-close-bold"
-                        block
-                        size="lg"
-                        :label="$t('common.decline')"
-                        @click="() => decideApproval(false)"
+                        :label="$t('common.close', 1)"
+                        @click="$emit('close', false)"
                     />
                 </UButtonGroup>
             </div>

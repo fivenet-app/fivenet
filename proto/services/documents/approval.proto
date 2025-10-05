@@ -45,7 +45,10 @@ message ApprovalTaskSeed {
   int32 minimum_grade = 3;
 
   // Only for JOB tasks; number of PENDING slots to ensure (>=1)
-  int32 slots = 4;
+  int32 slots = 4 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
   // Optional default due date for created slots
   optional resources.timestamp.Timestamp due_at = 5;
   // Optional note set on created tasks
@@ -108,11 +111,12 @@ message RevokeApprovalResponse {
 }
 
 message DecideApprovalRequest {
-  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
-  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
 
-  resources.documents.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
-  string comment = 4 [(buf.validate.field).string.max_len = 500];
+  resources.documents.ApprovalTaskStatus new_status = 4 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  string comment = 5 [(buf.validate.field).string.max_len = 500];
 }
 
 message DecideApprovalResponse {

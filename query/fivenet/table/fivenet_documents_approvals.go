@@ -84,7 +84,7 @@ func newFivenetDocumentsApprovalsTableImpl(schemaName, tableName, alias string) 
 		RevokedAtColumn    = mysql.TimestampColumn("revoked_at")
 		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
 		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
-		defaultColumns     = mysql.ColumnList{}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsApprovalsTable{

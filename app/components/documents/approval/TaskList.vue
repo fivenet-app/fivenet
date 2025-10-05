@@ -5,11 +5,12 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
-import type { ListApprovalTasksResponse } from '~~/gen/ts/services/documents/approval';
+import type { DeleteApprovalTasksResponse, ListApprovalTasksResponse } from '~~/gen/ts/services/documents/approval';
 import { approvalTaskStatusToColor } from './helpers';
 
 const props = defineProps<{
     documentId: number;
+    policyId: number;
 }>();
 
 const approvalClient = await getDocumentsApprovalClient();
@@ -28,6 +29,24 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
 
     return response;
 }
+
+async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
+    try {
+        const call = approvalClient.deleteApprovalTasks({
+            policyId: props.policyId,
+            taskIds: [id],
+            deleteAllPending: false,
+        });
+        const { response } = await call;
+
+        await refresh();
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
 </script>
 
 <template>
@@ -40,19 +59,28 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
 
                 <slot name="header" />
 
-                <UButton variant="link" icon="i-mdi-refresh" @click="() => refresh()" />
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton variant="link" icon="i-mdi-refresh" @click="() => refresh()" />
+                </UTooltip>
             </div>
         </template>
 
         <div>
-            <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.approvals')])" />
+            <DataPendingBlock
+                v-if="isRequestPending(status)"
+                :message="$t('common.loading', [$t('components.documents.approval.tasks')])"
+            />
             <DataErrorBlock
                 v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.approvals')])"
+                :title="$t('common.unable_to_load', [$t('components.documents.approval.tasks')])"
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="data?.tasks.length === 0" icon="i-mdi-approval" :type="$t('common.task', 2)" />
+            <DataNoDataBlock
+                v-else-if="data?.tasks.length === 0"
+                icon="i-mdi-approval"
+                :type="$t('components.documents.approval.tasks')"
+            />
 
             <ul v-else class="divide-y divide-default" role="list">
                 <li
@@ -60,8 +88,8 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
                     :key="task.id"
                     class="relative flex justify-between border-default p-2 hover:border-primary-500/25 hover:bg-primary-100/50 sm:px-4 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10"
                 >
-                    <div class="flex min-w-0 gap-x-2">
-                        <div class="min-w-0 flex-auto">
+                    <div class="flex min-w-0 flex-1 gap-x-2">
+                        <div class="min-w-0 flex-1 flex-auto">
                             <p class="text-sm leading-6 font-semibold text-toned">
                                 <span class="absolute inset-x-0 -top-px bottom-0" />
                                 <span class="inline-flex items-center gap-2 text-highlighted">
@@ -71,9 +99,25 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
                                     />
 
                                     <CitizenInfoPopover v-if="task.userId" :user="task.user" :user-id="task.userId" />
-                                    <span v-else> {{ task.jobLabel }} ({{ task.jobGradeLabel ?? task.minimumGrade }}) </span>
+                                    <div v-else class="inline-flex gap-1">
+                                        <span>{{ task.jobLabel }}</span>
+                                        -
+                                        <span>{{ task.jobGradeLabel ?? task.minimumGrade }}</span>
+                                    </div>
                                 </span>
                             </p>
+                            <p class="inline-flex gap-1 text-xs leading-6 font-semibold text-toned">
+                                <span class="font-semibold">{{ $t('common.comment') }}:</span>
+                                <span>
+                                    {{ task.comment || $t('common.no_comment') }}
+                                </span>
+                            </p>
+                        </div>
+
+                        <div class="inline-flex items-center gap-2">
+                            <UTooltip :text="$t('common.remove')">
+                                <UButton icon="i-mdi-trash-can" color="red" variant="link" @click="removeTask(task.id)" />
+                            </UTooltip>
                         </div>
                     </div>
                 </li>
