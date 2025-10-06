@@ -23,7 +23,7 @@ const { data, status, error, refresh } = useLazyAsyncData(
 async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
     const call = approvalClient.listApprovalTasks({
         documentId: props.documentId,
-        statuses: [],
+        statuses: [ApprovalTaskStatus.PENDING, ApprovalTaskStatus.EXPIRED, ApprovalTaskStatus.CANCELLED],
     });
     const { response } = await call;
 
@@ -57,7 +57,7 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                     {{ $t('components.documents.approval.tasks') }}
                 </h3>
 
-                <slot name="header" />
+                <slot name="header" :refresh="refresh" />
 
                 <UTooltip :text="$t('common.refresh')">
                     <UButton variant="link" icon="i-mdi-refresh" @click="() => refresh()" />
@@ -99,11 +99,12 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                                     />
 
                                     <CitizenInfoPopover v-if="task.userId" :user="task.user" :user-id="task.userId" />
-                                    <div v-else class="inline-flex gap-1">
-                                        <span>{{ task.jobLabel }}</span>
+                                    <p v-else>
+                                        {{ task.jobLabel }}
                                         -
-                                        <span>{{ task.jobGradeLabel ?? task.minimumGrade }}</span>
-                                    </div>
+                                        {{ task.jobGradeLabel ?? task.minimumGrade }}
+                                        ({{ $t('common.number') }}: {{ task.slotNo }})
+                                    </p>
                                 </span>
                             </p>
                             <p class="inline-flex gap-1 text-xs leading-6 font-semibold text-toned">

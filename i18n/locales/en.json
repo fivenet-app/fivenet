@@ -42,6 +42,12 @@
             },
             "categories": {
                 "title": "Document Categories"
+            },
+            "approvals": {
+                "title": "Approval Tasks"
+            },
+            "signatures": {
+                "title": "Signature Tasks"
             }
         },
         "notfound": {
@@ -714,7 +720,10 @@
         "continue": "Continue",
         "policy": "Policy",
         "task": "Task | Tasks",
-        "no_comment": "No comment provided."
+        "no_comment": "No comment provided.",
+        "declined": "Declined",
+        "approval": "No Approvals | {n} Approval | {n} Approvals",
+        "revoke": "Revoke"
     },
     "components": {
         "partials": {
@@ -2238,7 +2247,15 @@
             },
             "ErrDocOwnerFailed": "You need to have edit access to the document!",
             "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
-            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!"
+            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!",
+            "ErrApprovalTaskAlreadyHandled": {
+                "title": "Approval task already handled!",
+                "content": "This approval task has already been approved/declined."
+            },
+            "ErrSigningTaskAlreadyHandled": {
+                "title": "Signing task already handled!",
+                "content": "This signing task has already been signed/declined."
+            }
         },
         "LivemapService": {
             "ErrStreamFailed": "Failed to stream Map data!",
@@ -2538,6 +2555,12 @@
                 "DECLINED": "Declined",
                 "EXPIRED": "Expired",
                 "CANCELLED": "Cancelled"
+            },
+            "ApprovalStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "APPROVED": "Approved",
+                "DECLINED": "Declined",
+                "REVOKED": "Revoked"
             },
             "SignatureType": {
                 "UNSPECIFIED": "Unspecified",

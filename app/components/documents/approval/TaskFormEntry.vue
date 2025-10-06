@@ -42,17 +42,21 @@ const _schema = z.union([
 
 export type Task = z.output<typeof _schema>;
 
-watch(task, () => {
-    if (task.value.ruleKind === ApprovalAssigneeKind.USER) {
-        task.value.job = undefined;
-        task.value.minimumGrade = undefined;
+watch(
+    task,
+    () => {
+        if (task.value.ruleKind === ApprovalAssigneeKind.USER) {
+            task.value.job = undefined;
+            task.value.minimumGrade = undefined;
 
-        task.value.userId = task.value.user?.userId ?? task.value.userId;
-    } else if (task.value.ruleKind === ApprovalAssigneeKind.JOB_GRADE) {
-        task.value.userId = 0;
-        task.value.user = undefined;
-    }
-});
+            task.value.userId = task.value.user?.userId ?? task.value.userId;
+        } else if (task.value.ruleKind === ApprovalAssigneeKind.JOB_GRADE) {
+            task.value.userId = 0;
+            task.value.user = undefined;
+        }
+    },
+    { deep: true },
+);
 </script>
 
 <template>
@@ -78,7 +82,7 @@ watch(task, () => {
                 v-if="task.ruleKind === ApprovalAssigneeKind.USER"
                 name="ruleKind"
                 class="flex-1"
-                :label="$t('components.documents.approval.policy_form.rule_kind')"
+                :label="$t('common.target')"
             >
                 <SelectMenu
                     v-model="task.user"
@@ -86,7 +90,7 @@ watch(task, () => {
                         async (q: string) => {
                             const users = await completorStore.completeCitizens({
                                 search: q,
-                                userIds: [task.userId],
+                                userIds: task.userId ? [task.userId] : [],
                             });
                             return users.filter((u) => u.userId !== activeChar?.userId);
                         }

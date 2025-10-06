@@ -205,7 +205,7 @@ func (s *Server) UpsertSignatureTasks(
 		snap = req.GetSnapshotDate().AsTime()
 	}
 
-	tTasks := table.FivenetDocumentsSignatureTasks
+	tSignatureTasks := table.FivenetDocumentsSignatureTasks
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -222,14 +222,14 @@ func (s *Server) UpsertSignatureTasks(
 			// ensure one USER task exists
 			var cnt struct{ C int32 }
 			if err := mysql.
-				SELECT(mysql.COUNT(tTasks.ID).AS("C")).
-				FROM(tTasks).
-				WHERE(
-					tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())).
-						AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap))).
-						AND(tTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_USER)))).
-						AND(tTasks.UserID.EQ(mysql.Int32(seed.GetUserId()))),
-				).
+				SELECT(mysql.COUNT(tSignatureTasks.ID).AS("C")).
+				FROM(tSignatureTasks).
+				WHERE(mysql.AND(
+					tSignatureTasks.PolicyID.EQ(mysql.Int64(pol.GetId())),
+					tSignatureTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
+					tSignatureTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_USER))),
+					tSignatureTasks.UserID.EQ(mysql.Int32(seed.GetUserId())),
+				)).
 				LIMIT(1).
 				QueryContext(ctx, tx, &cnt); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -238,13 +238,14 @@ func (s *Server) UpsertSignatureTasks(
 				ensured++
 				continue
 			}
+
 			// insert USER task with slot_no=1
-			if _, err := tTasks.
+			if _, err := tSignatureTasks.
 				INSERT(
-					tTasks.DocumentID, tTasks.SnapshotDate, tTasks.PolicyID,
-					tTasks.AssigneeKind, tTasks.UserID, tTasks.SlotNo,
-					tTasks.Status, tTasks.Comment, tTasks.DueAt,
-					tTasks.CreatorID, tTasks.CreatorJob,
+					tSignatureTasks.DocumentID, tSignatureTasks.SnapshotDate, tSignatureTasks.PolicyID,
+					tSignatureTasks.AssigneeKind, tSignatureTasks.UserID, tSignatureTasks.SlotNo,
+					tSignatureTasks.Status, tSignatureTasks.Comment, tSignatureTasks.DueAt,
+					tSignatureTasks.CreatorID, tSignatureTasks.CreatorJob,
 				).
 				VALUES(
 					pol.GetDocumentId(), snap, pol.GetId(),
@@ -264,19 +265,19 @@ func (s *Server) UpsertSignatureTasks(
 		if slots <= 0 {
 			slots = 1
 		}
-		// count existing PENDING slots for this target
+		// Count existing PENDING slots for this target
 		var have struct{ C int32 }
 		if err := mysql.
-			SELECT(mysql.COUNT(tTasks.ID).AS("C")).
-			FROM(tTasks).
-			WHERE(
-				tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())).
-					AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap))).
-					AND(tTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_JOB_GRADE)))).
-					AND(tTasks.Job.EQ(mysql.String(seed.GetJob()))).
-					AND(tTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade()))).
-					AND(tTasks.Status.EQ(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING)))),
-			).
+			SELECT(mysql.COUNT(tSignatureTasks.ID).AS("C")).
+			FROM(tSignatureTasks).
+			WHERE(mysql.AND(
+				tSignatureTasks.PolicyID.EQ(mysql.Int64(pol.GetId())),
+				tSignatureTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
+				tSignatureTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_JOB_GRADE))),
+				tSignatureTasks.Job.EQ(mysql.String(seed.GetJob())),
+				tSignatureTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade())),
+				tSignatureTasks.Status.EQ(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING))),
+			)).
 			LIMIT(1).
 			QueryContext(ctx, tx, &have); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -285,13 +286,22 @@ func (s *Server) UpsertSignatureTasks(
 			ensured++
 			continue
 		}
+
 		// insert missing [have.C+1 .. slots]
-		ins := tTasks.
+		ins := tSignatureTasks.
 			INSERT(
-				tTasks.DocumentID, tTasks.SnapshotDate, tTasks.PolicyID,
-				tTasks.AssigneeKind, tTasks.Job, tTasks.MinimumGrade, tTasks.SlotNo,
-				tTasks.Status, tTasks.Comment, tTasks.DueAt,
-				tTasks.CreatorID, tTasks.CreatorJob,
+				tSignatureTasks.DocumentID,
+				tSignatureTasks.SnapshotDate,
+				tSignatureTasks.PolicyID,
+				tSignatureTasks.AssigneeKind,
+				tSignatureTasks.Job,
+				tSignatureTasks.MinimumGrade,
+				tSignatureTasks.SlotNo,
+				tSignatureTasks.Status,
+				tSignatureTasks.Comment,
+				tSignatureTasks.DueAt,
+				tSignatureTasks.CreatorID,
+				tSignatureTasks.CreatorJob,
 			)
 		for slot := have.C + 1; slot <= slots; slot++ {
 			ins = ins.
@@ -714,8 +724,7 @@ func (s *Server) DecideSignature(
 			return nil, errorsdocuments.ErrDocAccessViewDenied
 		}
 		if decidedTask.GetStatus() != documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING {
-			// return nil, errorsdocuments.ErrTaskAlreadyHandled
-			return nil, errorsdocuments.ErrFailedQuery
+			return nil, errorsdocuments.ErrSigningTaskAlreadyHandled
 		}
 
 		// TODO enforce eligibility (user_id match OR job/min_grade >=)
@@ -780,11 +789,11 @@ func (s *Server) DecideSignature(
 			tSignatures.RevokedAt,
 		).
 		FROM(tSignatures).
-		WHERE(
-			tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())).
-				AND(tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap))).
-				AND(tSignatures.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
-		).
+		WHERE(mysql.AND(
+			tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())),
+			tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap)),
+			tSignatures.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+		)).
 		LIMIT(1).
 		QueryContext(ctx, tx, newSig); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -945,21 +954,21 @@ func (s *Server) RecomputeSignatureStatus(
 	tSignatures := table.FivenetDocumentsSignatures
 	tSigPolicy := table.FivenetDocumentsSignaturePolicies
 
-	// required total
+	// Required total
 	var totalReq int64
 	if err := tSigPolicy.
 		SELECT(mysql.COUNT(tSigPolicy.ID)).
 		FROM(tSigPolicy).
-		WHERE(
-			tSigPolicy.DocumentID.EQ(mysql.Int(req.GetDocumentId())).
-				// .AND(tSigPolicy.SnapshotDate.EQ(mysql.TimestampT(req.GetSnapshotDate().AsTime()))).
-				AND(tSigPolicy.Required.EQ(mysql.Bool(true))),
-		).
+		WHERE(mysql.AND(
+			tSigPolicy.DocumentID.EQ(mysql.Int(req.GetDocumentId())),
+			// .AND(tSigPolicy.SnapshotDate.EQ(mysql.TimestampT(req.GetSnapshotDate().AsTime()))).
+			tSigPolicy.Required.EQ(mysql.Bool(true)),
+		)).
 		QueryContext(ctx, s.db, &totalReq); err != nil {
 		return nil, err
 	}
 
-	// collected valid
+	// Collected valid
 	var collectedValid int64
 	if err := tSignatures.
 		SELECT(mysql.COUNT(tSignatures.ID)).
@@ -972,6 +981,8 @@ func (s *Server) RecomputeSignatureStatus(
 		QueryContext(ctx, s.db, &collectedValid); err != nil {
 		return nil, err
 	}
+
+	// TODO update signature policy and meta table
 
 	requiredRemaining := max(totalReq-collectedValid, 0)
 
@@ -996,27 +1007,33 @@ func (s *Server) recomputeSignaturePolicyTx(
 	tSignatures := table.FivenetDocumentsSignatures
 	tDocumentsMeta := table.FivenetDocumentsMeta
 
-	// required total: count of required policies for this doc & snapshot
+	// Required total: count of required policies for this doc & snapshot
 	// (If you later support multiple signature policies per doc, you may want this across all policies.)
-	var reqTotal struct{ N int32 }
+	var reqTotal struct {
+		Required int32
+		Count    int32
+	}
 	if err := tSignaturePolicy.
 		SELECT(
-			mysql.Raw("SUM(required = 1)").AS("N"),
+			mysql.Raw("SUM(required = 1)").AS("required"),
+			mysql.COUNT(tSignaturePolicy.ID).AS("count"),
 		).
 		FROM(tSignaturePolicy).
-		WHERE(
-			tSignaturePolicy.DocumentID.EQ(mysql.Int64(documentID)).
-				AND(tSignaturePolicy.SnapshotDate.EQ(mysql.TimestampT(snap))),
-		).
+		WHERE(mysql.AND(
+			tSignaturePolicy.DocumentID.EQ(mysql.Int64(documentID)),
+			tSignaturePolicy.SnapshotDate.EQ(mysql.TimestampT(snap)),
+		)).
 		QueryContext(ctx, tx, &reqTotal); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	// collected valid for this policy+snapshot
-	var collected struct{ N int32 }
+	// Collected valid for this policy+snapshot
+	var collected struct {
+		Count int32
+	}
 	if err := tSignatures.
 		SELECT(
-			mysql.COUNT(tSignatures.ID).AS("N"),
+			mysql.COUNT(tSignatures.ID).AS("count"),
 		).
 		FROM(tSignatures).
 		WHERE(mysql.AND(
@@ -1028,8 +1045,8 @@ func (s *Server) recomputeSignaturePolicyTx(
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	requiredRemaining := max(reqTotal.N-collected.N, 0)
-	docSigned := (reqTotal.N > 0 && collected.N >= reqTotal.N)
+	requiredRemaining := max(reqTotal.Required-collected.Count, 0)
+	docSigned := (reqTotal.Required > 0 && collected.Count >= reqTotal.Required)
 
 	// update meta rollups (document-level)
 	if _, err := tDocumentsMeta.
@@ -1046,16 +1063,16 @@ func (s *Server) recomputeSignaturePolicyTx(
 			documentID,
 			mysql.CURRENT_TIMESTAMP(),
 			docSigned,
-			reqTotal.N,
-			collected.N,
+			reqTotal.Required,
+			collected.Count,
 			requiredRemaining,
-			1, // if you later have multiple policies, compute actual active count
+			reqTotal.Count,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tDocumentsMeta.RecomputedAt.SET(mysql.CURRENT_TIMESTAMP()),
 			tDocumentsMeta.Signed.SET(mysql.Bool(docSigned)),
-			tDocumentsMeta.SigRequiredTotal.SET(mysql.Int32(reqTotal.N)),
-			tDocumentsMeta.SigCollectedValid.SET(mysql.Int32(collected.N)),
+			tDocumentsMeta.SigRequiredTotal.SET(mysql.Int32(reqTotal.Required)),
+			tDocumentsMeta.SigCollectedValid.SET(mysql.Int32(collected.Count)),
 			tDocumentsMeta.SigRequiredRemaining.SET(mysql.Int32(requiredRemaining)),
 			tDocumentsMeta.SigPoliciesActive.SET(mysql.Int32(1)),
 		).

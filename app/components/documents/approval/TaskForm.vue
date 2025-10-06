@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { ApprovalAssigneeKind, type ApprovalTask } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TaskFormEntry from './TaskFormEntry.vue';
@@ -15,9 +15,9 @@ const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
-const tasks = defineModel<ApprovalTask[]>();
-
 const { game } = useAppConfig();
+
+const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
@@ -56,27 +56,20 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    tasks: [],
+    tasks: [
+        {
+            ruleKind: ApprovalAssigneeKind.JOB_GRADE,
+            userId: 0,
+            job: activeChar.value?.job
+                ? { name: activeChar.value.job, label: activeChar.value.jobLabel ?? activeChar.value.job, grades: [] }
+                : undefined,
+            minimumGrade: activeChar.value?.jobGrade
+                ? { grade: activeChar.value.jobGrade, label: `${activeChar.value.jobGrade}`, jobName: activeChar.value.job }
+                : undefined,
+            slots: 1,
+        },
+    ],
 });
-
-function setFromProps(): void {
-    if (tasks.value && tasks.value.length > 0) {
-        state.tasks = tasks.value.map((t) => ({
-            ruleKind: t.job ? ApprovalAssigneeKind.JOB_GRADE : ApprovalAssigneeKind.USER,
-            userId: t.userId ?? 0,
-            job: { name: t.job ?? '', label: t.jobLabel ?? '', grades: [] },
-            minimumGrade: { jobName: t.job ?? '', grade: t.minimumGrade ?? 0, label: t.jobGradeLabel ?? '' },
-            slots: t.slotNo,
-            dueAt: t.dueAt ? toDate(t.dueAt) : undefined,
-            comment: t.comment,
-        }));
-    } else {
-        state.tasks = [];
-    }
-}
-
-setFromProps();
-watch(tasks, () => setFromProps());
 
 async function upsertApprovalTasks(values: Schema): Promise<void> {
     try {
@@ -93,7 +86,7 @@ async function upsertApprovalTasks(values: Schema): Promise<void> {
         });
         await call;
 
-        emits('close', false);
+        emits('close', true);
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -164,6 +157,7 @@ onBeforeMount(async () => listJobs());
                                         <UButton
                                             color="red"
                                             class="flex-initial"
+                                            :class="idx === 0 ? 'pointer-events-none opacity-0' : ''"
                                             icon="i-mdi-close"
                                             :label="$t('components.access.remove_entry')"
                                             :ui="{ label: 'md:hidden' }"
@@ -174,11 +168,11 @@ onBeforeMount(async () => listJobs());
                             </div>
 
                             <div>
-                                <UTooltip :text="$t('components.access.add_entry')">
+                                <UTooltip :text="$t('common.add')">
                                     <UButton
                                         class="w-full justify-center md:w-auto"
                                         icon="i-mdi-plus"
-                                        :label="$t('components.access.add_entry')"
+                                        :label="$t('common.add')"
                                         :ui="{ label: 'md:hidden' }"
                                         @click="addNewTask"
                                     />

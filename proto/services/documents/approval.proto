@@ -14,6 +14,7 @@ message ListApprovalPoliciesRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
 }
 
+// Only one policy per document is supported currently.
 message ListApprovalPoliciesResponse {
   resources.documents.ApprovalPolicy policy = 1;
 }
@@ -88,13 +89,14 @@ message DeleteApprovalTasksResponse {}
 // List approvals (artifacts) for a policy/snapshot.
 // If snapshot_date is unset, server defaults to policy.snapshot_date.
 message ListApprovalsRequest {
-  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
-  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
-  optional resources.timestamp.Timestamp snapshot_date = 3;
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 4;
   // Optional filters
-  optional resources.documents.ApprovalStatus status = 4;
+  optional resources.documents.ApprovalStatus status = 5;
   // Filter by signer
-  optional int32 user_id = 5;
+  optional int32 user_id = 6;
 }
 
 message ListApprovalsResponse {

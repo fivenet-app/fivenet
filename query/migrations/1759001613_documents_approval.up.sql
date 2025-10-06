@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approval_policies` (
   `on_edit_behavior` smallint(2) NOT NULL,
   `rule_kind` SMALLINT(2) DEFAULT 1,
   `required_count` int NOT NULL DEFAULT 1,
-  `quorum_any` int DEFAULT NULL,
   `due_at` datetime(3) DEFAULT NULL,
 
   `assigned_count` int NOT NULL DEFAULT 0,

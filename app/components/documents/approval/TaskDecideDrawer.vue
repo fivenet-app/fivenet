@@ -40,7 +40,7 @@ async function decideApproval(approve: boolean) {
 
         state.reason = '';
 
-        emits('close', false);
+        emits('close', true);
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },

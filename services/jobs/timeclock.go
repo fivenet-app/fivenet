@@ -121,7 +121,7 @@ func (s *Server) ListTimeclock(
 	// User mode doesn't change the count query
 	countStmt := tTimeClock.
 		SELECT(
-			mysql.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").
+			mysql.COUNT(mysql.RawString("DISTINCT `timeclock_entry`.`date`, `timeclock_entry`.`user_id`")).
 				AS("data_count.total"),
 		).
 		FROM(

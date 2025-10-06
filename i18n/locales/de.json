@@ -42,6 +42,12 @@
             },
             "categories": {
                 "title": "Dokumentkategorien"
+            },
+            "approvals": {
+                "title": "Genehmigungsaufgaben"
+            },
+            "signatures": {
+                "title": "Signaturaufgaben"
             }
         },
         "notfound": {
@@ -714,7 +720,10 @@
         "continue": "Fortfahren",
         "policy": "Richtlinie",
         "task": "Aufgabe | Aufgaben",
-        "no_comment": "Kein Kommentar angegeben."
+        "no_comment": "Kein Kommentar angegeben.",
+        "declined": "Abgelehnt",
+        "approval": "Keine Genehmigung | {n} Genehmigung | {n} Genehmigungen",
+        "revoke": "Widerrufen"
     },
     "components": {
         "partials": {
@@ -2237,7 +2246,15 @@
             },
             "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
             "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
-            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!"
+            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!",
+            "ErrApprovalTaskAlreadyHandled": {
+                "title": "Genehmigungsaufgabe bereits bearbeitet!",
+                "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
+            },
+            "ErrSigningTaskAlreadyHandled": {
+                "title": "Signaturaufgabe bereits bearbeitet!",
+                "content": "Diese Signaturaufgabe wurde bereits unterschrieben/abgelehnt."
+            }
         },
         "LivemapService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
@@ -2537,6 +2554,12 @@
                 "DECLINED": "Abgelehnt",
                 "EXPIRED": "Abgelaufen",
                 "CANCELLED": "Storniert"
+            },
+            "ApprovalStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "APPROVED": "Genehmigt",
+                "DECLINED": "Abgelehnt",
+                "REVOKED": "Widerrufen"
             },
             "SignatureType": {
                 "UNSPECIFIED": "Unbestimmt",

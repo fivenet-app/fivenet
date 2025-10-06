@@ -724,13 +724,14 @@ func (*DeleteSignatureTasksResponse) Descriptor() ([]byte, []int) {
 // If snapshot_date is unset, server defaults to policy.snapshot_date.
 type ListSignaturesRequest struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId     int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
-	TaskId       *int64                 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	PolicyId     *int64                 `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	TaskId       *int64                 `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	// Optional filters
-	Status *documents.SignatureStatus `protobuf:"varint,4,opt,name=status,proto3,enum=resources.documents.SignatureStatus,oneof" json:"status,omitempty"`
+	Status *documents.SignatureStatus `protobuf:"varint,5,opt,name=status,proto3,enum=resources.documents.SignatureStatus,oneof" json:"status,omitempty"`
 	// Filter by signer
-	UserId        *int32 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserId        *int32 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -765,9 +766,16 @@ func (*ListSignaturesRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ListSignaturesRequest) GetPolicyId() int64 {
+func (x *ListSignaturesRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
+	}
+	return 0
+}
+
+func (x *ListSignaturesRequest) GetPolicyId() int64 {
+	if x != nil && x.PolicyId != nil {
+		return *x.PolicyId
 	}
 	return 0
 }
@@ -1643,13 +1651,17 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12\x19\n" +
 	"\btask_ids\x18\x02 \x03(\x03R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1e\n" +
-	"\x1cDeleteSignatureTasksResponse\"\xb2\x02\n" +
-	"\x15ListSignaturesRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12\x1c\n" +
-	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12H\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12A\n" +
-	"\x06status\x18\x04 \x01(\x0e2$.resources.documents.SignatureStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x05 \x01(\x05H\x03R\x06userId\x88\x01\x01B\n" +
+	"\x1cDeleteSignatureTasksResponse\"\xe6\x02\n" +
+	"\x15ListSignaturesRequest\x12\x1f\n" +
+	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"documentId\x12 \n" +
+	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
+	"\atask_id\x18\x03 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12H\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\fsnapshotDate\x88\x01\x01\x12A\n" +
+	"\x06status\x18\x05 \x01(\x0e2$.resources.documents.SignatureStatusH\x03R\x06status\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\x06 \x01(\x05H\x04R\x06userId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_policy_idB\n" +
 	"\n" +
 	"\b_task_idB\x10\n" +
 	"\x0e_snapshot_dateB\t\n" +

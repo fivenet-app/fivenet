@@ -1,10 +1,10 @@
 import type { BadgeProps } from '@nuxt/ui';
-import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalStatus, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
 
 export function approvalTaskStatusToColor(status: ApprovalTaskStatus): BadgeProps['color'] {
     switch (status) {
         case ApprovalTaskStatus.APPROVED:
-            return 'green';
+            return 'success';
 
         case ApprovalTaskStatus.CANCELLED:
             return 'warning';
@@ -17,6 +17,23 @@ export function approvalTaskStatusToColor(status: ApprovalTaskStatus): BadgeProp
 
         case ApprovalTaskStatus.UNSPECIFIED:
         case ApprovalTaskStatus.PENDING:
+        default:
+            return 'info';
+    }
+}
+
+export function approvalStatusToColor(status: ApprovalStatus): BadgeProps['color'] {
+    switch (status) {
+        case ApprovalStatus.APPROVED:
+            return 'success';
+
+        case ApprovalStatus.REVOKED:
+            return 'warning';
+
+        case ApprovalStatus.DECLINED:
+            return 'error';
+
+        case ApprovalStatus.UNSPECIFIED:
         default:
             return 'info';
     }

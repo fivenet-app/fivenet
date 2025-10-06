@@ -301,6 +301,7 @@ type CitizenLocations struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	JobGrade      *int32                 `protobuf:"varint,6,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	Coords        *livemap.Coords        `protobuf:"bytes,3,opt,name=coords,proto3" json:"coords,omitempty"`
 	Hidden        bool                   `protobuf:"varint,4,opt,name=hidden,proto3" json:"hidden,omitempty"`
 	Remove        bool                   `protobuf:"varint,5,opt,name=remove,proto3" json:"remove,omitempty"`
@@ -350,6 +351,13 @@ func (x *CitizenLocations) GetJob() string {
 		return x.Job
 	}
 	return ""
+}
+
+func (x *CitizenLocations) GetJobGrade() int32 {
+	if x != nil && x.JobGrade != nil {
+		return *x.JobGrade
+	}
+	return 0
 }
 
 func (x *CitizenLocations) GetCoords() *livemap.Coords {
@@ -533,15 +541,18 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"\x05users\x18\x01 \x03(\v2 .resources.sync.CitizenLocationsR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
 	"\n" +
-	"_clear_all\"\xa7\x01\n" +
+	"_clear_all\"\xd7\x01\n" +
 	"\x10CitizenLocations\x12\x1e\n" +
 	"\n" +
 	"identifier\x18\x01 \x01(\tR\n" +
 	"identifier\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x121\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
+	"\tjob_grade\x18\x06 \x01(\x05H\x00R\bjobGrade\x88\x01\x01\x121\n" +
 	"\x06coords\x18\x03 \x01(\v2\x19.resources.livemap.CoordsR\x06coords\x12\x16\n" +
 	"\x06hidden\x18\x04 \x01(\bR\x06hidden\x12\x16\n" +
-	"\x06remove\x18\x05 \x01(\bR\x06remove\"(\n" +
+	"\x06remove\x18\x05 \x01(\bR\x06removeB\f\n" +
+	"\n" +
+	"_job_grade\"(\n" +
 	"\vDeleteUsers\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x05R\auserIds\"(\n" +
 	"\x0eDeleteVehicles\x12\x16\n" +
@@ -605,6 +616,7 @@ func file_resources_sync_data_proto_init() {
 		return
 	}
 	file_resources_sync_data_proto_msgTypes[5].OneofWrappers = []any{}
+	file_resources_sync_data_proto_msgTypes[6].OneofWrappers = []any{}
 	file_resources_sync_data_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

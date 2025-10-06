@@ -45,8 +45,10 @@ func (s *Server) CompleteCitizens(
 
 		search := dbutils.PrepareForLikeSearch(req.GetSearch())
 		if search != "" {
-			condition = mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
-				LIKE(mysql.String(search))
+			condition = condition.AND(
+				mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
+					LIKE(mysql.String(search)),
+			)
 		}
 	} else {
 		userIds := []mysql.Expression{}

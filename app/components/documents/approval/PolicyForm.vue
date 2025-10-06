@@ -43,7 +43,7 @@ const onEditBehaviors = computed(() => [
 const schema = z.object({
     ruleKind: z.enum(ApprovalRuleKind).default(ApprovalRuleKind.REQUIRE_ALL),
     onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
-    requiredCount: z.number().min(0).max(10).default(0),
+    requiredCount: z.number().min(1).max(10).default(2),
 });
 
 type Schema = z.output<typeof schema>;
@@ -64,7 +64,8 @@ function setFromProps(): void {
 
     state.ruleKind = policy.value.ruleKind;
     state.onEditBehavior = policy.value.onEditBehavior;
-    state.requiredCount = policy.value.requiredCount ?? 0;
+    state.requiredCount =
+        policy.value.requiredCount === undefined || policy.value.requiredCount < 0 ? 1 : policy.value.requiredCount;
 }
 
 setFromProps();

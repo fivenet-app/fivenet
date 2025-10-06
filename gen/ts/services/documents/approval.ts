@@ -28,6 +28,8 @@ export interface ListApprovalPoliciesRequest {
     documentId: number;
 }
 /**
+ * Only one policy per document is supported currently.
+ *
  * @generated from protobuf message services.documents.ListApprovalPoliciesResponse
  */
 export interface ListApprovalPoliciesResponse {
@@ -198,27 +200,31 @@ export interface DeleteApprovalTasksResponse {
  */
 export interface ListApprovalsRequest {
     /**
-     * @generated from protobuf field: int64 policy_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    policyId: number;
+    documentId: number;
     /**
-     * @generated from protobuf field: optional int64 task_id = 2
+     * @generated from protobuf field: optional int64 policy_id = 2
+     */
+    policyId?: number;
+    /**
+     * @generated from protobuf field: optional int64 task_id = 3
      */
     taskId?: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 3
+     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 4
      */
     snapshotDate?: Timestamp;
     /**
      * Optional filters
      *
-     * @generated from protobuf field: optional resources.documents.ApprovalStatus status = 4
+     * @generated from protobuf field: optional resources.documents.ApprovalStatus status = 5
      */
     status?: ApprovalStatus;
     /**
      * Filter by signer
      *
-     * @generated from protobuf field: optional int32 user_id = 5
+     * @generated from protobuf field: optional int32 user_id = 6
      */
     userId?: number;
 }
@@ -960,16 +966,17 @@ export const DeleteApprovalTasksResponse = new DeleteApprovalTasksResponse$Type(
 class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
     constructor() {
         super("services.documents.ListApprovalsRequest", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"] },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 4, name: "snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"] },
+            { no: 6, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListApprovalsRequest>): ListApprovalsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = 0;
+        message.documentId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListApprovalsRequest>(this, message, value);
         return message;
@@ -979,19 +986,22 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 policy_id */ 1:
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* optional int64 policy_id */ 2:
                     message.policyId = reader.int64().toNumber();
                     break;
-                case /* optional int64 task_id */ 2:
+                case /* optional int64 task_id */ 3:
                     message.taskId = reader.int64().toNumber();
                     break;
-                case /* optional resources.timestamp.Timestamp snapshot_date */ 3:
+                case /* optional resources.timestamp.Timestamp snapshot_date */ 4:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* optional resources.documents.ApprovalStatus status */ 4:
+                case /* optional resources.documents.ApprovalStatus status */ 5:
                     message.status = reader.int32();
                     break;
-                case /* optional int32 user_id */ 5:
+                case /* optional int32 user_id */ 6:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -1006,21 +1016,24 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
         return message;
     }
     internalBinaryWrite(message: ListApprovalsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 policy_id = 1; */
-        if (message.policyId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.policyId);
-        /* optional int64 task_id = 2; */
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* optional int64 policy_id = 2; */
+        if (message.policyId !== undefined)
+            writer.tag(2, WireType.Varint).int64(message.policyId);
+        /* optional int64 task_id = 3; */
         if (message.taskId !== undefined)
-            writer.tag(2, WireType.Varint).int64(message.taskId);
-        /* optional resources.timestamp.Timestamp snapshot_date = 3; */
+            writer.tag(3, WireType.Varint).int64(message.taskId);
+        /* optional resources.timestamp.Timestamp snapshot_date = 4; */
         if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.ApprovalStatus status = 4; */
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.ApprovalStatus status = 5; */
         if (message.status !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.status);
-        /* optional int32 user_id = 5; */
+            writer.tag(5, WireType.Varint).int32(message.status);
+        /* optional int32 user_id = 6; */
         if (message.userId !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.userId);
+            writer.tag(6, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

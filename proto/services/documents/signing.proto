@@ -100,13 +100,14 @@ message DeleteSignatureTasksResponse {}
 // List signatures (artifacts) for a policy/snapshot.
 // If snapshot_date is unset, server defaults to policy.snapshot_date.
 message ListSignaturesRequest {
-  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
-  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
-  optional resources.timestamp.Timestamp snapshot_date = 3;
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 4;
   // Optional filters
-  optional resources.documents.SignatureStatus status = 4;
+  optional resources.documents.SignatureStatus status = 5;
   // Filter by signer
-  optional int32 user_id = 5;
+  optional int32 user_id = 6;
 }
 
 message ListSignaturesResponse {

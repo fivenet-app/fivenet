@@ -6274,6 +6274,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `identifier` | [string](#string) |  |  |
 | `job` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) | optional |  |
 | `coords` | [resources.livemap.Coords](#resourceslivemapCoords) |  |  |
 | `hidden` | [bool](#bool) |  |  |
 | `remove` | [bool](#bool) |  |  |
@@ -8513,6 +8514,8 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 
 
 ### services.documents.ListApprovalPoliciesResponse
+Only one policy per document is supported currently.
+
 
 
 | Field | Type | Label | Description |
@@ -8553,7 +8556,8 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `status` | [resources.documents.ApprovalStatus](#resourcesdocumentsApprovalStatus) | optional | Optional filters |
@@ -9717,7 +9721,8 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `status` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | optional | Optional filters |
