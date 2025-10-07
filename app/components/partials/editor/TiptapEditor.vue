@@ -32,6 +32,7 @@ import UniqueID from '@tiptap/extension-unique-id';
 import { CharacterCount, Dropcursor, Gapcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
+import AutoJoiner from 'tiptap-extension-auto-joiner';
 import { v4 as uuidv4 } from 'uuid';
 import * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
@@ -216,8 +217,9 @@ const extensions: Extensions = [
         limit: props.limit,
     }),
     Placeholder.configure({
-        placeholder: props.placeholder ?? '',
+        placeholder: () => props.placeholder ?? '',
     }),
+    AutoJoiner,
 ];
 
 if (!props.disableImages) {

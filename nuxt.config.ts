@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from 'nuxt/config';
+
 const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
