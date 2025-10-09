@@ -173,16 +173,10 @@ service ApprovalService {
     };
   }
   rpc UpsertApprovalTasks(UpsertApprovalTasksRequest) returns (UpsertApprovalTasksResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertApprovalPolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc DeleteApprovalTasks(DeleteApprovalTasksRequest) returns (DeleteApprovalTasksResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertApprovalPolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
 
   // Approval
@@ -194,10 +188,7 @@ service ApprovalService {
     };
   }
   rpc RevokeApproval(RevokeApprovalRequest) returns (RevokeApprovalResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertApprovalPolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc DecideApproval(DecideApprovalRequest) returns (DecideApprovalResponse) {
     option (codegen.perms.perms) = {
@@ -207,14 +198,17 @@ service ApprovalService {
     };
   }
   rpc ReopenApprovalTask(ReopenApprovalTaskRequest) returns (ReopenApprovalTaskResponse) {
-    option (codegen.perms.perms) = {enabled: true};
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "RevokeApproval"
+    };
   }
 
   // Helpers
   rpc RecomputeApprovalPolicyCounters(RecomputeApprovalPolicyCountersRequest) returns (RecomputeApprovalPolicyCountersResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "UpsertApprovalPolicy"
+      name: "RevokeApproval"
     };
   }
 }

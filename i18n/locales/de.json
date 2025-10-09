@@ -3097,24 +3097,48 @@
             },
             "ApprovalService": {
                 "category": "Dokumenten-System: Genehmigung",
-                "ReopenApprovalTask": {
-                    "key": "Genehmigung erneut öffnen",
-                    "description": "Eine abgeschlossene Genehmigung erneut öffnen."
-                },
                 "UpsertApprovalPolicy": {
                     "key": "Genehmigungsrichtlinie erstellen oder aktualisieren",
                     "description": "Genehmigungsrichtlinien für Berufe erstellen oder aktualisieren."
+                },
+                "UpsertApprovalTasks": {
+                    "key": "Genehmigungsaufgaben erstellen",
+                    "description": "Erstellen von Genehmigungsaufgaben für ein Dokument."
+                },
+                "DeleteApprovalTasks": {
+                    "key": "Genehmigungsaufgaben löschen",
+                    "description": "Löschen von Genehmigungsaufgaben für ein Dokument."
+                },
+                "RevokeApproval": {
+                    "key": "Genehmigung widerrufen",
+                    "description": "Eine abgeschlossene Genehmigung widerrufen."
                 }
             },
             "SigningService": {
                 "category": "Dokumenten-System: Unterzeichnung",
+                "UpsertSignaturePolicy": {
+                    "key": "Signaturanfrage erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
+                },
                 "DeleteSignaturePolicy": {
                     "key": "Signaturanfrage löschen",
                     "description": "Löschen einer Signaturanfrage."
                 },
-                "UpsertSignaturePolicy": {
-                    "key": "Signaturanfrage erstellen oder aktualisieren",
-                    "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
+                "UpsertSignatureTasks": {
+                    "key": "Signaturaufgaben erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren von Signaturaufgaben für ein Dokument."
+                },
+                "DeleteSignatureTasks": {
+                    "key": "Signaturaufgaben löschen",
+                    "description": "Löschen von Signaturaufgaben für ein Dokument."
+                },
+                "RevokeSignature": {
+                    "key": "Revoke Signature",
+                    "description": "Revoke a given signature."
+                },
+                "ListUsableStamps": {
+                    "key": "Stempel auflisten",
+                    "description": "Auflisten der verfügbaren Stempel."
                 },
                 "UpsertStamp": {
                     "key": "Stempel erstellen oder aktualisieren",

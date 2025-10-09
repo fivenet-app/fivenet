@@ -52,10 +52,7 @@ func (s *Server) ListUsableStamps(
 
 	condition := mysql.AND(
 		deletedAtCond,
-		mysql.OR(
-			tStamp.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-			existsAccess,
-		),
+		existsAccess,
 	)
 
 	countStmt := mysql.
@@ -83,7 +80,6 @@ func (s *Server) ListUsableStamps(
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
-			tStamp.UserID,
 			tStamp.SvgTemplate,
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
@@ -108,7 +104,6 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp,
 		SELECT(
 			tStamp.ID,
 			tStamp.Name,
-			tStamp.UserID,
 			tStamp.SvgTemplate,
 			tStamp.VariantsJSON,
 			tStamp.CreatedAt,
@@ -140,6 +135,15 @@ func (s *Server) UpsertStamp(
 	tStamp := table.FivenetDocumentsSignaturesStamps
 
 	st := req.GetStamp()
+
+	// Stamps are job only!
+	// TODO Ensure that at least the highest grade in the user's job has edit access
+
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	defer tx.Rollback()
 
 	if st.GetId() != 0 {
 		check, err := s.signingStampAccess.CanUserAccessTarget(
@@ -178,24 +182,16 @@ func (s *Server) UpsertStamp(
 		}
 	} else {
 		// Create new stamp in db
-
-		ownerId := mysql.NULL
-		if st.GetOwnerId() > 0 {
-			ownerId = mysql.Int32(st.GetOwnerId())
-		}
-
 		stmt := tStamp.
 			INSERT(
 				tStamp.Name,
 				tStamp.SvgTemplate,
 				tStamp.VariantsJSON,
-				tStamp.UserID,
 			).
 			VALUES(
 				st.GetJob(),
 				st.GetSvgTemplate(),
 				nil,
-				ownerId,
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -205,6 +201,10 @@ func (s *Server) UpsertStamp(
 		if _, err := s.signingStampAccess.HandleAccessChanges(ctx, s.db, st.GetId(), st.Access.Jobs, nil, nil); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	stamp, err := s.getStamp(ctx, st.GetId())

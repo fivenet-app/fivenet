@@ -10,10 +10,6 @@ const props = defineProps<{
     approve: boolean;
 }>();
 
-const emits = defineEmits<{
-    (e: 'close', v: boolean): void;
-}>();
-
 const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
@@ -28,6 +24,8 @@ const state = reactive<Schema>({
     reason: '',
 });
 
+const isOpen = ref(false);
+
 async function decideApproval(approve: boolean) {
     try {
         const call = approvalClient.decideApproval({
@@ -38,9 +36,9 @@ async function decideApproval(approve: boolean) {
         });
         await call;
 
-        state.reason = '';
+        isOpen.value = false;
 
-        emits('close', true);
+        state.reason = '';
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -55,16 +53,16 @@ async function decideApproval(approve: boolean) {
 
 <template>
     <UDrawer
+        v-model:open="isOpen"
         :title="$t('common.approve')"
         handle-only
-        :close="{ onClick: () => $emit('close', false) }"
         :ui="{ container: 'flex-1', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <slot />
 
         <template #title>
             <span class="flex-1">{{ $t(approve ? 'common.approve' : 'common.decline') }}</span>
-            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="isOpen = false" />
         </template>
 
         <template #body>
@@ -95,6 +93,14 @@ async function decideApproval(approve: boolean) {
                         />
                     </UFormField>
                 </UForm>
+            </div>
+        </template>
+
+        <template #footer>
+            <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
+                <UButtonGroup class="w-full flex-1">
+                    <UButton class="flex-1" color="neutral" block :label="$t('common.cancel')" @click="isOpen = false" />
+                </UButtonGroup>
             </div>
         </template>
     </UDrawer>

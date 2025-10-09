@@ -3752,13 +3752,14 @@ Policy snapshot applied to a specific version
 | `sig_required_remaining` | [int32](#int32) | optional | How many signatures still needed to satisfy all policies |
 | `sig_required_total` | [int32](#int32) | optional | Total signatures needed across policies |
 | `sig_collected_valid` | [int32](#int32) | optional | Signatures collected |
-| `apr_required_total` | [int32](#int32) | optional | Total approvals needed across policies |
-| `apr_collected_approved` | [int32](#int32) | optional | Approvals collected |
-| `apr_required_remaining` | [int32](#int32) | optional | How many left to satisfy |
-| `apr_declined_count` | [int32](#int32) | optional | Number of declines |
-| `apr_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
-| `apr_any_declined` | [bool](#bool) | optional | Quick flag if any declines |
-| `apr_policies_active` | [int32](#int32) | optional | Number of active approval policies |
+| `sig_policies_active` | [int32](#int32) | optional | Number of active signature policies |
+| `ap_required_total` | [int32](#int32) | optional | Total approvals needed across policies |
+| `ap_collected_approved` | [int32](#int32) | optional | Approvals collected |
+| `ap_required_remaining` | [int32](#int32) | optional | How many left to satisfy |
+| `ap_declined_count` | [int32](#int32) | optional | Number of declines |
+| `ap_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
+| `ap_any_declined` | [bool](#bool) | optional | Quick flag if any declines |
+| `ap_policies_active` | [int32](#int32) | optional | Number of active approval policies |
 
 
 
@@ -4097,7 +4098,6 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `owner_id` | [int32](#int32) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `name` | [string](#string) |  |  |
 | `svg_template` | [string](#string) |  | Parameterized SVG with slots |

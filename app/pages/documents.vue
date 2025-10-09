@@ -16,7 +16,7 @@ const itemsLeft = computed<(NavigationMenuItem & { permission?: Perms })[]>(() =
         label: t('common.approvals'),
         to: '/documents/approvals',
         icon: 'i-mdi-approval',
-        permission: 'documents.ApprovalService/UpsertApprovalPolicy',
+        permission: 'documents.DocumentsService/ListDocuments',
     },
     {
         label: t('common.signature'),
@@ -31,7 +31,7 @@ const itemsRight = computed<(NavigationMenuItem & { permission?: Perms })[]>(() 
         label: t('common.stamp', 2),
         to: '/documents/stamps',
         icon: 'i-mdi-stamper',
-        permission: 'TODOService/TODOMethod',
+        permission: 'documents.SigningService/ListUsableStamps',
     },
 ]);
 </script>

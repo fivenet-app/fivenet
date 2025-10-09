@@ -27,7 +27,10 @@ message Document {
       min_len: 3
       max_len: 512
     },
-    (codegen.sanitizer.sanitizer) = {enabled: true}
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
   ];
   resources.common.content.ContentType content_type = 8 [(buf.validate.field).enum.defined_only = true];
   resources.common.content.Content content = 9;
@@ -60,7 +63,10 @@ message DocumentShort {
       min_len: 3
       max_len: 512
     },
-    (codegen.sanitizer.sanitizer) = {enabled: true}
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
   ];
   resources.common.content.ContentType content_type = 8 [(buf.validate.field).enum.defined_only = true];
   resources.common.content.Content content = 9;
@@ -99,23 +105,25 @@ message DocumentMeta {
   optional int32 sig_required_total = 10;
   // Signatures collected
   optional int32 sig_collected_valid = 11;
+  // Number of active signature policies
+  optional int32 sig_policies_active = 12;
 
   // Approval rollups
 
   // Total approvals needed across policies
-  optional int32 apr_required_total = 12;
+  optional int32 ap_required_total = 13;
   // Approvals collected
-  optional int32 apr_collected_approved = 13;
+  optional int32 ap_collected_approved = 14;
   // How many left to satisfy
-  optional int32 apr_required_remaining = 14;
+  optional int32 ap_required_remaining = 15;
   // Number of declines
-  optional int32 apr_declined_count = 15;
+  optional int32 ap_declined_count = 16;
   // Tasks still pending (optional)
-  optional int32 apr_pending_count = 16;
+  optional int32 ap_pending_count = 17;
   // Quick flag if any declines
-  optional bool apr_any_declined = 17;
+  optional bool ap_any_declined = 18;
   // Number of active approval policies
-  optional int32 apr_policies_active = 18;
+  optional int32 ap_policies_active = 19;
 }
 
 enum DocReference {

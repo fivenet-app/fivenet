@@ -4,6 +4,7 @@ package resources.documents;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 
@@ -42,7 +43,10 @@ message SignaturePolicy {
   resources.timestamp.Timestamp snapshot_date = 3;
 
   // "Leader", "Counterparty Rep"
-  string label = 4;
+  string label = 4 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
   bool required = 5;
 
   SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
@@ -92,7 +96,10 @@ message SignatureTask {
   }];
 
   SignatureTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 14 [(buf.validate.field).string.max_len = 255];
+  optional string comment = 14 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 
   resources.timestamp.Timestamp created_at = 15;
   optional resources.timestamp.Timestamp completed_at = 16;
@@ -136,12 +143,18 @@ message Signature {
 
   SignatureType type = 12 [(buf.validate.field).enum.defined_only = true];
   // SVG path, typed preview, stamp fill, etc.
-  string payload_svg = 13;
-  // if type == STAMP
+  string payload_svg = 13 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "SanitizeSVG"
+  }];
+  // If type == STAMP
   optional int64 stamp_id = 14;
 
   SignatureStatus status = 15 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 16 [(buf.validate.field).string.max_len = 500];
+  optional string comment = 16 [
+    (buf.validate.field).string.max_len = 500,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 
   resources.timestamp.Timestamp created_at = 17;
   optional resources.timestamp.Timestamp revoked_at = 18;

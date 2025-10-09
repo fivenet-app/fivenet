@@ -29,25 +29,21 @@ export interface Stamp {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional int32 owner_id = 4
-     */
-    ownerId?: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 4
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: string name = 6
+     * @generated from protobuf field: string name = 5
      */
     name: string;
     /**
      * Parameterized SVG with slots
      *
-     * @generated from protobuf field: string svg_template = 7
+     * @generated from protobuf field: string svg_template = 6
      */
     svgTemplate: string;
     /**
-     * @generated from protobuf field: resources.documents.StampAccess access = 8
+     * @generated from protobuf field: resources.documents.StampAccess access = 7
      */
     access?: StampAccess;
 }
@@ -125,11 +121,10 @@ class Stamp$Type extends MessageType<Stamp> {
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "owner_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } } } },
-            { no: 7, name: "svg_template", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "access", kind: "message", T: () => StampAccess }
+            { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 6, name: "svg_template", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
+            { no: 7, name: "access", kind: "message", T: () => StampAccess }
         ]);
     }
     create(value?: PartialMessage<Stamp>): Stamp {
@@ -156,19 +151,16 @@ class Stamp$Type extends MessageType<Stamp> {
                 case /* optional string job_label */ 3:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional int32 owner_id */ 4:
-                    message.ownerId = reader.int32();
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 5:
+                case /* resources.timestamp.Timestamp created_at */ 4:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* string name */ 6:
+                case /* string name */ 5:
                     message.name = reader.string();
                     break;
-                case /* string svg_template */ 7:
+                case /* string svg_template */ 6:
                     message.svgTemplate = reader.string();
                     break;
-                case /* resources.documents.StampAccess access */ 8:
+                case /* resources.documents.StampAccess access */ 7:
                     message.access = StampAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -192,21 +184,18 @@ class Stamp$Type extends MessageType<Stamp> {
         /* optional string job_label = 3; */
         if (message.jobLabel !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional int32 owner_id = 4; */
-        if (message.ownerId !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.ownerId);
-        /* resources.timestamp.Timestamp created_at = 5; */
+        /* resources.timestamp.Timestamp created_at = 4; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string name = 6; */
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string name = 5; */
         if (message.name !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.name);
-        /* string svg_template = 7; */
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* string svg_template = 6; */
         if (message.svgTemplate !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.svgTemplate);
-        /* resources.documents.StampAccess access = 8; */
+            writer.tag(6, WireType.LengthDelimited).string(message.svgTemplate);
+        /* resources.documents.StampAccess access = 7; */
         if (message.access)
-            StampAccess.internalBinaryWrite(message.access, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+            StampAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

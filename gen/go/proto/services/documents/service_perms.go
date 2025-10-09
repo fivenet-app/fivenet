@@ -15,13 +15,11 @@ import (
 var PermsRemap = map[string]string{
 	// Service: documents.ApprovalService
 	"documents.ApprovalService/DecideApproval":                  "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/DeleteApprovalTasks":             "documents.ApprovalService/UpsertApprovalPolicy",
 	"documents.ApprovalService/ListApprovalPolicies":            "documents.DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListApprovalTasks":               "documents.DocumentsService/ListDocuments",
 	"documents.ApprovalService/ListApprovals":                   "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/RecomputeApprovalPolicyCounters": "documents.ApprovalService/UpsertApprovalPolicy",
-	"documents.ApprovalService/RevokeApproval":                  "documents.ApprovalService/UpsertApprovalPolicy",
-	"documents.ApprovalService/UpsertApprovalTasks":             "documents.ApprovalService/UpsertApprovalPolicy",
+	"documents.ApprovalService/RecomputeApprovalPolicyCounters": "documents.ApprovalService/RevokeApproval",
+	"documents.ApprovalService/ReopenApprovalTask":              "documents.ApprovalService/RevokeApproval",
 
 	// Service: documents.CollabService
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
@@ -46,15 +44,11 @@ var PermsRemap = map[string]string{
 
 	// Service: documents.SigningService
 	"documents.SigningService/DecideSignature":          "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/DeleteSignatureTasks":     "documents.SigningService/DeleteSignaturePolicy",
 	"documents.SigningService/ListSignaturePolicies":    "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/ListSignatureTasks":       "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/ListSignatures":           "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/ListUsableStamps":         "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/ReopenSignature":          "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/RevokeSignature":          "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/UpsertSignatureTasks":     "documents.SigningService/UpsertSignaturePolicy",
+	"documents.SigningService/ReopenSignature":          "documents.SigningService/RevokeSignature",
 }
 
 func init() {
@@ -63,7 +57,14 @@ func init() {
 		// Service: documents.ApprovalService
 		{
 			Category: permkeys.ApprovalServicePerm,
-			Name:     permkeys.ApprovalServiceReopenApprovalTaskPerm,
+			Name:     permkeys.ApprovalServiceDeleteApprovalTasksPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5200,
+			Icon:     "i-mdi-approval",
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceRevokeApprovalPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5200,
 			Icon:     "i-mdi-approval",
@@ -71,6 +72,13 @@ func init() {
 		{
 			Category: permkeys.ApprovalServicePerm,
 			Name:     permkeys.ApprovalServiceUpsertApprovalPolicyPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5200,
+			Icon:     "i-mdi-approval",
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceUpsertApprovalTasksPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5200,
 			Icon:     "i-mdi-approval",
@@ -277,6 +285,13 @@ func init() {
 		},
 		{
 			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceDeleteSignatureTasksPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
 			Name:     permkeys.SigningServiceDeleteStampPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
@@ -284,7 +299,28 @@ func init() {
 		},
 		{
 			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceListUsableStampsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceRevokeSignaturePerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
 			Name:     permkeys.SigningServiceUpsertSignaturePolicyPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5700,
+			Icon:     "i-mdi-signature",
+		},
+		{
+			Category: permkeys.SigningServicePerm,
+			Name:     permkeys.SigningServiceUpsertSignatureTasksPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
 			Icon:     "i-mdi-signature",

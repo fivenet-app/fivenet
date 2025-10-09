@@ -29,7 +29,7 @@ func (m *Signature) Sanitize() error {
 	}
 
 	// Field: PayloadSvg
-	m.PayloadSvg = htmlsanitizer.Sanitize(m.PayloadSvg)
+	m.PayloadSvg = htmlsanitizer.SanitizeSVG(m.PayloadSvg)
 
 	// Field: RevokedAt
 	if m.RevokedAt != nil {
@@ -102,7 +102,7 @@ func (m *SignaturePolicy) Sanitize() error {
 	}
 
 	// Field: Label
-	m.Label = htmlsanitizer.Sanitize(m.Label)
+	m.Label = htmlsanitizer.StripTags(m.Label)
 
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {

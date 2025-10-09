@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "tagger/tagger.proto";
 
@@ -19,15 +20,23 @@ message Stamp {
   int64 id = 1;
   string job = 2 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 3;
-  optional int32 owner_id = 4;
-  resources.timestamp.Timestamp created_at = 5;
+  resources.timestamp.Timestamp created_at = 4;
 
-  string name = 6 [(buf.validate.field).string.max_len = 120];
+  string name = 5 [
+    (buf.validate.field).string.max_len = 120,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 
   // Parameterized SVG with slots
-  string svg_template = 7;
+  string svg_template = 6 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "SanitizeSVG"
+  }];
 
-  StampAccess access = 8;
+  StampAccess access = 7;
 }
 
 message StampAccess {

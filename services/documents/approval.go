@@ -121,7 +121,7 @@ func (s *Server) getOrCreateApprovalPolicy(
 		return pol, nil
 	}
 
-	// Create a new approval policy if it doesn't exist
+	// Create a new policy if it doesn't exist
 	res, err := tApprovalPolicy.
 		INSERT(
 			tApprovalPolicy.DocumentID,
@@ -1021,7 +1021,17 @@ func (s *Server) DecideApproval(
 			return nil, errorsdocuments.ErrApprovalTaskAlreadyHandled
 		}
 
-		// TODO enforce eligibility (user_id match OR job/min_grade >=)
+		if decidedTask.GetAssigneeKind() == documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER &&
+			decidedTask.GetUserId() != userInfo.GetUserId() {
+			return nil, errorsdocuments.ErrDocAccessViewDenied
+		} else if decidedTask.GetAssigneeKind() == documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE {
+			if decidedTask.GetJob() != userInfo.GetJob() ||
+				decidedTask.GetMinimumGrade() >= userInfo.GetJobGrade() {
+				return nil, errorsdocuments.ErrDocAccessViewDenied
+			}
+		} else {
+			return nil, errorsdocuments.ErrDocAccessViewDenied
+		}
 
 		// Update task
 		tApprovalTasks = table.FivenetDocumentsApprovalTasks

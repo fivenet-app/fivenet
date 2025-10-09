@@ -3098,24 +3098,48 @@
             },
             "ApprovalService": {
                 "category": "Documents: Approval",
-                "ReopenApprovalTask": {
-                    "key": "Reopen Task",
-                    "description": "Reopen a completed task."
-                },
                 "UpsertApprovalPolicy": {
                     "key": "Create or Update Approval Policy",
                     "description": "Create or update approval policies for jobs."
+                },
+                "UpsertApprovalTasks": {
+                    "key": "Create or Update Approval Tasks",
+                    "description": "Create or update approval tasks for a document."
+                },
+                "DeleteApprovalTasks": {
+                    "key": "Delete Approval Tasks",
+                    "description": "Delete approval tasks for a document."
+                },
+                "RevokeApproval": {
+                    "key": "Revoke Approvals",
+                    "description": "Revoke a given approval."
                 }
             },
             "SigningService": {
                 "category": "Documents: Signing",
+                "UpsertSignaturePolicy": {
+                    "key": "Create or Update Signing Requirement",
+                    "description": "Create or update a signing requirement."
+                },
                 "DeleteSignaturePolicy": {
                     "key": "Delete Signing Requirement",
                     "description": "Delete a signing requirement."
                 },
-                "UpsertSignaturePolicy": {
-                    "key": "Create or Update Signing Requirement",
-                    "description": "Create or update a signing requirement."
+                "UpsertSignatureTasks": {
+                    "key": "Create or Update Signature Tasks",
+                    "description": "Create or update signature tasks for a document."
+                },
+                "DeleteSignatureTasks": {
+                    "key": "Delete Signature Tasks",
+                    "description": "Delete signature tasks for a document."
+                },
+                "RevokeSignature": {
+                    "key": "Revoke Signature",
+                    "description": "Revoke a given signature."
+                },
+                "ListUsableStamps": {
+                    "key": "List Stamps",
+                    "description": "List all usable stamps."
                 },
                 "UpsertStamp": {
                     "key": "Create or Update Stamp",

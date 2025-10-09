@@ -41,10 +41,10 @@ func (m *Stamp) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.StripTags(m.Name)
 
 	// Field: SvgTemplate
-	m.SvgTemplate = htmlsanitizer.Sanitize(m.SvgTemplate)
+	m.SvgTemplate = htmlsanitizer.SanitizeSVG(m.SvgTemplate)
 
 	return nil
 }

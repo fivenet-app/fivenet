@@ -103,7 +103,7 @@ func (m *Document) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -328,7 +328,7 @@ func (m *DocumentShort) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

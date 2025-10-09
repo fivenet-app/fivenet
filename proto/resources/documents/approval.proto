@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.documents;
 
 import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 
@@ -88,7 +89,10 @@ message ApprovalTask {
 
   ApprovalTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
   // Optional comment on approve/decline
-  optional string comment = 14 [(buf.validate.field).string.max_len = 255];
+  optional string comment = 14 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 
   resources.timestamp.Timestamp created_at = 15;
   optional resources.timestamp.Timestamp decided_at = 16;
@@ -132,7 +136,10 @@ message Approval {
   optional string user_grade_label = 11;
 
   ApprovalStatus status = 12 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 13 [(buf.validate.field).string.max_len = 500];
+  optional string comment = 13 [
+    (buf.validate.field).string.max_len = 500,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 
   resources.timestamp.Timestamp created_at = 14;
   optional resources.timestamp.Timestamp revoked_at = 15;

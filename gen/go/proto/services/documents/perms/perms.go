@@ -16,8 +16,10 @@ const (
 	DocumentsServicePerm perms.Category = "documents.DocumentsService"
 	SigningServicePerm   perms.Category = "documents.SigningService"
 
-	ApprovalServiceReopenApprovalTaskPerm              perms.Name = "ReopenApprovalTask"
+	ApprovalServiceDeleteApprovalTasksPerm             perms.Name = "DeleteApprovalTasks"
+	ApprovalServiceRevokeApprovalPerm                  perms.Name = "RevokeApproval"
 	ApprovalServiceUpsertApprovalPolicyPerm            perms.Name = "UpsertApprovalPolicy"
+	ApprovalServiceUpsertApprovalTasksPerm             perms.Name = "UpsertApprovalTasks"
 	DocumentsServiceAddDocumentReferencePerm           perms.Name = "AddDocumentReference"
 	DocumentsServiceAddDocumentRelationPerm            perms.Name = "AddDocumentRelation"
 	DocumentsServiceChangeDocumentOwnerPerm            perms.Name = "ChangeDocumentOwner"
@@ -47,7 +49,11 @@ const (
 	DocumentsServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocumentsServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
 	SigningServiceDeleteSignaturePolicyPerm            perms.Name = "DeleteSignaturePolicy"
+	SigningServiceDeleteSignatureTasksPerm             perms.Name = "DeleteSignatureTasks"
 	SigningServiceDeleteStampPerm                      perms.Name = "DeleteStamp"
+	SigningServiceListUsableStampsPerm                 perms.Name = "ListUsableStamps"
+	SigningServiceRevokeSignaturePerm                  perms.Name = "RevokeSignature"
 	SigningServiceUpsertSignaturePolicyPerm            perms.Name = "UpsertSignaturePolicy"
+	SigningServiceUpsertSignatureTasksPerm             perms.Name = "UpsertSignatureTasks"
 	SigningServiceUpsertStampPerm                      perms.Name = "UpsertStamp"
 )

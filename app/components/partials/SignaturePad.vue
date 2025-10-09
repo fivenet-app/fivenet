@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import type { Signature } from '@selemondev/vue3-signature-pad';
-
 const settingsStore = useSettingsStore();
 const { signature: signatureSettings } = storeToRefs(settingsStore);
 
@@ -8,8 +6,6 @@ const VueSignaturePad = defineAsyncComponent(async () => {
     const m = await import('@selemondev/vue3-signature-pad');
     return m.VueSignaturePad;
 });
-
-const modelValue = defineModel<string>({ required: true });
 
 const colors = [
     {
@@ -23,7 +19,7 @@ const colors = [
     },
 ];
 
-const signature = ref<Signature>();
+const signature = useTemplateRef('signature');
 
 function handleUndo() {
     signature.value?.undo();
@@ -33,11 +29,9 @@ function handleClearCanvas() {
     signature.value?.clearCanvas();
 }
 
-function handleSaveSignature() {
-    if (!signature.value) return;
-
-    modelValue.value = signature.value.saveSignature('image/svg');
-}
+defineExpose({
+    signature: signature,
+});
 </script>
 
 <template>
@@ -53,7 +47,6 @@ function handleSaveSignature() {
                     penColor: signatureSettings.penColor,
                     backgroundColor: 'rgb(255, 255, 255)',
                 }"
-                @end-stroke="handleSaveSignature"
             />
 
             <UButtonGroup class="absolute bottom-0 left-0 flex flex-row">

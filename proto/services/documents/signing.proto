@@ -218,16 +218,10 @@ service SigningService {
     };
   }
   rpc UpsertSignatureTasks(UpsertSignatureTasksRequest) returns (UpsertSignatureTasksResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpsertSignaturePolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc DeleteSignatureTasks(DeleteSignatureTasksRequest) returns (DeleteSignatureTasksResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "DeleteSignaturePolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
 
   // Signatures
@@ -239,10 +233,7 @@ service SigningService {
     };
   }
   rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "DeleteSignaturePolicy"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc DecideSignature(DecideSignatureRequest) returns (DecideSignatureResponse) {
     option (codegen.perms.perms) = {
@@ -254,7 +245,7 @@ service SigningService {
   rpc ReopenSignature(ReopenSignatureRequest) returns (ReopenSignatureResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "DeleteSignaturePolicy"
+      name: "RevokeSignature"
     };
   }
 
@@ -268,11 +259,7 @@ service SigningService {
 
   // Stamps
   rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      service: "documents.DocumentsService"
-      name: "ListDocuments"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc UpsertStamp(UpsertStampRequest) returns (UpsertStampResponse) {
     option (codegen.perms.perms) = {enabled: true};

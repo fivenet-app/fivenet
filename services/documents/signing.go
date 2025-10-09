@@ -54,6 +54,119 @@ func (s *Server) ListSignaturePolicies(
 	return resp, nil
 }
 
+func (s *Server) getSignaturePolicy(
+	ctx context.Context, tx qrm.DB, condition mysql.BoolExpression,
+) (*documents.SignaturePolicy, error) {
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
+
+	stmt := tSignaturePolicy.
+		SELECT(
+			tSignaturePolicy.ID,
+			tSignaturePolicy.DocumentID,
+			tSignaturePolicy.SnapshotDate,
+			tSignaturePolicy.Label,
+			tSignaturePolicy.Required,
+			tSignaturePolicy.BindingMode,
+			tSignaturePolicy.AllowedTypesMask,
+			tSignaturePolicy.CreatedAt,
+			tSignaturePolicy.UpdatedAt,
+			tSignaturePolicy.DeletedAt,
+		).
+		FROM(tSignaturePolicy).
+		WHERE(condition).
+		ORDER_BY(tSignaturePolicy.ID.ASC()).
+		LIMIT(1)
+
+	policy := &documents.SignaturePolicy{}
+	if err := stmt.QueryContext(ctx, tx, policy); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	if policy.Id == 0 {
+		return nil, nil
+	}
+
+	return policy, nil
+}
+
+func (s *Server) getOrCreateSignaturePolicy(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId int64,
+	polId int64,
+) (*documents.SignaturePolicy, error) {
+	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies
+
+	// Attempt to get any policy if no ID is specified
+	condition := tSignaturePolicy.AS("signature_policy").DocumentID.EQ(mysql.Int64(documentId))
+	if polId != 0 {
+		condition = condition.AND(tSignaturePolicy.AS("signature_policy").ID.EQ(mysql.Int64(polId)))
+	}
+
+	pol, err := s.getSignaturePolicy(
+		ctx,
+		tx,
+		condition,
+	)
+	if err != nil {
+		return nil, err
+	}
+	if pol != nil {
+		return pol, nil
+	}
+
+	// Create a new policy if it doesn't exist
+	allowedTypesMask := &documents.SignatureTypes{
+		Types: []documents.SignatureType{
+			documents.SignatureType_SIGNATURE_TYPE_FREEHAND,
+			documents.SignatureType_SIGNATURE_TYPE_TYPED,
+			documents.SignatureType_SIGNATURE_TYPE_STAMP,
+		},
+	}
+
+	res, err := tSignaturePolicy.
+		INSERT(
+			tSignaturePolicy.DocumentID,
+			tSignaturePolicy.SnapshotDate,
+			tSignaturePolicy.Label,
+			tSignaturePolicy.Required,
+			tSignaturePolicy.BindingMode,
+			tSignaturePolicy.AllowedTypesMask,
+		).
+		VALUES(
+			documentId,
+			mysql.CURRENT_TIMESTAMP(),
+			"",
+			false,
+			int32(documents.SignatureBindingMode_SIGNATURE_BINDING_MODE_NONBINDING),
+			allowedTypesMask,
+		).
+		ExecContext(ctx, tx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	pol, err = s.getSignaturePolicy(
+		ctx,
+		tx,
+		tSignaturePolicy.AS("signature_policy").ID.EQ(mysql.Int64(lastId)),
+	)
+	if err != nil {
+		return nil, err
+	}
+	if pol == nil {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
+
+	return pol, nil
+}
+
 // UpsertSignaturePolicy.
 func (s *Server) UpsertSignaturePolicy(
 	ctx context.Context,
@@ -635,28 +748,15 @@ func (s *Server) DecideSignature(
 ) (*pbdocuments.DecideSignatureResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Resolve policy & base snapshot
-	tSignaturePolicy := table.FivenetDocumentsSignaturePolicies.AS("signature_policy")
-
-	var pol documents.SignaturePolicy
-	if err := tSignaturePolicy.
-		SELECT(
-			tSignaturePolicy.ID,
-			tSignaturePolicy.DocumentID,
-			tSignaturePolicy.SnapshotDate,
-			tSignaturePolicy.Required,
-			tSignaturePolicy.AllowedTypesMask,
-			tSignaturePolicy.BindingMode,
-		).
-		FROM(tSignaturePolicy).
-		WHERE(tSignaturePolicy.ID.EQ(mysql.Int64(req.GetPolicyId()))).
-		LIMIT(1).
-		QueryContext(ctx, s.db, &pol); err != nil {
+	// Resolve policy, doc, snapshot
+	pol, err := s.getOrCreateSignaturePolicy(
+		ctx,
+		s.db,
+		req.GetDocumentId(),
+		req.GetPolicyId(),
+	)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-	// TODO allow ad-hoc approvals even if no policy exists.
-	if pol.Id == 0 {
-		return nil, errswrap.NewError(nil, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 
 	// Access check: signer must be able to view/act on document (stronger checks happen when consuming a task)
@@ -727,7 +827,17 @@ func (s *Server) DecideSignature(
 			return nil, errorsdocuments.ErrSigningTaskAlreadyHandled
 		}
 
-		// TODO enforce eligibility (user_id match OR job/min_grade >=)
+		if decidedTask.GetAssigneeKind() == documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_USER &&
+			decidedTask.GetUserId() != userInfo.GetUserId() {
+			return nil, errorsdocuments.ErrDocAccessViewDenied
+		} else if decidedTask.GetAssigneeKind() == documents.SignatureAssigneeKind_SIGNATURE_ASSIGNEE_KIND_JOB_GRADE {
+			if decidedTask.GetJob() != userInfo.GetJob() ||
+				decidedTask.GetMinimumGrade() >= userInfo.GetJobGrade() {
+				return nil, errorsdocuments.ErrDocAccessViewDenied
+			}
+		} else {
+			return nil, errorsdocuments.ErrDocAccessViewDenied
+		}
 	}
 
 	// Insert/Upsert artifact (unique by policy_id + snapshot_date + user_id)
@@ -832,7 +942,7 @@ func (s *Server) DecideSignature(
 	return &pbdocuments.DecideSignatureResponse{
 		Signature: newSig,
 		Task:      decidedTask,
-		Policy:    &pol,
+		Policy:    pol,
 	}, nil
 }
 

@@ -540,7 +540,7 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
             { no: 11, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 12, name: "slot_no", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 13, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 14, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
+            { no: 14, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 15, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 16, name: "decided_at", kind: "message", T: () => Timestamp },
             { no: 17, name: "due_at", kind: "message", T: () => Timestamp },
@@ -756,7 +756,7 @@ class Approval$Type extends MessageType<Approval> {
             { no: 10, name: "user_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "user_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 12, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 13, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
+            { no: 13, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 14, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 15, name: "revoked_at", kind: "message", T: () => Timestamp }
         ]);

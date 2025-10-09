@@ -1,12 +1,20 @@
 package main
 
 import (
+	"slices"
 	"text/template"
 
 	sanitizerpb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
+
+var validMethods = []string{
+	"Sanitize",
+	"SanitizeNoEntities",
+	"SanitizeSVG",
+	"StripTags",
+}
 
 // SanitizerPlugin holds all state for this plugin.
 type SanitizerModule struct {
@@ -88,6 +96,10 @@ func (p *SanitizerModule) generate(f pgs.File) {
 
 			if val.Method != nil && *val.Method != "" {
 				s.Method = *val.Method
+
+				if !slices.Contains(validMethods, s.Method) {
+					p.Failf("Invalid sanitizer method given %q", s.Method)
+				}
 			}
 
 			data.FMap[string(m.Name())][string(f.Name().UpperCamelCase())] = s

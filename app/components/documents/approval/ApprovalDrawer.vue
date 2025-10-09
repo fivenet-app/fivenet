@@ -261,6 +261,7 @@ const taskFormDrawer = overlay.create(TaskForm);
 
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
+                <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
                 <UButtonGroup class="w-full flex-1">
                     <TaskDecideDrawer
                         :document-id="documentId"
