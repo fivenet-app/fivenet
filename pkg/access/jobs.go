@@ -5,9 +5,12 @@ import (
 	"errors"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 // JobsAccessProtoMessage defines the interface for job access proto messages.
@@ -95,6 +98,75 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId int64) (T
 	}
 
 	return dest, nil
+}
+
+// Validate checks the validity of the provided job access entries.
+func (a *Jobs[U, T, V]) Validate(js *mstlystcdata.Jobs, in *[]T, fixEntries bool) (bool, error) {
+	if js == nil {
+		// If jobs data is nil, we cannot validate, assume validity
+		return true, nil
+	}
+
+	jobMap := make(map[string]*jobs.Job)
+	valid := true
+	*in = slices.DeleteFunc(*in, func(ja T) bool {
+		if !valid {
+			// Skip further processing if already invalid
+			return false
+		}
+
+		// Remove entry if job is empty or grade is invalid
+		if ja.GetJob() == "" || ja.GetMinimumGrade() < 0 {
+			return true
+		}
+
+		// Check if job exists in the cache
+		j, ok := jobMap[ja.GetJob()]
+		if !ok {
+			// Fetch job from jobs data if not in cache
+			var err error
+			j, err = js.Get(ja.GetJob())
+			if err != nil {
+				// Remove entry if job is not found and fixEntries is enabled
+				if fixEntries && errors.Is(err, jetstream.ErrKeyNotFound) {
+					return true
+				}
+
+				valid = false
+				return true
+			}
+
+			// Cache the fetched job
+			jobMap[ja.GetJob()] = j
+		}
+
+		// Validate the grade against the job's grades
+		if int(ja.GetMinimumGrade()) >= len(j.Grades) {
+			// Check if the grade exists in the job's grades
+			if !slices.ContainsFunc(j.Grades, func(g *jobs.JobGrade) bool {
+				return g.GetGrade() == ja.GetMinimumGrade()
+			}) {
+				// Overwrite the grade if fixEntries is enabled and there is at least one grade
+				if fixEntries {
+					if len(j.Grades) == 0 {
+						return true
+					}
+
+					jg := j.Grades[len(j.Grades)-1]
+					ja.SetMinimumGrade(jg.Grade)
+					return false
+				}
+
+				valid = false
+				return true
+			}
+		}
+
+		// Entry is valid, don't remove
+		return false
+	})
+
+	return !valid, nil
 }
 
 // Compare compares the current job access entries in the database with the provided input.

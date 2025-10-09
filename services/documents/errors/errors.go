@@ -81,6 +81,11 @@ var (
 		&common.I18NItem{Key: "errors.DocumentsService.ErrDocAccessDuplicate"},
 		nil,
 	)
+	ErrDocAccessInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrDocAccessInvalid"},
+		nil,
+	)
 
 	ErrTemplateFailed = common.NewI18nErr(
 		codes.InvalidArgument,

@@ -2257,7 +2257,8 @@
             "ErrSigningTaskAlreadyHandled": {
                 "title": "Signaturaufgabe bereits bearbeitet!",
                 "content": "Diese Signaturaufgabe wurde bereits unterschrieben/abgelehnt."
-            }
+            },
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!"
         },
         "LivemapService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",

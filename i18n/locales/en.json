@@ -2258,7 +2258,8 @@
             "ErrSigningTaskAlreadyHandled": {
                 "title": "Signing task already handled!",
                 "content": "This signing task has already been signed/declined."
-            }
+            },
+            "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!"
         },
         "LivemapService": {
             "ErrStreamFailed": "Failed to stream Map data!",

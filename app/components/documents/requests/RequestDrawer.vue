@@ -13,8 +13,8 @@ import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/docu
 import RequestListEntry from './RequestListEntry.vue';
 
 const props = defineProps<{
-    access: DocumentAccess;
     doc: DocumentShort;
+    access: DocumentAccess;
 }>();
 
 const emit = defineEmits<{

@@ -138,6 +138,15 @@ func (s *Server) handleDocumentAccessChange(
 	access *documents.DocumentAccess,
 	addActivity bool,
 ) error {
+	// Validate job access entries
+	valid, err := s.access.Jobs.Validate(s.jobs, &access.Jobs, true)
+	if err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if !valid {
+		return errorsdocuments.ErrDocAccessInvalid
+	}
+
 	changes, err := s.access.HandleAccessChanges(
 		ctx,
 		tx,

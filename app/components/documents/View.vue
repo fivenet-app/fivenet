@@ -78,23 +78,67 @@ function addToClipboard(): void {
     });
 }
 
-const hash = useRouteHash();
-if (hash.value !== undefined && hash.value !== null) {
-    if (hash.value.replace(/^#/, '') === 'requests') {
-        openRequestsModal();
+const requestDrawer = overlay.create(RequestDrawer);
+const approvalDrawer = overlay.create(ApprovalDrawer);
+const signingDrawer = overlay.create(SigningDrawer);
+
+const hash = useRouteHash('', { mode: 'push' });
+
+function openRequestsDrawer(): void {
+    if (doc.value?.access === undefined || doc.value?.document === undefined) return;
+
+    requestDrawer
+        .open({
+            access: doc.value.access,
+            doc: doc.value.document,
+            onRefresh: () => refresh(),
+        })
+        .then(() => (hash.value = ''));
+
+    hash.value = `#requests`;
+}
+
+function openApprovalDrawer(): void {
+    approvalDrawer
+        .open({
+            documentId: props.documentId,
+        })
+        .then(() => (hash.value = ''));
+
+    hash.value = `#approvals`;
+}
+
+function openSigningDrawer(): void {
+    signingDrawer
+        .open({
+            documentId: props.documentId,
+        })
+        .then(() => (hash.value = ''));
+
+    hash.value = `#signing`;
+}
+
+function handleHash(): void {
+    if (hash.value === undefined || hash.value === null) return;
+
+    const val = hash.value.replace(/^#/, '');
+    if (val === 'requests') {
+        openRequestsDrawer();
+    } else if (val === 'approvals') {
+        openApprovalDrawer();
+    } else if (val === 'signing') {
+        openSigningDrawer();
+    } else if (val === 'comments') {
+        nextTick(() => {
+            const el = document.getElementById('comments');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
     }
 }
 
-const requestDrawer = overlay.create(RequestDrawer);
-function openRequestsModal(): void {
-    if (doc.value?.access === undefined || doc.value?.document === undefined) return;
-
-    requestDrawer.open({
-        access: doc.value.access,
-        doc: doc.value.document,
-        onRefresh: () => refresh(),
-    });
-}
+watch(doc, () => handleHash());
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
@@ -151,9 +195,6 @@ async function toggleDocument(): Promise<void> {
     );
 }
 
-const approvalDrawer = overlay.create(ApprovalDrawer);
-const signingDrawer = overlay.create(SigningDrawer);
-
 const accordionItems = computed(() =>
     [
         { value: 'relations', slot: 'relations' as const, label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
@@ -209,7 +250,7 @@ defineShortcuts({
     'd-r': () => {
         if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) return;
 
-        openRequestsModal();
+        openRequestsDrawer();
     },
 });
 
@@ -373,24 +414,22 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 variant="ghost"
                                 icon="i-mdi-frequently-asked-questions"
                                 :label="$t('common.request', 2)"
-                                @click="openRequestsModal"
+                                @click="() => openRequestsDrawer()"
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="can('TODOService/TODOMethod').value" class="flex-1" :text="$t('common.approve')">
+                        <UTooltip
+                            v-if="can('documents.DocumentsService/ListDocuments').value"
+                            class="flex-1"
+                            :text="$t('common.approve')"
+                        >
                             <UButton
                                 block
                                 color="neutral"
                                 variant="ghost"
                                 icon="i-mdi-approval"
                                 :label="$t('common.approve')"
-                                @click="
-                                    () => {
-                                        approvalDrawer.open({
-                                            documentId: documentId,
-                                        });
-                                    }
-                                "
+                                @click="() => openApprovalDrawer()"
                             />
                         </UTooltip>
 
@@ -401,13 +440,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 variant="ghost"
                                 icon="i-mdi-signature"
                                 :label="$t('common.sign')"
-                                @click="
-                                    () => {
-                                        signingDrawer.open({
-                                            documentId: documentId,
-                                        });
-                                    }
-                                "
+                                @click="() => openSigningDrawer()"
                             />
                         </UTooltip>
 
@@ -731,16 +764,15 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
 
                     <template #comments>
                         <UContainer class="mb-2">
-                            <div id="comments">
-                                <Comments
-                                    :document-id="documentId"
-                                    :closed="doc.document?.meta?.closed"
-                                    :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
-                                    @counted="commentCount = $event"
-                                    @new-comment="commentCount && commentCount++"
-                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                />
-                            </div>
+                            <Comments
+                                id="comments"
+                                :document-id="documentId"
+                                :closed="doc.document?.meta?.closed"
+                                :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
+                                @counted="commentCount = $event"
+                                @new-comment="commentCount && commentCount++"
+                                @deleted-comment="commentCount && commentCount > 0 && commentCount--"
+                            />
                         </UContainer>
                     </template>
 
