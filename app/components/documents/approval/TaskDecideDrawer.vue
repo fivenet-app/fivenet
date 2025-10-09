@@ -10,6 +10,10 @@ const props = defineProps<{
     approve: boolean;
 }>();
 
+const emits = defineEmits<{
+    (e: 'close', v: boolean): void;
+}>();
+
 const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
@@ -26,6 +30,10 @@ const state = reactive<Schema>({
 
 const isOpen = ref(false);
 
+watch(isOpen, (newVal) => {
+    if (!newVal) emits('close', false);
+});
+
 async function decideApproval(approve: boolean) {
     try {
         const call = approvalClient.decideApproval({
@@ -36,6 +44,7 @@ async function decideApproval(approve: boolean) {
         });
         await call;
 
+        emits('close', true);
         isOpen.value = false;
 
         state.reason = '';
