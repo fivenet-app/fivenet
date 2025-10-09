@@ -291,11 +291,11 @@ func (*DeleteSignaturePolicyResponse) Descriptor() ([]byte, []int) {
 }
 
 type ListSignatureTasksRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	DocumentId    int64                       `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId      *int64                      `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	SnapshotDate  *timestamp.Timestamp        `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	Statuses      []documents.SignatureStatus `protobuf:"varint,4,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureStatus" json:"statuses,omitempty"`
+	state         protoimpl.MessageState          `protogen:"open.v1"`
+	DocumentId    int64                           `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	PolicyId      *int64                          `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	SnapshotDate  *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	Statuses      []documents.SignatureTaskStatus `protobuf:"varint,4,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -351,7 +351,7 @@ func (x *ListSignatureTasksRequest) GetSnapshotDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ListSignatureTasksRequest) GetStatuses() []documents.SignatureStatus {
+func (x *ListSignatureTasksRequest) GetStatuses() []documents.SignatureTaskStatus {
 	if x != nil {
 		return x.Statuses
 	}
@@ -1327,9 +1327,10 @@ func (x *RecomputeSignatureStatusResponse) GetCollectedValid() int32 {
 }
 
 type ListUsableStampsRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	DocumentId    int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	state      protoimpl.MessageState      `protogen:"open.v1"`
+	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	// If set, only stamps usable for signing this document are returned
+	DocumentId    *int64 `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3,oneof" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1372,8 +1373,8 @@ func (x *ListUsableStampsRequest) GetPagination() *database.PaginationRequest {
 }
 
 func (x *ListUsableStampsRequest) GetDocumentId() int64 {
-	if x != nil {
-		return x.DocumentId
+	if x != nil && x.DocumentId != nil {
+		return *x.DocumentId
 	}
 	return 0
 }
@@ -1615,13 +1616,13 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\";\n" +
 	"\x1cDeleteSignaturePolicyRequest\x12\x1b\n" +
 	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\"\x1f\n" +
-	"\x1dDeleteSignaturePolicyResponse\"\xf3\x01\n" +
+	"\x1dDeleteSignaturePolicyResponse\"\xf7\x01\n" +
 	"\x19ListSignatureTasksRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12 \n" +
 	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12@\n" +
-	"\bstatuses\x18\x04 \x03(\x0e2$.resources.documents.SignatureStatusR\bstatusesB\f\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12D\n" +
+	"\bstatuses\x18\x04 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatusesB\f\n" +
 	"\n" +
 	"_policy_id\"b\n" +
 	"\x1aListSignatureTasksResponse\x12D\n" +
@@ -1712,13 +1713,14 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x0fdocument_signed\x18\x01 \x01(\bR\x0edocumentSigned\x12%\n" +
 	"\x0erequired_total\x18\x02 \x01(\x05R\rrequiredTotal\x12-\n" +
 	"\x12required_remaining\x18\x03 \x01(\x05R\x11requiredRemaining\x12'\n" +
-	"\x0fcollected_valid\x18\x04 \x01(\x05R\x0ecollectedValid\"\x88\x01\n" +
+	"\x0fcollected_valid\x18\x04 \x01(\x05R\x0ecollectedValid\"\x9d\x01\n" +
 	"\x17ListUsableStampsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xa3\x01\n" +
+	"pagination\x12$\n" +
+	"\vdocument_id\x18\x02 \x01(\x03H\x00R\n" +
+	"documentId\x88\x01\x01B\x0e\n" +
+	"\f_document_id\"\xa3\x01\n" +
 	"\x18ListUsableStampsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1792,9 +1794,9 @@ var file_services_documents_signing_proto_goTypes = []any{
 	(*DeleteStampResponse)(nil),              // 28: services.documents.DeleteStampResponse
 	(*timestamp.Timestamp)(nil),              // 29: resources.timestamp.Timestamp
 	(*documents.SignaturePolicy)(nil),        // 30: resources.documents.SignaturePolicy
-	(documents.SignatureStatus)(0),           // 31: resources.documents.SignatureStatus
+	(documents.SignatureTaskStatus)(0),       // 31: resources.documents.SignatureTaskStatus
 	(*documents.Signature)(nil),              // 32: resources.documents.Signature
-	(documents.SignatureTaskStatus)(0),       // 33: resources.documents.SignatureTaskStatus
+	(documents.SignatureStatus)(0),           // 33: resources.documents.SignatureStatus
 	(documents.SignatureType)(0),             // 34: resources.documents.SignatureType
 	(*documents.SignatureTask)(nil),          // 35: resources.documents.SignatureTask
 	(*database.PaginationRequest)(nil),       // 36: resources.common.database.PaginationRequest
@@ -1807,17 +1809,17 @@ var file_services_documents_signing_proto_depIdxs = []int32{
 	30, // 2: services.documents.UpsertSignaturePolicyRequest.policy:type_name -> resources.documents.SignaturePolicy
 	30, // 3: services.documents.UpsertSignaturePolicyResponse.policy:type_name -> resources.documents.SignaturePolicy
 	29, // 4: services.documents.ListSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	31, // 5: services.documents.ListSignatureTasksRequest.statuses:type_name -> resources.documents.SignatureStatus
+	31, // 5: services.documents.ListSignatureTasksRequest.statuses:type_name -> resources.documents.SignatureTaskStatus
 	32, // 6: services.documents.ListSignatureTasksResponse.signatures:type_name -> resources.documents.Signature
 	29, // 7: services.documents.SignatureTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
 	29, // 8: services.documents.UpsertSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
 	8,  // 9: services.documents.UpsertSignatureTasksRequest.seeds:type_name -> services.documents.SignatureTaskSeed
 	30, // 10: services.documents.UpsertSignatureTasksResponse.policy:type_name -> resources.documents.SignaturePolicy
 	29, // 11: services.documents.ListSignaturesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	31, // 12: services.documents.ListSignaturesRequest.status:type_name -> resources.documents.SignatureStatus
+	33, // 12: services.documents.ListSignaturesRequest.status:type_name -> resources.documents.SignatureStatus
 	32, // 13: services.documents.ListSignaturesResponse.signatures:type_name -> resources.documents.Signature
 	32, // 14: services.documents.RevokeSignatureResponse.signature:type_name -> resources.documents.Signature
-	33, // 15: services.documents.DecideSignatureRequest.new_status:type_name -> resources.documents.SignatureTaskStatus
+	31, // 15: services.documents.DecideSignatureRequest.new_status:type_name -> resources.documents.SignatureTaskStatus
 	34, // 16: services.documents.DecideSignatureRequest.type:type_name -> resources.documents.SignatureType
 	32, // 17: services.documents.DecideSignatureResponse.signature:type_name -> resources.documents.Signature
 	35, // 18: services.documents.DecideSignatureResponse.task:type_name -> resources.documents.SignatureTask
@@ -1874,6 +1876,7 @@ func file_services_documents_signing_proto_init() {
 	file_services_documents_signing_proto_msgTypes[9].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[13].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[17].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[23].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

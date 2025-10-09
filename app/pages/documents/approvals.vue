@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
+import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import type { ListApprovalTasksResponse } from '~~/gen/ts/services/documents/approval';
 
 useHead({
     title: 'pages.documents.approvals.title',
@@ -8,13 +11,30 @@ useHead({
 definePageMeta({
     title: 'pages.documents.approvals.title',
     requiresAuth: true,
-    permission: 'TODOService/TODOMethod',
+    permission: 'documents.DocumentsService/ListDocuments',
 });
 
 defineProps<{
     itemsLeft: NavigationMenuItem[];
     itemsRight: NavigationMenuItem[];
 }>();
+
+const approvalClient = await getDocumentsApprovalClient();
+
+const { data, status, error, refresh } = useLazyAsyncData(
+    () => `documents-approvals`,
+    () => listApprovalTasks(),
+);
+
+async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
+    const call = approvalClient.listApprovalTasks({
+        documentId: 0,
+        statuses: [ApprovalTaskStatus.PENDING, ApprovalTaskStatus.EXPIRED, ApprovalTaskStatus.CANCELLED],
+    });
+    const { response } = await call;
+
+    return response;
+}
 
 // TODO
 </script>
@@ -32,7 +52,11 @@ defineProps<{
         </template>
 
         <template #body>
-            <div>Approvals Page - TODO</div>
+            <div>
+                Approvals Page - TODO
+
+                {{ data }}
+            </div>
         </template>
 
         <template v-if="itemsLeft.length > 1 || itemsRight.length > 1" #footer>

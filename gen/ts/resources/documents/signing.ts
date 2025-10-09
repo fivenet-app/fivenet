@@ -233,7 +233,7 @@ export interface Signature {
      */
     payloadSvg: string;
     /**
-     * if type == STAMP
+     * If type == STAMP
      *
      * @generated from protobuf field: optional int64 stamp_id = 14
      */

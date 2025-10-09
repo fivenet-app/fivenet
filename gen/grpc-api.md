@@ -3952,7 +3952,7 @@ Policy snapshot applied to a specific version
 | `user_grade_label` | [string](#string) | optional |  |
 | `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_svg` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
-| `stamp_id` | [int64](#int64) | optional | if type == STAMP |
+| `stamp_id` | [int64](#int64) | optional | If type == STAMP |
 | `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
 | `comment` | [string](#string) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -9697,7 +9697,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `document_id` | [int64](#int64) |  |  |
 | `policy_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `statuses` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | repeated |  |
+| `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
 
 
 
@@ -9749,7 +9749,7 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `document_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) | optional | If set, only stamps usable for signing this document are returned |
 
 
 

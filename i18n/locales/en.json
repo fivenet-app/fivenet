@@ -48,6 +48,9 @@
             },
             "signatures": {
                 "title": "Signature Tasks"
+            },
+            "stamps": {
+                "title": "Stamps"
             }
         },
         "notfound": {

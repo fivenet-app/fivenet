@@ -29,7 +29,7 @@ const overlay = useOverlay();
 const approvalClient = await getDocumentsApprovalClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
-    () => `approval-drawer-${props.documentId}`,
+    () => `documents-approval-policy-${props.documentId}`,
     () => getPolicy(),
 );
 

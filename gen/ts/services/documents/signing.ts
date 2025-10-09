@@ -17,9 +17,9 @@ import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { SignatureTask } from "../../resources/documents/signing";
 import { SignatureType } from "../../resources/documents/signing";
-import { SignatureTaskStatus } from "../../resources/documents/signing";
-import { Signature } from "../../resources/documents/signing";
 import { SignatureStatus } from "../../resources/documents/signing";
+import { Signature } from "../../resources/documents/signing";
+import { SignatureTaskStatus } from "../../resources/documents/signing";
 import { SignaturePolicy } from "../../resources/documents/signing";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
@@ -93,9 +93,9 @@ export interface ListSignatureTasksRequest {
      */
     snapshotDate?: Timestamp;
     /**
-     * @generated from protobuf field: repeated resources.documents.SignatureStatus statuses = 4
+     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 4
      */
-    statuses: SignatureStatus[];
+    statuses: SignatureTaskStatus[];
 }
 /**
  * @generated from protobuf message services.documents.ListSignatureTasksResponse
@@ -410,9 +410,11 @@ export interface ListUsableStampsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int64 document_id = 2
+     * If set, only stamps usable for signing this document are returned
+     *
+     * @generated from protobuf field: optional int64 document_id = 2
      */
-    documentId: number;
+    documentId?: number;
 }
 /**
  * @generated from protobuf message services.documents.ListUsableStampsResponse
@@ -744,7 +746,7 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
-            { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<ListSignatureTasksRequest>): ListSignatureTasksRequest {
@@ -769,7 +771,7 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
                 case /* resources.timestamp.Timestamp snapshot_date */ 3:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* repeated resources.documents.SignatureStatus statuses */ 4:
+                case /* repeated resources.documents.SignatureTaskStatus statuses */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
@@ -797,7 +799,7 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
         /* resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.SignatureStatus statuses = 4; */
+        /* repeated resources.documents.SignatureTaskStatus statuses = 4; */
         if (message.statuses.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
@@ -1799,12 +1801,11 @@ class ListUsableStampsRequest$Type extends MessageType<ListUsableStampsRequest> 
     constructor() {
         super("services.documents.ListUsableStampsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "document_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListUsableStampsRequest>): ListUsableStampsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListUsableStampsRequest>(this, message, value);
         return message;
@@ -1817,7 +1818,7 @@ class ListUsableStampsRequest$Type extends MessageType<ListUsableStampsRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int64 document_id */ 2:
+                case /* optional int64 document_id */ 2:
                     message.documentId = reader.int64().toNumber();
                     break;
                 default:
@@ -1835,8 +1836,8 @@ class ListUsableStampsRequest$Type extends MessageType<ListUsableStampsRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 document_id = 2; */
-        if (message.documentId !== 0)
+        /* optional int64 document_id = 2; */
+        if (message.documentId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.documentId);
         let u = options.writeUnknownFields;
         if (u !== false)

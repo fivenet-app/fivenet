@@ -121,6 +121,27 @@ func (c *DBSyncTable) GetSyncInterval() *time.Duration {
 	return c.SyncInterval
 }
 
+type FilterAction string
+
+const (
+	// Replace the matching pattern with the replacement string.
+	FilterActionReplace FilterAction = "replace"
+	// Drop the whole record if the pattern matches.
+	FilterActionDrop FilterAction = "drop"
+)
+
+type Filter struct {
+	Pattern     string       `yaml:"pattern"`
+	Action      FilterAction `yaml:"action"      default:"replace"`
+	Replacement string       `yaml:"replacement"`
+}
+
+type JobsDBSyncTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Filters []Filter `yaml:"filters"`
+}
+
 type UsersDBSyncTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
 
@@ -129,6 +150,12 @@ type UsersDBSyncTable struct {
 	ValueMapping *UsersValueMappings   `                yaml:"valueMapping"`
 
 	IgnoreEmptyName bool `default:"true" yaml:"ignoreEmptyName"`
+
+	Filters UsersFilters `yaml:"filters"`
+}
+
+type UsersFilters struct {
+	Jobs []Filter `yaml:"jobs"`
 }
 
 type DateOfBirthNormalizer struct {

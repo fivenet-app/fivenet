@@ -16,7 +16,7 @@ const props = defineProps<{
 const approvalClient = await getDocumentsApprovalClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
-    () => `approval-drawer-${props.documentId}-tasklist`,
+    () => `documents-approval-tasks-${props.documentId}`,
     () => listApprovalTasks(),
 );
 

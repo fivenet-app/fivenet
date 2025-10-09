@@ -40,7 +40,7 @@ message ListSignatureTasksRequest {
   optional int64 policy_id = 2;
 
   resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
-  repeated resources.documents.SignatureStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.SignatureTaskStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
 }
 
 message ListSignatureTasksResponse {
@@ -166,7 +166,8 @@ message RecomputeSignatureStatusResponse {
 
 message ListUsableStampsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  int64 document_id = 2;
+  // If set, only stamps usable for signing this document are returned
+  optional int64 document_id = 2;
 }
 
 message ListUsableStampsResponse {

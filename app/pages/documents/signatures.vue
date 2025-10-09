@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import { getDocumentsSigningClient } from '~~/gen/ts/clients';
+import { SignatureTaskStatus } from '~~/gen/ts/resources/documents/signing';
+import type { ListSignatureTasksResponse } from '~~/gen/ts/services/documents/signing';
 
 useHead({
     title: 'pages.documents.signatures.title',
@@ -15,6 +18,23 @@ defineProps<{
     itemsLeft: NavigationMenuItem[];
     itemsRight: NavigationMenuItem[];
 }>();
+
+const signingClient = await getDocumentsSigningClient();
+
+const { data, status, error, refresh } = useLazyAsyncData(
+    () => `documents-signatures-`,
+    () => listSignatureTasks(),
+);
+
+async function listSignatureTasks(): Promise<ListSignatureTasksResponse> {
+    const call = signingClient.listSignatureTasks({
+        documentId: 0,
+        statuses: [SignatureTaskStatus.PENDING, SignatureTaskStatus.EXPIRED],
+    });
+    const { response } = await call;
+
+    return response;
+}
 
 // TODO
 </script>

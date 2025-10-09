@@ -48,6 +48,9 @@
             },
             "signatures": {
                 "title": "Signaturaufgaben"
+            },
+            "stamps": {
+                "title": "Stempel"
             }
         },
         "notfound": {

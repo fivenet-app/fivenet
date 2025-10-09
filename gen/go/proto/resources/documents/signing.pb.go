@@ -676,7 +676,7 @@ type Signature struct {
 	Type           SignatureType    `protobuf:"varint,12,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
 	// SVG path, typed preview, stamp fill, etc.
 	PayloadSvg string `protobuf:"bytes,13,opt,name=payload_svg,json=payloadSvg,proto3" json:"payload_svg,omitempty"`
-	// if type == STAMP
+	// If type == STAMP
 	StampId       *int64               `protobuf:"varint,14,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	Status        SignatureStatus      `protobuf:"varint,15,opt,name=status,proto3,enum=resources.documents.SignatureStatus" json:"status,omitempty"`
 	Comment       *string              `protobuf:"bytes,16,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
