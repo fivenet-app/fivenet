@@ -13,7 +13,7 @@ type DiscordCmd struct {
 func (c *DiscordCmd) Run(_ *Context) error {
 	instance.SetComponent("discord")
 
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, true, true)
 	fxOpts = append(fxOpts, FxDiscordOpts()...)
 
 	if c.ModuleCronAgent {

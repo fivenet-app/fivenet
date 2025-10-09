@@ -25,7 +25,7 @@ type FilestoreCmd struct {
 }
 
 func (c *FilestoreCmd) Run() error {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err

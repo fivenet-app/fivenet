@@ -26,7 +26,7 @@ type DBSyncCmd struct {
 }
 
 func getService() service.Service {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, false)
 	fxOpts = append(fxOpts, FxDBSyncOpts()...)
 
 	app := fx.New(fxOpts...)

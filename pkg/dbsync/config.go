@@ -3,74 +3,117 @@ package dbsync
 import (
 	"fmt"
 	"os"
+	"sync/atomic"
 	"time"
 
 	"github.com/creasty/defaults"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-func (s *Sync) loadConfig(shutdowner fx.Shutdowner) error {
-	v := viper.New()
+type Config struct {
+	shutdowner fx.Shutdowner
+
+	v *viper.Viper
+
+	cfg atomic.Pointer[DBSyncConfig]
+}
+
+type ParamsConfig struct {
+	fx.In
+
+	LC         fx.Lifecycle
+	Shutdowner fx.Shutdowner
+}
+
+type ResultConfig struct {
+	fx.Out
+
+	Config *Config
+	Cfg    *config.Config
+}
+
+func NewConfig(p ParamsConfig) (ResultConfig, error) {
+	s := &Config{
+		shutdowner: p.Shutdowner,
+	}
+
+	r := ResultConfig{
+		Config: s,
+		Cfg:    &config.Config{},
+	}
+
+	s.v = viper.New()
 	// Viper config reading setup
-	v.SetEnvPrefix("FIVENET")
-	v.SetConfigType("yaml")
+	s.v.SetEnvPrefix("FIVENET")
+	s.v.SetConfigType("yaml")
 
 	if configFile := os.Getenv("FIVENET_DBSYNC_FILE"); configFile != "" {
-		v.SetConfigFile(configFile)
+		s.v.SetConfigFile(configFile)
 	} else {
-		v.SetConfigName("dbsync")
-		v.AddConfigPath(".")
-		v.AddConfigPath("/config")
+		s.v.SetConfigName("dbsync")
+		s.v.AddConfigPath(".")
+		s.v.AddConfigPath("/config")
 	}
 
-	loadConfig := func() error {
-		// Find and read the dbsync config file
-		if err := v.ReadInConfig(); err != nil {
-			return fmt.Errorf("fatal error config file. %w", err)
-		}
-
-		c := &DBSyncConfig{}
-		if err := defaults.Set(c); err != nil {
-			return fmt.Errorf("failed to set config defaults. %w", err)
-		}
-
-		if err := v.Unmarshal(c); err != nil {
-			return fmt.Errorf("failed to unmarshal config. %w", err)
-		}
-
-		s.cfg.Store(c)
-
-		return nil
+	if err := s.LoadConfig(); err != nil {
+		return r, err
 	}
 
-	if err := loadConfig(); err != nil {
-		return err
+	return r, nil
+}
+
+func (s *Config) Load() *DBSyncConfig {
+	return s.cfg.Load()
+}
+
+func (s *Config) LoadConfig() error {
+	// Find and read the dbsync config file
+	if err := s.v.ReadInConfig(); err != nil {
+		return fmt.Errorf("fatal error in config file format/syntax. %w", err)
 	}
 
-	v.WatchConfig()
-	v.OnConfigChange(func(_ fsnotify.Event) {
-		s.logger.Info("config change detected, reloading config")
-		if err := loadConfig(); err != nil {
-			s.logger.Error("failed to hot reload config", zap.Error(err))
-			return
-		}
+	c := &DBSyncConfig{}
+	if err := defaults.Set(c); err != nil {
+		return fmt.Errorf("failed to set defaults in config file. %w", err)
+	}
 
-		if err := s.restart(); err != nil {
-			if err := shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
-				s.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
-			}
-			s.logger.Error("failed to restart dbsync", zap.Error(err))
-			return
-		}
-	})
+	if err := s.v.Unmarshal(c); err != nil {
+		return fmt.Errorf("failed to read config file data into the system. %w", err)
+	}
+
+	s.cfg.Store(c)
 
 	return nil
 }
 
+func (s *Config) setupWatch(logger *zap.Logger, restartFn func() error) {
+	s.v.WatchConfig()
+	s.v.OnConfigChange(func(_ fsnotify.Event) {
+		logger.Info("config change detected, reloading config")
+		if err := s.LoadConfig(); err != nil {
+			logger.Error("failed to hot reload config", zap.Error(err))
+			return
+		}
+
+		if err := restartFn(); err != nil {
+			if err := s.shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+				logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
+			}
+			logger.Error("failed to restart dbsync", zap.Error(err))
+			return
+		}
+	})
+}
+
 type DBSyncConfig struct {
+	Mode string `default:"release" yaml:"mode"`
+
+	Log config.Log `yaml:"log"`
+
 	WatchConfig bool `default:"true" yaml:"watchConfig"`
 
 	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`

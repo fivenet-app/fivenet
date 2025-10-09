@@ -10,7 +10,7 @@ type AllInOneCmd struct{}
 func (c *AllInOneCmd) Run(_ *Context) error {
 	instance.SetComponent("allinone")
 
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, true, true)
 	fxOpts = append(fxOpts, FxServerOpts()...)
 	fxOpts = append(fxOpts, FxDemoOpts()...)
 	fxOpts = append(fxOpts, FxUserInfoPollerOpts()...)
