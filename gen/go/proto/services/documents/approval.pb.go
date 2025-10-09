@@ -9,6 +9,7 @@ package documents
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -25,6 +26,110 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ListApprovalTasksInboxRequest struct {
+	state         protoimpl.MessageState         `protogen:"open.v1"`
+	Pagination    *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListApprovalTasksInboxRequest) Reset() {
+	*x = ListApprovalTasksInboxRequest{}
+	mi := &file_services_documents_approval_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListApprovalTasksInboxRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListApprovalTasksInboxRequest) ProtoMessage() {}
+
+func (x *ListApprovalTasksInboxRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_approval_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListApprovalTasksInboxRequest.ProtoReflect.Descriptor instead.
+func (*ListApprovalTasksInboxRequest) Descriptor() ([]byte, []int) {
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ListApprovalTasksInboxRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListApprovalTasksInboxRequest) GetStatuses() []documents.ApprovalTaskStatus {
+	if x != nil {
+		return x.Statuses
+	}
+	return nil
+}
+
+type ListApprovalTasksInboxResponse struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Tasks         []*documents.ApprovalTask    `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListApprovalTasksInboxResponse) Reset() {
+	*x = ListApprovalTasksInboxResponse{}
+	mi := &file_services_documents_approval_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListApprovalTasksInboxResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListApprovalTasksInboxResponse) ProtoMessage() {}
+
+func (x *ListApprovalTasksInboxResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_approval_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListApprovalTasksInboxResponse.ProtoReflect.Descriptor instead.
+func (*ListApprovalTasksInboxResponse) Descriptor() ([]byte, []int) {
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ListApprovalTasksInboxResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListApprovalTasksInboxResponse) GetTasks() []*documents.ApprovalTask {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
 type ListApprovalPoliciesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
@@ -34,7 +139,7 @@ type ListApprovalPoliciesRequest struct {
 
 func (x *ListApprovalPoliciesRequest) Reset() {
 	*x = ListApprovalPoliciesRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[0]
+	mi := &file_services_documents_approval_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -46,7 +151,7 @@ func (x *ListApprovalPoliciesRequest) String() string {
 func (*ListApprovalPoliciesRequest) ProtoMessage() {}
 
 func (x *ListApprovalPoliciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[0]
+	mi := &file_services_documents_approval_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -59,7 +164,7 @@ func (x *ListApprovalPoliciesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalPoliciesRequest.ProtoReflect.Descriptor instead.
 func (*ListApprovalPoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{0}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListApprovalPoliciesRequest) GetDocumentId() int64 {
@@ -79,7 +184,7 @@ type ListApprovalPoliciesResponse struct {
 
 func (x *ListApprovalPoliciesResponse) Reset() {
 	*x = ListApprovalPoliciesResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[1]
+	mi := &file_services_documents_approval_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -91,7 +196,7 @@ func (x *ListApprovalPoliciesResponse) String() string {
 func (*ListApprovalPoliciesResponse) ProtoMessage() {}
 
 func (x *ListApprovalPoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[1]
+	mi := &file_services_documents_approval_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -104,7 +209,7 @@ func (x *ListApprovalPoliciesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalPoliciesResponse.ProtoReflect.Descriptor instead.
 func (*ListApprovalPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{1}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListApprovalPoliciesResponse) GetPolicy() *documents.ApprovalPolicy {
@@ -123,7 +228,7 @@ type UpsertApprovalPolicyRequest struct {
 
 func (x *UpsertApprovalPolicyRequest) Reset() {
 	*x = UpsertApprovalPolicyRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[2]
+	mi := &file_services_documents_approval_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -135,7 +240,7 @@ func (x *UpsertApprovalPolicyRequest) String() string {
 func (*UpsertApprovalPolicyRequest) ProtoMessage() {}
 
 func (x *UpsertApprovalPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[2]
+	mi := &file_services_documents_approval_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -148,7 +253,7 @@ func (x *UpsertApprovalPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertApprovalPolicyRequest.ProtoReflect.Descriptor instead.
 func (*UpsertApprovalPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{2}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpsertApprovalPolicyRequest) GetPolicy() *documents.ApprovalPolicy {
@@ -167,7 +272,7 @@ type UpsertApprovalPolicyResponse struct {
 
 func (x *UpsertApprovalPolicyResponse) Reset() {
 	*x = UpsertApprovalPolicyResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[3]
+	mi := &file_services_documents_approval_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -179,7 +284,7 @@ func (x *UpsertApprovalPolicyResponse) String() string {
 func (*UpsertApprovalPolicyResponse) ProtoMessage() {}
 
 func (x *UpsertApprovalPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[3]
+	mi := &file_services_documents_approval_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -192,7 +297,7 @@ func (x *UpsertApprovalPolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertApprovalPolicyResponse.ProtoReflect.Descriptor instead.
 func (*UpsertApprovalPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{3}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpsertApprovalPolicyResponse) GetPolicy() *documents.ApprovalPolicy {
@@ -212,7 +317,7 @@ type ListApprovalTasksRequest struct {
 
 func (x *ListApprovalTasksRequest) Reset() {
 	*x = ListApprovalTasksRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[4]
+	mi := &file_services_documents_approval_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -224,7 +329,7 @@ func (x *ListApprovalTasksRequest) String() string {
 func (*ListApprovalTasksRequest) ProtoMessage() {}
 
 func (x *ListApprovalTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[4]
+	mi := &file_services_documents_approval_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -237,7 +342,7 @@ func (x *ListApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalTasksRequest.ProtoReflect.Descriptor instead.
 func (*ListApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{4}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListApprovalTasksRequest) GetDocumentId() int64 {
@@ -263,7 +368,7 @@ type ListApprovalTasksResponse struct {
 
 func (x *ListApprovalTasksResponse) Reset() {
 	*x = ListApprovalTasksResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[5]
+	mi := &file_services_documents_approval_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -275,7 +380,7 @@ func (x *ListApprovalTasksResponse) String() string {
 func (*ListApprovalTasksResponse) ProtoMessage() {}
 
 func (x *ListApprovalTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[5]
+	mi := &file_services_documents_approval_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -288,7 +393,7 @@ func (x *ListApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalTasksResponse.ProtoReflect.Descriptor instead.
 func (*ListApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{5}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListApprovalTasksResponse) GetTasks() []*documents.ApprovalTask {
@@ -319,7 +424,7 @@ type ApprovalTaskSeed struct {
 
 func (x *ApprovalTaskSeed) Reset() {
 	*x = ApprovalTaskSeed{}
-	mi := &file_services_documents_approval_proto_msgTypes[6]
+	mi := &file_services_documents_approval_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -331,7 +436,7 @@ func (x *ApprovalTaskSeed) String() string {
 func (*ApprovalTaskSeed) ProtoMessage() {}
 
 func (x *ApprovalTaskSeed) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[6]
+	mi := &file_services_documents_approval_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,7 +449,7 @@ func (x *ApprovalTaskSeed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApprovalTaskSeed.ProtoReflect.Descriptor instead.
 func (*ApprovalTaskSeed) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{6}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ApprovalTaskSeed) GetUserId() int32 {
@@ -407,7 +512,7 @@ type UpsertApprovalTasksRequest struct {
 
 func (x *UpsertApprovalTasksRequest) Reset() {
 	*x = UpsertApprovalTasksRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[7]
+	mi := &file_services_documents_approval_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -419,7 +524,7 @@ func (x *UpsertApprovalTasksRequest) String() string {
 func (*UpsertApprovalTasksRequest) ProtoMessage() {}
 
 func (x *UpsertApprovalTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[7]
+	mi := &file_services_documents_approval_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -432,7 +537,7 @@ func (x *UpsertApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertApprovalTasksRequest.ProtoReflect.Descriptor instead.
 func (*UpsertApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{7}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpsertApprovalTasksRequest) GetPolicyId() int64 {
@@ -470,7 +575,7 @@ type UpsertApprovalTasksResponse struct {
 
 func (x *UpsertApprovalTasksResponse) Reset() {
 	*x = UpsertApprovalTasksResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[8]
+	mi := &file_services_documents_approval_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -482,7 +587,7 @@ func (x *UpsertApprovalTasksResponse) String() string {
 func (*UpsertApprovalTasksResponse) ProtoMessage() {}
 
 func (x *UpsertApprovalTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[8]
+	mi := &file_services_documents_approval_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -495,7 +600,7 @@ func (x *UpsertApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertApprovalTasksResponse.ProtoReflect.Descriptor instead.
 func (*UpsertApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{8}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UpsertApprovalTasksResponse) GetTasksCreated() int32 {
@@ -531,7 +636,7 @@ type DeleteApprovalTasksRequest struct {
 
 func (x *DeleteApprovalTasksRequest) Reset() {
 	*x = DeleteApprovalTasksRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[9]
+	mi := &file_services_documents_approval_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -543,7 +648,7 @@ func (x *DeleteApprovalTasksRequest) String() string {
 func (*DeleteApprovalTasksRequest) ProtoMessage() {}
 
 func (x *DeleteApprovalTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[9]
+	mi := &file_services_documents_approval_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -556,7 +661,7 @@ func (x *DeleteApprovalTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteApprovalTasksRequest.ProtoReflect.Descriptor instead.
 func (*DeleteApprovalTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{9}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *DeleteApprovalTasksRequest) GetPolicyId() int64 {
@@ -588,7 +693,7 @@ type DeleteApprovalTasksResponse struct {
 
 func (x *DeleteApprovalTasksResponse) Reset() {
 	*x = DeleteApprovalTasksResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[10]
+	mi := &file_services_documents_approval_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -600,7 +705,7 @@ func (x *DeleteApprovalTasksResponse) String() string {
 func (*DeleteApprovalTasksResponse) ProtoMessage() {}
 
 func (x *DeleteApprovalTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[10]
+	mi := &file_services_documents_approval_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -613,7 +718,7 @@ func (x *DeleteApprovalTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteApprovalTasksResponse.ProtoReflect.Descriptor instead.
 func (*DeleteApprovalTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{10}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{12}
 }
 
 // List approvals (artifacts) for a policy/snapshot.
@@ -634,7 +739,7 @@ type ListApprovalsRequest struct {
 
 func (x *ListApprovalsRequest) Reset() {
 	*x = ListApprovalsRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[11]
+	mi := &file_services_documents_approval_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -646,7 +751,7 @@ func (x *ListApprovalsRequest) String() string {
 func (*ListApprovalsRequest) ProtoMessage() {}
 
 func (x *ListApprovalsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[11]
+	mi := &file_services_documents_approval_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -659,7 +764,7 @@ func (x *ListApprovalsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalsRequest.ProtoReflect.Descriptor instead.
 func (*ListApprovalsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{11}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListApprovalsRequest) GetDocumentId() int64 {
@@ -706,14 +811,14 @@ func (x *ListApprovalsRequest) GetUserId() int32 {
 
 type ListApprovalsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Approvals     []*documents.Approval  `protobuf:"bytes,1,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Approvals     []*documents.Approval  `protobuf:"bytes,3,rep,name=approvals,proto3" json:"approvals,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListApprovalsResponse) Reset() {
 	*x = ListApprovalsResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[12]
+	mi := &file_services_documents_approval_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -725,7 +830,7 @@ func (x *ListApprovalsResponse) String() string {
 func (*ListApprovalsResponse) ProtoMessage() {}
 
 func (x *ListApprovalsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[12]
+	mi := &file_services_documents_approval_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -738,7 +843,7 @@ func (x *ListApprovalsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListApprovalsResponse.ProtoReflect.Descriptor instead.
 func (*ListApprovalsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{12}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListApprovalsResponse) GetApprovals() []*documents.Approval {
@@ -758,7 +863,7 @@ type RevokeApprovalRequest struct {
 
 func (x *RevokeApprovalRequest) Reset() {
 	*x = RevokeApprovalRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[13]
+	mi := &file_services_documents_approval_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -770,7 +875,7 @@ func (x *RevokeApprovalRequest) String() string {
 func (*RevokeApprovalRequest) ProtoMessage() {}
 
 func (x *RevokeApprovalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[13]
+	mi := &file_services_documents_approval_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -783,7 +888,7 @@ func (x *RevokeApprovalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeApprovalRequest.ProtoReflect.Descriptor instead.
 func (*RevokeApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{13}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *RevokeApprovalRequest) GetApprovalId() int64 {
@@ -809,7 +914,7 @@ type RevokeApprovalResponse struct {
 
 func (x *RevokeApprovalResponse) Reset() {
 	*x = RevokeApprovalResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[14]
+	mi := &file_services_documents_approval_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -821,7 +926,7 @@ func (x *RevokeApprovalResponse) String() string {
 func (*RevokeApprovalResponse) ProtoMessage() {}
 
 func (x *RevokeApprovalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[14]
+	mi := &file_services_documents_approval_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -834,7 +939,7 @@ func (x *RevokeApprovalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeApprovalResponse.ProtoReflect.Descriptor instead.
 func (*RevokeApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{14}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
@@ -857,7 +962,7 @@ type DecideApprovalRequest struct {
 
 func (x *DecideApprovalRequest) Reset() {
 	*x = DecideApprovalRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[15]
+	mi := &file_services_documents_approval_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -869,7 +974,7 @@ func (x *DecideApprovalRequest) String() string {
 func (*DecideApprovalRequest) ProtoMessage() {}
 
 func (x *DecideApprovalRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[15]
+	mi := &file_services_documents_approval_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -882,7 +987,7 @@ func (x *DecideApprovalRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecideApprovalRequest.ProtoReflect.Descriptor instead.
 func (*DecideApprovalRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{15}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *DecideApprovalRequest) GetDocumentId() int64 {
@@ -931,7 +1036,7 @@ type DecideApprovalResponse struct {
 
 func (x *DecideApprovalResponse) Reset() {
 	*x = DecideApprovalResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[16]
+	mi := &file_services_documents_approval_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -943,7 +1048,7 @@ func (x *DecideApprovalResponse) String() string {
 func (*DecideApprovalResponse) ProtoMessage() {}
 
 func (x *DecideApprovalResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[16]
+	mi := &file_services_documents_approval_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -956,7 +1061,7 @@ func (x *DecideApprovalResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecideApprovalResponse.ProtoReflect.Descriptor instead.
 func (*DecideApprovalResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{16}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *DecideApprovalResponse) GetApproval() *documents.Approval {
@@ -990,7 +1095,7 @@ type ReopenApprovalTaskRequest struct {
 
 func (x *ReopenApprovalTaskRequest) Reset() {
 	*x = ReopenApprovalTaskRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[17]
+	mi := &file_services_documents_approval_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1002,7 +1107,7 @@ func (x *ReopenApprovalTaskRequest) String() string {
 func (*ReopenApprovalTaskRequest) ProtoMessage() {}
 
 func (x *ReopenApprovalTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[17]
+	mi := &file_services_documents_approval_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1015,7 +1120,7 @@ func (x *ReopenApprovalTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenApprovalTaskRequest.ProtoReflect.Descriptor instead.
 func (*ReopenApprovalTaskRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{17}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ReopenApprovalTaskRequest) GetTaskId() int64 {
@@ -1043,7 +1148,7 @@ type ReopenApprovalTaskResponse struct {
 
 func (x *ReopenApprovalTaskResponse) Reset() {
 	*x = ReopenApprovalTaskResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[18]
+	mi := &file_services_documents_approval_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1055,7 +1160,7 @@ func (x *ReopenApprovalTaskResponse) String() string {
 func (*ReopenApprovalTaskResponse) ProtoMessage() {}
 
 func (x *ReopenApprovalTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[18]
+	mi := &file_services_documents_approval_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1068,7 +1173,7 @@ func (x *ReopenApprovalTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenApprovalTaskResponse.ProtoReflect.Descriptor instead.
 func (*ReopenApprovalTaskResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{18}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ReopenApprovalTaskResponse) GetApproval() *documents.Approval {
@@ -1101,7 +1206,7 @@ type RecomputeApprovalPolicyCountersRequest struct {
 
 func (x *RecomputeApprovalPolicyCountersRequest) Reset() {
 	*x = RecomputeApprovalPolicyCountersRequest{}
-	mi := &file_services_documents_approval_proto_msgTypes[19]
+	mi := &file_services_documents_approval_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1113,7 +1218,7 @@ func (x *RecomputeApprovalPolicyCountersRequest) String() string {
 func (*RecomputeApprovalPolicyCountersRequest) ProtoMessage() {}
 
 func (x *RecomputeApprovalPolicyCountersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[19]
+	mi := &file_services_documents_approval_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1126,7 +1231,7 @@ func (x *RecomputeApprovalPolicyCountersRequest) ProtoReflect() protoreflect.Mes
 
 // Deprecated: Use RecomputeApprovalPolicyCountersRequest.ProtoReflect.Descriptor instead.
 func (*RecomputeApprovalPolicyCountersRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{19}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *RecomputeApprovalPolicyCountersRequest) GetDocumentId() int64 {
@@ -1145,7 +1250,7 @@ type RecomputeApprovalPolicyCountersResponse struct {
 
 func (x *RecomputeApprovalPolicyCountersResponse) Reset() {
 	*x = RecomputeApprovalPolicyCountersResponse{}
-	mi := &file_services_documents_approval_proto_msgTypes[20]
+	mi := &file_services_documents_approval_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1157,7 +1262,7 @@ func (x *RecomputeApprovalPolicyCountersResponse) String() string {
 func (*RecomputeApprovalPolicyCountersResponse) ProtoMessage() {}
 
 func (x *RecomputeApprovalPolicyCountersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_approval_proto_msgTypes[20]
+	mi := &file_services_documents_approval_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1170,7 +1275,7 @@ func (x *RecomputeApprovalPolicyCountersResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use RecomputeApprovalPolicyCountersResponse.ProtoReflect.Descriptor instead.
 func (*RecomputeApprovalPolicyCountersResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_approval_proto_rawDescGZIP(), []int{20}
+	return file_services_documents_approval_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RecomputeApprovalPolicyCountersResponse) GetPolicy() *documents.ApprovalPolicy {
@@ -1184,7 +1289,17 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\">\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"\xb2\x01\n" +
+	"\x1dListApprovalTasksInboxRequest\x12L\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12C\n" +
+	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"\xae\x01\n" +
+	"\x1eListApprovalTasksInboxResponse\x12M\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x12=\n" +
+	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\">\n" +
 	"\x1bListApprovalPoliciesRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"[\n" +
@@ -1241,7 +1356,7 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_id\"T\n" +
 	"\x15ListApprovalsResponse\x12;\n" +
-	"\tapprovals\x18\x01 \x03(\v2\x1d.resources.documents.ApprovalR\tapprovals\"R\n" +
+	"\tapprovals\x18\x03 \x03(\v2\x1d.resources.documents.ApprovalR\tapprovals\"R\n" +
 	"\x15RevokeApprovalRequest\x12\x1f\n" +
 	"\vapproval_id\x18\x01 \x01(\x03R\n" +
 	"approvalId\x12\x18\n" +
@@ -1275,8 +1390,9 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"f\n" +
 	"'RecomputeApprovalPolicyCountersResponse\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xed\v\n" +
-	"\x0fApprovalService\x12\xac\x01\n" +
+	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xa2\r\n" +
+	"\x0fApprovalService\x12\xb2\x01\n" +
+	"\x16ListApprovalTasksInbox\x121.services.documents.ListApprovalTasksInboxRequest\x1a2.services.documents.ListApprovalTasksInboxResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\xac\x01\n" +
 	"\x14ListApprovalPolicies\x12/.services.documents.ListApprovalPoliciesRequest\x1a0.services.documents.ListApprovalPoliciesResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
 	"\x14UpsertApprovalPolicy\x12/.services.documents.UpsertApprovalPolicyRequest\x1a0.services.documents.UpsertApprovalPolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa3\x01\n" +
 	"\x11ListApprovalTasks\x12,.services.documents.ListApprovalTasksRequest\x1a-.services.documents.ListApprovalTasksResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12~\n" +
@@ -1300,83 +1416,93 @@ func file_services_documents_approval_proto_rawDescGZIP() []byte {
 	return file_services_documents_approval_proto_rawDescData
 }
 
-var file_services_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
+var file_services_documents_approval_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
 var file_services_documents_approval_proto_goTypes = []any{
-	(*ListApprovalPoliciesRequest)(nil),             // 0: services.documents.ListApprovalPoliciesRequest
-	(*ListApprovalPoliciesResponse)(nil),            // 1: services.documents.ListApprovalPoliciesResponse
-	(*UpsertApprovalPolicyRequest)(nil),             // 2: services.documents.UpsertApprovalPolicyRequest
-	(*UpsertApprovalPolicyResponse)(nil),            // 3: services.documents.UpsertApprovalPolicyResponse
-	(*ListApprovalTasksRequest)(nil),                // 4: services.documents.ListApprovalTasksRequest
-	(*ListApprovalTasksResponse)(nil),               // 5: services.documents.ListApprovalTasksResponse
-	(*ApprovalTaskSeed)(nil),                        // 6: services.documents.ApprovalTaskSeed
-	(*UpsertApprovalTasksRequest)(nil),              // 7: services.documents.UpsertApprovalTasksRequest
-	(*UpsertApprovalTasksResponse)(nil),             // 8: services.documents.UpsertApprovalTasksResponse
-	(*DeleteApprovalTasksRequest)(nil),              // 9: services.documents.DeleteApprovalTasksRequest
-	(*DeleteApprovalTasksResponse)(nil),             // 10: services.documents.DeleteApprovalTasksResponse
-	(*ListApprovalsRequest)(nil),                    // 11: services.documents.ListApprovalsRequest
-	(*ListApprovalsResponse)(nil),                   // 12: services.documents.ListApprovalsResponse
-	(*RevokeApprovalRequest)(nil),                   // 13: services.documents.RevokeApprovalRequest
-	(*RevokeApprovalResponse)(nil),                  // 14: services.documents.RevokeApprovalResponse
-	(*DecideApprovalRequest)(nil),                   // 15: services.documents.DecideApprovalRequest
-	(*DecideApprovalResponse)(nil),                  // 16: services.documents.DecideApprovalResponse
-	(*ReopenApprovalTaskRequest)(nil),               // 17: services.documents.ReopenApprovalTaskRequest
-	(*ReopenApprovalTaskResponse)(nil),              // 18: services.documents.ReopenApprovalTaskResponse
-	(*RecomputeApprovalPolicyCountersRequest)(nil),  // 19: services.documents.RecomputeApprovalPolicyCountersRequest
-	(*RecomputeApprovalPolicyCountersResponse)(nil), // 20: services.documents.RecomputeApprovalPolicyCountersResponse
-	(*documents.ApprovalPolicy)(nil),                // 21: resources.documents.ApprovalPolicy
-	(documents.ApprovalTaskStatus)(0),               // 22: resources.documents.ApprovalTaskStatus
-	(*documents.ApprovalTask)(nil),                  // 23: resources.documents.ApprovalTask
-	(*timestamp.Timestamp)(nil),                     // 24: resources.timestamp.Timestamp
-	(documents.ApprovalStatus)(0),                   // 25: resources.documents.ApprovalStatus
-	(*documents.Approval)(nil),                      // 26: resources.documents.Approval
+	(*ListApprovalTasksInboxRequest)(nil),           // 0: services.documents.ListApprovalTasksInboxRequest
+	(*ListApprovalTasksInboxResponse)(nil),          // 1: services.documents.ListApprovalTasksInboxResponse
+	(*ListApprovalPoliciesRequest)(nil),             // 2: services.documents.ListApprovalPoliciesRequest
+	(*ListApprovalPoliciesResponse)(nil),            // 3: services.documents.ListApprovalPoliciesResponse
+	(*UpsertApprovalPolicyRequest)(nil),             // 4: services.documents.UpsertApprovalPolicyRequest
+	(*UpsertApprovalPolicyResponse)(nil),            // 5: services.documents.UpsertApprovalPolicyResponse
+	(*ListApprovalTasksRequest)(nil),                // 6: services.documents.ListApprovalTasksRequest
+	(*ListApprovalTasksResponse)(nil),               // 7: services.documents.ListApprovalTasksResponse
+	(*ApprovalTaskSeed)(nil),                        // 8: services.documents.ApprovalTaskSeed
+	(*UpsertApprovalTasksRequest)(nil),              // 9: services.documents.UpsertApprovalTasksRequest
+	(*UpsertApprovalTasksResponse)(nil),             // 10: services.documents.UpsertApprovalTasksResponse
+	(*DeleteApprovalTasksRequest)(nil),              // 11: services.documents.DeleteApprovalTasksRequest
+	(*DeleteApprovalTasksResponse)(nil),             // 12: services.documents.DeleteApprovalTasksResponse
+	(*ListApprovalsRequest)(nil),                    // 13: services.documents.ListApprovalsRequest
+	(*ListApprovalsResponse)(nil),                   // 14: services.documents.ListApprovalsResponse
+	(*RevokeApprovalRequest)(nil),                   // 15: services.documents.RevokeApprovalRequest
+	(*RevokeApprovalResponse)(nil),                  // 16: services.documents.RevokeApprovalResponse
+	(*DecideApprovalRequest)(nil),                   // 17: services.documents.DecideApprovalRequest
+	(*DecideApprovalResponse)(nil),                  // 18: services.documents.DecideApprovalResponse
+	(*ReopenApprovalTaskRequest)(nil),               // 19: services.documents.ReopenApprovalTaskRequest
+	(*ReopenApprovalTaskResponse)(nil),              // 20: services.documents.ReopenApprovalTaskResponse
+	(*RecomputeApprovalPolicyCountersRequest)(nil),  // 21: services.documents.RecomputeApprovalPolicyCountersRequest
+	(*RecomputeApprovalPolicyCountersResponse)(nil), // 22: services.documents.RecomputeApprovalPolicyCountersResponse
+	(*database.PaginationRequest)(nil),              // 23: resources.common.database.PaginationRequest
+	(documents.ApprovalTaskStatus)(0),               // 24: resources.documents.ApprovalTaskStatus
+	(*database.PaginationResponse)(nil),             // 25: resources.common.database.PaginationResponse
+	(*documents.ApprovalTask)(nil),                  // 26: resources.documents.ApprovalTask
+	(*documents.ApprovalPolicy)(nil),                // 27: resources.documents.ApprovalPolicy
+	(*timestamp.Timestamp)(nil),                     // 28: resources.timestamp.Timestamp
+	(documents.ApprovalStatus)(0),                   // 29: resources.documents.ApprovalStatus
+	(*documents.Approval)(nil),                      // 30: resources.documents.Approval
 }
 var file_services_documents_approval_proto_depIdxs = []int32{
-	21, // 0: services.documents.ListApprovalPoliciesResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	21, // 1: services.documents.UpsertApprovalPolicyRequest.policy:type_name -> resources.documents.ApprovalPolicy
-	21, // 2: services.documents.UpsertApprovalPolicyResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	22, // 3: services.documents.ListApprovalTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
-	23, // 4: services.documents.ListApprovalTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
-	24, // 5: services.documents.ApprovalTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
-	24, // 6: services.documents.UpsertApprovalTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	6,  // 7: services.documents.UpsertApprovalTasksRequest.seeds:type_name -> services.documents.ApprovalTaskSeed
-	21, // 8: services.documents.UpsertApprovalTasksResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	24, // 9: services.documents.ListApprovalsRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	25, // 10: services.documents.ListApprovalsRequest.status:type_name -> resources.documents.ApprovalStatus
-	26, // 11: services.documents.ListApprovalsResponse.approvals:type_name -> resources.documents.Approval
-	26, // 12: services.documents.RevokeApprovalResponse.approval:type_name -> resources.documents.Approval
-	22, // 13: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
-	26, // 14: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.Approval
-	23, // 15: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.ApprovalTask
-	21, // 16: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	26, // 17: services.documents.ReopenApprovalTaskResponse.approval:type_name -> resources.documents.Approval
-	23, // 18: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.ApprovalTask
-	21, // 19: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	21, // 20: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	0,  // 21: services.documents.ApprovalService.ListApprovalPolicies:input_type -> services.documents.ListApprovalPoliciesRequest
-	2,  // 22: services.documents.ApprovalService.UpsertApprovalPolicy:input_type -> services.documents.UpsertApprovalPolicyRequest
-	4,  // 23: services.documents.ApprovalService.ListApprovalTasks:input_type -> services.documents.ListApprovalTasksRequest
-	7,  // 24: services.documents.ApprovalService.UpsertApprovalTasks:input_type -> services.documents.UpsertApprovalTasksRequest
-	9,  // 25: services.documents.ApprovalService.DeleteApprovalTasks:input_type -> services.documents.DeleteApprovalTasksRequest
-	11, // 26: services.documents.ApprovalService.ListApprovals:input_type -> services.documents.ListApprovalsRequest
-	13, // 27: services.documents.ApprovalService.RevokeApproval:input_type -> services.documents.RevokeApprovalRequest
-	15, // 28: services.documents.ApprovalService.DecideApproval:input_type -> services.documents.DecideApprovalRequest
-	17, // 29: services.documents.ApprovalService.ReopenApprovalTask:input_type -> services.documents.ReopenApprovalTaskRequest
-	19, // 30: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:input_type -> services.documents.RecomputeApprovalPolicyCountersRequest
-	1,  // 31: services.documents.ApprovalService.ListApprovalPolicies:output_type -> services.documents.ListApprovalPoliciesResponse
-	3,  // 32: services.documents.ApprovalService.UpsertApprovalPolicy:output_type -> services.documents.UpsertApprovalPolicyResponse
-	5,  // 33: services.documents.ApprovalService.ListApprovalTasks:output_type -> services.documents.ListApprovalTasksResponse
-	8,  // 34: services.documents.ApprovalService.UpsertApprovalTasks:output_type -> services.documents.UpsertApprovalTasksResponse
-	10, // 35: services.documents.ApprovalService.DeleteApprovalTasks:output_type -> services.documents.DeleteApprovalTasksResponse
-	12, // 36: services.documents.ApprovalService.ListApprovals:output_type -> services.documents.ListApprovalsResponse
-	14, // 37: services.documents.ApprovalService.RevokeApproval:output_type -> services.documents.RevokeApprovalResponse
-	16, // 38: services.documents.ApprovalService.DecideApproval:output_type -> services.documents.DecideApprovalResponse
-	18, // 39: services.documents.ApprovalService.ReopenApprovalTask:output_type -> services.documents.ReopenApprovalTaskResponse
-	20, // 40: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:output_type -> services.documents.RecomputeApprovalPolicyCountersResponse
-	31, // [31:41] is the sub-list for method output_type
-	21, // [21:31] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	23, // 0: services.documents.ListApprovalTasksInboxRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	24, // 1: services.documents.ListApprovalTasksInboxRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
+	25, // 2: services.documents.ListApprovalTasksInboxResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	26, // 3: services.documents.ListApprovalTasksInboxResponse.tasks:type_name -> resources.documents.ApprovalTask
+	27, // 4: services.documents.ListApprovalPoliciesResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	27, // 5: services.documents.UpsertApprovalPolicyRequest.policy:type_name -> resources.documents.ApprovalPolicy
+	27, // 6: services.documents.UpsertApprovalPolicyResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	24, // 7: services.documents.ListApprovalTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
+	26, // 8: services.documents.ListApprovalTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
+	28, // 9: services.documents.ApprovalTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
+	28, // 10: services.documents.UpsertApprovalTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	8,  // 11: services.documents.UpsertApprovalTasksRequest.seeds:type_name -> services.documents.ApprovalTaskSeed
+	27, // 12: services.documents.UpsertApprovalTasksResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	28, // 13: services.documents.ListApprovalsRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	29, // 14: services.documents.ListApprovalsRequest.status:type_name -> resources.documents.ApprovalStatus
+	30, // 15: services.documents.ListApprovalsResponse.approvals:type_name -> resources.documents.Approval
+	30, // 16: services.documents.RevokeApprovalResponse.approval:type_name -> resources.documents.Approval
+	24, // 17: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
+	30, // 18: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.Approval
+	26, // 19: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.ApprovalTask
+	27, // 20: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	30, // 21: services.documents.ReopenApprovalTaskResponse.approval:type_name -> resources.documents.Approval
+	26, // 22: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.ApprovalTask
+	27, // 23: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	27, // 24: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	0,  // 25: services.documents.ApprovalService.ListApprovalTasksInbox:input_type -> services.documents.ListApprovalTasksInboxRequest
+	2,  // 26: services.documents.ApprovalService.ListApprovalPolicies:input_type -> services.documents.ListApprovalPoliciesRequest
+	4,  // 27: services.documents.ApprovalService.UpsertApprovalPolicy:input_type -> services.documents.UpsertApprovalPolicyRequest
+	6,  // 28: services.documents.ApprovalService.ListApprovalTasks:input_type -> services.documents.ListApprovalTasksRequest
+	9,  // 29: services.documents.ApprovalService.UpsertApprovalTasks:input_type -> services.documents.UpsertApprovalTasksRequest
+	11, // 30: services.documents.ApprovalService.DeleteApprovalTasks:input_type -> services.documents.DeleteApprovalTasksRequest
+	13, // 31: services.documents.ApprovalService.ListApprovals:input_type -> services.documents.ListApprovalsRequest
+	15, // 32: services.documents.ApprovalService.RevokeApproval:input_type -> services.documents.RevokeApprovalRequest
+	17, // 33: services.documents.ApprovalService.DecideApproval:input_type -> services.documents.DecideApprovalRequest
+	19, // 34: services.documents.ApprovalService.ReopenApprovalTask:input_type -> services.documents.ReopenApprovalTaskRequest
+	21, // 35: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:input_type -> services.documents.RecomputeApprovalPolicyCountersRequest
+	1,  // 36: services.documents.ApprovalService.ListApprovalTasksInbox:output_type -> services.documents.ListApprovalTasksInboxResponse
+	3,  // 37: services.documents.ApprovalService.ListApprovalPolicies:output_type -> services.documents.ListApprovalPoliciesResponse
+	5,  // 38: services.documents.ApprovalService.UpsertApprovalPolicy:output_type -> services.documents.UpsertApprovalPolicyResponse
+	7,  // 39: services.documents.ApprovalService.ListApprovalTasks:output_type -> services.documents.ListApprovalTasksResponse
+	10, // 40: services.documents.ApprovalService.UpsertApprovalTasks:output_type -> services.documents.UpsertApprovalTasksResponse
+	12, // 41: services.documents.ApprovalService.DeleteApprovalTasks:output_type -> services.documents.DeleteApprovalTasksResponse
+	14, // 42: services.documents.ApprovalService.ListApprovals:output_type -> services.documents.ListApprovalsResponse
+	16, // 43: services.documents.ApprovalService.RevokeApproval:output_type -> services.documents.RevokeApprovalResponse
+	18, // 44: services.documents.ApprovalService.DecideApproval:output_type -> services.documents.DecideApprovalResponse
+	20, // 45: services.documents.ApprovalService.ReopenApprovalTask:output_type -> services.documents.ReopenApprovalTaskResponse
+	22, // 46: services.documents.ApprovalService.RecomputeApprovalPolicyCounters:output_type -> services.documents.RecomputeApprovalPolicyCountersResponse
+	36, // [36:47] is the sub-list for method output_type
+	25, // [25:36] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_approval_proto_init() }
@@ -1384,17 +1510,17 @@ func file_services_documents_approval_proto_init() {
 	if File_services_documents_approval_proto != nil {
 		return
 	}
-	file_services_documents_approval_proto_msgTypes[6].OneofWrappers = []any{}
-	file_services_documents_approval_proto_msgTypes[7].OneofWrappers = []any{}
-	file_services_documents_approval_proto_msgTypes[11].OneofWrappers = []any{}
-	file_services_documents_approval_proto_msgTypes[15].OneofWrappers = []any{}
+	file_services_documents_approval_proto_msgTypes[8].OneofWrappers = []any{}
+	file_services_documents_approval_proto_msgTypes[9].OneofWrappers = []any{}
+	file_services_documents_approval_proto_msgTypes[13].OneofWrappers = []any{}
+	file_services_documents_approval_proto_msgTypes[17].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_approval_proto_rawDesc), len(file_services_documents_approval_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   21,
+			NumMessages:   23,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -144,18 +144,6 @@ func (m *ApprovalTask) Sanitize() error {
 		return nil
 	}
 
-	// Field: Approvals
-	for idx, item := range m.Approvals {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
 	// Field: Comment
 	if m.Comment != nil {
 		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
@@ -190,6 +178,15 @@ func (m *ApprovalTask) Sanitize() error {
 	// Field: DecidedAt
 	if m.DecidedAt != nil {
 		if v, ok := any(m.GetDecidedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

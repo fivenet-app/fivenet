@@ -11,6 +11,14 @@ func (m *ListSignaturePoliciesResponse) ItemsLen() int {
 	return len(m.GetPolicies())
 }
 
+// ItemsLen returns the length of Tasks.
+func (m *ListSignatureTasksInboxResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetTasks())
+}
+
 // ItemsLen returns the length of Signatures.
 func (m *ListSignatureTasksResponse) ItemsLen() int {
 	if m == nil {

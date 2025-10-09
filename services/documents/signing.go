@@ -19,6 +19,18 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+// ListSignatureTasksInbox.
+func (s *Server) ListSignatureTasksInbox(
+	ctx context.Context,
+	req *pbdocuments.ListSignatureTasksInboxRequest,
+) (*pbdocuments.ListSignatureTasksInboxResponse, error) {
+	// TODO
+
+	return &pbdocuments.ListSignatureTasksInboxResponse{
+		Tasks: []*documents.SignatureTask{},
+	}, nil
+}
+
 // ListSignaturePolicies.
 func (s *Server) ListSignaturePolicies(
 	ctx context.Context,

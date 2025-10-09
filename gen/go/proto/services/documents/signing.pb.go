@@ -26,6 +26,110 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ListSignatureTasksInboxRequest struct {
+	state         protoimpl.MessageState          `protogen:"open.v1"`
+	Pagination    *database.PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Statuses      []documents.SignatureTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSignatureTasksInboxRequest) Reset() {
+	*x = ListSignatureTasksInboxRequest{}
+	mi := &file_services_documents_signing_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSignatureTasksInboxRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSignatureTasksInboxRequest) ProtoMessage() {}
+
+func (x *ListSignatureTasksInboxRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_signing_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSignatureTasksInboxRequest.ProtoReflect.Descriptor instead.
+func (*ListSignatureTasksInboxRequest) Descriptor() ([]byte, []int) {
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ListSignatureTasksInboxRequest) GetPagination() *database.PaginationRequest {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListSignatureTasksInboxRequest) GetStatuses() []documents.SignatureTaskStatus {
+	if x != nil {
+		return x.Statuses
+	}
+	return nil
+}
+
+type ListSignatureTasksInboxResponse struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Tasks         []*documents.SignatureTask   `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSignatureTasksInboxResponse) Reset() {
+	*x = ListSignatureTasksInboxResponse{}
+	mi := &file_services_documents_signing_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSignatureTasksInboxResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSignatureTasksInboxResponse) ProtoMessage() {}
+
+func (x *ListSignatureTasksInboxResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_documents_signing_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSignatureTasksInboxResponse.ProtoReflect.Descriptor instead.
+func (*ListSignatureTasksInboxResponse) Descriptor() ([]byte, []int) {
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ListSignatureTasksInboxResponse) GetPagination() *database.PaginationResponse {
+	if x != nil {
+		return x.Pagination
+	}
+	return nil
+}
+
+func (x *ListSignatureTasksInboxResponse) GetTasks() []*documents.SignatureTask {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
 type ListSignaturePoliciesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
@@ -36,7 +140,7 @@ type ListSignaturePoliciesRequest struct {
 
 func (x *ListSignaturePoliciesRequest) Reset() {
 	*x = ListSignaturePoliciesRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[0]
+	mi := &file_services_documents_signing_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +152,7 @@ func (x *ListSignaturePoliciesRequest) String() string {
 func (*ListSignaturePoliciesRequest) ProtoMessage() {}
 
 func (x *ListSignaturePoliciesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[0]
+	mi := &file_services_documents_signing_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +165,7 @@ func (x *ListSignaturePoliciesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignaturePoliciesRequest.ProtoReflect.Descriptor instead.
 func (*ListSignaturePoliciesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{0}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ListSignaturePoliciesRequest) GetDocumentId() int64 {
@@ -87,7 +191,7 @@ type ListSignaturePoliciesResponse struct {
 
 func (x *ListSignaturePoliciesResponse) Reset() {
 	*x = ListSignaturePoliciesResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[1]
+	mi := &file_services_documents_signing_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -99,7 +203,7 @@ func (x *ListSignaturePoliciesResponse) String() string {
 func (*ListSignaturePoliciesResponse) ProtoMessage() {}
 
 func (x *ListSignaturePoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[1]
+	mi := &file_services_documents_signing_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -112,7 +216,7 @@ func (x *ListSignaturePoliciesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignaturePoliciesResponse.ProtoReflect.Descriptor instead.
 func (*ListSignaturePoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{1}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ListSignaturePoliciesResponse) GetPolicies() []*documents.SignaturePolicy {
@@ -131,7 +235,7 @@ type UpsertSignaturePolicyRequest struct {
 
 func (x *UpsertSignaturePolicyRequest) Reset() {
 	*x = UpsertSignaturePolicyRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[2]
+	mi := &file_services_documents_signing_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -143,7 +247,7 @@ func (x *UpsertSignaturePolicyRequest) String() string {
 func (*UpsertSignaturePolicyRequest) ProtoMessage() {}
 
 func (x *UpsertSignaturePolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[2]
+	mi := &file_services_documents_signing_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -156,7 +260,7 @@ func (x *UpsertSignaturePolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertSignaturePolicyRequest.ProtoReflect.Descriptor instead.
 func (*UpsertSignaturePolicyRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{2}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpsertSignaturePolicyRequest) GetPolicy() *documents.SignaturePolicy {
@@ -175,7 +279,7 @@ type UpsertSignaturePolicyResponse struct {
 
 func (x *UpsertSignaturePolicyResponse) Reset() {
 	*x = UpsertSignaturePolicyResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[3]
+	mi := &file_services_documents_signing_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +291,7 @@ func (x *UpsertSignaturePolicyResponse) String() string {
 func (*UpsertSignaturePolicyResponse) ProtoMessage() {}
 
 func (x *UpsertSignaturePolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[3]
+	mi := &file_services_documents_signing_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +304,7 @@ func (x *UpsertSignaturePolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertSignaturePolicyResponse.ProtoReflect.Descriptor instead.
 func (*UpsertSignaturePolicyResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{3}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpsertSignaturePolicyResponse) GetPolicy() *documents.SignaturePolicy {
@@ -219,7 +323,7 @@ type DeleteSignaturePolicyRequest struct {
 
 func (x *DeleteSignaturePolicyRequest) Reset() {
 	*x = DeleteSignaturePolicyRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[4]
+	mi := &file_services_documents_signing_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -231,7 +335,7 @@ func (x *DeleteSignaturePolicyRequest) String() string {
 func (*DeleteSignaturePolicyRequest) ProtoMessage() {}
 
 func (x *DeleteSignaturePolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[4]
+	mi := &file_services_documents_signing_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -244,7 +348,7 @@ func (x *DeleteSignaturePolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSignaturePolicyRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSignaturePolicyRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{4}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteSignaturePolicyRequest) GetPolicyId() int64 {
@@ -262,7 +366,7 @@ type DeleteSignaturePolicyResponse struct {
 
 func (x *DeleteSignaturePolicyResponse) Reset() {
 	*x = DeleteSignaturePolicyResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[5]
+	mi := &file_services_documents_signing_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +378,7 @@ func (x *DeleteSignaturePolicyResponse) String() string {
 func (*DeleteSignaturePolicyResponse) ProtoMessage() {}
 
 func (x *DeleteSignaturePolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[5]
+	mi := &file_services_documents_signing_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +391,7 @@ func (x *DeleteSignaturePolicyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSignaturePolicyResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSignaturePolicyResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{5}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{7}
 }
 
 type ListSignatureTasksRequest struct {
@@ -302,7 +406,7 @@ type ListSignatureTasksRequest struct {
 
 func (x *ListSignatureTasksRequest) Reset() {
 	*x = ListSignatureTasksRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[6]
+	mi := &file_services_documents_signing_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -314,7 +418,7 @@ func (x *ListSignatureTasksRequest) String() string {
 func (*ListSignatureTasksRequest) ProtoMessage() {}
 
 func (x *ListSignatureTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[6]
+	mi := &file_services_documents_signing_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -327,7 +431,7 @@ func (x *ListSignatureTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignatureTasksRequest.ProtoReflect.Descriptor instead.
 func (*ListSignatureTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{6}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListSignatureTasksRequest) GetDocumentId() int64 {
@@ -367,7 +471,7 @@ type ListSignatureTasksResponse struct {
 
 func (x *ListSignatureTasksResponse) Reset() {
 	*x = ListSignatureTasksResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[7]
+	mi := &file_services_documents_signing_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +483,7 @@ func (x *ListSignatureTasksResponse) String() string {
 func (*ListSignatureTasksResponse) ProtoMessage() {}
 
 func (x *ListSignatureTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[7]
+	mi := &file_services_documents_signing_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +496,7 @@ func (x *ListSignatureTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignatureTasksResponse.ProtoReflect.Descriptor instead.
 func (*ListSignatureTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{7}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListSignatureTasksResponse) GetSignatures() []*documents.Signature {
@@ -423,7 +527,7 @@ type SignatureTaskSeed struct {
 
 func (x *SignatureTaskSeed) Reset() {
 	*x = SignatureTaskSeed{}
-	mi := &file_services_documents_signing_proto_msgTypes[8]
+	mi := &file_services_documents_signing_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -435,7 +539,7 @@ func (x *SignatureTaskSeed) String() string {
 func (*SignatureTaskSeed) ProtoMessage() {}
 
 func (x *SignatureTaskSeed) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[8]
+	mi := &file_services_documents_signing_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -448,7 +552,7 @@ func (x *SignatureTaskSeed) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SignatureTaskSeed.ProtoReflect.Descriptor instead.
 func (*SignatureTaskSeed) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{8}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SignatureTaskSeed) GetUserId() int32 {
@@ -511,7 +615,7 @@ type UpsertSignatureTasksRequest struct {
 
 func (x *UpsertSignatureTasksRequest) Reset() {
 	*x = UpsertSignatureTasksRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[9]
+	mi := &file_services_documents_signing_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -523,7 +627,7 @@ func (x *UpsertSignatureTasksRequest) String() string {
 func (*UpsertSignatureTasksRequest) ProtoMessage() {}
 
 func (x *UpsertSignatureTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[9]
+	mi := &file_services_documents_signing_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -536,7 +640,7 @@ func (x *UpsertSignatureTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertSignatureTasksRequest.ProtoReflect.Descriptor instead.
 func (*UpsertSignatureTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{9}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpsertSignatureTasksRequest) GetPolicyId() int64 {
@@ -574,7 +678,7 @@ type UpsertSignatureTasksResponse struct {
 
 func (x *UpsertSignatureTasksResponse) Reset() {
 	*x = UpsertSignatureTasksResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[10]
+	mi := &file_services_documents_signing_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -586,7 +690,7 @@ func (x *UpsertSignatureTasksResponse) String() string {
 func (*UpsertSignatureTasksResponse) ProtoMessage() {}
 
 func (x *UpsertSignatureTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[10]
+	mi := &file_services_documents_signing_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -599,7 +703,7 @@ func (x *UpsertSignatureTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertSignatureTasksResponse.ProtoReflect.Descriptor instead.
 func (*UpsertSignatureTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{10}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpsertSignatureTasksResponse) GetTasksCreated() int32 {
@@ -635,7 +739,7 @@ type DeleteSignatureTasksRequest struct {
 
 func (x *DeleteSignatureTasksRequest) Reset() {
 	*x = DeleteSignatureTasksRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[11]
+	mi := &file_services_documents_signing_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +751,7 @@ func (x *DeleteSignatureTasksRequest) String() string {
 func (*DeleteSignatureTasksRequest) ProtoMessage() {}
 
 func (x *DeleteSignatureTasksRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[11]
+	mi := &file_services_documents_signing_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +764,7 @@ func (x *DeleteSignatureTasksRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSignatureTasksRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSignatureTasksRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{11}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteSignatureTasksRequest) GetPolicyId() int64 {
@@ -692,7 +796,7 @@ type DeleteSignatureTasksResponse struct {
 
 func (x *DeleteSignatureTasksResponse) Reset() {
 	*x = DeleteSignatureTasksResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[12]
+	mi := &file_services_documents_signing_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -704,7 +808,7 @@ func (x *DeleteSignatureTasksResponse) String() string {
 func (*DeleteSignatureTasksResponse) ProtoMessage() {}
 
 func (x *DeleteSignatureTasksResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[12]
+	mi := &file_services_documents_signing_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -717,7 +821,7 @@ func (x *DeleteSignatureTasksResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSignatureTasksResponse.ProtoReflect.Descriptor instead.
 func (*DeleteSignatureTasksResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{12}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{14}
 }
 
 // List signatures (artifacts) for a policy/snapshot.
@@ -738,7 +842,7 @@ type ListSignaturesRequest struct {
 
 func (x *ListSignaturesRequest) Reset() {
 	*x = ListSignaturesRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[13]
+	mi := &file_services_documents_signing_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -750,7 +854,7 @@ func (x *ListSignaturesRequest) String() string {
 func (*ListSignaturesRequest) ProtoMessage() {}
 
 func (x *ListSignaturesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[13]
+	mi := &file_services_documents_signing_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -763,7 +867,7 @@ func (x *ListSignaturesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignaturesRequest.ProtoReflect.Descriptor instead.
 func (*ListSignaturesRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{13}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListSignaturesRequest) GetDocumentId() int64 {
@@ -817,7 +921,7 @@ type ListSignaturesResponse struct {
 
 func (x *ListSignaturesResponse) Reset() {
 	*x = ListSignaturesResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[14]
+	mi := &file_services_documents_signing_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -829,7 +933,7 @@ func (x *ListSignaturesResponse) String() string {
 func (*ListSignaturesResponse) ProtoMessage() {}
 
 func (x *ListSignaturesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[14]
+	mi := &file_services_documents_signing_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -842,7 +946,7 @@ func (x *ListSignaturesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSignaturesResponse.ProtoReflect.Descriptor instead.
 func (*ListSignaturesResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{14}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListSignaturesResponse) GetSignatures() []*documents.Signature {
@@ -863,7 +967,7 @@ type RevokeSignatureRequest struct {
 
 func (x *RevokeSignatureRequest) Reset() {
 	*x = RevokeSignatureRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[15]
+	mi := &file_services_documents_signing_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -875,7 +979,7 @@ func (x *RevokeSignatureRequest) String() string {
 func (*RevokeSignatureRequest) ProtoMessage() {}
 
 func (x *RevokeSignatureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[15]
+	mi := &file_services_documents_signing_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -888,7 +992,7 @@ func (x *RevokeSignatureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeSignatureRequest.ProtoReflect.Descriptor instead.
 func (*RevokeSignatureRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{15}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *RevokeSignatureRequest) GetSignatureId() int64 {
@@ -914,7 +1018,7 @@ type RevokeSignatureResponse struct {
 
 func (x *RevokeSignatureResponse) Reset() {
 	*x = RevokeSignatureResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[16]
+	mi := &file_services_documents_signing_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -926,7 +1030,7 @@ func (x *RevokeSignatureResponse) String() string {
 func (*RevokeSignatureResponse) ProtoMessage() {}
 
 func (x *RevokeSignatureResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[16]
+	mi := &file_services_documents_signing_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -939,7 +1043,7 @@ func (x *RevokeSignatureResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeSignatureResponse.ProtoReflect.Descriptor instead.
 func (*RevokeSignatureResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{16}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *RevokeSignatureResponse) GetSignature() *documents.Signature {
@@ -966,7 +1070,7 @@ type DecideSignatureRequest struct {
 
 func (x *DecideSignatureRequest) Reset() {
 	*x = DecideSignatureRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[17]
+	mi := &file_services_documents_signing_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -978,7 +1082,7 @@ func (x *DecideSignatureRequest) String() string {
 func (*DecideSignatureRequest) ProtoMessage() {}
 
 func (x *DecideSignatureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[17]
+	mi := &file_services_documents_signing_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -991,7 +1095,7 @@ func (x *DecideSignatureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecideSignatureRequest.ProtoReflect.Descriptor instead.
 func (*DecideSignatureRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{17}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *DecideSignatureRequest) GetDocumentId() int64 {
@@ -1061,7 +1165,7 @@ type DecideSignatureResponse struct {
 
 func (x *DecideSignatureResponse) Reset() {
 	*x = DecideSignatureResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[18]
+	mi := &file_services_documents_signing_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1073,7 +1177,7 @@ func (x *DecideSignatureResponse) String() string {
 func (*DecideSignatureResponse) ProtoMessage() {}
 
 func (x *DecideSignatureResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[18]
+	mi := &file_services_documents_signing_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1086,7 +1190,7 @@ func (x *DecideSignatureResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecideSignatureResponse.ProtoReflect.Descriptor instead.
 func (*DecideSignatureResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{18}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *DecideSignatureResponse) GetSignature() *documents.Signature {
@@ -1120,7 +1224,7 @@ type ReopenSignatureRequest struct {
 
 func (x *ReopenSignatureRequest) Reset() {
 	*x = ReopenSignatureRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[19]
+	mi := &file_services_documents_signing_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1132,7 +1236,7 @@ func (x *ReopenSignatureRequest) String() string {
 func (*ReopenSignatureRequest) ProtoMessage() {}
 
 func (x *ReopenSignatureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[19]
+	mi := &file_services_documents_signing_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1145,7 +1249,7 @@ func (x *ReopenSignatureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenSignatureRequest.ProtoReflect.Descriptor instead.
 func (*ReopenSignatureRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{19}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ReopenSignatureRequest) GetSignatureId() int64 {
@@ -1171,7 +1275,7 @@ type ReopenSignatureResponse struct {
 
 func (x *ReopenSignatureResponse) Reset() {
 	*x = ReopenSignatureResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[20]
+	mi := &file_services_documents_signing_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1183,7 +1287,7 @@ func (x *ReopenSignatureResponse) String() string {
 func (*ReopenSignatureResponse) ProtoMessage() {}
 
 func (x *ReopenSignatureResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[20]
+	mi := &file_services_documents_signing_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1196,7 +1300,7 @@ func (x *ReopenSignatureResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReopenSignatureResponse.ProtoReflect.Descriptor instead.
 func (*ReopenSignatureResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{20}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *ReopenSignatureResponse) GetSignature() *documents.Signature {
@@ -1216,7 +1320,7 @@ type RecomputeSignatureStatusRequest struct {
 
 func (x *RecomputeSignatureStatusRequest) Reset() {
 	*x = RecomputeSignatureStatusRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[21]
+	mi := &file_services_documents_signing_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1228,7 +1332,7 @@ func (x *RecomputeSignatureStatusRequest) String() string {
 func (*RecomputeSignatureStatusRequest) ProtoMessage() {}
 
 func (x *RecomputeSignatureStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[21]
+	mi := &file_services_documents_signing_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1241,7 +1345,7 @@ func (x *RecomputeSignatureStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecomputeSignatureStatusRequest.ProtoReflect.Descriptor instead.
 func (*RecomputeSignatureStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{21}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *RecomputeSignatureStatusRequest) GetDocumentId() int64 {
@@ -1270,7 +1374,7 @@ type RecomputeSignatureStatusResponse struct {
 
 func (x *RecomputeSignatureStatusResponse) Reset() {
 	*x = RecomputeSignatureStatusResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[22]
+	mi := &file_services_documents_signing_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1282,7 +1386,7 @@ func (x *RecomputeSignatureStatusResponse) String() string {
 func (*RecomputeSignatureStatusResponse) ProtoMessage() {}
 
 func (x *RecomputeSignatureStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[22]
+	mi := &file_services_documents_signing_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1295,7 +1399,7 @@ func (x *RecomputeSignatureStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RecomputeSignatureStatusResponse.ProtoReflect.Descriptor instead.
 func (*RecomputeSignatureStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{22}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *RecomputeSignatureStatusResponse) GetDocumentSigned() bool {
@@ -1337,7 +1441,7 @@ type ListUsableStampsRequest struct {
 
 func (x *ListUsableStampsRequest) Reset() {
 	*x = ListUsableStampsRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[23]
+	mi := &file_services_documents_signing_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1349,7 +1453,7 @@ func (x *ListUsableStampsRequest) String() string {
 func (*ListUsableStampsRequest) ProtoMessage() {}
 
 func (x *ListUsableStampsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[23]
+	mi := &file_services_documents_signing_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1362,7 +1466,7 @@ func (x *ListUsableStampsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsableStampsRequest.ProtoReflect.Descriptor instead.
 func (*ListUsableStampsRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{23}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *ListUsableStampsRequest) GetPagination() *database.PaginationRequest {
@@ -1389,7 +1493,7 @@ type ListUsableStampsResponse struct {
 
 func (x *ListUsableStampsResponse) Reset() {
 	*x = ListUsableStampsResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[24]
+	mi := &file_services_documents_signing_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1401,7 +1505,7 @@ func (x *ListUsableStampsResponse) String() string {
 func (*ListUsableStampsResponse) ProtoMessage() {}
 
 func (x *ListUsableStampsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[24]
+	mi := &file_services_documents_signing_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,7 +1518,7 @@ func (x *ListUsableStampsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUsableStampsResponse.ProtoReflect.Descriptor instead.
 func (*ListUsableStampsResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{24}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListUsableStampsResponse) GetPagination() *database.PaginationResponse {
@@ -1440,7 +1544,7 @@ type UpsertStampRequest struct {
 
 func (x *UpsertStampRequest) Reset() {
 	*x = UpsertStampRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[25]
+	mi := &file_services_documents_signing_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1452,7 +1556,7 @@ func (x *UpsertStampRequest) String() string {
 func (*UpsertStampRequest) ProtoMessage() {}
 
 func (x *UpsertStampRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[25]
+	mi := &file_services_documents_signing_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1465,7 +1569,7 @@ func (x *UpsertStampRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertStampRequest.ProtoReflect.Descriptor instead.
 func (*UpsertStampRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{25}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *UpsertStampRequest) GetStamp() *documents.Stamp {
@@ -1484,7 +1588,7 @@ type UpsertStampResponse struct {
 
 func (x *UpsertStampResponse) Reset() {
 	*x = UpsertStampResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[26]
+	mi := &file_services_documents_signing_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1496,7 +1600,7 @@ func (x *UpsertStampResponse) String() string {
 func (*UpsertStampResponse) ProtoMessage() {}
 
 func (x *UpsertStampResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[26]
+	mi := &file_services_documents_signing_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1509,7 +1613,7 @@ func (x *UpsertStampResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertStampResponse.ProtoReflect.Descriptor instead.
 func (*UpsertStampResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{26}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *UpsertStampResponse) GetStamp() *documents.Stamp {
@@ -1528,7 +1632,7 @@ type DeleteStampRequest struct {
 
 func (x *DeleteStampRequest) Reset() {
 	*x = DeleteStampRequest{}
-	mi := &file_services_documents_signing_proto_msgTypes[27]
+	mi := &file_services_documents_signing_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1540,7 +1644,7 @@ func (x *DeleteStampRequest) String() string {
 func (*DeleteStampRequest) ProtoMessage() {}
 
 func (x *DeleteStampRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[27]
+	mi := &file_services_documents_signing_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1553,7 +1657,7 @@ func (x *DeleteStampRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStampRequest.ProtoReflect.Descriptor instead.
 func (*DeleteStampRequest) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{27}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *DeleteStampRequest) GetStampId() int64 {
@@ -1571,7 +1675,7 @@ type DeleteStampResponse struct {
 
 func (x *DeleteStampResponse) Reset() {
 	*x = DeleteStampResponse{}
-	mi := &file_services_documents_signing_proto_msgTypes[28]
+	mi := &file_services_documents_signing_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1583,7 +1687,7 @@ func (x *DeleteStampResponse) String() string {
 func (*DeleteStampResponse) ProtoMessage() {}
 
 func (x *DeleteStampResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_documents_signing_proto_msgTypes[28]
+	mi := &file_services_documents_signing_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1596,14 +1700,24 @@ func (x *DeleteStampResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteStampResponse.ProtoReflect.Descriptor instead.
 func (*DeleteStampResponse) Descriptor() ([]byte, []int) {
-	return file_services_documents_signing_proto_rawDescGZIP(), []int{28}
+	return file_services_documents_signing_proto_rawDescGZIP(), []int{30}
 }
 
 var File_services_documents_signing_proto protoreflect.FileDescriptor
 
 const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\x84\x01\n" +
+	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\xb4\x01\n" +
+	"\x1eListSignatureTasksInboxRequest\x12L\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x12D\n" +
+	"\bstatuses\x18\x02 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatuses\"\xb0\x01\n" +
+	"\x1fListSignatureTasksInboxResponse\x12M\n" +
+	"\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x12>\n" +
+	"\x05tasks\x18\x02 \x03(\v2\".resources.documents.SignatureTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\x84\x01\n" +
 	"\x1cListSignaturePoliciesRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12C\n" +
@@ -1732,8 +1846,9 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"/\n" +
 	"\x12DeleteStampRequest\x12\x19\n" +
 	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
-	"\x13DeleteStampResponse2\xbf\x0f\n" +
-	"\x0eSigningService\x12\xaf\x01\n" +
+	"\x13DeleteStampResponse2\xf7\x10\n" +
+	"\x0eSigningService\x12\xb5\x01\n" +
+	"\x17ListSignatureTasksInbox\x122.services.documents.ListSignatureTasksInboxRequest\x1a3.services.documents.ListSignatureTasksInboxResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\xaf\x01\n" +
 	"\x15ListSignaturePolicies\x120.services.documents.ListSignaturePoliciesRequest\x1a1.services.documents.ListSignaturePoliciesResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x84\x01\n" +
 	"\x15UpsertSignaturePolicy\x120.services.documents.UpsertSignaturePolicyRequest\x1a1.services.documents.UpsertSignaturePolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x84\x01\n" +
 	"\x15DeleteSignaturePolicy\x120.services.documents.DeleteSignaturePolicyRequest\x1a1.services.documents.DeleteSignaturePolicyResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\xa6\x01\n" +
@@ -1761,109 +1876,117 @@ func file_services_documents_signing_proto_rawDescGZIP() []byte {
 	return file_services_documents_signing_proto_rawDescData
 }
 
-var file_services_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 29)
+var file_services_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_services_documents_signing_proto_goTypes = []any{
-	(*ListSignaturePoliciesRequest)(nil),     // 0: services.documents.ListSignaturePoliciesRequest
-	(*ListSignaturePoliciesResponse)(nil),    // 1: services.documents.ListSignaturePoliciesResponse
-	(*UpsertSignaturePolicyRequest)(nil),     // 2: services.documents.UpsertSignaturePolicyRequest
-	(*UpsertSignaturePolicyResponse)(nil),    // 3: services.documents.UpsertSignaturePolicyResponse
-	(*DeleteSignaturePolicyRequest)(nil),     // 4: services.documents.DeleteSignaturePolicyRequest
-	(*DeleteSignaturePolicyResponse)(nil),    // 5: services.documents.DeleteSignaturePolicyResponse
-	(*ListSignatureTasksRequest)(nil),        // 6: services.documents.ListSignatureTasksRequest
-	(*ListSignatureTasksResponse)(nil),       // 7: services.documents.ListSignatureTasksResponse
-	(*SignatureTaskSeed)(nil),                // 8: services.documents.SignatureTaskSeed
-	(*UpsertSignatureTasksRequest)(nil),      // 9: services.documents.UpsertSignatureTasksRequest
-	(*UpsertSignatureTasksResponse)(nil),     // 10: services.documents.UpsertSignatureTasksResponse
-	(*DeleteSignatureTasksRequest)(nil),      // 11: services.documents.DeleteSignatureTasksRequest
-	(*DeleteSignatureTasksResponse)(nil),     // 12: services.documents.DeleteSignatureTasksResponse
-	(*ListSignaturesRequest)(nil),            // 13: services.documents.ListSignaturesRequest
-	(*ListSignaturesResponse)(nil),           // 14: services.documents.ListSignaturesResponse
-	(*RevokeSignatureRequest)(nil),           // 15: services.documents.RevokeSignatureRequest
-	(*RevokeSignatureResponse)(nil),          // 16: services.documents.RevokeSignatureResponse
-	(*DecideSignatureRequest)(nil),           // 17: services.documents.DecideSignatureRequest
-	(*DecideSignatureResponse)(nil),          // 18: services.documents.DecideSignatureResponse
-	(*ReopenSignatureRequest)(nil),           // 19: services.documents.ReopenSignatureRequest
-	(*ReopenSignatureResponse)(nil),          // 20: services.documents.ReopenSignatureResponse
-	(*RecomputeSignatureStatusRequest)(nil),  // 21: services.documents.RecomputeSignatureStatusRequest
-	(*RecomputeSignatureStatusResponse)(nil), // 22: services.documents.RecomputeSignatureStatusResponse
-	(*ListUsableStampsRequest)(nil),          // 23: services.documents.ListUsableStampsRequest
-	(*ListUsableStampsResponse)(nil),         // 24: services.documents.ListUsableStampsResponse
-	(*UpsertStampRequest)(nil),               // 25: services.documents.UpsertStampRequest
-	(*UpsertStampResponse)(nil),              // 26: services.documents.UpsertStampResponse
-	(*DeleteStampRequest)(nil),               // 27: services.documents.DeleteStampRequest
-	(*DeleteStampResponse)(nil),              // 28: services.documents.DeleteStampResponse
-	(*timestamp.Timestamp)(nil),              // 29: resources.timestamp.Timestamp
-	(*documents.SignaturePolicy)(nil),        // 30: resources.documents.SignaturePolicy
-	(documents.SignatureTaskStatus)(0),       // 31: resources.documents.SignatureTaskStatus
-	(*documents.Signature)(nil),              // 32: resources.documents.Signature
-	(documents.SignatureStatus)(0),           // 33: resources.documents.SignatureStatus
-	(documents.SignatureType)(0),             // 34: resources.documents.SignatureType
-	(*documents.SignatureTask)(nil),          // 35: resources.documents.SignatureTask
-	(*database.PaginationRequest)(nil),       // 36: resources.common.database.PaginationRequest
-	(*database.PaginationResponse)(nil),      // 37: resources.common.database.PaginationResponse
-	(*documents.Stamp)(nil),                  // 38: resources.documents.Stamp
+	(*ListSignatureTasksInboxRequest)(nil),   // 0: services.documents.ListSignatureTasksInboxRequest
+	(*ListSignatureTasksInboxResponse)(nil),  // 1: services.documents.ListSignatureTasksInboxResponse
+	(*ListSignaturePoliciesRequest)(nil),     // 2: services.documents.ListSignaturePoliciesRequest
+	(*ListSignaturePoliciesResponse)(nil),    // 3: services.documents.ListSignaturePoliciesResponse
+	(*UpsertSignaturePolicyRequest)(nil),     // 4: services.documents.UpsertSignaturePolicyRequest
+	(*UpsertSignaturePolicyResponse)(nil),    // 5: services.documents.UpsertSignaturePolicyResponse
+	(*DeleteSignaturePolicyRequest)(nil),     // 6: services.documents.DeleteSignaturePolicyRequest
+	(*DeleteSignaturePolicyResponse)(nil),    // 7: services.documents.DeleteSignaturePolicyResponse
+	(*ListSignatureTasksRequest)(nil),        // 8: services.documents.ListSignatureTasksRequest
+	(*ListSignatureTasksResponse)(nil),       // 9: services.documents.ListSignatureTasksResponse
+	(*SignatureTaskSeed)(nil),                // 10: services.documents.SignatureTaskSeed
+	(*UpsertSignatureTasksRequest)(nil),      // 11: services.documents.UpsertSignatureTasksRequest
+	(*UpsertSignatureTasksResponse)(nil),     // 12: services.documents.UpsertSignatureTasksResponse
+	(*DeleteSignatureTasksRequest)(nil),      // 13: services.documents.DeleteSignatureTasksRequest
+	(*DeleteSignatureTasksResponse)(nil),     // 14: services.documents.DeleteSignatureTasksResponse
+	(*ListSignaturesRequest)(nil),            // 15: services.documents.ListSignaturesRequest
+	(*ListSignaturesResponse)(nil),           // 16: services.documents.ListSignaturesResponse
+	(*RevokeSignatureRequest)(nil),           // 17: services.documents.RevokeSignatureRequest
+	(*RevokeSignatureResponse)(nil),          // 18: services.documents.RevokeSignatureResponse
+	(*DecideSignatureRequest)(nil),           // 19: services.documents.DecideSignatureRequest
+	(*DecideSignatureResponse)(nil),          // 20: services.documents.DecideSignatureResponse
+	(*ReopenSignatureRequest)(nil),           // 21: services.documents.ReopenSignatureRequest
+	(*ReopenSignatureResponse)(nil),          // 22: services.documents.ReopenSignatureResponse
+	(*RecomputeSignatureStatusRequest)(nil),  // 23: services.documents.RecomputeSignatureStatusRequest
+	(*RecomputeSignatureStatusResponse)(nil), // 24: services.documents.RecomputeSignatureStatusResponse
+	(*ListUsableStampsRequest)(nil),          // 25: services.documents.ListUsableStampsRequest
+	(*ListUsableStampsResponse)(nil),         // 26: services.documents.ListUsableStampsResponse
+	(*UpsertStampRequest)(nil),               // 27: services.documents.UpsertStampRequest
+	(*UpsertStampResponse)(nil),              // 28: services.documents.UpsertStampResponse
+	(*DeleteStampRequest)(nil),               // 29: services.documents.DeleteStampRequest
+	(*DeleteStampResponse)(nil),              // 30: services.documents.DeleteStampResponse
+	(*database.PaginationRequest)(nil),       // 31: resources.common.database.PaginationRequest
+	(documents.SignatureTaskStatus)(0),       // 32: resources.documents.SignatureTaskStatus
+	(*database.PaginationResponse)(nil),      // 33: resources.common.database.PaginationResponse
+	(*documents.SignatureTask)(nil),          // 34: resources.documents.SignatureTask
+	(*timestamp.Timestamp)(nil),              // 35: resources.timestamp.Timestamp
+	(*documents.SignaturePolicy)(nil),        // 36: resources.documents.SignaturePolicy
+	(*documents.Signature)(nil),              // 37: resources.documents.Signature
+	(documents.SignatureStatus)(0),           // 38: resources.documents.SignatureStatus
+	(documents.SignatureType)(0),             // 39: resources.documents.SignatureType
+	(*documents.Stamp)(nil),                  // 40: resources.documents.Stamp
 }
 var file_services_documents_signing_proto_depIdxs = []int32{
-	29, // 0: services.documents.ListSignaturePoliciesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	30, // 1: services.documents.ListSignaturePoliciesResponse.policies:type_name -> resources.documents.SignaturePolicy
-	30, // 2: services.documents.UpsertSignaturePolicyRequest.policy:type_name -> resources.documents.SignaturePolicy
-	30, // 3: services.documents.UpsertSignaturePolicyResponse.policy:type_name -> resources.documents.SignaturePolicy
-	29, // 4: services.documents.ListSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	31, // 5: services.documents.ListSignatureTasksRequest.statuses:type_name -> resources.documents.SignatureTaskStatus
-	32, // 6: services.documents.ListSignatureTasksResponse.signatures:type_name -> resources.documents.Signature
-	29, // 7: services.documents.SignatureTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
-	29, // 8: services.documents.UpsertSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	8,  // 9: services.documents.UpsertSignatureTasksRequest.seeds:type_name -> services.documents.SignatureTaskSeed
-	30, // 10: services.documents.UpsertSignatureTasksResponse.policy:type_name -> resources.documents.SignaturePolicy
-	29, // 11: services.documents.ListSignaturesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	33, // 12: services.documents.ListSignaturesRequest.status:type_name -> resources.documents.SignatureStatus
-	32, // 13: services.documents.ListSignaturesResponse.signatures:type_name -> resources.documents.Signature
-	32, // 14: services.documents.RevokeSignatureResponse.signature:type_name -> resources.documents.Signature
-	31, // 15: services.documents.DecideSignatureRequest.new_status:type_name -> resources.documents.SignatureTaskStatus
-	34, // 16: services.documents.DecideSignatureRequest.type:type_name -> resources.documents.SignatureType
-	32, // 17: services.documents.DecideSignatureResponse.signature:type_name -> resources.documents.Signature
-	35, // 18: services.documents.DecideSignatureResponse.task:type_name -> resources.documents.SignatureTask
-	30, // 19: services.documents.DecideSignatureResponse.policy:type_name -> resources.documents.SignaturePolicy
-	32, // 20: services.documents.ReopenSignatureResponse.signature:type_name -> resources.documents.Signature
-	29, // 21: services.documents.RecomputeSignatureStatusRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	36, // 22: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	37, // 23: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	38, // 24: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.Stamp
-	38, // 25: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.Stamp
-	38, // 26: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.Stamp
-	0,  // 27: services.documents.SigningService.ListSignaturePolicies:input_type -> services.documents.ListSignaturePoliciesRequest
-	2,  // 28: services.documents.SigningService.UpsertSignaturePolicy:input_type -> services.documents.UpsertSignaturePolicyRequest
-	4,  // 29: services.documents.SigningService.DeleteSignaturePolicy:input_type -> services.documents.DeleteSignaturePolicyRequest
-	6,  // 30: services.documents.SigningService.ListSignatureTasks:input_type -> services.documents.ListSignatureTasksRequest
-	9,  // 31: services.documents.SigningService.UpsertSignatureTasks:input_type -> services.documents.UpsertSignatureTasksRequest
-	11, // 32: services.documents.SigningService.DeleteSignatureTasks:input_type -> services.documents.DeleteSignatureTasksRequest
-	13, // 33: services.documents.SigningService.ListSignatures:input_type -> services.documents.ListSignaturesRequest
-	15, // 34: services.documents.SigningService.RevokeSignature:input_type -> services.documents.RevokeSignatureRequest
-	17, // 35: services.documents.SigningService.DecideSignature:input_type -> services.documents.DecideSignatureRequest
-	19, // 36: services.documents.SigningService.ReopenSignature:input_type -> services.documents.ReopenSignatureRequest
-	21, // 37: services.documents.SigningService.RecomputeSignatureStatus:input_type -> services.documents.RecomputeSignatureStatusRequest
-	23, // 38: services.documents.SigningService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
-	25, // 39: services.documents.SigningService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
-	27, // 40: services.documents.SigningService.DeleteStamp:input_type -> services.documents.DeleteStampRequest
-	1,  // 41: services.documents.SigningService.ListSignaturePolicies:output_type -> services.documents.ListSignaturePoliciesResponse
-	3,  // 42: services.documents.SigningService.UpsertSignaturePolicy:output_type -> services.documents.UpsertSignaturePolicyResponse
-	5,  // 43: services.documents.SigningService.DeleteSignaturePolicy:output_type -> services.documents.DeleteSignaturePolicyResponse
-	7,  // 44: services.documents.SigningService.ListSignatureTasks:output_type -> services.documents.ListSignatureTasksResponse
-	10, // 45: services.documents.SigningService.UpsertSignatureTasks:output_type -> services.documents.UpsertSignatureTasksResponse
-	12, // 46: services.documents.SigningService.DeleteSignatureTasks:output_type -> services.documents.DeleteSignatureTasksResponse
-	14, // 47: services.documents.SigningService.ListSignatures:output_type -> services.documents.ListSignaturesResponse
-	16, // 48: services.documents.SigningService.RevokeSignature:output_type -> services.documents.RevokeSignatureResponse
-	18, // 49: services.documents.SigningService.DecideSignature:output_type -> services.documents.DecideSignatureResponse
-	20, // 50: services.documents.SigningService.ReopenSignature:output_type -> services.documents.ReopenSignatureResponse
-	22, // 51: services.documents.SigningService.RecomputeSignatureStatus:output_type -> services.documents.RecomputeSignatureStatusResponse
-	24, // 52: services.documents.SigningService.ListUsableStamps:output_type -> services.documents.ListUsableStampsResponse
-	26, // 53: services.documents.SigningService.UpsertStamp:output_type -> services.documents.UpsertStampResponse
-	28, // 54: services.documents.SigningService.DeleteStamp:output_type -> services.documents.DeleteStampResponse
-	41, // [41:55] is the sub-list for method output_type
-	27, // [27:41] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	31, // 0: services.documents.ListSignatureTasksInboxRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	32, // 1: services.documents.ListSignatureTasksInboxRequest.statuses:type_name -> resources.documents.SignatureTaskStatus
+	33, // 2: services.documents.ListSignatureTasksInboxResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	34, // 3: services.documents.ListSignatureTasksInboxResponse.tasks:type_name -> resources.documents.SignatureTask
+	35, // 4: services.documents.ListSignaturePoliciesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	36, // 5: services.documents.ListSignaturePoliciesResponse.policies:type_name -> resources.documents.SignaturePolicy
+	36, // 6: services.documents.UpsertSignaturePolicyRequest.policy:type_name -> resources.documents.SignaturePolicy
+	36, // 7: services.documents.UpsertSignaturePolicyResponse.policy:type_name -> resources.documents.SignaturePolicy
+	35, // 8: services.documents.ListSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	32, // 9: services.documents.ListSignatureTasksRequest.statuses:type_name -> resources.documents.SignatureTaskStatus
+	37, // 10: services.documents.ListSignatureTasksResponse.signatures:type_name -> resources.documents.Signature
+	35, // 11: services.documents.SignatureTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
+	35, // 12: services.documents.UpsertSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	10, // 13: services.documents.UpsertSignatureTasksRequest.seeds:type_name -> services.documents.SignatureTaskSeed
+	36, // 14: services.documents.UpsertSignatureTasksResponse.policy:type_name -> resources.documents.SignaturePolicy
+	35, // 15: services.documents.ListSignaturesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	38, // 16: services.documents.ListSignaturesRequest.status:type_name -> resources.documents.SignatureStatus
+	37, // 17: services.documents.ListSignaturesResponse.signatures:type_name -> resources.documents.Signature
+	37, // 18: services.documents.RevokeSignatureResponse.signature:type_name -> resources.documents.Signature
+	32, // 19: services.documents.DecideSignatureRequest.new_status:type_name -> resources.documents.SignatureTaskStatus
+	39, // 20: services.documents.DecideSignatureRequest.type:type_name -> resources.documents.SignatureType
+	37, // 21: services.documents.DecideSignatureResponse.signature:type_name -> resources.documents.Signature
+	34, // 22: services.documents.DecideSignatureResponse.task:type_name -> resources.documents.SignatureTask
+	36, // 23: services.documents.DecideSignatureResponse.policy:type_name -> resources.documents.SignaturePolicy
+	37, // 24: services.documents.ReopenSignatureResponse.signature:type_name -> resources.documents.Signature
+	35, // 25: services.documents.RecomputeSignatureStatusRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	31, // 26: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	33, // 27: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	40, // 28: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.Stamp
+	40, // 29: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.Stamp
+	40, // 30: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.Stamp
+	0,  // 31: services.documents.SigningService.ListSignatureTasksInbox:input_type -> services.documents.ListSignatureTasksInboxRequest
+	2,  // 32: services.documents.SigningService.ListSignaturePolicies:input_type -> services.documents.ListSignaturePoliciesRequest
+	4,  // 33: services.documents.SigningService.UpsertSignaturePolicy:input_type -> services.documents.UpsertSignaturePolicyRequest
+	6,  // 34: services.documents.SigningService.DeleteSignaturePolicy:input_type -> services.documents.DeleteSignaturePolicyRequest
+	8,  // 35: services.documents.SigningService.ListSignatureTasks:input_type -> services.documents.ListSignatureTasksRequest
+	11, // 36: services.documents.SigningService.UpsertSignatureTasks:input_type -> services.documents.UpsertSignatureTasksRequest
+	13, // 37: services.documents.SigningService.DeleteSignatureTasks:input_type -> services.documents.DeleteSignatureTasksRequest
+	15, // 38: services.documents.SigningService.ListSignatures:input_type -> services.documents.ListSignaturesRequest
+	17, // 39: services.documents.SigningService.RevokeSignature:input_type -> services.documents.RevokeSignatureRequest
+	19, // 40: services.documents.SigningService.DecideSignature:input_type -> services.documents.DecideSignatureRequest
+	21, // 41: services.documents.SigningService.ReopenSignature:input_type -> services.documents.ReopenSignatureRequest
+	23, // 42: services.documents.SigningService.RecomputeSignatureStatus:input_type -> services.documents.RecomputeSignatureStatusRequest
+	25, // 43: services.documents.SigningService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
+	27, // 44: services.documents.SigningService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
+	29, // 45: services.documents.SigningService.DeleteStamp:input_type -> services.documents.DeleteStampRequest
+	1,  // 46: services.documents.SigningService.ListSignatureTasksInbox:output_type -> services.documents.ListSignatureTasksInboxResponse
+	3,  // 47: services.documents.SigningService.ListSignaturePolicies:output_type -> services.documents.ListSignaturePoliciesResponse
+	5,  // 48: services.documents.SigningService.UpsertSignaturePolicy:output_type -> services.documents.UpsertSignaturePolicyResponse
+	7,  // 49: services.documents.SigningService.DeleteSignaturePolicy:output_type -> services.documents.DeleteSignaturePolicyResponse
+	9,  // 50: services.documents.SigningService.ListSignatureTasks:output_type -> services.documents.ListSignatureTasksResponse
+	12, // 51: services.documents.SigningService.UpsertSignatureTasks:output_type -> services.documents.UpsertSignatureTasksResponse
+	14, // 52: services.documents.SigningService.DeleteSignatureTasks:output_type -> services.documents.DeleteSignatureTasksResponse
+	16, // 53: services.documents.SigningService.ListSignatures:output_type -> services.documents.ListSignaturesResponse
+	18, // 54: services.documents.SigningService.RevokeSignature:output_type -> services.documents.RevokeSignatureResponse
+	20, // 55: services.documents.SigningService.DecideSignature:output_type -> services.documents.DecideSignatureResponse
+	22, // 56: services.documents.SigningService.ReopenSignature:output_type -> services.documents.ReopenSignatureResponse
+	24, // 57: services.documents.SigningService.RecomputeSignatureStatus:output_type -> services.documents.RecomputeSignatureStatusResponse
+	26, // 58: services.documents.SigningService.ListUsableStamps:output_type -> services.documents.ListUsableStampsResponse
+	28, // 59: services.documents.SigningService.UpsertStamp:output_type -> services.documents.UpsertStampResponse
+	30, // 60: services.documents.SigningService.DeleteStamp:output_type -> services.documents.DeleteStampResponse
+	46, // [46:61] is the sub-list for method output_type
+	31, // [31:46] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_services_documents_signing_proto_init() }
@@ -1871,19 +1994,19 @@ func file_services_documents_signing_proto_init() {
 	if File_services_documents_signing_proto != nil {
 		return
 	}
-	file_services_documents_signing_proto_msgTypes[6].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[8].OneofWrappers = []any{}
-	file_services_documents_signing_proto_msgTypes[9].OneofWrappers = []any{}
-	file_services_documents_signing_proto_msgTypes[13].OneofWrappers = []any{}
-	file_services_documents_signing_proto_msgTypes[17].OneofWrappers = []any{}
-	file_services_documents_signing_proto_msgTypes[23].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[10].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[11].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[15].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[19].OneofWrappers = []any{}
+	file_services_documents_signing_proto_msgTypes[25].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_documents_signing_proto_rawDesc), len(file_services_documents_signing_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   29,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

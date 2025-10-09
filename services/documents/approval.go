@@ -21,6 +21,143 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+// ListApprovalTasksInbox.
+func (s *Server) ListApprovalTasksInbox(
+	ctx context.Context,
+	req *pbdocuments.ListApprovalTasksInboxRequest,
+) (*pbdocuments.ListApprovalTasksInboxResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
+
+	var existsAccess mysql.BoolExpression
+	if !userInfo.GetSuperuser() {
+		existsAccess = mysql.EXISTS(
+			mysql.
+				SELECT(mysql.Int(1)).
+				FROM(tDAccess).
+				WHERE(mysql.AND(
+					tDAccess.TargetID.EQ(tApprovalTasks.DocumentID),
+					mysql.OR(
+						// Direct user access
+						tDAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						// or job + grade access
+						mysql.AND(
+							tDAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+							tDAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+						),
+					),
+					tDAccess.Access.GT_EQ(
+						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+					),
+				),
+				),
+		)
+	} else {
+		existsAccess = mysql.Bool(true)
+	}
+
+	condition := mysql.AND(
+		tDocumentShort.DeletedAt.IS_NULL(),
+		existsAccess,
+	)
+	if len(req.GetStatuses()) > 0 {
+		vals := make([]mysql.Expression, 0, len(req.GetStatuses()))
+		for _, st := range req.GetStatuses() {
+			vals = append(vals, mysql.Int32(int32(st)))
+		}
+		condition = condition.AND(tApprovalTasks.Status.IN(vals...))
+	}
+
+	// Get total count of values
+	countStmt := tApprovalTasks.
+		SELECT(
+			mysql.COUNT(tApprovalTasks.ID).AS("data_count.total"),
+		).
+		FROM(
+			tApprovalTasks.
+				INNER_JOIN(tDocumentShort,
+					tDocumentShort.ID.EQ(tApprovalTasks.DocumentID),
+				),
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	resp := &pbdocuments.ListApprovalTasksInboxResponse{
+		Tasks: []*documents.ApprovalTask{},
+	}
+
+	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
+	resp.Pagination = pag
+	if count.Total <= 0 {
+		return resp, nil
+	}
+
+	tUser := tables.User().AS("usershort")
+
+	stmt := mysql.
+		SELECT(
+			tApprovalTasks.ID,
+			tApprovalTasks.DocumentID,
+			tApprovalTasks.PolicyID,
+			tApprovalTasks.SnapshotDate,
+			tApprovalTasks.AssigneeKind,
+			tApprovalTasks.UserID,
+			tApprovalTasks.Job,
+			tApprovalTasks.MinimumGrade,
+			tApprovalTasks.SlotNo,
+			tApprovalTasks.Status,
+			tApprovalTasks.Comment,
+			tApprovalTasks.CreatedAt,
+			tApprovalTasks.DecidedAt,
+			tApprovalTasks.DueAt,
+			tApprovalTasks.DecisionCount,
+			tApprovalTasks.CreatorID,
+			tApprovalTasks.CreatorJob,
+			tUser.ID,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
+			tUser.JobGrade,
+			tDocumentShort.Title,
+		).
+		FROM(
+			tApprovalTasks.
+				INNER_JOIN(tDocumentShort,
+					tDocumentShort.ID.EQ(tApprovalTasks.DocumentID),
+				).
+				LEFT_JOIN(tUser,
+					tUser.ID.EQ(tApprovalTasks.UserID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(req.GetPagination().GetOffset()).
+		ORDER_BY(tApprovalTasks.CreatedAt.ASC()).
+		LIMIT(limit)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Tasks); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := range resp.Tasks {
+		if resp.Tasks[i].GetJob() == "" {
+			continue
+		}
+
+		jobInfoFn(resp.Tasks[i])
+	}
+
+	return resp, nil
+}
+
 // ListApprovalPolicies.
 func (s *Server) ListApprovalPolicies(
 	ctx context.Context,
@@ -313,6 +450,9 @@ func (s *Server) ListApprovalTasks(
 			tUser.ID,
 			tUser.Firstname,
 			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
+			tUser.JobGrade,
 		).
 		FROM(
 			tApprovalTasks.
@@ -398,7 +538,7 @@ func (s *Server) UpsertApprovalTasks(
 		if isUser {
 			// Ensure one User task exists
 			var cnt struct{ C int32 }
-			if err := mysql.
+			if err := tApprovalTasks.
 				SELECT(mysql.COUNT(tApprovalTasks.ID).AS("C")).
 				FROM(tApprovalTasks).
 				WHERE(mysql.AND(

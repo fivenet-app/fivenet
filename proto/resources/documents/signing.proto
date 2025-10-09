@@ -5,6 +5,7 @@ package resources.documents;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 
@@ -112,7 +113,7 @@ message SignatureTask {
   string creator_job = 21 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 22;
 
-  repeated Signature signatures = 23 [(buf.validate.field).repeated.max_items = 15];
+  optional resources.documents.DocumentShort document = 23;
 }
 
 enum SignatureStatus {

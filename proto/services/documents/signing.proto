@@ -12,6 +12,16 @@ import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
+message ListSignatureTasksInboxRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListSignatureTasksInboxResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureTask tasks = 2 [(codegen.itemslen.enabled) = true];
+}
+
 message ListSignaturePoliciesRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
@@ -194,6 +204,15 @@ service SigningService {
     order: 57
     icon: "i-mdi-signature"
   };
+
+  // Inbox (for tasks assigned to user)
+  rpc ListSignatureTasksInbox(ListSignatureTasksInboxRequest) returns (ListSignatureTasksInboxResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
 
   // Policies
   rpc ListSignaturePolicies(ListSignaturePoliciesRequest) returns (ListSignaturePoliciesResponse) {

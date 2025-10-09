@@ -5,19 +5,47 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Approval } from "../../resources/documents/approval";
 import { ApprovalStatus } from "../../resources/documents/approval";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { ApprovalTask } from "../../resources/documents/approval";
-import { ApprovalTaskStatus } from "../../resources/documents/approval";
 import { ApprovalPolicy } from "../../resources/documents/approval";
+import { ApprovalTask } from "../../resources/documents/approval";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { ApprovalTaskStatus } from "../../resources/documents/approval";
+import { PaginationRequest } from "../../resources/common/database/database";
+/**
+ * @generated from protobuf message services.documents.ListApprovalTasksInboxRequest
+ */
+export interface ListApprovalTasksInboxRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 2
+     */
+    statuses: ApprovalTaskStatus[];
+}
+/**
+ * @generated from protobuf message services.documents.ListApprovalTasksInboxResponse
+ */
+export interface ListApprovalTasksInboxResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.documents.ApprovalTask tasks = 2
+     */
+    tasks: ApprovalTask[];
+}
 /**
  * @generated from protobuf message services.documents.ListApprovalPoliciesRequest
  */
@@ -233,7 +261,7 @@ export interface ListApprovalsRequest {
  */
 export interface ListApprovalsResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Approval approvals = 1
+     * @generated from protobuf field: repeated resources.documents.Approval approvals = 3
      */
     approvals: Approval[];
 }
@@ -349,6 +377,122 @@ export interface RecomputeApprovalPolicyCountersResponse {
      */
     policy?: ApprovalPolicy;
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksInboxRequest> {
+    constructor() {
+        super("services.documents.ListApprovalTasksInboxRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListApprovalTasksInboxRequest>): ListApprovalTasksInboxRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.statuses = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListApprovalTasksInboxRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalTasksInboxRequest): ListApprovalTasksInboxRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.statuses.push(reader.int32());
+                    else
+                        message.statuses.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListApprovalTasksInboxRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.ApprovalTaskStatus statuses = 2; */
+        if (message.statuses.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.statuses.length; i++)
+                writer.int32(message.statuses[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListApprovalTasksInboxRequest
+ */
+export const ListApprovalTasksInboxRequest = new ListApprovalTasksInboxRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListApprovalTasksInboxResponse$Type extends MessageType<ListApprovalTasksInboxResponse> {
+    constructor() {
+        super("services.documents.ListApprovalTasksInboxResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ApprovalTask, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListApprovalTasksInboxResponse>): ListApprovalTasksInboxResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.tasks = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListApprovalTasksInboxResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListApprovalTasksInboxResponse): ListApprovalTasksInboxResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.documents.ApprovalTask tasks */ 2:
+                    message.tasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListApprovalTasksInboxResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.ApprovalTask tasks = 2; */
+        for (let i = 0; i < message.tasks.length; i++)
+            ApprovalTask.internalBinaryWrite(message.tasks[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListApprovalTasksInboxResponse
+ */
+export const ListApprovalTasksInboxResponse = new ListApprovalTasksInboxResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListApprovalPoliciesRequest$Type extends MessageType<ListApprovalPoliciesRequest> {
     constructor() {
@@ -1048,7 +1192,7 @@ export const ListApprovalsRequest = new ListApprovalsRequest$Type();
 class ListApprovalsResponse$Type extends MessageType<ListApprovalsResponse> {
     constructor() {
         super("services.documents.ListApprovalsResponse", [
-            { no: 1, name: "approvals", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Approval }
+            { no: 3, name: "approvals", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Approval }
         ]);
     }
     create(value?: PartialMessage<ListApprovalsResponse>): ListApprovalsResponse {
@@ -1063,7 +1207,7 @@ class ListApprovalsResponse$Type extends MessageType<ListApprovalsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Approval approvals */ 1:
+                case /* repeated resources.documents.Approval approvals */ 3:
                     message.approvals.push(Approval.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1078,9 +1222,9 @@ class ListApprovalsResponse$Type extends MessageType<ListApprovalsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListApprovalsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Approval approvals = 1; */
+        /* repeated resources.documents.Approval approvals = 3; */
         for (let i = 0; i < message.approvals.length; i++)
-            Approval.internalBinaryWrite(message.approvals[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Approval.internalBinaryWrite(message.approvals[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1541,6 +1685,7 @@ export const RecomputeApprovalPolicyCountersResponse = new RecomputeApprovalPoli
  * @generated ServiceType for protobuf service services.documents.ApprovalService
  */
 export const ApprovalService = new ServiceType("services.documents.ApprovalService", [
+    { name: "ListApprovalTasksInbox", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksInboxRequest, O: ListApprovalTasksInboxResponse },
     { name: "ListApprovalPolicies", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalPoliciesRequest, O: ListApprovalPoliciesResponse },
     { name: "UpsertApprovalPolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertApprovalPolicyRequest, O: UpsertApprovalPolicyResponse },
     { name: "ListApprovalTasks", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListApprovalTasksRequest, O: ListApprovalTasksResponse },

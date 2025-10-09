@@ -23,15 +23,23 @@ import type { ListApprovalTasksResponse } from "./approval";
 import type { ListApprovalTasksRequest } from "./approval";
 import type { UpsertApprovalPolicyResponse } from "./approval";
 import type { UpsertApprovalPolicyRequest } from "./approval";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListApprovalPoliciesResponse } from "./approval";
 import type { ListApprovalPoliciesRequest } from "./approval";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ListApprovalTasksInboxResponse } from "./approval";
+import type { ListApprovalTasksInboxRequest } from "./approval";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.documents.ApprovalService
  */
 export interface IApprovalServiceClient {
+    /**
+     * Inbox (for tasks assigned to user)
+     *
+     * @generated from protobuf rpc: ListApprovalTasksInbox
+     */
+    listApprovalTasksInbox(input: ListApprovalTasksInboxRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksInboxRequest, ListApprovalTasksInboxResponse>;
     /**
      * Policies
      *
@@ -91,19 +99,28 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Inbox (for tasks assigned to user)
+     *
+     * @generated from protobuf rpc: ListApprovalTasksInbox
+     */
+    listApprovalTasksInbox(input: ListApprovalTasksInboxRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksInboxRequest, ListApprovalTasksInboxResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListApprovalTasksInboxRequest, ListApprovalTasksInboxResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * Policies
      *
      * @generated from protobuf rpc: ListApprovalPolicies
      */
     listApprovalPolicies(input: ListApprovalPoliciesRequest, options?: RpcOptions): UnaryCall<ListApprovalPoliciesRequest, ListApprovalPoliciesResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListApprovalPoliciesRequest, ListApprovalPoliciesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpsertApprovalPolicy
      */
     upsertApprovalPolicy(input: UpsertApprovalPolicyRequest, options?: RpcOptions): UnaryCall<UpsertApprovalPolicyRequest, UpsertApprovalPolicyResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertApprovalPolicyRequest, UpsertApprovalPolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -112,21 +129,21 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
      * @generated from protobuf rpc: ListApprovalTasks
      */
     listApprovalTasks(input: ListApprovalTasksRequest, options?: RpcOptions): UnaryCall<ListApprovalTasksRequest, ListApprovalTasksResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListApprovalTasksRequest, ListApprovalTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpsertApprovalTasks
      */
     upsertApprovalTasks(input: UpsertApprovalTasksRequest, options?: RpcOptions): UnaryCall<UpsertApprovalTasksRequest, UpsertApprovalTasksResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertApprovalTasksRequest, UpsertApprovalTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteApprovalTasks
      */
     deleteApprovalTasks(input: DeleteApprovalTasksRequest, options?: RpcOptions): UnaryCall<DeleteApprovalTasksRequest, DeleteApprovalTasksResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteApprovalTasksRequest, DeleteApprovalTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -135,28 +152,28 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
      * @generated from protobuf rpc: ListApprovals
      */
     listApprovals(input: ListApprovalsRequest, options?: RpcOptions): UnaryCall<ListApprovalsRequest, ListApprovalsResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListApprovalsRequest, ListApprovalsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeApproval
      */
     revokeApproval(input: RevokeApprovalRequest, options?: RpcOptions): UnaryCall<RevokeApprovalRequest, RevokeApprovalResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<RevokeApprovalRequest, RevokeApprovalResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DecideApproval
      */
     decideApproval(input: DecideApprovalRequest, options?: RpcOptions): UnaryCall<DecideApprovalRequest, DecideApprovalResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<DecideApprovalRequest, DecideApprovalResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ReopenApprovalTask
      */
     reopenApprovalTask(input: ReopenApprovalTaskRequest, options?: RpcOptions): UnaryCall<ReopenApprovalTaskRequest, ReopenApprovalTaskResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<ReopenApprovalTaskRequest, ReopenApprovalTaskResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -165,7 +182,7 @@ export class ApprovalServiceClient implements IApprovalServiceClient, ServiceInf
      * @generated from protobuf rpc: RecomputeApprovalPolicyCounters
      */
     recomputeApprovalPolicyCounters(input: RecomputeApprovalPolicyCountersRequest, options?: RpcOptions): UnaryCall<RecomputeApprovalPolicyCountersRequest, RecomputeApprovalPolicyCountersResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<RecomputeApprovalPolicyCountersRequest, RecomputeApprovalPolicyCountersResponse>("unary", this._transport, method, opt, input);
     }
 }

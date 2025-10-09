@@ -4,6 +4,7 @@ package resources.documents;
 
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 
@@ -106,7 +107,7 @@ message ApprovalTask {
   string creator_job = 22 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 23;
 
-  repeated Approval approvals = 24 [(buf.validate.field).repeated.max_items = 15];
+  optional resources.documents.DocumentShort document = 24;
 }
 
 enum ApprovalStatus {

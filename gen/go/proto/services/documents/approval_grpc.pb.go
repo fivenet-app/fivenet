@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	ApprovalService_ListApprovalTasksInbox_FullMethodName          = "/services.documents.ApprovalService/ListApprovalTasksInbox"
 	ApprovalService_ListApprovalPolicies_FullMethodName            = "/services.documents.ApprovalService/ListApprovalPolicies"
 	ApprovalService_UpsertApprovalPolicy_FullMethodName            = "/services.documents.ApprovalService/UpsertApprovalPolicy"
 	ApprovalService_ListApprovalTasks_FullMethodName               = "/services.documents.ApprovalService/ListApprovalTasks"
@@ -35,6 +36,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApprovalServiceClient interface {
+	// Inbox (for tasks assigned to user)
+	ListApprovalTasksInbox(ctx context.Context, in *ListApprovalTasksInboxRequest, opts ...grpc.CallOption) (*ListApprovalTasksInboxResponse, error)
 	// Policies
 	ListApprovalPolicies(ctx context.Context, in *ListApprovalPoliciesRequest, opts ...grpc.CallOption) (*ListApprovalPoliciesResponse, error)
 	UpsertApprovalPolicy(ctx context.Context, in *UpsertApprovalPolicyRequest, opts ...grpc.CallOption) (*UpsertApprovalPolicyResponse, error)
@@ -57,6 +60,16 @@ type approvalServiceClient struct {
 
 func NewApprovalServiceClient(cc grpc.ClientConnInterface) ApprovalServiceClient {
 	return &approvalServiceClient{cc}
+}
+
+func (c *approvalServiceClient) ListApprovalTasksInbox(ctx context.Context, in *ListApprovalTasksInboxRequest, opts ...grpc.CallOption) (*ListApprovalTasksInboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListApprovalTasksInboxResponse)
+	err := c.cc.Invoke(ctx, ApprovalService_ListApprovalTasksInbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *approvalServiceClient) ListApprovalPolicies(ctx context.Context, in *ListApprovalPoliciesRequest, opts ...grpc.CallOption) (*ListApprovalPoliciesResponse, error) {
@@ -163,6 +176,8 @@ func (c *approvalServiceClient) RecomputeApprovalPolicyCounters(ctx context.Cont
 // All implementations must embed UnimplementedApprovalServiceServer
 // for forward compatibility.
 type ApprovalServiceServer interface {
+	// Inbox (for tasks assigned to user)
+	ListApprovalTasksInbox(context.Context, *ListApprovalTasksInboxRequest) (*ListApprovalTasksInboxResponse, error)
 	// Policies
 	ListApprovalPolicies(context.Context, *ListApprovalPoliciesRequest) (*ListApprovalPoliciesResponse, error)
 	UpsertApprovalPolicy(context.Context, *UpsertApprovalPolicyRequest) (*UpsertApprovalPolicyResponse, error)
@@ -187,6 +202,9 @@ type ApprovalServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedApprovalServiceServer struct{}
 
+func (UnimplementedApprovalServiceServer) ListApprovalTasksInbox(context.Context, *ListApprovalTasksInboxRequest) (*ListApprovalTasksInboxResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListApprovalTasksInbox not implemented")
+}
 func (UnimplementedApprovalServiceServer) ListApprovalPolicies(context.Context, *ListApprovalPoliciesRequest) (*ListApprovalPoliciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListApprovalPolicies not implemented")
 }
@@ -236,6 +254,24 @@ func RegisterApprovalServiceServer(s grpc.ServiceRegistrar, srv ApprovalServiceS
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&ApprovalService_ServiceDesc, srv)
+}
+
+func _ApprovalService_ListApprovalTasksInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListApprovalTasksInboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApprovalServiceServer).ListApprovalTasksInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ApprovalService_ListApprovalTasksInbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApprovalServiceServer).ListApprovalTasksInbox(ctx, req.(*ListApprovalTasksInboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ApprovalService_ListApprovalPolicies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -425,6 +461,10 @@ var ApprovalService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.documents.ApprovalService",
 	HandlerType: (*ApprovalServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListApprovalTasksInbox",
+			Handler:    _ApprovalService_ListApprovalTasksInbox_Handler,
+		},
 		{
 			MethodName: "ListApprovalPolicies",
 			Handler:    _ApprovalService_ListApprovalPolicies_Handler,

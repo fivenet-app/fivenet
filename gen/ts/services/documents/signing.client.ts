@@ -31,15 +31,23 @@ import type { DeleteSignaturePolicyResponse } from "./signing";
 import type { DeleteSignaturePolicyRequest } from "./signing";
 import type { UpsertSignaturePolicyResponse } from "./signing";
 import type { UpsertSignaturePolicyRequest } from "./signing";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListSignaturePoliciesResponse } from "./signing";
 import type { ListSignaturePoliciesRequest } from "./signing";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ListSignatureTasksInboxResponse } from "./signing";
+import type { ListSignatureTasksInboxRequest } from "./signing";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.documents.SigningService
  */
 export interface ISigningServiceClient {
+    /**
+     * Inbox (for tasks assigned to user)
+     *
+     * @generated from protobuf rpc: ListSignatureTasksInbox
+     */
+    listSignatureTasksInbox(input: ListSignatureTasksInboxRequest, options?: RpcOptions): UnaryCall<ListSignatureTasksInboxRequest, ListSignatureTasksInboxResponse>;
     /**
      * Policies
      *
@@ -117,26 +125,35 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Inbox (for tasks assigned to user)
+     *
+     * @generated from protobuf rpc: ListSignatureTasksInbox
+     */
+    listSignatureTasksInbox(input: ListSignatureTasksInboxRequest, options?: RpcOptions): UnaryCall<ListSignatureTasksInboxRequest, ListSignatureTasksInboxResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListSignatureTasksInboxRequest, ListSignatureTasksInboxResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * Policies
      *
      * @generated from protobuf rpc: ListSignaturePolicies
      */
     listSignaturePolicies(input: ListSignaturePoliciesRequest, options?: RpcOptions): UnaryCall<ListSignaturePoliciesRequest, ListSignaturePoliciesResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListSignaturePoliciesRequest, ListSignaturePoliciesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpsertSignaturePolicy
      */
     upsertSignaturePolicy(input: UpsertSignaturePolicyRequest, options?: RpcOptions): UnaryCall<UpsertSignaturePolicyRequest, UpsertSignaturePolicyResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertSignaturePolicyRequest, UpsertSignaturePolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteSignaturePolicy
      */
     deleteSignaturePolicy(input: DeleteSignaturePolicyRequest, options?: RpcOptions): UnaryCall<DeleteSignaturePolicyRequest, DeleteSignaturePolicyResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteSignaturePolicyRequest, DeleteSignaturePolicyResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -145,21 +162,21 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListSignatureTasks
      */
     listSignatureTasks(input: ListSignatureTasksRequest, options?: RpcOptions): UnaryCall<ListSignatureTasksRequest, ListSignatureTasksResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListSignatureTasksRequest, ListSignatureTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpsertSignatureTasks
      */
     upsertSignatureTasks(input: UpsertSignatureTasksRequest, options?: RpcOptions): UnaryCall<UpsertSignatureTasksRequest, UpsertSignatureTasksResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertSignatureTasksRequest, UpsertSignatureTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteSignatureTasks
      */
     deleteSignatureTasks(input: DeleteSignatureTasksRequest, options?: RpcOptions): UnaryCall<DeleteSignatureTasksRequest, DeleteSignatureTasksResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteSignatureTasksRequest, DeleteSignatureTasksResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -168,28 +185,28 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListSignatures
      */
     listSignatures(input: ListSignaturesRequest, options?: RpcOptions): UnaryCall<ListSignaturesRequest, ListSignaturesResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListSignaturesRequest, ListSignaturesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: RevokeSignature
      */
     revokeSignature(input: RevokeSignatureRequest, options?: RpcOptions): UnaryCall<RevokeSignatureRequest, RevokeSignatureResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<RevokeSignatureRequest, RevokeSignatureResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DecideSignature
      */
     decideSignature(input: DecideSignatureRequest, options?: RpcOptions): UnaryCall<DecideSignatureRequest, DecideSignatureResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<DecideSignatureRequest, DecideSignatureResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ReopenSignature
      */
     reopenSignature(input: ReopenSignatureRequest, options?: RpcOptions): UnaryCall<ReopenSignatureRequest, ReopenSignatureResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<ReopenSignatureRequest, ReopenSignatureResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -198,7 +215,7 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
      * @generated from protobuf rpc: RecomputeSignatureStatus
      */
     recomputeSignatureStatus(input: RecomputeSignatureStatusRequest, options?: RpcOptions): UnaryCall<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<RecomputeSignatureStatusRequest, RecomputeSignatureStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -207,21 +224,21 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListUsableStamps
      */
     listUsableStamps(input: ListUsableStampsRequest, options?: RpcOptions): UnaryCall<ListUsableStampsRequest, ListUsableStampsResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUsableStampsRequest, ListUsableStampsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpsertStamp
      */
     upsertStamp(input: UpsertStampRequest, options?: RpcOptions): UnaryCall<UpsertStampRequest, UpsertStampResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpsertStampRequest, UpsertStampResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteStamp
      */
     deleteStamp(input: DeleteStampRequest, options?: RpcOptions): UnaryCall<DeleteStampRequest, DeleteStampResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteStampRequest, DeleteStampResponse>("unary", this._transport, method, opt, input);
     }
 }

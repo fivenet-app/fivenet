@@ -462,7 +462,7 @@ type SignatureTask struct {
 	Creator         *users.UserShort     `protobuf:"bytes,20,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string               `protobuf:"bytes,21,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string              `protobuf:"bytes,22,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Signatures      []*Signature         `protobuf:"bytes,23,rep,name=signatures,proto3" json:"signatures,omitempty"`
+	Document        *DocumentShort       `protobuf:"bytes,23,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -651,9 +651,9 @@ func (x *SignatureTask) GetCreatorJobLabel() string {
 	return ""
 }
 
-func (x *SignatureTask) GetSignatures() []*Signature {
+func (x *SignatureTask) GetDocument() *DocumentShort {
 	if x != nil {
-		return x.Signatures
+		return x.Document
 	}
 	return nil
 }
@@ -846,7 +846,7 @@ var File_resources_documents_signing_proto protoreflect.FileDescriptor
 
 const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"R\n" +
+	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"R\n" +
 	"\x0eSignatureTypes\x128\n" +
 	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeR\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xe2\x03\n" +
 	"\x0fSignaturePolicy\x12\x0e\n" +
@@ -861,7 +861,7 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xdb\t\n" +
+	"updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xed\t\n" +
 	"\rSignatureTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
@@ -890,10 +890,8 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\x15 \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x16 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12>\n" +
-	"\n" +
-	"signatures\x18\x17 \x03(\v2\x1e.resources.documents.SignatureR\n" +
-	"signaturesB\n" +
+	"\x11creator_job_label\x18\x16 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\x17 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_userB\x06\n" +
@@ -909,7 +907,8 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\r_signature_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
-	"\x12_creator_job_label\"\xc3\a\n" +
+	"\x12_creator_job_labelB\v\n" +
+	"\t_document\"\xc3\a\n" +
 	"\tSignature\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -1001,6 +1000,7 @@ var file_resources_documents_signing_proto_goTypes = []any{
 	(*Signature)(nil),           // 8: resources.documents.Signature
 	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
 	(*users.UserShort)(nil),     // 10: resources.users.UserShort
+	(*DocumentShort)(nil),       // 11: resources.documents.DocumentShort
 }
 var file_resources_documents_signing_proto_depIdxs = []int32{
 	1,  // 0: resources.documents.SignatureTypes.types:type_name -> resources.documents.SignatureType
@@ -1017,7 +1017,7 @@ var file_resources_documents_signing_proto_depIdxs = []int32{
 	9,  // 11: resources.documents.SignatureTask.completed_at:type_name -> resources.timestamp.Timestamp
 	9,  // 12: resources.documents.SignatureTask.due_at:type_name -> resources.timestamp.Timestamp
 	10, // 13: resources.documents.SignatureTask.creator:type_name -> resources.users.UserShort
-	8,  // 14: resources.documents.SignatureTask.signatures:type_name -> resources.documents.Signature
+	11, // 14: resources.documents.SignatureTask.document:type_name -> resources.documents.DocumentShort
 	9,  // 15: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
 	10, // 16: resources.documents.Signature.user:type_name -> resources.users.UserShort
 	1,  // 17: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
@@ -1036,6 +1036,7 @@ func file_resources_documents_signing_proto_init() {
 	if File_resources_documents_signing_proto != nil {
 		return
 	}
+	file_resources_documents_documents_proto_init()
 	file_resources_documents_signing_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}

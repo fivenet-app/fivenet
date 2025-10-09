@@ -475,7 +475,7 @@ type ApprovalTask struct {
 	Creator         *users.UserShort     `protobuf:"bytes,21,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
 	CreatorJob      string               `protobuf:"bytes,22,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string              `protobuf:"bytes,23,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Approvals       []*Approval          `protobuf:"bytes,24,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Document        *DocumentShort       `protobuf:"bytes,24,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -671,9 +671,9 @@ func (x *ApprovalTask) GetCreatorJobLabel() string {
 	return ""
 }
 
-func (x *ApprovalTask) GetApprovals() []*Approval {
+func (x *ApprovalTask) GetDocument() *DocumentShort {
 	if x != nil {
-		return x.Approvals
+		return x.Document
 	}
 	return nil
 }
@@ -840,7 +840,7 @@ var File_resources_documents_approval_proto protoreflect.FileDescriptor
 
 const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa6\a\n" +
+	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa6\a\n" +
 	"\x0eApprovalPolicy\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -868,7 +868,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xf3\t\n" +
+	"\v_deleted_at\"\x88\n" +
+	"\n" +
 	"\fApprovalTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
@@ -900,8 +901,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\x16 \x01(\tR\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x17 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12;\n" +
-	"\tapprovals\x18\x18 \x03(\v2\x1d.resources.documents.ApprovalR\tapprovalsB\n" +
+	"\x11creator_job_label\x18\x17 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\x18 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_userB\x06\n" +
@@ -917,7 +918,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\f_approval_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
-	"\x12_creator_job_label\"\xa6\x06\n" +
+	"\x12_creator_job_labelB\v\n" +
+	"\t_document\"\xa6\x06\n" +
 	"\bApproval\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -1003,6 +1005,7 @@ var file_resources_documents_approval_proto_goTypes = []any{
 	(*Approval)(nil),            // 7: resources.documents.Approval
 	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
 	(*users.UserShort)(nil),     // 9: resources.users.UserShort
+	(*DocumentShort)(nil),       // 10: resources.documents.DocumentShort
 }
 var file_resources_documents_approval_proto_depIdxs = []int32{
 	8,  // 0: resources.documents.ApprovalPolicy.snapshot_date:type_name -> resources.timestamp.Timestamp
@@ -1021,7 +1024,7 @@ var file_resources_documents_approval_proto_depIdxs = []int32{
 	8,  // 13: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
 	8,  // 14: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
 	9,  // 15: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
-	7,  // 16: resources.documents.ApprovalTask.approvals:type_name -> resources.documents.Approval
+	10, // 16: resources.documents.ApprovalTask.document:type_name -> resources.documents.DocumentShort
 	8,  // 17: resources.documents.Approval.snapshot_date:type_name -> resources.timestamp.Timestamp
 	9,  // 18: resources.documents.Approval.user:type_name -> resources.users.UserShort
 	4,  // 19: resources.documents.Approval.status:type_name -> resources.documents.ApprovalStatus
@@ -1039,6 +1042,7 @@ func file_resources_documents_approval_proto_init() {
 	if File_resources_documents_approval_proto != nil {
 		return
 	}
+	file_resources_documents_documents_proto_init()
 	file_resources_documents_approval_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_documents_approval_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_documents_approval_proto_msgTypes[2].OneofWrappers = []any{}

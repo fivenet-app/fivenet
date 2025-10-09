@@ -5,10 +5,21 @@ package services.documents;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message ListApprovalTasksInboxRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListApprovalTasksInboxResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
+}
 
 message ListApprovalPoliciesRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
@@ -100,7 +111,7 @@ message ListApprovalsRequest {
 }
 
 message ListApprovalsResponse {
-  repeated resources.documents.Approval approvals = 1;
+  repeated resources.documents.Approval approvals = 3;
 }
 
 message RevokeApprovalRequest {
@@ -151,6 +162,15 @@ service ApprovalService {
     order: 52
     icon: "i-mdi-approval"
   };
+
+  // Inbox (for tasks assigned to user)
+  rpc ListApprovalTasksInbox(ListApprovalTasksInboxRequest) returns (ListApprovalTasksInboxResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
 
   // Policies
   rpc ListApprovalPolicies(ListApprovalPoliciesRequest) returns (ListApprovalPoliciesResponse) {

@@ -1,5 +1,8 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsSigningClient } from '~~/gen/ts/clients';
 import type { ListUsableStampsResponse } from '~~/gen/ts/services/documents/signing';
 
@@ -47,12 +50,23 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                     <UDashboardSidebarCollapse />
                 </template>
 
-                <template #right> </template>
+                <template #right>
+                    <PartialsBackButton fallback-to="/documents" />
+                </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
-            <div>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.stamp', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
+            <DataNoDataBlock v-else-if="data?.stamps.length === 0" :type="$t('common.stamp', 2)" />
+
+            <div v-else>
                 Stamps Page - TODO
 
                 {{ data }}

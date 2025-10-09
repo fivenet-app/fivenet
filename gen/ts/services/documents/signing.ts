@@ -5,23 +5,49 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Stamp } from "../../resources/documents/stamp";
-import { PaginationResponse } from "../../resources/common/database/database";
-import { PaginationRequest } from "../../resources/common/database/database";
-import { SignatureTask } from "../../resources/documents/signing";
 import { SignatureType } from "../../resources/documents/signing";
 import { SignatureStatus } from "../../resources/documents/signing";
 import { Signature } from "../../resources/documents/signing";
-import { SignatureTaskStatus } from "../../resources/documents/signing";
 import { SignaturePolicy } from "../../resources/documents/signing";
 import { Timestamp } from "../../resources/timestamp/timestamp";
+import { SignatureTask } from "../../resources/documents/signing";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { SignatureTaskStatus } from "../../resources/documents/signing";
+import { PaginationRequest } from "../../resources/common/database/database";
+/**
+ * @generated from protobuf message services.documents.ListSignatureTasksInboxRequest
+ */
+export interface ListSignatureTasksInboxRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 2
+     */
+    statuses: SignatureTaskStatus[];
+}
+/**
+ * @generated from protobuf message services.documents.ListSignatureTasksInboxResponse
+ */
+export interface ListSignatureTasksInboxResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.documents.SignatureTask tasks = 2
+     */
+    tasks: SignatureTask[];
+}
 /**
  * @generated from protobuf message services.documents.ListSignaturePoliciesRequest
  */
@@ -461,6 +487,122 @@ export interface DeleteStampRequest {
  */
 export interface DeleteStampResponse {
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListSignatureTasksInboxRequest$Type extends MessageType<ListSignatureTasksInboxRequest> {
+    constructor() {
+        super("services.documents.ListSignatureTasksInboxRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListSignatureTasksInboxRequest>): ListSignatureTasksInboxRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.statuses = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListSignatureTasksInboxRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignatureTasksInboxRequest): ListSignatureTasksInboxRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.documents.SignatureTaskStatus statuses */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.statuses.push(reader.int32());
+                    else
+                        message.statuses.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListSignatureTasksInboxRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignatureTaskStatus statuses = 2; */
+        if (message.statuses.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.statuses.length; i++)
+                writer.int32(message.statuses[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListSignatureTasksInboxRequest
+ */
+export const ListSignatureTasksInboxRequest = new ListSignatureTasksInboxRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListSignatureTasksInboxResponse$Type extends MessageType<ListSignatureTasksInboxResponse> {
+    constructor() {
+        super("services.documents.ListSignatureTasksInboxResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "buf.validate.field": { required: true } } },
+            { no: 2, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureTask, options: { "codegen.itemslen.enabled": true } }
+        ]);
+    }
+    create(value?: PartialMessage<ListSignatureTasksInboxResponse>): ListSignatureTasksInboxResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.tasks = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListSignatureTasksInboxResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListSignatureTasksInboxResponse): ListSignatureTasksInboxResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.documents.SignatureTask tasks */ 2:
+                    message.tasks.push(SignatureTask.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListSignatureTasksInboxResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignatureTask tasks = 2; */
+        for (let i = 0; i < message.tasks.length; i++)
+            SignatureTask.internalBinaryWrite(message.tasks[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.documents.ListSignatureTasksInboxResponse
+ */
+export const ListSignatureTasksInboxResponse = new ListSignatureTasksInboxResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListSignaturePoliciesRequest$Type extends MessageType<ListSignaturePoliciesRequest> {
     constructor() {
@@ -2084,6 +2226,7 @@ export const DeleteStampResponse = new DeleteStampResponse$Type();
  * @generated ServiceType for protobuf service services.documents.SigningService
  */
 export const SigningService = new ServiceType("services.documents.SigningService", [
+    { name: "ListSignatureTasksInbox", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListSignatureTasksInboxRequest, O: ListSignatureTasksInboxResponse },
     { name: "ListSignaturePolicies", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListSignaturePoliciesRequest, O: ListSignaturePoliciesResponse },
     { name: "UpsertSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertSignaturePolicyRequest, O: UpsertSignaturePolicyResponse },
     { name: "DeleteSignaturePolicy", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteSignaturePolicyRequest, O: DeleteSignaturePolicyResponse },

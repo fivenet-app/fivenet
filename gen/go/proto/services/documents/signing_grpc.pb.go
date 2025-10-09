@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	SigningService_ListSignatureTasksInbox_FullMethodName  = "/services.documents.SigningService/ListSignatureTasksInbox"
 	SigningService_ListSignaturePolicies_FullMethodName    = "/services.documents.SigningService/ListSignaturePolicies"
 	SigningService_UpsertSignaturePolicy_FullMethodName    = "/services.documents.SigningService/UpsertSignaturePolicy"
 	SigningService_DeleteSignaturePolicy_FullMethodName    = "/services.documents.SigningService/DeleteSignaturePolicy"
@@ -39,6 +40,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SigningServiceClient interface {
+	// Inbox (for tasks assigned to user)
+	ListSignatureTasksInbox(ctx context.Context, in *ListSignatureTasksInboxRequest, opts ...grpc.CallOption) (*ListSignatureTasksInboxResponse, error)
 	// Policies
 	ListSignaturePolicies(ctx context.Context, in *ListSignaturePoliciesRequest, opts ...grpc.CallOption) (*ListSignaturePoliciesResponse, error)
 	UpsertSignaturePolicy(ctx context.Context, in *UpsertSignaturePolicyRequest, opts ...grpc.CallOption) (*UpsertSignaturePolicyResponse, error)
@@ -66,6 +69,16 @@ type signingServiceClient struct {
 
 func NewSigningServiceClient(cc grpc.ClientConnInterface) SigningServiceClient {
 	return &signingServiceClient{cc}
+}
+
+func (c *signingServiceClient) ListSignatureTasksInbox(ctx context.Context, in *ListSignatureTasksInboxRequest, opts ...grpc.CallOption) (*ListSignatureTasksInboxResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSignatureTasksInboxResponse)
+	err := c.cc.Invoke(ctx, SigningService_ListSignatureTasksInbox_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *signingServiceClient) ListSignaturePolicies(ctx context.Context, in *ListSignaturePoliciesRequest, opts ...grpc.CallOption) (*ListSignaturePoliciesResponse, error) {
@@ -212,6 +225,8 @@ func (c *signingServiceClient) DeleteStamp(ctx context.Context, in *DeleteStampR
 // All implementations must embed UnimplementedSigningServiceServer
 // for forward compatibility.
 type SigningServiceServer interface {
+	// Inbox (for tasks assigned to user)
+	ListSignatureTasksInbox(context.Context, *ListSignatureTasksInboxRequest) (*ListSignatureTasksInboxResponse, error)
 	// Policies
 	ListSignaturePolicies(context.Context, *ListSignaturePoliciesRequest) (*ListSignaturePoliciesResponse, error)
 	UpsertSignaturePolicy(context.Context, *UpsertSignaturePolicyRequest) (*UpsertSignaturePolicyResponse, error)
@@ -241,6 +256,9 @@ type SigningServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedSigningServiceServer struct{}
 
+func (UnimplementedSigningServiceServer) ListSignatureTasksInbox(context.Context, *ListSignatureTasksInboxRequest) (*ListSignatureTasksInboxResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSignatureTasksInbox not implemented")
+}
 func (UnimplementedSigningServiceServer) ListSignaturePolicies(context.Context, *ListSignaturePoliciesRequest) (*ListSignaturePoliciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListSignaturePolicies not implemented")
 }
@@ -302,6 +320,24 @@ func RegisterSigningServiceServer(s grpc.ServiceRegistrar, srv SigningServiceSer
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&SigningService_ServiceDesc, srv)
+}
+
+func _SigningService_ListSignatureTasksInbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSignatureTasksInboxRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SigningServiceServer).ListSignatureTasksInbox(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SigningService_ListSignatureTasksInbox_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SigningServiceServer).ListSignatureTasksInbox(ctx, req.(*ListSignatureTasksInboxRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _SigningService_ListSignaturePolicies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -563,6 +599,10 @@ var SigningService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.documents.SigningService",
 	HandlerType: (*SigningServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListSignatureTasksInbox",
+			Handler:    _SigningService_ListSignatureTasksInbox_Handler,
+		},
 		{
 			MethodName: "ListSignaturePolicies",
 			Handler:    _SigningService_ListSignaturePolicies_Handler,

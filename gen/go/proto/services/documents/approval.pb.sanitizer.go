@@ -135,6 +135,62 @@ func (m *ListApprovalPoliciesResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *ListApprovalTasksInboxRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Statuses
+	for idx, item := range m.Statuses {
+		_, _ = idx, item
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *ListApprovalTasksInboxResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Tasks
+	for idx, item := range m.Tasks {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListApprovalTasksRequest) Sanitize() error {
 	if m == nil {
 		return nil

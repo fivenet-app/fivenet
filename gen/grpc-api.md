@@ -3388,159 +3388,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
-## resources/documents/approval.proto
-
-
-### resources.documents.Approval
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `policy_id` | [int64](#int64) | optional | Link to originating policy (if any) |
-| `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
-| `user_id` | [int32](#int32) | optional |  |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `user_job` | [string](#string) | optional |  |
-| `user_job_label` | [string](#string) | optional |  |
-| `user_grade` | [int32](#int32) | optional |  |
-| `user_grade_label` | [string](#string) | optional |  |
-| `status` | [ApprovalStatus](#resourcesdocumentsApprovalStatus) |  |  |
-| `comment` | [string](#string) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.documents.ApprovalPolicy
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
-| `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
-| `required_count` | [int32](#int32) | optional |  |
-| `assigned_count` | [int32](#int32) |  |  |
-| `approved_count` | [int32](#int32) |  |  |
-| `declined_count` | [int32](#int32) |  |  |
-| `pending_count` | [int32](#int32) |  |  |
-| `any_declined` | [bool](#bool) |  |  |
-| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.documents.ApprovalTask
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `assignee_kind` | [ApprovalAssigneeKind](#resourcesdocumentsApprovalAssigneeKind) |  |  |
-| `user_id` | [int32](#int32) | optional |  |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) | optional |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
-| `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
-| `comment` | [string](#string) | optional | Optional comment on approve/decline |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `decision_count` | [int32](#int32) |  |  |
-| `approval_id` | [int64](#int64) | optional |  |
-| `creator_id` | [int32](#int32) |  |  |
-| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `approvals` | [Approval](#resourcesdocumentsApproval) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.documents.ApprovalAssigneeKind
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `APPROVAL_ASSIGNEE_KIND_UNSPECIFIED` | 0 |  |
-| `APPROVAL_ASSIGNEE_KIND_USER` | 1 |  |
-| `APPROVAL_ASSIGNEE_KIND_JOB_GRADE` | 2 |  |
-
-
-
-### resources.documents.ApprovalRuleKind
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `APPROVAL_RULE_KIND_UNSPECIFIED` | 0 |  |
-| `APPROVAL_RULE_KIND_REQUIRE_ALL` | 1 |  |
-| `APPROVAL_RULE_KIND_QUORUM_ANY` | 2 |  |
-
-
-
-### resources.documents.ApprovalStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `APPROVAL_STATUS_UNSPECIFIED` | 0 |  |
-| `APPROVAL_STATUS_APPROVED` | 1 |  |
-| `APPROVAL_STATUS_DECLINED` | 2 |  |
-| `APPROVAL_STATUS_REVOKED` | 3 |  |
-
-
-
-### resources.documents.ApprovalTaskStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `APPROVAL_TASK_STATUS_UNSPECIFIED` | 0 |  |
-| `APPROVAL_TASK_STATUS_PENDING` | 1 |  |
-| `APPROVAL_TASK_STATUS_APPROVED` | 2 |  |
-| `APPROVAL_TASK_STATUS_DECLINED` | 3 |  |
-| `APPROVAL_TASK_STATUS_EXPIRED` | 4 |  |
-| `APPROVAL_TASK_STATUS_CANCELLED` | 5 |  |
-
-
-
-### resources.documents.OnEditBehavior
-Policy snapshot applied to a specific version
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ON_EDIT_BEHAVIOR_UNSPECIFIED` | 0 |  |
-| `ON_EDIT_BEHAVIOR_RESET` | 1 | Reset review on content edits |
-| `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 2 | Keep approvals where possible |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/documents/category.proto
 
 
@@ -3557,37 +3404,6 @@ Policy snapshot applied to a specific version
 | `job` | [string](#string) | optional |  |
 | `color` | [string](#string) | optional |  |
 | `icon` | [string](#string) | optional |  |
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/documents/comment.proto
-
-
-### resources.documents.Comment
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `document_id` | [int64](#int64) |  |  |
-| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
 
 
 
@@ -3897,6 +3713,190 @@ Policy snapshot applied to a specific version
 
 
 
+## resources/documents/approval.proto
+
+
+### resources.documents.Approval
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `policy_id` | [int64](#int64) | optional | Link to originating policy (if any) |
+| `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
+| `user_id` | [int32](#int32) | optional |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `user_job` | [string](#string) | optional |  |
+| `user_job_label` | [string](#string) | optional |  |
+| `user_grade` | [int32](#int32) | optional |  |
+| `user_grade_label` | [string](#string) | optional |  |
+| `status` | [ApprovalStatus](#resourcesdocumentsApprovalStatus) |  |  |
+| `comment` | [string](#string) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.documents.ApprovalPolicy
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
+| `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
+| `required_count` | [int32](#int32) | optional |  |
+| `assigned_count` | [int32](#int32) |  |  |
+| `approved_count` | [int32](#int32) |  |  |
+| `declined_count` | [int32](#int32) |  |  |
+| `pending_count` | [int32](#int32) |  |  |
+| `any_declined` | [bool](#bool) |  |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+
+
+
+
+
+### resources.documents.ApprovalTask
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
+| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `assignee_kind` | [ApprovalAssigneeKind](#resourcesdocumentsApprovalAssigneeKind) |  |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) | optional |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
+| `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
+| `comment` | [string](#string) | optional | Optional comment on approve/decline |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `decision_count` | [int32](#int32) |  |  |
+| `approval_id` | [int64](#int64) | optional |  |
+| `creator_id` | [int32](#int32) |  |  |
+| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.documents.ApprovalAssigneeKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_ASSIGNEE_KIND_UNSPECIFIED` | 0 |  |
+| `APPROVAL_ASSIGNEE_KIND_USER` | 1 |  |
+| `APPROVAL_ASSIGNEE_KIND_JOB_GRADE` | 2 |  |
+
+
+
+### resources.documents.ApprovalRuleKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_RULE_KIND_UNSPECIFIED` | 0 |  |
+| `APPROVAL_RULE_KIND_REQUIRE_ALL` | 1 |  |
+| `APPROVAL_RULE_KIND_QUORUM_ANY` | 2 |  |
+
+
+
+### resources.documents.ApprovalStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_STATUS_UNSPECIFIED` | 0 |  |
+| `APPROVAL_STATUS_APPROVED` | 1 |  |
+| `APPROVAL_STATUS_DECLINED` | 2 |  |
+| `APPROVAL_STATUS_REVOKED` | 3 |  |
+
+
+
+### resources.documents.ApprovalTaskStatus
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `APPROVAL_TASK_STATUS_UNSPECIFIED` | 0 |  |
+| `APPROVAL_TASK_STATUS_PENDING` | 1 |  |
+| `APPROVAL_TASK_STATUS_APPROVED` | 2 |  |
+| `APPROVAL_TASK_STATUS_DECLINED` | 3 |  |
+| `APPROVAL_TASK_STATUS_EXPIRED` | 4 |  |
+| `APPROVAL_TASK_STATUS_CANCELLED` | 5 |  |
+
+
+
+### resources.documents.OnEditBehavior
+Policy snapshot applied to a specific version
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ON_EDIT_BEHAVIOR_UNSPECIFIED` | 0 |  |
+| `ON_EDIT_BEHAVIOR_RESET` | 1 | Reset review on content edits |
+| `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 2 | Keep approvals where possible |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/documents/comment.proto
+
+
+### resources.documents.Comment
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `document_id` | [int64](#int64) |  |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/documents/requests.proto
 
 
@@ -4008,7 +4008,7 @@ Policy snapshot applied to a specific version
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `signatures` | [Signature](#resourcesdocumentsSignature) | repeated |  |
+| `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
 
 
 
@@ -8526,6 +8526,30 @@ Only one policy per document is supported currently.
 
 
 
+### services.documents.ListApprovalTasksInboxRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
+
+
+
+
+
+### services.documents.ListApprovalTasksInboxResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `tasks` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) | repeated |  |
+
+
+
+
+
 ### services.documents.ListApprovalTasksRequest
 
 
@@ -8708,6 +8732,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListApprovalTasksInbox` | [ListApprovalTasksInboxRequest](#servicesdocumentsListApprovalTasksInboxRequest) | [ListApprovalTasksInboxResponse](#servicesdocumentsListApprovalTasksInboxResponse) |Inbox (for tasks assigned to user) |
 | `ListApprovalPolicies` | [ListApprovalPoliciesRequest](#servicesdocumentsListApprovalPoliciesRequest) | [ListApprovalPoliciesResponse](#servicesdocumentsListApprovalPoliciesResponse) |Policies |
 | `UpsertApprovalPolicy` | [UpsertApprovalPolicyRequest](#servicesdocumentsUpsertApprovalPolicyRequest) | [UpsertApprovalPolicyResponse](#servicesdocumentsUpsertApprovalPolicyResponse) | |
 | `ListApprovalTasks` | [ListApprovalTasksRequest](#servicesdocumentsListApprovalTasksRequest) | [ListApprovalTasksResponse](#servicesdocumentsListApprovalTasksResponse) |Tasks |
@@ -9689,6 +9714,30 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+### services.documents.ListSignatureTasksInboxRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
+| `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
+
+
+
+
+
+### services.documents.ListSignatureTasksInboxResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
+| `tasks` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) | repeated |  |
+
+
+
+
+
 ### services.documents.ListSignatureTasksRequest
 
 
@@ -9941,6 +9990,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| `ListSignatureTasksInbox` | [ListSignatureTasksInboxRequest](#servicesdocumentsListSignatureTasksInboxRequest) | [ListSignatureTasksInboxResponse](#servicesdocumentsListSignatureTasksInboxResponse) |Inbox (for tasks assigned to user) |
 | `ListSignaturePolicies` | [ListSignaturePoliciesRequest](#servicesdocumentsListSignaturePoliciesRequest) | [ListSignaturePoliciesResponse](#servicesdocumentsListSignaturePoliciesResponse) |Policies |
 | `UpsertSignaturePolicy` | [UpsertSignaturePolicyRequest](#servicesdocumentsUpsertSignaturePolicyRequest) | [UpsertSignaturePolicyResponse](#servicesdocumentsUpsertSignaturePolicyResponse) | |
 | `DeleteSignaturePolicy` | [DeleteSignaturePolicyRequest](#servicesdocumentsDeleteSignaturePolicyRequest) | [DeleteSignaturePolicyResponse](#servicesdocumentsDeleteSignaturePolicyResponse) | |

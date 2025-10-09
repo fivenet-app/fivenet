@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DocumentShort } from "./documents";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -183,9 +184,9 @@ export interface ApprovalTask {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.documents.Approval approvals = 24
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 24
      */
-    approvals: Approval[];
+    document?: DocumentShort;
 }
 /**
  * @generated from protobuf message resources.documents.Approval
@@ -550,7 +551,7 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
             { no: 21, name: "creator", kind: "message", T: () => UserShort },
             { no: 22, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 23, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 24, name: "approvals", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Approval, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }
+            { no: 24, name: "document", kind: "message", T: () => DocumentShort }
         ]);
     }
     create(value?: PartialMessage<ApprovalTask>): ApprovalTask {
@@ -564,7 +565,6 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
         message.decisionCount = 0;
         message.creatorId = 0;
         message.creatorJob = "";
-        message.approvals = [];
         if (value !== undefined)
             reflectionMergePartial<ApprovalTask>(this, message, value);
         return message;
@@ -643,8 +643,8 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
                 case /* optional string creator_job_label */ 23:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* repeated resources.documents.Approval approvals */ 24:
-                    message.approvals.push(Approval.internalBinaryRead(reader, reader.uint32(), options));
+                case /* optional resources.documents.DocumentShort document */ 24:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -727,9 +727,9 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
         /* optional string creator_job_label = 23; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(23, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* repeated resources.documents.Approval approvals = 24; */
-        for (let i = 0; i < message.approvals.length; i++)
-            Approval.internalBinaryWrite(message.approvals[i], writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 24; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

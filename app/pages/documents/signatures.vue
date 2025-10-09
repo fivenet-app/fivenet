@@ -1,8 +1,13 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
+import { z } from 'zod';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsSigningClient } from '~~/gen/ts/clients';
+import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { SignatureTaskStatus } from '~~/gen/ts/resources/documents/signing';
-import type { ListSignatureTasksResponse } from '~~/gen/ts/services/documents/signing';
+import type { ListSignatureTasksInboxResponse } from '~~/gen/ts/services/documents/signing';
 
 useHead({
     title: 'pages.documents.signatures.title',
@@ -21,15 +26,38 @@ defineProps<{
 
 const signingClient = await getDocumentsSigningClient();
 
+const schema = z.object({
+    statuses: z.enum(SignatureTaskStatus).array().optional().default([SignatureTaskStatus.PENDING]),
+    sorting: z
+        .object({
+            columns: z
+                .custom<SortByColumn>()
+                .array()
+                .max(3)
+                .default([
+                    {
+                        id: 'createdAt',
+                        desc: true,
+                    },
+                ]),
+        })
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
+    page: pageNumberSchema,
+});
+
+const query = useSearchForm('documents-approvals', schema);
+
 const { data, status, error, refresh } = useLazyAsyncData(
-    () => `documents-signatures-`,
-    () => listSignatureTasks(),
+    () => `documents-signatures-${JSON.stringify(query)}`,
+    () => listSignatureTasksInbox(),
 );
 
-async function listSignatureTasks(): Promise<ListSignatureTasksResponse> {
-    const call = signingClient.listSignatureTasks({
-        documentId: 0,
-        statuses: [SignatureTaskStatus.PENDING, SignatureTaskStatus.EXPIRED],
+async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxResponse> {
+    const call = signingClient.listSignatureTasksInbox({
+        pagination: {
+            offset: calculateOffset(query.page, data.value?.pagination),
+        },
+        statuses: query.statuses,
     });
     const { response } = await call;
 
@@ -42,17 +70,31 @@ async function listSignatureTasks(): Promise<ListSignatureTasksResponse> {
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
-            <UDashboardNavbar :title="$t('pages.documents.title')">
+            <UDashboardNavbar :title="$t('pages.documents.signatures.title')">
                 <template #leading>
                     <UDashboardSidebarCollapse />
                 </template>
 
-                <template #right> </template>
+                <template #right>
+                    <PartialsBackButton fallback-to="/documents" />
+                </template>
             </UDashboardNavbar>
         </template>
 
         <template #body>
-            <div>Signatures Page - TODO</div>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.task', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
+            <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" />
+            <div v-else>
+                Signatures Page - TODO
+
+                {{ data }}
+            </div>
         </template>
 
         <template v-if="itemsLeft.length > 1 || itemsRight.length > 1" #footer>

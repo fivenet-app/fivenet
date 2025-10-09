@@ -4,6 +4,14 @@
 package documents
 
 // ItemsLen returns the length of Tasks.
+func (m *ListApprovalTasksInboxResponse) ItemsLen() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.GetTasks())
+}
+
+// ItemsLen returns the length of Tasks.
 func (m *ListApprovalTasksResponse) ItemsLen() int {
 	if m == nil {
 		return 0

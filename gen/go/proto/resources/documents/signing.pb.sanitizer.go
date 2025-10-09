@@ -172,6 +172,15 @@ func (m *SignatureTask) Sanitize() error {
 		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
 	}
 
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: DueAt
 	if m.DueAt != nil {
 		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
@@ -194,18 +203,6 @@ func (m *SignatureTask) Sanitize() error {
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
-	}
-
-	// Field: Signatures
-	for idx, item := range m.Signatures {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	// Field: SnapshotDate

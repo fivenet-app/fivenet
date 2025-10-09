@@ -11,6 +11,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DocumentShort } from "./documents";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -166,9 +167,9 @@ export interface SignatureTask {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.documents.Signature signatures = 23
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 23
      */
-    signatures: Signature[];
+    document?: DocumentShort;
 }
 /**
  * @generated from protobuf message resources.documents.Signature
@@ -544,7 +545,7 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
             { no: 20, name: "creator", kind: "message", T: () => UserShort },
             { no: 21, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 22, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 23, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature, options: { "buf.validate.field": { repeated: { maxItems: "15" } } } }
+            { no: 23, name: "document", kind: "message", T: () => DocumentShort }
         ]);
     }
     create(value?: PartialMessage<SignatureTask>): SignatureTask {
@@ -557,7 +558,6 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
         message.status = 0;
         message.creatorId = 0;
         message.creatorJob = "";
-        message.signatures = [];
         if (value !== undefined)
             reflectionMergePartial<SignatureTask>(this, message, value);
         return message;
@@ -633,8 +633,8 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
                 case /* optional string creator_job_label */ 22:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* repeated resources.documents.Signature signatures */ 23:
-                    message.signatures.push(Signature.internalBinaryRead(reader, reader.uint32(), options));
+                case /* optional resources.documents.DocumentShort document */ 23:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -714,9 +714,9 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
         /* optional string creator_job_label = 22; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(22, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* repeated resources.documents.Signature signatures = 23; */
-        for (let i = 0; i < message.signatures.length; i++)
-            Signature.internalBinaryWrite(message.signatures[i], writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 23; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
