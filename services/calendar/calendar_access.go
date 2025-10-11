@@ -77,8 +77,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 							tCAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 						),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		accessExists = mysql.Bool(true)

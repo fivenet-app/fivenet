@@ -81,11 +81,12 @@ func (s *Server) ListQualificationsResults(
 
 					mysql.OR(
 						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
-							AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+						mysql.AND(
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						),
 					),
-				),
-				),
+				)),
 		)
 
 		condition = condition.AND(mysql.AND(
@@ -102,8 +103,10 @@ func (s *Server) ListQualificationsResults(
 
 	countColumn := mysql.Expression(tQualiResults.QualificationID)
 	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-			AND(tQualiResults.UserID.EQ(mysql.Int32(req.GetUserId())))
+		condition = condition.AND(mysql.AND(
+			tUser.Job.EQ(mysql.String(userInfo.GetJob())),
+			tQualiResults.UserID.EQ(mysql.Int32(req.GetUserId())),
+		))
 	} else {
 		if req.QualificationId == nil {
 			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
@@ -132,9 +135,11 @@ func (s *Server) ListQualificationsResults(
 					tQuali.ID.EQ(tQualiResults.QualificationID),
 				).
 				LEFT_JOIN(tQAccess,
-					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
+					mysql.AND(
+						tQAccess.TargetID.EQ(tQuali.ID),
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+					),
 				).
 				LEFT_JOIN(tUser,
 					tQualiResults.UserID.EQ(tUser.ID),
@@ -229,9 +234,11 @@ func (s *Server) ListQualificationsResults(
 					tQualiResults.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tQAccess,
-					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
+					mysql.AND(
+						tQAccess.TargetID.EQ(tQuali.ID),
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+					),
 				),
 		).
 		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt, tQualiResults.ID).

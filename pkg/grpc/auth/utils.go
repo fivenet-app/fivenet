@@ -24,9 +24,8 @@ func FromContext(ctx context.Context) (*pbuserinfo.UserInfo, bool) {
 func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	// Try to get auth token from cookies and fallback to `authorization header`
 	val := metadata.ExtractIncoming(ctx)
-	cookie := val.Get("cookie")
-	if cookie != "" {
-		for _, line := range strings.Split(cookie, "; ") {
+	if cookie := val.Get("cookie"); cookie != "" {
+		for line := range strings.SplitSeq(cookie, "; ") {
 			cs, err := http.ParseCookie(line)
 			if err != nil {
 				continue

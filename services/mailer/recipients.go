@@ -63,8 +63,10 @@ func (s *Server) getThreadRecipients(
 		FROM(
 			tThreadsRecipients.
 				INNER_JOIN(tEmails,
-					tEmails.ID.EQ(tThreadsRecipients.EmailID).
-						AND(tEmails.Deactivated.IS_FALSE()),
+					mysql.AND(
+						tEmails.ID.EQ(tThreadsRecipients.EmailID),
+						tEmails.Deactivated.IS_FALSE(),
+					),
 				),
 		).
 		WHERE(mysql.AND(

@@ -46,9 +46,11 @@ func (s *Server) listDocumentsQuery(
 			tDocumentShort.CreatedAt.AS("created_at"),
 		).
 		FROM(tDocumentShort).
-		WHERE(tDocumentShort.DeletedAt.IS_NULL().
-			AND(tDocumentShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))).
-			AND(tDocumentShort.CreatorJob.EQ(mysql.String(userInfo.GetJob()))))
+		WHERE(mysql.AND(
+			tDocumentShort.DeletedAt.IS_NULL(),
+			tDocumentShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+			tDocumentShort.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+		))
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
@@ -70,8 +72,7 @@ func (s *Server) listDocumentsQuery(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		existsAccess = mysql.Bool(true)
@@ -166,8 +167,10 @@ func (s *Server) listDocumentsQuery(
 		FROM(docIDs.
 			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
 			LEFT_JOIN(tDCategory,
-				tDocumentShort.CategoryID.EQ(tDCategory.ID).
-					AND(tDCategory.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tDocumentShort.CategoryID.EQ(tDCategory.ID),
+					tDCategory.DeletedAt.IS_NULL(),
+				),
 			).
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
@@ -222,8 +225,7 @@ func (s *Server) getDocumentQuery(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 
 		wheres = []mysql.BoolExpression{
@@ -324,8 +326,10 @@ func (s *Server) getDocumentQuery(
 		).
 		FROM(tDocument.
 			LEFT_JOIN(tDCategory,
-				tDocument.CategoryID.EQ(tDCategory.ID).
-					AND(tDCategory.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tDocument.CategoryID.EQ(tDCategory.ID),
+					tDCategory.DeletedAt.IS_NULL(),
+				),
 			).
 			LEFT_JOIN(tCreator,
 				tDocument.CreatorID.EQ(tCreator.ID),
@@ -337,8 +341,10 @@ func (s *Server) getDocumentQuery(
 				tDWorkflow.DocumentID.EQ(tDocument.ID),
 			).
 			LEFT_JOIN(tUserWorkflow,
-				tUserWorkflow.DocumentID.EQ(tDocument.ID).
-					AND(tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+				mysql.AND(
+					tUserWorkflow.DocumentID.EQ(tDocument.ID),
+					tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				),
 			).
 			LEFT_JOIN(tDMeta,
 				tDMeta.DocumentID.EQ(tDocument.ID),

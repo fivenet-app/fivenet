@@ -2202,7 +2202,11 @@
             "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
             "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
             "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!",
-            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
+            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+            "ErrCitizenNotFound": {
+                "title": "Bürger nicht gefunden!",
+                "content": "Der angeforderte Bürger wurde nicht gefunden."
+            }
         },
         "VehiclesService": {
             "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!",

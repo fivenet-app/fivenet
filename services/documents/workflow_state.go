@@ -166,12 +166,16 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 			FROM(
 				tDWorkflow.
 					INNER_JOIN(tDocumentShort,
-						tDocumentShort.ID.EQ(tDWorkflow.DocumentID).
-							AND(tDocumentShort.DeletedAt.IS_NULL()),
+						mysql.AND(
+							tDocumentShort.ID.EQ(tDWorkflow.DocumentID),
+							tDocumentShort.DeletedAt.IS_NULL(),
+						),
 					).
 					LEFT_JOIN(tDTemplates,
-						tDTemplates.ID.EQ(tDocumentShort.TemplateID).
-							AND(tDTemplates.DeletedAt.IS_NULL()),
+						mysql.AND(
+							tDTemplates.ID.EQ(tDocumentShort.TemplateID),
+							tDTemplates.DeletedAt.IS_NULL(),
+						),
 					),
 			).
 			WHERE(mysql.AND(

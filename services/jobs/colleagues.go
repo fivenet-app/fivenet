@@ -63,8 +63,10 @@ func (s *Server) ListColleagues(
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(mysql.String(userInfo.GetJob())).
-		AND(s.customDB.Conditions.User.GetFilter(tColleague.Alias()))
+	condition := mysql.AND(
+		tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+		s.customDB.Conditions.User.GetFilter(tColleague.Alias()),
+	)
 
 	userIds := []mysql.Expression{}
 	for _, v := range req.GetUserIds() {
@@ -121,11 +123,11 @@ func (s *Server) ListColleagues(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tColleagueLabels).
-				WHERE(
-					tColleagueLabels.UserID.EQ(tColleague.ID).
-						AND(tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tColleagueLabels.LabelID.IN(labelIDExprs...)),
-				),
+				WHERE(mysql.AND(
+					tColleagueLabels.UserID.EQ(tColleague.ID),
+					tColleagueLabels.Job.EQ(mysql.String(userInfo.GetJob())),
+					tColleagueLabels.LabelID.IN(labelIDExprs...),
+				)),
 		)
 
 		condition = condition.AND(labelsExists)
@@ -140,8 +142,10 @@ func (s *Server) ListColleagues(
 		FROM(
 			tColleague.
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				),
 		).
 		WHERE(condition)
@@ -221,8 +225,10 @@ func (s *Server) ListColleagues(
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -344,8 +350,10 @@ func (s *Server) getColleague(
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(mysql.String(job))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(mysql.String(job)),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -987,8 +995,10 @@ func (s *Server) ListColleagueActivity(
 					tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID),
 				).
 				LEFT_JOIN(tTargetColleagueProps,
-					tTargetColleagueProps.UserID.EQ(tTargetColleague.ID).
-						AND(tTargetColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tTargetColleagueProps.UserID.EQ(tTargetColleague.ID),
+						tTargetColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),

@@ -246,11 +246,11 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(g.Users.table).
-				WHERE(
-					g.Users.columns.TargetID.EQ(g.targetTableColumns.ID).
-						AND(g.Users.columns.Access.GT_EQ(mysql.Int32(int32(access.Number())))).
-						AND(g.Users.columns.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
-				),
+				WHERE(mysql.AND(
+					g.Users.columns.TargetID.EQ(g.targetTableColumns.ID),
+					g.Users.columns.Access.GT_EQ(mysql.Int32(int32(access.Number()))),
+					g.Users.columns.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				)),
 		)
 		accessCheckConditions = append(accessCheckConditions, userAccessExists)
 	}
@@ -270,8 +270,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 							mysql.Int32(userInfo.GetJobGrade()),
 						),
 					),
-				),
-				),
+				)),
 		)
 		accessCheckConditions = append(accessCheckConditions, jobAccessExists)
 	}
@@ -286,19 +285,17 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationID),
 					),
 				).
-				WHERE(
-					mysql.AND(
-						g.Qualifications.columns.QualificationID.IS_NOT_NULL(),
-						tQualiResults.DeletedAt.IS_NULL(),
-						tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationID),
-						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-						tQualiResults.Status.EQ(
-							mysql.Int32(
-								int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
-							),
+				WHERE(mysql.AND(
+					g.Qualifications.columns.QualificationID.IS_NOT_NULL(),
+					tQualiResults.DeletedAt.IS_NULL(),
+					tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationID),
+					tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tQualiResults.Status.EQ(
+						mysql.Int32(
+							int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL),
 						),
 					),
-				),
+				)),
 		)
 		accessCheckConditions = append(accessCheckConditions, qualExists)
 	}
@@ -308,13 +305,11 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuer
 			g.targetTableColumns.ID.AS("id"),
 		).
 		FROM(g.targetTable).
-		WHERE(
-			mysql.AND(
-				g.targetTableColumns.ID.IN(ids...),
-				g.targetTableColumns.DeletedAt.IS_NULL(),
-				mysql.OR(accessCheckConditions...),
-			),
-		).
+		WHERE(mysql.AND(
+			g.targetTableColumns.ID.IN(ids...),
+			g.targetTableColumns.DeletedAt.IS_NULL(),
+			mysql.OR(accessCheckConditions...),
+		)).
 		ORDER_BY(orderBys...)
 
 	return stmt

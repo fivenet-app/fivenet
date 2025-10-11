@@ -707,8 +707,10 @@ func (s *Server) getDocumentRelations(
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocument.CategoryID.EQ(tDCategory.ID).
-						AND(tDCategory.DeletedAt.IS_NULL()),
+					mysql.AND(
+						tDocument.CategoryID.EQ(tDCategory.ID),
+						tDCategory.DeletedAt.IS_NULL(),
+					),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tDocRel.SourceUserID),

@@ -38,7 +38,7 @@ func (s *Server) GetAccountInfo(
 	}
 
 	// Load account
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)), false)
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}

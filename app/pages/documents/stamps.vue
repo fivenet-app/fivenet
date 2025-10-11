@@ -21,6 +21,8 @@ defineProps<{
     itemsRight: NavigationMenuItem[];
 }>();
 
+const { can } = useAuth();
+
 const signingClient = await getDocumentsSigningClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
@@ -39,7 +41,7 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
     return response;
 }
 
-// TODO
+// TODO add logic for creating/updating stamps
 </script>
 
 <template>
@@ -52,6 +54,14 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
 
                 <template #right>
                     <PartialsBackButton fallback-to="/documents" />
+
+                    <UTooltip v-if="can('documents.SigningService/UpsertStamp').value" :text="$t('common.create')">
+                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate>
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.stamp', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
         </template>
@@ -64,12 +74,21 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                 :retry="refresh"
             />
             <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
-            <DataNoDataBlock v-else-if="data?.stamps.length === 0" :type="$t('common.stamp', 2)" />
+            <DataNoDataBlock v-else-if="data?.stamps.length === 0" :type="$t('common.stamp', 2)" icon="i-mdi-stamper" />
 
-            <div v-else>
-                Stamps Page - TODO
+            <div v-else class="flex justify-center">
+                <UPageGrid>
+                    <UPageCard v-for="stamp in data?.stamps" :key="stamp.id">
+                        <template #title>
+                            {{ stamp.name }}
+                        </template>
 
-                {{ data }}
+                        <template #description>
+                            <!-- eslint-disable-next-line vue/no-v-html -->
+                            <div v-html="stamp.svgTemplate" />
+                        </template>
+                    </UPageCard>
+                </UPageGrid>
             </div>
         </template>
 

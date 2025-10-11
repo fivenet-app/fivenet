@@ -2203,7 +2203,11 @@
             "ErrPropsJobInvalid": "Invalid job or job rank set!",
             "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
             "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!",
-            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!"
+            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
+            "ErrCitizenNotFound": {
+                "title": "Citizen not found",
+                "content": "The citizen you are looking for was not found."
+            }
         },
         "VehiclesService": {
             "ErrFailedQuery": "Failed to search vehicles data!",

@@ -414,8 +414,9 @@ func (s *Server) SearchThreads(
 	}
 
 	// Get Thread ids via threads recipients list
-	condition := tMessages.DeletedAt.IS_NULL().
-		AND(tMessages.ThreadID.IN(
+	condition := mysql.AND(
+		tMessages.DeletedAt.IS_NULL(),
+		tMessages.ThreadID.IN(
 			tThreadsRecipients.
 				SELECT(
 					mysql.DISTINCT(tThreadsRecipients.ThreadID),
@@ -424,11 +425,12 @@ func (s *Server) SearchThreads(
 				WHERE(
 					tThreadsRecipients.EmailID.IN(ids...),
 				),
-		)).
-		AND(mysql.OR(
+		),
+		mysql.OR(
 			dbutils.MATCH(tMessages.Title, mysql.String(req.GetSearch())),
 			dbutils.MATCH(tMessages.Content, mysql.String(req.GetSearch())),
-		))
+		),
+	)
 
 	countStmt := tMessages.
 		SELECT(

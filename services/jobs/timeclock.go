@@ -253,8 +253,10 @@ func (s *Server) ListTimeclock(
 					tUserProps.UserID.EQ(tColleague.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -381,8 +383,10 @@ func (s *Server) ListTimeclock(
 						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tColleague.ID).
-							AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+						mysql.AND(
+							tColleagueProps.UserID.EQ(tColleague.ID),
+							tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+						),
 					).
 					LEFT_JOIN(tAvatar,
 						tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -436,8 +440,10 @@ func (s *Server) GetTimeclockStats(
 		}
 	}
 
-	condition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())).
-		AND(tTimeClock.UserID.EQ(mysql.Int32(userId)))
+	condition := mysql.AND(
+		tTimeClock.Job.EQ(mysql.String(userInfo.GetJob())),
+		tTimeClock.UserID.EQ(mysql.Int32(userId)),
+	)
 
 	stats, err := s.getTimeclockStats(ctx, condition)
 	if err != nil {
@@ -509,8 +515,10 @@ func (s *Server) ListInactiveEmployees(
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tTimeClock.UserID),
+						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				),
 		).
 		WHERE(condition)
@@ -583,8 +591,10 @@ func (s *Server) ListInactiveEmployees(
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tTimeClock.UserID),
+						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

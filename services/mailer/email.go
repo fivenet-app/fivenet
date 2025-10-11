@@ -79,12 +79,18 @@ func (s *Server) ListEmails(
 		FROM(
 			tEmails.
 				LEFT_JOIN(tEmailsAccess,
-					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
+					mysql.AND(
+						tEmailsAccess.TargetID.EQ(tEmails.ID),
+						tEmailsAccess.Access.GT_EQ(
+							mysql.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)),
+						),
+					),
 				).
 				LEFT_JOIN(tQualificationsResults,
-					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID).
-						AND(tQualificationsResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+					mysql.AND(
+						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
+						tQualificationsResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					),
 				),
 		).
 		WHERE(condition)
@@ -152,23 +158,23 @@ func ListUserEmails(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess).
-				WHERE(
-					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(access))).
-						AND(tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
-				),
+				WHERE(mysql.AND(
+					tEmailsAccess.TargetID.EQ(tEmails.ID),
+					tEmailsAccess.Access.GT_EQ(mysql.Int32(access)),
+					tEmailsAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				)),
 		)
 
 		jobAccessExists := mysql.EXISTS(
 			mysql.
 				SELECT(mysql.Int(1)).
 				FROM(tEmailsAccess).
-				WHERE(
-					tEmailsAccess.TargetID.EQ(tEmails.ID).
-						AND(tEmailsAccess.Access.GT_EQ(mysql.Int32(access))).
-						AND(tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
-				),
+				WHERE(mysql.AND(
+					tEmailsAccess.TargetID.EQ(tEmails.ID),
+					tEmailsAccess.Access.GT_EQ(mysql.Int32(access)),
+					tEmailsAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+					tEmailsAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+				)),
 		)
 
 		// Qualification-based access: there exists an access row with a QualificationID
@@ -188,23 +194,20 @@ func ListUserEmails(
 						mysql.
 							SELECT(mysql.Int(1)).
 							FROM(tQualificationsResults.AS("qr")).
-							WHERE(
-								mysql.AND(
-									qr.QualificationID.EQ(ea.QualificationID),
-									qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-									qr.DeletedAt.IS_NULL(),
-									qr.Status.EQ(
-										mysql.Int32(
-											int32(
-												qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
-											),
+							WHERE(mysql.AND(
+								qr.QualificationID.EQ(ea.QualificationID),
+								qr.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+								qr.DeletedAt.IS_NULL(),
+								qr.Status.EQ(
+									mysql.Int32(
+										int32(
+											qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL,
 										),
 									),
 								),
-							),
+							)),
 					),
-				),
-				),
+				)),
 		)
 
 		condition = condition.AND(

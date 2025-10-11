@@ -62,30 +62,32 @@ func (s *Server) ListThreads(
 	if req.Unread != nil {
 		wheres = append(
 			wheres,
-			tThreadsState.Unread.IS_NOT_NULL().
-				AND(tThreadsState.Unread.EQ(mysql.Bool(req.GetUnread()))),
-		)
+			mysql.AND(
+				tThreadsState.Unread.IS_NOT_NULL(),
+				tThreadsState.Unread.EQ(mysql.Bool(req.GetUnread())),
+			))
 	}
 	if req.Archived != nil {
 		wheres = append(
 			wheres,
-			tThreadsState.Archived.IS_NOT_NULL().
-				AND(tThreadsState.Archived.EQ(mysql.Bool(req.GetArchived()))),
-		)
+			mysql.AND(
+				tThreadsState.Archived.IS_NOT_NULL(),
+				tThreadsState.Archived.EQ(mysql.Bool(req.GetArchived())),
+			))
 	} else {
 		// Skip archived emails by default
 		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(mysql.Bool(false))))
 	}
 
 	// EXISTS filter: thread has at least one of the user’s email IDs as recipient
-	recipExists := mysql.EXISTS(
+	recipientExists := mysql.EXISTS(
 		mysql.
 			SELECT(mysql.Int(1)).
 			FROM(tThreadsRecipients).
-			WHERE(
-				tThreadsRecipients.ThreadID.EQ(tThreads.ID).
-					AND(tThreadsRecipients.EmailID.IN(emailIDExprs...)),
-			),
+			WHERE(mysql.AND(
+				tThreadsRecipients.ThreadID.EQ(tThreads.ID),
+				tThreadsRecipients.EmailID.IN(emailIDExprs...),
+			)),
 	)
 
 	countStmt := tThreads.
@@ -95,16 +97,16 @@ func (s *Server) ListThreads(
 		FROM(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
+					mysql.AND(
+						tThreadsState.ThreadID.EQ(tThreads.ID),
+						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
+					),
 				),
 		).
-		WHERE(
-			mysql.AND(
-				mysql.AND(wheres...),
-				recipExists,
-			),
-		)
+		WHERE(mysql.AND(
+			mysql.AND(wheres...),
+			recipientExists,
+		))
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -126,16 +128,16 @@ func (s *Server) ListThreads(
 		FROM(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
+					mysql.AND(
+						tThreadsState.ThreadID.EQ(tThreads.ID),
+						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
+					),
 				),
 		).
-		WHERE(
-			mysql.AND(
-				mysql.AND(wheres...),
-				recipExists,
-			),
-		).
+		WHERE(mysql.AND(
+			mysql.AND(wheres...),
+			recipientExists,
+		)).
 		ORDER_BY(
 			mysql.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(),
 			tThreads.ID.DESC(),
@@ -171,8 +173,10 @@ func (s *Server) ListThreads(
 					tThreads.ID.EQ(mysql.RawInt("page.id")),
 				).
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0]))),
+					mysql.AND(
+						tThreadsState.ThreadID.EQ(tThreads.ID),
+						tThreadsState.EmailID.EQ(mysql.Int64(req.GetEmailIds()[0])),
+					),
 				),
 		).
 		ORDER_BY(
@@ -225,8 +229,10 @@ func (s *Server) getThread(
 		FROM(
 			tThreads.
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(mysql.Int64(emailId))),
+					mysql.AND(
+						tThreadsState.ThreadID.EQ(tThreads.ID),
+						tThreadsState.EmailID.EQ(mysql.Int64(emailId)),
+					),
 				),
 		).
 		WHERE(mysql.AND(

@@ -43,8 +43,7 @@ func (s *Server) ListUsableStamps(
 					tStampAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		existsAccess = mysql.Bool(true)

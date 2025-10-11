@@ -72,8 +72,10 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(
 				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 			).
 			INNER_JOIN(tCalendar,
-				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendar.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tCalendar.ID.EQ(tCalendarEntry.CalendarID),
+					tCalendar.DeletedAt.IS_NULL(),
+				),
 			),
 		).
 		WHERE(mysql.AND(

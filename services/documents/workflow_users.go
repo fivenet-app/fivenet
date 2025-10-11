@@ -37,12 +37,16 @@ func (w *Workflow) handleDocumentsUsers(
 		FROM(
 			tUserWorkflow.
 				INNER_JOIN(tDocumentShort,
-					tDocumentShort.ID.EQ(tUserWorkflow.DocumentID).
-						AND(tDocumentShort.DeletedAt.IS_NULL()),
+					mysql.AND(
+						tDocumentShort.ID.EQ(tUserWorkflow.DocumentID),
+						tDocumentShort.DeletedAt.IS_NULL(),
+					),
 				).
 				LEFT_JOIN(tDTemplates,
-					tDTemplates.ID.EQ(tDocumentShort.TemplateID).
-						AND(tDTemplates.DeletedAt.IS_NULL()),
+					mysql.AND(
+						tDTemplates.ID.EQ(tDocumentShort.TemplateID),
+						tDTemplates.DeletedAt.IS_NULL(),
+					),
 				),
 		).
 		WHERE(mysql.AND(

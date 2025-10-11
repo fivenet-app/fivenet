@@ -29,6 +29,7 @@ func (s *Server) ListApprovalTasksInbox(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
+	tApprovals := table.FivenetDocumentsApprovals
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
@@ -50,16 +51,91 @@ func (s *Server) ListApprovalTasksInbox(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		existsAccess = mysql.Bool(true)
 	}
 
+	// 2) Eligibility for this task
+	eligible := mysql.OR(
+		// USER slot
+		mysql.AND(
+			tApprovalTasks.AssigneeKind.EQ(
+				mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER)),
+			),
+			tApprovalTasks.UserID.EQ(mysql.Int32(int32(userInfo.GetUserId()))),
+		),
+		// JOB slot
+		mysql.AND(
+			tApprovalTasks.AssigneeKind.EQ(
+				mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE)),
+			),
+			tApprovalTasks.Job.EQ(mysql.String(userInfo.GetJob())),
+			tApprovalTasks.MinimumGrade.LT_EQ(mysql.Int32(int32(userInfo.GetJobGrade()))),
+		),
+	)
+
+	// 3) Pending only
+	pending := tApprovalTasks.Status.EQ(
+		mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
+	)
+
+	// 4) NOT already approved/declined in this round
+	notAlreadyActed := mysql.NOT(
+		mysql.EXISTS(
+			mysql.SELECT(mysql.Int(1)).
+				FROM(tApprovals).
+				WHERE(mysql.AND(
+					tApprovals.PolicyID.EQ(tApprovalTasks.PolicyID),
+					tApprovals.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
+					tApprovals.UserID.EQ(mysql.Int32(int32(userInfo.GetUserId()))),
+					tApprovals.Status.IN(
+						mysql.Int32(int32(documents.ApprovalStatus_APPROVAL_STATUS_APPROVED)),
+						mysql.Int32(int32(documents.ApprovalStatus_APPROVAL_STATUS_DECLINED)),
+					),
+				)),
+		),
+	)
+
+	// 5) For JOB groups: only the smallest slot_no
+	t2 := tApprovalTasks.AS("t2")
+
+	maxSlotThisGroup := t2.
+		SELECT(mysql.MAX(t2.SlotNo)).
+		FROM(t2).
+		WHERE(mysql.AND(
+			t2.PolicyID.EQ(tApprovalTasks.PolicyID),
+			t2.SnapshotDate.EQ(tApprovalTasks.SnapshotDate),
+			t2.AssigneeKind.EQ(tApprovalTasks.AssigneeKind),
+			mysql.IntExp(mysql.COALESCE(t2.UserID, mysql.Int32(0))).
+				EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.UserID, mysql.Int32(0)))),
+			mysql.StringExp(mysql.COALESCE(t2.Job, mysql.String(""))).
+				EQ(mysql.StringExp(mysql.COALESCE(tApprovalTasks.Job, mysql.String("")))),
+			mysql.IntExp(mysql.COALESCE(t2.MinimumGrade, mysql.Int32(-1))).
+				EQ(mysql.IntExp(mysql.COALESCE(tApprovalTasks.MinimumGrade, mysql.Int32(-1)))),
+			t2.Status.EQ(
+				mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
+			),
+		))
+
+	// onlyFirstSlot is true if:
+	//  • USER task (there’s only one anyway), or
+	//  • JOB task with slot_no = MIN(slot_no) among pending in its group
+	onlyFirstSlot := mysql.OR(
+		tApprovalTasks.AssigneeKind.EQ(
+			mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER)),
+		),
+		maxSlotThisGroup.IN(tApprovalTasks.SlotNo),
+	)
+
 	condition := mysql.AND(
-		tDocumentShort.DeletedAt.IS_NULL(),
 		existsAccess,
+		tDocumentShort.DeletedAt.IS_NULL(),
+		eligible,
+		pending,
+		notAlreadyActed,
+		onlyFirstSlot,
 	)
 	if len(req.GetStatuses()) > 0 {
 		vals := make([]mysql.Expression, 0, len(req.GetStatuses()))
@@ -99,7 +175,8 @@ func (s *Server) ListApprovalTasksInbox(
 		return resp, nil
 	}
 
-	tUser := tables.User().AS("usershort")
+	tUser := tables.User().AS("requester")
+	tCreator := tables.User().AS("creator")
 
 	stmt := mysql.
 		SELECT(
@@ -127,6 +204,33 @@ func (s *Server) ListApprovalTasksInbox(
 			tUser.Job,
 			tUser.JobGrade,
 			tDocumentShort.Title,
+			tDocumentShort.ContentType,
+			tDocumentShort.CreatorID,
+			tCreator.ID,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
+			tDocumentShort.CreatorJob,
+			tDocumentShort.State.AS("meta.state"),
+			tDocumentShort.Closed.AS("meta.closed"),
+			tDocumentShort.Draft.AS("meta.draft"),
+			tDocumentShort.Public.AS("meta.public"),
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.Signed,
+			tDMeta.SigRequiredRemaining,
+			tDMeta.SigRequiredTotal,
+			tDMeta.SigCollectedValid,
+			tDMeta.SigPoliciesActive,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
 		).
 		FROM(
 			tApprovalTasks.
@@ -135,6 +239,12 @@ func (s *Server) ListApprovalTasksInbox(
 				).
 				LEFT_JOIN(tUser,
 					tUser.ID.EQ(tApprovalTasks.UserID),
+				).
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(tApprovalTasks.CreatorID),
+				).
+				LEFT_JOIN(tDMeta,
+					tDMeta.DocumentID.EQ(tDocumentShort.ID),
 				),
 		).
 		WHERE(condition).
@@ -147,12 +257,28 @@ func (s *Server) ListApprovalTasksInbox(
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := range resp.Tasks {
-		if resp.Tasks[i].GetJob() == "" {
+	tasks := resp.GetTasks()
+	for i := range tasks {
+		if tasks[i].GetJob() == "" {
 			continue
 		}
 
-		jobInfoFn(resp.Tasks[i])
+		jobInfoFn(tasks[i])
+
+		if tasks[i].GetCreator() != nil {
+			jobInfoFn(tasks[i].GetCreator())
+		}
+
+		if tasks[i].GetDocument() != nil {
+			doc := tasks[i].GetDocument()
+			if doc.GetCreator() != nil {
+				jobInfoFn(doc.GetCreator())
+			}
+
+			if job := s.enricher.GetJobByName(doc.GetCreatorJob()); job != nil {
+				doc.CreatorJobLabel = &job.Label
+			}
+		}
 	}
 
 	return resp, nil
@@ -723,10 +849,11 @@ func (s *Server) DeleteApprovalTasks(
 
 	// Delete all pending?
 	if req.GetDeleteAllPending() {
-		condition = condition.
-			AND(tApprovalTasks.Status.EQ(
+		condition = condition.AND(
+			tApprovalTasks.Status.EQ(
 				mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
-			))
+			),
+		)
 	} else if len(req.GetTaskIds()) > 0 {
 		ids := make([]mysql.Expression, 0, len(req.GetTaskIds()))
 		for _, id := range req.GetTaskIds() {

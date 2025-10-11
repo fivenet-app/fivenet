@@ -52,14 +52,19 @@ func (s *Server) ListDispatches(
 	}
 	jobsOut, _ := json.Marshal(jobs)
 
-	condition := mysql.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut))))).
-		AND(
-			tDispatchStatus.ID.IS_NULL().OR(
-				tDispatchStatus.ID.EQ(
-					mysql.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+	condition := mysql.AND(
+		mysql.BoolExp(
+			dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut)))),
+		),
+
+		tDispatchStatus.ID.IS_NULL().OR(
+			tDispatchStatus.ID.EQ(
+				mysql.RawInt(
+					"SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`",
 				),
 			),
-		)
+		),
+	)
 
 	if len(req.GetStatus()) > 0 {
 		statuses := make([]mysql.Expression, len(req.GetStatus()))
@@ -657,12 +662,16 @@ func (s *Server) ListDispatchActivity(
 					tUsers.ID.EQ(tDispatchStatus.UserID),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tDispatchStatus.UserID).
-						AND(tUsers.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tUserProps.UserID.EQ(tDispatchStatus.UserID),
+						tUsers.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(tUsers.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

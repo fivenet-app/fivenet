@@ -119,8 +119,10 @@ func (s *DispatchersDB) LoadFromDB(ctx context.Context, job string) error {
 					tUserProps.UserID.EQ(tCentrumDispatchers.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(tColleague.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(tColleague.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

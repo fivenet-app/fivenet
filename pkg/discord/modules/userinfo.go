@@ -283,8 +283,10 @@ func (g *UserInfo) planUsers(ctx context.Context) (discordtypes.Users, []discord
 					tUsers.Identifier.LIKE(mysql.CONCAT(mysql.String("%"), tAccs.License)),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(mysql.String(g.job))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(mysql.String(g.job)),
+					),
 				),
 		).
 		WHERE(mysql.AND(

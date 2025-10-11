@@ -510,8 +510,10 @@ func (s *Server) DeleteSignatureTasks(
 	snap := pol.GetSnapshotDate().AsTime()
 
 	tTasks := table.FivenetDocumentsSignatureTasks
-	condition := tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())).
-		AND(tTasks.SnapshotDate.EQ(mysql.TimestampT(snap)))
+	condition := mysql.AND(
+		tTasks.PolicyID.EQ(mysql.Int64(pol.GetId())),
+		tTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
+	)
 
 	// Delete all pending?
 	if req.GetDeleteAllPending() {
@@ -596,8 +598,10 @@ func (s *Server) ListSignatures(
 		snap = req.GetSnapshotDate().AsTime()
 	}
 
-	condition := tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())).
-		AND(tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap)))
+	condition := mysql.AND(
+		tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())),
+		tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap)),
+	)
 
 	if req.GetStatus() != 0 {
 		condition = condition.AND(

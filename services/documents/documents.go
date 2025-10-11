@@ -80,7 +80,6 @@ func (s *Server) ListDocuments(
 			mysql.TimestampT(req.GetFrom().AsTime()),
 		))
 	}
-
 	if req.GetTo() != nil {
 		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
 			mysql.TimestampT(req.GetTo().AsTime()),
