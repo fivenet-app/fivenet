@@ -27,7 +27,15 @@ defineProps<{
     itemsRight: NavigationMenuItem[];
 }>();
 
+const { t } = useI18n();
+
 const signingClient = await getDocumentsSigningClient();
+
+const statuses = computed(() => [
+    { label: t('enums.documents.SignatureTaskStatus.PENDING'), value: SignatureTaskStatus.PENDING },
+    { label: t('enums.documents.SignatureTaskStatus.SIGNED'), value: SignatureTaskStatus.SIGNED },
+    { label: t('enums.documents.SignatureTaskStatus.EXPIRED'), value: SignatureTaskStatus.EXPIRED },
+]);
 
 const schema = z.object({
     statuses: z.enum(SignatureTaskStatus).array().optional().default([SignatureTaskStatus.PENDING]),
@@ -82,6 +90,36 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
                     <PartialsBackButton fallback-to="/documents" />
                 </template>
             </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <UForm
+                    ref="formRef"
+                    class="my-2 flex w-full flex-1 flex-col gap-2"
+                    :schema="schema"
+                    :state="query"
+                    @submit="refresh()"
+                >
+                    <div class="flex flex-1 flex-row gap-2">
+                        <UFormField class="flex flex-1 shrink-0 flex-col" name="onlyDrafts" :label="$t('common.status')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.statuses"
+                                    :items="statuses"
+                                    multiple
+                                    class="w-full"
+                                    label-key="label"
+                                    value-key="value"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                >
+                                    <template #default>
+                                        {{ $t('common.selected', query.statuses.length) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
+                    </div>
+                </UForm>
+            </UDashboardToolbar>
         </template>
 
         <template #body>

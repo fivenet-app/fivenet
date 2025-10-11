@@ -103,12 +103,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                     @submit="refresh()"
                 >
                     <div class="flex flex-1 flex-row gap-2">
-                        <UFormField
-                            class="flex min-w-40 shrink-0 flex-col"
-                            name="onlyDrafts"
-                            :label="$t('common.status')"
-                            :ui="{ container: 'flex-1 flex' }"
-                        >
+                        <UFormField class="flex flex-1 shrink-0 flex-col" name="onlyDrafts" :label="$t('common.status')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.statuses"
