@@ -38,11 +38,11 @@ tables:
       LIMIT $limit
       OFFSET $offset;
     filters:
-      # Example filter to drop jobs starting with "off_"
+      # Example filter to drop jobs starting with "off_", to enable uncomment this section
       # This is useful in combination with the `users:` jobs filters below if you
       # have "off-duty" jobs that need to be rewritten to their "actual" job name
-      - pattern: '^off_'
-        action: drop
+      #- pattern: '^off_'
+      #  action: drop
   jobGrades:
     # Must return `job_grade.job_name`, `job_grade.grade`, `job_grade.label` columns (with condition for the `job_name`)
     enabled: true
