@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/documents/documents.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+
+enum SignatureBindingMode {
+  SIGNATURE_BINDING_MODE_UNSPECIFIED = 0;
+  // Invalidates on content edits
+  SIGNATURE_BINDING_MODE_BINDING = 1;
+  // Stays but marked 'signed on vX'
+  SIGNATURE_BINDING_MODE_NONBINDING = 2;
+}
+
+enum SignatureType {
+  SIGNATURE_TYPE_UNSPECIFIED = 0;
+  SIGNATURE_TYPE_FREEHAND = 1;
+  SIGNATURE_TYPE_TYPED = 2;
+  SIGNATURE_TYPE_STAMP = 3;
+}
+
+message SignatureTypes {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated SignatureType types = 1 [(buf.validate.field).repeated = {
+    max_items: 3
+    items: {
+      enum: {defined_only: true}
+    }
+  }];
+}
+
+message SignaturePolicy {
+  int64 id = 1;
+  int64 document_id = 2;
+
+  resources.timestamp.Timestamp snapshot_date = 3;
+
+  // "Leader", "Counterparty Rep"
+  string label = 4 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "StripTags"
+  }];
+  bool required = 5;
+
+  SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
+  SignatureTypes allowed_types = 7;
+
+  resources.timestamp.Timestamp created_at = 8;
+  resources.timestamp.Timestamp updated_at = 9;
+}
+
+enum SignatureAssigneeKind {
+  SIGNATURE_ASSIGNEE_KIND_UNSPECIFIED = 0;
+  SIGNATURE_ASSIGNEE_KIND_USER = 1;
+  SIGNATURE_ASSIGNEE_KIND_JOB_GRADE = 2;
+}
+
+enum SignatureTaskStatus {
+  SIGNATURE_TASK_STATUS_UNSPECIFIED = 0;
+  SIGNATURE_TASK_STATUS_PENDING = 1;
+  SIGNATURE_TASK_STATUS_SIGNED = 2;
+  SIGNATURE_TASK_STATUS_EXPIRED = 3;
+}
+
+message SignatureTask {
+  int64 id = 1;
+  int64 policy_id = 2;
+  int64 document_id = 3;
+
+  resources.timestamp.Timestamp snapshot_date = 4;
+
+  // Who is the task for? 1=USER, 2=JOB
+  SignatureAssigneeKind assignee_kind = 5 [(buf.validate.field).enum.defined_only = true];
+
+  // USER assignment
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  // JOB assignment (claimable by any eligible user)
+  optional string job = 8 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 9 [(buf.validate.field).string.max_len = 20];
+  optional int32 minimum_grade = 10;
+  optional string job_grade_label = 11 [(buf.validate.field).string.max_len = 20];
+
+  // >=1; meaningful only for Job tasks; always 1 for User
+  int32 slot_no = 12 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
+
+  SignatureTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 14 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+
+  resources.timestamp.Timestamp created_at = 15;
+  optional resources.timestamp.Timestamp completed_at = 16;
+  optional resources.timestamp.Timestamp due_at = 17;
+
+  optional int64 signature_id = 18;
+
+  int32 creator_id = 19;
+  optional resources.users.UserShort creator = 20;
+  string creator_job = 21 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 22;
+
+  optional resources.documents.DocumentShort document = 23;
+}
+
+enum SignatureStatus {
+  SIGNATURE_STATUS_UNSPECIFIED = 0;
+  SIGNATURE_STATUS_VALID = 1;
+  SIGNATURE_STATUS_REVOKED = 2;
+  SIGNATURE_STATUS_INVALID = 3;
+}
+
+message Signature {
+  int64 id = 1;
+  int64 document_id = 2;
+  resources.timestamp.Timestamp snapshot_date = 3;
+
+  // Link to originating policy (if any)
+  optional int64 policy_id = 4;
+
+  // Link to originating task (if any)
+  optional int64 task_id = 5;
+
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  optional string user_job = 8;
+  optional string user_job_label = 9;
+  optional int32 user_grade = 10;
+  optional string user_grade_label = 11;
+
+  SignatureType type = 12 [(buf.validate.field).enum.defined_only = true];
+  // SVG path, typed preview, stamp fill, etc.
+  string payload_svg = 13 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "SanitizeSVG"
+  }];
+  // If type == STAMP
+  optional int64 stamp_id = 14;
+
+  SignatureStatus status = 15 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 16 [
+    (buf.validate.field).string.max_len = 500,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+
+  resources.timestamp.Timestamp created_at = 17;
+  optional resources.timestamp.Timestamp revoked_at = 18;
+}

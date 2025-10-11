@@ -239,13 +239,7 @@ message UpdateDocumentRequest {
   resources.common.content.Content content = 4;
   resources.common.content.ContentType content_type = 5 [(buf.validate.field).enum.defined_only = true];
   optional string data = 6 [(buf.validate.field).string = {max_bytes: 1000000}];
-  string state = 7 [
-    (buf.validate.field).string.max_len = 32,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-  bool closed = 8;
-  bool draft = 9;
-  bool public = 10;
+  resources.documents.DocumentMeta meta = 7 [(buf.validate.field).required = true];
   optional resources.documents.DocumentAccess access = 11;
   repeated resources.file.File files = 12 [(tagger.tags) = "alias:\"files\""];
 }

@@ -38,11 +38,11 @@ func (s *Server) listCalendarEntriesQuery(
 		mysql.
 			SELECT(mysql.Int(1)).
 			FROM(tCalendarRSVP.AS("r2")).
-			WHERE(
-				rsvp2.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
-					AND(rsvp2.Response.GT(mysql.Int32(3))). // response > 3
-					AND(rsvp2.EntryID.EQ(tCalendarEntry.ID)),
-			),
+			WHERE(mysql.AND(
+				rsvp2.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				rsvp2.Response.GT(mysql.Int32(3)), // response > 3
+				rsvp2.EntryID.EQ(tCalendarEntry.ID),
+			)),
 	)
 
 	stmt := tCalendarEntry.
@@ -83,8 +83,10 @@ func (s *Server) listCalendarEntriesQuery(
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,
-				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendar.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tCalendar.ID.EQ(tCalendarEntry.CalendarID),
+					tCalendar.DeletedAt.IS_NULL(),
+				),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
@@ -93,8 +95,10 @@ func (s *Server) listCalendarEntriesQuery(
 				tUserProps.UserID.EQ(tCreator.ID),
 			).
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
-					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
+				mysql.AND(
+					tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID),
+				),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),

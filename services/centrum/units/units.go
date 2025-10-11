@@ -122,7 +122,7 @@ func New(p Params) *UnitDB {
 						TargetID: table.FivenetCentrumUnitsAccess.TargetID,
 						Access:   table.FivenetCentrumUnitsAccess.Access,
 					},
-					QualificationId: table.FivenetCentrumUnitsAccess.QualificationID,
+					QualificationID: table.FivenetCentrumUnitsAccess.QualificationID,
 				},
 				table.FivenetCentrumUnitsAccess.AS("unit_qualification_access"),
 				&access.QualificationAccessColumns{
@@ -137,7 +137,7 @@ func New(p Params) *UnitDB {
 							"unit_qualification_access",
 						).Access,
 					},
-					QualificationId: table.FivenetCentrumUnitsAccess.AS(
+					QualificationID: table.FivenetCentrumUnitsAccess.AS(
 						"unit_qualification_access",
 					).QualificationID,
 				},
@@ -957,8 +957,10 @@ func (s *UnitDB) GetStatusByID(
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(tUsers.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -1031,8 +1033,10 @@ func (s *UnitDB) GetLastStatus(
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(tUsers.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

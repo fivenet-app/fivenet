@@ -12,7 +12,7 @@ type ServerCmd struct {
 func (c *ServerCmd) Run(_ *Context) error {
 	instance.SetComponent("server")
 
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, true, true)
 	fxOpts = append(fxOpts, FxServerOpts()...)
 
 	if c.ModuleCronAgent {

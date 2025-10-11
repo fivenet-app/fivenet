@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/documents/documents.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+
+// Policy snapshot applied to a specific version
+enum OnEditBehavior {
+  ON_EDIT_BEHAVIOR_UNSPECIFIED = 0;
+  // Reset review on content edits
+  ON_EDIT_BEHAVIOR_RESET = 1;
+  // Keep approvals where possible
+  ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
+}
+
+enum ApprovalRuleKind {
+  APPROVAL_RULE_KIND_UNSPECIFIED = 0;
+  APPROVAL_RULE_KIND_REQUIRE_ALL = 1;
+  APPROVAL_RULE_KIND_QUORUM_ANY = 2;
+}
+
+message ApprovalPolicy {
+  int64 id = 1;
+  int64 document_id = 2;
+
+  resources.timestamp.Timestamp snapshot_date = 3;
+
+  OnEditBehavior on_edit_behavior = 4 [(buf.validate.field).enum.defined_only = true];
+
+  ApprovalRuleKind rule_kind = 5 [(buf.validate.field).enum.defined_only = true];
+  optional int32 required_count = 6 [(buf.validate.field).int32.gte = 1];
+
+  int32 assigned_count = 8;
+  int32 approved_count = 9;
+  int32 declined_count = 10;
+  int32 pending_count = 11;
+  bool any_declined = 12;
+
+  optional resources.timestamp.Timestamp started_at = 13;
+  optional resources.timestamp.Timestamp completed_at = 14;
+
+  resources.timestamp.Timestamp created_at = 15;
+  optional resources.timestamp.Timestamp updated_at = 16;
+  optional resources.timestamp.Timestamp deleted_at = 17;
+}
+
+enum ApprovalAssigneeKind {
+  APPROVAL_ASSIGNEE_KIND_UNSPECIFIED = 0;
+  APPROVAL_ASSIGNEE_KIND_USER = 1;
+  APPROVAL_ASSIGNEE_KIND_JOB_GRADE = 2;
+}
+
+enum ApprovalTaskStatus {
+  APPROVAL_TASK_STATUS_UNSPECIFIED = 0;
+  APPROVAL_TASK_STATUS_PENDING = 1;
+  APPROVAL_TASK_STATUS_APPROVED = 2;
+  APPROVAL_TASK_STATUS_DECLINED = 3;
+  APPROVAL_TASK_STATUS_EXPIRED = 4;
+  APPROVAL_TASK_STATUS_CANCELLED = 5;
+}
+
+message ApprovalTask {
+  int64 id = 1;
+  int64 policy_id = 2;
+  int64 document_id = 3;
+
+  resources.timestamp.Timestamp snapshot_date = 4;
+
+  ApprovalAssigneeKind assignee_kind = 5 [(buf.validate.field).enum.defined_only = true];
+
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  optional string job = 8 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 9 [(buf.validate.field).string.max_len = 20];
+  optional int32 minimum_grade = 10;
+  optional string job_grade_label = 11 [(buf.validate.field).string.max_len = 20];
+
+  // >=1; meaningful only for Job tasks; always 1 for User
+  int32 slot_no = 12 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
+
+  ApprovalTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
+  // Optional comment on approve/decline
+  optional string comment = 14 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+
+  resources.timestamp.Timestamp created_at = 15;
+  optional resources.timestamp.Timestamp decided_at = 16;
+  optional resources.timestamp.Timestamp due_at = 17;
+  int32 decision_count = 18;
+
+  optional int64 approval_id = 19;
+
+  int32 creator_id = 20;
+  optional resources.users.UserShort creator = 21;
+  string creator_job = 22 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 23;
+
+  optional resources.documents.DocumentShort document = 24;
+}
+
+enum ApprovalStatus {
+  APPROVAL_STATUS_UNSPECIFIED = 0;
+  APPROVAL_STATUS_APPROVED = 1;
+  APPROVAL_STATUS_DECLINED = 2;
+  APPROVAL_STATUS_REVOKED = 3;
+}
+
+message Approval {
+  int64 id = 1;
+  int64 document_id = 2;
+  resources.timestamp.Timestamp snapshot_date = 3;
+
+  // Link to originating policy (if any)
+  optional int64 policy_id = 4;
+
+  // Link to originating task (if any)
+  optional int64 task_id = 5;
+
+  optional int32 user_id = 6;
+  optional resources.users.UserShort user = 7;
+
+  optional string user_job = 8;
+  optional string user_job_label = 9;
+  optional int32 user_grade = 10;
+  optional string user_grade_label = 11;
+
+  ApprovalStatus status = 12 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 13 [
+    (buf.validate.field).string.max_len = 500,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+
+  resources.timestamp.Timestamp created_at = 14;
+  optional resources.timestamp.Timestamp revoked_at = 15;
+}

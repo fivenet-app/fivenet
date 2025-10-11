@@ -56,7 +56,7 @@ ALTER TABLE `fivenet_centrum_dispatches` ADD KEY `idx_fivenet_centrum_dispatches
 
 -- Table: `fivenet_centrum_dispatches_heatmaps`
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches_heatmaps` (
-  `job` VARCHAR(20) PRIMARY KEY,
+  `job` varchar(20) PRIMARY KEY,
   `heat_json` JSON NOT NULL,
   `max` INT NOT NULL DEFAULT 0,
   `generated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

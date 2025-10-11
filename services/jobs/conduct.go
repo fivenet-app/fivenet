@@ -179,8 +179,10 @@ func (s *Server) ListConductEntries(
 					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tConduct.TargetUserID).
-						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tConduct.TargetUserID),
+						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),

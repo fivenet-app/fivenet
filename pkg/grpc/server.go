@@ -46,10 +46,11 @@ var ErrInternalServer = common.NewI18nErr(
 )
 
 // Setup metric for panic recoveries.
-var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{
-	Name: "grpc_req_panics_recovered_total",
-	Help: "Total number of gRPC requests recovered from internal panic.",
-})
+var panicsTotal = promauto.With(prometheus.DefaultRegisterer).
+	NewCounter(prometheus.CounterOpts{
+		Name: "grpc_req_panics_recovered_total",
+		Help: "Total number of gRPC requests recovered from internal panic.",
+	})
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("server.grpc")

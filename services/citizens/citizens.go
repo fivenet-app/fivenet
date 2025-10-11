@@ -344,6 +344,9 @@ func (s *Server) GetUser(
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.GetUser()); err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorscitizens.ErrCitizenNotFound
+		}
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

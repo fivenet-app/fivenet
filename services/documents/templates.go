@@ -52,8 +52,12 @@ func (s *Server) ListTemplates(
 		FROM(
 			tDTemplates.
 				LEFT_JOIN(tDTemplatesAccess,
-					tDTemplatesAccess.TargetID.EQ(tDTemplates.ID).
-						AND(tDTemplatesAccess.Access.GT_EQ(mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
+					mysql.AND(
+						tDTemplatesAccess.TargetID.EQ(tDTemplates.ID),
+						tDTemplatesAccess.Access.GT_EQ(
+							mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						),
+					),
 				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),

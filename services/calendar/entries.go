@@ -71,8 +71,10 @@ func (s *Server) ListCalendarEntries(
 	endDate := baseDate.EndOfMonth()
 
 	condition = condition.
-		AND(tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate))).
-		AND(tCalendarEntry.StartTime.LT(mysql.DateTimeT(endDate)))
+		AND(mysql.AND(
+			tCalendarEntry.StartTime.GT_EQ(mysql.DateTimeT(startDate)),
+			tCalendarEntry.StartTime.LT(mysql.DateTimeT(endDate)),
+		))
 
 	resp := &pbcalendar.ListCalendarEntriesResponse{}
 
@@ -141,7 +143,8 @@ func (s *Server) GetUpcomingEntries(
 		),
 		tCalendarEntry.StartTime.LT_EQ(
 			// Now plus X seconds
-			mysql.CURRENT_TIMESTAMP().ADD(mysql.INTERVALd(time.Duration(req.GetSeconds())*time.Second)),
+			mysql.CURRENT_TIMESTAMP().
+				ADD(mysql.INTERVALd(time.Duration(req.GetSeconds())*time.Second)),
 		),
 		tCalendarEntry.StartTime.GT_EQ(
 			// Now minus 1 minute
@@ -480,8 +483,10 @@ func (s *Server) getEntry(
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,
-				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendar.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tCalendar.ID.EQ(tCalendarEntry.CalendarID),
+					tCalendar.DeletedAt.IS_NULL(),
+				),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
@@ -490,8 +495,10 @@ func (s *Server) getEntry(
 				tUserProps.UserID.EQ(tCalendarEntry.CreatorID),
 			).
 			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())).
-					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
+				mysql.AND(
+					tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID),
+				),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),

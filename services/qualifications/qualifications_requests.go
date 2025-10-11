@@ -44,8 +44,12 @@ func (s *Server) ListQualificationRequests(
 	tUser := tables.User().AS("user")
 	tApprover := tUser.AS("approver")
 
-	condition := tQualiRequests.DeletedAt.IS_NULL().
-		AND(tQualiRequests.Status.NOT_EQ(mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
+	condition := mysql.AND(
+		tQualiRequests.DeletedAt.IS_NULL(),
+		tQualiRequests.Status.NOT_EQ(
+			mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)),
+		),
+	)
 
 	if req.QualificationId != nil {
 		check, err := s.access.CanUserAccessTarget(
@@ -75,13 +79,12 @@ func (s *Server) ListQualificationRequests(
 
 					mysql.OR(
 						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
-						mysql.OR(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))).
-								AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+						mysql.AND(
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
-				),
-				),
+				)),
 		)
 
 		condition = condition.AND(mysql.AND(
@@ -95,8 +98,10 @@ func (s *Server) ListQualificationRequests(
 
 	countColumn := mysql.Expression(tQualiRequests.QualificationID)
 	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).
-			AND(tQualiRequests.UserID.EQ(mysql.Int32(req.GetUserId())))
+		condition = condition.AND(mysql.AND(
+			tUser.Job.EQ(mysql.String(userInfo.GetJob())),
+			tQualiRequests.UserID.EQ(mysql.Int32(req.GetUserId())),
+		))
 	} else {
 		if req.QualificationId == nil {
 			condition = condition.AND(tUser.Job.EQ(mysql.String(userInfo.GetJob()))).AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
@@ -127,9 +132,11 @@ func (s *Server) ListQualificationRequests(
 					tQuali.ID.EQ(tQualiRequests.QualificationID),
 				).
 				LEFT_JOIN(tQAccess,
-					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
+					mysql.AND(
+						tQAccess.TargetID.EQ(tQuali.ID),
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+					),
 				).
 				LEFT_JOIN(tUser,
 					tQualiRequests.UserID.EQ(tUser.ID),
@@ -225,9 +232,11 @@ func (s *Server) ListQualificationRequests(
 					tQualiRequests.ApproverID.EQ(tApprover.ID),
 				).
 				LEFT_JOIN(tQAccess,
-					tQAccess.TargetID.EQ(tQuali.ID).
-						AND(tQAccess.Job.EQ(mysql.String(userInfo.GetJob()))).
-						AND(tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade()))),
+					mysql.AND(
+						tQAccess.TargetID.EQ(tQuali.ID),
+						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
+					),
 				),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).

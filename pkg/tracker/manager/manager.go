@@ -363,12 +363,16 @@ func (m *Manager) refreshUserLocations(ctx context.Context, initial bool) error 
 					tFallbackJobProps.Job.EQ(tUsers.Job),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tLocs.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(tLocs.Job),
+					),
 				).
 				LEFT_JOIN(tFallbackColleagueProps,
-					tFallbackColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tFallbackColleagueProps.Job.EQ(tUsers.Job)),
+					mysql.AND(
+						tFallbackColleagueProps.UserID.EQ(tUsers.ID),
+						tFallbackColleagueProps.Job.EQ(tUsers.Job),
+					),
 				),
 		).
 		WHERE(mysql.AND(

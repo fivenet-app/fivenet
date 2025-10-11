@@ -1228,8 +1228,14 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 
 	}
 
-	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
+	// Field: Meta
+	if m.Meta != nil {
+		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	// Field: Title
 	m.Title = htmlsanitizer.StripTags(m.Title)

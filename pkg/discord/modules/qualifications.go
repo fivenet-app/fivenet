@@ -196,8 +196,10 @@ func (g *QualificationsSync) planUsers(
 			FROM(
 				tQualificationsResults.
 					INNER_JOIN(tQualifications,
-						tQualifications.ID.EQ(tQualificationsResults.QualificationID).
-							AND(tQualifications.DeletedAt.IS_NULL()),
+						mysql.AND(
+							tQualifications.ID.EQ(tQualificationsResults.QualificationID),
+							tQualifications.DeletedAt.IS_NULL(),
+						),
 					).
 					INNER_JOIN(tUsers,
 						tUsers.ID.EQ(tQualificationsResults.UserID),

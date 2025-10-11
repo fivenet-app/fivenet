@@ -104,6 +104,8 @@ func init() {
 type Server struct {
 	pbdocuments.DocumentsServiceServer
 	pbdocuments.CollabServiceServer
+	pbdocuments.ApprovalServiceServer
+	pbdocuments.SigningServiceServer
 
 	logger *zap.Logger
 	db     *sql.DB
@@ -120,6 +122,8 @@ type Server struct {
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+
+	signingStampAccess *access.Grouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel]
 
 	collabServer *collab.CollabServer
 	fHandler     *filestore.Handler[int64]
@@ -238,6 +242,52 @@ func NewServer(p Params) *Server {
 			nil,
 			nil,
 		),
+
+		signingStampAccess: access.NewGrouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel](
+			p.DB,
+			table.FivenetDocumentsSignaturesStampsAccess,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsSignaturesStamps.ID,
+				DeletedAt:  table.FivenetDocumentsSignaturesStamps.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: nil,
+			},
+			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](
+				table.FivenetDocumentsSignaturesStampsAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsSignaturesStampsAccess.ID,
+						TargetID: table.FivenetDocumentsSignaturesStampsAccess.TargetID,
+						Access:   table.FivenetDocumentsSignaturesStampsAccess.Access,
+					},
+					Job:          table.FivenetDocumentsSignaturesStampsAccess.Job,
+					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsSignaturesStampsAccess.AS("stamp_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).ID,
+						TargetID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).TargetID,
+						Access: table.FivenetDocumentsSignaturesStampsAccess.AS(
+							"stamp_job_access",
+						).Access,
+					},
+					Job: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						"stamp_job_access",
+					).Job,
+					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						"stamp_job_access",
+					).MinimumGrade,
+				},
+			),
+			nil,
+			nil,
+		),
+
 		collabServer: collabServer,
 		fHandler:     fHandler,
 	}
@@ -257,7 +307,12 @@ func NewServer(p Params) *Server {
 
 func newAccess(
 	db *sql.DB,
-) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
+) *access.Grouped[
+	documents.DocumentJobAccess, *documents.DocumentJobAccess,
+	documents.DocumentUserAccess, *documents.DocumentUserAccess,
+	access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel],
+	documents.AccessLevel,
+] {
 	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 		db,
 		table.FivenetDocuments,
@@ -297,7 +352,7 @@ func newAccess(
 					TargetID: table.FivenetDocumentsAccess.TargetID,
 					Access:   table.FivenetDocumentsAccess.Access,
 				},
-				UserId: table.FivenetDocumentsAccess.UserID,
+				UserID: table.FivenetDocumentsAccess.UserID,
 			},
 			table.FivenetDocumentsAccess.AS("document_user_access"),
 			&access.UserAccessColumns{
@@ -306,7 +361,7 @@ func newAccess(
 					TargetID: table.FivenetDocumentsAccess.AS("document_user_access").TargetID,
 					Access:   table.FivenetDocumentsAccess.AS("document_user_access").Access,
 				},
-				UserId: table.FivenetDocumentsAccess.AS("document_user_access").UserID,
+				UserID: table.FivenetDocumentsAccess.AS("document_user_access").UserID,
 			},
 		),
 		nil,
@@ -316,6 +371,8 @@ func newAccess(
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterDocumentsServiceServer(srv, s)
 	pbdocuments.RegisterCollabServiceServer(srv, s)
+	pbdocuments.RegisterApprovalServiceServer(srv, s)
+	pbdocuments.RegisterSigningServiceServer(srv, s)
 }
 
 // GetPermsRemap returns the permissions re-mapping for the services.

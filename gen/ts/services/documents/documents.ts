@@ -22,6 +22,7 @@ import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
 import { File } from "../../resources/file/file";
+import { DocumentMeta } from "../../resources/documents/documents";
 import { Content } from "../../resources/common/content/content";
 import { ContentType } from "../../resources/common/content/content";
 import { Comment } from "../../resources/documents/comment";
@@ -522,21 +523,9 @@ export interface UpdateDocumentRequest {
      */
     data?: string;
     /**
-     * @generated from protobuf field: string state = 7
+     * @generated from protobuf field: resources.documents.DocumentMeta meta = 7
      */
-    state: string;
-    /**
-     * @generated from protobuf field: bool closed = 8
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 9
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 10
-     */
-    public: boolean;
+    meta?: DocumentMeta;
     /**
      * @generated from protobuf field: optional resources.documents.DocumentAccess access = 11
      */
@@ -3024,10 +3013,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 4, name: "content", kind: "message", T: () => Content },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } } } },
-            { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "meta", kind: "message", T: () => DocumentMeta, options: { "buf.validate.field": { required: true } } },
             { no: 11, name: "access", kind: "message", T: () => DocumentAccess },
             { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
         ]);
@@ -3037,10 +3023,6 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         message.documentId = 0;
         message.title = "";
         message.contentType = 0;
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         message.files = [];
         if (value !== undefined)
             reflectionMergePartial<UpdateDocumentRequest>(this, message, value);
@@ -3069,17 +3051,8 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* optional string data */ 6:
                     message.data = reader.string();
                     break;
-                case /* string state */ 7:
-                    message.state = reader.string();
-                    break;
-                case /* bool closed */ 8:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 9:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 10:
-                    message.public = reader.bool();
+                case /* resources.documents.DocumentMeta meta */ 7:
+                    message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
                 case /* optional resources.documents.DocumentAccess access */ 11:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
@@ -3117,18 +3090,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* optional string data = 6; */
         if (message.data !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.data);
-        /* string state = 7; */
-        if (message.state !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 8; */
-        if (message.closed !== false)
-            writer.tag(8, WireType.Varint).bool(message.closed);
-        /* bool draft = 9; */
-        if (message.draft !== false)
-            writer.tag(9, WireType.Varint).bool(message.draft);
-        /* bool public = 10; */
-        if (message.public !== false)
-            writer.tag(10, WireType.Varint).bool(message.public);
+        /* resources.documents.DocumentMeta meta = 7; */
+        if (message.meta)
+            DocumentMeta.internalBinaryWrite(message.meta, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.documents.DocumentAccess access = 11; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();

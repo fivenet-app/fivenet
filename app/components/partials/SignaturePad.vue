@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { VueSignaturePad, type Signature } from '@selemondev/vue3-signature-pad';
-
 const settingsStore = useSettingsStore();
 const { signature: signatureSettings } = storeToRefs(settingsStore);
 
-const modelValue = defineModel<string>({ required: true });
+const VueSignaturePad = defineAsyncComponent(async () => {
+    const m = await import('@selemondev/vue3-signature-pad');
+    return m.VueSignaturePad;
+});
 
 const colors = [
     {
@@ -17,7 +18,8 @@ const colors = [
         color: 'rgb(255, 85, 51)',
     },
 ];
-const signature = ref<Signature>();
+
+const signature = useTemplateRef('signature');
 
 function handleUndo() {
     signature.value?.undo();
@@ -27,11 +29,9 @@ function handleClearCanvas() {
     signature.value?.clearCanvas();
 }
 
-function handleSaveSignature() {
-    if (!signature.value) return;
-
-    modelValue.value = signature.value.saveSignature('image/svg');
-}
+defineExpose({
+    signature: signature,
+});
 </script>
 
 <template>
@@ -47,7 +47,6 @@ function handleSaveSignature() {
                     penColor: signatureSettings.penColor,
                     backgroundColor: 'rgb(255, 255, 255)',
                 }"
-                @end-stroke="handleSaveSignature"
             />
 
             <UButtonGroup class="absolute bottom-0 left-0 flex flex-row">
@@ -98,7 +97,7 @@ function handleSaveSignature() {
                     <div class="my-2 flex w-full flex-col space-y-4">
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
-                            :label="$t('components.partials.SignaturePad.min_stroke_width')"
+                            :label="$t('components.partials.signature_pad.min_stroke_width')"
                         >
                             <USlider v-model="signatureSettings.minStrokeWidth" :min="1" :max="10" />
                             <p>{{ signatureSettings.minStrokeWidth }}</p>
@@ -106,7 +105,7 @@ function handleSaveSignature() {
 
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
-                            :label="$t('components.partials.SignaturePad.max_stroke_width')"
+                            :label="$t('components.partials.signature_pad.max_stroke_width')"
                         >
                             <USlider v-model="signatureSettings.maxStrokeWidth" :min="1" :max="10" />
                             <p>{{ signatureSettings.maxStrokeWidth }}</p>

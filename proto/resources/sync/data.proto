@@ -39,6 +39,7 @@ message DataUserLocations {
 message CitizenLocations {
   string identifier = 1 [(buf.validate.field).string.max_len = 64];
   string job = 2 [(buf.validate.field).string.max_len = 20];
+  optional int32 job_grade = 6 [(buf.validate.field).int32.gte = 0];
   resources.livemap.Coords coords = 3 [(buf.validate.field).required = true];
   bool hidden = 4;
   bool remove = 5;

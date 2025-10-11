@@ -46,9 +46,11 @@ func (s *Server) listDocumentsQuery(
 			tDocumentShort.CreatedAt.AS("created_at"),
 		).
 		FROM(tDocumentShort).
-		WHERE(tDocumentShort.DeletedAt.IS_NULL().
-			AND(tDocumentShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId()))).
-			AND(tDocumentShort.CreatorJob.EQ(mysql.String(userInfo.GetJob()))))
+		WHERE(mysql.AND(
+			tDocumentShort.DeletedAt.IS_NULL(),
+			tDocumentShort.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+			tDocumentShort.CreatorJob.EQ(mysql.String(userInfo.GetJob())),
+		))
 
 	var existsAccess mysql.BoolExpression
 	if !userInfo.GetSuperuser() {
@@ -70,8 +72,7 @@ func (s *Server) listDocumentsQuery(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		existsAccess = mysql.Bool(true)
@@ -105,7 +106,7 @@ func (s *Server) listDocumentsQuery(
 			tDCategory.Icon,
 			tDocumentShort.Title,
 			tDocumentShort.ContentType,
-			// tDocumentShort.Summary.AS("document_short.content"), // Summary is unused at the moment
+			// tDocumentShort.Summary.AS("document_short.content"), // Summary is currently unused
 			tDocumentShort.CreatorID,
 			tDocumentShort.TemplateID,
 			tCreator.ID,
@@ -115,14 +116,27 @@ func (s *Server) listDocumentsQuery(
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tDocumentShort.CreatorJob,
-			tDocumentShort.State,
-			tDocumentShort.Closed,
-			tDocumentShort.Draft,
-			tDocumentShort.Public,
-			tDocumentShort.TemplateID,
 			tDWorkflow.DocumentID,
 			tDWorkflow.AutoCloseTime,
 			tDWorkflow.NextReminderTime,
+			tDocumentShort.State.AS("meta.state"),
+			tDocumentShort.Closed.AS("meta.closed"),
+			tDocumentShort.Draft.AS("meta.draft"),
+			tDocumentShort.Public.AS("meta.public"),
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.Signed,
+			tDMeta.SigRequiredRemaining,
+			tDMeta.SigRequiredTotal,
+			tDMeta.SigCollectedValid,
+			tDMeta.SigPoliciesActive,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
 		)
 
 		if userInfo.GetSuperuser() {
@@ -150,19 +164,23 @@ func (s *Server) listDocumentsQuery(
 			columns[0],
 			columns[1:],
 		).
-		FROM(
-			docIDs.
-				INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
-				LEFT_JOIN(tDCategory,
-					tDocumentShort.CategoryID.EQ(tDCategory.ID).
-						AND(tDCategory.DeletedAt.IS_NULL()),
-				).
-				LEFT_JOIN(tCreator,
-					tDocumentShort.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tDWorkflow,
-					tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
+		FROM(docIDs.
+			INNER_JOIN(tDocumentShort, tDocumentShort.ID.EQ(cteIDColumn)).
+			LEFT_JOIN(tDCategory,
+				mysql.AND(
+					tDocumentShort.CategoryID.EQ(tDCategory.ID),
+					tDCategory.DeletedAt.IS_NULL(),
 				),
+			).
+			LEFT_JOIN(tCreator,
+				tDocumentShort.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tDWorkflow,
+				tDWorkflow.DocumentID.EQ(tDocumentShort.ID),
+			).
+			LEFT_JOIN(tDMeta,
+				tDMeta.DocumentID.EQ(tDocumentShort.ID),
+			),
 		).
 		WHERE(mysql.AND(
 			wheres...,
@@ -207,8 +225,7 @@ func (s *Server) getDocumentQuery(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 
 		wheres = []mysql.BoolExpression{
@@ -253,10 +270,10 @@ func (s *Server) getDocumentQuery(
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tDocument.CreatorJob,
-			tDocument.State,
-			tDocument.Closed,
-			tDocument.Draft,
-			tDocument.Public,
+			tDocument.State.AS("meta.state"),
+			tDocument.Closed.AS("meta.closed"),
+			tDocument.Draft.AS("meta.draft"),
+			tDocument.Public.AS("meta.public"),
 			tDocument.TemplateID,
 			tDPins.State,
 			tDPins.Job,
@@ -268,6 +285,20 @@ func (s *Server) getDocumentQuery(
 			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.Signed,
+			tDMeta.SigRequiredRemaining,
+			tDMeta.SigRequiredTotal,
+			tDMeta.SigCollectedValid,
+			tDMeta.SigPoliciesActive,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
 		)
 
 		if withContent {
@@ -295,8 +326,10 @@ func (s *Server) getDocumentQuery(
 		).
 		FROM(tDocument.
 			LEFT_JOIN(tDCategory,
-				tDocument.CategoryID.EQ(tDCategory.ID).
-					AND(tDCategory.DeletedAt.IS_NULL()),
+				mysql.AND(
+					tDocument.CategoryID.EQ(tDCategory.ID),
+					tDCategory.DeletedAt.IS_NULL(),
+				),
 			).
 			LEFT_JOIN(tCreator,
 				tDocument.CreatorID.EQ(tCreator.ID),
@@ -308,8 +341,13 @@ func (s *Server) getDocumentQuery(
 				tDWorkflow.DocumentID.EQ(tDocument.ID),
 			).
 			LEFT_JOIN(tUserWorkflow,
-				tUserWorkflow.DocumentID.EQ(tDocument.ID).
-					AND(tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+				mysql.AND(
+					tUserWorkflow.DocumentID.EQ(tDocument.ID),
+					tUserWorkflow.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				),
+			).
+			LEFT_JOIN(tDMeta,
+				tDMeta.DocumentID.EQ(tDocument.ID),
 			),
 		).
 		WHERE(mysql.AND(
@@ -337,7 +375,8 @@ func (s *Server) updateDocumentOwner(
 		).
 		WHERE(
 			tDocument.ID.EQ(mysql.Int64(documentId)),
-		)
+		).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

@@ -505,10 +505,10 @@ func (s *Server) notifyUsersNewComment(
 			mysql.MAX(tDComments.CreatedAt).AS("last_at"),
 		).
 		FROM(tDComments).
-		WHERE(
-			tDComments.DocumentID.EQ(mysql.Int64(documentId)).
-				AND(tDComments.CreatorID.NOT_EQ(mysql.Int32(sourceUserId))),
-		).
+		WHERE(mysql.AND(
+			tDComments.DocumentID.EQ(mysql.Int64(documentId)),
+			tDComments.CreatorID.NOT_EQ(mysql.Int32(sourceUserId)),
+		)).
 		GROUP_BY(tDComments.CreatorID).
 		AsTable("dc")
 

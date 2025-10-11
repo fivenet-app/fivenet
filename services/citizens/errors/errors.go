@@ -56,4 +56,9 @@ var (
 		&common.I18NItem{Key: "errors.CitizensService.ErrPropsLabelsDenied"},
 		nil,
 	)
+	ErrCitizenNotFound = common.NewI18nErr(
+		codes.NotFound,
+		&common.I18NItem{Key: "errors.CitizensService.ErrCitizenNotFound"},
+		nil,
+	)
 )

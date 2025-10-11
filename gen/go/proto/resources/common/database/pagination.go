@@ -19,6 +19,15 @@ func (p *PaginationRequest) GetResponseWithPageSize(
 	totalCount int64,
 	maxPageSize int64,
 ) (*PaginationResponse, int64) {
+	if p == nil {
+		return &PaginationResponse{
+			TotalCount: totalCount,
+			Offset:     0,
+			End:        0,
+			PageSize:   maxPageSize,
+		}, maxPageSize
+	}
+
 	pageSize := p.normalizedPageSize(maxPageSize)
 	offset := ensureOffsetInRange(p.GetOffset(), pageSize, totalCount)
 

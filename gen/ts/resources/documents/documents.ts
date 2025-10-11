@@ -80,39 +80,27 @@ export interface Document {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: string state = 15
+     * @generated from protobuf field: resources.documents.DocumentMeta meta = 15
      */
-    state: string;
+    meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: bool closed = 16
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 17
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 18
-     */
-    public: boolean;
-    /**
-     * @generated from protobuf field: optional int64 template_id = 19
+     * @generated from protobuf field: optional int64 template_id = 16
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
     /**
-     * @generated from protobuf field: repeated resources.file.File files = 23
+     * @generated from protobuf field: repeated resources.file.File files = 20
      */
     files: File[];
 }
@@ -173,33 +161,130 @@ export interface DocumentShort {
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: string state = 15
+     * @generated from protobuf field: resources.documents.DocumentMeta meta = 15
      */
-    state: string;
+    meta?: DocumentMeta;
     /**
-     * @generated from protobuf field: bool closed = 16
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 17
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 18
-     */
-    public: boolean;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 17
      */
     pin?: DocumentPin;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 18
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 19
      */
     workflowUser?: WorkflowUserState;
+}
+/**
+ * @generated from protobuf message resources.documents.DocumentMeta
+ */
+export interface DocumentMeta {
+    /**
+     * @generated from protobuf field: int64 document_id = 1
+     */
+    documentId: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp recomputed_at = 2
+     */
+    recomputedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: bool closed = 3
+     */
+    closed: boolean;
+    /**
+     * @generated from protobuf field: bool draft = 4
+     */
+    draft: boolean;
+    /**
+     * @generated from protobuf field: bool public = 5
+     */
+    public: boolean;
+    /**
+     * @generated from protobuf field: string state = 6
+     */
+    state: string;
+    /**
+     * Overall aggregates - At least one approval policy fully satisfied
+     *
+     * @generated from protobuf field: optional bool approved = 7
+     */
+    approved?: boolean;
+    /**
+     * @generated from protobuf field: optional bool signed = 8
+     */
+    signed?: boolean;
+    // Signature rollups
+
+    /**
+     * How many signatures still needed to satisfy all policies
+     *
+     * @generated from protobuf field: optional int32 sig_required_remaining = 9
+     */
+    sigRequiredRemaining?: number;
+    /**
+     * Total signatures needed across policies
+     *
+     * @generated from protobuf field: optional int32 sig_required_total = 10
+     */
+    sigRequiredTotal?: number;
+    /**
+     * Signatures collected
+     *
+     * @generated from protobuf field: optional int32 sig_collected_valid = 11
+     */
+    sigCollectedValid?: number;
+    /**
+     * Number of active signature policies
+     *
+     * @generated from protobuf field: optional int32 sig_policies_active = 12
+     */
+    sigPoliciesActive?: number;
+    // Approval rollups
+
+    /**
+     * Total approvals needed across policies
+     *
+     * @generated from protobuf field: optional int32 ap_required_total = 13
+     */
+    apRequiredTotal?: number;
+    /**
+     * Approvals collected
+     *
+     * @generated from protobuf field: optional int32 ap_collected_approved = 14
+     */
+    apCollectedApproved?: number;
+    /**
+     * How many left to satisfy
+     *
+     * @generated from protobuf field: optional int32 ap_required_remaining = 15
+     */
+    apRequiredRemaining?: number;
+    /**
+     * Number of declines
+     *
+     * @generated from protobuf field: optional int32 ap_declined_count = 16
+     */
+    apDeclinedCount?: number;
+    /**
+     * Tasks still pending (optional)
+     *
+     * @generated from protobuf field: optional int32 ap_pending_count = 17
+     */
+    apPendingCount?: number;
+    /**
+     * Quick flag if any declines
+     *
+     * @generated from protobuf field: optional bool ap_any_declined = 18
+     */
+    apAnyDeclined?: boolean;
+    /**
+     * Number of active approval policies
+     *
+     * @generated from protobuf field: optional int32 ap_policies_active = 19
+     */
+    apPoliciesActive?: number;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -409,7 +494,7 @@ class Document$Type extends MessageType<Document> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"data\"" } },
@@ -417,15 +502,12 @@ class Document$Type extends MessageType<Document> {
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 19, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 20, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
-            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
-            { no: 23, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
+            { no: 15, name: "meta", kind: "message", T: () => DocumentMeta, options: { "tagger.tags": "alias:\"meta\"" } },
+            { no: 16, name: "template_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 17, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
+            { no: 18, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 19, name: "workflow_user", kind: "message", T: () => WorkflowUserState },
+            { no: 20, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -434,10 +516,6 @@ class Document$Type extends MessageType<Document> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         message.files = [];
         if (value !== undefined)
             reflectionMergePartial<Document>(this, message, value);
@@ -490,31 +568,22 @@ class Document$Type extends MessageType<Document> {
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* string state */ 15:
-                    message.state = reader.string();
+                case /* resources.documents.DocumentMeta meta */ 15:
+                    message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* bool closed */ 16:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 17:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 18:
-                    message.public = reader.bool();
-                    break;
-                case /* optional int64 template_id */ 19:
+                case /* optional int64 template_id */ 16:
                     message.templateId = reader.int64().toNumber();
                     break;
-                case /* optional resources.documents.DocumentPin pin */ 20:
+                case /* optional resources.documents.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 21:
+                case /* optional resources.documents.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
-                case /* repeated resources.file.File files */ 23:
+                case /* repeated resources.file.File files */ 20:
                     message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -571,33 +640,24 @@ class Document$Type extends MessageType<Document> {
         /* optional string creator_job_label = 14; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* string state = 15; */
-        if (message.state !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 16; */
-        if (message.closed !== false)
-            writer.tag(16, WireType.Varint).bool(message.closed);
-        /* bool draft = 17; */
-        if (message.draft !== false)
-            writer.tag(17, WireType.Varint).bool(message.draft);
-        /* bool public = 18; */
-        if (message.public !== false)
-            writer.tag(18, WireType.Varint).bool(message.public);
-        /* optional int64 template_id = 19; */
+        /* resources.documents.DocumentMeta meta = 15; */
+        if (message.meta)
+            DocumentMeta.internalBinaryWrite(message.meta, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional int64 template_id = 16; */
         if (message.templateId !== undefined)
-            writer.tag(19, WireType.Varint).int64(message.templateId);
-        /* optional resources.documents.DocumentPin pin = 20; */
+            writer.tag(16, WireType.Varint).int64(message.templateId);
+        /* optional resources.documents.DocumentPin pin = 17; */
         if (message.pin)
-            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 21; */
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 18; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.file.File files = 23; */
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.file.File files = 20; */
         for (let i = 0; i < message.files.length; i++)
-            File.internalBinaryWrite(message.files[i], writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+            File.internalBinaryWrite(message.files[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -618,20 +678,17 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
-            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 20, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
-            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
+            { no: 15, name: "meta", kind: "message", T: () => DocumentMeta, options: { "tagger.tags": "alias:\"meta\"" } },
+            { no: 17, name: "pin", kind: "message", T: () => DocumentPin, options: { "tagger.tags": "alias:\"pin\"" } },
+            { no: 18, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 19, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<DocumentShort>): DocumentShort {
@@ -640,10 +697,6 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         message.title = "";
         message.contentType = 0;
         message.creatorJob = "";
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         if (value !== undefined)
             reflectionMergePartial<DocumentShort>(this, message, value);
         return message;
@@ -692,25 +745,16 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* string state */ 15:
-                    message.state = reader.string();
+                case /* resources.documents.DocumentMeta meta */ 15:
+                    message.meta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* bool closed */ 16:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 17:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 18:
-                    message.public = reader.bool();
-                    break;
-                case /* optional resources.documents.DocumentPin pin */ 20:
+                case /* optional resources.documents.DocumentPin pin */ 17:
                     message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 21:
+                case /* optional resources.documents.WorkflowState workflow_state */ 18:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 19:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 default:
@@ -764,27 +808,18 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional string creator_job_label = 14; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* string state = 15; */
-        if (message.state !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 16; */
-        if (message.closed !== false)
-            writer.tag(16, WireType.Varint).bool(message.closed);
-        /* bool draft = 17; */
-        if (message.draft !== false)
-            writer.tag(17, WireType.Varint).bool(message.draft);
-        /* bool public = 18; */
-        if (message.public !== false)
-            writer.tag(18, WireType.Varint).bool(message.public);
-        /* optional resources.documents.DocumentPin pin = 20; */
+        /* resources.documents.DocumentMeta meta = 15; */
+        if (message.meta)
+            DocumentMeta.internalBinaryWrite(message.meta, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentPin pin = 17; */
         if (message.pin)
-            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowState workflow_state = 21; */
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 18; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -795,6 +830,183 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
  * @generated MessageType for protobuf message resources.documents.DocumentShort
  */
 export const DocumentShort = new DocumentShort$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocumentMeta$Type extends MessageType<DocumentMeta> {
+    constructor() {
+        super("resources.documents.DocumentMeta", [
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "recomputed_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "signed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "sig_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "sig_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "ap_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "ap_collected_approved", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "ap_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "ap_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 17, name: "ap_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 18, name: "ap_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 19, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = 0;
+        message.closed = false;
+        message.draft = false;
+        message.public = false;
+        message.state = "";
+        if (value !== undefined)
+            reflectionMergePartial<DocumentMeta>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocumentMeta): DocumentMeta {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
+                    break;
+                case /* optional resources.timestamp.Timestamp recomputed_at */ 2:
+                    message.recomputedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.recomputedAt);
+                    break;
+                case /* bool closed */ 3:
+                    message.closed = reader.bool();
+                    break;
+                case /* bool draft */ 4:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 5:
+                    message.public = reader.bool();
+                    break;
+                case /* string state */ 6:
+                    message.state = reader.string();
+                    break;
+                case /* optional bool approved */ 7:
+                    message.approved = reader.bool();
+                    break;
+                case /* optional bool signed */ 8:
+                    message.signed = reader.bool();
+                    break;
+                case /* optional int32 sig_required_remaining */ 9:
+                    message.sigRequiredRemaining = reader.int32();
+                    break;
+                case /* optional int32 sig_required_total */ 10:
+                    message.sigRequiredTotal = reader.int32();
+                    break;
+                case /* optional int32 sig_collected_valid */ 11:
+                    message.sigCollectedValid = reader.int32();
+                    break;
+                case /* optional int32 sig_policies_active */ 12:
+                    message.sigPoliciesActive = reader.int32();
+                    break;
+                case /* optional int32 ap_required_total */ 13:
+                    message.apRequiredTotal = reader.int32();
+                    break;
+                case /* optional int32 ap_collected_approved */ 14:
+                    message.apCollectedApproved = reader.int32();
+                    break;
+                case /* optional int32 ap_required_remaining */ 15:
+                    message.apRequiredRemaining = reader.int32();
+                    break;
+                case /* optional int32 ap_declined_count */ 16:
+                    message.apDeclinedCount = reader.int32();
+                    break;
+                case /* optional int32 ap_pending_count */ 17:
+                    message.apPendingCount = reader.int32();
+                    break;
+                case /* optional bool ap_any_declined */ 18:
+                    message.apAnyDeclined = reader.bool();
+                    break;
+                case /* optional int32 ap_policies_active */ 19:
+                    message.apPoliciesActive = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocumentMeta, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
+        /* optional resources.timestamp.Timestamp recomputed_at = 2; */
+        if (message.recomputedAt)
+            Timestamp.internalBinaryWrite(message.recomputedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool closed = 3; */
+        if (message.closed !== false)
+            writer.tag(3, WireType.Varint).bool(message.closed);
+        /* bool draft = 4; */
+        if (message.draft !== false)
+            writer.tag(4, WireType.Varint).bool(message.draft);
+        /* bool public = 5; */
+        if (message.public !== false)
+            writer.tag(5, WireType.Varint).bool(message.public);
+        /* string state = 6; */
+        if (message.state !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.state);
+        /* optional bool approved = 7; */
+        if (message.approved !== undefined)
+            writer.tag(7, WireType.Varint).bool(message.approved);
+        /* optional bool signed = 8; */
+        if (message.signed !== undefined)
+            writer.tag(8, WireType.Varint).bool(message.signed);
+        /* optional int32 sig_required_remaining = 9; */
+        if (message.sigRequiredRemaining !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.sigRequiredRemaining);
+        /* optional int32 sig_required_total = 10; */
+        if (message.sigRequiredTotal !== undefined)
+            writer.tag(10, WireType.Varint).int32(message.sigRequiredTotal);
+        /* optional int32 sig_collected_valid = 11; */
+        if (message.sigCollectedValid !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.sigCollectedValid);
+        /* optional int32 sig_policies_active = 12; */
+        if (message.sigPoliciesActive !== undefined)
+            writer.tag(12, WireType.Varint).int32(message.sigPoliciesActive);
+        /* optional int32 ap_required_total = 13; */
+        if (message.apRequiredTotal !== undefined)
+            writer.tag(13, WireType.Varint).int32(message.apRequiredTotal);
+        /* optional int32 ap_collected_approved = 14; */
+        if (message.apCollectedApproved !== undefined)
+            writer.tag(14, WireType.Varint).int32(message.apCollectedApproved);
+        /* optional int32 ap_required_remaining = 15; */
+        if (message.apRequiredRemaining !== undefined)
+            writer.tag(15, WireType.Varint).int32(message.apRequiredRemaining);
+        /* optional int32 ap_declined_count = 16; */
+        if (message.apDeclinedCount !== undefined)
+            writer.tag(16, WireType.Varint).int32(message.apDeclinedCount);
+        /* optional int32 ap_pending_count = 17; */
+        if (message.apPendingCount !== undefined)
+            writer.tag(17, WireType.Varint).int32(message.apPendingCount);
+        /* optional bool ap_any_declined = 18; */
+        if (message.apAnyDeclined !== undefined)
+            writer.tag(18, WireType.Varint).bool(message.apAnyDeclined);
+        /* optional int32 ap_policies_active = 19; */
+        if (message.apPoliciesActive !== undefined)
+            writer.tag(19, WireType.Varint).int32(message.apPoliciesActive);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocumentMeta
+ */
+export const DocumentMeta = new DocumentMeta$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DocumentReference$Type extends MessageType<DocumentReference> {
     constructor() {

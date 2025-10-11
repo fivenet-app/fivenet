@@ -32,28 +32,28 @@ func (s *Server) getCookieBase(name string) http.Cookie {
 }
 
 func (s *Server) setTokenCookie(ctx context.Context, token string) error {
-	cookie := s.getCookieBase(auth.TokenCookieName)
-	cookie.Value = token
-
 	authedCookie := s.getCookieBase(auth.AuthedCookieName)
 	authedCookie.Value = "true"
 	authedCookie.HttpOnly = false
 
-	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
+	cookie := s.getCookieBase(auth.TokenCookieName)
+	cookie.Value = token
+
+	header := metadata.Pairs("set-cookie", authedCookie.String(), "set-cookie", cookie.String())
 	// Send the cookie back to the client
 	return grpc.SendHeader(ctx, header)
 }
 
 func (s *Server) destroyTokenCookie(ctx context.Context) error {
-	cookie := s.getCookieBase(auth.TokenCookieName)
-	cookie.Expires = time.Time{}
-	cookie.MaxAge = -1
-
 	authedCookie := s.getCookieBase(auth.AuthedCookieName)
 	authedCookie.Value = "false"
 	authedCookie.HttpOnly = false
 
-	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
+	cookie := s.getCookieBase(auth.TokenCookieName)
+	cookie.Expires = time.Time{}
+	cookie.MaxAge = -1
+
+	header := metadata.Pairs("set-cookie", authedCookie.String(), "set-cookie", cookie.String())
 	// Send the cookie back to the client
 	return grpc.SendHeader(ctx, header)
 }
@@ -62,9 +62,12 @@ func (s *Server) destroyTokenCookie(ctx context.Context) error {
 func (s *Server) getAccountFromClaims(
 	ctx context.Context,
 	claims *auth.CitizenInfoClaims,
+	withPassword bool,
 ) (*model.FivenetAccounts, error) {
-	return s.getAccountFromDB(ctx, tAccounts.ID.EQ(mysql.Int64(claims.AccID)).
-		AND(tAccounts.Username.EQ(mysql.String(claims.Username))))
+	return s.getAccountFromDB(ctx, mysql.AND(
+		tAccounts.ID.EQ(mysql.Int64(claims.AccID)),
+		tAccounts.Username.EQ(mysql.String(claims.Username)),
+	), withPassword)
 }
 
 // Helper for password hashing.

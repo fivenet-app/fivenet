@@ -77,7 +77,7 @@ const groupedLayers = computed(() => {
                                 :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
                             >
                                 <template #label="{ item }">
-                                    {{ $t(item.label) }}
+                                    {{ $t(item.label ?? item.id) }}
                                 </template>
                             </URadioGroup>
                         </div>

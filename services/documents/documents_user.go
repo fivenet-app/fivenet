@@ -48,8 +48,7 @@ func (s *Server) ListUserDocuments(
 					tDAccess.Access.GT_EQ(
 						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
-				),
-				),
+				)),
 		)
 	} else {
 		userCondition = mysql.Bool(true)
@@ -174,10 +173,10 @@ func (s *Server) ListUserDocuments(
 			tDocument.UpdatedAt,
 			tDocument.CategoryID,
 			tDocument.CreatorID,
-			tDocument.State,
-			tDocument.Closed,
-			tDocument.Draft,
-			tDocument.Public,
+			tDocument.State.AS("meta.state"),
+			tDocument.Closed.AS("meta.closed"),
+			tDocument.Draft.AS("meta.draft"),
+			tDocument.Public.AS("meta.public"),
 			tDocument.Title,
 			tDCategory.ID,
 			tDCategory.Name,
@@ -209,8 +208,10 @@ func (s *Server) ListUserDocuments(
 					tDocument.ID.EQ(mysql.RawInt("doc_rel.document_id")),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocument.CategoryID.EQ(tDCategory.ID).
-						AND(tDCategory.DeletedAt.IS_NULL()),
+					mysql.AND(
+						tDocument.CategoryID.EQ(tDCategory.ID),
+						tDCategory.DeletedAt.IS_NULL(),
+					),
 				).
 				LEFT_JOIN(tCreator,
 					tDocument.CreatorID.EQ(tCreator.ID),

@@ -58,8 +58,10 @@ func (s *Server) GetColleagueLabels(
 		}
 	}
 
-	condition := tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())).
-		AND(tJobLabels.DeletedAt.IS_NULL())
+	condition := mysql.AND(
+		tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
+		tJobLabels.DeletedAt.IS_NULL(),
+	)
 
 	if req.GetSearch() != "" {
 		search := dbutils.PrepareForLikeSearch(req.GetSearch())

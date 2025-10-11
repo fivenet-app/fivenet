@@ -13,8 +13,8 @@ import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/docu
 import RequestListEntry from './RequestListEntry.vue';
 
 const props = defineProps<{
-    access: DocumentAccess;
     doc: DocumentShort;
+    access: DocumentAccess;
 }>();
 
 const emit = defineEmits<{
@@ -30,7 +30,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 type RequestType = { key: DocActivityType; attrKey: string };
 const requestTypes = [
-    { key: props.doc.closed ? DocActivityType.REQUESTED_OPENING : DocActivityType.REQUESTED_CLOSURE, attrKey: 'Closure' },
+    { key: props.doc.meta?.closed ? DocActivityType.REQUESTED_OPENING : DocActivityType.REQUESTED_CLOSURE, attrKey: 'Closure' },
     { key: DocActivityType.REQUESTED_UPDATE, attrKey: 'Update' },
     { key: DocActivityType.REQUESTED_OWNER_CHANGE, attrKey: 'OwnerChange' },
     { key: DocActivityType.REQUESTED_DELETION, attrKey: 'Deletion' },
@@ -151,7 +151,7 @@ const formRef = useTemplateRef('formRef');
         :title="$t('common.request', 2)"
         :overlay="false"
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ title: 'flex flex-row gap-2' }"
+        :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"
     >
         <template #title>
             <span class="flex-1">{{ $t('common.request', 2) }}</span>

@@ -1,0 +1,234 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
+import "resources/documents/approval.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message ListApprovalTasksInboxRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListApprovalTasksInboxResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message ListApprovalPoliciesRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+// Only one policy per document is supported currently.
+message ListApprovalPoliciesResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+}
+
+message UpsertApprovalPolicyRequest {
+  resources.documents.ApprovalPolicy policy = 1 [(buf.validate.field).required = true];
+}
+
+message UpsertApprovalPolicyResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+}
+
+message ListApprovalTasksRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListApprovalTasksResponse {
+  repeated resources.documents.ApprovalTask tasks = 1 [(codegen.itemslen.enabled) = true];
+}
+
+// A declarative "ensure" for tasks under one policy/snapshot.
+// Exactly one target must be set: user_id OR (job + minimum_grade).
+message ApprovalTaskSeed {
+  // If set -> USER task; slots is forced to 1
+  int32 user_id = 1;
+  // If user_id == 0 -> JOB task
+  string job = 2;
+  int32 minimum_grade = 3;
+
+  // Only for JOB tasks; number of PENDING slots to ensure (>=1)
+  int32 slots = 4 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
+  // Optional default due date for created slots
+  optional resources.timestamp.Timestamp due_at = 5;
+  // Optional note set on created tasks
+  optional string comment = 6;
+}
+
+// Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
+// Identity rules (server-side):
+//  - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
+//  - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+// For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
+message UpsertApprovalTasksRequest {
+  int64 policy_id = 1;
+  // If empty, use policy.snapshot_date
+  optional resources.timestamp.Timestamp snapshot_date = 2;
+  repeated ApprovalTaskSeed seeds = 3;
+}
+
+message UpsertApprovalTasksResponse {
+  // Number of new task rows inserted
+  int32 tasks_created = 1;
+  // Number of requested targets already satisfied (no-op)
+  int32 tasks_ensured = 2;
+  // Echo (optional convenience)
+  resources.documents.ApprovalPolicy policy = 3;
+}
+
+message DeleteApprovalTasksRequest {
+  int64 policy_id = 1;
+  repeated int64 task_ids = 2 [(buf.validate.field).repeated.min_items = 1];
+  // If true, ignore task_ids and delete all PENDING tasks under this policy
+  bool delete_all_pending = 3;
+}
+
+message DeleteApprovalTasksResponse {}
+
+// List approvals (artifacts) for a policy/snapshot.
+// If snapshot_date is unset, server defaults to policy.snapshot_date.
+message ListApprovalsRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 4;
+  // Optional filters
+  optional resources.documents.ApprovalStatus status = 5;
+  // Filter by signer
+  optional int32 user_id = 6;
+}
+
+message ListApprovalsResponse {
+  repeated resources.documents.Approval approvals = 3;
+}
+
+message RevokeApprovalRequest {
+  int64 approval_id = 1 [(buf.validate.field).int64.gt = 0];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message RevokeApprovalResponse {
+  resources.documents.Approval approval = 1;
+}
+
+message DecideApprovalRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+
+  resources.documents.ApprovalTaskStatus new_status = 4 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  string comment = 5 [(buf.validate.field).string.max_len = 500];
+}
+
+message DecideApprovalResponse {
+  resources.documents.Approval approval = 1;
+  resources.documents.ApprovalTask task = 2;
+  resources.documents.ApprovalPolicy policy = 3;
+}
+
+message ReopenApprovalTaskRequest {
+  int64 task_id = 1 [(buf.validate.field).int64.gt = 0];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message ReopenApprovalTaskResponse {
+  resources.documents.Approval approval = 1;
+  resources.documents.ApprovalTask task = 2;
+  resources.documents.ApprovalPolicy policy = 3;
+}
+
+message RecomputeApprovalPolicyCountersRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message RecomputeApprovalPolicyCountersResponse {
+  resources.documents.ApprovalPolicy policy = 1;
+}
+
+service ApprovalService {
+  option (codegen.perms.perms_svc) = {
+    order: 52
+    icon: "i-mdi-approval"
+  };
+
+  // Inbox (for tasks assigned to user)
+  rpc ListApprovalTasksInbox(ListApprovalTasksInboxRequest) returns (ListApprovalTasksInboxResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+
+  // Policies
+  rpc ListApprovalPolicies(ListApprovalPoliciesRequest) returns (ListApprovalPoliciesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertApprovalPolicy(UpsertApprovalPolicyRequest) returns (UpsertApprovalPolicyResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Tasks
+  rpc ListApprovalTasks(ListApprovalTasksRequest) returns (ListApprovalTasksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertApprovalTasks(UpsertApprovalTasksRequest) returns (UpsertApprovalTasksResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteApprovalTasks(DeleteApprovalTasksRequest) returns (DeleteApprovalTasksResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Approval
+  rpc ListApprovals(ListApprovalsRequest) returns (ListApprovalsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc RevokeApproval(RevokeApprovalRequest) returns (RevokeApprovalResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DecideApproval(DecideApprovalRequest) returns (DecideApprovalResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc ReopenApprovalTask(ReopenApprovalTaskRequest) returns (ReopenApprovalTaskResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "RevokeApproval"
+    };
+  }
+
+  // Helpers
+  rpc RecomputeApprovalPolicyCounters(RecomputeApprovalPolicyCountersRequest) returns (RecomputeApprovalPolicyCountersResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "RevokeApproval"
+    };
+  }
+}

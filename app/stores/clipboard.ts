@@ -41,21 +41,29 @@ export class ClipboardDocument {
     public title: string;
     public creator: ClipboardUser;
     public category: Category | undefined;
-    public state: string;
-    public closed: boolean;
-    public draft: boolean;
-    public public: boolean;
+    public meta: {
+        closed: boolean;
+        draft: boolean;
+        public: boolean;
+        state: string;
+        signed: boolean;
+        approved: boolean;
+    };
 
     constructor(d: Document) {
         this.id = d.id;
         this.createdAt = d.createdAt ? toDate(d.createdAt).toJSON() : undefined;
         this.category = d.category;
         this.title = d.title;
-        this.state = d.state;
+        this.meta = {
+            closed: d.meta?.closed || false,
+            draft: d.meta?.draft || false,
+            public: d.meta?.public || false,
+            state: d.meta?.state || '',
+            signed: d.meta?.signed || false,
+            approved: d.meta?.approved || false,
+        };
         this.creator = new ClipboardUser(d.creator!);
-        this.closed = d.closed;
-        this.draft = d.draft;
-        this.public = d.public;
     }
 }
 
@@ -115,10 +123,15 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         creatorId: user.userId,
         creator: user,
         creatorJob: user.job,
-        state: obj.state,
-        closed: obj.closed,
-        draft: obj.draft,
-        public: obj.public,
+        meta: {
+            documentId: obj.id,
+            closed: obj.meta.closed,
+            draft: obj.meta.draft,
+            public: obj.meta.public,
+            state: obj.meta.state,
+            signed: obj.meta.signed,
+            approved: obj.meta.approved,
+        },
     };
     if (obj.createdAt !== undefined) {
         doc.createdAt = toTimestamp(stringToDate(obj.createdAt));

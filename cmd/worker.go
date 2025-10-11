@@ -18,7 +18,7 @@ type WorkerCmd struct {
 func (c *WorkerCmd) Run(_ *Context) error {
 	instance.SetComponent("worker")
 
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
+	fxOpts := getFxBaseOpts(Cli.StartTimeout, true, true)
 	fxOpts = append(fxOpts, FxDemoOpts()...)
 	fxOpts = append(fxOpts, FxCronerOpts()...)
 

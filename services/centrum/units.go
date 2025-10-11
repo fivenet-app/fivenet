@@ -453,12 +453,16 @@ func (s *Server) ListUnitActivity(
 					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUnitStatus.UserID).
-						AND(tColleague.Job.EQ(mysql.String(userInfo.GetJob()))),
+					mysql.AND(
+						tUserProps.UserID.EQ(tUnitStatus.UserID),
+						tColleague.Job.EQ(mysql.String(userInfo.GetJob())),
+					),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tColleague.ID).
-						AND(tColleagueProps.Job.EQ(tColleague.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tColleague.ID),
+						tColleagueProps.Job.EQ(tColleague.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

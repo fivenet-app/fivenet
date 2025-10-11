@@ -59,8 +59,10 @@ func RetrieveColleagueById(
 					tUserProps.UserID.EQ(tUsers.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					mysql.AND(
+						tColleagueProps.UserID.EQ(tUsers.ID),
+						tColleagueProps.Job.EQ(tUsers.Job),
+					),
 				).
 				LEFT_JOIN(tAvatar,
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),

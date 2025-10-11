@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package resources.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+
+enum StampAccessLevel {
+  STAMP_ACCESS_LEVEL_UNSPECIFIED = 0;
+  STAMP_ACCESS_LEVEL_BLOCKED = 1;
+  STAMP_ACCESS_LEVEL_USE = 2;
+  STAMP_ACCESS_LEVEL_MANAGE = 3;
+}
+
+message Stamp {
+  int64 id = 1;
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 3;
+  resources.timestamp.Timestamp created_at = 4;
+
+  string name = 5 [
+    (buf.validate.field).string.max_len = 120,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+
+  // Parameterized SVG with slots
+  string svg_template = 6 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "SanitizeSVG"
+  }];
+
+  StampAccess access = 7;
+}
+
+message StampAccess {
+  repeated StampJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+}
+
+message StampJobAccess {
+  int64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  StampAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}

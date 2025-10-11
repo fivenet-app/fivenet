@@ -76,7 +76,7 @@ async function searchDocuments(q: string): Promise<CommandPaletteItem[]> {
         return response.documents.map((d) => ({
             id: d.id,
             label: d.title,
-            suffix: d.state,
+            suffix: d.meta?.state,
             to: `/documents/${d.id}`,
         }));
     } catch (e) {

@@ -50,8 +50,10 @@ func (s *Server) ListCalendarEntryRSVP(
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
-	condition := tCalendarRSVP.EntryID.EQ(mysql.Int64(entry.GetId())).
-		AND(tCalendarRSVP.Response.GT(mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
+	condition := mysql.AND(
+		tCalendarRSVP.EntryID.EQ(mysql.Int64(entry.GetId())),
+		tCalendarRSVP.Response.GT(mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))),
+	)
 
 	countStmt := tCalendarRSVP.
 		SELECT(

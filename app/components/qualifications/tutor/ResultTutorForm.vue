@@ -152,7 +152,7 @@ const formRef = useTemplateRef('formRef');
                             leading-icon="i-mdi-user"
                         >
                             <template v-if="selectedUser" #default>
-                                {{ usersToLabel([selectedUser]) }}
+                                {{ userToLabel(selectedUser) }}
                             </template>
 
                             <template #item-label="{ item }">

@@ -18,4 +18,5 @@ type FivenetRbacPermissions struct {
 	Name      string     `json:"name"`
 	GuardName string     `json:"guard_name"`
 	Order     *int32     `json:"order"`
+	Icon      *string    `json:"icon"`
 }

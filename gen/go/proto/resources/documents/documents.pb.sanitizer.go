@@ -84,6 +84,15 @@ func (m *Document) Sanitize() error {
 
 	}
 
+	// Field: Meta
+	if m.Meta != nil {
+		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Pin
 	if m.Pin != nil {
 		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {
@@ -93,11 +102,8 @@ func (m *Document) Sanitize() error {
 		}
 	}
 
-	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
-
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -125,6 +131,28 @@ func (m *Document) Sanitize() error {
 			}
 		}
 	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *DocumentMeta) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: RecomputedAt
+	if m.RecomputedAt != nil {
+		if v, ok := any(m.GetRecomputedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: State
+	m.State = htmlsanitizer.Sanitize(m.State)
 
 	return nil
 }
@@ -281,6 +309,15 @@ func (m *DocumentShort) Sanitize() error {
 		}
 	}
 
+	// Field: Meta
+	if m.Meta != nil {
+		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Pin
 	if m.Pin != nil {
 		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {
@@ -290,11 +327,8 @@ func (m *DocumentShort) Sanitize() error {
 		}
 	}
 
-	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
-
 	// Field: Title
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

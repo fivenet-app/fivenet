@@ -746,11 +746,16 @@ func (s *Server) handleUserLocations(
 			continue
 		}
 
+		jg := mysql.NULL
+		if location.JobGrade != nil {
+			jg = mysql.Int32(location.GetJobGrade())
+		}
+
 		stmt = stmt.
 			VALUES(
 				location.GetIdentifier(),
 				location.GetJob(),
-				nil, // TODO add job grade to user locations sync api
+				jg,
 				location.GetCoords().GetX(),
 				location.GetCoords().GetY(),
 				location.GetHidden(),

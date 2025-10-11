@@ -62,6 +62,7 @@ defineProps<{
                 </p>
             </div>
         </div>
+
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <div class="flex flex-row gap-1">

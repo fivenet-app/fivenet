@@ -1,0 +1,290 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
+import "resources/documents/signing.proto";
+import "resources/documents/stamp.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message ListSignatureTasksInboxRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListSignatureTasksInboxResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureTask tasks = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message ListSignaturePoliciesRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
+}
+
+message ListSignaturePoliciesResponse {
+  repeated resources.documents.SignaturePolicy policies = 1 [(codegen.itemslen.enabled) = true];
+}
+
+message UpsertSignaturePolicyRequest {
+  resources.documents.SignaturePolicy policy = 1 [(buf.validate.field).required = true];
+}
+
+message UpsertSignaturePolicyResponse {
+  resources.documents.SignaturePolicy policy = 1;
+}
+
+message DeleteSignaturePolicyRequest {
+  int64 policy_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteSignaturePolicyResponse {}
+
+message ListSignatureTasksRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2;
+
+  resources.timestamp.Timestamp snapshot_date = 3 [(buf.validate.field).required = true];
+  repeated resources.documents.SignatureTaskStatus statuses = 4 [(buf.validate.field).repeated.max_items = 4];
+}
+
+message ListSignatureTasksResponse {
+  repeated resources.documents.Signature signatures = 1 [(codegen.itemslen.enabled) = true];
+}
+
+// A declarative "ensure" for tasks under one policy/snapshot.
+// Exactly one target must be set: user_id OR (job + minimum_grade).
+message SignatureTaskSeed {
+  // If set -> USER task; slots is forced to 1
+  int32 user_id = 1;
+  // If user_id == 0 -> JOB task
+  string job = 2;
+  int32 minimum_grade = 3;
+
+  // Only for JOB tasks; number of PENDING slots to ensure (>=1)
+  int32 slots = 4 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
+  // Optional default due date for created slots
+  optional resources.timestamp.Timestamp due_at = 5;
+  // Optional note set on created tasks
+  optional string comment = 6;
+}
+
+// Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
+// Identity rules (server-side):
+//  - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
+//  - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+// For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
+message UpsertSignatureTasksRequest {
+  int64 policy_id = 1;
+  // If empty, use policy.snapshot_date
+  optional resources.timestamp.Timestamp snapshot_date = 2;
+  repeated SignatureTaskSeed seeds = 3;
+}
+
+message UpsertSignatureTasksResponse {
+  // Number of new task rows inserted
+  int32 tasks_created = 1;
+  // Number of requested targets already satisfied (no-op)
+  int32 tasks_ensured = 2;
+  // Echo (optional convenience)
+  resources.documents.SignaturePolicy policy = 3;
+}
+
+message DeleteSignatureTasksRequest {
+  int64 policy_id = 1;
+  repeated int64 task_ids = 2 [(buf.validate.field).repeated.min_items = 1];
+  // If true, ignore task_ids and delete all PENDING tasks under this policy
+  bool delete_all_pending = 3;
+}
+
+message DeleteSignatureTasksResponse {}
+
+// List signatures (artifacts) for a policy/snapshot.
+// If snapshot_date is unset, server defaults to policy.snapshot_date.
+message ListSignaturesRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 4;
+  // Optional filters
+  optional resources.documents.SignatureStatus status = 5;
+  // Filter by signer
+  optional int32 user_id = 6;
+}
+
+message ListSignaturesResponse {
+  repeated resources.documents.Signature signatures = 1;
+}
+
+// Revoke a signature artifact by id (sets status=REVOKED, revoked_at=now, comment=...).
+message RevokeSignatureRequest {
+  int64 signature_id = 1 [(buf.validate.field).int64.gt = 0];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message RevokeSignatureResponse {
+  resources.documents.Signature signature = 1;
+}
+
+message DecideSignatureRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+
+  resources.documents.SignatureTaskStatus new_status = 4 [(buf.validate.field).enum.defined_only = true];
+  string comment = 5 [(buf.validate.field).string.max_len = 500];
+  resources.documents.SignatureType type = 6 [(buf.validate.field).enum.defined_only = true];
+  optional string payload_svg = 7 [(buf.validate.field).string.min_len = 1];
+  // When type=STAMP
+  optional int64 stamp_id = 8;
+}
+
+message DecideSignatureResponse {
+  resources.documents.Signature signature = 1;
+  resources.documents.SignatureTask task = 2;
+  resources.documents.SignaturePolicy policy = 3;
+}
+
+message ReopenSignatureRequest {
+  int64 signature_id = 1 [(buf.validate.field).int64.gt = 0];
+  string comment = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message ReopenSignatureResponse {
+  resources.documents.Signature signature = 1;
+}
+
+message RecomputeSignatureStatusRequest {
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
+  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
+}
+
+message RecomputeSignatureStatusResponse {
+  bool document_signed = 1;
+  int32 required_total = 2;
+  int32 required_remaining = 3;
+  int32 collected_valid = 4;
+}
+
+message ListUsableStampsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  // If set, only stamps usable for signing this document are returned
+  optional int64 document_id = 2;
+}
+
+message ListUsableStampsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message UpsertStampRequest {
+  resources.documents.Stamp stamp = 1 [(buf.validate.field).required = true];
+}
+
+message UpsertStampResponse {
+  resources.documents.Stamp stamp = 1;
+}
+
+message DeleteStampRequest {
+  int64 stamp_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteStampResponse {}
+
+service SigningService {
+  option (codegen.perms.perms_svc) = {
+    order: 57
+    icon: "i-mdi-signature"
+  };
+
+  // Inbox (for tasks assigned to user)
+  rpc ListSignatureTasksInbox(ListSignatureTasksInboxRequest) returns (ListSignatureTasksInboxResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+
+  // Policies
+  rpc ListSignaturePolicies(ListSignaturePoliciesRequest) returns (ListSignaturePoliciesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertSignaturePolicy(UpsertSignaturePolicyRequest) returns (UpsertSignaturePolicyResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteSignaturePolicy(DeleteSignaturePolicyRequest) returns (DeleteSignaturePolicyResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Tasks
+  rpc ListSignatureTasks(ListSignatureTasksRequest) returns (ListSignatureTasksResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc UpsertSignatureTasks(UpsertSignatureTasksRequest) returns (UpsertSignatureTasksResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteSignatureTasks(DeleteSignatureTasksRequest) returns (DeleteSignatureTasksResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+
+  // Signatures
+  rpc ListSignatures(ListSignaturesRequest) returns (ListSignaturesResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc RevokeSignature(RevokeSignatureRequest) returns (RevokeSignatureResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DecideSignature(DecideSignatureRequest) returns (DecideSignatureResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      service: "documents.DocumentsService"
+      name: "ListDocuments"
+    };
+  }
+  rpc ReopenSignature(ReopenSignatureRequest) returns (ReopenSignatureResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "RevokeSignature"
+    };
+  }
+
+  // Helpers
+  rpc RecomputeSignatureStatus(RecomputeSignatureStatusRequest) returns (RecomputeSignatureStatusResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "DeleteSignaturePolicy"
+    };
+  }
+
+  // Stamps
+  rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpsertStamp(UpsertStampRequest) returns (UpsertStampResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteStamp(DeleteStampRequest) returns (DeleteStampResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

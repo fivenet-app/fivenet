@@ -81,6 +81,11 @@ var (
 		&common.I18NItem{Key: "errors.DocumentsService.ErrDocAccessDuplicate"},
 		nil,
 	)
+	ErrDocAccessInvalid = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrDocAccessInvalid"},
+		nil,
+	)
 
 	ErrTemplateFailed = common.NewI18nErr(
 		codes.InvalidArgument,
@@ -169,5 +174,16 @@ var (
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.DocumentsService.ErrDocReqAlreadyCompleted.content"},
 		&common.I18NItem{Key: "errors.DocumentsService.ErrDocReqAlreadyCompleted.title"},
+	)
+
+	ErrApprovalTaskAlreadyHandled = common.NewI18nErr(
+		codes.FailedPrecondition,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalTaskAlreadyHandled.content"},
+		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalTaskAlreadyHandled.title"},
+	)
+	ErrSigningTaskAlreadyHandled = common.NewI18nErr(
+		codes.FailedPrecondition,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.content"},
+		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.title"},
 	)
 )

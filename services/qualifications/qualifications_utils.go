@@ -44,8 +44,7 @@ func (s *Server) listQualificationsQuery(
 						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
 						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
-				),
-				),
+				)),
 		)
 
 		wheres = append(wheres,
@@ -134,9 +133,11 @@ func (s *Server) listQualificationsQuery(
 					tQuali.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tQualiResults,
-					tQualiResults.QualificationID.EQ(tQuali.ID).
-						AND(tQualiResults.DeletedAt.IS_NULL()).
-						AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+					mysql.AND(
+						tQualiResults.QualificationID.EQ(tQuali.ID),
+						tQualiResults.DeletedAt.IS_NULL(),
+						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					),
 				),
 		).
 		WHERE(mysql.AND(
@@ -175,8 +176,7 @@ func (s *Server) getQualificationQuery(
 						tQAccess.Job.EQ(mysql.String(userInfo.GetJob())),
 						tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
-				),
-				),
+				)),
 		)
 
 		wheres = append(wheres,
@@ -278,15 +278,23 @@ func (s *Server) getQualificationQuery(
 					tQuali.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tQualiResults,
-					tQualiResults.QualificationID.EQ(tQuali.ID).
-						AND(tQualiResults.DeletedAt.IS_NULL()).
-						AND(tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+					mysql.AND(
+						tQualiResults.QualificationID.EQ(tQuali.ID),
+						tQualiResults.DeletedAt.IS_NULL(),
+						tQualiResults.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+					),
 				).
 				LEFT_JOIN(tQualiRequests,
-					tQualiRequests.QualificationID.EQ(tQuali.ID).
-						AND(tQualiRequests.DeletedAt.IS_NULL()).
-						AND(tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId()))).
-						AND(tQualiRequests.Status.NOT_EQ(mysql.Int32(int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
+					mysql.AND(
+						tQualiRequests.QualificationID.EQ(tQuali.ID),
+						tQualiRequests.DeletedAt.IS_NULL(),
+						tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+						tQualiRequests.Status.NOT_EQ(
+							mysql.Int32(
+								int32(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED),
+							),
+						),
+					),
 				),
 		).
 		WHERE(mysql.AND(
@@ -434,10 +442,14 @@ func (s *Server) checkRequirementsMetForQualification(
 		).
 		FROM(tQReqs.
 			LEFT_JOIN(tQualiResults,
-				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID).
-					AND(tQualiResults.DeletedAt.IS_NULL()).
-					AND(tQualiResults.UserID.EQ(mysql.Int32(userId))).
-					AND(tQualiResults.Status.EQ(mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)))),
+				mysql.AND(
+					tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID),
+					tQualiResults.DeletedAt.IS_NULL(),
+					tQualiResults.UserID.EQ(mysql.Int32(userId)),
+					tQualiResults.Status.EQ(
+						mysql.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)),
+					),
+				),
 			),
 		).
 		WHERE(

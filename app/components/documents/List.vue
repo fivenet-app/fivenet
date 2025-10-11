@@ -453,6 +453,8 @@ defineShortcuts({
 
         <template #footer>
             <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
+
+            <slot name="footer" />
         </template>
     </UDashboardPanel>
 

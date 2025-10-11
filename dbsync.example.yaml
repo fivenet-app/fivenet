@@ -1,3 +1,9 @@
+mode: "release"
+
+log:
+  logToFile: false
+  file: "dbsync.log"
+
 watchConfig: true
 
 stateFile: "dbsync.state.yaml"
@@ -31,6 +37,12 @@ tables:
         `jobs`
       LIMIT $limit
       OFFSET $offset;
+    filters:
+      # Example filter to drop jobs starting with "off_", to enable uncomment this section
+      # This is useful in combination with the `users:` jobs filters below if you
+      # have "off-duty" jobs that need to be rewritten to their "actual" job name
+      #- pattern: '^off_'
+      #  action: drop
   jobGrades:
     # Must return `job_grade.job_name`, `job_grade.grade`, `job_grade.label` columns (with condition for the `job_name`)
     enabled: true
@@ -105,6 +117,17 @@ tables:
           '1': 'f'
     # If the firstname or lastname is empty or null, do not sync the user at all
     ignoreEmptyNames: true
+    # Filters allow to modify certain values before they are sent to FiveNet
+    filters:
+      jobs: []
+        # Example: `off_police` -> `police`
+        #- pattern: '^off_'
+        #  action: replace
+        #  replacement: ''
+        # Example: `ambulance` -> `ems`
+        #- pattern: '^ambulance$'
+        #  action: replace
+        #  replacement: 'ems'
   userLicenses:
     # Must return `user_license.type`, `user_license.owner` columns
     enabled: true

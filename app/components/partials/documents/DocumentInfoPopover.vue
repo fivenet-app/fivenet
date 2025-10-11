@@ -6,6 +6,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import OpenClosedBadge from '../OpenClosedBadge.vue';
 import CategoryBadge from './CategoryBadge.vue';
 
 defineOptions({
@@ -96,7 +97,7 @@ watchOnce(opened, async () => {
             variant="link"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
-            @click="opened = true"
+            @click.prevent="opened = true"
         >
             <slot name="title" :document="document" :loading="isRequestPending(status)">
                 <template v-if="!document && isRequestPending(status)">
@@ -164,13 +165,15 @@ watchOnce(opened, async () => {
                         <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>
                     </UButton>
 
-                    <div>
+                    <div class="flex flex-row flex-wrap items-center gap-2">
+                        <OpenClosedBadge :closed="document.meta?.closed" size="sm" />
+
                         <UBadge
-                            v-if="document.state"
+                            v-if="document.meta?.state"
                             class="inline-flex gap-1"
                             icon="i-mdi-note-check"
-                            :label="document.state"
-                            size="xs"
+                            :label="document.meta.state"
+                            size="sm"
                         />
                     </div>
 

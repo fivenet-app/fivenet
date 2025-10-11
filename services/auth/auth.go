@@ -48,27 +48,35 @@ func (s *Server) createTokenFromAccountAndChar(
 func (s *Server) getAccountFromDB(
 	ctx context.Context,
 	condition mysql.BoolExpression,
+	withPass bool,
 ) (*model.FivenetAccounts, error) {
+	columns := mysql.ProjectionList{
+		tAccounts.ID,
+		tAccounts.CreatedAt,
+		tAccounts.UpdatedAt,
+		tAccounts.Enabled,
+		tAccounts.Username,
+		tAccounts.License,
+		tAccounts.RegToken,
+		tAccounts.OverrideJob,
+		tAccounts.OverrideJobGrade,
+		tAccounts.Superuser,
+		tAccounts.LastChar,
+	}
+	if withPass {
+		columns = append(columns, tAccounts.Password)
+	}
+
 	stmt := tAccounts.
 		SELECT(
-			tAccounts.ID,
-			tAccounts.CreatedAt,
-			tAccounts.UpdatedAt,
-			tAccounts.Enabled,
-			tAccounts.Username,
-			tAccounts.Password,
-			tAccounts.License,
-			tAccounts.RegToken,
-			tAccounts.OverrideJob,
-			tAccounts.OverrideJobGrade,
-			tAccounts.Superuser,
-			tAccounts.LastChar,
+			columns[0],
+			columns[1:]...,
 		).
 		FROM(tAccounts).
-		WHERE(
-			tAccounts.Enabled.IS_TRUE().
-				AND(condition),
-		).
+		WHERE(mysql.AND(
+			tAccounts.Enabled.IS_TRUE(),
+			condition,
+		)).
 		LIMIT(1)
 
 	acc := &model.FivenetAccounts{}
@@ -91,7 +99,7 @@ func (s *Server) Login(
 		tAccounts.Username.EQ(mysql.String(req.GetUsername())),
 		tAccounts.RegToken.IS_NULL(),
 		tAccounts.Password.IS_NOT_NULL(),
-	))
+	), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
@@ -159,7 +167,11 @@ func (s *Server) CreateAccount(
 		return nil, errorsauth.ErrSignupDisabled
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())))
+	acc, err := s.getAccountFromDB(
+		ctx,
+		tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
+		true,
+	)
 	if err != nil {
 		s.logger.Error(
 			"failed to get account from database by registration token",
@@ -227,7 +239,7 @@ func (s *Server) ChangePassword(
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	acc, err := s.getAccountFromClaims(ctx, claims)
+	acc, err := s.getAccountFromClaims(ctx, claims, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
@@ -302,7 +314,7 @@ func (s *Server) ChangeUsername(
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
-	acc, err := s.getAccountFromClaims(ctx, claims)
+	acc, err := s.getAccountFromClaims(ctx, claims, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
@@ -327,7 +339,7 @@ func (s *Server) ChangeUsername(
 	}
 
 	// If there is an account with the new username, fail
-	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(username)))
+	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(username)), false)
 	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		// Other database error
 		return nil, errswrap.NewError(err, errorsauth.ErrBadUsername)
@@ -365,7 +377,7 @@ func (s *Server) ForgotPassword(
 		tAccounts.RegToken.EQ(mysql.String(req.GetRegToken())),
 		tAccounts.Username.IS_NOT_NULL(),
 		tAccounts.Password.IS_NULL(),
-	))
+	), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
@@ -418,7 +430,7 @@ func (s *Server) GetCharacters(
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromClaims(ctx, claims)
+	acc, err := s.getAccountFromClaims(ctx, claims, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
@@ -604,7 +616,7 @@ func (s *Server) ChooseCharacter(
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromClaims(ctx, claims)
+	account, err := s.getAccountFromClaims(ctx, claims, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
@@ -775,6 +787,7 @@ func (s *Server) SetSuperuserMode(
 		account, err := s.getAccountFromDB(
 			ctx,
 			tAccounts.Username.EQ(mysql.String(claims.Username)),
+			false,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(
@@ -834,7 +847,11 @@ func (s *Server) SetSuperuserMode(
 	userInfo.Superuser = req.GetSuperuser()
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(mysql.String(claims.Username)))
+	account, err := s.getAccountFromDB(
+		ctx,
+		tAccounts.Username.EQ(mysql.String(claims.Username)),
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(
 			fmt.Errorf("failed to get account from db. %w", err),

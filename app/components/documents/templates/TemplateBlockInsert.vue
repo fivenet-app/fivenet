@@ -9,9 +9,9 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const options = [
-    { label: t('components.partials.TiptapEditor.extensions.template_block.options.range'), value: 'range' },
-    { label: t('components.partials.TiptapEditor.extensions.template_block.options.if'), value: 'if' },
-    { label: t('components.partials.TiptapEditor.extensions.template_block.options.with'), value: 'with' },
+    { label: t('components.partials.tiptap_editor.extensions.template_block.options.range'), value: 'range' },
+    { label: t('components.partials.tiptap_editor.extensions.template_block.options.if'), value: 'if' },
+    { label: t('components.partials.tiptap_editor.extensions.template_block.options.with'), value: 'with' },
 ];
 
 const selected = ref('');
@@ -36,13 +36,13 @@ const insertBlock = () => {
 
 <template>
     <UPopover>
-        <UTooltip :text="$t('components.partials.TiptapEditor.extensions.template_block.title')">
+        <UTooltip :text="$t('components.partials.tiptap_editor.extensions.template_block.title')">
             <UButton color="neutral" variant="ghost" icon="i-mdi-application-variable" :disabled="disabled" />
         </UTooltip>
         <template #content>
             <div class="flex flex-1 flex-col gap-1 p-4">
                 <h3 class="block font-medium">
-                    {{ $t('components.partials.TiptapEditor.extensions.template_block.title') }}
+                    {{ $t('components.partials.tiptap_editor.extensions.template_block.title') }}
                 </h3>
 
                 <UFormField>
@@ -52,14 +52,14 @@ const insertBlock = () => {
                 <div class="flex flex-row gap-2">
                     <UFormField
                         class="justify-center"
-                        :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_left')"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_left')"
                     >
                         <UCheckbox v-model="leftTrim" />
                     </UFormField>
 
                     <UFormField
                         class="justify-center"
-                        :label="$t('components.partials.TiptapEditor.extensions.template_var.trim_right')"
+                        :label="$t('components.partials.tiptap_editor.extensions.template_var.trim_right')"
                     >
                         <UCheckbox v-model="rightTrim" />
                     </UFormField>
@@ -70,8 +70,8 @@ const insertBlock = () => {
                         v-model="expression"
                         :placeholder="
                             selected
-                                ? $t('components.partials.TiptapEditor.extensions.template_block.block_placeholder.select')
-                                : $t('components.partials.TiptapEditor.extensions.template_block.block_placeholder.empty')
+                                ? $t('components.partials.tiptap_editor.extensions.template_block.block_placeholder.select')
+                                : $t('components.partials.tiptap_editor.extensions.template_block.block_placeholder.empty')
                         "
                         :disabled="!selected"
                     />
@@ -79,7 +79,7 @@ const insertBlock = () => {
 
                 <UFormField>
                     <UButton block :disabled="!canInsert" @click="insertBlock">
-                        {{ $t('components.partials.TiptapEditor.extensions.template_block.insert_block') }}
+                        {{ $t('components.partials.tiptap_editor.extensions.template_block.insert_block') }}
                     </UButton>
                 </UFormField>
             </div>

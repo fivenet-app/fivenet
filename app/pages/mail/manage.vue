@@ -23,7 +23,7 @@ definePageMeta({
 const overlay = useOverlay();
 
 const mailerStore = useMailerStore();
-const { emails, getPrivateEmail, hasPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
+const { emails, getPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
 
 const { attr, can, isSuperuser } = useAuth();
 
@@ -54,10 +54,6 @@ const route = useRoute();
 
 onBeforeMount(async () => {
     await listEmails();
-
-    if (route.query?.tab === 'new') {
-        if (emails.value.length === 0 || !hasPrivateEmail.value) return;
-    }
 });
 
 // Disable create form when email is selected

@@ -42,6 +42,15 @@
             },
             "categories": {
                 "title": "Dokumentkategorien"
+            },
+            "approvals": {
+                "title": "Genehmigungsaufgaben"
+            },
+            "signatures": {
+                "title": "Signaturaufgaben"
+            },
+            "stamps": {
+                "title": "Stempel"
             }
         },
         "notfound": {
@@ -703,7 +712,21 @@
         "directory": "Verzeichnis | Verzeichnisse",
         "undo": "Rückgängig machen",
         "redo": "Wiederholen",
-        "sign": "Unterschreiben"
+        "sign": "Unterschreiben",
+        "approved": "Genehmigt",
+        "unapproved": "Nicht genehmigt",
+        "signed": "Unterschrieben",
+        "unsigned": "Nicht unterschrieben",
+        "stamp": "Stempel",
+        "due_at": "Fällig am",
+        "approvals": "Genehmigungen",
+        "continue": "Fortfahren",
+        "policy": "Richtlinie",
+        "task": "Aufgabe | Aufgaben",
+        "no_comment": "Kein Kommentar angegeben.",
+        "declined": "Abgelehnt",
+        "approval": "Keine Genehmigung | {n} Genehmigung | {n} Genehmigungen",
+        "revoke": "Widerrufen"
     },
     "components": {
         "partials": {
@@ -723,7 +746,7 @@
                 "page_count": "Seite {current} à {size} Einträge",
                 "page_count_with_total": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
             },
-            "TiptapEditor": {
+            "tiptap_editor": {
                 "clear": "Löschen",
                 "previous": "Vorherige",
                 "next": "Nächste",
@@ -803,7 +826,7 @@
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen"
             },
-            "SignaturePad": {
+            "signature_pad": {
                 "pen_color": "Stiftfarbe",
                 "min_stroke_width": "Minimale Strichstärke",
                 "max_stroke_width": "Maximale Strichstärke"
@@ -877,7 +900,7 @@
                 "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
                 "callback_message": "Hier Zugriff beantragen"
             },
-            "TemplateWorkflowEditor": {
+            "template_workflow_editor": {
                 "reminder": {
                     "description": "Dokumenten-Erinnerungen, werden nur an den Besitzer/Ersteller des Dokumentes geschickt. Die Erinnerungen werden in Reihenfolge verschickt, jeweils aufbauend auf der vorherigen Erinnerung. E.g., Erinnerung 1 (3 Tage) wird 3 Tage nach Dokumenten-Erstellung/letzter Aktualisierung verschickt, Erinnerung 2 (2 Tage) wird so gesehen erst in 5 Tagen verschickt.\nDie Erinnerungen starten wieder bei der Ersten sollte das zwischendurch Dokument aktualisiert worden sein."
                 },
@@ -888,6 +911,18 @@
                     "title": "Maximale Anzahl gesendeter Erinnerungen",
                     "description": "Die maximale Anzahl an Erinnerungen, die an den Ersteller eines Dokuments gesendet werden. Wenn das Maximum (10) erreicht ist, werden keine weiteren Erinnerungen gesendet."
                 }
+            },
+            "approval": {
+                "policy_form": {
+                    "rule_kind": "Regeltyp",
+                    "on_edit_behavior": "Bearbeitungsverhalten",
+                    "required_signatures": "Erforderliche Unterschriften"
+                },
+                "tasks": "Genehmigungsaufgaben",
+                "task_form": {
+                    "title": "Aufgaben"
+                },
+                "slots": "Genehmigungs-Slots"
             }
         },
         "livemap": {
@@ -2167,7 +2202,11 @@
             "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
             "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
             "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!",
-            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
+            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+            "ErrCitizenNotFound": {
+                "title": "Bürger nicht gefunden!",
+                "content": "Der angeforderte Bürger wurde nicht gefunden."
+            }
         },
         "VehiclesService": {
             "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!",
@@ -2214,7 +2253,16 @@
             },
             "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
             "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
-            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!"
+            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!",
+            "ErrApprovalTaskAlreadyHandled": {
+                "title": "Genehmigungsaufgabe bereits bearbeitet!",
+                "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
+            },
+            "ErrSigningTaskAlreadyHandled": {
+                "title": "Signaturaufgabe bereits bearbeitet!",
+                "content": "Diese Signaturaufgabe wurde bereits unterschrieben/abgelehnt."
+            },
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!"
         },
         "LivemapService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
@@ -2496,6 +2544,53 @@
                 "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beantragt | Dokument-Besitzer Wechsel",
                 "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument",
                 "DRAFT_TOGGLED": "Entwurfstatus aktualisiert"
+            },
+            "OnEditBehavior": {
+                "UNSPECIFIED": "Unbestimmt",
+                "RESET": "Genehmigungen bei Bearbeitung zurücksetzen",
+                "KEEP_PROGRESS": "Genehmigungen bei Bearbeitung beibehalten"
+            },
+            "ApprovalRuleKind": {
+                "UNSPECIFIED": "Unbestimmt",
+                "REQUIRE_ALL": "Alle erforderlich",
+                "QUORUM_ANY": "Quorum"
+            },
+            "ApprovalTaskStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "APPROVED": "Genehmigt",
+                "DECLINED": "Abgelehnt",
+                "EXPIRED": "Abgelaufen",
+                "CANCELLED": "Storniert"
+            },
+            "ApprovalStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "APPROVED": "Genehmigt",
+                "DECLINED": "Abgelehnt",
+                "REVOKED": "Widerrufen"
+            },
+            "SignatureType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "FREEHAND": "Freihand",
+                "TYPED": "Getippt",
+                "STAMP": "Stempel"
+            },
+            "SignatureBindingMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BINDING": "Verbindlich",
+                "NONBINDING": "Nicht verbindlich"
+            },
+            "SignatureTaskStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "SIGNED": "Unterschrieben",
+                "EXPIRED": "Abgelaufen"
+            },
+            "StampAccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "USE": "Verwenden",
+                "MANAGE": "Verwalten"
             }
         },
         "settings": {
@@ -3006,6 +3101,60 @@
                 "SetDocumentReminder": {
                     "key": "Setzen von eigenen Dokumenten-Erinnerungen",
                     "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
+                }
+            },
+            "ApprovalService": {
+                "category": "Dokumenten-System: Genehmigung",
+                "UpsertApprovalPolicy": {
+                    "key": "Genehmigungsrichtlinie erstellen oder aktualisieren",
+                    "description": "Genehmigungsrichtlinien für Berufe erstellen oder aktualisieren."
+                },
+                "UpsertApprovalTasks": {
+                    "key": "Genehmigungsaufgaben erstellen",
+                    "description": "Erstellen von Genehmigungsaufgaben für ein Dokument."
+                },
+                "DeleteApprovalTasks": {
+                    "key": "Genehmigungsaufgaben löschen",
+                    "description": "Löschen von Genehmigungsaufgaben für ein Dokument."
+                },
+                "RevokeApproval": {
+                    "key": "Genehmigung widerrufen",
+                    "description": "Eine abgeschlossene Genehmigung widerrufen."
+                }
+            },
+            "SigningService": {
+                "category": "Dokumenten-System: Unterzeichnung",
+                "UpsertSignaturePolicy": {
+                    "key": "Signaturanfrage erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
+                },
+                "DeleteSignaturePolicy": {
+                    "key": "Signaturanfrage löschen",
+                    "description": "Löschen einer Signaturanfrage."
+                },
+                "UpsertSignatureTasks": {
+                    "key": "Signaturaufgaben erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren von Signaturaufgaben für ein Dokument."
+                },
+                "DeleteSignatureTasks": {
+                    "key": "Signaturaufgaben löschen",
+                    "description": "Löschen von Signaturaufgaben für ein Dokument."
+                },
+                "RevokeSignature": {
+                    "key": "Revoke Signature",
+                    "description": "Revoke a given signature."
+                },
+                "ListUsableStamps": {
+                    "key": "Stempel auflisten",
+                    "description": "Auflisten der verfügbaren Stempel."
+                },
+                "UpsertStamp": {
+                    "key": "Stempel erstellen oder aktualisieren",
+                    "description": "Erstellen oder Aktualisieren eines Stempels."
+                },
+                "DeleteStamp": {
+                    "key": "Stempel löschen",
+                    "description": "Löschen eines Stempels."
                 }
             }
         },

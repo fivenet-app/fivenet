@@ -27,7 +27,10 @@ message Document {
       min_len: 3
       max_len: 512
     },
-    (codegen.sanitizer.sanitizer) = {enabled: true}
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
   ];
   resources.common.content.ContentType content_type = 8 [(buf.validate.field).enum.defined_only = true];
   resources.common.content.Content content = 9;
@@ -40,18 +43,12 @@ message Document {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
-  string state = 15 [
-    (buf.validate.field).string.max_len = 32,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
-  bool closed = 16;
-  bool draft = 17;
-  bool public = 18;
-  optional int64 template_id = 19;
-  optional DocumentPin pin = 20 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 21;
-  optional WorkflowUserState workflow_user = 22;
-  repeated resources.file.File files = 23 [(tagger.tags) = "alias:\"files\""];
+  DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
+  optional int64 template_id = 16;
+  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional WorkflowState workflow_state = 18;
+  optional WorkflowUserState workflow_user = 19;
+  repeated resources.file.File files = 20 [(tagger.tags) = "alias:\"files\""];
 }
 
 message DocumentShort {
@@ -66,7 +63,10 @@ message DocumentShort {
       min_len: 3
       max_len: 512
     },
-    (codegen.sanitizer.sanitizer) = {enabled: true}
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
   ];
   resources.common.content.ContentType content_type = 8 [(buf.validate.field).enum.defined_only = true];
   resources.common.content.Content content = 9;
@@ -74,16 +74,56 @@ message DocumentShort {
   optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
-  string state = 15 [
+  DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
+  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional WorkflowState workflow_state = 18;
+  optional WorkflowUserState workflow_user = 19;
+}
+
+message DocumentMeta {
+  int64 document_id = 1;
+
+  optional resources.timestamp.Timestamp recomputed_at = 2;
+
+  bool closed = 3;
+  bool draft = 4;
+  bool public = 5;
+  string state = 6 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
-  bool closed = 16;
-  bool draft = 17;
-  bool public = 18;
-  optional DocumentPin pin = 20 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 21;
-  optional WorkflowUserState workflow_user = 22;
+
+  // Overall aggregates - At least one approval policy fully satisfied
+  optional bool approved = 7;
+  optional bool signed = 8;
+
+  // Signature rollups
+
+  // How many signatures still needed to satisfy all policies
+  optional int32 sig_required_remaining = 9;
+  // Total signatures needed across policies
+  optional int32 sig_required_total = 10;
+  // Signatures collected
+  optional int32 sig_collected_valid = 11;
+  // Number of active signature policies
+  optional int32 sig_policies_active = 12;
+
+  // Approval rollups
+
+  // Total approvals needed across policies
+  optional int32 ap_required_total = 13;
+  // Approvals collected
+  optional int32 ap_collected_approved = 14;
+  // How many left to satisfy
+  optional int32 ap_required_remaining = 15;
+  // Number of declines
+  optional int32 ap_declined_count = 16;
+  // Tasks still pending (optional)
+  optional int32 ap_pending_count = 17;
+  // Quick flag if any declines
+  optional bool ap_any_declined = 18;
+  // Number of active approval policies
+  optional int32 ap_policies_active = 19;
 }
 
 enum DocReference {

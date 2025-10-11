@@ -2,7 +2,7 @@ BEGIN;
 
 -- Cries in no natural sorting in MySQL
 
-ALTER TABLE `fivenet_documents_categories` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_documents_categories` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`name`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`name`, '[0-9]+', LPAD(REGEXP_SUBSTR(`name`, '[0-9]+'), 8, '0'))
@@ -11,7 +11,7 @@ ALTER TABLE `fivenet_documents_categories` ADD COLUMN `sort_key` VARCHAR(255) GE
   )) STORED AFTER `name`,
   ADD INDEX `idx_fivenet_documents_categories_sort_key` (`sort_key`);
 
-ALTER TABLE `fivenet_job_citizen_labels` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_job_citizen_labels` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`name`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`name`, '[0-9]+', LPAD(REGEXP_SUBSTR(`name`, '[0-9]+'), 8, '0'))
@@ -20,7 +20,7 @@ ALTER TABLE `fivenet_job_citizen_labels` ADD COLUMN `sort_key` VARCHAR(255) GENE
   )) STORED AFTER `name`,
   ADD INDEX `idx_fivenet_job_citizen_labels_sort_key` (`sort_key`);
 
-ALTER TABLE `fivenet_jobs_labels` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_jobs_labels` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`name`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`name`, '[0-9]+', LPAD(REGEXP_SUBSTR(`name`, '[0-9]+'), 8, '0'))
@@ -29,7 +29,7 @@ ALTER TABLE `fivenet_jobs_labels` ADD COLUMN `sort_key` VARCHAR(255) GENERATED A
   )) STORED AFTER `name`,
   ADD INDEX `idx_fivenet_jobs_labels_sort_key` (`sort_key`);
 
-ALTER TABLE `fivenet_lawbooks` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_lawbooks` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`name`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`name`, '[0-9]+', LPAD(REGEXP_SUBSTR(`name`, '[0-9]+'), 8, '0'))
@@ -38,7 +38,7 @@ ALTER TABLE `fivenet_lawbooks` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWA
   )) STORED AFTER `name`,
   ADD INDEX `idx_fivenet_lawbooks_sort_key` (`sort_key`);
 
-ALTER TABLE `fivenet_lawbooks_laws` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_lawbooks_laws` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`name`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`name`, '[0-9]+', LPAD(REGEXP_SUBSTR(`name`, '[0-9]+'), 8, '0'))
@@ -47,7 +47,7 @@ ALTER TABLE `fivenet_lawbooks_laws` ADD COLUMN `sort_key` VARCHAR(255) GENERATED
   )) STORED AFTER `name`,
   ADD INDEX `idx_fivenet_lawbooks_laws_sort_key` (`sort_key`);
 
-ALTER TABLE `fivenet_wiki_pages` ADD COLUMN `sort_key` VARCHAR(255) GENERATED ALWAYS AS ((
+ALTER TABLE `fivenet_wiki_pages` ADD COLUMN `sort_key` varchar(255) GENERATED ALWAYS AS ((
     CASE
       WHEN (REGEXP_SUBSTR(`title`, '[0-9]+') IS NOT NULL) THEN
         REGEXP_REPLACE(`title`, '[0-9]+', LPAD(REGEXP_SUBSTR(`title`, '[0-9]+'), 8, '0'))

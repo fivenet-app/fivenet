@@ -152,8 +152,10 @@ func (s *Server) ListCalendars(
 				tUserProps.UserID.EQ(tCalendar.CreatorID),
 			).
 			LEFT_JOIN(tCalendarSubs,
-				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
-					AND(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+				mysql.AND(
+					tCalendarSubs.CalendarID.EQ(tCalendar.ID),
+					tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),
@@ -618,8 +620,10 @@ func (s *Server) getCalendar(
 				tUserProps.UserID.EQ(tCalendar.CreatorID),
 			).
 			LEFT_JOIN(tCalendarSubs,
-				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
-					AND(tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId()))),
+				mysql.AND(
+					tCalendarSubs.CalendarID.EQ(tCalendar.ID),
+					tCalendarSubs.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+				),
 			).
 			LEFT_JOIN(tAvatar,
 				tAvatar.ID.EQ(tUserProps.AvatarFileID),

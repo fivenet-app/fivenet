@@ -19,7 +19,7 @@ func (a *Qualifications[U, T, AccessLevel]) GetEntry(
 			a.selectColumns.ID,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
-			a.selectColumns.QualificationId,
+			a.selectColumns.QualificationID,
 			tQualifications.ID,
 			tQualifications.Job,
 			tQualifications.Abbreviation,
@@ -28,7 +28,7 @@ func (a *Qualifications[U, T, AccessLevel]) GetEntry(
 		FROM(
 			a.table.
 				INNER_JOIN(tQualifications,
-					tQualifications.ID.EQ(a.selectColumns.QualificationId),
+					tQualifications.ID.EQ(a.selectColumns.QualificationID),
 				),
 		).
 		WHERE(mysql.AND(
@@ -58,7 +58,7 @@ func (a *Qualifications[U, T, AccessLevel]) CreateEntry(
 		INSERT(
 			a.columns.TargetID,
 			a.columns.Access,
-			a.columns.QualificationId,
+			a.columns.QualificationID,
 		).
 		VALUES(
 			targetId,
@@ -83,7 +83,7 @@ func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(
 	stmt := a.table.
 		UPDATE(
 			a.columns.Access,
-			a.columns.QualificationId,
+			a.columns.QualificationID,
 		).
 		SET(
 			entry.GetAccess(),

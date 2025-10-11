@@ -92,7 +92,7 @@ var Cli struct {
 	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migration helpers."`
 }
 
-func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
+func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool) []fx.Option {
 	opts := []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			l := &fxevent.ZapLogger{Logger: log}
@@ -109,7 +109,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		auth.PermsModule,
 		auth.TokenMgrModule,
 		centrumbot.Module,
-		config.Module,
 		croner.ExecutorModule,
 		croner.HandlersModule,
 		croner.SchedulerModule,
@@ -211,6 +210,12 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			fx.Invoke(func(croner.IRegistry) {}),
 			fx.Invoke(func(*croner.Scheduler) {}),
 		)
+	}
+
+	if withConfig {
+		opts = append(opts, config.Module)
+	} else {
+		opts = append(opts, fx.Provide(dbsync.NewConfig))
 	}
 
 	return opts

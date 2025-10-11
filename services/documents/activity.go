@@ -187,8 +187,8 @@ func (s *Server) generateDocumentDiff(
 		}
 	}
 
-	if !strings.EqualFold(old.GetState(), new.GetState()) {
-		stateDiff, err := s.htmlDiff.FancyDiff(old.GetState(), new.GetState())
+	if !strings.EqualFold(old.GetMeta().GetState(), new.GetMeta().GetState()) {
+		stateDiff, err := s.htmlDiff.FancyDiff(old.GetMeta().GetState(), new.GetMeta().GetState())
 		if err != nil {
 			return nil, err
 		}

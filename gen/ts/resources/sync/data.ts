@@ -87,6 +87,10 @@ export interface CitizenLocations {
      */
     job: string;
     /**
+     * @generated from protobuf field: optional int32 job_grade = 6
+     */
+    jobGrade?: number;
+    /**
      * @generated from protobuf field: resources.livemap.Coords coords = 3
      */
     coords?: Coords;
@@ -425,6 +429,7 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
         super("resources.sync.CitizenLocations", [
             { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 6, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 3, name: "coords", kind: "message", T: () => Coords, options: { "buf.validate.field": { required: true } } },
             { no: 4, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "remove", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -450,6 +455,9 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
+                    break;
+                case /* optional int32 job_grade */ 6:
+                    message.jobGrade = reader.int32();
                     break;
                 case /* resources.livemap.Coords coords */ 3:
                     message.coords = Coords.internalBinaryRead(reader, reader.uint32(), options, message.coords);
@@ -487,6 +495,9 @@ class CitizenLocations$Type extends MessageType<CitizenLocations> {
         /* bool remove = 5; */
         if (message.remove !== false)
             writer.tag(5, WireType.Varint).bool(message.remove);
+        /* optional int32 job_grade = 6; */
+        if (message.jobGrade !== undefined)
+            writer.tag(6, WireType.Varint).int32(message.jobGrade);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

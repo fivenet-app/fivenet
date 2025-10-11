@@ -98,7 +98,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         (s) => {
             const q: Record<string, string> = {};
             if (route.query.tab) {
-                // TODO this is a temporary fix for tab query param being lost
+                // FIXME otherwise the tab query param is lost when using the search form
                 q.tab = String(route.query.tab);
             }
 

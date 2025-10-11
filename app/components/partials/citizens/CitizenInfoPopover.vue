@@ -94,7 +94,7 @@ watchOnce(opened, async () => {
             truncate
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
-            @click="opened = true"
+            @click.prevent="opened = true"
         >
             <template v-if="showAvatarInName" #leading>
                 <USkeleton v-if="!user && isRequestPending(status)" class="h-6 w-6" />

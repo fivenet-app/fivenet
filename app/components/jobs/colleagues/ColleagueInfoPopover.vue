@@ -81,7 +81,7 @@ watchOnce(opened, async () => {
             variant="link"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
-            @click="opened = true"
+            @click.prevent="opened = true"
         >
             <slot name="before" />
             <template v-if="showAvatar" #leading>

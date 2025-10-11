@@ -84,11 +84,11 @@ const links = computed(() =>
                         </div>
 
                         <UBadge
-                            v-if="document.state"
+                            v-if="document.meta?.state"
                             class="inline-flex gap-1"
                             size="md"
                             icon="i-mdi-note-check"
-                            :label="document.state"
+                            :label="document.meta.state"
                         />
 
                         <div
@@ -99,8 +99,26 @@ const links = computed(() =>
                             {{ $t('common.deleted') }}
                         </div>
 
+                        <UBadge
+                            v-if="document?.meta?.apPoliciesActive"
+                            class="inline-flex gap-1"
+                            size="md"
+                            :color="document?.meta?.approved ? 'info' : 'warning'"
+                            icon="i-mdi-approval"
+                            :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
+                        />
+
+                        <UBadge
+                            v-if="document?.meta?.sigPoliciesActive"
+                            class="inline-flex gap-1"
+                            size="md"
+                            :color="document?.meta?.signed ? 'info' : 'warning'"
+                            icon="i-mdi-approval"
+                            :label="document?.meta?.signed ? $t('common.signed') : $t('common.unsigned')"
+                        />
+
                         <div class="flex flex-row items-center gap-1">
-                            <OpenClosedBadge :closed="document.closed" />
+                            <OpenClosedBadge :closed="document.meta?.closed" />
                         </div>
                     </div>
 
@@ -122,7 +140,7 @@ const links = computed(() =>
                             </h2>
 
                             <UBadge
-                                v-if="document.draft"
+                                v-if="document.meta?.draft"
                                 class="inline-flex grow-0 gap-1 self-start"
                                 color="info"
                                 size="md"

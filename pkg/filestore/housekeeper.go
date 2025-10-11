@@ -167,7 +167,8 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	//
 
 	// A) soft-deleted & expired
-	softExpired := tFiles.DeletedAt.IS_NOT_NULL().AND(
+	softExpired := mysql.AND(
+		tFiles.DeletedAt.IS_NOT_NULL(),
 		tFiles.DeletedAt.LT(mysql.TimestampT(cutoff)),
 	)
 
@@ -175,11 +176,11 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	candidateWhere := softExpired
 
 	if len(joinTables) > 0 {
-		orphanCond := tFiles.DeletedAt.IS_NULL()
+		orphanCondition := tFiles.DeletedAt.IS_NULL()
 
 		for _, ji := range joinTables {
 			// NOT EXISTS (SELECT 1 FROM ji.table WHERE ji.fileCol = files.id)
-			orphanCond = orphanCond.AND(
+			orphanCondition = orphanCondition.AND(
 				mysql.NOT(mysql.EXISTS(
 					ji.Table.
 						SELECT(mysql.RawInt("1")).
@@ -189,7 +190,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 			)
 		}
 
-		candidateWhere = mysql.OR(softExpired, orphanCond)
+		candidateWhere = mysql.OR(softExpired, orphanCondition)
 	}
 
 	for {

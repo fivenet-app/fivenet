@@ -18,7 +18,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id i
 			a.selectColumns.ID,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
-			a.selectColumns.UserId,
+			a.selectColumns.UserID,
 			tUsers.ID,
 			tUsers.Job,
 			tUsers.JobGrade,
@@ -30,7 +30,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id i
 		FROM(
 			a.table.
 				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(a.selectColumns.UserId),
+					tUsers.ID.EQ(a.selectColumns.UserID),
 				),
 		).
 		WHERE(
@@ -59,7 +59,7 @@ func (a *Users[U, T, AccessLevel]) CreateEntry(
 		INSERT(
 			a.columns.TargetID,
 			a.columns.Access,
-			a.columns.UserId,
+			a.columns.UserID,
 		).
 		VALUES(
 			targetId,
@@ -84,7 +84,7 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(
 	stmt := a.table.
 		UPDATE(
 			a.columns.Access,
-			a.columns.UserId,
+			a.columns.UserID,
 		).
 		SET(
 			entry.GetAccess(),

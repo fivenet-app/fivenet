@@ -140,7 +140,7 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetCalendarAccess.TargetID,
 						Access:   table.FivenetCalendarAccess.Access,
 					},
-					UserId: table.FivenetCalendarAccess.UserID,
+					UserID: table.FivenetCalendarAccess.UserID,
 				},
 				table.FivenetCalendarAccess.AS("calendar_user_access"),
 				&access.UserAccessColumns{
@@ -149,7 +149,7 @@ func NewServer(p Params) *Server {
 						TargetID: table.FivenetCalendarAccess.AS("calendar_user_access").TargetID,
 						Access:   table.FivenetCalendarAccess.AS("calendar_user_access").Access,
 					},
-					UserId: table.FivenetCalendarAccess.AS("calendar_user_access").UserID,
+					UserID: table.FivenetCalendarAccess.AS("calendar_user_access").UserID,
 				},
 			),
 			nil,

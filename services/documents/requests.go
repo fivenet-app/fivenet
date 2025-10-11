@@ -307,8 +307,10 @@ func (s *Server) UpdateDocumentReq(
 	defer s.aud.Log(auditEntry, req)
 
 	request, err := s.getDocumentReq(ctx, s.db,
-		tDocRequest.ID.EQ(mysql.Int64(req.GetRequestId())).
-			AND(tDocRequest.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))),
+		mysql.AND(
+			tDocRequest.ID.EQ(mysql.Int64(req.GetRequestId())),
+			tDocRequest.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
+		),
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

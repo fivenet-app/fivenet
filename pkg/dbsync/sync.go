@@ -8,12 +8,10 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/XSAM/otelsql"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/prometheus/client_golang/prometheus"
@@ -41,8 +39,7 @@ type Sync struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	acfg    *config.Config
-	cfg     atomic.Pointer[DBSyncConfig]
+	cfg     *Config
 	state   *DBSyncState
 	cli     *grpc.ClientConn
 	syncCli pbsync.SyncServiceClient
@@ -62,7 +59,7 @@ type Params struct {
 	Shutdowner fx.Shutdowner
 
 	Logger *zap.Logger
-	Config *config.Config
+	Config *Config
 }
 
 func New(p Params) (*Sync, error) {
@@ -70,25 +67,22 @@ func New(p Params) (*Sync, error) {
 		wg: &sync.WaitGroup{},
 
 		logger: p.Logger.Named("dbsync"),
-		acfg:   p.Config,
-		cfg:    atomic.Pointer[DBSyncConfig]{},
+		cfg:    p.Config,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
-	if err := s.loadConfig(p.Shutdowner); err != nil {
-		return nil, err
-	}
+	p.Config.setupWatch(p.Logger, s.restart)
 
 	// Load dbsync state from file if exists
 	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
 
 	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN, false)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to prepare source database connection (bad DSN). %w", err)
 	}
 
 	// Connect to source database
@@ -101,14 +95,14 @@ func New(p Params) (*Sync, error) {
 		}),
 	)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to source database. %w", err)
 	}
 	s.db = db
 
 	if err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
 		semconv.DBSystemMySQL,
 	)); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to register db stats metrics. %w", err)
 	}
 
 	// Setup SQL Prometheus metrics collector
@@ -149,7 +143,10 @@ func (s *Sync) createGRPCClient() error {
 			grpc.WithTransportCredentials(transportCreds),
 			// Require transport security for release mode
 			grpc.WithPerRPCCredentials(
-				auth.NewClientTokenAuth(s.cfg.Load().Destination.Token, s.acfg.Mode == "release"),
+				auth.NewClientTokenAuth(
+					s.cfg.Load().Destination.Token,
+					s.cfg.Load().Mode == "release",
+				),
 			),
 		)
 		if err != nil {
