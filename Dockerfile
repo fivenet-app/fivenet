@@ -18,7 +18,7 @@ RUN apk add --no-cache git && \
         pnpm generate
 
 # Livemap Tiles Layer for improved caching
-FROM docker.io/library/alpine:3.22.1 AS livemaptiles
+FROM docker.io/library/alpine:3.22.2 AS livemaptiles
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
-FROM docker.io/library/alpine:3.22.1 AS iconsets
+FROM docker.io/library/alpine:3.22.2 AS iconsets
 
 WORKDIR /app
 
@@ -48,7 +48,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Backend Build
-FROM docker.io/library/golang:1.25.1 AS gobuilder
+FROM docker.io/library/golang:1.25.2 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
 
@@ -59,7 +59,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.22.1
+FROM docker.io/library/alpine:3.22.2
 
 WORKDIR /app
 
