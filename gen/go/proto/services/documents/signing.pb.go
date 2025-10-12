@@ -27,9 +27,14 @@ const (
 )
 
 type ListSignatureTasksInboxRequest struct {
-	state         protoimpl.MessageState          `protogen:"open.v1"`
-	Pagination    *database.PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Statuses      []documents.SignatureTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
+	state      protoimpl.MessageState          `protogen:"open.v1"`
+	Pagination *database.PaginationRequest     `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Statuses   []documents.SignatureTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
+	// Controls inclusion of drafts in the result:
+	// - unset/null: include all documents (drafts and non-drafts)
+	// - false: only non-draft documents
+	// - true: only draft documents
+	OnlyDrafts    *bool `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof" json:"only_drafts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -76,6 +81,13 @@ func (x *ListSignatureTasksInboxRequest) GetStatuses() []documents.SignatureTask
 		return x.Statuses
 	}
 	return nil
+}
+
+func (x *ListSignatureTasksInboxRequest) GetOnlyDrafts() bool {
+	if x != nil && x.OnlyDrafts != nil {
+		return *x.OnlyDrafts
+	}
+	return false
 }
 
 type ListSignatureTasksInboxResponse struct {
@@ -1313,7 +1325,6 @@ func (x *ReopenSignatureResponse) GetSignature() *documents.Signature {
 type RecomputeSignatureStatusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate  *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1355,21 +1366,11 @@ func (x *RecomputeSignatureStatusRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *RecomputeSignatureStatusRequest) GetSnapshotDate() *timestamp.Timestamp {
-	if x != nil {
-		return x.SnapshotDate
-	}
-	return nil
-}
-
 type RecomputeSignatureStatusResponse struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	DocumentSigned    bool                   `protobuf:"varint,1,opt,name=document_signed,json=documentSigned,proto3" json:"document_signed,omitempty"`
-	RequiredTotal     int32                  `protobuf:"varint,2,opt,name=required_total,json=requiredTotal,proto3" json:"required_total,omitempty"`
-	RequiredRemaining int32                  `protobuf:"varint,3,opt,name=required_remaining,json=requiredRemaining,proto3" json:"required_remaining,omitempty"`
-	CollectedValid    int32                  `protobuf:"varint,4,opt,name=collected_valid,json=collectedValid,proto3" json:"collected_valid,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Policy        *documents.SignaturePolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RecomputeSignatureStatusResponse) Reset() {
@@ -1402,32 +1403,11 @@ func (*RecomputeSignatureStatusResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *RecomputeSignatureStatusResponse) GetDocumentSigned() bool {
+func (x *RecomputeSignatureStatusResponse) GetPolicy() *documents.SignaturePolicy {
 	if x != nil {
-		return x.DocumentSigned
+		return x.Policy
 	}
-	return false
-}
-
-func (x *RecomputeSignatureStatusResponse) GetRequiredTotal() int32 {
-	if x != nil {
-		return x.RequiredTotal
-	}
-	return 0
-}
-
-func (x *RecomputeSignatureStatusResponse) GetRequiredRemaining() int32 {
-	if x != nil {
-		return x.RequiredRemaining
-	}
-	return 0
-}
-
-func (x *RecomputeSignatureStatusResponse) GetCollectedValid() int32 {
-	if x != nil {
-		return x.CollectedValid
-	}
-	return 0
+	return nil
 }
 
 type ListUsableStampsRequest struct {
@@ -1707,12 +1687,15 @@ var File_services_documents_signing_proto protoreflect.FileDescriptor
 
 const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\xb4\x01\n" +
+	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\xea\x01\n" +
 	"\x1eListSignatureTasksInboxRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12D\n" +
-	"\bstatuses\x18\x02 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatuses\"\xb0\x01\n" +
+	"\bstatuses\x18\x02 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatuses\x12$\n" +
+	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
+	"onlyDrafts\x88\x01\x01B\x0e\n" +
+	"\f_only_drafts\"\xb0\x01\n" +
 	"\x1fListSignatureTasksInboxResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1818,16 +1801,12 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\fsignature_id\x18\x01 \x01(\x03R\vsignatureId\x12\x18\n" +
 	"\acomment\x18\x02 \x01(\tR\acomment\"W\n" +
 	"\x17ReopenSignatureResponse\x12<\n" +
-	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\x87\x01\n" +
+	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"B\n" +
 	"\x1fRecomputeSignatureStatusRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\"\xca\x01\n" +
-	" RecomputeSignatureStatusResponse\x12'\n" +
-	"\x0fdocument_signed\x18\x01 \x01(\bR\x0edocumentSigned\x12%\n" +
-	"\x0erequired_total\x18\x02 \x01(\x05R\rrequiredTotal\x12-\n" +
-	"\x12required_remaining\x18\x03 \x01(\x05R\x11requiredRemaining\x12'\n" +
-	"\x0fcollected_valid\x18\x04 \x01(\x05R\x0ecollectedValid\"\x9d\x01\n" +
+	"documentId\"`\n" +
+	" RecomputeSignatureStatusResponse\x12<\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x9d\x01\n" +
 	"\x17ListUsableStampsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1946,7 +1925,7 @@ var file_services_documents_signing_proto_depIdxs = []int32{
 	34, // 22: services.documents.DecideSignatureResponse.task:type_name -> resources.documents.SignatureTask
 	36, // 23: services.documents.DecideSignatureResponse.policy:type_name -> resources.documents.SignaturePolicy
 	37, // 24: services.documents.ReopenSignatureResponse.signature:type_name -> resources.documents.Signature
-	35, // 25: services.documents.RecomputeSignatureStatusRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
+	36, // 25: services.documents.RecomputeSignatureStatusResponse.policy:type_name -> resources.documents.SignaturePolicy
 	31, // 26: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	33, // 27: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	40, // 28: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.Stamp
@@ -1994,6 +1973,7 @@ func file_services_documents_signing_proto_init() {
 	if File_services_documents_signing_proto != nil {
 		return
 	}
+	file_services_documents_signing_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[8].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[10].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[11].OneofWrappers = []any{}

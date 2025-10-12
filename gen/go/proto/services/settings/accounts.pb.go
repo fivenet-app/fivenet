@@ -11,6 +11,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -162,6 +163,119 @@ func (x *ListAccountsResponse) GetAccounts() []*accounts.Account {
 	return nil
 }
 
+type CreateAccountRequest struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	License  string                 `protobuf:"bytes,1,opt,name=license,proto3" json:"license,omitempty"`
+	Username string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	LastChar *int32                 `protobuf:"varint,3,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	// Allow creating a char at the same time (only when dbsync is used)
+	Char          *users.UserShort `protobuf:"bytes,4,opt,name=char,proto3,oneof" json:"char,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAccountRequest) Reset() {
+	*x = CreateAccountRequest{}
+	mi := &file_services_settings_accounts_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountRequest) ProtoMessage() {}
+
+func (x *CreateAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_accounts_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAccountRequest.ProtoReflect.Descriptor instead.
+func (*CreateAccountRequest) Descriptor() ([]byte, []int) {
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateAccountRequest) GetLicense() string {
+	if x != nil {
+		return x.License
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CreateAccountRequest) GetLastChar() int32 {
+	if x != nil && x.LastChar != nil {
+		return *x.LastChar
+	}
+	return 0
+}
+
+func (x *CreateAccountRequest) GetChar() *users.UserShort {
+	if x != nil {
+		return x.Char
+	}
+	return nil
+}
+
+type CreateAccountResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RegToken      string                 `protobuf:"bytes,1,opt,name=reg_token,json=regToken,proto3" json:"reg_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateAccountResponse) Reset() {
+	*x = CreateAccountResponse{}
+	mi := &file_services_settings_accounts_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateAccountResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateAccountResponse) ProtoMessage() {}
+
+func (x *CreateAccountResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_accounts_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateAccountResponse.ProtoReflect.Descriptor instead.
+func (*CreateAccountResponse) Descriptor() ([]byte, []int) {
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CreateAccountResponse) GetRegToken() string {
+	if x != nil {
+		return x.RegToken
+	}
+	return ""
+}
+
 type UpdateAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -173,7 +287,7 @@ type UpdateAccountRequest struct {
 
 func (x *UpdateAccountRequest) Reset() {
 	*x = UpdateAccountRequest{}
-	mi := &file_services_settings_accounts_proto_msgTypes[2]
+	mi := &file_services_settings_accounts_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -185,7 +299,7 @@ func (x *UpdateAccountRequest) String() string {
 func (*UpdateAccountRequest) ProtoMessage() {}
 
 func (x *UpdateAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[2]
+	mi := &file_services_settings_accounts_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -198,7 +312,7 @@ func (x *UpdateAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAccountRequest.ProtoReflect.Descriptor instead.
 func (*UpdateAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{2}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *UpdateAccountRequest) GetId() int64 {
@@ -231,7 +345,7 @@ type UpdateAccountResponse struct {
 
 func (x *UpdateAccountResponse) Reset() {
 	*x = UpdateAccountResponse{}
-	mi := &file_services_settings_accounts_proto_msgTypes[3]
+	mi := &file_services_settings_accounts_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -243,7 +357,7 @@ func (x *UpdateAccountResponse) String() string {
 func (*UpdateAccountResponse) ProtoMessage() {}
 
 func (x *UpdateAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[3]
+	mi := &file_services_settings_accounts_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -256,7 +370,7 @@ func (x *UpdateAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateAccountResponse.ProtoReflect.Descriptor instead.
 func (*UpdateAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{3}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UpdateAccountResponse) GetAccount() *accounts.Account {
@@ -276,7 +390,7 @@ type DisconnectOAuth2ConnectionRequest struct {
 
 func (x *DisconnectOAuth2ConnectionRequest) Reset() {
 	*x = DisconnectOAuth2ConnectionRequest{}
-	mi := &file_services_settings_accounts_proto_msgTypes[4]
+	mi := &file_services_settings_accounts_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -288,7 +402,7 @@ func (x *DisconnectOAuth2ConnectionRequest) String() string {
 func (*DisconnectOAuth2ConnectionRequest) ProtoMessage() {}
 
 func (x *DisconnectOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[4]
+	mi := &file_services_settings_accounts_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -301,7 +415,7 @@ func (x *DisconnectOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use DisconnectOAuth2ConnectionRequest.ProtoReflect.Descriptor instead.
 func (*DisconnectOAuth2ConnectionRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{4}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DisconnectOAuth2ConnectionRequest) GetId() int64 {
@@ -326,7 +440,7 @@ type DisconnectOAuth2ConnectionResponse struct {
 
 func (x *DisconnectOAuth2ConnectionResponse) Reset() {
 	*x = DisconnectOAuth2ConnectionResponse{}
-	mi := &file_services_settings_accounts_proto_msgTypes[5]
+	mi := &file_services_settings_accounts_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -338,7 +452,7 @@ func (x *DisconnectOAuth2ConnectionResponse) String() string {
 func (*DisconnectOAuth2ConnectionResponse) ProtoMessage() {}
 
 func (x *DisconnectOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[5]
+	mi := &file_services_settings_accounts_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -351,7 +465,7 @@ func (x *DisconnectOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use DisconnectOAuth2ConnectionResponse.ProtoReflect.Descriptor instead.
 func (*DisconnectOAuth2ConnectionResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{5}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{7}
 }
 
 type DeleteAccountRequest struct {
@@ -363,7 +477,7 @@ type DeleteAccountRequest struct {
 
 func (x *DeleteAccountRequest) Reset() {
 	*x = DeleteAccountRequest{}
-	mi := &file_services_settings_accounts_proto_msgTypes[6]
+	mi := &file_services_settings_accounts_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -375,7 +489,7 @@ func (x *DeleteAccountRequest) String() string {
 func (*DeleteAccountRequest) ProtoMessage() {}
 
 func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[6]
+	mi := &file_services_settings_accounts_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -388,7 +502,7 @@ func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{6}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteAccountRequest) GetId() int64 {
@@ -406,7 +520,7 @@ type DeleteAccountResponse struct {
 
 func (x *DeleteAccountResponse) Reset() {
 	*x = DeleteAccountResponse{}
-	mi := &file_services_settings_accounts_proto_msgTypes[7]
+	mi := &file_services_settings_accounts_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -418,7 +532,7 @@ func (x *DeleteAccountResponse) String() string {
 func (*DeleteAccountResponse) ProtoMessage() {}
 
 func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_accounts_proto_msgTypes[7]
+	mi := &file_services_settings_accounts_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -431,14 +545,14 @@ func (x *DeleteAccountResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountResponse.ProtoReflect.Descriptor instead.
 func (*DeleteAccountResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_accounts_proto_rawDescGZIP(), []int{7}
+	return file_services_settings_accounts_proto_rawDescGZIP(), []int{9}
 }
 
 var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\"\xe0\x02\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a\x1bresources/users/users.proto\"\xe0\x02\n" +
 	"\x13ListAccountsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -460,7 +574,17 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\x81\x01\n" +
+	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\xba\x01\n" +
+	"\x14CreateAccountRequest\x12\x18\n" +
+	"\alicense\x18\x01 \x01(\tR\alicense\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12 \n" +
+	"\tlast_char\x18\x03 \x01(\x05H\x00R\blastChar\x88\x01\x01\x123\n" +
+	"\x04char\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04char\x88\x01\x01B\f\n" +
+	"\n" +
+	"_last_charB\a\n" +
+	"\x05_char\"4\n" +
+	"\x15CreateAccountResponse\x12\x1b\n" +
+	"\treg_token\x18\x01 \x01(\tR\bregToken\"\x81\x01\n" +
 	"\x14UpdateAccountRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12 \n" +
@@ -477,9 +601,10 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\"DisconnectOAuth2ConnectionResponse\"&\n" +
 	"\x14DeleteAccountRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
-	"\x15DeleteAccountResponse2\x92\x04\n" +
+	"\x15DeleteAccountResponse2\x89\x05\n" +
 	"\x0fAccountsService\x12r\n" +
 	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x9c\x01\n" +
 	"\x1aDisconnectOAuth2Connection\x124.services.settings.DisconnectOAuth2ConnectionRequest\x1a5.services.settings.DisconnectOAuth2ConnectionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
@@ -496,40 +621,46 @@ func file_services_settings_accounts_proto_rawDescGZIP() []byte {
 	return file_services_settings_accounts_proto_rawDescData
 }
 
-var file_services_settings_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_services_settings_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_accounts_proto_goTypes = []any{
 	(*ListAccountsRequest)(nil),                // 0: services.settings.ListAccountsRequest
 	(*ListAccountsResponse)(nil),               // 1: services.settings.ListAccountsResponse
-	(*UpdateAccountRequest)(nil),               // 2: services.settings.UpdateAccountRequest
-	(*UpdateAccountResponse)(nil),              // 3: services.settings.UpdateAccountResponse
-	(*DisconnectOAuth2ConnectionRequest)(nil),  // 4: services.settings.DisconnectOAuth2ConnectionRequest
-	(*DisconnectOAuth2ConnectionResponse)(nil), // 5: services.settings.DisconnectOAuth2ConnectionResponse
-	(*DeleteAccountRequest)(nil),               // 6: services.settings.DeleteAccountRequest
-	(*DeleteAccountResponse)(nil),              // 7: services.settings.DeleteAccountResponse
-	(*database.PaginationRequest)(nil),         // 8: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                      // 9: resources.common.database.Sort
-	(*database.PaginationResponse)(nil),        // 10: resources.common.database.PaginationResponse
-	(*accounts.Account)(nil),                   // 11: resources.accounts.Account
+	(*CreateAccountRequest)(nil),               // 2: services.settings.CreateAccountRequest
+	(*CreateAccountResponse)(nil),              // 3: services.settings.CreateAccountResponse
+	(*UpdateAccountRequest)(nil),               // 4: services.settings.UpdateAccountRequest
+	(*UpdateAccountResponse)(nil),              // 5: services.settings.UpdateAccountResponse
+	(*DisconnectOAuth2ConnectionRequest)(nil),  // 6: services.settings.DisconnectOAuth2ConnectionRequest
+	(*DisconnectOAuth2ConnectionResponse)(nil), // 7: services.settings.DisconnectOAuth2ConnectionResponse
+	(*DeleteAccountRequest)(nil),               // 8: services.settings.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),              // 9: services.settings.DeleteAccountResponse
+	(*database.PaginationRequest)(nil),         // 10: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                      // 11: resources.common.database.Sort
+	(*database.PaginationResponse)(nil),        // 12: resources.common.database.PaginationResponse
+	(*accounts.Account)(nil),                   // 13: resources.accounts.Account
+	(*users.UserShort)(nil),                    // 14: resources.users.UserShort
 }
 var file_services_settings_accounts_proto_depIdxs = []int32{
-	8,  // 0: services.settings.ListAccountsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	9,  // 1: services.settings.ListAccountsRequest.sort:type_name -> resources.common.database.Sort
-	10, // 2: services.settings.ListAccountsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	11, // 3: services.settings.ListAccountsResponse.accounts:type_name -> resources.accounts.Account
-	11, // 4: services.settings.UpdateAccountResponse.account:type_name -> resources.accounts.Account
-	0,  // 5: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
-	2,  // 6: services.settings.AccountsService.UpdateAccount:input_type -> services.settings.UpdateAccountRequest
-	4,  // 7: services.settings.AccountsService.DisconnectOAuth2Connection:input_type -> services.settings.DisconnectOAuth2ConnectionRequest
-	6,  // 8: services.settings.AccountsService.DeleteAccount:input_type -> services.settings.DeleteAccountRequest
-	1,  // 9: services.settings.AccountsService.ListAccounts:output_type -> services.settings.ListAccountsResponse
-	3,  // 10: services.settings.AccountsService.UpdateAccount:output_type -> services.settings.UpdateAccountResponse
-	5,  // 11: services.settings.AccountsService.DisconnectOAuth2Connection:output_type -> services.settings.DisconnectOAuth2ConnectionResponse
-	7,  // 12: services.settings.AccountsService.DeleteAccount:output_type -> services.settings.DeleteAccountResponse
-	9,  // [9:13] is the sub-list for method output_type
-	5,  // [5:9] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	10, // 0: services.settings.ListAccountsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	11, // 1: services.settings.ListAccountsRequest.sort:type_name -> resources.common.database.Sort
+	12, // 2: services.settings.ListAccountsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	13, // 3: services.settings.ListAccountsResponse.accounts:type_name -> resources.accounts.Account
+	14, // 4: services.settings.CreateAccountRequest.char:type_name -> resources.users.UserShort
+	13, // 5: services.settings.UpdateAccountResponse.account:type_name -> resources.accounts.Account
+	0,  // 6: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
+	2,  // 7: services.settings.AccountsService.CreateAccount:input_type -> services.settings.CreateAccountRequest
+	4,  // 8: services.settings.AccountsService.UpdateAccount:input_type -> services.settings.UpdateAccountRequest
+	6,  // 9: services.settings.AccountsService.DisconnectOAuth2Connection:input_type -> services.settings.DisconnectOAuth2ConnectionRequest
+	8,  // 10: services.settings.AccountsService.DeleteAccount:input_type -> services.settings.DeleteAccountRequest
+	1,  // 11: services.settings.AccountsService.ListAccounts:output_type -> services.settings.ListAccountsResponse
+	3,  // 12: services.settings.AccountsService.CreateAccount:output_type -> services.settings.CreateAccountResponse
+	5,  // 13: services.settings.AccountsService.UpdateAccount:output_type -> services.settings.UpdateAccountResponse
+	7,  // 14: services.settings.AccountsService.DisconnectOAuth2Connection:output_type -> services.settings.DisconnectOAuth2ConnectionResponse
+	9,  // 15: services.settings.AccountsService.DeleteAccount:output_type -> services.settings.DeleteAccountResponse
+	11, // [11:16] is the sub-list for method output_type
+	6,  // [6:11] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_accounts_proto_init() }
@@ -539,13 +670,14 @@ func file_services_settings_accounts_proto_init() {
 	}
 	file_services_settings_accounts_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_settings_accounts_proto_msgTypes[2].OneofWrappers = []any{}
+	file_services_settings_accounts_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_accounts_proto_rawDesc), len(file_services_settings_accounts_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

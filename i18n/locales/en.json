@@ -1585,7 +1585,7 @@
                     "migration_dirty": "Migration Dirty",
                     "db_charset": "Database Charset",
                     "db_collation": "Database Collation",
-                    "tables_ok": "Tables OK"
+                    "tables_mismatch": "Table Collation Mismatch"
                 },
                 "nats": {
                     "title": "NATS"
@@ -2547,7 +2547,17 @@
                 "COMMENT_DELETED": "Comment deleted",
                 "UNSPECIFIED": "Unspecified",
                 "REQUESTED_OWNER_CHANGE": "Document owner change requested",
-                "REQUESTED_OPENING": "Document open requested"
+                "REQUESTED_OPENING": "Document open requested",
+                "APPROVAL_ASSIGNED": "Document Approval task assigned",
+                "APPROVAL_APPROVED": "Document has been approved",
+                "APPROVAL_REJECTED": "Document has been rejected",
+                "APPROVAL_REVOKED": "Document approval revoked",
+                "APPROVAL_REMOVED": "Document approval removed",
+                "SIGNING_ASSIGNED": "Document signature task assigned",
+                "SIGNING_SIGNED": "Document has been signed",
+                "SIGNING_DECLINED": "Document signature has been declined",
+                "SIGNING_REVOKED": "Document signature revoked",
+                "SIGNING_REMOVED": "Document signature removed"
             },
             "OnEditBehavior": {
                 "UNSPECIFIED": "Unspecified",

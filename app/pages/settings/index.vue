@@ -105,17 +105,12 @@ const superuserItems = [
         </template>
 
         <template #body>
-            <div class="flex flex-col gap-1">
-                <div class="mb-2">
+            <div class="flex flex-col gap-4">
+                <div>
                     <CardsList :items="items" />
                 </div>
 
-                <UCard
-                    v-if="isSuperuser"
-                    class="mb-4"
-                    :title="$t('components.settings.system_status.title')"
-                    icon="i-mdi-server"
-                >
+                <UCard v-if="isSuperuser" :title="$t('components.settings.system_status.title')" icon="i-mdi-server">
                     <template #header>
                         <div class="flex items-center gap-2">
                             <UIcon name="i-mdi-server" class="size-5 text-primary" />
@@ -128,12 +123,7 @@ const superuserItems = [
                     </template>
                 </UCard>
 
-                <UCard
-                    v-if="isSuperuser"
-                    class="mb-4"
-                    :title="$t('components.settings.system_settings')"
-                    icon="i-mdi-administrator"
-                >
+                <UCard v-if="isSuperuser" :title="$t('components.settings.system_settings')" icon="i-mdi-administrator">
                     <template #header>
                         <div class="flex items-center gap-2">
                             <UIcon name="i-mdi-administrator" class="size-5 text-primary" />

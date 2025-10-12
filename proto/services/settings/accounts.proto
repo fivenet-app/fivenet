@@ -7,6 +7,7 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/accounts/accounts.proto";
 import "resources/common/database/database.proto";
+import "resources/users/users.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
 
@@ -23,6 +24,18 @@ message ListAccountsRequest {
 message ListAccountsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.accounts.Account accounts = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message CreateAccountRequest {
+  string license = 1 [(buf.validate.field).string.max_len = 64];
+  string username = 2 [(buf.validate.field).string.max_len = 64];
+  optional int32 last_char = 3;
+  // Allow creating a char at the same time (only when dbsync is used)
+  optional resources.users.UserShort char = 4;
+}
+
+message CreateAccountResponse {
+  string reg_token = 1 [(buf.validate.field).string.len = 6];
 }
 
 message UpdateAccountRequest {
@@ -50,6 +63,12 @@ message DeleteAccountResponse {}
 
 service AccountsService {
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Superuser"
+    };
+  }
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Superuser"

@@ -29,23 +29,23 @@ type OnEditBehavior int32
 
 const (
 	OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED OnEditBehavior = 0
-	// Reset review on content edits
-	OnEditBehavior_ON_EDIT_BEHAVIOR_RESET OnEditBehavior = 1
 	// Keep approvals where possible
-	OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS OnEditBehavior = 2
+	OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS OnEditBehavior = 1
+	// Reset review on content edits
+	OnEditBehavior_ON_EDIT_BEHAVIOR_RESET OnEditBehavior = 2
 )
 
 // Enum value maps for OnEditBehavior.
 var (
 	OnEditBehavior_name = map[int32]string{
 		0: "ON_EDIT_BEHAVIOR_UNSPECIFIED",
-		1: "ON_EDIT_BEHAVIOR_RESET",
-		2: "ON_EDIT_BEHAVIOR_KEEP_PROGRESS",
+		1: "ON_EDIT_BEHAVIOR_KEEP_PROGRESS",
+		2: "ON_EDIT_BEHAVIOR_RESET",
 	}
 	OnEditBehavior_value = map[string]int32{
 		"ON_EDIT_BEHAVIOR_UNSPECIFIED":   0,
-		"ON_EDIT_BEHAVIOR_RESET":         1,
-		"ON_EDIT_BEHAVIOR_KEEP_PROGRESS": 2,
+		"ON_EDIT_BEHAVIOR_KEEP_PROGRESS": 1,
+		"ON_EDIT_BEHAVIOR_RESET":         2,
 	}
 )
 
@@ -956,9 +956,9 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\b_commentB\r\n" +
 	"\v_revoked_at*r\n" +
 	"\x0eOnEditBehavior\x12 \n" +
-	"\x1cON_EDIT_BEHAVIOR_UNSPECIFIED\x10\x00\x12\x1a\n" +
-	"\x16ON_EDIT_BEHAVIOR_RESET\x10\x01\x12\"\n" +
-	"\x1eON_EDIT_BEHAVIOR_KEEP_PROGRESS\x10\x02*}\n" +
+	"\x1cON_EDIT_BEHAVIOR_UNSPECIFIED\x10\x00\x12\"\n" +
+	"\x1eON_EDIT_BEHAVIOR_KEEP_PROGRESS\x10\x01\x12\x1a\n" +
+	"\x16ON_EDIT_BEHAVIOR_RESET\x10\x02*}\n" +
 	"\x10ApprovalRuleKind\x12\"\n" +
 	"\x1eAPPROVAL_RULE_KIND_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eAPPROVAL_RULE_KIND_REQUIRE_ALL\x10\x01\x12!\n" +

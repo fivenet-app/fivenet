@@ -12,6 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserShort } from "../../resources/users/users";
 import { Account } from "../../resources/accounts/accounts";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -59,6 +60,38 @@ export interface ListAccountsResponse {
      * @generated from protobuf field: repeated resources.accounts.Account accounts = 2
      */
     accounts: Account[];
+}
+/**
+ * @generated from protobuf message services.settings.CreateAccountRequest
+ */
+export interface CreateAccountRequest {
+    /**
+     * @generated from protobuf field: string license = 1
+     */
+    license: string;
+    /**
+     * @generated from protobuf field: string username = 2
+     */
+    username: string;
+    /**
+     * @generated from protobuf field: optional int32 last_char = 3
+     */
+    lastChar?: number;
+    /**
+     * Allow creating a char at the same time (only when dbsync is used)
+     *
+     * @generated from protobuf field: optional resources.users.UserShort char = 4
+     */
+    char?: UserShort;
+}
+/**
+ * @generated from protobuf message services.settings.CreateAccountResponse
+ */
+export interface CreateAccountResponse {
+    /**
+     * @generated from protobuf field: string reg_token = 1
+     */
+    regToken: string;
 }
 /**
  * @generated from protobuf message services.settings.UpdateAccountRequest
@@ -253,6 +286,122 @@ class ListAccountsResponse$Type extends MessageType<ListAccountsResponse> {
  * @generated MessageType for protobuf message services.settings.ListAccountsResponse
  */
 export const ListAccountsResponse = new ListAccountsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
+    constructor() {
+        super("services.settings.CreateAccountRequest", [
+            { no: 1, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 3, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "char", kind: "message", T: () => UserShort }
+        ]);
+    }
+    create(value?: PartialMessage<CreateAccountRequest>): CreateAccountRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.license = "";
+        message.username = "";
+        if (value !== undefined)
+            reflectionMergePartial<CreateAccountRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountRequest): CreateAccountRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string license */ 1:
+                    message.license = reader.string();
+                    break;
+                case /* string username */ 2:
+                    message.username = reader.string();
+                    break;
+                case /* optional int32 last_char */ 3:
+                    message.lastChar = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort char */ 4:
+                    message.char = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string license = 1; */
+        if (message.license !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.license);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
+        /* optional int32 last_char = 3; */
+        if (message.lastChar !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.lastChar);
+        /* optional resources.users.UserShort char = 4; */
+        if (message.char)
+            UserShort.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.CreateAccountRequest
+ */
+export const CreateAccountRequest = new CreateAccountRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
+    constructor() {
+        super("services.settings.CreateAccountResponse", [
+            { no: 1, name: "reg_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "6" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateAccountResponse>): CreateAccountResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.regToken = "";
+        if (value !== undefined)
+            reflectionMergePartial<CreateAccountResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateAccountResponse): CreateAccountResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string reg_token */ 1:
+                    message.regToken = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string reg_token = 1; */
+        if (message.regToken !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.regToken);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.CreateAccountResponse
+ */
+export const CreateAccountResponse = new CreateAccountResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateAccountRequest$Type extends MessageType<UpdateAccountRequest> {
     constructor() {
@@ -543,6 +692,7 @@ export const DeleteAccountResponse = new DeleteAccountResponse$Type();
  */
 export const AccountsService = new ServiceType("services.settings.AccountsService", [
     { name: "ListAccounts", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListAccountsRequest, O: ListAccountsResponse },
+    { name: "CreateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: CreateAccountRequest, O: CreateAccountResponse },
     { name: "UpdateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateAccountRequest, O: UpdateAccountResponse },
     { name: "DisconnectOAuth2Connection", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DisconnectOAuth2ConnectionRequest, O: DisconnectOAuth2ConnectionResponse },
     { name: "DeleteAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteAccountRequest, O: DeleteAccountResponse }

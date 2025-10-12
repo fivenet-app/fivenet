@@ -364,15 +364,6 @@ func (m *RecomputeSignatureStatusRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: SnapshotDate
-	if m.SnapshotDate != nil {
-		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -381,6 +372,15 @@ func (m *RecomputeSignatureStatusRequest) Sanitize() error {
 func (m *RecomputeSignatureStatusResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

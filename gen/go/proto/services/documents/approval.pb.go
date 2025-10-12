@@ -27,9 +27,14 @@ const (
 )
 
 type ListApprovalTasksInboxRequest struct {
-	state         protoimpl.MessageState         `protogen:"open.v1"`
-	Pagination    *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
+	state      protoimpl.MessageState         `protogen:"open.v1"`
+	Pagination *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Statuses   []documents.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
+	// Controls inclusion of drafts in the result:
+	// - unset/null: include all documents (drafts and non-drafts)
+	// - false: only non-draft documents
+	// - true: only draft documents
+	OnlyDrafts    *bool `protobuf:"varint,3,opt,name=only_drafts,json=onlyDrafts,proto3,oneof" json:"only_drafts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -76,6 +81,13 @@ func (x *ListApprovalTasksInboxRequest) GetStatuses() []documents.ApprovalTaskSt
 		return x.Statuses
 	}
 	return nil
+}
+
+func (x *ListApprovalTasksInboxRequest) GetOnlyDrafts() bool {
+	if x != nil && x.OnlyDrafts != nil {
+		return *x.OnlyDrafts
+	}
+	return false
 }
 
 type ListApprovalTasksInboxResponse struct {
@@ -1289,12 +1301,15 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"\xb2\x01\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"\xe8\x01\n" +
 	"\x1dListApprovalTasksInboxRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12C\n" +
-	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"\xae\x01\n" +
+	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\x12$\n" +
+	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
+	"onlyDrafts\x88\x01\x01B\x0e\n" +
+	"\f_only_drafts\"\xae\x01\n" +
 	"\x1eListApprovalTasksInboxResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
@@ -1510,6 +1525,7 @@ func file_services_documents_approval_proto_init() {
 	if File_services_documents_approval_proto != nil {
 		return
 	}
+	file_services_documents_approval_proto_msgTypes[0].OneofWrappers = []any{}
 	file_services_documents_approval_proto_msgTypes[8].OneofWrappers = []any{}
 	file_services_documents_approval_proto_msgTypes[9].OneofWrappers = []any{}
 	file_services_documents_approval_proto_msgTypes[13].OneofWrappers = []any{}

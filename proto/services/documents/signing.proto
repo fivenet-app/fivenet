@@ -15,6 +15,11 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/
 message ListSignatureTasksInboxRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.SignatureTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+  // Controls inclusion of drafts in the result:
+  // - unset/null: include all documents (drafts and non-drafts)
+  // - false: only non-draft documents
+  // - true: only draft documents
+  optional bool only_drafts = 3;
 }
 
 message ListSignatureTasksInboxResponse {
@@ -164,14 +169,10 @@ message ReopenSignatureResponse {
 
 message RecomputeSignatureStatusRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  resources.timestamp.Timestamp snapshot_date = 2 [(buf.validate.field).required = true];
 }
 
 message RecomputeSignatureStatusResponse {
-  bool document_signed = 1;
-  int32 required_total = 2;
-  int32 required_remaining = 3;
-  int32 collected_valid = 4;
+  resources.documents.SignaturePolicy policy = 1;
 }
 
 message ListUsableStampsRequest {

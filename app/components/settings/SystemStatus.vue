@@ -54,7 +54,7 @@ async function getStatus() {
                             </li>
                             <li class="inline-flex items-center gap-1">
                                 <strong>{{ $t('components.settings.system_status.database.migration_dirty') }}:</strong>
-                                {{ data.database?.migrationDirty ? $t('common.yes') : $t('common.no') }}
+                                <span>{{ data.database?.migrationDirty ? $t('common.yes') : $t('common.no') }}</span>
                             </li>
                             <li class="inline-flex items-center gap-1">
                                 <strong>{{ $t('components.settings.system_status.database.db_charset') }}:</strong>
@@ -65,8 +65,8 @@ async function getStatus() {
                                 <code>{{ data.database?.dbCollation }}</code>
                             </li>
                             <li class="inline-flex items-center gap-1">
-                                <strong>{{ $t('components.settings.system_status.database.tables_ok') }}:</strong>
-                                <code>{{ data.database?.tablesOk ? $t('common.yes') : $t('common.no') }}</code>
+                                <strong>{{ $t('components.settings.system_status.database.tables_mismatch') }}:</strong>
+                                <span>{{ !data.database?.tablesOk ? $t('common.yes') : $t('common.no') }}</span>
                             </li>
                         </ul>
                     </div>

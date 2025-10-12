@@ -9,6 +9,44 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *CreateAccountRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Char
+	if m.Char != nil {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: License
+	m.License = htmlsanitizer.Sanitize(m.License)
+
+	// Field: Username
+	m.Username = htmlsanitizer.Sanitize(m.Username)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *CreateAccountResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: RegToken
+	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *DeleteAccountRequest) Sanitize() error {
 	if m == nil {
 		return nil

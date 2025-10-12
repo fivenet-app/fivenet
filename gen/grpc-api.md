@@ -3425,13 +3425,16 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_REQUESTED_DELETION` | 18 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_APPROVAL` | 20 |  |
 | `DOC_ACTIVITY_TYPE_REQUESTED_SIGNING` | 21 |  |
-| `DOC_ACTIVITY_TYPE_APPROVAL_APPROVED` | 22 | Approval |
-| `DOC_ACTIVITY_TYPE_APPROVAL_DECLINED` | 23 |  |
-| `DOC_ACTIVITY_TYPE_APPROVAL_CANCELLED` | 24 |  |
-| `DOC_ACTIVITY_TYPE_APPROVAL_EXPIRED` | 25 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_CREATED` | 26 | Signing |
-| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 27 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 28 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED` | 40 | Approval |
+| `DOC_ACTIVITY_TYPE_APPROVAL_APPROVED` | 41 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_REJECTED` | 42 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_REVOKED` | 43 |  |
+| `DOC_ACTIVITY_TYPE_APPROVAL_REMOVED` | 44 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED` | 50 | Signing |
+| `DOC_ACTIVITY_TYPE_SIGNING_SIGNED` | 51 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_DECLINED` | 52 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 53 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 54 |  |
 
 
  <!-- end enums -->
@@ -3908,8 +3911,8 @@ Policy snapshot applied to a specific version
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `ON_EDIT_BEHAVIOR_UNSPECIFIED` | 0 |  |
-| `ON_EDIT_BEHAVIOR_RESET` | 1 | Reset review on content edits |
-| `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 2 | Keep approvals where possible |
+| `ON_EDIT_BEHAVIOR_KEEP_PROGRESS` | 1 | Keep approvals where possible |
+| `ON_EDIT_BEHAVIOR_RESET` | 2 | Reset review on content edits |
 
 
  <!-- end enums -->
@@ -4096,8 +4099,8 @@ Policy snapshot applied to a specific version
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_BINDING_MODE_BINDING` | 1 | Invalidates on content edits |
-| `SIGNATURE_BINDING_MODE_NONBINDING` | 2 | Stays but marked 'signed on vX' |
+| `SIGNATURE_BINDING_MODE_NONBINDING` | 1 | Stays but marked 'signed on vX' |
+| `SIGNATURE_BINDING_MODE_BINDING` | 2 | Invalidates on content edits |
 
 
 
@@ -8587,6 +8590,7 @@ Only one policy per document is supported currently.
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `statuses` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) | repeated |  |
+| `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
 
 
 
@@ -9775,6 +9779,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
 | `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
+| `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
 
 
 
@@ -9876,7 +9881,6 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 
 
 
@@ -9887,10 +9891,7 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_signed` | [bool](#bool) |  |  |
-| `required_total` | [int32](#int32) |  |  |
-| `required_remaining` | [int32](#int32) |  |  |
-| `collected_valid` | [int32](#int32) |  |  |
+| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
 
 
 
@@ -11810,6 +11811,31 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 ## services/settings/accounts.proto
 
 
+### services.settings.CreateAccountRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `license` | [string](#string) |  |  |
+| `username` | [string](#string) |  |  |
+| `last_char` | [int32](#int32) | optional |  |
+| `char` | [resources.users.UserShort](#resourcesusersUserShort) | optional | Allow creating a char at the same time (only when dbsync is used) |
+
+
+
+
+
+### services.settings.CreateAccountResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reg_token` | [string](#string) |  |  |
+
+
+
+
+
 ### services.settings.DeleteAccountRequest
 
 
@@ -11908,6 +11934,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListAccounts` | [ListAccountsRequest](#servicessettingsListAccountsRequest) | [ListAccountsResponse](#servicessettingsListAccountsResponse) | |
+| `CreateAccount` | [CreateAccountRequest](#servicessettingsCreateAccountRequest) | [CreateAccountResponse](#servicessettingsCreateAccountResponse) | |
 | `UpdateAccount` | [UpdateAccountRequest](#servicessettingsUpdateAccountRequest) | [UpdateAccountResponse](#servicessettingsUpdateAccountResponse) | |
 | `DisconnectOAuth2Connection` | [DisconnectOAuth2ConnectionRequest](#servicessettingsDisconnectOAuth2ConnectionRequest) | [DisconnectOAuth2ConnectionResponse](#servicessettingsDisconnectOAuth2ConnectionResponse) | |
 | `DeleteAccount` | [DeleteAccountRequest](#servicessettingsDeleteAccountRequest) | [DeleteAccountResponse](#servicessettingsDeleteAccountResponse) | |

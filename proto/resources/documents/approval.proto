@@ -13,10 +13,10 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 // Policy snapshot applied to a specific version
 enum OnEditBehavior {
   ON_EDIT_BEHAVIOR_UNSPECIFIED = 0;
-  // Reset review on content edits
-  ON_EDIT_BEHAVIOR_RESET = 1;
   // Keep approvals where possible
-  ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
+  ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 1;
+  // Reset review on content edits
+  ON_EDIT_BEHAVIOR_RESET = 2;
 }
 
 enum ApprovalRuleKind {

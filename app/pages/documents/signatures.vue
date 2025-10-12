@@ -37,8 +37,15 @@ const statuses = computed(() => [
     { label: t('enums.documents.SignatureTaskStatus.EXPIRED'), value: SignatureTaskStatus.EXPIRED },
 ]);
 
+const onlyDrafts: ToggleItem[] = [
+    { id: 0, label: t('common.all_documents'), value: undefined },
+    { id: 1, label: t('common.only_published'), value: false },
+    { id: 2, label: t('common.only_drafts'), value: true },
+];
+
 const schema = z.object({
     statuses: z.enum(SignatureTaskStatus).array().optional().default([SignatureTaskStatus.PENDING]),
+    onlyDrafts: z.coerce.boolean().optional(),
     sorting: z
         .object({
             columns: z
@@ -69,6 +76,7 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
             offset: calculateOffset(query.page, data.value?.pagination),
         },
         statuses: query.statuses,
+        onlyDrafts: query.onlyDrafts,
     });
     const { response } = await call;
 
@@ -113,6 +121,32 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
                                 >
                                     <template #default>
                                         {{ $t('common.selected', query.statuses.length) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormField>
+
+                        <UFormField
+                            class="flex min-w-40 shrink-0 flex-col"
+                            name="onlyDrafts"
+                            :label="$t('common.show')"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.onlyDrafts"
+                                    :items="onlyDrafts"
+                                    class="w-full"
+                                    label-key="label"
+                                    value-key="value"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                >
+                                    <template #default="{ modelValue }">
+                                        {{
+                                            modelValue === undefined
+                                                ? $t('common.all_documents')
+                                                : onlyDrafts.find((item) => item.value === modelValue)?.label
+                                        }}
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
@@ -164,14 +198,6 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
                                         size="xs"
                                     />
                                 </div>
-
-                                <UBadge
-                                    v-if="task.document?.meta?.state"
-                                    class="inline-flex gap-1"
-                                    size="md"
-                                    icon="i-mdi-note-check"
-                                    :label="task.document.meta.state"
-                                />
 
                                 <div
                                     v-if="task.document?.deletedAt"
@@ -243,7 +269,23 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
                             </div>
 
                             <div class="flex justify-between gap-2">
-                                <div class="flex-1" />
+                                <div class="flex flex-1 items-center gap-1.5">
+                                    <UIcon class="size-4 shrink-0" name="i-mdi-calendar" />
+                                    <p class="inline-flex gap-1 text-nowrap">
+                                        <span class="hidden truncate md:block">
+                                            {{ $t('common.created_at') }}
+                                        </span>
+                                        <GenericTime :value="task.document?.createdAt" />
+                                    </p>
+                                </div>
+
+                                <UBadge
+                                    v-if="task.document?.meta?.state"
+                                    class="inline-flex gap-1"
+                                    size="md"
+                                    icon="i-mdi-note-check"
+                                    :label="task.document.meta.state"
+                                />
 
                                 <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
                                     <span>{{ task.document?.creatorJobLabel }}</span>

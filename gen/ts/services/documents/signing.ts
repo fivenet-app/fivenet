@@ -34,6 +34,15 @@ export interface ListSignatureTasksInboxRequest {
      * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 2
      */
     statuses: SignatureTaskStatus[];
+    /**
+     * Controls inclusion of drafts in the result:
+     * - unset/null: include all documents (drafts and non-drafts)
+     * - false: only non-draft documents
+     * - true: only draft documents
+     *
+     * @generated from protobuf field: optional bool only_drafts = 3
+     */
+    onlyDrafts?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListSignatureTasksInboxResponse
@@ -401,31 +410,15 @@ export interface RecomputeSignatureStatusRequest {
      * @generated from protobuf field: int64 document_id = 1
      */
     documentId: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
-     */
-    snapshotDate?: Timestamp;
 }
 /**
  * @generated from protobuf message services.documents.RecomputeSignatureStatusResponse
  */
 export interface RecomputeSignatureStatusResponse {
     /**
-     * @generated from protobuf field: bool document_signed = 1
+     * @generated from protobuf field: resources.documents.SignaturePolicy policy = 1
      */
-    documentSigned: boolean;
-    /**
-     * @generated from protobuf field: int32 required_total = 2
-     */
-    requiredTotal: number;
-    /**
-     * @generated from protobuf field: int32 required_remaining = 3
-     */
-    requiredRemaining: number;
-    /**
-     * @generated from protobuf field: int32 collected_valid = 4
-     */
-    collectedValid: number;
+    policy?: SignaturePolicy;
 }
 /**
  * @generated from protobuf message services.documents.ListUsableStampsRequest
@@ -492,7 +485,8 @@ class ListSignatureTasksInboxRequest$Type extends MessageType<ListSignatureTasks
     constructor() {
         super("services.documents.ListSignatureTasksInboxRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
+            { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListSignatureTasksInboxRequest>): ListSignatureTasksInboxRequest {
@@ -517,6 +511,9 @@ class ListSignatureTasksInboxRequest$Type extends MessageType<ListSignatureTasks
                     else
                         message.statuses.push(reader.int32());
                     break;
+                case /* optional bool only_drafts */ 3:
+                    message.onlyDrafts = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -539,6 +536,9 @@ class ListSignatureTasksInboxRequest$Type extends MessageType<ListSignatureTasks
                 writer.int32(message.statuses[i]);
             writer.join();
         }
+        /* optional bool only_drafts = 3; */
+        if (message.onlyDrafts !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.onlyDrafts);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1817,8 +1817,7 @@ export const ReopenSignatureResponse = new ReopenSignatureResponse$Type();
 class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatureStatusRequest> {
     constructor() {
         super("services.documents.RecomputeSignatureStatusRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<RecomputeSignatureStatusRequest>): RecomputeSignatureStatusRequest {
@@ -1836,9 +1835,6 @@ class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatur
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 2:
-                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1854,9 +1850,6 @@ class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatur
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 2; */
-        if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1871,18 +1864,11 @@ export const RecomputeSignatureStatusRequest = new RecomputeSignatureStatusReque
 class RecomputeSignatureStatusResponse$Type extends MessageType<RecomputeSignatureStatusResponse> {
     constructor() {
         super("services.documents.RecomputeSignatureStatusResponse", [
-            { no: 1, name: "document_signed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "required_total", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "required_remaining", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "collected_valid", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "policy", kind: "message", T: () => SignaturePolicy }
         ]);
     }
     create(value?: PartialMessage<RecomputeSignatureStatusResponse>): RecomputeSignatureStatusResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentSigned = false;
-        message.requiredTotal = 0;
-        message.requiredRemaining = 0;
-        message.collectedValid = 0;
         if (value !== undefined)
             reflectionMergePartial<RecomputeSignatureStatusResponse>(this, message, value);
         return message;
@@ -1892,17 +1878,8 @@ class RecomputeSignatureStatusResponse$Type extends MessageType<RecomputeSignatu
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool document_signed */ 1:
-                    message.documentSigned = reader.bool();
-                    break;
-                case /* int32 required_total */ 2:
-                    message.requiredTotal = reader.int32();
-                    break;
-                case /* int32 required_remaining */ 3:
-                    message.requiredRemaining = reader.int32();
-                    break;
-                case /* int32 collected_valid */ 4:
-                    message.collectedValid = reader.int32();
+                case /* resources.documents.SignaturePolicy policy */ 1:
+                    message.policy = SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1916,18 +1893,9 @@ class RecomputeSignatureStatusResponse$Type extends MessageType<RecomputeSignatu
         return message;
     }
     internalBinaryWrite(message: RecomputeSignatureStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool document_signed = 1; */
-        if (message.documentSigned !== false)
-            writer.tag(1, WireType.Varint).bool(message.documentSigned);
-        /* int32 required_total = 2; */
-        if (message.requiredTotal !== 0)
-            writer.tag(2, WireType.Varint).int32(message.requiredTotal);
-        /* int32 required_remaining = 3; */
-        if (message.requiredRemaining !== 0)
-            writer.tag(3, WireType.Varint).int32(message.requiredRemaining);
-        /* int32 collected_valid = 4; */
-        if (message.collectedValid !== 0)
-            writer.tag(4, WireType.Varint).int32(message.collectedValid);
+        /* resources.documents.SignaturePolicy policy = 1; */
+        if (message.policy)
+            SignaturePolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -15,6 +15,7 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: settings.AccountsService
+	"settings.AccountsService/CreateAccount":              "Superuser",
 	"settings.AccountsService/DeleteAccount":              "Superuser",
 	"settings.AccountsService/DisconnectOAuth2Connection": "Superuser",
 	"settings.AccountsService/ListAccounts":               "Superuser",

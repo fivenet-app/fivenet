@@ -302,6 +302,7 @@ export const grpcMethods = [
 	'qualifications.QualificationsService/GetUserExam',
 	'qualifications.QualificationsService/UploadFile',
 	'settings.AccountsService/ListAccounts',
+	'settings.AccountsService/CreateAccount',
 	'settings.AccountsService/UpdateAccount',
 	'settings.AccountsService/DisconnectOAuth2Connection',
 	'settings.AccountsService/DeleteAccount',

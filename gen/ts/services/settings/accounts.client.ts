@@ -11,6 +11,8 @@ import type { DisconnectOAuth2ConnectionResponse } from "./accounts";
 import type { DisconnectOAuth2ConnectionRequest } from "./accounts";
 import type { UpdateAccountResponse } from "./accounts";
 import type { UpdateAccountRequest } from "./accounts";
+import type { CreateAccountResponse } from "./accounts";
+import type { CreateAccountRequest } from "./accounts";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListAccountsResponse } from "./accounts";
 import type { ListAccountsRequest } from "./accounts";
@@ -24,6 +26,10 @@ export interface IAccountsServiceClient {
      * @generated from protobuf rpc: ListAccounts
      */
     listAccounts(input: ListAccountsRequest, options?: RpcOptions): UnaryCall<ListAccountsRequest, ListAccountsResponse>;
+    /**
+     * @generated from protobuf rpc: CreateAccount
+     */
+    createAccount(input: CreateAccountRequest, options?: RpcOptions): UnaryCall<CreateAccountRequest, CreateAccountResponse>;
     /**
      * @generated from protobuf rpc: UpdateAccount
      */
@@ -54,24 +60,31 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
         return stackIntercept<ListAccountsRequest, ListAccountsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: CreateAccount
+     */
+    createAccount(input: CreateAccountRequest, options?: RpcOptions): UnaryCall<CreateAccountRequest, CreateAccountResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateAccountRequest, CreateAccountResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: UpdateAccount
      */
     updateAccount(input: UpdateAccountRequest, options?: RpcOptions): UnaryCall<UpdateAccountRequest, UpdateAccountResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateAccountRequest, UpdateAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DisconnectOAuth2Connection
      */
     disconnectOAuth2Connection(input: DisconnectOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteAccount
      */
     deleteAccount(input: DeleteAccountRequest, options?: RpcOptions): UnaryCall<DeleteAccountRequest, DeleteAccountResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteAccountRequest, DeleteAccountResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -32,6 +32,15 @@ export interface ListApprovalTasksInboxRequest {
      * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 2
      */
     statuses: ApprovalTaskStatus[];
+    /**
+     * Controls inclusion of drafts in the result:
+     * - unset/null: include all documents (drafts and non-drafts)
+     * - false: only non-draft documents
+     * - true: only draft documents
+     *
+     * @generated from protobuf field: optional bool only_drafts = 3
+     */
+    onlyDrafts?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListApprovalTasksInboxResponse
@@ -382,7 +391,8 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
     constructor() {
         super("services.documents.ListApprovalTasksInboxRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
+            { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListApprovalTasksInboxRequest>): ListApprovalTasksInboxRequest {
@@ -407,6 +417,9 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
                     else
                         message.statuses.push(reader.int32());
                     break;
+                case /* optional bool only_drafts */ 3:
+                    message.onlyDrafts = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -429,6 +442,9 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
                 writer.int32(message.statuses[i]);
             writer.join();
         }
+        /* optional bool only_drafts = 3; */
+        if (message.onlyDrafts !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.onlyDrafts);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

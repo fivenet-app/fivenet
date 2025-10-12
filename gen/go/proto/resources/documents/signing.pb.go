@@ -29,23 +29,23 @@ type SignatureBindingMode int32
 
 const (
 	SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED SignatureBindingMode = 0
-	// Invalidates on content edits
-	SignatureBindingMode_SIGNATURE_BINDING_MODE_BINDING SignatureBindingMode = 1
 	// Stays but marked 'signed on vX'
-	SignatureBindingMode_SIGNATURE_BINDING_MODE_NONBINDING SignatureBindingMode = 2
+	SignatureBindingMode_SIGNATURE_BINDING_MODE_NONBINDING SignatureBindingMode = 1
+	// Invalidates on content edits
+	SignatureBindingMode_SIGNATURE_BINDING_MODE_BINDING SignatureBindingMode = 2
 )
 
 // Enum value maps for SignatureBindingMode.
 var (
 	SignatureBindingMode_name = map[int32]string{
 		0: "SIGNATURE_BINDING_MODE_UNSPECIFIED",
-		1: "SIGNATURE_BINDING_MODE_BINDING",
-		2: "SIGNATURE_BINDING_MODE_NONBINDING",
+		1: "SIGNATURE_BINDING_MODE_NONBINDING",
+		2: "SIGNATURE_BINDING_MODE_BINDING",
 	}
 	SignatureBindingMode_value = map[string]int32{
 		"SIGNATURE_BINDING_MODE_UNSPECIFIED": 0,
-		"SIGNATURE_BINDING_MODE_BINDING":     1,
-		"SIGNATURE_BINDING_MODE_NONBINDING":  2,
+		"SIGNATURE_BINDING_MODE_NONBINDING":  1,
+		"SIGNATURE_BINDING_MODE_BINDING":     2,
 	}
 )
 
@@ -951,9 +951,9 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\b_commentB\r\n" +
 	"\v_revoked_at*\x89\x01\n" +
 	"\x14SignatureBindingMode\x12&\n" +
-	"\"SIGNATURE_BINDING_MODE_UNSPECIFIED\x10\x00\x12\"\n" +
-	"\x1eSIGNATURE_BINDING_MODE_BINDING\x10\x01\x12%\n" +
-	"!SIGNATURE_BINDING_MODE_NONBINDING\x10\x02*\x80\x01\n" +
+	"\"SIGNATURE_BINDING_MODE_UNSPECIFIED\x10\x00\x12%\n" +
+	"!SIGNATURE_BINDING_MODE_NONBINDING\x10\x01\x12\"\n" +
+	"\x1eSIGNATURE_BINDING_MODE_BINDING\x10\x02*\x80\x01\n" +
 	"\rSignatureType\x12\x1e\n" +
 	"\x1aSIGNATURE_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17SIGNATURE_TYPE_FREEHAND\x10\x01\x12\x18\n" +

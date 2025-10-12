@@ -265,17 +265,17 @@ export enum SignatureBindingMode {
      */
     UNSPECIFIED = 0,
     /**
-     * Invalidates on content edits
-     *
-     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_BINDING = 1;
-     */
-    BINDING = 1,
-    /**
      * Stays but marked 'signed on vX'
      *
-     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_NONBINDING = 2;
+     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_NONBINDING = 1;
      */
-    NONBINDING = 2
+    NONBINDING = 1,
+    /**
+     * Invalidates on content edits
+     *
+     * @generated from protobuf enum value: SIGNATURE_BINDING_MODE_BINDING = 2;
+     */
+    BINDING = 2
 }
 /**
  * @generated from protobuf enum resources.documents.SignatureType

@@ -13,10 +13,10 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 enum SignatureBindingMode {
   SIGNATURE_BINDING_MODE_UNSPECIFIED = 0;
-  // Invalidates on content edits
-  SIGNATURE_BINDING_MODE_BINDING = 1;
   // Stays but marked 'signed on vX'
-  SIGNATURE_BINDING_MODE_NONBINDING = 2;
+  SIGNATURE_BINDING_MODE_NONBINDING = 1;
+  // Invalidates on content edits
+  SIGNATURE_BINDING_MODE_BINDING = 2;
 }
 
 enum SignatureType {

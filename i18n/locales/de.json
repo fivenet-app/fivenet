@@ -917,6 +917,7 @@
             },
             "approval": {
                 "policy_form": {
+                    "title": "Genehmigungsanfrage-Richtlinie",
                     "rule_kind": "Regeltyp",
                     "on_edit_behavior": "Bearbeitungsverhalten",
                     "required_signatures": "Erforderliche Unterschriften"
@@ -1583,7 +1584,7 @@
                     "migration_dirty": "Datenbank-Migrationsfehler",
                     "db_charset": "Datenbank-Zeichensatz",
                     "db_collation": "Datenbank-Kollation",
-                    "tables_ok": "Tabellen OK"
+                    "tables_mismatch": "Tabellen-Kollations-Diskrepanz"
                 },
                 "nats": {
                     "title": "NATS"

@@ -661,6 +661,14 @@ func (s *Server) UpdateDocument(
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
+
+		if err := s.handleApprovalOnEditBehaviors(ctx, tx, oldDoc); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
+		if err := s.handleSignatureBindingMode(ctx, tx, oldDoc); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	// Commit the transaction

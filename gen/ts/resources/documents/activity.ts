@@ -319,35 +319,47 @@ export enum DocActivityType {
     /**
      * Approval
      *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_APPROVED = 22;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED = 40;
      */
-    APPROVAL_APPROVED = 22,
+    APPROVAL_ASSIGNED = 40,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_DECLINED = 23;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_APPROVED = 41;
      */
-    APPROVAL_DECLINED = 23,
+    APPROVAL_APPROVED = 41,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_CANCELLED = 24;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_REJECTED = 42;
      */
-    APPROVAL_CANCELLED = 24,
+    APPROVAL_REJECTED = 42,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_EXPIRED = 25;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_REVOKED = 43;
      */
-    APPROVAL_EXPIRED = 25,
+    APPROVAL_REVOKED = 43,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_REMOVED = 44;
+     */
+    APPROVAL_REMOVED = 44,
     /**
      * Signing
      *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_CREATED = 26;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED = 50;
      */
-    SIGNING_CREATED = 26,
+    SIGNING_ASSIGNED = 50,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REVOKED = 27;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_SIGNED = 51;
      */
-    SIGNING_REVOKED = 27,
+    SIGNING_SIGNED = 51,
     /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REMOVED = 28;
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_DECLINED = 52;
      */
-    SIGNING_REMOVED = 28
+    SIGNING_DECLINED = 52,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REVOKED = 53;
+     */
+    SIGNING_REVOKED = 53,
+    /**
+     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REMOVED = 54;
+     */
+    SIGNING_REMOVED = 54
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocActivity$Type extends MessageType<DocActivity> {

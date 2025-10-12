@@ -268,17 +268,17 @@ export enum OnEditBehavior {
      */
     UNSPECIFIED = 0,
     /**
-     * Reset review on content edits
-     *
-     * @generated from protobuf enum value: ON_EDIT_BEHAVIOR_RESET = 1;
-     */
-    RESET = 1,
-    /**
      * Keep approvals where possible
      *
-     * @generated from protobuf enum value: ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 2;
+     * @generated from protobuf enum value: ON_EDIT_BEHAVIOR_KEEP_PROGRESS = 1;
      */
-    KEEP_PROGRESS = 2
+    KEEP_PROGRESS = 1,
+    /**
+     * Reset review on content edits
+     *
+     * @generated from protobuf enum value: ON_EDIT_BEHAVIOR_RESET = 2;
+     */
+    RESET = 2
 }
 /**
  * @generated from protobuf enum resources.documents.ApprovalRuleKind
