@@ -43,7 +43,7 @@ jobs:
             "${{ inputs.chart_version }}"
 
       - name: Commit changes on develop
-        uses: stefanzweifel/git-auto-commit-action@v6
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "ci: bump dev channel to ${{ inputs.image_tag }}"
           file_pattern: |
