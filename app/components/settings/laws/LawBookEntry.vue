@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton } from '#components';
+import { UButton, UTooltip } from '#components';
 import type { FormSubmitEvent, TableColumn } from '@nuxt/ui';
 import type { ExpandedState } from '@tanstack/vue-table';
 import { z } from 'zod';
@@ -191,17 +191,19 @@ const columns = computed(
             {
                 id: 'expand',
                 cell: ({ row }) =>
-                    h(UButton, {
-                        color: row.getIsExpanded() ? 'neutral' : 'primary',
-                        variant: 'ghost',
-                        icon: row.getIsExpanded() ? 'i-mdi-chevron-up' : 'i-mdi-pencil',
-                        square: true,
-                        'aria-label': 'Expand',
-                        ui: {
-                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
-                        },
-                        onClick: () => row.toggleExpanded(),
-                    }),
+                    h(UTooltip, { text: t('common.expand_collapse') }, () =>
+                        h(UButton, {
+                            color: row.getIsExpanded() ? 'neutral' : 'primary',
+                            variant: 'ghost',
+                            icon: row.getIsExpanded() ? 'i-mdi-chevron-up' : 'i-mdi-pencil',
+                            square: true,
+                            'aria-label': 'Expand',
+                            ui: {
+                                leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                            },
+                            onClick: () => row.toggleExpanded(),
+                        }),
+                    ),
             },
             {
                 id: 'actions',

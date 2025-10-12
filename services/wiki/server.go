@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -55,7 +54,6 @@ type Server struct {
 	db     *sql.DB
 	js     *events.JSWrapper
 
-	aud      audit.IAuditer
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	htmlDiff *htmldiffer.Differ
@@ -74,7 +72,6 @@ type Params struct {
 
 	Logger     *zap.Logger
 	DB         *sql.DB
-	Audit      audit.IAuditer
 	Perms      perms.Permissions
 	Enricher   *mstlystcdata.UserAwareEnricher
 	HTMLDiffer *htmldiffer.Differ
@@ -167,7 +164,6 @@ func NewServer(p Params) *Server {
 		db:     p.DB,
 		js:     p.JS,
 
-		aud:      p.Audit,
 		perms:    p.Perms,
 		enricher: p.Enricher,
 		htmlDiff: p.HTMLDiffer,

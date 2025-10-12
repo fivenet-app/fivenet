@@ -7,6 +7,7 @@
 package grpcws
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -511,7 +512,7 @@ var File_resources_common_grpcws_grpcws_proto protoreflect.FileDescriptor
 
 const file_resources_common_grpcws_grpcws_proto_rawDesc = "" +
 	"\n" +
-	"$resources/common/grpcws/grpcws.proto\x12\x17resources.common.grpcws\"\x92\x03\n" +
+	"$resources/common/grpcws/grpcws.proto\x12\x17resources.common.grpcws\x1a\x1ccodegen/audit/redacted.proto\"\x92\x03\n" +
 	"\tGrpcFrame\x12\x1b\n" +
 	"\tstream_id\x18\x01 \x01(\rR\bstreamId\x123\n" +
 	"\x04ping\x18\x03 \x01(\v2\x1d.resources.common.grpcws.PingH\x00R\x04ping\x129\n" +
@@ -531,9 +532,9 @@ const file_resources_common_grpcws_grpcws_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12:\n" +
 	"\x05value\x18\x02 \x01(\v2$.resources.common.grpcws.HeaderValueR\x05value:\x028\x01\"#\n" +
 	"\vHeaderValue\x12\x14\n" +
-	"\x05value\x18\x01 \x03(\tR\x05value\"6\n" +
-	"\x04Body\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\x12\x1a\n" +
+	"\x05value\x18\x01 \x03(\tR\x05value\"<\n" +
+	"\x04Body\x12\x18\n" +
+	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\x12\x1a\n" +
 	"\bcomplete\x18\x02 \x01(\bR\bcomplete\"\n" +
 	"\n" +
 	"\bComplete\"\xfc\x01\n" +

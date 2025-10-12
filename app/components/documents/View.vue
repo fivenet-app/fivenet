@@ -682,15 +682,19 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         </div>
 
                         <div>
-                            <UButton
-                                icon="i-mdi-chevron-double-down"
-                                variant="link"
-                                size="sm"
-                                class="group place-self-end"
-                                :ui="{ leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180' }"
-                                :data-state="headToggled ? 'open' : 'closed'"
-                                @click="headToggled = !headToggled"
-                            />
+                            <UTooltip :text="$t('common.expand_collapse')">
+                                <UButton
+                                    icon="i-mdi-chevron-double-down"
+                                    variant="link"
+                                    size="sm"
+                                    class="group place-self-end"
+                                    :ui="{
+                                        leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180',
+                                    }"
+                                    :data-state="headToggled ? 'open' : 'closed'"
+                                    @click="headToggled = !headToggled"
+                                />
+                            </UTooltip>
                         </div>
                     </div>
                 </div>

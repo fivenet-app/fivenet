@@ -120,16 +120,18 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         <UCollapsible class="flex flex-1 flex-col gap-1">
                                             <template #default>
                                                 <div class="group flex flex-1 flex-row flex-wrap items-center gap-1">
-                                                    <UButton
-                                                        class="order-last"
-                                                        size="sm"
-                                                        icon="i-mdi-chevron-double-down"
-                                                        variant="link"
-                                                        :ui="{
-                                                            leadingIcon:
-                                                                'group-data-[state=open]:rotate-180 transition-transform duration-200',
-                                                        }"
-                                                    />
+                                                    <UTooltip :text="$t('common.expand_collapse')">
+                                                        <UButton
+                                                            class="order-last"
+                                                            size="sm"
+                                                            icon="i-mdi-chevron-double-down"
+                                                            variant="link"
+                                                            :ui="{
+                                                                leadingIcon:
+                                                                    'group-data-[state=open]:rotate-180 transition-transform duration-200',
+                                                            }"
+                                                        />
+                                                    </UTooltip>
 
                                                     <p class="flex-1 shrink-0 text-lg font-medium">
                                                         <UTooltip :text="$t('common.approved')"

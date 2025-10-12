@@ -32,7 +32,7 @@ func PaginationInterceptor(maxPageSize int64) grpc.UnaryServerInterceptor {
 			}
 		}
 
-		// Handler
+		// Call method handler
 		resp, err := handler(ctx, req)
 		if err != nil {
 			return resp, err
@@ -46,6 +46,7 @@ func PaginationInterceptor(maxPageSize int64) grpc.UnaryServerInterceptor {
 				p.Update(r.ItemsLen())
 			}
 		}
+
 		return resp, nil
 	}
 }

@@ -18,7 +18,8 @@ import { Guild } from "../../resources/discord/discord";
 import { Channel } from "../../resources/discord/discord";
 import { AuditEntry } from "../../resources/audit/audit";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { EventType } from "../../resources/audit/audit";
+import { EventResult } from "../../resources/audit/audit";
+import { EventAction } from "../../resources/audit/audit";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -241,9 +242,13 @@ export interface ViewAuditLogRequest {
      */
     search?: string;
     /**
-     * @generated from protobuf field: repeated resources.audit.EventType states = 9
+     * @generated from protobuf field: repeated resources.audit.EventAction actions = 9
      */
-    states: EventType[];
+    actions: EventAction[];
+    /**
+     * @generated from protobuf field: repeated resources.audit.EventResult results = 10
+     */
+    results: EventResult[];
 }
 /**
  * @generated from protobuf message services.settings.ViewAuditLogResponse
@@ -1166,7 +1171,8 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 9, name: "states", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventType", EventType, "EVENT_TYPE_"], options: { "buf.validate.field": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
+            { no: 9, name: "actions", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventAction", EventAction, "EVENT_ACTION_"], options: { "buf.validate.field": { repeated: { maxItems: "6", items: { enum: { definedOnly: true } } } } } },
+            { no: 10, name: "results", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventResult", EventResult, "EVENT_RESULT_"], options: { "buf.validate.field": { repeated: { maxItems: "6", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {
@@ -1174,7 +1180,8 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         message.userIds = [];
         message.services = [];
         message.methods = [];
-        message.states = [];
+        message.actions = [];
+        message.results = [];
         if (value !== undefined)
             reflectionMergePartial<ViewAuditLogRequest>(this, message, value);
         return message;
@@ -1212,12 +1219,19 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                 case /* optional string search */ 8:
                     message.search = reader.string();
                     break;
-                case /* repeated resources.audit.EventType states */ 9:
+                case /* repeated resources.audit.EventAction actions */ 9:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.states.push(reader.int32());
+                            message.actions.push(reader.int32());
                     else
-                        message.states.push(reader.int32());
+                        message.actions.push(reader.int32());
+                    break;
+                case /* repeated resources.audit.EventResult results */ 10:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.results.push(reader.int32());
+                    else
+                        message.results.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1259,11 +1273,18 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         /* optional string search = 8; */
         if (message.search !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.search);
-        /* repeated resources.audit.EventType states = 9; */
-        if (message.states.length) {
+        /* repeated resources.audit.EventAction actions = 9; */
+        if (message.actions.length) {
             writer.tag(9, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.states.length; i++)
-                writer.int32(message.states[i]);
+            for (let i = 0; i < message.actions.length; i++)
+                writer.int32(message.actions[i]);
+            writer.join();
+        }
+        /* repeated resources.audit.EventResult results = 10; */
+        if (message.results.length) {
+            writer.tag(10, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.results.length; i++)
+                writer.int32(message.results[i]);
             writer.join();
         }
         let u = options.writeUnknownFields;

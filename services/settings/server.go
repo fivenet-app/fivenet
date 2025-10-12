@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/reqs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/updatecheck"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -48,8 +47,7 @@ type Server struct {
 	logger    *zap.Logger
 	db        *sql.DB
 	ps        perms.Permissions
-	aud       audit.IAuditer
-	enricher  *mstlystcdata.Enricher
+		enricher  *mstlystcdata.Enricher
 	laws      *mstlystcdata.Laws
 	st        storage.IStorage
 	cfg       *config.Config
@@ -76,8 +74,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	PS        perms.Permissions
-	Aud       audit.IAuditer
-	Enricher  *mstlystcdata.Enricher
+		Enricher  *mstlystcdata.Enricher
 	Laws      *mstlystcdata.Laws
 	Storage   storage.IStorage
 	Config    *config.Config
@@ -127,8 +124,7 @@ func NewServer(p Params) *Server {
 		logger:    p.Logger,
 		db:        p.DB,
 		ps:        p.PS,
-		aud:       p.Aud,
-		enricher:  p.Enricher,
+				enricher:  p.Enricher,
 		laws:      p.Laws,
 		st:        p.Storage,
 		cfg:       p.Config,

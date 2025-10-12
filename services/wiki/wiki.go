@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
@@ -30,15 +31,6 @@ func (s *Server) ListPages(
 	req *pbwiki.ListPagesRequest,
 ) (*pbwiki.ListPagesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
-		Method:  "ListPages",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	tPageShort := table.FivenetWikiPages.AS("page_short")
 	tPAccess := table.FivenetWikiPagesAccess.AS("access")
@@ -206,15 +198,6 @@ func (s *Server) GetPage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
-		Method:  "GetPage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetId(),
@@ -258,7 +241,7 @@ func (s *Server) GetPage(
 	}
 	resp.Page.Files = files
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -380,15 +363,6 @@ func (s *Server) CreatePage(
 	req *pbwiki.CreatePageRequest,
 ) (*pbwiki.CreatePageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
-		Method:  "CreatePage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	// No parent ID?
 	// If so, check if there are any existing pages for the user's job and use one as the parent.
@@ -541,7 +515,7 @@ func (s *Server) CreatePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return resp, nil
 }
@@ -553,15 +527,6 @@ func (s *Server) UpdatePage(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.page_id", req.GetPage().GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
-		Method:  "UpdatePage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -778,7 +743,7 @@ func (s *Server) UpdatePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	page, err := s.getPage(ctx, req.GetPage().GetId(), true, true, userInfo)
 	if err != nil {
@@ -865,15 +830,6 @@ func (s *Server) DeletePage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
-		Method:  "DeletePage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetId(),
@@ -937,7 +893,7 @@ func (s *Server) DeletePage(
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbwiki.DeletePageResponse{}, nil
 }

@@ -7,9 +7,9 @@
 package audit
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -24,78 +24,130 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type EventType int32
+type EventAction int32
 
 const (
-	EventType_EVENT_TYPE_UNSPECIFIED EventType = 0
-	EventType_EVENT_TYPE_ERRORED     EventType = 1
-	EventType_EVENT_TYPE_VIEWED      EventType = 2
-	EventType_EVENT_TYPE_CREATED     EventType = 3
-	EventType_EVENT_TYPE_UPDATED     EventType = 4
-	EventType_EVENT_TYPE_DELETED     EventType = 5
+	EventAction_EVENT_ACTION_UNSPECIFIED EventAction = 0
+	// EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
+	EventAction_EVENT_ACTION_VIEWED  EventAction = 2
+	EventAction_EVENT_ACTION_CREATED EventAction = 3
+	EventAction_EVENT_ACTION_UPDATED EventAction = 4
+	EventAction_EVENT_ACTION_DELETED EventAction = 5
 )
 
-// Enum value maps for EventType.
+// Enum value maps for EventAction.
 var (
-	EventType_name = map[int32]string{
-		0: "EVENT_TYPE_UNSPECIFIED",
-		1: "EVENT_TYPE_ERRORED",
-		2: "EVENT_TYPE_VIEWED",
-		3: "EVENT_TYPE_CREATED",
-		4: "EVENT_TYPE_UPDATED",
-		5: "EVENT_TYPE_DELETED",
+	EventAction_name = map[int32]string{
+		0: "EVENT_ACTION_UNSPECIFIED",
+		2: "EVENT_ACTION_VIEWED",
+		3: "EVENT_ACTION_CREATED",
+		4: "EVENT_ACTION_UPDATED",
+		5: "EVENT_ACTION_DELETED",
 	}
-	EventType_value = map[string]int32{
-		"EVENT_TYPE_UNSPECIFIED": 0,
-		"EVENT_TYPE_ERRORED":     1,
-		"EVENT_TYPE_VIEWED":      2,
-		"EVENT_TYPE_CREATED":     3,
-		"EVENT_TYPE_UPDATED":     4,
-		"EVENT_TYPE_DELETED":     5,
+	EventAction_value = map[string]int32{
+		"EVENT_ACTION_UNSPECIFIED": 0,
+		"EVENT_ACTION_VIEWED":      2,
+		"EVENT_ACTION_CREATED":     3,
+		"EVENT_ACTION_UPDATED":     4,
+		"EVENT_ACTION_DELETED":     5,
 	}
 )
 
-func (x EventType) Enum() *EventType {
-	p := new(EventType)
+func (x EventAction) Enum() *EventAction {
+	p := new(EventAction)
 	*p = x
 	return p
 }
 
-func (x EventType) String() string {
+func (x EventAction) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (EventType) Descriptor() protoreflect.EnumDescriptor {
+func (EventAction) Descriptor() protoreflect.EnumDescriptor {
 	return file_resources_audit_audit_proto_enumTypes[0].Descriptor()
 }
 
-func (EventType) Type() protoreflect.EnumType {
+func (EventAction) Type() protoreflect.EnumType {
 	return &file_resources_audit_audit_proto_enumTypes[0]
 }
 
-func (x EventType) Number() protoreflect.EnumNumber {
+func (x EventAction) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use EventType.Descriptor instead.
-func (EventType) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use EventAction.Descriptor instead.
+func (EventAction) EnumDescriptor() ([]byte, []int) {
 	return file_resources_audit_audit_proto_rawDescGZIP(), []int{0}
+}
+
+type EventResult int32
+
+const (
+	EventResult_EVENT_RESULT_UNSPECIFIED EventResult = 0
+	EventResult_EVENT_RESULT_SUCCEEDED   EventResult = 1
+	EventResult_EVENT_RESULT_FAILED      EventResult = 2
+	EventResult_EVENT_RESULT_ERRORED     EventResult = 3
+)
+
+// Enum value maps for EventResult.
+var (
+	EventResult_name = map[int32]string{
+		0: "EVENT_RESULT_UNSPECIFIED",
+		1: "EVENT_RESULT_SUCCEEDED",
+		2: "EVENT_RESULT_FAILED",
+		3: "EVENT_RESULT_ERRORED",
+	}
+	EventResult_value = map[string]int32{
+		"EVENT_RESULT_UNSPECIFIED": 0,
+		"EVENT_RESULT_SUCCEEDED":   1,
+		"EVENT_RESULT_FAILED":      2,
+		"EVENT_RESULT_ERRORED":     3,
+	}
+)
+
+func (x EventResult) Enum() *EventResult {
+	p := new(EventResult)
+	*p = x
+	return p
+}
+
+func (x EventResult) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EventResult) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_audit_audit_proto_enumTypes[1].Descriptor()
+}
+
+func (EventResult) Type() protoreflect.EnumType {
+	return &file_resources_audit_audit_proto_enumTypes[1]
+}
+
+func (x EventResult) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EventResult.Descriptor instead.
+func (EventResult) EnumDescriptor() ([]byte, []int) {
+	return file_resources_audit_audit_proto_rawDescGZIP(), []int{1}
 }
 
 type AuditEntry struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`
+	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User          *users.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	UserJob       string                 `protobuf:"bytes,5,opt,name=user_job,json=userJob,proto3" json:"user_job,omitempty" alias:"user_job"`
-	TargetUserId  *int32                 `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty" alias:"target_user_id"`
+	UserJob       string                 `protobuf:"bytes,5,opt,name=user_job,json=userJob,proto3" json:"user_job,omitempty"`
+	TargetUserId  *int32                 `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty"`
 	TargetUser    *users.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
-	TargetUserJob *string                `protobuf:"bytes,8,opt,name=target_user_job,json=targetUserJob,proto3,oneof" json:"target_user_job,omitempty" alias:"target_user_job"`
-	Service       string                 `protobuf:"bytes,9,opt,name=service,proto3" json:"service,omitempty" alias:"service"`
-	Method        string                 `protobuf:"bytes,10,opt,name=method,proto3" json:"method,omitempty" alias:"method"`
-	State         EventType              `protobuf:"varint,11,opt,name=state,proto3,enum=resources.audit.EventType" json:"state,omitempty" alias:"state"`
-	Data          *string                `protobuf:"bytes,12,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`
+	TargetUserJob *string                `protobuf:"bytes,8,opt,name=target_user_job,json=targetUserJob,proto3,oneof" json:"target_user_job,omitempty"`
+	Service       string                 `protobuf:"bytes,9,opt,name=service,proto3" json:"service,omitempty"`
+	Method        string                 `protobuf:"bytes,10,opt,name=method,proto3" json:"method,omitempty"`
+	Action        EventAction            `protobuf:"varint,11,opt,name=action,proto3,enum=resources.audit.EventAction" json:"action,omitempty"`
+	Result        EventResult            `protobuf:"varint,12,opt,name=result,proto3,enum=resources.audit.EventResult" json:"result,omitempty"`
+	Meta          *AuditEntryMeta        `protobuf:"bytes,13,opt,name=meta,proto3,oneof" json:"meta,omitempty"`
+	Data          *string                `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -200,11 +252,25 @@ func (x *AuditEntry) GetMethod() string {
 	return ""
 }
 
-func (x *AuditEntry) GetState() EventType {
+func (x *AuditEntry) GetAction() EventAction {
 	if x != nil {
-		return x.State
+		return x.Action
 	}
-	return EventType_EVENT_TYPE_UNSPECIFIED
+	return EventAction_EVENT_ACTION_UNSPECIFIED
+}
+
+func (x *AuditEntry) GetResult() EventResult {
+	if x != nil {
+		return x.Result
+	}
+	return EventResult_EVENT_RESULT_UNSPECIFIED
+}
+
+func (x *AuditEntry) GetMeta() *AuditEntryMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
 }
 
 func (x *AuditEntry) GetData() string {
@@ -214,41 +280,96 @@ func (x *AuditEntry) GetData() string {
 	return ""
 }
 
+type AuditEntryMeta struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Meta          map[string]string      `protobuf:"bytes,1,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AuditEntryMeta) Reset() {
+	*x = AuditEntryMeta{}
+	mi := &file_resources_audit_audit_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AuditEntryMeta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AuditEntryMeta) ProtoMessage() {}
+
+func (x *AuditEntryMeta) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_audit_audit_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AuditEntryMeta.ProtoReflect.Descriptor instead.
+func (*AuditEntryMeta) Descriptor() ([]byte, []int) {
+	return file_resources_audit_audit_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *AuditEntryMeta) GetMeta() map[string]string {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 var File_resources_audit_audit_proto protoreflect.FileDescriptor
 
 const file_resources_audit_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xef\x05\n" +
+	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa1\x05\n" +
 	"\n" +
-	"AuditEntry\x12\x1f\n" +
-	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
-	"alias:\"id\"R\x02id\x12=\n" +
+	"AuditEntry\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12-\n" +
-	"\auser_id\x18\x03 \x01(\x05B\x14\x9a\x84\x9e\x03\x0falias:\"user_id\"R\x06userId\x123\n" +
-	"\x04user\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x120\n" +
-	"\buser_job\x18\x05 \x01(\tB\x15\x9a\x84\x9e\x03\x10alias:\"user_job\"R\auserJob\x12F\n" +
-	"\x0etarget_user_id\x18\x06 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"target_user_id\"H\x01R\ftargetUserId\x88\x01\x01\x12@\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x05R\x06userId\x123\n" +
+	"\x04user\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x12\x19\n" +
+	"\buser_job\x18\x05 \x01(\tR\auserJob\x12)\n" +
+	"\x0etarget_user_id\x18\x06 \x01(\x05H\x01R\ftargetUserId\x88\x01\x01\x12@\n" +
 	"\vtarget_user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x02R\n" +
-	"targetUser\x88\x01\x01\x12I\n" +
-	"\x0ftarget_user_job\x18\b \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"target_user_job\"H\x03R\rtargetUserJob\x88\x01\x01\x12.\n" +
-	"\aservice\x18\t \x01(\tB\x14\x9a\x84\x9e\x03\x0falias:\"service\"R\aservice\x12+\n" +
+	"targetUser\x88\x01\x01\x12+\n" +
+	"\x0ftarget_user_job\x18\b \x01(\tH\x03R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
+	"\aservice\x18\t \x01(\tR\aservice\x12\x16\n" +
 	"\x06method\x18\n" +
-	" \x01(\tB\x13\x9a\x84\x9e\x03\x0ealias:\"method\"R\x06method\x12D\n" +
-	"\x05state\x18\v \x01(\x0e2\x1a.resources.audit.EventTypeB\x12\x9a\x84\x9e\x03\ralias:\"state\"R\x05state\x12*\n" +
-	"\x04data\x18\f \x01(\tB\x11\x9a\x84\x9e\x03\falias:\"data\"H\x04R\x04data\x88\x01\x01B\a\n" +
+	" \x01(\tR\x06method\x124\n" +
+	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionR\x06action\x124\n" +
+	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultR\x06result\x128\n" +
+	"\x04meta\x18\r \x01(\v2\x1f.resources.audit.AuditEntryMetaH\x04R\x04meta\x88\x01\x01\x12\x17\n" +
+	"\x04data\x18\x0e \x01(\tH\x05R\x04data\x88\x01\x01B\a\n" +
 	"\x05_userB\x11\n" +
 	"\x0f_target_user_idB\x0e\n" +
 	"\f_target_userB\x12\n" +
 	"\x10_target_user_jobB\a\n" +
-	"\x05_data*\x9e\x01\n" +
-	"\tEventType\x12\x1a\n" +
-	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
-	"\x12EVENT_TYPE_ERRORED\x10\x01\x12\x15\n" +
-	"\x11EVENT_TYPE_VIEWED\x10\x02\x12\x16\n" +
-	"\x12EVENT_TYPE_CREATED\x10\x03\x12\x16\n" +
-	"\x12EVENT_TYPE_UPDATED\x10\x04\x12\x16\n" +
-	"\x12EVENT_TYPE_DELETED\x10\x05BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;auditb\x06proto3"
+	"\x05_metaB\a\n" +
+	"\x05_data\"\x90\x01\n" +
+	"\x0eAuditEntryMeta\x12=\n" +
+	"\x04meta\x18\x01 \x03(\v2).resources.audit.AuditEntryMeta.MetaEntryR\x04meta\x1a7\n" +
+	"\tMetaEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01:\x06\xe2\xf3\x18\x02\b\x01*\x98\x01\n" +
+	"\vEventAction\x12\x1c\n" +
+	"\x18EVENT_ACTION_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13EVENT_ACTION_VIEWED\x10\x02\x12\x18\n" +
+	"\x14EVENT_ACTION_CREATED\x10\x03\x12\x18\n" +
+	"\x14EVENT_ACTION_UPDATED\x10\x04\x12\x18\n" +
+	"\x14EVENT_ACTION_DELETED\x10\x05\"\x04\b\x01\x10\x01*z\n" +
+	"\vEventResult\x12\x1c\n" +
+	"\x18EVENT_RESULT_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16EVENT_RESULT_SUCCEEDED\x10\x01\x12\x17\n" +
+	"\x13EVENT_RESULT_FAILED\x10\x02\x12\x18\n" +
+	"\x14EVENT_RESULT_ERRORED\x10\x03BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;auditb\x06proto3"
 
 var (
 	file_resources_audit_audit_proto_rawDescOnce sync.Once
@@ -262,24 +383,30 @@ func file_resources_audit_audit_proto_rawDescGZIP() []byte {
 	return file_resources_audit_audit_proto_rawDescData
 }
 
-var file_resources_audit_audit_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_audit_audit_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_audit_audit_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_audit_audit_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_audit_audit_proto_goTypes = []any{
-	(EventType)(0),              // 0: resources.audit.EventType
-	(*AuditEntry)(nil),          // 1: resources.audit.AuditEntry
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 3: resources.users.UserShort
+	(EventAction)(0),            // 0: resources.audit.EventAction
+	(EventResult)(0),            // 1: resources.audit.EventResult
+	(*AuditEntry)(nil),          // 2: resources.audit.AuditEntry
+	(*AuditEntryMeta)(nil),      // 3: resources.audit.AuditEntryMeta
+	nil,                         // 4: resources.audit.AuditEntryMeta.MetaEntry
+	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 6: resources.users.UserShort
 }
 var file_resources_audit_audit_proto_depIdxs = []int32{
-	2, // 0: resources.audit.AuditEntry.created_at:type_name -> resources.timestamp.Timestamp
-	3, // 1: resources.audit.AuditEntry.user:type_name -> resources.users.UserShort
-	3, // 2: resources.audit.AuditEntry.target_user:type_name -> resources.users.UserShort
-	0, // 3: resources.audit.AuditEntry.state:type_name -> resources.audit.EventType
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	5, // 0: resources.audit.AuditEntry.created_at:type_name -> resources.timestamp.Timestamp
+	6, // 1: resources.audit.AuditEntry.user:type_name -> resources.users.UserShort
+	6, // 2: resources.audit.AuditEntry.target_user:type_name -> resources.users.UserShort
+	0, // 3: resources.audit.AuditEntry.action:type_name -> resources.audit.EventAction
+	1, // 4: resources.audit.AuditEntry.result:type_name -> resources.audit.EventResult
+	3, // 5: resources.audit.AuditEntry.meta:type_name -> resources.audit.AuditEntryMeta
+	4, // 6: resources.audit.AuditEntryMeta.meta:type_name -> resources.audit.AuditEntryMeta.MetaEntry
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_audit_audit_proto_init() }
@@ -293,8 +420,8 @@ func file_resources_audit_audit_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_audit_audit_proto_rawDesc), len(file_resources_audit_audit_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   1,
+			NumEnums:      2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

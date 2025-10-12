@@ -8,9 +8,11 @@ import (
 
 	"buf.build/go/protovalidate"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2025/pkg/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	grpc_auth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/auth"
 	grpc_database "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/database"
 	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
@@ -72,6 +74,7 @@ type ServerParams struct {
 	TokenMgr *auth.TokenMgr
 	UserInfo userinfo.UserInfoRetriever
 	Perms    perms.Permissions
+	Audit    audit.IAuditer
 
 	GRPCAuth *auth.GRPCAuth
 	GRPCPerm *auth.GRPCPerm
@@ -154,6 +157,10 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),
+			grpc_audit.NewUnary(grpc_audit.Options{
+				Logger:      p.Audit,
+				RecordFirst: true,
+			}),
 			grpc_database.PaginationInterceptor(0),
 		),
 		grpc.ChainStreamInterceptor(
@@ -168,6 +175,11 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			grpc_auth.StreamServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 			grpc_permission.StreamServerInterceptor(p.GRPCPerm.GRPCPermissionStreamFunc),
 			protovalidate_middleware.StreamServerInterceptor(validator),
+			grpc_sanitizer.StreamServerInterceptor(),
+			grpc_audit.NewStream(grpc_audit.Options{
+				Logger:      p.Audit,
+				RecordFirst: true,
+			}),
 			recovery.StreamServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),

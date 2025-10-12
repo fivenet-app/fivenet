@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
@@ -26,14 +25,6 @@ func (s *Server) ViewAuditLog(
 	req *pbsettings.ViewAuditLogRequest,
 ) (*pbsettings.ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	defer s.aud.Log(&audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "ViewAuditLog",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_VIEWED,
-	}, req)
 
 	condition := mysql.Bool(true)
 	if !userInfo.GetSuperuser() {
@@ -74,12 +65,19 @@ func (s *Server) ViewAuditLog(
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
-	if len(req.GetStates()) > 0 {
-		states := make([]mysql.Expression, len(req.GetStates()))
-		for i := range req.GetStates() {
-			states[i] = mysql.Int32(int32(req.GetStates()[i]))
+	if len(req.GetActions()) > 0 {
+		actions := make([]mysql.Expression, len(req.GetActions()))
+		for i := range req.GetActions() {
+			actions[i] = mysql.Int32(int32(req.GetActions()[i]))
 		}
-		condition = condition.AND(tAuditLog.State.IN(states...))
+		condition = condition.AND(tAuditLog.Action.IN(actions...))
+	}
+	if len(req.GetResults()) > 0 {
+		results := make([]mysql.Expression, len(req.GetResults()))
+		for i := range req.GetResults() {
+			results[i] = mysql.Int32(int32(req.GetResults()[i]))
+		}
+		condition = condition.AND(tAuditLog.Result.IN(results...))
 	}
 	if req.Search != nil && req.GetSearch() != "" {
 		condition = condition.AND(
@@ -116,8 +114,8 @@ func (s *Server) ViewAuditLog(
 		switch req.GetSort().GetColumn() {
 		case "service":
 			column = tAuditLog.Service
-		case "state":
-			column = tAuditLog.State
+		case "action":
+			column = tAuditLog.Action
 		case "createdAt":
 			fallthrough
 		default:
@@ -144,7 +142,9 @@ func (s *Server) ViewAuditLog(
 			tAuditLog.TargetUserID,
 			tAuditLog.Service,
 			tAuditLog.Method,
-			tAuditLog.State,
+			tAuditLog.Action,
+			tAuditLog.Result,
+			tAuditLog.Meta,
 			tAuditLog.Data,
 			tUser.ID,
 			tUser.Identifier,

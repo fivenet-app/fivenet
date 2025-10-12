@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
@@ -28,15 +29,6 @@ func (s *Server) ShareCalendarEntry(
 	req *pbcalendar.ShareCalendarEntryRequest,
 ) (*pbcalendar.ShareCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "ShareCalendarEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
@@ -95,7 +87,7 @@ func (s *Server) ShareCalendarEntry(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
 }

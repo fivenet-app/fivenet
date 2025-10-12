@@ -26,6 +26,21 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
+// StreamServerInterceptor returns a gRPC StreamServerInterceptor that applies the sanitize logic
+// to every incoming stream request/message that implements ISanitize. If sanitization fails, the
+// request is rejected.
+func StreamServerInterceptor() grpc.StreamServerInterceptor {
+	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		if err := sanitize(stream.Context(), srv); err != nil {
+			return err
+		}
+
+		// Wrap to intercept RecvMsg to be able to sanitize incoming messages
+		wrapped := &sanitizeStream{ServerStream: stream}
+		return handler(srv, wrapped)
+	}
+}
+
 // sanitize checks if the request or response implements ISanitize and calls its Sanitize method.
 // If an error is returned, it is converted to a gRPC InvalidArgument error.
 func sanitize(_ context.Context, reqOrRes any) error {
@@ -41,4 +56,17 @@ func sanitize(_ context.Context, reqOrRes any) error {
 	}
 
 	return status.Error(codes.InvalidArgument, err.Error())
+}
+
+type sanitizeStream struct {
+	grpc.ServerStream
+}
+
+func (s *sanitizeStream) RecvMsg(m any) error {
+	// Receive the next message from the client
+	if err := s.ServerStream.RecvMsg(m); err != nil {
+		return err
+	}
+	// Sanitize/validate it before the handler sees it
+	return sanitize(s.Context(), m)
 }

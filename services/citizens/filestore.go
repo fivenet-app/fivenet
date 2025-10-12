@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -30,16 +31,7 @@ func (s *Server) UploadAvatar(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "UploadAvatar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-
 	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
-	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
@@ -49,7 +41,7 @@ func (s *Server) UploadAvatar(
 		return err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return nil
 }
@@ -59,15 +51,6 @@ func (s *Server) DeleteAvatar(
 	req *pbcitizens.DeleteAvatarRequest,
 ) (*pbcitizens.DeleteAvatarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "DeleteAvatar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, nil)
 
 	stmt := tUserProps.
 		SELECT(tUserProps.AvatarFileID.AS("profile_picture_file_id")).
@@ -103,14 +86,6 @@ func (s *Server) UploadMugshot(
 
 	logging.InjectFields(ctx, logging.Fields{"fivenet.citizens.user_id", userInfo.GetUserId()})
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "UploadMugshot",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
@@ -119,17 +94,14 @@ func (s *Server) UploadMugshot(
 		permscitizens.CitizensServiceSetUserPropsFieldsPermField,
 	)
 	if err != nil {
-		s.aud.Log(auditEntry, nil)
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
 	if !fields.Contains("Mugshot") {
-		s.aud.Log(auditEntry, nil)
 		return errorscitizens.ErrPropsMugshotDenied
 	}
 
 	meta, err := s.profilePictureHandler.AwaitHandshake(srv)
-	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
@@ -216,7 +188,7 @@ func (s *Server) UploadMugshot(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return nil
 }
@@ -226,15 +198,6 @@ func (s *Server) DeleteMugshot(
 	req *pbcitizens.DeleteMugshotRequest,
 ) (*pbcitizens.DeleteMugshotResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "DeleteMugshot",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, nil)
 
 	if req.GetReason() == "" {
 		return nil, errorscitizens.ErrReasonRequired

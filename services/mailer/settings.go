@@ -11,6 +11,7 @@ import (
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
@@ -92,15 +93,6 @@ func (s *Server) SetEmailSettings(
 	req *pbmailer.SetEmailSettingsRequest,
 ) (*pbmailer.SetEmailSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "SetEmailSettings",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -250,7 +242,7 @@ func (s *Server) SetEmailSettings(
 		},
 	}, req.GetSettings().GetEmailId())
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbmailer.SetEmailSettingsResponse{
 		Settings: settings,

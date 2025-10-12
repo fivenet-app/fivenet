@@ -8,6 +8,7 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
@@ -63,15 +64,6 @@ func (s *Server) SetQualificationAccess(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "SetQualificationAccess",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetQualificationId(),
@@ -104,7 +96,7 @@ func (s *Server) SetQualificationAccess(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbqualifications.SetQualificationAccessResponse{}, nil
 }

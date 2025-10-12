@@ -21,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -401,15 +402,6 @@ func (s *Server) GetColleague(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
-		Method:  "GetColleague",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	// Access Permission Check
 	colleagueAccess, err := s.ps.AttrStringList(
 		userInfo,
@@ -483,7 +475,7 @@ func (s *Server) GetColleague(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return &pbjobs.GetColleagueResponse{
 		Colleague: colleague,
@@ -544,15 +536,6 @@ func (s *Server) SetColleagueProps(
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
-		Method:  "SetColleagueProps",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	if req.GetReason() == "" {
 		return nil, errorsjobs.ErrReasonRequired
@@ -717,7 +700,7 @@ func (s *Server) SetColleagueProps(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	props, err = jobs.GetColleagueProps(
 		ctx,

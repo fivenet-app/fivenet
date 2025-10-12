@@ -430,7 +430,7 @@ export const HeaderValue = new HeaderValue$Type();
 class Body$Type extends MessageType<Body> {
     constructor() {
         super("resources.common.grpcws.Body", [
-            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "codegen.audit.redacted": true } },
             { no: 2, name: "complete", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

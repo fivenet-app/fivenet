@@ -133,7 +133,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                 :retry="refresh"
             />
             <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
-            <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" />
+            <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" icon="i-mdi-approval" />
 
             <ul
                 v-else

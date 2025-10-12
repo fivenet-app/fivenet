@@ -1,17 +1,28 @@
 import type { BadgeProps } from '@nuxt/ui';
-import { EventType } from '~~/gen/ts/resources/audit/audit';
+import { EventAction, EventResult } from '~~/gen/ts/resources/audit/audit';
 
-export function eventTypeToBadgeColor(et: EventType): BadgeProps['color'] {
+export function eventActionToBadgeColor(et: EventAction): BadgeProps['color'] {
     switch (et) {
-        case EventType.ERRORED:
-            return 'error';
-        case EventType.VIEWED:
+        case EventAction.VIEWED:
             return 'info';
-        case EventType.CREATED:
+        case EventAction.CREATED:
             return 'success';
-        case EventType.UPDATED:
+        case EventAction.UPDATED:
             return 'warning';
         default:
             return 'error';
+    }
+}
+
+export function eventResultToBadgeColor(er: EventResult): BadgeProps['color'] {
+    switch (er) {
+        case EventResult.SUCCEEDED:
+            return 'success';
+        case EventResult.FAILED:
+            return 'warning';
+        case EventResult.ERRORED:
+            return 'error';
+        default:
+            return 'info';
     }
 }

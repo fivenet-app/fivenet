@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
@@ -258,15 +259,7 @@ func (s *Server) GetUser(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service:      pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:       "GetUser",
-		UserId:       userInfo.GetUserId(),
-		UserJob:      userInfo.GetJob(),
-		TargetUserId: &req.UserId,
-		State:        audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
+	grpc_audit.SetTargetUser(ctx, req.GetUserId(), "")
 
 	tUser := tables.User().AS("user")
 
@@ -354,7 +347,7 @@ func (s *Server) GetUser(
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	auditEntry.TargetUserJob = &resp.User.Job
+	grpc_audit.SetTargetUser(ctx, resp.GetUser().GetUserId(), resp.GetUser().GetJob())
 
 	if slices.Contains(s.appCfg.Get().JobInfo.GetPublicJobs(), resp.GetUser().GetJob()) ||
 		slices.Contains(s.appCfg.Get().JobInfo.GetHiddenJobs(), resp.GetUser().GetJob()) {
@@ -429,7 +422,7 @@ func (s *Server) GetUser(
 		resp.User.Props.Labels = attributes
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -445,15 +438,7 @@ func (s *Server) SetUserProps(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service:      pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:       "SetUserProps",
-		UserId:       userInfo.GetUserId(),
-		UserJob:      userInfo.GetJob(),
-		TargetUserId: &req.Props.UserId,
-		State:        audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
+	grpc_audit.SetTargetUser(ctx, req.GetProps().GetUserId(), "")
 
 	if req.GetReason() == "" {
 		return nil, errorscitizens.ErrReasonRequired
@@ -680,7 +665,7 @@ func (s *Server) SetUserProps(
 		Job:    &userInfo.Job,
 	})
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
 }

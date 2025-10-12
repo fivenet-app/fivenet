@@ -4,10 +4,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
@@ -20,16 +20,7 @@ func (s *Server) UploadFile(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "UploadFile",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-
 	meta, err := s.fHandler.AwaitHandshake(srv)
-	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
@@ -61,7 +52,7 @@ func (s *Server) UploadFile(
 		"fivenet.file.name", meta.GetOriginalName(),
 	})
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return nil
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
@@ -60,8 +59,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	aud      audit.IAuditer
-	js       *events.JSWrapper
+		js       *events.JSWrapper
 
 	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel]
 }
@@ -72,8 +70,7 @@ type Params struct {
 	DB       *sql.DB
 	P        perms.Permissions
 	Enricher *mstlystcdata.UserAwareEnricher
-	Aud      audit.IAuditer
-	JS       *events.JSWrapper
+		JS       *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
@@ -81,8 +78,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
-		aud:      p.Aud,
-		js:       p.JS,
+				js:       p.JS,
 
 		access: access.NewGrouped(
 			p.DB,

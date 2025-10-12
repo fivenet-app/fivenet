@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -255,15 +256,6 @@ func (s *Server) CreateTemplate(
 ) (*pbdocuments.CreateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "CreateTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	if documents.TemplateAccessHasDuplicates(req.GetTemplate().GetJobAccess()) ||
 		documents.DocumentAccessHasDuplicates(req.GetTemplate().GetContentAccess()) {
 		return nil, errorsdocuments.ErrTemplateAccessDuplicate
@@ -343,7 +335,7 @@ func (s *Server) CreateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbdocuments.CreateTemplateResponse{
 		Id: lastId,
@@ -360,15 +352,6 @@ func (s *Server) UpdateTemplate(
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "UpdateTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.templateAccess.CanUserAccessTarget(
 		ctx,
@@ -467,7 +450,7 @@ func (s *Server) UpdateTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.UpdateTemplateResponse{
 		Template: tmpl,
@@ -481,15 +464,6 @@ func (s *Server) DeleteTemplate(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.template_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "DeleteTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.templateAccess.CanUserAccessTarget(
 		ctx,
@@ -537,7 +511,7 @@ func (s *Server) DeleteTemplate(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteTemplateResponse{}, nil
 }

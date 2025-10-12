@@ -7,6 +7,7 @@ import (
 	// fx Modules imports.
 	"github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
+	"github.com/fivenet-app/fivenet/v2025/pkg/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
@@ -29,7 +30,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/api"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/icons"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/images"

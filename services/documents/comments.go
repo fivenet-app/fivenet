@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -165,15 +166,6 @@ func (s *Server) PostComment(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "PostComment",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetComment().GetDocumentId(),
@@ -236,7 +228,7 @@ func (s *Server) PostComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -260,23 +252,13 @@ func (s *Server) EditComment(
 ) (*pbdocuments.EditCommentResponse, error) {
 	logging.InjectFields(
 		ctx,
-		logging.Fields{"fivenet.documents.id", req.GetComment().GetDocumentId()},
-	)
-	logging.InjectFields(
-		ctx,
-		logging.Fields{"fivenet.documents.comment_id", req.GetComment().GetId()},
+		logging.Fields{
+			"fivenet.documents.id", req.GetComment().GetDocumentId(),
+			"fivenet.documents.comment_id", req.GetComment().GetId(),
+		},
 	)
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "EditComment",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -330,7 +312,7 @@ func (s *Server) EditComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.EditCommentResponse{
 		Comment: comment,
@@ -401,15 +383,6 @@ func (s *Server) DeleteComment(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "DeleteComment",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	comment, err := s.getComment(ctx, req.GetCommentId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -475,7 +448,7 @@ func (s *Server) DeleteComment(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteCommentResponse{}, nil
 }

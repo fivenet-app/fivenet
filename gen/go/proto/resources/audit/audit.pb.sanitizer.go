@@ -28,6 +28,15 @@ func (m *AuditEntry) Sanitize() error {
 		*m.Data = htmlsanitizer.Sanitize(*m.Data)
 	}
 
+	// Field: Meta
+	if m.Meta != nil {
+		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Method
 	m.Method = htmlsanitizer.Sanitize(m.Method)
 
@@ -59,6 +68,24 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: UserJob
 	m.UserJob = htmlsanitizer.Sanitize(m.UserJob)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *AuditEntryMeta) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Meta
+	for idx, item := range m.Meta {
+		_, _ = idx, item
+
+		m.Meta[idx] = htmlsanitizer.Sanitize(m.Meta[idx])
+
+	}
 
 	return nil
 }

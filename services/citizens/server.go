@@ -18,7 +18,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -32,8 +31,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	aud      audit.IAuditer
-	st       storage.IStorage
+		st       storage.IStorage
 	appCfg   appconfig.IConfig
 	cfg      *config.Config
 	customDB config.CustomDB
@@ -49,8 +47,7 @@ type Params struct {
 	DB        *sql.DB
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
-	Aud       audit.IAuditer
-	Config    *config.Config
+		Config    *config.Config
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notifi    notifi.INotifi
@@ -90,8 +87,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
-		aud:      p.Aud,
-		st:       p.Storage,
+				st:       p.Storage,
 		appCfg:   p.AppConfig,
 		cfg:      p.Config,
 		customDB: p.Config.Database.Custom,

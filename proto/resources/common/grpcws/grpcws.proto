@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.common.grpcws;
 
 import "buf/validate/validate.proto";
+import "codegen/audit/redacted.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws;grpcws";
 
@@ -36,7 +37,7 @@ message HeaderValue {
 }
 
 message Body {
-  bytes data = 1;
+  bytes data = 1 [(codegen.audit.redacted) = true];
   bool complete = 2;
 }
 

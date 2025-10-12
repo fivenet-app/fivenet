@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -149,15 +150,6 @@ func (s *Server) PostMessage(
 ) (*pbmailer.PostMessageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "PostMessage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetMessage().GetThreadId(), req.GetMessage().GetSenderId(), mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
@@ -250,7 +242,7 @@ func (s *Server) PostMessage(
 		},
 	}, emailIds...)
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbmailer.PostMessageResponse{
 		Message: message,
@@ -306,15 +298,6 @@ func (s *Server) DeleteMessage(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "DeleteMessage",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	if !userInfo.GetSuperuser() {
 		return nil, errorsmailer.ErrFailedQuery
 	}
@@ -364,7 +347,7 @@ func (s *Server) DeleteMessage(
 		}, emailIds...)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteMessageResponse{}, nil
 }
@@ -374,15 +357,6 @@ func (s *Server) SearchThreads(
 	req *pbmailer.SearchThreadsRequest,
 ) (*pbmailer.SearchThreadsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "SearchThreads",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	req.Search = strings.TrimRight(req.GetSearch(), "*")
 	if req.GetSearch() == "" {

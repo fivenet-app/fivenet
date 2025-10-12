@@ -117,7 +117,8 @@ func (s *Server) ListApprovalTasksInbox(
 			t2.Status.EQ(
 				mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
 			),
-		))
+		)).
+		LIMIT(1)
 
 	// onlyFirstSlot is true if:
 	//  • USER task (there’s only one anyway), or

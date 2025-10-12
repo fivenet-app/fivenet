@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
@@ -57,15 +58,6 @@ func (s *Server) SetJobProps(
 ) (*pbsettings.SetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "SetJobProps",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	jobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
 		return nil, err
@@ -107,7 +99,7 @@ func (s *Server) SetJobProps(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	newJobProps, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
@@ -137,15 +129,6 @@ func (s *Server) UploadJobLogo(
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "UploadJobLogo",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, nil)
 
 	props, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {
@@ -196,7 +179,7 @@ func (s *Server) UploadJobLogo(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return nil
 }
@@ -206,15 +189,6 @@ func (s *Server) DeleteJobLogo(
 	req *pbsettings.DeleteJobLogoRequest,
 ) (*pbsettings.DeleteJobLogoResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DeleteJobLogo",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, nil)
 
 	props, err := s.getJobProps(ctx, userInfo.GetJob())
 	if err != nil {

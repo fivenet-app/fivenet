@@ -344,7 +344,7 @@ class SyncStep$Type extends MessageType<SyncStep> {
     constructor() {
         super("resources.collab.SyncStep", [
             { no: 1, name: "step", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { in: [1, 2] } } } },
-            { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ },
+            { no: 2, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "codegen.audit.redacted": true } },
             { no: 3, name: "receiver_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } }
         ]);
     }
@@ -405,7 +405,7 @@ export const SyncStep = new SyncStep$Type();
 class YjsUpdate$Type extends MessageType<YjsUpdate> {
     constructor() {
         super("resources.collab.YjsUpdate", [
-            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
+            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "codegen.audit.redacted": true } }
         ]);
     }
     create(value?: PartialMessage<YjsUpdate>): YjsUpdate {
@@ -452,7 +452,7 @@ export const YjsUpdate = new YjsUpdate$Type();
 class AwarenessPing$Type extends MessageType<AwarenessPing> {
     constructor() {
         super("resources.collab.AwarenessPing", [
-            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/ }
+            { no: 1, name: "data", kind: "scalar", T: 12 /*ScalarType.BYTES*/, options: { "codegen.audit.redacted": true } }
         ]);
     }
     create(value?: PartialMessage<AwarenessPing>): AwarenessPing {

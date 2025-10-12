@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -271,15 +272,6 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 ) (*pbqualifications.CreateOrUpdateQualificationRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateQualificationRequest",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	canGrade, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetRequest().GetQualificationId(),
@@ -368,7 +360,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			}
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
 		canRequest, err := s.access.CanUserAccessTarget(ctx, req.GetRequest().GetQualificationId(), userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
@@ -426,7 +418,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}
 
 	request, err := s.getQualificationRequest(
@@ -539,15 +531,6 @@ func (s *Server) DeleteQualificationReq(
 ) (*pbqualifications.DeleteQualificationReqResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "DeleteQualificationReq",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	re, err := s.getQualificationRequest(ctx, req.GetQualificationId(), req.GetUserId(), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -574,7 +557,7 @@ func (s *Server) DeleteQualificationReq(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbqualifications.DeleteQualificationReqResponse{}, nil
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -146,15 +147,6 @@ func (s *Server) TakeExam(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "TakeExam",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetQualificationId(),
@@ -237,7 +229,7 @@ func (s *Server) TakeExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbqualifications.TakeExamResponse{
 		Exam:     exam,
@@ -252,15 +244,6 @@ func (s *Server) SubmitExam(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.qualifications.id", req.GetQualificationId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "SubmitExam",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -386,7 +369,7 @@ func (s *Server) SubmitExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbqualifications.SubmitExamResponse{
 		Duration: durationpb.New(duration),
@@ -403,15 +386,6 @@ func (s *Server) GetUserExam(
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "GetUserExam",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,

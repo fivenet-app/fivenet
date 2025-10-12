@@ -5,7 +5,6 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
@@ -151,15 +150,6 @@ func (s *Server) ToggleDocumentPin(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "ToggleDocumentPin",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	// Adding a pin requires view access to the document, but removing a pin does not
 	if req.GetState() {

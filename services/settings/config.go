@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -21,23 +21,14 @@ func (s *Server) GetAppConfig(
 	ctx context.Context,
 	req *pbsettings.GetAppConfigRequest,
 ) (*pbsettings.GetAppConfigResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.ConfigService_ServiceDesc.ServiceName,
-		Method:  "GetAppConfig",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	cfg, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return &pbsettings.GetAppConfigResponse{
 		Config: cfg,
@@ -48,16 +39,7 @@ func (s *Server) UpdateAppConfig(
 	ctx context.Context,
 	req *pbsettings.UpdateAppConfigRequest,
 ) (*pbsettings.UpdateAppConfigResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.ConfigService_ServiceDesc.ServiceName,
-		Method:  "UpdateAppConfig",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	req.GetConfig().Default()
 	if req.GetConfig().GetSystem().GetBannerMessage() != nil {
@@ -105,7 +87,7 @@ func (s *Server) UpdateAppConfig(
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	config, err := s.appCfg.Reload(ctx)
 	if err != nil {

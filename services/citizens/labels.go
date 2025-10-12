@@ -12,6 +12,7 @@ import (
 	permscompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
@@ -29,15 +30,6 @@ func (s *Server) ManageLabels(
 	req *pbcitizens.ManageLabelsRequest,
 ) (*pbcitizens.ManageLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "ManageLabels",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	resp := &pbcitizens.ManageLabelsResponse{
 		Labels: []*users.Label{},
@@ -152,7 +144,7 @@ func (s *Server) ManageLabels(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return resp, nil
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -263,15 +264,6 @@ func (s *Server) CreateCalendar(
 ) (*pbcalendar.CreateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "CreateCalendar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	fields, err := s.ps.AttrStringList(
 		userInfo,
 		permscalendar.CalendarServicePerm,
@@ -373,7 +365,7 @@ func (s *Server) CreateCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	calendar, err := s.getCalendar(
 		ctx,
@@ -394,15 +386,6 @@ func (s *Server) UpdateCalendar(
 	req *pbcalendar.UpdateCalendarRequest,
 ) (*pbcalendar.UpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "UpdateCalendar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,
@@ -490,7 +473,7 @@ func (s *Server) UpdateCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	if _, err := s.access.HandleAccessChanges(ctx, tx, req.GetCalendar().GetId(), req.GetCalendar().GetAccess().GetJobs(), req.GetCalendar().GetAccess().GetUsers(), nil); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -520,15 +503,6 @@ func (s *Server) DeleteCalendar(
 	req *pbcalendar.DeleteCalendarRequest,
 ) (*pbcalendar.DeleteCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "DeleteCalendar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToCalendar(
 		ctx,
@@ -570,7 +544,7 @@ func (s *Server) DeleteCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbcalendar.DeleteCalendarResponse{}, nil
 }

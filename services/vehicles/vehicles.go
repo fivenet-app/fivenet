@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -91,14 +92,8 @@ func (s *Server) ListVehicles(
 		}
 	}
 
-	if logRequest {
-		defer s.aud.Log(&audit.AuditEntry{
-			Service: pbvehicles.VehiclesService_ServiceDesc.ServiceName,
-			Method:  "ListVehicles",
-			UserId:  userInfo.GetUserId(),
-			UserJob: userInfo.GetJob(),
-			State:   audit.EventType_EVENT_TYPE_VIEWED,
-		}, req)
+	if !logRequest {
+		grpc_audit.Skip(ctx)
 	}
 
 	countStmt := tVehicles.
@@ -238,15 +233,6 @@ func (s *Server) SetVehicleProps(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbvehicles.VehiclesService_ServiceDesc.ServiceName,
-		Method:  "SetVehicleProps",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	// Get current vehicle props to be able to compare
 	props, err := s.getVehicleProps(ctx, req.GetProps().GetPlate())
 	if err != nil {
@@ -297,7 +283,7 @@ func (s *Server) SetVehicleProps(
 		return nil, errswrap.NewError(err, errorsvehicles.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	resp.Props, err = s.getVehicleProps(ctx, req.GetProps().GetPlate())
 	if err != nil {

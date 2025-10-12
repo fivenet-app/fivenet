@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UBadge, UButton, UKbd } from '#components';
+import { UBadge, UButton, UKbd, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { getSettingsCronClient } from '~~/gen/ts/clients';
@@ -69,17 +69,19 @@ const columns = computed(
             {
                 id: 'expand',
                 cell: ({ row }) =>
-                    h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
-                        icon: 'i-mdi-chevron-down',
-                        square: true,
-                        'aria-label': 'Expand',
-                        ui: {
-                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
-                        },
-                        onClick: () => row.toggleExpanded(),
-                    }),
+                    h(UTooltip, { text: t('common.expand_collapse') }, () =>
+                        h(UButton, {
+                            color: 'neutral',
+                            variant: 'ghost',
+                            icon: 'i-mdi-chevron-down',
+                            square: true,
+                            'aria-label': 'Expand',
+                            ui: {
+                                leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                            },
+                            onClick: () => row.toggleExpanded(),
+                        }),
+                    ),
             },
             {
                 accessorKey: 'name',
@@ -156,9 +158,9 @@ const columns = computed(
                 sticky
             >
                 <template #expanded="{ row }">
-                    <div class="p-2">
+                    <div class="p-1">
                         <pre v-if="!row.original.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
-                        <UCard v-else>
+                        <UCard v-else :ui="{ body: 'p-1 sm:p-1' }">
                             <template #header>
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex gap-2">

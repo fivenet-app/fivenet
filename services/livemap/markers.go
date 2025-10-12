@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -35,15 +36,6 @@ func (s *Server) CreateOrUpdateMarker(
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pblivemap.LivemapService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateMarker",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	if req.Marker.Postal == nil || *req.Marker.Postal == "" {
 		if postal, ok := s.postals.Closest(req.Marker.X, req.Marker.Y); postal != nil && ok {
@@ -94,7 +86,7 @@ func (s *Server) CreateOrUpdateMarker(
 
 		req.Marker.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		fields, err := s.ps.AttrStringList(userInfo, permslivemap.LivemapServicePerm, permslivemap.LivemapServiceCreateOrUpdateMarkerPerm, permslivemap.LivemapServiceCreateOrUpdateMarkerAccessPermField)
 		if err != nil {
@@ -142,7 +134,7 @@ func (s *Server) CreateOrUpdateMarker(
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
 	marker, err := s.getMarker(ctx, req.GetMarker().GetId())
@@ -166,15 +158,6 @@ func (s *Server) DeleteMarker(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.livemap.marker_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pblivemap.LivemapService_ServiceDesc.ServiceName,
-		Method:  "DeleteMarker",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	fields, err := s.ps.AttrStringList(
 		userInfo,

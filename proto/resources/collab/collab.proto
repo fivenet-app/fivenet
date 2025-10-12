@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.collab;
 
 import "buf/validate/validate.proto";
+import "codegen/audit/redacted.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab;collab";
 
@@ -35,16 +36,16 @@ message SyncStep {
       2
     ]
   }];
-  bytes data = 2;
+  bytes data = 2 [(codegen.audit.redacted) = true];
   optional uint64 receiver_id = 3 [(buf.validate.field).uint64.gt = 0];
 }
 
 message YjsUpdate {
-  bytes data = 1;
+  bytes data = 1 [(codegen.audit.redacted) = true];
 }
 
 message AwarenessPing {
-  bytes data = 1;
+  bytes data = 1 [(codegen.audit.redacted) = true];
 }
 
 message ServerPacket {

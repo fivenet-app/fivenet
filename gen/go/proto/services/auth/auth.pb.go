@@ -7,6 +7,7 @@
 package auth
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
@@ -1120,17 +1121,17 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"k\n" +
-	"\x14CreateAccountRequest\x12\x1b\n" +
-	"\treg_token\x18\x01 \x01(\tR\bregToken\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\"6\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"w\n" +
+	"\x14CreateAccountRequest\x12!\n" +
+	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12 \n" +
+	"\bpassword\x18\x03 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"6\n" +
 	"\x15CreateAccountResponse\x12\x1d\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x03R\taccountId\"F\n" +
+	"account_id\x18\x01 \x01(\x03R\taccountId\"L\n" +
 	"\fLoginRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"\xb2\x01\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12 \n" +
+	"\bpassword\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\bpassword\"\xb2\x01\n" +
 	"\rLoginResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12\x1d\n" +
 	"\n" +
@@ -1139,19 +1140,19 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x05_char\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"C\n" +
-	"\x15ChangePasswordRequest\x12\x18\n" +
-	"\acurrent\x18\x01 \x01(\tR\acurrent\x12\x10\n" +
-	"\x03new\x18\x02 \x01(\tR\x03new\"R\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"O\n" +
+	"\x15ChangePasswordRequest\x12\x1e\n" +
+	"\acurrent\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\acurrent\x12\x16\n" +
+	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"R\n" +
 	"\x16ChangePasswordResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\"C\n" +
 	"\x15ChangeUsernameRequest\x12\x18\n" +
 	"\acurrent\x18\x01 \x01(\tR\acurrent\x12\x10\n" +
 	"\x03new\x18\x02 \x01(\tR\x03new\"\x18\n" +
-	"\x16ChangeUsernameResponse\"F\n" +
-	"\x15ForgotPasswordRequest\x12\x1b\n" +
-	"\treg_token\x18\x01 \x01(\tR\bregToken\x12\x10\n" +
-	"\x03new\x18\x02 \x01(\tR\x03new\"\x18\n" +
+	"\x16ChangeUsernameResponse\"R\n" +
+	"\x15ForgotPasswordRequest\x12!\n" +
+	"\treg_token\x18\x01 \x01(\tB\x04\xf0\xf3\x18\x01R\bregToken\x12\x16\n" +
+	"\x03new\x18\x02 \x01(\tB\x04\xf0\xf3\x18\x01R\x03new\"\x18\n" +
 	"\x16ForgotPasswordResponse\"\x17\n" +
 	"\x15GetAccountInfoRequest\"\xf0\x01\n" +
 	"\x16GetAccountInfoResponse\x125\n" +

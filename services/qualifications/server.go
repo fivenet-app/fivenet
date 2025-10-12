@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
@@ -69,8 +68,7 @@ type Server struct {
 	db       *sql.DB
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	aud      audit.IAuditer
-	notif    notifi.INotifi
+		notif    notifi.INotifi
 	st       storage.IStorage
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
@@ -87,8 +85,7 @@ type Params struct {
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
-	Audit             audit.IAuditer
-	Config            *config.Config
+		Config            *config.Config
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
 }
@@ -115,8 +112,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
-		aud:      p.Audit,
-		notif:    p.Notif,
+				notif:    p.Notif,
 		st:       p.Storage,
 
 		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel](

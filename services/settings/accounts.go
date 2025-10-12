@@ -9,8 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -26,16 +26,6 @@ func (s *Server) ListAccounts(
 	ctx context.Context,
 	req *pbsettings.ListAccountsRequest,
 ) (*pbsettings.ListAccountsResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	defer s.aud.Log(&audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "ListAccounts",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_VIEWED,
-	}, req)
-
 	var t mysql.ReadableTable = tAccounts
 	condition := mysql.Bool(true)
 	if req.License != nil && req.GetLicense() != "" {
@@ -200,17 +190,6 @@ func (s *Server) UpdateAccount(
 	ctx context.Context,
 	req *pbsettings.UpdateAccountRequest,
 ) (*pbsettings.UpdateAccountResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "UpdateAccount",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	tAccounts := table.FivenetAccounts
 
 	updateSets := []interface{}{}
@@ -246,7 +225,7 @@ func (s *Server) UpdateAccount(
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbsettings.UpdateAccountResponse{
 		Account: acc,
@@ -257,17 +236,6 @@ func (s *Server) DisconnectOAuth2Connection(
 	ctx context.Context,
 	req *pbsettings.DisconnectOAuth2ConnectionRequest,
 ) (*pbsettings.DisconnectOAuth2ConnectionResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DisconnectOAuth2Connection",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	tOauth2 := table.FivenetAccountsOauth2
 
 	stmt := tOauth2.
@@ -282,7 +250,7 @@ func (s *Server) DisconnectOAuth2Connection(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return nil, nil
 }
@@ -291,17 +259,6 @@ func (s *Server) DeleteAccount(
 	ctx context.Context,
 	req *pbsettings.DeleteAccountRequest,
 ) (*pbsettings.DeleteAccountResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DeleteAccount",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	tAccounts := table.FivenetAccounts
 
 	stmt := tAccounts.
@@ -313,7 +270,7 @@ func (s *Server) DeleteAccount(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbsettings.DeleteAccountResponse{}, nil
 }

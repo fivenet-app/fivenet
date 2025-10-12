@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -107,14 +108,8 @@ func (s *Server) ListDocuments(
 		condition = condition.AND(tDocumentShort.Draft.EQ(mysql.Bool(req.GetOnlyDrafts())))
 	}
 
-	if logRequest {
-		defer s.aud.Log(&audit.AuditEntry{
-			Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-			Method:  "ListDocuments",
-			UserId:  userInfo.GetUserId(),
-			UserJob: userInfo.GetJob(),
-			State:   audit.EventType_EVENT_TYPE_VIEWED,
-		}, req)
+	if !logRequest {
+		grpc_audit.Skip(ctx)
 	}
 
 	// Convert proto sort to db sorting
@@ -193,15 +188,6 @@ func (s *Server) GetDocument(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "GetDocument",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetDocumentId(),
@@ -261,7 +247,7 @@ func (s *Server) GetDocument(
 		resp.Document.Files = files
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -300,15 +286,6 @@ func (s *Server) CreateDocument(
 	req *pbdocuments.CreateDocumentRequest,
 ) (*pbdocuments.CreateDocumentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "CreateDocument",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	var docContent string
 	var docTitle string
@@ -489,7 +466,7 @@ func (s *Server) CreateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbdocuments.CreateDocumentResponse{
 		Id: lastId,
@@ -503,15 +480,6 @@ func (s *Server) UpdateDocument(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "UpdateDocument",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -700,7 +668,7 @@ func (s *Server) UpdateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	doc, err := s.getDocument(ctx,
 		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
@@ -732,15 +700,6 @@ func (s *Server) DeleteDocument(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "DeleteDocument",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -816,7 +775,7 @@ func (s *Server) DeleteDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteDocumentResponse{}, nil
 }
@@ -828,15 +787,6 @@ func (s *Server) ToggleDocument(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "ToggleDocument",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -941,7 +891,7 @@ func (s *Server) ToggleDocument(
 		Job:    &userInfo.Job,
 	})
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.ToggleDocumentResponse{}, nil
 }
@@ -953,15 +903,6 @@ func (s *Server) ChangeDocumentOwner(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", req.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "ChangeDocumentOwner",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -1070,7 +1011,7 @@ func (s *Server) ChangeDocumentOwner(
 		Job:    &userInfo.Job,
 	})
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbdocuments.ChangeDocumentOwnerResponse{}, nil
 }

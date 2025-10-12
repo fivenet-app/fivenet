@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.file;
 
 import "buf/validate/validate.proto";
+import "codegen/audit/redacted.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/file/file.proto";
 
@@ -12,7 +13,10 @@ message UploadFileRequest {
   oneof payload {
     UploadMeta meta = 1;
     // Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
-    bytes data = 2 [(buf.validate.field).bytes.max_len = 131072];
+    bytes data = 2 [
+      (buf.validate.field).bytes.max_len = 131072,
+      (codegen.audit.redacted) = true
+    ];
   }
 }
 

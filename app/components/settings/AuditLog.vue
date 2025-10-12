@@ -14,14 +14,14 @@ import InputDateRangePopover from '~/components/partials/InputDateRangePopover.v
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
-import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
+import { type AuditEntry, EventAction, EventResult } from '~~/gen/ts/resources/audit/audit';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
-import { eventTypeToBadgeColor } from './helpers';
+import { eventActionToBadgeColor, eventResultToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
 
@@ -39,7 +39,8 @@ const schema = z.object({
         .optional(),
     services: z.coerce.string().max(64).array().max(10).default([]),
     methods: z.coerce.string().max(64).array().max(10).default([]),
-    states: z.enum(EventType).array().max(10).default([]),
+    actions: z.enum(EventAction).array().max(6).default([]),
+    results: z.enum(EventResult).array().max(6).default([]),
     search: z.coerce.string().max(64).default(''),
     sorting: z
         .object({
@@ -60,17 +61,35 @@ const schema = z.object({
 
 const query = useSearchForm('settings_auditlog', schema);
 
-const eventTypes = Object.keys(EventType)
-    .map((eventType) => EventType[eventType as keyof typeof EventType])
-    .filter((eventType) => {
-        if (typeof eventType === 'string') {
+const eventActions = Object.keys(EventAction)
+    .map((e) => EventAction[e as keyof typeof EventAction])
+    .filter((e) => {
+        if (typeof e === 'string') {
             return false;
-        } else if (typeof eventType === 'number' && eventType === 0) {
+        } else if (typeof e === 'number' && e === 0) {
             return false;
         }
         return true;
     });
-const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
+const actionOptions = eventActions.map((e) => ({
+    label: t(`enums.settings.AuditLog.EventAction.${EventAction[e]}`),
+    value: e,
+}));
+
+const eventResults = Object.keys(EventResult)
+    .map((e) => EventResult[e as keyof typeof EventResult])
+    .filter((e) => {
+        if (typeof e === 'string') {
+            return false;
+        } else if (typeof e === 'number' && e === 0) {
+            return false;
+        }
+        return true;
+    });
+const resultOptions = eventResults.map((e) => ({
+    label: t(`enums.settings.AuditLog.EventResult.${EventResult[e]}`),
+    value: e,
+}));
 
 const { data, status, refresh, error } = useLazyAsyncData(
     () =>
@@ -88,7 +107,8 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         services: query.services,
         // Make sure to remove the service from the beginning
         methods: query.methods.map((m) => m.split('/').pop() ?? m),
-        states: query.states,
+        actions: query.actions,
+        results: query.results,
     };
 
     if (query.date) {
@@ -127,8 +147,9 @@ async function addToClipboard(logEntry: AuditEntry): Promise<void> {
         text += `User: ${user?.firstname} ${user?.lastname} (${user?.userId}; ${user?.identifier})
 `;
     }
-    text += `Action: \`${logEntry.service}/${logEntry.method}\`
-Event: \`${EventType[logEntry.state]}\`
+    text += `Service/Method: \`${logEntry.service}/${logEntry.method}\`
+Action: \`${EventAction[logEntry.action]}\`
+Result: \`${EventResult[logEntry.result]}\`
 `;
     if (logEntry.data) {
         text += `Data:
@@ -158,17 +179,19 @@ const columns = computed(
             {
                 id: 'expand',
                 cell: ({ row }) =>
-                    h(UButton, {
-                        color: 'neutral',
-                        variant: 'ghost',
-                        icon: 'i-mdi-chevron-down',
-                        square: true,
-                        'aria-label': 'Expand',
-                        ui: {
-                            leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
-                        },
-                        onClick: () => row.toggleExpanded(),
-                    }),
+                    h(UTooltip, { text: t('common.expand_collapse') }, () =>
+                        h(UButton, {
+                            color: 'neutral',
+                            variant: 'ghost',
+                            icon: 'i-mdi-chevron-down',
+                            square: true,
+                            'aria-label': 'Expand',
+                            ui: {
+                                leadingIcon: ['transition-transform', row.getIsExpanded() ? 'duration-200 rotate-180' : ''],
+                            },
+                            onClick: () => row.toggleExpanded(),
+                        }),
+                    ),
             },
             {
                 id: 'actions',
@@ -219,7 +242,7 @@ const columns = computed(
                     return h(UButton, {
                         color: 'neutral',
                         variant: 'ghost',
-                        label: t('common.service'),
+                        label: `${t('common.service')} / ${t('common.method')}`,
                         icon: isSorted
                             ? isSorted === 'asc'
                                 ? appConfig.custom.icons.sortAsc
@@ -229,23 +252,43 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
-                cell: ({ row }) => row.original.service,
+                meta: {
+                    class: {
+                        td: 'text-default',
+                    },
+                },
+                cell: ({ row }) => `${row.original.service}/${row.original.method}`,
             },
             {
-                accessorKey: 'state',
-                header: t('common.state'),
+                accessorKey: 'action',
+                header: t('common.action'),
                 cell: ({ row }) =>
                     h(UBadge, {
-                        color: eventTypeToBadgeColor(row.original.state),
-                        label: t(`enums.settings.AuditLog.EventType.${EventType[row.original.state]}`),
+                        color: eventActionToBadgeColor(row.original.action),
+                        label: t(`enums.settings.AuditLog.EventAction.${EventAction[row.original.action]}`),
+                    }),
+            },
+            {
+                accessorKey: 'result',
+                header: t('common.result'),
+                cell: ({ row }) =>
+                    h(UBadge, {
+                        color: eventResultToBadgeColor(row.original.result),
+                        label: t(`enums.settings.AuditLog.EventResult.${EventResult[row.original.result]}`),
                     }),
             },
         ] as TableColumn<AuditEntry>[],
 );
 
-function statesToLabel(states: EventType[]): string {
-    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c ?? 0]}`)).join(', ');
+function actionsToLabel(actions: EventAction[]): string {
+    return actions.map((c) => t(`enums.settings.AuditLog.EventAction.${EventAction[c ?? 0]}`)).join(', ');
 }
+
+function resultsToLabel(results: EventResult[]): string {
+    return results.map((c) => t(`enums.settings.AuditLog.EventResult.${EventResult[c ?? 0]}`)).join(', ');
+}
+
+const dataToggled = ref(false);
 
 const today = new Date();
 const tomorrow = addDays(today, 1);
@@ -391,20 +434,40 @@ const tomorrow = addDays(today, 1);
                                     <UFormField class="flex-1" name="states" :label="$t('common.state')">
                                         <ClientOnly>
                                             <USelectMenu
-                                                v-model="query.states"
+                                                v-model="query.actions"
                                                 multiple
                                                 name="states"
                                                 :placeholder="$t('common.state')"
-                                                :items="statesOptions"
-                                                value-key="eventType"
+                                                :items="actionOptions"
+                                                label-key="label"
+                                                value-key="value"
                                                 class="w-full"
                                             >
-                                                <template #default>
-                                                    {{ statesToLabel(query.states) }}
+                                                <template v-if="query.actions.length" #default>
+                                                    {{ actionsToLabel(query.actions) }}
                                                 </template>
 
-                                                <template #item-label="{ item }">
-                                                    {{ $t(`enums.settings.AuditLog.EventType.${EventType[item.eventType]}`) }}
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.state')]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormField>
+
+                                    <UFormField class="flex-1" name="results" :label="$t('common.result')">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="query.results"
+                                                multiple
+                                                name="results"
+                                                :placeholder="$t('common.result')"
+                                                :items="resultOptions"
+                                                label-key="label"
+                                                value-key="value"
+                                                class="w-full"
+                                            >
+                                                <template v-if="query.actions.length" #default>
+                                                    {{ resultsToLabel(query.results) }}
                                                 </template>
 
                                                 <template #empty>
@@ -443,7 +506,32 @@ const tomorrow = addDays(today, 1);
                 sticky
             >
                 <template #expanded="{ row }">
-                    <div class="px-2 py-1">
+                    <UCard :ui="{ header: 'p-2 sm:px-2', body: 'p-1 sm:p-1', footer: '' }">
+                        <template #header>
+                            <div class="flex flex-row items-center gap-2">
+                                <div class="flex-1 font-semibold text-highlighted">
+                                    {{ $t('common.data') }}
+                                </div>
+
+                                <div>
+                                    <UTooltip :text="$t('common.expand_collapse')">
+                                        <UButton
+                                            icon="i-mdi-chevron-double-down"
+                                            variant="link"
+                                            size="sm"
+                                            class="place-self-end"
+                                            :class="dataToggled ? 'rotate-180' : ''"
+                                            :ui="{
+                                                leadingIcon: 'transition-transform duration-200',
+                                            }"
+                                            :data-state="dataToggled ? 'open' : 'closed'"
+                                            @click="dataToggled = !dataToggled"
+                                        />
+                                    </UTooltip>
+                                </div>
+                            </div>
+                        </template>
+
                         <span v-if="!row.original.data">{{ $t('common.na') }}</span>
                         <template v-else>
                             <VueJsonPretty
@@ -451,10 +539,25 @@ const tomorrow = addDays(today, 1);
                                 show-icon
                                 show-length
                                 virtual
-                                :height="240"
+                                :height="dataToggled ? 240 : 800"
+                                show-line-number
                             />
                         </template>
-                    </div>
+
+                        <template v-if="row.original.meta" #footer>
+                            <div class="flex flex-row items-center justify-between gap-2">
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.duration') }}</span
+                                    >: {{ row.original.meta.meta['duration_ms'] ?? $t('common.na') }} ms
+                                </div>
+
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.code') }}</span
+                                    >: {{ row.original.meta.meta['code'] ?? $t('common.na') }}
+                                </div>
+                            </div>
+                        </template>
+                    </UCard>
                 </template>
             </UTable>
         </template>

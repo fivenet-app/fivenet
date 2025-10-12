@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -27,8 +26,7 @@ type Server struct {
 	tm       *auth.TokenMgr
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-	aud      audit.IAuditer
-	ui       userinfo.UserInfoRetriever
+		ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 	js       *events.JSWrapper
 
@@ -48,8 +46,7 @@ type Params struct {
 	TM        *auth.TokenMgr
 	Perms     perms.Permissions
 	Enricher  *mstlystcdata.Enricher
-	Aud       audit.IAuditer
-	UI        userinfo.UserInfoRetriever
+		UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
@@ -63,8 +60,7 @@ func NewServer(p Params) *Server {
 		tm:       p.TM,
 		ps:       p.Perms,
 		enricher: p.Enricher,
-		aud:      p.Aud,
-		ui:       p.UI,
+				ui:       p.UI,
 		appCfg:   p.AppConfig,
 		js:       p.JS,
 

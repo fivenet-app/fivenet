@@ -7,6 +7,7 @@
 package collab
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -744,7 +745,7 @@ var File_resources_collab_collab_proto protoreflect.FileDescriptor
 
 const file_resources_collab_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/collab/collab.proto\x12\x10resources.collab\"\x85\x02\n" +
+	"\x1dresources/collab/collab.proto\x12\x10resources.collab\x1a\x1ccodegen/audit/redacted.proto\"\x85\x02\n" +
 	"\fClientPacket\x124\n" +
 	"\x05hello\x18\x01 \x01(\v2\x1c.resources.collab.CollabInitH\x00R\x05hello\x129\n" +
 	"\tsync_step\x18\x02 \x01(\v2\x1a.resources.collab.SyncStepH\x00R\bsyncStep\x12<\n" +
@@ -754,17 +755,17 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\x03msg\")\n" +
 	"\n" +
 	"CollabInit\x12\x1b\n" +
-	"\ttarget_id\x18\x01 \x01(\x03R\btargetId\"h\n" +
+	"\ttarget_id\x18\x01 \x01(\x03R\btargetId\"n\n" +
 	"\bSyncStep\x12\x12\n" +
-	"\x04step\x18\x01 \x01(\x05R\x04step\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\x12$\n" +
+	"\x04step\x18\x01 \x01(\x05R\x04step\x12\x18\n" +
+	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\x12$\n" +
 	"\vreceiver_id\x18\x03 \x01(\x04H\x00R\n" +
 	"receiverId\x88\x01\x01B\x0e\n" +
-	"\f_receiver_id\"\x1f\n" +
-	"\tYjsUpdate\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"#\n" +
-	"\rAwarenessPing\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"\xf6\x03\n" +
+	"\f_receiver_id\"%\n" +
+	"\tYjsUpdate\x12\x18\n" +
+	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\")\n" +
+	"\rAwarenessPing\x12\x18\n" +
+	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\"\xf6\x03\n" +
 	"\fServerPacket\x12\x1b\n" +
 	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12A\n" +
 	"\thandshake\x18\x02 \x01(\v2!.resources.collab.CollabHandshakeH\x00R\thandshake\x129\n" +

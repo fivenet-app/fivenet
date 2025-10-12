@@ -720,13 +720,16 @@
         "stamp": "Stempel",
         "due_at": "Fällig am",
         "approvals": "Genehmigungen",
+        "signatures": "Unterschriften",
         "continue": "Fortfahren",
         "policy": "Richtlinie",
         "task": "Aufgabe | Aufgaben",
         "no_comment": "Kein Kommentar angegeben.",
         "declined": "Abgelehnt",
         "approval": "Keine Genehmigung | {n} Genehmigung | {n} Genehmigungen",
-        "revoke": "Widerrufen"
+        "revoke": "Widerrufen",
+        "metadata": "Metadaten",
+        "expand_collapse": "Ausklappen/Einklappen"
     },
     "components": {
         "partials": {
@@ -2609,13 +2612,18 @@
                 }
             },
             "AuditLog": {
-                "EventType": {
+                "EventAction": {
                     "UNSPECIFIED": "Unbestimmt",
-                    "ERRORED": "Fehlerhaft",
                     "VIEWED": "Aufgerufen",
                     "CREATED": "Erstellt",
                     "UPDATED": "Aktualisiert",
                     "DELETED": "Gelöscht"
+                },
+                "EventResult": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "SUCCEEDED": "Erfolgreich",
+                    "FAILED": "Fehlgeschlagen",
+                    "ERRORED": "Fehlerhaft"
                 }
             },
             "CronjobState": {

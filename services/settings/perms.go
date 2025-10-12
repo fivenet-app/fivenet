@@ -13,6 +13,7 @@ import (
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
@@ -228,15 +229,6 @@ func (s *Server) CreateRole(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "CreateRole",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	// Make sure the user is from the job or is a super user
 	if !userInfo.GetSuperuser() {
 		if req.GetJob() != userInfo.GetJob() {
@@ -268,7 +260,7 @@ func (s *Server) CreateRole(
 
 	s.enricher.EnrichJobInfoNoFallback(r)
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	return &pbsettings.CreateRoleResponse{
 		Role: r,
 	}, nil
@@ -281,15 +273,6 @@ func (s *Server) DeleteRole(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DeleteRole",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.GetId())
 	if err != nil {
@@ -318,7 +301,7 @@ func (s *Server) DeleteRole(
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbsettings.DeleteRoleResponse{}, nil
 }
@@ -330,15 +313,6 @@ func (s *Server) UpdateRolePerms(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.role_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "UpdateRolePerms",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.GetId())
 	if err != nil {
@@ -370,7 +344,7 @@ func (s *Server) UpdateRolePerms(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbsettings.UpdateRolePermsResponse{}, nil
 }
@@ -547,17 +521,6 @@ func (s *Server) DeleteFaction(
 ) (*pbsettings.DeleteFactionResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "DeleteFaction",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
 	roles, err := s.ps.GetJobRoles(ctx, req.GetJob())
@@ -596,7 +559,7 @@ func (s *Server) DeleteFaction(
 		return nil, errswrap.NewError(errs, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbsettings.DeleteFactionResponse{}, nil
 }

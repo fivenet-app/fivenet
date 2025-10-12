@@ -19,7 +19,7 @@ const itemsLeft = computed<(NavigationMenuItem & { permission?: Perms })[]>(() =
         permission: 'documents.DocumentsService/ListDocuments',
     },
     {
-        label: t('common.signature'),
+        label: t('common.signatures'),
         to: '/documents/signatures',
         icon: 'i-mdi-signature',
         permission: 'TODOService/TODOMethod',

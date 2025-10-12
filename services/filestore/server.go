@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -22,8 +21,7 @@ type Server struct {
 
 	logger   *zap.Logger
 	db       *sql.DB
-	aud      audit.IAuditer
-	st       storage.IStorage
+		st       storage.IStorage
 	fHandler *filestore.Handler[int64]
 }
 
@@ -33,8 +31,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	PS        perms.Permissions
-	Aud       audit.IAuditer
-	Enricher  *mstlystcdata.Enricher
+		Enricher  *mstlystcdata.Enricher
 	Laws      *mstlystcdata.Laws
 	Storage   storage.IStorage
 	Config    *config.Config
@@ -58,8 +55,7 @@ func NewServer(p Params) *Server {
 	return &Server{
 		logger:   p.Logger,
 		db:       p.DB,
-		aud:      p.Aud,
-		st:       p.Storage,
+				st:       p.Storage,
 		fHandler: fHandler,
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -21,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
@@ -110,7 +110,6 @@ func (s *Server) Login(
 	}
 
 	// Password check logic
-
 	if err := checkPassword(*account.Password, req.GetPassword()); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
@@ -149,6 +148,9 @@ func (s *Server) Logout(
 	ctx context.Context,
 	req *pbauth.LogoutRequest,
 ) (*pbauth.LogoutResponse, error) {
+	// No need to audit logout actions
+	grpc_audit.Skip(ctx)
+
 	err := s.destroyTokenCookie(ctx)
 	if err != nil {
 		s.logger.Error("failed to destroy token cookie", zap.Error(err))
@@ -680,13 +682,7 @@ func (s *Server) ChooseCharacter(
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	defer s.aud.Log(&audit.AuditEntry{
-		Service: pbauth.AuthService_ServiceDesc.ServiceName,
-		Method:  "ChooseCharacter",
-		UserId:  char.GetUserId(),
-		UserJob: char.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_VIEWED,
-	}, char.UserShort())
+	grpc_audit.SetUser(ctx, char.UserId, char.Job)
 
 	if err := s.setTokenCookie(ctx, newToken); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)

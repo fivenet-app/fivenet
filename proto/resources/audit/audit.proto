@@ -3,35 +3,55 @@ syntax = "proto3";
 package resources.audit;
 
 import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;audit";
 
-enum EventType {
-  EVENT_TYPE_UNSPECIFIED = 0;
-  EVENT_TYPE_ERRORED = 1;
-  EVENT_TYPE_VIEWED = 2;
-  EVENT_TYPE_CREATED = 3;
-  EVENT_TYPE_UPDATED = 4;
-  EVENT_TYPE_DELETED = 5;
+enum EventAction {
+  reserved 1;
+
+  EVENT_ACTION_UNSPECIFIED = 0;
+  // EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
+  EVENT_ACTION_VIEWED = 2;
+  EVENT_ACTION_CREATED = 3;
+  EVENT_ACTION_UPDATED = 4;
+  EVENT_ACTION_DELETED = 5;
+}
+
+enum EventResult {
+  EVENT_RESULT_UNSPECIFIED = 0;
+  EVENT_RESULT_SUCCEEDED = 1;
+  EVENT_RESULT_FAILED = 2;
+  EVENT_RESULT_ERRORED = 3;
 }
 
 message AuditEntry {
-  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  int64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
-  int32 user_id = 3 [(tagger.tags) = "alias:\"user_id\""];
+
+  int32 user_id = 3;
   optional resources.users.UserShort user = 4;
-  string user_job = 5 [(tagger.tags) = "alias:\"user_job\""];
-  optional int32 target_user_id = 6 [(tagger.tags) = "alias:\"target_user_id\""];
+  string user_job = 5;
+
+  optional int32 target_user_id = 6;
   optional resources.users.UserShort target_user = 7;
-  optional string target_user_job = 8 [(tagger.tags) = "alias:\"target_user_job\""];
-  string service = 9 [(tagger.tags) = "alias:\"service\""];
-  string method = 10 [(tagger.tags) = "alias:\"method\""];
-  EventType state = 11 [
-    (buf.validate.field).enum.defined_only = true,
-    (tagger.tags) = "alias:\"state\""
-  ];
-  optional string data = 12 [(tagger.tags) = "alias:\"data\""];
+  optional string target_user_job = 8;
+
+  string service = 9;
+  string method = 10;
+
+  EventAction action = 11 [(buf.validate.field).enum.defined_only = true];
+  EventResult result = 12 [(buf.validate.field).enum.defined_only = true];
+
+  optional AuditEntryMeta meta = 13;
+
+  optional string data = 14;
+}
+
+message AuditEntryMeta {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  map<string, string> meta = 1;
 }

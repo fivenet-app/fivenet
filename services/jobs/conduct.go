@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -227,15 +228,6 @@ func (s *Server) CreateConductEntry(
 ) (*pbjobs.CreateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
-		Method:  "CreateConductEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	req.Entry.Job = userInfo.GetJob()
 
 	tConduct := table.FivenetJobConduct
@@ -273,7 +265,7 @@ func (s *Server) CreateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbjobs.CreateConductEntryResponse{
 		Entry: entry,
@@ -287,15 +279,6 @@ func (s *Server) UpdateConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetEntry().GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
-		Method:  "UpdateConductEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getConductEntry(ctx, req.GetEntry().GetId())
 	if err != nil {
@@ -343,7 +326,7 @@ func (s *Server) UpdateConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
 		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_CONDUCT,
@@ -366,15 +349,6 @@ func (s *Server) DeleteConductEntry(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.jobs.conduct_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
-		Method:  "DeleteConductEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getConductEntry(ctx, req.GetId())
 	if err != nil {
@@ -403,7 +377,7 @@ func (s *Server) DeleteConductEntry(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbjobs.DeleteConductEntryResponse{}, nil
 }

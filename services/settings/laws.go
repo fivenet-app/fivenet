@@ -6,8 +6,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -18,16 +18,7 @@ func (s *Server) CreateOrUpdateLawBook(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawBookRequest,
 ) (*pbsettings.CreateOrUpdateLawBookResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateLawBook",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	tLawBooks := table.FivenetLawbooks
 
@@ -54,7 +45,7 @@ func (s *Server) CreateOrUpdateLawBook(
 
 		req.LawBook.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		stmt := tLawBooks.
 			UPDATE(
@@ -73,7 +64,7 @@ func (s *Server) CreateOrUpdateLawBook(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
 	lawBook, err := s.getLawBook(ctx, req.GetLawBook().GetId())
@@ -99,16 +90,7 @@ func (s *Server) DeleteLawBook(
 	ctx context.Context,
 	req *pbsettings.DeleteLawBookRequest,
 ) (*pbsettings.DeleteLawBookResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
-		Method:  "DeleteLawBook",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	lawBook, err := s.getLawBook(ctx, req.GetId())
 	if err != nil {
@@ -164,16 +146,7 @@ func (s *Server) CreateOrUpdateLaw(
 	ctx context.Context,
 	req *pbsettings.CreateOrUpdateLawRequest,
 ) (*pbsettings.CreateOrUpdateLawResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateLaw",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	tLaws := table.FivenetLawbooksLaws
 
@@ -210,7 +183,7 @@ func (s *Server) CreateOrUpdateLaw(
 
 		req.Law.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		stmt := tLaws.
 			UPDATE(
@@ -239,7 +212,7 @@ func (s *Server) CreateOrUpdateLaw(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
 	law, err := s.getLaw(ctx, req.GetLaw().GetId())
@@ -261,16 +234,7 @@ func (s *Server) DeleteLaw(
 	ctx context.Context,
 	req *pbsettings.DeleteLawRequest,
 ) (*pbsettings.DeleteLawResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.LawsService_ServiceDesc.ServiceName,
-		Method:  "DeleteLaw",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	law, err := s.getLaw(ctx, req.GetId())
 	if err != nil {

@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -69,8 +68,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
-	aud      audit.IAuditer
-	appCfg   appconfig.IConfig
+		appCfg   appconfig.IConfig
 	postals  postals.Postals
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
@@ -92,8 +90,7 @@ type Params struct {
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
 	Tracker   tracker.ITracker
-	Audit     audit.IAuditer
-	AppConfig appconfig.IConfig
+		AppConfig appconfig.IConfig
 	Postals   postals.Postals
 }
 
@@ -114,8 +111,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
-		aud:      p.Audit,
-		appCfg:   p.AppConfig,
+				appCfg:   p.AppConfig,
 		postals:  p.Postals,
 
 		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),

@@ -58,59 +58,99 @@ export interface AuditEntry {
      */
     method: string;
     /**
-     * @generated from protobuf field: resources.audit.EventType state = 11
+     * @generated from protobuf field: resources.audit.EventAction action = 11
      */
-    state: EventType;
+    action: EventAction;
     /**
-     * @generated from protobuf field: optional string data = 12
+     * @generated from protobuf field: resources.audit.EventResult result = 12
+     */
+    result: EventResult;
+    /**
+     * @generated from protobuf field: optional resources.audit.AuditEntryMeta meta = 13
+     */
+    meta?: AuditEntryMeta;
+    /**
+     * @generated from protobuf field: optional string data = 14
      */
     data?: string;
 }
 /**
- * @generated from protobuf enum resources.audit.EventType
+ * @generated from protobuf message resources.audit.AuditEntryMeta
  */
-export enum EventType {
+export interface AuditEntryMeta {
     /**
-     * @generated from protobuf enum value: EVENT_TYPE_UNSPECIFIED = 0;
+     * @generated from protobuf field: map<string, string> meta = 1
+     */
+    meta: {
+        [key: string]: string;
+    };
+}
+/**
+ * @generated from protobuf enum resources.audit.EventAction
+ */
+export enum EventAction {
+    /**
+     * @generated from protobuf enum value: EVENT_ACTION_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: EVENT_TYPE_ERRORED = 1;
-     */
-    ERRORED = 1,
-    /**
-     * @generated from protobuf enum value: EVENT_TYPE_VIEWED = 2;
+     * EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
+     *
+     * @generated from protobuf enum value: EVENT_ACTION_VIEWED = 2;
      */
     VIEWED = 2,
     /**
-     * @generated from protobuf enum value: EVENT_TYPE_CREATED = 3;
+     * @generated from protobuf enum value: EVENT_ACTION_CREATED = 3;
      */
     CREATED = 3,
     /**
-     * @generated from protobuf enum value: EVENT_TYPE_UPDATED = 4;
+     * @generated from protobuf enum value: EVENT_ACTION_UPDATED = 4;
      */
     UPDATED = 4,
     /**
-     * @generated from protobuf enum value: EVENT_TYPE_DELETED = 5;
+     * @generated from protobuf enum value: EVENT_ACTION_DELETED = 5;
      */
     DELETED = 5
+}
+/**
+ * @generated from protobuf enum resources.audit.EventResult
+ */
+export enum EventResult {
+    /**
+     * @generated from protobuf enum value: EVENT_RESULT_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: EVENT_RESULT_SUCCEEDED = 1;
+     */
+    SUCCEEDED = 1,
+    /**
+     * @generated from protobuf enum value: EVENT_RESULT_FAILED = 2;
+     */
+    FAILED = 2,
+    /**
+     * @generated from protobuf enum value: EVENT_RESULT_ERRORED = 3;
+     */
+    ERRORED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class AuditEntry$Type extends MessageType<AuditEntry> {
     constructor() {
         super("resources.audit.AuditEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "alias:\"user_id\"" } },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
-            { no: 5, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"user_job\"" } },
-            { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "alias:\"target_user_id\"" } },
+            { no: 5, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
-            { no: 8, name: "target_user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"target_user_job\"" } },
-            { no: 9, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"service\"" } },
-            { no: 10, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"method\"" } },
-            { no: 11, name: "state", kind: "enum", T: () => ["resources.audit.EventType", EventType, "EVENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } }, "tagger.tags": "alias:\"state\"" } },
-            { no: 12, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "alias:\"data\"" } }
+            { no: 8, name: "target_user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "action", kind: "enum", T: () => ["resources.audit.EventAction", EventAction, "EVENT_ACTION_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 12, name: "result", kind: "enum", T: () => ["resources.audit.EventResult", EventResult, "EVENT_RESULT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 13, name: "meta", kind: "message", T: () => AuditEntryMeta },
+            { no: 14, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<AuditEntry>): AuditEntry {
@@ -120,7 +160,8 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         message.userJob = "";
         message.service = "";
         message.method = "";
-        message.state = 0;
+        message.action = 0;
+        message.result = 0;
         if (value !== undefined)
             reflectionMergePartial<AuditEntry>(this, message, value);
         return message;
@@ -160,10 +201,16 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
                 case /* string method */ 10:
                     message.method = reader.string();
                     break;
-                case /* resources.audit.EventType state */ 11:
-                    message.state = reader.int32();
+                case /* resources.audit.EventAction action */ 11:
+                    message.action = reader.int32();
                     break;
-                case /* optional string data */ 12:
+                case /* resources.audit.EventResult result */ 12:
+                    message.result = reader.int32();
+                    break;
+                case /* optional resources.audit.AuditEntryMeta meta */ 13:
+                    message.meta = AuditEntryMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
+                    break;
+                case /* optional string data */ 14:
                     message.data = reader.string();
                     break;
                 default:
@@ -208,12 +255,18 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         /* string method = 10; */
         if (message.method !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.method);
-        /* resources.audit.EventType state = 11; */
-        if (message.state !== 0)
-            writer.tag(11, WireType.Varint).int32(message.state);
-        /* optional string data = 12; */
+        /* resources.audit.EventAction action = 11; */
+        if (message.action !== 0)
+            writer.tag(11, WireType.Varint).int32(message.action);
+        /* resources.audit.EventResult result = 12; */
+        if (message.result !== 0)
+            writer.tag(12, WireType.Varint).int32(message.result);
+        /* optional resources.audit.AuditEntryMeta meta = 13; */
+        if (message.meta)
+            AuditEntryMeta.internalBinaryWrite(message.meta, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* optional string data = 14; */
         if (message.data !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.data);
+            writer.tag(14, WireType.LengthDelimited).string(message.data);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -224,3 +277,66 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
  * @generated MessageType for protobuf message resources.audit.AuditEntry
  */
 export const AuditEntry = new AuditEntry$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AuditEntryMeta$Type extends MessageType<AuditEntryMeta> {
+    constructor() {
+        super("resources.audit.AuditEntryMeta", [
+            { no: 1, name: "meta", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<AuditEntryMeta>): AuditEntryMeta {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.meta = {};
+        if (value !== undefined)
+            reflectionMergePartial<AuditEntryMeta>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AuditEntryMeta): AuditEntryMeta {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* map<string, string> meta */ 1:
+                    this.binaryReadMap1(message.meta, reader, options);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    private binaryReadMap1(map: AuditEntryMeta["meta"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof AuditEntryMeta["meta"] | undefined, val: AuditEntryMeta["meta"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = reader.string();
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for resources.audit.AuditEntryMeta.meta");
+            }
+        }
+        map[key ?? ""] = val ?? "";
+    }
+    internalBinaryWrite(message: AuditEntryMeta, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* map<string, string> meta = 1; */
+        for (let k of globalThis.Object.keys(message.meta))
+            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.meta[k]).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.audit.AuditEntryMeta
+ */
+export const AuditEntryMeta = new AuditEntryMeta$Type();

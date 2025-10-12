@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -272,15 +273,6 @@ func (s *Server) CreateOrUpdateQualificationResult(
 	req *pbqualifications.CreateOrUpdateQualificationResultRequest,
 ) (*pbqualifications.CreateOrUpdateQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateQualificationResult",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -610,15 +602,6 @@ func (s *Server) DeleteQualificationResult(
 ) (*pbqualifications.DeleteQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
-		Method:  "DeleteQualificationResult",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	result, err := s.getQualificationResult(ctx, 0, req.GetResultId(), nil, userInfo, 0)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -693,7 +676,7 @@ func (s *Server) DeleteQualificationResult(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbqualifications.DeleteQualificationResultResponse{}, nil
 }

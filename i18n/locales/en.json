@@ -720,13 +720,16 @@
         "stamp": "Stamp | Stamps",
         "due_at": "Due at",
         "approvals": "Approvals",
+        "signatures": "Signatures",
         "continue": "Continue",
         "policy": "Policy",
         "task": "Task | Tasks",
         "no_comment": "No comment provided.",
         "declined": "Declined",
         "approval": "No Approvals | {n} Approval | {n} Approvals",
-        "revoke": "Revoke"
+        "revoke": "Revoke",
+        "metadata": "Metadata",
+        "expand_collapse": "Expand/ Collapse"
     },
     "components": {
         "partials": {
@@ -2610,13 +2613,18 @@
                 }
             },
             "AuditLog": {
-                "EventType": {
+                "EventAction": {
                     "UNSPECIFIED": "Unspecified",
-                    "ERRORED": "Failed",
                     "VIEWED": "Viewed",
                     "CREATED": "Created",
                     "UPDATED": "Updated",
                     "DELETED": "Deleted"
+                },
+                "EventResult": {
+                    "UNSPECIFIED": "Unspecified",
+                    "SUCCEEDED": "Succeeded",
+                    "FAILED": "Failed",
+                    "ERRORED": "Errored"
                 }
             },
             "CronjobState": {

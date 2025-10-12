@@ -7,8 +7,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -67,17 +67,6 @@ func (s *Server) GetAllPermissions(
 ) (*pbsettings.GetAllPermissionsResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "GetAllPermissions",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
 		return nil, errorssettings.ErrInvalidRequest
@@ -105,17 +94,6 @@ func (s *Server) GetJobLimits(
 	req *pbsettings.GetJobLimitsRequest,
 ) (*pbsettings.GetJobLimitsResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "GetJobLimits",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
@@ -145,17 +123,6 @@ func (s *Server) UpdateJobLimits(
 ) (*pbsettings.UpdateJobLimitsResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.settings.job", req.GetJob()})
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
-		Method:  "UpdateJobLimits",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	job := s.enricher.GetJobByName(req.GetJob())
 	if job == nil {
 		return nil, errorssettings.ErrInvalidRequest
@@ -177,7 +144,7 @@ func (s *Server) UpdateJobLimits(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbsettings.UpdateJobLimitsResponse{}, nil
 }

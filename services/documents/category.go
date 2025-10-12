@@ -9,6 +9,7 @@ import (
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -102,15 +103,6 @@ func (s *Server) CreateOrUpdateCategory(
 ) (*pbdocuments.CreateOrUpdateCategoryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateCategory",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	tDCategory := table.FivenetDocumentsCategories
 
 	if req.GetCategory().GetId() == 0 {
@@ -142,7 +134,7 @@ func (s *Server) CreateOrUpdateCategory(
 
 		req.Category.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		stmt := tDCategory.
 			UPDATE(
@@ -168,7 +160,7 @@ func (s *Server) CreateOrUpdateCategory(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
 	category, err := s.getCategory(ctx, req.GetCategory().GetId())
@@ -188,15 +180,6 @@ func (s *Server) DeleteCategory(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.category_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbdocuments.DocumentsService_ServiceDesc.ServiceName,
-		Method:  "DeleteCategory",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	category, err := s.getCategory(ctx, req.GetId())
 	if err != nil {
@@ -226,7 +209,7 @@ func (s *Server) DeleteCategory(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbdocuments.DeleteCategoryResponse{}, nil
 }

@@ -7,6 +7,7 @@
 package file
 
 import (
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -341,10 +342,10 @@ var File_resources_file_filestore_proto protoreflect.FileDescriptor
 
 const file_resources_file_filestore_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\"f\n" +
+	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a\x1ccodegen/audit/redacted.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\"l\n" +
 	"\x11UploadFileRequest\x120\n" +
-	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x14\n" +
-	"\x04data\x18\x02 \x01(\fH\x00R\x04dataB\t\n" +
+	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x1a\n" +
+	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01H\x00R\x04dataB\t\n" +
 	"\apayload\"\xc3\x01\n" +
 	"\n" +
 	"UploadMeta\x12\x1b\n" +

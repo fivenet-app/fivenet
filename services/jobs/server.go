@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -74,8 +73,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	aud      audit.IAuditer
-	notifi   notifi.INotifi
+		notifi   notifi.INotifi
 
 	customDB config.CustomDB
 }
@@ -89,8 +87,7 @@ type Params struct {
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
-	Audit             audit.IAuditer
-	Notifi            notifi.INotifi
+		Notifi            notifi.INotifi
 	Config            *config.Config
 }
 
@@ -102,8 +99,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
-		aud:      p.Audit,
-		notifi:   p.Notifi,
+				notifi:   p.Notifi,
 
 		customDB: p.Config.Database.Custom,
 	}

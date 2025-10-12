@@ -106,7 +106,7 @@ class UploadFileRequest$Type extends MessageType<UploadFileRequest> {
     constructor() {
         super("resources.file.UploadFileRequest", [
             { no: 1, name: "meta", kind: "message", oneof: "payload", T: () => UploadMeta },
-            { no: 2, name: "data", kind: "scalar", oneof: "payload", T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.field": { bytes: { maxLen: "131072" } } } }
+            { no: 2, name: "data", kind: "scalar", oneof: "payload", T: 12 /*ScalarType.BYTES*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { bytes: { maxLen: "131072" } } } }
         ]);
     }
     create(value?: PartialMessage<UploadFileRequest>): UploadFileRequest {

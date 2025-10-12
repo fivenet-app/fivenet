@@ -5,6 +5,25 @@ description: Documentation for GRPC Protobuf files.
 
 
 
+## codegen/audit/redacted.proto
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+| `redacted` | bool | .google.protobuf.FieldOptions | 51006 |  |
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## codegen/dbscanner/dbscanner.proto
 
 
@@ -669,8 +688,33 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `target_user_job` | [string](#string) | optional |  |
 | `service` | [string](#string) |  |  |
 | `method` | [string](#string) |  |  |
-| `state` | [EventType](#resourcesauditEventType) |  |  |
+| `action` | [EventAction](#resourcesauditEventAction) |  |  |
+| `result` | [EventResult](#resourcesauditEventResult) |  |  |
+| `meta` | [AuditEntryMeta](#resourcesauditAuditEntryMeta) | optional |  |
 | `data` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.audit.AuditEntryMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `meta` | [AuditEntryMeta.MetaEntry](#resourcesauditAuditEntryMetaMetaEntry) | repeated |  |
+
+
+
+
+
+### resources.audit.AuditEntryMeta.MetaEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
 
 
 
@@ -678,16 +722,26 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
  <!-- end messages -->
 
 
-### resources.audit.EventType
+### resources.audit.EventAction
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `EVENT_TYPE_UNSPECIFIED` | 0 |  |
-| `EVENT_TYPE_ERRORED` | 1 |  |
-| `EVENT_TYPE_VIEWED` | 2 |  |
-| `EVENT_TYPE_CREATED` | 3 |  |
-| `EVENT_TYPE_UPDATED` | 4 |  |
-| `EVENT_TYPE_DELETED` | 5 |  |
+| `EVENT_ACTION_UNSPECIFIED` | 0 |  |
+| `EVENT_ACTION_VIEWED` | 2 | EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum. |
+| `EVENT_ACTION_CREATED` | 3 |  |
+| `EVENT_ACTION_UPDATED` | 4 |  |
+| `EVENT_ACTION_DELETED` | 5 |  |
+
+
+
+### resources.audit.EventResult
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `EVENT_RESULT_UNSPECIFIED` | 0 |  |
+| `EVENT_RESULT_SUCCEEDED` | 1 |  |
+| `EVENT_RESULT_FAILED` | 2 |  |
+| `EVENT_RESULT_ERRORED` | 3 |  |
 
 
  <!-- end enums -->
@@ -12308,7 +12362,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `services` | [string](#string) | repeated |  |
 | `methods` | [string](#string) | repeated |  |
 | `search` | [string](#string) | optional |  |
-| `states` | [resources.audit.EventType](#resourcesauditEventType) | repeated |  |
+| `actions` | [resources.audit.EventAction](#resourcesauditEventAction) | repeated |  |
+| `results` | [resources.audit.EventResult](#resourcesauditEventResult) | repeated |  |
 
 
 

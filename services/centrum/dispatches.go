@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/users"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -36,15 +37,6 @@ func (s *Server) ListDispatches(
 	req *pbcentrum.ListDispatchesRequest,
 ) (*pbcentrum.ListDispatchesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "ListDispatches",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	jobs, _, err := s.settings.GetAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
 	if err != nil {
@@ -232,7 +224,7 @@ func (s *Server) ListDispatches(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -244,15 +236,6 @@ func (s *Server) GetDispatch(
 	logging.InjectFields(ctx, logging.Fields{"fivenet.centrum.dispatch_id", req.GetId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "GetDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	jobs, _, err := s.settings.GetAccessList(ctx, userInfo.GetJob(), userInfo.GetJobGrade())
 	if err != nil {
@@ -354,7 +337,7 @@ func (s *Server) GetDispatch(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -364,15 +347,6 @@ func (s *Server) CreateDispatch(
 	req *pbcentrum.CreateDispatchRequest,
 ) (*pbcentrum.CreateDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "CreateDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	// Make sure jobs and creator id are set
 	if len(req.GetDispatch().GetJobs().GetJobs()) > 0 {
@@ -398,7 +372,7 @@ func (s *Server) CreateDispatch(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbcentrum.CreateDispatchResponse{
 		Dispatch: dsp,
@@ -416,21 +390,12 @@ func (s *Server) UpdateDispatch(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "UpdateDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	dsp, err := s.dispatches.Update(ctx, &userInfo.UserId, req.GetDispatch())
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbcentrum.UpdateDispatchResponse{
 		Dispatch: dsp,
@@ -445,15 +410,6 @@ func (s *Server) TakeDispatch(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "TakeDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	unitMapping, err := s.tracker.GetUserMapping(userInfo.GetUserId())
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
@@ -467,7 +423,7 @@ func (s *Server) TakeDispatch(
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbcentrum.TakeDispatchResponse{}, nil
 }
@@ -477,15 +433,6 @@ func (s *Server) UpdateDispatchStatus(
 	req *pbcentrum.UpdateDispatchStatusRequest,
 ) (*pbcentrum.UpdateDispatchStatusResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "UpdateDispatchStatus",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	dsp, err := s.dispatches.Get(ctx, req.GetDispatchId())
 	if err != nil {
@@ -541,7 +488,7 @@ func (s *Server) UpdateDispatchStatus(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbcentrum.UpdateDispatchStatusResponse{}, nil
 }
@@ -557,15 +504,6 @@ func (s *Server) AssignDispatch(
 	})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "AssignDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	dsp, err := s.dispatches.Get(ctx, req.GetDispatchId())
 	if err != nil {
@@ -585,7 +523,7 @@ func (s *Server) AssignDispatch(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
 	return &pbcentrum.AssignDispatchResponse{}, nil
 }
@@ -714,15 +652,6 @@ func (s *Server) DeleteDispatch(
 ) (*pbcentrum.DeleteDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "DeleteDispatch",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	dsp, err := s.dispatches.Get(ctx, req.GetId())
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
@@ -740,7 +669,7 @@ func (s *Server) DeleteDispatch(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbcentrum.DeleteDispatchResponse{}, nil
 }

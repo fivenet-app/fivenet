@@ -8,6 +8,6 @@ import (
 type Noop struct{}
 
 // Log is a no-op implementation that ignores all input and does nothing.
-func (a *Noop) Log(in *audit.AuditEntry, data any, callbacks ...FilterFn) {
+func (a *Noop) Log(in *audit.AuditEntry, data any) {
 	// Nothing
 }

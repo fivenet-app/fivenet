@@ -7,7 +7,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
@@ -18,8 +17,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-	aud      audit.IAuditer
-	customDB config.CustomDB
+		customDB config.CustomDB
 }
 
 type Params struct {
@@ -28,8 +26,7 @@ type Params struct {
 	DB       *sql.DB
 	Ps       perms.Permissions
 	Enricher *mstlystcdata.Enricher
-	Aud      audit.IAuditer
-	Config   *config.Config
+		Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -37,8 +34,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.Ps,
 		enricher: p.Enricher,
-		aud:      p.Aud,
-		customDB: p.Config.Database.Custom,
+				customDB: p.Config.Database.Custom,
 	}
 }
 

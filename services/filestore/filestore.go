@@ -10,8 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	pbfilestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
@@ -26,16 +26,6 @@ func (s *Server) ListFiles(
 	if req.Path != nil {
 		logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.GetPath()})
 	}
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	defer s.aud.Log(&audit.AuditEntry{
-		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
-		Method:  "ListFiles",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_VIEWED,
-	}, req)
 
 	filePath := ""
 	if req.Path != nil {
@@ -76,24 +66,12 @@ func (s *Server) Upload(
 ) error {
 	ctx := srv.Context()
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
-		Method:  "Upload",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-
 	meta, err := s.fHandler.AwaitHandshake(srv)
-	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
 
 	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.GetParentId(), srv)
-	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return err
 	}
@@ -103,7 +81,7 @@ func (s *Server) Upload(
 		"fivenet.file.name", meta.GetOriginalName(),
 	})
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return nil
 }
@@ -117,22 +95,11 @@ func (s *Server) DeleteFile(
 		"fivenet.file.file_id", req.GetFileId(),
 	})
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
-		Method:  "Delete",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	if err := s.fHandler.Delete(ctx, req.GetParentId(), req.GetFileId()); err != nil {
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &file.DeleteFileResponse{}, nil
 }
@@ -143,22 +110,11 @@ func (s *Server) DeleteFileByPath(
 ) (*pbfilestore.DeleteFileByPathResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.file.path", req.GetPath()})
 
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbfilestore.FilestoreService_ServiceDesc.ServiceName,
-		Method:  "DeleteFileByPath",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	if err := s.fHandler.DeleteFileByPath(ctx, 0, req.GetPath()); err != nil {
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbfilestore.DeleteFileByPathResponse{}, nil
 }

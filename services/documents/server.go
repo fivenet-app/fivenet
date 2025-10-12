@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -115,8 +114,7 @@ type Server struct {
 	jobs          *mstlystcdata.Jobs
 	docCategories *mstlystcdata.DocumentCategories
 	enricher      *mstlystcdata.UserAwareEnricher
-	aud           audit.IAuditer
-	ui            userinfo.UserInfoRetriever
+		ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
 	htmlDiff      *htmldiffer.Differ
 
@@ -141,8 +139,7 @@ type Params struct {
 	Jobs          *mstlystcdata.Jobs
 	DocCategories *mstlystcdata.DocumentCategories
 	Enricher      *mstlystcdata.UserAwareEnricher
-	Aud           audit.IAuditer
-	Ui            userinfo.UserInfoRetriever
+		Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	HTMLDiffer    *htmldiffer.Differ
 	JS            *events.JSWrapper
@@ -192,8 +189,7 @@ func NewServer(p Params) *Server {
 		jobs:          p.Jobs,
 		docCategories: p.DocCategories,
 		enricher:      p.Enricher,
-		aud:           p.Aud,
-		ui:            p.Ui,
+				ui:            p.Ui,
 		notifi:        p.Notif,
 		htmlDiff:      p.HTMLDiffer,
 

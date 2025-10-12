@@ -10,6 +10,7 @@ import (
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -116,15 +117,6 @@ func (s *Server) GetTemplate(
 ) (*pbmailer.GetTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "GetTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetEmailId(),
@@ -144,7 +136,7 @@ func (s *Server) GetTemplate(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }
@@ -154,15 +146,6 @@ func (s *Server) CreateOrUpdateTemplate(
 	req *pbmailer.CreateOrUpdateTemplateRequest,
 ) (*pbmailer.CreateOrUpdateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -231,7 +214,7 @@ func (s *Server) CreateOrUpdateTemplate(
 		}
 		req.Template.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	} else {
 		template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
 		if err != nil {
@@ -256,7 +239,7 @@ func (s *Server) CreateOrUpdateTemplate(
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	}
 
 	template, err := s.getTemplate(ctx, req.GetTemplate().GetId(), &req.Template.EmailId)
@@ -274,15 +257,6 @@ func (s *Server) DeleteTemplate(
 	req *pbmailer.DeleteTemplateRequest,
 ) (*pbmailer.DeleteTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "DeleteTemplate",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -310,7 +284,7 @@ func (s *Server) DeleteTemplate(
 		return nil, err
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteTemplateResponse{}, nil
 }

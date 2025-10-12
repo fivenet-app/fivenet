@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	codegenaudit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
@@ -15,6 +16,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
 )
 
 // tAudit is a reference to the audit log table in the database.
@@ -38,8 +42,8 @@ type FilterFn func(in *audit.AuditEntry, data any)
 
 // IAuditer defines the interface for logging audit entries.
 type IAuditer interface {
-	// Log records an audit entry with optional data and filter callbacks.
-	Log(in *audit.AuditEntry, data any, callbacks ...FilterFn)
+	// Log records an audit entry with optional data.
+	Log(in *audit.AuditEntry, data any)
 }
 
 // AuditStorer implements IAuditer and manages asynchronous audit log storage.
@@ -123,6 +127,10 @@ func (a *AuditStorer) worker(ctx context.Context) {
 			return
 
 		case in := <-a.input:
+			if in == nil {
+				continue
+			}
+
 			if err := a.store(ctx, in); err != nil {
 				a.logger.Error("failed to store audit log", zap.Error(err))
 				continue
@@ -132,14 +140,16 @@ func (a *AuditStorer) worker(ctx context.Context) {
 }
 
 // Log records an audit entry, applies filter callbacks, serializes data, and queues it for storage.
-func (a *AuditStorer) Log(in *audit.AuditEntry, data any, callbacks ...FilterFn) {
+func (a *AuditStorer) Log(in *audit.AuditEntry, data any) {
 	if in == nil {
 		return
 	}
 
-	for _, fn := range callbacks {
-		fn(in, data)
+	// GLOBAL REDACTION: If payload is a protobuf message, redact fields with the custom option.
+	if pm, ok := data.(proto.Message); ok {
+		data = RedactProto(pm)
 	}
+
 	in.Data = a.toJson(data)
 
 	// Prevent panic if channel is closed
@@ -175,7 +185,9 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.TargetUserJob,
 			tAudit.Service,
 			tAudit.Method,
-			tAudit.State,
+			tAudit.Action,
+			tAudit.Result,
+			tAudit.Meta,
 			tAudit.Data,
 		).
 		VALUES(
@@ -185,7 +197,9 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			in.TargetUserJob,
 			in.GetService(),
 			in.GetMethod(),
-			in.GetState(),
+			in.GetAction(),
+			in.GetResult(),
+			in.GetMeta(),
 			in.GetData(),
 		)
 
@@ -196,18 +210,80 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 	return nil
 }
 
+var (
+	noDataMsg     = "{\"aud.msg\":\"No request data\"}"
+	marshalErrMsg = "{\"aud.err\":\"Failed to marshal data\"}"
+)
+
 // toJson serializes the provided data to a JSON string pointer for storage in the audit log.
 func (a *AuditStorer) toJson(data any) *string {
 	if data == nil {
-		noData := "No Data"
-		return &noData
+		return &noDataMsg
 	}
 
 	outB, err := json.Marshal(data)
 	if err != nil {
-		errStr := "Failed to marshal data"
-		return &errStr
+		return &marshalErrMsg
 	}
 	out := string(outB)
 	return &out
+}
+
+// RedactProto returns a redacted copy of msg (zeroing fields tagged with (codegen.audit.redacted)=true).
+func RedactProto(msg proto.Message) proto.Message {
+	if msg == nil {
+		return nil
+	}
+	cp := proto.Clone(msg)
+	redactMessage(cp.ProtoReflect())
+	return cp
+}
+
+// isFieldRedacted checks the custom option (audit.annotations.redacted) on a field.
+func isFieldRedacted(fd protoreflect.FieldDescriptor) bool {
+	opts, ok := fd.Options().(*descriptorpb.FieldOptions)
+	if !ok || opts == nil {
+		return false
+	}
+	if !proto.HasExtension(opts, codegenaudit.E_Redacted) {
+		return false
+	}
+	v, ok := proto.GetExtension(opts, codegenaudit.E_Redacted).(bool)
+	return ok && v
+}
+
+func redactMessage(m protoreflect.Message) {
+	m.Range(func(fd protoreflect.FieldDescriptor, v protoreflect.Value) bool {
+		// Check if the field has the (codegen.audit.redacted) option set to true
+		if isFieldRedacted(fd) {
+			// Zero this field
+			m.Clear(fd)
+			return true
+		}
+
+		switch {
+		case fd.IsList():
+			l := m.Get(fd).List()
+			if fd.Kind() == protoreflect.MessageKind {
+				for i := 0; i < l.Len(); i++ {
+					redactMessage(l.Get(i).Message())
+				}
+			}
+
+		case fd.IsMap():
+			mv := fd.MapValue()
+			if mv.Kind() == protoreflect.MessageKind {
+				mp := m.Get(fd).Map()
+				mp.Range(func(k protoreflect.MapKey, v protoreflect.Value) bool {
+					redactMessage(v.Message())
+					return true
+				})
+			}
+
+		case fd.Kind() == protoreflect.MessageKind:
+			redactMessage(m.Get(fd).Message())
+		}
+
+		return true
+	})
 }

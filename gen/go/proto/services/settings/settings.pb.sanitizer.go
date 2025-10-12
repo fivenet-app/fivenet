@@ -413,6 +413,12 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: Actions
+	for idx, item := range m.Actions {
+		_, _ = idx, item
+
+	}
+
 	// Field: From
 	if m.From != nil {
 		if v, ok := any(m.GetFrom()).(interface{ Sanitize() error }); ok {
@@ -439,6 +445,12 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Results
+	for idx, item := range m.Results {
+		_, _ = idx, item
+
+	}
+
 	// Field: Search
 	if m.Search != nil {
 		*m.Search = htmlsanitizer.Sanitize(*m.Search)
@@ -459,12 +471,6 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: States
-	for idx, item := range m.States {
-		_, _ = idx, item
-
 	}
 
 	// Field: To

@@ -20,6 +20,8 @@ type FivenetAuditLog struct {
 	TargetUserJob *string    `json:"target_user_job"`
 	Service       string     `json:"service"`
 	Method        string     `json:"method"`
-	State         int16      `json:"state"`
+	Action        int16      `json:"action"`
+	Result        int16      `json:"result"`
+	Meta          *string    `json:"meta"`
 	Data          *string    `json:"data"`
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -210,15 +211,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 ) (*pbcalendar.CreateOrUpdateCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateCalendarEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.checkIfUserHasAccessToCalendar(
 		ctx,
 		req.GetEntry().GetCalendarId(),
@@ -294,7 +286,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
 		stmt := tCalendarEntry.
 			INSERT(
@@ -336,7 +328,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 
 		req.Entry.Id = lastId
 
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 	}
 
 	newUsers := []int32{}
@@ -377,15 +369,6 @@ func (s *Server) DeleteCalendarEntry(
 	req *pbcalendar.DeleteCalendarEntryRequest,
 ) (*pbcalendar.DeleteCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "DeleteCalendarEntry",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(mysql.Int64(req.GetEntryId())))
 	if err != nil {
@@ -430,7 +413,7 @@ func (s *Server) DeleteCalendarEntry(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbcalendar.DeleteCalendarEntryResponse{}, nil
 }

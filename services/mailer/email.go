@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -335,15 +336,6 @@ func (s *Server) GetEmail(
 ) (*pbmailer.GetEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "GetEmail",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetId(),
@@ -362,7 +354,7 @@ func (s *Server) GetEmail(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return &pbmailer.GetEmailResponse{
 		Email: email,
@@ -398,15 +390,6 @@ func (s *Server) CreateOrUpdateEmail(
 	req *pbmailer.CreateOrUpdateEmailRequest,
 ) (*pbmailer.CreateOrUpdateEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateEmail",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	if req.Email.UserId != nil {
 		req.Email.UserId = &userInfo.UserId
@@ -590,7 +573,7 @@ func (s *Server) CreateOrUpdateEmail(
 		resp.GetEmail().GetId(),
 	)
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return resp, nil
 }
@@ -660,15 +643,6 @@ func (s *Server) DeleteEmail(
 ) (*pbmailer.DeleteEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &audit.AuditEntry{
-		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
-		Method:  "DeleteEmail",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		req.GetId(),
@@ -719,7 +693,7 @@ func (s *Server) DeleteEmail(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_DELETED)
 
 	return &pbmailer.DeleteEmailResponse{}, nil
 }

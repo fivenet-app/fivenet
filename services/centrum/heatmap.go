@@ -10,6 +10,7 @@ import (
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -20,15 +21,6 @@ func (s *Server) GetDispatchHeatmap(
 	req *pbcentrum.GetDispatchHeatmapRequest,
 ) (*pbcentrum.GetDispatchHeatmapResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "GetDispatchHeatmap",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	resp := &pbcentrum.GetDispatchHeatmapResponse{}
 
@@ -61,7 +53,7 @@ func (s *Server) GetDispatchHeatmap(
 		}
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_VIEWED)
 
 	return resp, nil
 }

@@ -9,6 +9,7 @@ import (
 	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -20,15 +21,6 @@ func (s *Server) SubscribeToCalendar(
 	req *pbcalendar.SubscribeToCalendarRequest,
 ) (*pbcalendar.SubscribeToCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "SubscribeToCalendar",
-		UserId:  userInfo.GetUserId(),
-		UserJob: userInfo.GetJob(),
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
 
 	req.Sub.UserId = userInfo.GetUserId()
 
@@ -56,7 +48,7 @@ func (s *Server) SubscribeToCalendar(
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_CREATED)
 
 	return &pbcalendar.SubscribeToCalendarResponse{
 		Sub: sub,

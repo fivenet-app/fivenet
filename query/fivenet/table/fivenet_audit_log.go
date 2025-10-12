@@ -25,7 +25,9 @@ type fivenetAuditLogTable struct {
 	TargetUserJob mysql.ColumnString
 	Service       mysql.ColumnString
 	Method        mysql.ColumnString
-	State         mysql.ColumnInteger
+	Action        mysql.ColumnInteger
+	Result        mysql.ColumnInteger
+	Meta          mysql.ColumnString
 	Data          mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -76,10 +78,12 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		TargetUserJobColumn = mysql.StringColumn("target_user_job")
 		ServiceColumn       = mysql.StringColumn("service")
 		MethodColumn        = mysql.StringColumn("method")
-		StateColumn         = mysql.IntegerColumn("state")
+		ActionColumn        = mysql.IntegerColumn("action")
+		ResultColumn        = mysql.IntegerColumn("result")
+		MetaColumn          = mysql.StringColumn("meta")
 		DataColumn          = mysql.StringColumn("data")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, ActionColumn, ResultColumn, MetaColumn, DataColumn}
 		defaultColumns      = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -95,7 +99,9 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		TargetUserJob: TargetUserJobColumn,
 		Service:       ServiceColumn,
 		Method:        MethodColumn,
-		State:         StateColumn,
+		Action:        ActionColumn,
+		Result:        ResultColumn,
+		Meta:          MetaColumn,
 		Data:          DataColumn,
 
 		AllColumns:     allColumns,

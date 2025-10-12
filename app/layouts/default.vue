@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { NavigationMenuItem } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
@@ -25,7 +26,7 @@ const route = useRoute();
 
 const open = ref(false);
 
-const links = computed(() =>
+const links = computed<NavigationMenuItem[]>(() =>
     [
         {
             label: t('common.overview'),
@@ -77,6 +78,20 @@ const links = computed(() =>
                 text: t('common.document', 2),
                 kbds: ['G', 'D'],
             },
+            defaultOpen: false,
+            children: [
+                {
+                    label: t('common.approvals'),
+                    icon: 'i-mdi-approval',
+                    to: 'documents/approvals',
+                },
+                {
+                    label: t('common.signatures'),
+                    icon: 'i-mdi-signature',
+                    to: '/documents/signatures',
+                    permission: 'TODOService/TODOMethod' as Perms,
+                },
+            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
             active: route.name.startsWith('documents'),
         },

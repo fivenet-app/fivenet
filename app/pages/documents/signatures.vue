@@ -130,7 +130,8 @@ async function listSignatureTasksInbox(): Promise<ListSignatureTasksInboxRespons
                 :retry="refresh"
             />
             <DataPendingBlock v-else-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.task', 2)])" />
-            <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" />
+            <DataNoDataBlock v-else-if="data?.tasks.length === 0" :type="$t('common.task', 2)" icon="i-mdi-signature" />
+
             <ul
                 v-else
                 class="min-w-full divide-y divide-default"
