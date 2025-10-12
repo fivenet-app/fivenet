@@ -155,7 +155,7 @@ func TestFullAuthFlow(t *testing.T) {
 	require.True(foundAuthed != -1, "Expected a cookie starting with 'fivenet_authed='")
 	require.True(foundToken != -1, "Expected a cookie starting with 'fivenet_token='")
 
-	cookie, err = http.ParseSetCookie(cookies[0])
+	cookie, err = http.ParseSetCookie(cookies[foundToken])
 	require.NoError(err)
 	userToken = cookie.Value
 	assert.NotEmpty(userToken)
