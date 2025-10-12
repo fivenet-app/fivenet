@@ -188,7 +188,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),
 			grpc.AsService(pbvehicles.NewServer),
-			grpc.AsService(pbdocuments.NewServer),
+			pbdocuments.NewServer,
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
