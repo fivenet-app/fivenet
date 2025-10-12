@@ -158,7 +158,7 @@ type Result struct {
 	fx.Out
 
 	Server       *Server
-	Service      pkggrpc.Service     `group:"grpcservice"`
+	Service      pkggrpc.Service     `group:"grpcservices"`
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
