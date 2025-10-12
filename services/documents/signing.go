@@ -1026,6 +1026,32 @@ func (s *Server) DecideSignature(
 		}
 	}
 
+	var existing struct {
+		ID     int64 `alias:"id"`
+		Status int32 `alias:"status"`
+	}
+	if err := tSignatures.
+		SELECT(
+			tSignatures.ID.AS("id"),
+			tSignatures.Status.AS("status"),
+		).
+		FROM(tSignatures).
+		WHERE(
+			tSignatures.PolicyID.EQ(mysql.Int64(pol.GetId())).
+				AND(tSignatures.SnapshotDate.EQ(mysql.TimestampT(snap))).
+				AND(tSignatures.UserID.EQ(mysql.Int32(int32(userInfo.GetUserId())))),
+		).
+		LIMIT(1).
+		QueryContext(ctx, tx, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if existing.ID != 0 &&
+		(existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_APPROVED) ||
+			existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_DECLINED)) {
+		return nil, errswrap.NewError(nil, errorsdocuments.ErrApprovalTaskAlreadyHandled)
+	}
+
 	// Insert/Upsert artifact (unique by policy_id + snapshot_date + user_id)
 	newSig := &documents.Signature{}
 	ins := tSignatures.
@@ -1487,4 +1513,34 @@ func (s *Server) handleSignatureBindingMode(
 	}
 
 	return nil
+}
+
+func (s *Server) expireSignatureTasks(ctx context.Context) (int64, error) {
+	tSignatureTasks := table.FivenetDocumentsSignatureTasks
+	now := time.Now()
+
+	stmt := tSignatureTasks.
+		UPDATE().
+		SET(
+			tSignatureTasks.Status.SET(mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_EXPIRED))),
+		).
+		WHERE(mysql.AND(
+			tSignatureTasks.DueAt.LT_EQ(mysql.TimestampT(now)),
+			tSignatureTasks.Status.EQ(
+				mysql.Int32(int32(documents.SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING)),
+			),
+		)).
+		LIMIT(250)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, err
+	}
+
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return affected, nil
 }

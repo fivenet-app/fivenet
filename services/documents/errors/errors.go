@@ -186,4 +186,13 @@ var (
 		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.content"},
 		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.title"},
 	)
+
+	ErrStampLimitReached = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{
+			Key:        "errors.DocumentsService.ErrStampLimitReached.content",
+			Parameters: map[string]string{"max": "5"},
+		},
+		&common.I18NItem{Key: "errors.DocumentsService.ErrStampLimitReached.title"},
+	)
 )

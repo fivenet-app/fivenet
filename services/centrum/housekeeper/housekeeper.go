@@ -151,29 +151,21 @@ func New(p Params) Result {
 }
 
 func (s *Housekeeper) start(ctx context.Context) {
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		s.runUserChangesWatch(ctx)
-	}()
+	})
 
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		s.runDispatchWatch(ctx)
-	}()
+	})
 
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		s.runIdleWatcher(ctx)
-	}()
+	})
 
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
+	s.wg.Go(func() {
 		s.runTTLWatcher(ctx)
-	}()
+	})
 }
 
 func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {

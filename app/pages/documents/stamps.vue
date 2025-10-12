@@ -80,7 +80,15 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                 <UPageGrid>
                     <UPageCard v-for="stamp in data?.stamps" :key="stamp.id">
                         <template #title>
-                            {{ stamp.name }}
+                            <span>{{ stamp.name }}</span>
+
+                            <UTooltip
+                                v-if="can('documents.SigningService/UpsertStamp').value"
+                                class="flex-1"
+                                :text="$t('common.edit')"
+                            >
+                                <UButton class="flex-1" block color="neutral" variant="ghost" icon="i-mdi-pencil" />
+                            </UTooltip>
                         </template>
 
                         <template #description>

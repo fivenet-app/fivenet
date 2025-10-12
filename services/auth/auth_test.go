@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 	"os"
+	"strings"
 	"testing"
 
 	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
@@ -37,8 +38,11 @@ func TestFullAuthFlow(t *testing.T) {
 
 	ctx := t.Context()
 
+	assert := assert.New(t)
+	require := require.New(t)
+
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
-	require.NoError(t, err)
+	require.NoError(err)
 
 	var srv *Server
 	app := fxtest.New(t,
@@ -55,11 +59,11 @@ func TestFullAuthFlow(t *testing.T) {
 			fx.Invoke(func(*grpc.Server) {}),
 		)...,
 	)
-	assert.NotNil(t, app)
+	assert.NotNil(app)
 
 	app.RequireStart()
 	defer app.RequireStop()
-	assert.NotNil(t, srv)
+	assert.NotNil(srv)
 
 	client := pbauth.NewAuthServiceClient(clientConn)
 
@@ -68,16 +72,16 @@ func TestFullAuthFlow(t *testing.T) {
 	loginReq.Username = ""
 	loginReq.Password = ""
 	res, err := client.Login(ctx, loginReq)
-	require.Error(t, err)
-	assert.Nil(t, res)
+	require.Error(err)
+	assert.Nil(res)
 	proto.CompareGRPCStatusCode(t, codes.InvalidArgument, err)
 
 	// Login with invalid credentials
 	loginReq.Username = "non-existent-username"
 	loginReq.Password = "non-existent-password"
 	res, err = client.Login(ctx, loginReq)
-	require.Error(t, err)
-	assert.Nil(t, res)
+	require.Error(err)
+	assert.Nil(res)
 	proto.CompareGRPCError(t, errorsauth.ErrInvalidLogin, err)
 
 	// user-3: Login with valid account that has one char
@@ -85,108 +89,136 @@ func TestFullAuthFlow(t *testing.T) {
 	loginReq.Password = "password"
 	mdUser1 := metadata.New(map[string]string{})
 	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser1))
-	require.NoError(t, err)
-	assert.NotNil(t, res)
+	require.NoError(err)
+	assert.NotNil(res)
 	if res == nil {
-		assert.FailNow(t, "user-3: Login with valid account failed, response is nil")
+		assert.FailNow("user-3: Login with valid account failed, response is nil")
 	}
 	cookies := mdUser1.Get("set-cookie")
-	cookie, err := http.ParseSetCookie(cookies[0])
-	require.NoError(t, err)
+	// Make sure we have both cookies
+	require.Len(cookies, 2, "Expected 2 cookies to be set")
+	foundAuthed := -1
+	foundToken := -1
+	for i, c := range cookies {
+		if strings.HasPrefix(c, "fivenet_authed=") {
+			foundAuthed = i
+		}
+		if strings.HasPrefix(c, "fivenet_token=") {
+			foundToken = i
+		}
+	}
+	require.True(foundAuthed != -1, "Expected a cookie starting with 'fivenet_authed='")
+	require.True(foundToken != -1, "Expected a cookie starting with 'fivenet_token='")
+
+	cookie, err := http.ParseSetCookie(cookies[foundToken])
+	require.NoError(err)
 	userToken := cookie.Value
-	assert.NotEmpty(t, userToken)
+	assert.NotEmpty(userToken)
 
 	// user-3: Create authenticated metadate and get characters (only has one char)
 	md := metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq := &pbauth.GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
-	require.NoError(t, err)
-	assert.NotNil(t, getCharsRes)
+	require.NoError(err)
+	assert.NotNil(getCharsRes)
 	if getCharsRes == nil {
 		assert.FailNow(
-			t,
 			"user-3: Empty char list returned for valid account that should have 2 chars",
 		)
 	}
-	assert.Len(t, getCharsRes.GetChars(), 1)
+	assert.Len(getCharsRes.GetChars(), 1)
 
 	// user-1: Login with valid account (2 chars)
 	loginReq.Username = "user-1"
 	loginReq.Password = "password"
 	mdUser2 := metadata.New(map[string]string{})
 	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser2))
-	require.NoError(t, err)
-	assert.NotNil(t, res)
+	require.NoError(err)
+	assert.NotNil(res)
 	if res == nil {
-		assert.FailNow(t, "user-1: Login with valid account failed, response is nil")
+		assert.FailNow("user-1: Login with valid account failed, response is nil")
 	}
 	cookies = mdUser2.Get("set-cookie")
+	// Make sure we have both cookies
+	require.Len(cookies, 2, "Expected 2 cookies to be set")
+	foundAuthed = -1
+	foundToken = -1
+	for i, c := range cookies {
+		if strings.HasPrefix(c, "fivenet_authed=") {
+			foundAuthed = i
+		}
+		if strings.HasPrefix(c, "fivenet_token=") {
+			foundToken = i
+		}
+	}
+	require.True(foundAuthed != -1, "Expected a cookie starting with 'fivenet_authed='")
+	require.True(foundToken != -1, "Expected a cookie starting with 'fivenet_token='")
+
 	cookie, err = http.ParseSetCookie(cookies[0])
-	require.NoError(t, err)
+	require.NoError(err)
 	userToken = cookie.Value
-	assert.NotEmpty(t, userToken)
+	assert.NotEmpty(userToken)
 
 	// user-1: Create authenticated metadate and get characters
 	md = metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq = &pbauth.GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)
-	require.NoError(t, err)
-	assert.NotNil(t, getCharsRes)
+	require.NoError(err)
+	assert.NotNil(getCharsRes)
 	if getCharsRes == nil {
 		assert.FailNow(
-			t,
 			"user-1: Empty char list returned for valid account that should have 2 chars",
 		)
 	}
-	assert.Len(t, getCharsRes.GetChars(), 2)
+	assert.Len(getCharsRes.GetChars(), 2)
 
 	// user-1: Choose an invalid character
 	chooseCharReq := &pbauth.ChooseCharacterRequest{}
 	chooseCharReq.CharId = 2 // Char id 2 is `user-2`'s char
 	chooseCharRes, err := client.ChooseCharacter(ctx, chooseCharReq)
-	require.Error(t, err)
-	assert.Nil(t, chooseCharRes)
+	require.Error(err)
+	assert.Nil(chooseCharRes)
 	proto.CompareGRPCError(t, errorsauth.ErrUnableToChooseChar, err)
 
 	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
-	require.NoError(t, err)
-	require.NotNil(t, role)
+	require.NoError(err)
+	require.NotNil(role)
 
 	perm, err := srv.ps.GetPermission(
 		ctx,
 		permsauth.AuthServicePerm,
 		permsauth.AuthServiceChooseCharacterPerm,
 	)
-	require.NoError(t, err)
-	assert.NotNil(t, perm)
+	require.NoError(err)
+	assert.NotNil(perm)
 
 	// user-1: Choose valid character, the job role doesn't have permissions but the **default permissions** should still allow us to login
 	err = srv.ps.RemovePermissionsFromRole(ctx, role.GetId(), perm.GetId())
-	require.NoError(t, err)
+	require.NoError(err)
 	// Disable choose char perm but the **default permissions** will still allow us to login
 	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  perm.GetId(),
 		Val: false,
 	})
-	require.NoError(t, err)
+	require.NoError(err)
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
-	require.NoError(t, err)
-	assert.NotNil(t, chooseCharRes)
+	require.NoError(err)
+	assert.NotNil(chooseCharRes)
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
 	err = srv.ps.UpdateRolePermissions(ctx, role.GetId(), perms.AddPerm{
 		Id:  perm.GetId(),
 		Val: true,
 	})
-	require.NoError(t, err)
+	require.NoError(err)
 	chooseCharReq.CharId = 1
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
-	require.NoError(t, err)
-	assert.NotNil(t, chooseCharRes)
+	require.NoError(err)
+	assert.NotNil(chooseCharRes)
 	if chooseCharRes != nil {
-		assert.NotNil(t, chooseCharRes.GetChar())
+		assert.NotNil(chooseCharRes.GetChar())
 	}
 }

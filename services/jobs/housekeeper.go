@@ -95,7 +95,8 @@ func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {
 			),
 			tTimeClock.StartTime.IS_NOT_NULL(),
 			tTimeClock.EndTime.IS_NULL(),
-		))
+		)).
+		LIMIT(1000)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err

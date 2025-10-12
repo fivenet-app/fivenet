@@ -11,7 +11,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -36,6 +39,13 @@ var Module = fx.Module("audit",
 		New,
 	),
 )
+
+var metricDropCount = promauto.NewGauge(prometheus.GaugeOpts{
+	Namespace: admin.MetricsNamespace,
+	Subsystem: "audit",
+	Name:      "drop_count",
+	Help:      "Number of audit entries dropped by the store (e.g., channel full).",
+})
 
 // FilterFn is a callback function type for filtering or modifying audit entries before logging.
 type FilterFn func(in *audit.AuditEntry, data any)
@@ -160,6 +170,8 @@ func (a *AuditStorer) Log(in *audit.AuditEntry, data any) {
 	default:
 		// channel full, drop or log warning
 		a.logger.Warn("audit log channel full, dropping entry")
+
+		metricDropCount.Inc()
 	}
 }
 

@@ -2547,7 +2547,17 @@
                 "UNSPECIFIED": "Unbekannte Aktivität",
                 "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beantragt | Dokument-Besitzer Wechsel",
                 "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument",
-                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert"
+                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert",
+                "APPROVAL_ASSIGNED": "Genehmigungsaufgabe zugewiesen",
+                "APPROVAL_APPROVED": "Dokument wurde genehmigt",
+                "APPROVAL_REJECTED": "Dokument wurde abgelehnt",
+                "APPROVAL_REVOKED": "Dokumentgenehmigung widerrufen",
+                "APPROVAL_REMOVED": "Dokumentgenehmigung entfernt",
+                "SIGNING_ASSIGNED": "Signaturaufgabe zugewiesen",
+                "SIGNING_SIGNED": "Dokument wurde unterschrieben",
+                "SIGNING_DECLINED": "Dokumentensignatur wurde abgelehnt",
+                "SIGNING_REVOKED": "Dokumentensignatur widerrufen",
+                "SIGNING_REMOVED": "Dokumentensignatur entfernt"
             },
             "OnEditBehavior": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2612,6 +2622,12 @@
                     "UNSPECIFIED": "Unbestimmt"
                 }
             },
+            "CronjobState": {
+                "UNSPECIFIED": "Unbestimmt",
+                "WAITING": "Warten",
+                "PENDING": "Ausstehend",
+                "RUNNING": "Laufend"
+            },
             "AuditLog": {
                 "EventAction": {
                     "UNSPECIFIED": "Unbestimmt",
@@ -2626,12 +2642,6 @@
                     "FAILED": "Fehlgeschlagen",
                     "ERRORED": "Fehlerhaft"
                 }
-            },
-            "CronjobState": {
-                "UNSPECIFIED": "Unbestimmt",
-                "WAITING": "Warten",
-                "PENDING": "Ausstehend",
-                "RUNNING": "Laufend"
             }
         }
     },
@@ -2645,95 +2655,6 @@
             "navigation": "Navigation"
         },
         "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
-    },
-    "zod": {
-        "value": "Wert",
-        "required": "Erforderlich",
-        "invalid_input": "Ungültige Eingabe",
-        "invalid_type": "Ungültige Eingabe: erwartet {expected}, erhalten {received}",
-        "invalid_value": "Ungültiger Wert",
-        "invalid_value_single": "Ungültige Eingabe: erwartet {expected}",
-        "invalid_value_one_of": "Ungültige Option: erwartet eine von {expected}",
-        "too_big": {
-            "have_full": "{origin} darf {comparator} {maximum} {unit} {verb}",
-            "be_full":   "{origin} darf {comparator} {maximum} nicht überschreiten"
-        },
-        "too_small": {
-            "have_full": "{origin} muss {comparator} {minimum} {unit} {verb}",
-            "be_full":   "{origin} muss {comparator} {minimum} sein"
-        },
-        "starts_with": "Ungültige Zeichenkette: muss mit „{prefix}“ beginnen",
-        "ends_with": "Ungültige Zeichenkette: muss mit „{suffix}“ enden",
-        "includes": "Ungültige Zeichenkette: muss „{includes}“ enthalten",
-        "regex": "Ungültige Zeichenkette: Muster {pattern} erforderlich",
-        "invalid_format_noun": "Ungültige(r/s) {noun}",
-        "not_multiple_of": "Ungültige Zahl: muss ein Vielfaches von {divisor} sein",
-        "unrecognized_key": "Unbekannter Schlüssel: {keys}",
-        "unrecognized_keys": "Unbekannte Schlüssel: {keys}",
-        "invalid_key": "Ungültiger Schlüssel in {origin}",
-        "invalid_union": "Ungültige Eingabe",
-        "invalid_element": "Ungültiger Wert in {origin}",
-        "custom": "{message}",
-        "origins": {
-            "string": "Zeichenkette",
-            "file": "Datei",
-            "array": "Liste",
-            "set": "Menge"
-        },
-        "comparators": {
-            "lte": "höchstens",
-            "lt": "weniger als",
-            "gte": "mindestens",
-            "gt": "mehr als"
-        },
-        "sizable": {
-            "string": {
-                "unit": "Zeichen",
-                "verb": "haben"
-            },
-            "file": {
-                "unit": "Byte",
-                "verb": "haben"
-            },
-            "array": {
-                "unit": "Elemente",
-                "verb": "enthalten"
-            },
-            "set": {
-                "unit": "Elemente",
-                "verb": "enthalten"
-            }
-        },
-        "nouns": {
-            "regex": "Eingabe",
-            "email": "E-Mail-Adresse",
-            "url": "URL",
-            "emoji": "Emoji",
-            "uuid": "UUID",
-            "uuidv4": "UUIDv4",
-            "uuidv6": "UUIDv6",
-            "nanoid": "nanoid",
-            "guid": "GUID",
-            "cuid": "cuid",
-            "cuid2": "cuid2",
-            "ulid": "ULID",
-            "xid": "XID",
-            "ksuid": "KSUID",
-            "datetime": "ISO-Datum/Zeit",
-            "date": "ISO-Datum",
-            "time": "ISO-Zeit",
-            "duration": "ISO-Dauer",
-            "ipv4": "IPv4-Adresse",
-            "ipv6": "IPv6-Adresse",
-            "cidrv4": "IPv4-Bereich",
-            "cidrv6": "IPv6-Bereich",
-            "base64": "Base64-String",
-            "base64url": "Base64url-String",
-            "json_string": "JSON-String",
-            "e164": "E.164-Nummer",
-            "jwt": "JWT",
-            "template_literal": "Eingabe"
-        }
     },
     "discord": {
         "commands": {
@@ -3539,6 +3460,95 @@
                 "key": "Superuser",
                 "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf alle FiveNet-Funktionen und -Berechtigungen, unabhängig von Ihrem Beruf oder Ihrer Rolle."
             }
+        }
+    },
+    "zod": {
+        "value": "Wert",
+        "required": "Erforderlich",
+        "invalid_input": "Ungültige Eingabe",
+        "invalid_type": "Ungültige Eingabe: erwartet {expected}, erhalten {received}",
+        "invalid_value": "Ungültiger Wert",
+        "invalid_value_single": "Ungültige Eingabe: erwartet {expected}",
+        "invalid_value_one_of": "Ungültige Option: erwartet eine von {expected}",
+        "too_big": {
+            "have_full": "{origin} darf {comparator} {maximum} {unit} {verb}",
+            "be_full": "{origin} darf {comparator} {maximum} nicht überschreiten"
+        },
+        "too_small": {
+            "have_full": "{origin} muss {comparator} {minimum} {unit} {verb}",
+            "be_full": "{origin} muss {comparator} {minimum} sein"
+        },
+        "starts_with": "Ungültige Zeichenkette: muss mit „{prefix}“ beginnen",
+        "ends_with": "Ungültige Zeichenkette: muss mit „{suffix}“ enden",
+        "includes": "Ungültige Zeichenkette: muss „{includes}“ enthalten",
+        "regex": "Ungültige Zeichenkette: Muster {pattern} erforderlich",
+        "invalid_format_noun": "Ungültige(r/s) {noun}",
+        "not_multiple_of": "Ungültige Zahl: muss ein Vielfaches von {divisor} sein",
+        "unrecognized_key": "Unbekannter Schlüssel: {keys}",
+        "unrecognized_keys": "Unbekannte Schlüssel: {keys}",
+        "invalid_key": "Ungültiger Schlüssel in {origin}",
+        "invalid_union": "Ungültige Eingabe",
+        "invalid_element": "Ungültiger Wert in {origin}",
+        "custom": "{message}",
+        "origins": {
+            "string": "Zeichenkette",
+            "file": "Datei",
+            "array": "Liste",
+            "set": "Menge"
+        },
+        "comparators": {
+            "lte": "höchstens",
+            "lt": "weniger als",
+            "gte": "mindestens",
+            "gt": "mehr als"
+        },
+        "sizable": {
+            "string": {
+                "unit": "Zeichen",
+                "verb": "haben"
+            },
+            "file": {
+                "unit": "Byte",
+                "verb": "haben"
+            },
+            "array": {
+                "unit": "Elemente",
+                "verb": "enthalten"
+            },
+            "set": {
+                "unit": "Elemente",
+                "verb": "enthalten"
+            }
+        },
+        "nouns": {
+            "regex": "Eingabe",
+            "email": "E-Mail-Adresse",
+            "url": "URL",
+            "emoji": "Emoji",
+            "uuid": "UUID",
+            "uuidv4": "UUIDv4",
+            "uuidv6": "UUIDv6",
+            "nanoid": "nanoid",
+            "guid": "GUID",
+            "cuid": "cuid",
+            "cuid2": "cuid2",
+            "ulid": "ULID",
+            "xid": "XID",
+            "ksuid": "KSUID",
+            "datetime": "ISO-Datum/Zeit",
+            "date": "ISO-Datum",
+            "time": "ISO-Zeit",
+            "duration": "ISO-Dauer",
+            "ipv4": "IPv4-Adresse",
+            "ipv6": "IPv6-Adresse",
+            "cidrv4": "IPv4-Bereich",
+            "cidrv6": "IPv6-Bereich",
+            "base64": "Base64-String",
+            "base64url": "Base64url-String",
+            "json_string": "JSON-String",
+            "e164": "E.164-Nummer",
+            "jwt": "JWT",
+            "template_literal": "Eingabe"
         }
     }
 }

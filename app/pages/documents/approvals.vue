@@ -243,7 +243,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                     </div>
 
                                     <h2
-                                        class="line-clamp-2 flex-1 text-base font-medium break-words break-all text-highlighted hover:line-clamp-3 sm:text-xl md:line-clamp-1"
+                                        class="line-clamp-2 flex-1 text-base font-medium break-words break-all text-highlighted hover:line-clamp-3 md:line-clamp-1"
                                     >
                                         <span v-if="!task.document?.title" class="italic">
                                             {{ $t('common.untitled') }}
@@ -265,7 +265,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                             </div>
 
                             <div class="flex justify-between gap-2">
-                                <div class="flex flex-1 items-center gap-1.5">
+                                <div class="flex flex-1 items-center gap-1.5 text-sm">
                                     <UIcon class="size-4 shrink-0" name="i-mdi-calendar" />
                                     <p class="inline-flex gap-1 text-nowrap">
                                         <span class="hidden truncate md:block">
@@ -278,12 +278,12 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                 <UBadge
                                     v-if="task.document?.meta?.state"
                                     class="inline-flex gap-1"
-                                    size="md"
+                                    size="sm"
                                     icon="i-mdi-note-check"
                                     :label="task.document.meta.state"
                                 />
 
-                                <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
+                                <div class="flex flex-1 flex-row items-center justify-end gap-1.5 text-sm">
                                     <span>{{ task.document?.creatorJobLabel }}</span>
                                     <UIcon class="size-4 shrink-0" name="i-mdi-briefcase" />
                                 </div>

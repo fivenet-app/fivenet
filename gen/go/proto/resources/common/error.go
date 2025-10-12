@@ -37,7 +37,7 @@ func NewI18nErrFunc(c codes.Code, content *I18NItem, title *I18NItem) I18nErrFun
 
 		return NewI18nErr(
 			c,
-			NewI18NItemWithParams(content.GetKey(), merged),
+			NewI18nItemWithParams(content.GetKey(), merged),
 			title,
 		)
 	}

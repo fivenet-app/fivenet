@@ -101,6 +101,10 @@
         },
         "qualifications": {
             "title": "Qualifications",
+            "edit": {
+                "title": "Edit Qualification"
+            },
+            "create": "Create Qualification",
             "id": {
                 "title": "Qualification",
                 "exam": {
@@ -109,11 +113,7 @@
                         "title": "Edit Qualification Exam"
                     }
                 }
-            },
-            "edit": {
-                "title": "Edit Qualification"
-            },
-            "create": "Create Qualification"
+            }
         },
         "auth": {
             "logout": {
@@ -490,7 +490,6 @@
         "motd": "MOTD",
         "fallback_mode": "Fallback Mode",
         "volume": "Volume",
-        "profile_picture": "Profile Picture",
         "image": "Image",
         "logo": "Logo",
         "absence_date": "Absence Date",
@@ -698,6 +697,7 @@
         "revoke_wanted": "Revoke Wanted",
         "only_wanted": "Only Wanted",
         "no_actions_available": "No actions available.",
+        "profile_picture": "Profile Picture",
         "dispatch_center_settings": "Dispatch Center Settings",
         "accepted_at": "Accepted At",
         "choose_color": "Choose Color",
@@ -1306,10 +1306,6 @@
             }
         },
         "citizens": {
-            "List": {
-                "no_citizens": "Use the search field above to search or update your query.",
-                "open_fine": "Open fines"
-            },
             "CitizenInfoProfile": {
                 "create_new_document": "Create New Document",
                 "copy_profile_link": "Copy Profile Link",
@@ -1357,6 +1353,10 @@
             },
             "citizen_labels": {
                 "title": "Citizen Labels"
+            },
+            "List": {
+                "no_citizens": "Use the search field above to search or update your query.",
+                "open_fine": "Open fines"
             }
         },
         "CookieControl": {
@@ -1388,11 +1388,11 @@
                     "title": "Update Calendar Entry"
                 }
             },
-            "FindCalendarDrawer": {
-                "title": "Find Calendars"
-            },
             "EntryShareModal": {
                 "title": "Share Calendar Entry"
+            },
+            "FindCalendarDrawer": {
+                "title": "Find Calendars"
             }
         },
         "mathcalculator": {
@@ -1400,7 +1400,6 @@
         },
         "mailer": {
             "mark_unread": "Mark as unread",
-            "mark_read": "Mark as read",
             "mark_important": "Mark as important",
             "star_thread": "Star thread",
             "mute_thread": "Mute thread",
@@ -1429,7 +1428,8 @@
             },
             "ThreadAttachmentsForm": {
                 "document_title_warning": "By attaching documents to an email, the document titles might be visible to the receiving party even if they don't have access to the document."
-            }
+            },
+            "mark_read": "Mark as read"
         },
         "access": {
             "add_entry": "Add Access",
@@ -1578,7 +1578,6 @@
                 "edit_account": "Edit Account"
             },
             "system_status": {
-                "title": "System Status",
                 "database": {
                     "title": "Database",
                     "migration_version": "Migration Version",
@@ -1595,7 +1594,8 @@
                     "last_data_received": "Last Data Received",
                     "last_activity_received": "Last Activity Received",
                     "last_dbsync_version": "Last seen DB Sync Version"
-                }
+                },
+                "title": "System Status"
             },
             "system_settings": "System Settings"
         }
@@ -2537,7 +2537,6 @@
                 "ACCESS_UPDATED": "Document Access updated",
                 "OWNER_CHANGED": "Document Owner changed",
                 "DELETED": "Document deleted",
-                "DRAFT_TOGGLED": "Draft status updated",
                 "REQUESTED_ACCESS": "Document access requested",
                 "REQUESTED_CLOSURE": "Document closure requested",
                 "REQUESTED_UPDATE": "Document update requested",
@@ -2548,6 +2547,7 @@
                 "UNSPECIFIED": "Unspecified",
                 "REQUESTED_OWNER_CHANGE": "Document owner change requested",
                 "REQUESTED_OPENING": "Document open requested",
+                "DRAFT_TOGGLED": "Draft status updated",
                 "APPROVAL_ASSIGNED": "Document Approval task assigned",
                 "APPROVAL_APPROVED": "Document has been approved",
                 "APPROVAL_REJECTED": "Document has been rejected",
@@ -2622,6 +2622,12 @@
                     "UNSPECIFIED": "Unspecified"
                 }
             },
+            "CronjobState": {
+                "UNSPECIFIED": "Unspecified",
+                "WAITING": "Waiting",
+                "PENDING": "Pending",
+                "RUNNING": "Running"
+            },
             "AuditLog": {
                 "EventAction": {
                     "UNSPECIFIED": "Unspecified",
@@ -2636,12 +2642,6 @@
                     "FAILED": "Failed",
                     "ERRORED": "Errored"
                 }
-            },
-            "CronjobState": {
-                "UNSPECIFIED": "Unspecified",
-                "WAITING": "Waiting",
-                "PENDING": "Pending",
-                "RUNNING": "Running"
             }
         }
     },
@@ -2655,95 +2655,6 @@
             "navigation": "Navigation"
         },
         "footer": "Type {key1} for citizens, {key2} for documents search."
-    },
-    "zod": {
-        "value": "value",
-        "required": "Required",
-        "invalid_input": "Invalid input",
-        "invalid_type": "Invalid input: expected {expected}, received {received}",
-        "invalid_value": "Invalid value",
-        "invalid_value_single": "Invalid input: expected {expected}",
-        "invalid_value_one_of": "Invalid option: expected one of {expected}",
-        "too_big": {
-            "have_full": "Too big: expected {origin} {verb} {comparator} {maximum} {unit}",
-            "be_full":   "Too big: expected {origin} to be {comparator} {maximum}"
-        },
-        "too_small": {
-            "have_full": "Too small: expected {origin} {verb} {comparator} {minimum} {unit}",
-            "be_full":   "Too small: expected {origin} to be {comparator} {minimum}"
-        },
-        "starts_with": "Invalid string: must start with \"{prefix}\"",
-        "ends_with": "Invalid string: must end with \"{suffix}\"",
-        "includes": "Invalid string: must include \"{includes}\"",
-        "regex": "Invalid string: must match pattern {pattern}",
-        "invalid_format_noun": "Invalid {noun}",
-        "not_multiple_of": "Invalid number: must be a multiple of {divisor}",
-        "unrecognized_key": "Unrecognized key: {keys}",
-        "unrecognized_keys": "Unrecognized keys: {keys}",
-        "invalid_key": "Invalid key in {origin}",
-        "invalid_union": "Invalid input",
-        "invalid_element": "Invalid value in {origin}",
-        "custom": "{message}",
-        "origins": {
-            "string": "string",
-            "file": "file",
-            "array": "array",
-            "set": "set"
-        },
-        "comparators": {
-            "lte": "at most",
-            "lt": "less than",
-            "gte": "at least",
-            "gt": "greater than"
-        },
-        "sizable": {
-            "string":{
-                "unit": "characters",
-                "verb": "to have"
-            },
-            "file":  {
-                "unit": "bytes",
-                "verb": "to have"
-            },
-            "array": {
-                "unit": "items",
-                "verb": "to have"
-            },
-            "set": {
-                "unit": "items",
-                "verb": "to have"
-            }
-        },
-        "nouns": {
-            "regex": "input",
-            "email": "email address",
-            "url": "URL",
-            "emoji": "emoji",
-            "uuid": "UUID",
-            "uuidv4": "UUIDv4",
-            "uuidv6": "UUIDv6",
-            "nanoid": "nanoid",
-            "guid": "GUID",
-            "cuid": "cuid",
-            "cuid2": "cuid2",
-            "ulid": "ULID",
-            "xid": "XID",
-            "ksuid": "KSUID",
-            "datetime": "ISO datetime",
-            "date": "ISO date",
-            "time": "ISO time",
-            "duration": "ISO duration",
-            "ipv4": "IPv4 address",
-            "ipv6": "IPv6 address",
-            "cidrv4": "IPv4 range",
-            "cidrv6": "IPv6 range",
-            "base64": "base64-encoded string",
-            "base64url": "base64url-encoded string",
-            "json_string": "JSON string",
-            "e164": "E.164 number",
-            "jwt": "JWT",
-            "template_literal": "input"
-        }
     },
     "discord": {
         "commands": {
@@ -3549,6 +3460,95 @@
                 "key": "Superuser",
                 "description": "This permission allows you to access all FiveNet features and permissions, regardless of your job or role."
             }
+        }
+    },
+    "zod": {
+        "value": "value",
+        "required": "Required",
+        "invalid_input": "Invalid input",
+        "invalid_type": "Invalid input: expected {expected}, received {received}",
+        "invalid_value": "Invalid value",
+        "invalid_value_single": "Invalid input: expected {expected}",
+        "invalid_value_one_of": "Invalid option: expected one of {expected}",
+        "too_big": {
+            "have_full": "Too big: expected {origin} {verb} {comparator} {maximum} {unit}",
+            "be_full": "Too big: expected {origin} to be {comparator} {maximum}"
+        },
+        "too_small": {
+            "have_full": "Too small: expected {origin} {verb} {comparator} {minimum} {unit}",
+            "be_full": "Too small: expected {origin} to be {comparator} {minimum}"
+        },
+        "starts_with": "Invalid string: must start with \"{prefix}\"",
+        "ends_with": "Invalid string: must end with \"{suffix}\"",
+        "includes": "Invalid string: must include \"{includes}\"",
+        "regex": "Invalid string: must match pattern {pattern}",
+        "invalid_format_noun": "Invalid {noun}",
+        "not_multiple_of": "Invalid number: must be a multiple of {divisor}",
+        "unrecognized_key": "Unrecognized key: {keys}",
+        "unrecognized_keys": "Unrecognized keys: {keys}",
+        "invalid_key": "Invalid key in {origin}",
+        "invalid_union": "Invalid input",
+        "invalid_element": "Invalid value in {origin}",
+        "custom": "{message}",
+        "origins": {
+            "string": "string",
+            "file": "file",
+            "array": "array",
+            "set": "set"
+        },
+        "comparators": {
+            "lte": "at most",
+            "lt": "less than",
+            "gte": "at least",
+            "gt": "greater than"
+        },
+        "sizable": {
+            "string": {
+                "unit": "characters",
+                "verb": "to have"
+            },
+            "file": {
+                "unit": "bytes",
+                "verb": "to have"
+            },
+            "array": {
+                "unit": "items",
+                "verb": "to have"
+            },
+            "set": {
+                "unit": "items",
+                "verb": "to have"
+            }
+        },
+        "nouns": {
+            "regex": "input",
+            "email": "email address",
+            "url": "URL",
+            "emoji": "emoji",
+            "uuid": "UUID",
+            "uuidv4": "UUIDv4",
+            "uuidv6": "UUIDv6",
+            "nanoid": "nanoid",
+            "guid": "GUID",
+            "cuid": "cuid",
+            "cuid2": "cuid2",
+            "ulid": "ULID",
+            "xid": "XID",
+            "ksuid": "KSUID",
+            "datetime": "ISO datetime",
+            "date": "ISO date",
+            "time": "ISO time",
+            "duration": "ISO duration",
+            "ipv4": "IPv4 address",
+            "ipv6": "IPv6 address",
+            "cidrv4": "IPv4 range",
+            "cidrv6": "IPv6 range",
+            "base64": "base64-encoded string",
+            "base64url": "base64url-encoded string",
+            "json_string": "JSON string",
+            "e164": "E.164 number",
+            "jwt": "JWT",
+            "template_literal": "input"
         }
     }
 }

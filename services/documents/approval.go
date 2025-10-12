@@ -1454,6 +1454,29 @@ func (s *Server) DecideApproval(
 		}
 	}
 
+	var existing struct {
+		ID     int64 `alias:"id"`
+		Status int32 `alias:"status"`
+	}
+	if err := tApprovals.
+		SELECT(tApprovals.ID.AS("id"), tApprovals.Status.AS("status")).
+		FROM(tApprovals).
+		WHERE(
+			tApprovals.PolicyID.EQ(mysql.Int64(pol.GetId())).
+				AND(tApprovals.SnapshotDate.EQ(mysql.TimestampT(snap))).
+				AND(tApprovals.UserID.EQ(mysql.Int32(int32(userInfo.GetUserId())))),
+		).
+		LIMIT(1).
+		QueryContext(ctx, tx, &existing); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if existing.ID != 0 &&
+		(existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_APPROVED) ||
+			existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_DECLINED)) {
+		return nil, errswrap.NewError(nil, errorsdocuments.ErrApprovalTaskAlreadyHandled)
+	}
+
 	// Write/UPSERT approval artifact (unique per (policy_id, snapshot_date, user_id))
 	// Map task statuses APPROVED/DECLINED -> artifact status
 	artifactStatus := documents.ApprovalStatus_APPROVAL_STATUS_APPROVED
@@ -1914,4 +1937,34 @@ func (s *Server) handleApprovalOnEditBehaviors(
 	}
 
 	return nil
+}
+
+func (s *Server) expireApprovalTasks(ctx context.Context) (int64, error) {
+	tApprovalTasks := table.FivenetDocumentsApprovalTasks
+	now := time.Now()
+
+	stmt := tApprovalTasks.
+		UPDATE().
+		SET(
+			tApprovalTasks.Status.SET(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_EXPIRED))),
+		).
+		WHERE(mysql.AND(
+			tApprovalTasks.DueAt.LT_EQ(mysql.TimestampT(now)),
+			tApprovalTasks.Status.EQ(
+				mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
+			),
+		)).
+		LIMIT(250)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, err
+	}
+
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return affected, err
+	}
+
+	return affected, nil
 }

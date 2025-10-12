@@ -3,14 +3,19 @@ package documents
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strconv"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
+	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
@@ -20,6 +25,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -107,6 +114,7 @@ type Server struct {
 	pbdocuments.SigningServiceServer
 
 	logger *zap.Logger
+	tracer trace.Tracer
 	db     *sql.DB
 
 	js            *events.JSWrapper
@@ -114,7 +122,7 @@ type Server struct {
 	jobs          *mstlystcdata.Jobs
 	docCategories *mstlystcdata.DocumentCategories
 	enricher      *mstlystcdata.UserAwareEnricher
-		ui            userinfo.UserInfoRetriever
+	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
 	htmlDiff      *htmldiffer.Differ
 
@@ -134,18 +142,27 @@ type Params struct {
 
 	Logger        *zap.Logger
 	DB            *sql.DB
+	TP            *tracesdk.TracerProvider
 	Perms         perms.Permissions
 	Storage       storage.IStorage
 	Jobs          *mstlystcdata.Jobs
 	DocCategories *mstlystcdata.DocumentCategories
 	Enricher      *mstlystcdata.UserAwareEnricher
-		Ui            userinfo.UserInfoRetriever
+	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	HTMLDiffer    *htmldiffer.Differ
 	JS            *events.JSWrapper
 }
 
-func NewServer(p Params) *Server {
+type Result struct {
+	fx.Out
+
+	Server       *Server
+	Service      pkggrpc.Service     `group:"grpcservice"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
+}
+
+func NewServer(p Params) Result {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "documents")
@@ -182,6 +199,7 @@ func NewServer(p Params) *Server {
 
 	s := &Server{
 		logger: p.Logger.Named("documents"),
+		tracer: p.TP.Tracer("documents"),
 		db:     p.DB,
 
 		js:            p.JS,
@@ -189,7 +207,7 @@ func NewServer(p Params) *Server {
 		jobs:          p.Jobs,
 		docCategories: p.DocCategories,
 		enricher:      p.Enricher,
-				ui:            p.Ui,
+		ui:            p.Ui,
 		notifi:        p.Notif,
 		htmlDiff:      p.HTMLDiffer,
 
@@ -298,7 +316,11 @@ func NewServer(p Params) *Server {
 		return nil
 	}))
 
-	return s
+	return Result{
+		Server:       s,
+		Service:      s,
+		CronRegister: s,
+	}
 }
 
 func newAccess(
@@ -374,4 +396,72 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 // GetPermsRemap returns the permissions re-mapping for the services.
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbdocuments.PermsRemap
+}
+
+func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.approval.tasks.expire",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "documents.signature.tasks.expire",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add(
+		"documents.approval.tasks.expire",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.approval.tasks.expire")
+			defer span.End()
+
+			dest := &cron.GenericCronData{}
+
+			rowsAffected, err := s.expireApprovalTasks(ctx)
+			if err != nil {
+				return err
+			}
+			dest.SetAttribute("affected_rows", strconv.FormatInt(rowsAffected, 10))
+
+			// Marshal the updated cron data
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	h.Add(
+		"documents.signature.tasks.expire",
+		func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "documents.signature.tasks.expire")
+			defer span.End()
+
+			dest := &cron.GenericCronData{}
+
+			affectedRows, err := s.expireSignatureTasks(ctx)
+			if err != nil {
+				return err
+			}
+			dest.SetAttribute("affected_rows", strconv.FormatInt(affectedRows, 10))
+
+			// Marshal the updated cron data
+			if err := data.MarshalFrom(dest); err != nil {
+				return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
+			}
+
+			return nil
+		},
+	)
+
+	return nil
 }

@@ -2,6 +2,7 @@ package documents
 
 import (
 	"context"
+	"errors"
 
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
@@ -11,7 +12,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
+
+const stampLimit = 5
 
 func (s *Server) ListUsableStamps(
 	ctx context.Context,
@@ -125,6 +129,26 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp,
 	return &stamp, nil
 }
 
+func (s *Server) checkJobStampCount(ctx context.Context, job string) (int64, error) {
+	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
+
+	countStmt := tStamp.
+		SELECT(
+			mysql.COUNT(tStamp.ID).AS("data_count.total"),
+		).
+		FROM(tStamp).
+		WHERE(tStamp.Name.EQ(mysql.String(job)))
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
+	}
+
+	return count.Total, nil
+}
+
 func (s *Server) UpsertStamp(
 	ctx context.Context,
 	req *pbdocuments.UpsertStampRequest,
@@ -135,8 +159,25 @@ func (s *Server) UpsertStamp(
 
 	st := req.GetStamp()
 
-	// Stamps are job only!
-	// TODO Ensure that at least the highest grade in the user's job has edit access
+	// Stamps are job only and are currently limited to 5!
+	if st.Access == nil {
+		st.Access = &documents.StampAccess{}
+	}
+	if len(st.Access.Jobs) == 0 {
+		// Add minimum access for the creator's job
+		st.Access.Jobs = append(st.Access.Jobs, &documents.StampJobAccess{
+			Job:          userInfo.GetJob(),
+			MinimumGrade: userInfo.GetJobGrade(),
+			Access:       documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+		})
+	}
+
+	// Check if stamp count for the job exceeds the limit
+	if count, err := s.checkJobStampCount(ctx, userInfo.GetJob()); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	} else if count >= stampLimit && st.GetId() == 0 {
+		return nil, errorsdocuments.ErrStampLimitReached
+	}
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
