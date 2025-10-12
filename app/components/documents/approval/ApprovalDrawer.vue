@@ -26,6 +26,8 @@ defineEmits<{
 
 const overlay = useOverlay();
 
+const { can } = useAuth();
+
 const approvalClient = await getDocumentsApprovalClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
@@ -211,9 +213,16 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     <DataNoDataBlock icon="i-mdi-approval" :type="$t('common.policy')" />
                                 </div>
 
-                                <template #footer>
+                                <template
+                                    v-if="
+                                        can('documents.ApprovalService/UpsertApprovalPolicy').value ||
+                                        can('documents.ApprovalService/RevokeApproval').value
+                                    "
+                                    #footer
+                                >
                                     <UButtonGroup class="flex w-full flex-1">
                                         <UButton
+                                            v-if="can('documents.ApprovalService/UpsertApprovalPolicy').value"
                                             block
                                             :label="$t('common.policy')"
                                             :trailing-icon="data ? 'i-mdi-pencil' : 'i-mdi-plus'"
@@ -227,6 +236,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         />
 
                                         <UButton
+                                            v-if="can('documents.ApprovalService/RevokeApproval').value"
                                             icon="i-mdi-calculator-variant"
                                             variant="outline"
                                             @click="() => recomputeApprovalPolicyCounters()"
@@ -240,7 +250,10 @@ const taskFormDrawer = overlay.create(TaskForm);
                             <ApprovalList :document-id="documentId" :policy-id="data?.id ?? 0" />
 
                             <TaskList :document-id="documentId" :policy-id="data?.id ?? 0">
-                                <template #header="{ refresh: tasksRefresh }">
+                                <template
+                                    v-if="can('documents.ApprovalService/UpsertApprovalTasks').value"
+                                    #header="{ refresh: tasksRefresh }"
+                                >
                                     <UButton
                                         :disabled="!data"
                                         variant="link"

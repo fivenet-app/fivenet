@@ -13,6 +13,8 @@ const props = defineProps<{
     policyId: number;
 }>();
 
+const { can } = useAuth();
+
 const approvalClient = await getDocumentsApprovalClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
@@ -115,7 +117,10 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                             </p>
                         </div>
 
-                        <div class="inline-flex items-center gap-2">
+                        <div
+                            v-if="can('documents.ApprovalService/DeleteApprovalTasks').value"
+                            class="inline-flex items-center gap-2"
+                        >
                             <UTooltip :text="$t('common.remove')">
                                 <UButton icon="i-mdi-trash-can" color="red" variant="link" @click="removeTask(task.id)" />
                             </UTooltip>

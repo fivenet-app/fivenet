@@ -16,6 +16,8 @@ defineEmits<{
 
 const overlay = useOverlay();
 
+const { can } = useAuth();
+
 const signingClient = await getDocumentsSigningClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
@@ -179,10 +181,17 @@ const signaturePad = overlay.create(SignaturePadDrawer);
             </div>
         </template>
 
-        <template #footer>
+        <template
+            v-if="
+                can('documents.SigningService/UpsertSignaturePolicy').value ||
+                can('documents.SigningService/RevokeSignature').value
+            "
+            #footer
+        >
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <UButtonGroup class="w-full flex-1">
                     <UButton
+                        v-if="can('documents.SigningService/UpsertSignaturePolicy').value"
                         class="flex-1"
                         color="success"
                         icon="i-mdi-signature"
@@ -199,7 +208,7 @@ const signaturePad = overlay.create(SignaturePadDrawer);
                     />
                 </UButtonGroup>
 
-                <UButtonGroup class="w-full flex-1">
+                <UButtonGroup v-if="can('documents.SigningService/RevokeSignature').value" class="w-full flex-1">
                     <UButton
                         class="flex-1"
                         color="neutral"

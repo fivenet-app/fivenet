@@ -17,6 +17,8 @@ const props = defineProps<{
 
 const overlay = useOverlay();
 
+const { can } = useAuth();
+
 const approvalClient = await getDocumentsApprovalClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
@@ -114,7 +116,10 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
                             </p>
                         </div>
 
-                        <div class="inline-flex items-center gap-2">
+                        <div
+                            v-if="can('documents.ApprovalService/RevokeApproval').value"
+                            class="inline-flex items-center gap-2"
+                        >
                             <UTooltip v-if="approval.status !== ApprovalStatus.REVOKED" :text="$t('common.revoke')">
                                 <UButton
                                     icon="i-mdi-cancel"
