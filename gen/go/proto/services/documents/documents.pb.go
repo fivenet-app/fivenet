@@ -3560,31 +3560,31 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\a_render\"l\n" +
 	"\x13GetTemplateResponse\x129\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\x12\x1a\n" +
-	"\brendered\x18\x02 \x01(\bR\brendered\"R\n" +
-	"\x15CreateTemplateRequest\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"(\n" +
+	"\brendered\x18\x02 \x01(\bR\brendered\"Z\n" +
+	"\x15CreateTemplateRequest\x12A\n" +
+	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"(\n" +
 	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"R\n" +
-	"\x15UpdateTemplateRequest\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"S\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"Z\n" +
+	"\x15UpdateTemplateRequest\x12A\n" +
+	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateB\x06\xbaH\x03\xc8\x01\x01R\btemplate\"S\n" +
 	"\x16UpdateTemplateResponse\x129\n" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse\"\x92\x04\n" +
-	"\x14ListDocumentsRequest\x12L\n" +
+	"\x16DeleteTemplateResponse\"\xc1\x04\n" +
+	"\x14ListDocumentsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1b\n" +
-	"\x06search\x18\x03 \x01(\tH\x01R\x06search\x88\x01\x01\x12!\n" +
-	"\fcategory_ids\x18\x04 \x03(\x03R\vcategoryIds\x12\x1f\n" +
-	"\vcreator_ids\x18\x05 \x03(\x05R\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12$\n" +
+	"\x06search\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\x06search\x88\x01\x01\x12+\n" +
+	"\fcategory_ids\x18\x04 \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\x05R\vcategoryIds\x12)\n" +
+	"\vcreator_ids\x18\x05 \x03(\x05B\b\xbaH\x05\x92\x01\x02\x10\x05R\n" +
 	"creatorIds\x127\n" +
 	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x04from\x88\x01\x01\x123\n" +
 	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x02to\x88\x01\x01\x12\x1b\n" +
-	"\x06closed\x18\b \x01(\bH\x04R\x06closed\x88\x01\x01\x12!\n" +
-	"\fdocument_ids\x18\t \x03(\x03R\vdocumentIds\x12$\n" +
+	"\x06closed\x18\b \x01(\bH\x04R\x06closed\x88\x01\x01\x12+\n" +
+	"\fdocument_ids\x18\t \x03(\x03B\b\xbaH\x05\x92\x01\x02\x10\x05R\vdocumentIds\x12$\n" +
 	"\vonly_drafts\x18\n" +
 	" \x01(\bH\x05R\n" +
 	"onlyDrafts\x88\x01\x01B\a\n" +
@@ -3593,10 +3593,10 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +
 	"\a_closedB\x0e\n" +
-	"\f_only_drafts\"\xae\x01\n" +
-	"\x15ListDocumentsResponse\x12M\n" +
+	"\f_only_drafts\"\xb6\x01\n" +
+	"\x15ListDocumentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12F\n" +
 	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortB\x04\xc8\xf3\x18\x01R\tdocuments\"e\n" +
 	"\x12GetDocumentRequest\x12\x1f\n" +
@@ -3619,38 +3619,38 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\"z\n" +
 	"\x1cGetDocumentRelationsResponse\x12Z\n" +
-	"\trelations\x18\x01 \x03(\v2%.resources.documents.DocumentRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\trelations\"c\n" +
-	"\x1bAddDocumentReferenceRequest\x12D\n" +
-	"\treference\x18\x01 \x01(\v2&.resources.documents.DocumentReferenceR\treference\".\n" +
+	"\trelations\x18\x01 \x03(\v2%.resources.documents.DocumentRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\trelations\"k\n" +
+	"\x1bAddDocumentReferenceRequest\x12L\n" +
+	"\treference\x18\x01 \x01(\v2&.resources.documents.DocumentReferenceB\x06\xbaH\x03\xc8\x01\x01R\treference\".\n" +
 	"\x1cAddDocumentReferenceResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
 	"\x1eRemoveDocumentReferenceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"!\n" +
-	"\x1fRemoveDocumentReferenceResponse\"_\n" +
-	"\x1aAddDocumentRelationRequest\x12A\n" +
-	"\brelation\x18\x01 \x01(\v2%.resources.documents.DocumentRelationR\brelation\"-\n" +
+	"\x1fRemoveDocumentReferenceResponse\"g\n" +
+	"\x1aAddDocumentRelationRequest\x12I\n" +
+	"\brelation\x18\x01 \x01(\v2%.resources.documents.DocumentRelationB\x06\xbaH\x03\xc8\x01\x01R\brelation\"-\n" +
 	"\x1bAddDocumentRelationResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"/\n" +
 	"\x1dRemoveDocumentRelationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\" \n" +
-	"\x1eRemoveDocumentRelationResponse\"\x83\x01\n" +
-	"\x12GetCommentsRequest\x12L\n" +
+	"\x1eRemoveDocumentRelationResponse\"\x8b\x01\n" +
+	"\x12GetCommentsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xa4\x01\n" +
-	"\x13GetCommentsResponse\x12M\n" +
+	"documentId\"\xac\x01\n" +
+	"\x13GetCommentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12>\n" +
-	"\bcomments\x18\x02 \x03(\v2\x1c.resources.documents.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"L\n" +
-	"\x12PostCommentRequest\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"M\n" +
+	"\bcomments\x18\x02 \x03(\v2\x1c.resources.documents.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"T\n" +
+	"\x12PostCommentRequest\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentB\x06\xbaH\x03\xc8\x01\x01R\acomment\"M\n" +
 	"\x13PostCommentResponse\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"L\n" +
-	"\x12EditCommentRequest\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"M\n" +
+	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"T\n" +
+	"\x12EditCommentRequest\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentB\x06\xbaH\x03\xc8\x01\x01R\acomment\"M\n" +
 	"\x13EditCommentResponse\x126\n" +
 	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"5\n" +
 	"\x14DeleteCommentRequest\x12\x1d\n" +
@@ -3658,12 +3658,13 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
 	"\x15DeleteCommentResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x84\x01\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x91\x01\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
-	"documentId\x12.\n" +
-	"\x06reason\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x00R\x06reason\x88\x01\x01B\t\n" +
+	"documentId\x12;\n" +
+	"\x06reason\x18\x02 \x01(\tB\x1e\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x00\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x18\n" +
 	"\x16DeleteDocumentResponse\"P\n" +
 	"\x15ToggleDocumentRequest\x12\x1f\n" +
@@ -3676,71 +3677,72 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12#\n" +
 	"\vnew_user_id\x18\x02 \x01(\x05H\x00R\tnewUserId\x88\x01\x01B\x0e\n" +
 	"\f_new_user_id\"\x1d\n" +
-	"\x1bChangeDocumentOwnerResponse\"\xf6\x01\n" +
-	"\x15CreateDocumentRequest\x12H\n" +
-	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12$\n" +
+	"\x1bChangeDocumentOwnerResponse\"\x80\x02\n" +
+	"\x15CreateDocumentRequest\x12R\n" +
+	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12$\n" +
 	"\vtemplate_id\x18\x02 \x01(\x03H\x00R\n" +
 	"templateId\x88\x01\x01\x12K\n" +
 	"\rtemplate_data\x18\x03 \x01(\v2!.resources.documents.TemplateDataH\x01R\ftemplateData\x88\x01\x01B\x0e\n" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xa7\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xce\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
 	"documentId\x12$\n" +
 	"\vcategory_id\x18\x02 \x01(\x03H\x00R\n" +
-	"categoryId\x88\x01\x01\x129\n" +
-	"\x05title\x18\x03 \x01(\tB#\xda\xf3\x18\r\b\x01\x12\tStripTags\x9a\x84\x9e\x03\ralias:\"title\"R\x05title\x12;\n" +
-	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12H\n" +
-	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12\x17\n" +
-	"\x04data\x18\x06 \x01(\tH\x01R\x04data\x88\x01\x01\x125\n" +
-	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaR\x04meta\x12@\n" +
+	"categoryId\x88\x01\x01\x12C\n" +
+	"\x05title\x18\x03 \x01(\tB-\xda\xf3\x18\r\b\x01\x12\tStripTags\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
+	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12R\n" +
+	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\"\n" +
+	"\x04data\x18\x06 \x01(\tB\t\xbaH\x06r\x04(\xc0\x84=H\x01R\x04data\x88\x01\x01\x12=\n" +
+	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12@\n" +
 	"\x06access\x18\v \x01(\v2#.resources.documents.DocumentAccessH\x02R\x06access\x88\x01\x01\x12>\n" +
 	"\x05files\x18\f \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\x0e\n" +
 	"\f_category_idB\a\n" +
 	"\x05_dataB\t\n" +
-	"\a_access\"\xd9\x01\n" +
-	"\x1bListDocumentActivityRequest\x12L\n" +
+	"\a_access\"\xfc\x01\n" +
+	"\x1bListDocumentActivityRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12K\n" +
-	"\x0eactivity_types\x18\x03 \x03(\x0e2$.resources.documents.DocActivityTypeR\ractivityTypes\"\xb1\x01\n" +
-	"\x1cListDocumentActivityResponse\x12M\n" +
+	"documentId\x12f\n" +
+	"\x0eactivity_types\x18\x03 \x03(\x0e2$.resources.documents.DocActivityTypeB\x19\xbaH\x16\x92\x01\x13\x10\n" +
+	"\"\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\ractivityTypes\"\xb9\x01\n" +
+	"\x1cListDocumentActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12B\n" +
-	"\bactivity\x18\x02 \x03(\v2 .resources.documents.DocActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x88\x01\n" +
-	"\x17ListDocumentReqsRequest\x12L\n" +
+	"\bactivity\x18\x02 \x03(\v2 .resources.documents.DocActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x90\x01\n" +
+	"\x17ListDocumentReqsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xac\x01\n" +
-	"\x18ListDocumentReqsResponse\x12M\n" +
+	"documentId\"\xb4\x01\n" +
+	"\x18ListDocumentReqsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12A\n" +
-	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\xfc\x01\n" +
+	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\x98\x02\n" +
 	"\x18CreateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12G\n" +
-	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeR\vrequestType\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
+	"documentId\x12[\n" +
+	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeB\x12\xbaH\x0f\x82\x01\f\x18\r\x18\x0e\x18\x0f\x18\x10\x18\x11\x18\x12R\vrequestType\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
 	"\x05_data\"V\n" +
 	"\x19CreateDocumentReqResponse\x129\n" +
-	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xee\x01\n" +
+	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xf6\x01\n" +
 	"\x18UpdateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1d\n" +
 	"\n" +
-	"request_id\x18\x02 \x01(\x03R\trequestId\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
+	"request_id\x18\x02 \x01(\x03R\trequestId\x12+\n" +
+	"\x06reason\x18\x03 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
 	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01\x12\x1a\n" +
 	"\baccepted\x18\x05 \x01(\bR\bacceptedB\t\n" +
 	"\a_reasonB\a\n" +
@@ -3753,50 +3755,50 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x19DeleteDocumentReqResponse\";\n" +
 	"\x18GetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"X\n" +
-	"\x19GetDocumentAccessResponse\x12;\n" +
-	"\x06access\x18\x01 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"x\n" +
+	"documentId\"`\n" +
+	"\x19GetDocumentAccessResponse\x12C\n" +
+	"\x06access\x18\x01 \x01(\v2#.resources.documents.DocumentAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\"\x80\x01\n" +
 	"\x18SetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12;\n" +
-	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"\x1b\n" +
-	"\x19SetDocumentAccessResponse\"\xac\x02\n" +
-	"\x18ListUserDocumentsRequest\x12L\n" +
+	"documentId\x12C\n" +
+	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\"\x1b\n" +
+	"\x19SetDocumentAccessResponse\"\xc7\x02\n" +
+	"\x18ListUserDocumentsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12>\n" +
-	"\trelations\x18\x04 \x03(\x0e2 .resources.documents.DocRelationR\trelations\x12\x1b\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12 \n" +
+	"\auser_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12H\n" +
+	"\trelations\x18\x04 \x03(\x0e2 .resources.documents.DocRelationB\b\xbaH\x05\x92\x01\x02\x10\x03R\trelations\x12\x1b\n" +
 	"\x06closed\x18\x05 \x01(\bH\x01R\x06closed\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_closed\"\xb5\x01\n" +
-	"\x19ListUserDocumentsResponse\x12M\n" +
+	"\a_closed\"\xbd\x01\n" +
+	"\x19ListUserDocumentsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12I\n" +
 	"\trelations\x18\x02 \x03(\v2%.resources.documents.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x17\n" +
 	"\x15ListCategoriesRequest\"W\n" +
 	"\x16ListCategoriesResponse\x12=\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x1d.resources.documents.CategoryR\n" +
-	"categories\"Z\n" +
-	"\x1dCreateOrUpdateCategoryRequest\x129\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryR\bcategory\"[\n" +
-	"\x1eCreateOrUpdateCategoryResponse\x129\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryR\bcategory\"'\n" +
+	"categories\"b\n" +
+	"\x1dCreateOrUpdateCategoryRequest\x12A\n" +
+	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\"c\n" +
+	"\x1eCreateOrUpdateCategoryResponse\x12A\n" +
+	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\x06\xbaH\x03\xc8\x01\x01R\bcategory\"'\n" +
 	"\x15DeleteCategoryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
-	"\x16DeleteCategoryResponse\"\x95\x01\n" +
-	"\x17ListDocumentPinsRequest\x12L\n" +
+	"\x16DeleteCategoryResponse\"\x9d\x01\n" +
+	"\x17ListDocumentPinsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\bpersonal\x18\x02 \x01(\bH\x00R\bpersonal\x88\x01\x01B\v\n" +
-	"\t_personal\"\xb1\x01\n" +
-	"\x18ListDocumentPinsResponse\x12M\n" +
+	"\t_personal\"\xb9\x01\n" +
+	"\x18ListDocumentPinsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12F\n" +
 	"\tdocuments\x18\x02 \x03(\v2\".resources.documents.DocumentShortB\x04\xc8\xf3\x18\x01R\tdocuments\"\x7f\n" +
 	"\x18ToggleDocumentPinRequest\x12\x1f\n" +
@@ -3807,13 +3809,14 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\t_personal\"n\n" +
 	"\x19ToggleDocumentPinResponse\x12I\n" +
 	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
-	"\x04_pin\"\x85\x02\n" +
+	"\x04_pin\"\x98\x02\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
-	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x120\n" +
-	"\amessage\x18\x03 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x01R\amessage\x88\x01\x01\x12,\n" +
-	"\x12max_reminder_count\x18\x04 \x01(\x05R\x10maxReminderCountB\x10\n" +
+	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x128\n" +
+	"\amessage\x18\x03 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
+	"\x12max_reminder_count\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
+	"(\x01R\x10maxReminderCountB\x10\n" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +

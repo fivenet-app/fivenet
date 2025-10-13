@@ -69,9 +69,9 @@ var File_resources_common_uuid_proto protoreflect.FileDescriptor
 
 const file_resources_common_uuid_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/common/uuid.proto\x12\x10resources.common\"\x1a\n" +
-	"\x04UUID\x12\x12\n" +
-	"\x04uuid\x18\x01 \x01(\tR\x04uuidBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x1bresources/common/uuid.proto\x12\x10resources.common\"$\n" +
+	"\x04UUID\x12\x1c\n" +
+	"\x04uuid\x18\x01 \x01(\tB\b\xbaH\x05r\x03\xb0\x01\x01R\x04uuidBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_uuid_proto_rawDescOnce sync.Once

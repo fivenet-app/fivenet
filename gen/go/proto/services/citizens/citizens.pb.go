@@ -745,17 +745,18 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\xe8\x03\n" +
-	"\x13ListCitizensRequest\x12L\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\x8b\x04\n" +
+	"\x13ListCitizensRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x16\n" +
-	"\x06search\x18\x03 \x01(\tR\x06search\x12\x1b\n" +
-	"\x06wanted\x18\x04 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12&\n" +
-	"\fphone_number\x18\x05 \x01(\tH\x02R\vphoneNumber\x88\x01\x01\x12?\n" +
-	"\x19traffic_infraction_points\x18\x06 \x01(\rH\x03R\x17trafficInfractionPoints\x88\x01\x01\x12%\n" +
-	"\vdateofbirth\x18\a \x01(\tH\x04R\vdateofbirth\x88\x01\x01\x12\"\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1f\n" +
+	"\x06search\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@R\x06search\x12\x1b\n" +
+	"\x06wanted\x18\x04 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12/\n" +
+	"\fphone_number\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\vphoneNumber\x88\x01\x01\x12?\n" +
+	"\x19traffic_infraction_points\x18\x06 \x01(\rH\x03R\x17trafficInfractionPoints\x88\x01\x01\x12.\n" +
+	"\vdateofbirth\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\n" +
+	"H\x04R\vdateofbirth\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"open_fines\x18\b \x01(\x03H\x05R\topenFines\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
@@ -763,45 +764,47 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\r_phone_numberB\x1c\n" +
 	"\x1a_traffic_infraction_pointsB\x0e\n" +
 	"\f_dateofbirthB\r\n" +
-	"\v_open_fines\"\x98\x01\n" +
-	"\x14ListCitizensResponse\x12M\n" +
+	"\v_open_fines\"\xa0\x01\n" +
+	"\x14ListCitizensResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x121\n" +
-	"\x05users\x18\x02 \x03(\v2\x15.resources.users.UserB\x04\xc8\xf3\x18\x01R\x05users\"Y\n" +
-	"\x0eGetUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12 \n" +
+	"\x05users\x18\x02 \x03(\v2\x15.resources.users.UserB\x04\xc8\xf3\x18\x01R\x05users\"b\n" +
+	"\x0eGetUserRequest\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
 	"_info_only\"<\n" +
 	"\x0fGetUserResponse\x12)\n" +
-	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\xfc\x01\n" +
-	"\x17ListUserActivityRequest\x12L\n" +
+	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\x97\x02\n" +
+	"\x17ListUserActivityRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x127\n" +
-	"\x05types\x18\x04 \x03(\x0e2!.resources.users.UserActivityTypeR\x05typesB\a\n" +
-	"\x05_sort\"\xaa\x01\n" +
-	"\x18ListUserActivityResponse\x12M\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12 \n" +
+	"\auser_id\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12A\n" +
+	"\x05types\x18\x04 \x03(\x0e2!.resources.users.UserActivityTypeB\b\xbaH\x05\x92\x01\x02\x10\x14R\x05typesB\a\n" +
+	"\x05_sort\"\xb2\x01\n" +
+	"\x18ListUserActivityResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12?\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"g\n" +
-	"\x13SetUserPropsRequest\x120\n" +
-	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"H\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"|\n" +
+	"\x13SetUserPropsRequest\x128\n" +
+	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"H\n" +
 	"\x14SetUserPropsResponse\x120\n" +
 	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\"\x15\n" +
 	"\x13DeleteAvatarRequest\"\x16\n" +
-	"\x14DeleteAvatarResponse\"O\n" +
-	"\x14DeleteMugshotRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x17\n" +
-	"\x15DeleteMugshotResponse\"E\n" +
-	"\x13ManageLabelsRequest\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
+	"\x14DeleteAvatarResponse\"e\n" +
+	"\x14DeleteMugshotRequest\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12+\n" +
+	"\x06reason\x18\x02 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"\x17\n" +
+	"\x15DeleteMugshotResponse\"O\n" +
+	"\x13ManageLabelsRequest\x128\n" +
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelB\b\xbaH\x05\x92\x01\x02\x102R\x06labels\"F\n" +
 	"\x14ManageLabelsResponse\x12.\n" +
 	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xb8\n" +
 	"\n" +

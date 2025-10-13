@@ -126,10 +126,10 @@ var File_resources_file_file_proto protoreflect.FileDescriptor
 
 const file_resources_file_file_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/file/file.proto\x12\x0eresources.file\x1a\x19resources/file/meta.proto\x1a#resources/timestamp/timestamp.proto\"\xc9\x02\n" +
-	"\x04File\x12 \n" +
-	"\tparent_id\x18\x01 \x01(\x03H\x00R\bparentId\x88\x01\x01\x12\x0e\n" +
-	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x1b\n" +
+	"\x19resources/file/file.proto\x12\x0eresources.file\x1a\x19resources/file/meta.proto\x1a#resources/timestamp/timestamp.proto\"\xdb\x02\n" +
+	"\x04File\x12)\n" +
+	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bparentId\x88\x01\x01\x12\x17\n" +
+	"\x02id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12\x1b\n" +
 	"\tfile_path\x18\x03 \x01(\tR\bfilePath\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1b\n" +

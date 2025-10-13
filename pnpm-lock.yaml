@@ -352,12 +352,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: 0.6.14
         version: 0.6.14(prettier-plugin-organize-attributes@1.0.0(prettier@3.6.2))(prettier-plugin-organize-imports@4.3.0(prettier@3.6.2)(typescript@5.9.3)(vue-tsc@3.1.1(typescript@5.9.3)))(prettier@3.6.2)
-      protoc:
-        specifier: 32.1.0
-        version: 32.1.0
-      protoc-gen-js:
-        specifier: 3.21.4-4
-        version: 3.21.4-4
       release-it:
         specifier: 19.0.5
         version: 19.0.5(@types/node@24.7.2)(magicast@0.3.5)
@@ -3748,10 +3742,6 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  adm-zip@0.5.10:
-    resolution: {integrity: sha512-x0HvcHqVJNTPk/Bw8JbLWlWoo6Wwnsug0fnYYro1HBrjxZ3G7/AZk7Ahv8JwDe1uIcz8eBqvu86FuF1POiG7vQ==}
-    engines: {node: '>=6.0'}
 
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
@@ -7163,15 +7153,6 @@ packages:
 
   prosemirror-view@1.41.2:
     resolution: {integrity: sha512-PGS/jETmh+Qjmre/6vcG7SNHAKiGc4vKOJmHMPRmvcUl7ISuVtrtHmH06UDUwaim4NDJfZfVMl7U7JkMMETa6g==}
-
-  protoc-gen-js@3.21.4-4:
-    resolution: {integrity: sha512-BQUNVNm55pCiFl386SbAjM4D/S70N1jyZPKuTsb8RVibtn+FoiOdHlw4wG8DssvMRZTdI+DIL/WZYN3QBChurg==}
-    hasBin: true
-
-  protoc@32.1.0:
-    resolution: {integrity: sha512-yICJJCGHJLM9ao5W2V4CGp1d7xuBsdHzgVDw6L8mdDtoIcqzN3arNPOm9Jx4Ufp5vfhQfJGkNUDo6mm/SLPdXw==}
-    engines: {node: '>=20.0.0'}
-    hasBin: true
 
   protocol-buffers-schema@3.6.0:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}
@@ -12516,8 +12497,6 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  adm-zip@0.5.10: {}
-
   agent-base@7.1.4: {}
 
   ajv@6.12.6:
@@ -16589,12 +16568,6 @@ snapshots:
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-
-  protoc-gen-js@3.21.4-4:
-    dependencies:
-      adm-zip: 0.5.10
-
-  protoc@32.1.0: {}
 
   protocol-buffers-schema@3.6.0: {}
 

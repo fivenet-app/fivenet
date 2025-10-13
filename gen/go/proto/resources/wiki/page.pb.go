@@ -455,34 +455,34 @@ var File_resources_wiki_page_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\x9d\x03\n" +
+	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xbd\x03\n" +
 	"\x04Page\x121\n" +
-	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12#\n" +
-	"\x03job\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x03job\x12 \n" +
-	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12 \n" +
-	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x12,\n" +
-	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaR\x04meta\x12;\n" +
-	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x122\n" +
-	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessR\x06access\x12>\n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12*\n" +
+	"\x03job\x18\x02 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x182R\x03job\x12)\n" +
+	"\tjob_label\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12 \n" +
+	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x124\n" +
+	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaB\x06\xbaH\x03\xc8\x01\x01R\x04meta\x12;\n" +
+	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x12:\n" +
+	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessB\x06\xbaH\x03\xc8\x01\x01R\x06access\x12>\n" +
 	"\x05files\x18\b \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
-	"_parent_id\"\xc5\x05\n" +
+	"_parent_id\"\xf1\x05\n" +
 	"\bPageMeta\x12=\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12*\n" +
-	"\x04slug\x18\x04 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x02R\x04slug\x88\x01\x01\x12\x1c\n" +
-	"\x05title\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x123\n" +
-	"\vdescription\x18\x06 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\vdescription\x12\"\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x121\n" +
+	"\x04slug\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18dH\x02R\x04slug\x88\x01\x01\x12&\n" +
+	"\x05title\x18\x05 \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\bR\x05title\x12;\n" +
+	"\vdescription\x18\x06 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x18\x80\x01R\vdescription\x12+\n" +
 	"\n" +
-	"creator_id\x18\a \x01(\x05H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12H\n" +
-	"\fcontent_type\x18\t \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12%\n" +
+	"creator_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
+	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12R\n" +
+	"\fcontent_type\x18\t \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12%\n" +
 	"\x04tags\x18\n" +
 	" \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x04tags\x12\x15\n" +
 	"\x03toc\x18\v \x01(\bH\x05R\x03toc\x88\x01\x01\x12\x16\n" +
@@ -494,21 +494,21 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x06\n" +
-	"\x04_toc\"\xb0\x04\n" +
+	"\x04_toc\"\xd2\x04\n" +
 	"\tPageShort\x121\n" +
-	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12 \n" +
+	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182R\x03job\x12)\n" +
+	"\tjob_label\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12 \n" +
 	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12*\n" +
-	"\x04slug\x18\x06 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x03R\x04slug\x88\x01\x01\x12\x14\n" +
+	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x121\n" +
+	"\x04slug\x18\x06 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18dH\x03R\x04slug\x88\x01\x01\x12\x14\n" +
 	"\x05title\x18\a \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x125\n" +
 	"\bchildren\x18\t \x03(\v2\x19.resources.wiki.PageShortR\bchildren\x12>\n" +
 	"\troot_info\x18\n" +
-	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01\x12\x19\n" +
-	"\x05level\x18\v \x01(\x05H\x05R\x05level\x88\x01\x01\x12\x14\n" +
+	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01\x12\"\n" +
+	"\x05level\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x05R\x05level\x88\x01\x01\x12\x14\n" +
 	"\x05draft\x18\r \x01(\bR\x05draftB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +

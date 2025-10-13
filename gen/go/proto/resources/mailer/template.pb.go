@@ -135,7 +135,7 @@ var File_resources_mailer_template_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_template_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xce\x03\n" +
+	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xf4\x03\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -144,14 +144,14 @@ const file_resources_mailer_template_proto_rawDesc = "" +
 	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x19\n" +
-	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x12'\n" +
-	"\x05title\x18\a \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x05title\x12 \n" +
-	"\acontent\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\acontent\x12$\n" +
-	"\vcreator_job\x18\t \x01(\tH\x02R\n" +
-	"creatorJob\x88\x01\x01\x12\"\n" +
+	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x121\n" +
+	"\x05title\x18\a \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12*\n" +
+	"\acontent\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80PR\acontent\x12-\n" +
+	"\vcreator_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18(H\x02R\n" +
+	"creatorJob\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\n" +
-	" \x01(\x05H\x03R\tcreatorId\x88\x01\x01B\r\n" +
+	" \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_creator_jobB\r\n" +

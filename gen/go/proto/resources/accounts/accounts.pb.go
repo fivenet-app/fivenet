@@ -188,18 +188,19 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc0\x03\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe3\x03\n" +
 	"\aAccount\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\x12\x18\n" +
-	"\alicense\x18\x05 \x01(\tR\alicense\x12\x18\n" +
-	"\aenabled\x18\x06 \x01(\bR\aenabled\x12 \n" +
-	"\tlast_char\x18\a \x01(\x05H\x02R\blastChar\x88\x01\x01\x12g\n" +
-	"\x0foauth2_accounts\x18\b \x03(\v2!.resources.accounts.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12#\n" +
+	"\busername\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x18R\busername\x12!\n" +
+	"\alicense\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18@R\alicense\x12\x18\n" +
+	"\aenabled\x18\x06 \x01(\bR\aenabled\x12)\n" +
+	"\tlast_char\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x02R\blastChar\x88\x01\x01\x12o\n" +
+	"\x0foauth2_accounts\x18\b \x03(\v2!.resources.accounts.OAuth2AccountB#\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +

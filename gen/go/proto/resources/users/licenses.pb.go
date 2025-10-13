@@ -129,12 +129,12 @@ var File_resources_users_licenses_proto protoreflect.FileDescriptor
 
 const file_resources_users_licenses_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/users/licenses.proto\x12\x0fresources.users\"3\n" +
-	"\aLicense\x12\x12\n" +
-	"\x04type\x18\x01 \x01(\tR\x04type\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\"a\n" +
-	"\x10CitizensLicenses\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x05R\x06userId\x124\n" +
+	"\x1eresources/users/licenses.proto\x12\x0fresources.users\"G\n" +
+	"\aLicense\x12\x1d\n" +
+	"\x04type\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x18<R\x04type\x12\x1d\n" +
+	"\x05label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18<R\x05label\"j\n" +
+	"\x10CitizensLicenses\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x124\n" +
 	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicensesBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (

@@ -342,26 +342,27 @@ var File_resources_file_filestore_proto protoreflect.FileDescriptor
 
 const file_resources_file_filestore_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a\x1ccodegen/audit/redacted.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\"l\n" +
+	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a\x1ccodegen/audit/redacted.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19resources/file/file.proto\"u\n" +
 	"\x11UploadFileRequest\x120\n" +
-	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x1a\n" +
-	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01H\x00R\x04dataB\t\n" +
-	"\apayload\"\xc3\x01\n" +
+	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12#\n" +
+	"\x04data\x18\x02 \x01(\fB\r\xf0\xf3\x18\x01\xbaH\x06z\x04\x18\x80\x80\bH\x00R\x04dataB\t\n" +
+	"\apayload\"\xe3\x01\n" +
 	"\n" +
 	"UploadMeta\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x1c\n" +
-	"\tnamespace\x18\x02 \x01(\tR\tnamespace\x12#\n" +
-	"\roriginal_name\x18\x03 \x01(\tR\foriginalName\x12!\n" +
-	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x12\n" +
-	"\x04size\x18\x05 \x01(\x03R\x04size\x12\x1e\n" +
-	"\x06reason\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"`\n" +
+	"\tnamespace\x18\x02 \x01(\tR\tnamespace\x12-\n" +
+	"\roriginal_name\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\foriginalName\x12!\n" +
+	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x1b\n" +
+	"\x04size\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x04size\x12+\n" +
+	"\x06reason\x18\x06 \x01(\tB\x13\xda\xf3\x18\x02\b\x01\xbaH\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"`\n" +
 	"\x12UploadFileResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12(\n" +
-	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"I\n" +
-	"\x11DeleteFileRequest\x12\x1b\n" +
-	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x17\n" +
-	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\x14\n" +
+	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"[\n" +
+	"\x11DeleteFileRequest\x12$\n" +
+	"\tparent_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bparentId\x12 \n" +
+	"\afile_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x06fileId\"\x14\n" +
 	"\x12DeleteFileResponseBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;fileb\x06proto3"
 
 var (

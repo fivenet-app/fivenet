@@ -94,13 +94,13 @@ var File_resources_vehicles_props_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/vehicles/props.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\"\xdb\x01\n" +
-	"\fVehicleProps\x12\x14\n" +
-	"\x05plate\x18\x01 \x01(\tR\x05plate\x12B\n" +
+	"\x1eresources/vehicles/props.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\"\xee\x01\n" +
+	"\fVehicleProps\x12\x1d\n" +
+	"\x05plate\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18 R\x05plate\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
-	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12(\n" +
-	"\rwanted_reason\x18\x04 \x01(\tH\x02R\fwantedReason\x88\x01\x01B\r\n" +
+	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x122\n" +
+	"\rwanted_reason\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x02R\fwantedReason\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\x10\n" +
 	"\x0e_wanted_reasonBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"

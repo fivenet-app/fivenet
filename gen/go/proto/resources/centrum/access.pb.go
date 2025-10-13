@@ -317,21 +317,22 @@ var File_resources_centrum_access_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_access_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"i\n" +
-	"\rCentrumAccess\x12P\n" +
-	"\x04jobs\x18\x01 \x03(\v2#.resources.centrum.CentrumJobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs:\x06\xe2\xf3\x18\x02\b\x01\"\xee\x03\n" +
+	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"q\n" +
+	"\rCentrumAccess\x12X\n" +
+	"\x04jobs\x18\x01 \x03(\v2#.resources.centrum.CentrumJobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs:\x06\xe2\xf3\x18\x02\b\x01\"\xa5\x04\n" +
 	"\x10CentrumJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x1d\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12&\n" +
 	"\n" +
-	"source_job\x18\t \x01(\tR\tsourceJob\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x12=\n" +
-	"\x06access\x18\b \x01(\x0e2%.resources.centrum.CentrumAccessLevelR\x06access\x12D\n" +
+	"source_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14R\tsourceJob\x12\x19\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12G\n" +
+	"\x06access\x18\b \x01(\x0e2%.resources.centrum.CentrumAccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06access\x12D\n" +
 	"\vaccepted_at\x18\n" +
 	" \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\n" +
 	"acceptedAt\x88\x01\x01B\r\n" +

@@ -840,15 +840,15 @@ var File_resources_documents_approval_proto protoreflect.FileDescriptor
 
 const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa6\a\n" +
+	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xc3\a\n" +
 	"\x0eApprovalPolicy\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12M\n" +
-	"\x10on_edit_behavior\x18\x04 \x01(\x0e2#.resources.documents.OnEditBehaviorR\x0eonEditBehavior\x12B\n" +
-	"\trule_kind\x18\x05 \x01(\x0e2%.resources.documents.ApprovalRuleKindR\bruleKind\x12*\n" +
-	"\x0erequired_count\x18\x06 \x01(\x05H\x00R\rrequiredCount\x88\x01\x01\x12%\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12W\n" +
+	"\x10on_edit_behavior\x18\x04 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x12L\n" +
+	"\trule_kind\x18\x05 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x123\n" +
+	"\x0erequired_count\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12%\n" +
 	"\x0eassigned_count\x18\b \x01(\x05R\rassignedCount\x12%\n" +
 	"\x0eapproved_count\x18\t \x01(\x05R\rapprovedCount\x12%\n" +
 	"\x0edeclined_count\x18\n" +
@@ -868,25 +868,25 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\x88\n" +
+	"\v_deleted_at\"\xd3\n" +
 	"\n" +
 	"\fApprovalTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12N\n" +
-	"\rassignee_kind\x18\x05 \x01(\x0e2).resources.documents.ApprovalAssigneeKindR\fassigneeKind\x12\x1c\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12X\n" +
+	"\rassignee_kind\x18\x05 \x01(\x0e2).resources.documents.ApprovalAssigneeKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\fassigneeKind\x12\x1c\n" +
 	"\auser_id\x18\x06 \x01(\x05H\x00R\x06userId\x88\x01\x01\x123\n" +
-	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\b \x01(\tH\x02R\x03job\x88\x01\x01\x12 \n" +
-	"\tjob_label\x18\t \x01(\tH\x03R\bjobLabel\x88\x01\x01\x12(\n" +
+	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x12)\n" +
+	"\tjob_label\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\bjobLabel\x88\x01\x01\x12(\n" +
 	"\rminimum_grade\x18\n" +
-	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x12+\n" +
-	"\x0fjob_grade_label\x18\v \x01(\tH\x05R\rjobGradeLabel\x88\x01\x01\x12\x17\n" +
-	"\aslot_no\x18\f \x01(\x05R\x06slotNo\x12?\n" +
-	"\x06status\x18\r \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\x06status\x12%\n" +
-	"\acomment\x18\x0e \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
+	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x124\n" +
+	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x12\"\n" +
+	"\aslot_no\x18\f \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12I\n" +
+	"\x06status\x18\r \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\x0e \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
@@ -898,8 +898,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"creator_id\x18\x14 \x01(\x05R\tcreatorId\x129\n" +
 	"\acreator\x18\x15 \x01(\v2\x1a.resources.users.UserShortH\n" +
-	"R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x16 \x01(\tR\n" +
+	"R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x16 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12/\n" +
 	"\x11creator_job_label\x18\x17 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
 	"\bdocument\x18\x18 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
@@ -919,7 +919,7 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_document\"\xa6\x06\n" +
+	"\t_document\"\xb8\x06\n" +
 	"\bApproval\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -934,9 +934,9 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"user_grade\x18\n" +
 	" \x01(\x05H\x06R\tuserGrade\x88\x01\x01\x12-\n" +
-	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x12;\n" +
-	"\x06status\x18\f \x01(\x0e2#.resources.documents.ApprovalStatusR\x06status\x12%\n" +
-	"\acomment\x18\r \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\bR\acomment\x88\x01\x01\x12=\n" +
+	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x12E\n" +
+	"\x06status\x18\f \x01(\x0e2#.resources.documents.ApprovalStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\r \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\bR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +

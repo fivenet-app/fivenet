@@ -2,27 +2,27 @@ version: v2
 clean: false
 plugins:
   # Golang
-  - local: protoc-gen-go
+  - remote: buf.build/protocolbuffers/go:v1.36.10
     out: ./gen/go/proto
     opt:
       - paths=source_relative
     include_wkt: false
     exclude_types:
       - buf.validate
-  - local: protoc-gen-go-grpc
+  - remote: buf.build/grpc/go:v1.5.1
     out: ./gen/go/proto
     opt:
       - paths=source_relative
     include_wkt: false
     exclude_types:
       - buf.validate
-  - local: ["go", "run", "./internal/cmd/protoc-gen-customizer"]
+  - local: ["go", "run", "./internal/cmd/protoc-gen-backend"]
     out: ./gen/go/proto
     opt:
       - paths=source_relative
     strategy: all
   # TypeScript
-  - local: node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
+  - local: ./node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
     out: ./gen/ts
     opt:
       - force_server_none
@@ -30,7 +30,7 @@ plugins:
       - optimize_speed
       - ts_nocheck
     strategy: all
-  - local: ["go", "run", "./internal/cmd/protoc-gen-fronthelper"]
+  - local: ["go", "run", "./internal/cmd/protoc-gen-frontend"]
     out: ./gen/ts
     opt:
       - paths=source_relative

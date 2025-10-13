@@ -425,17 +425,17 @@ var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\x9d\x04\n" +
+	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xba\x04\n" +
 	"\fNotification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x127\n" +
-	"\aread_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\x06readAt\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x05R\x06userId\x128\n" +
-	"\x05title\x18\x05 \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12=\n" +
-	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeR\x04type\x12<\n" +
-	"\acontent\x18\a \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\acontent\x12I\n" +
-	"\bcategory\x18\b \x01(\x0e2-.resources.notifications.NotificationCategoryR\bcategory\x126\n" +
+	"\aread_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\x06readAt\x12 \n" +
+	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x128\n" +
+	"\x05title\x18\x05 \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12G\n" +
+	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12<\n" +
+	"\acontent\x18\a \x01(\v2\x1a.resources.common.I18NItemB\x06\xda\xf3\x18\x02\b\x01R\acontent\x12S\n" +
+	"\bcategory\x18\b \x01(\x0e2-.resources.notifications.NotificationCategoryB\b\xbaH\x05\x82\x01\x02\x10\x01R\bcategory\x126\n" +
 	"\x04data\x18\t \x01(\v2\x1d.resources.notifications.DataH\x00R\x04data\x88\x01\x01\x12\x1d\n" +
 	"\astarred\x18\n" +
 	" \x01(\bH\x01R\astarred\x88\x01\x01B\a\n" +

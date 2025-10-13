@@ -1454,42 +1454,42 @@ var File_services_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1fresources/calendar/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xaf\x02\n" +
-	"\x14ListCalendarsRequest\x12L\n" +
+	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1fresources/calendar/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xb7\x02\n" +
+	"\x14ListCalendarsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x1f\n" +
 	"\vonly_public\x18\x02 \x01(\bR\n" +
 	"onlyPublic\x12N\n" +
 	"\x10min_access_level\x18\x03 \x01(\x0e2\x1f.resources.calendar.AccessLevelH\x00R\x0eminAccessLevel\x88\x01\x01\x129\n" +
 	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x13\n" +
 	"\x11_min_access_levelB\b\n" +
-	"\x06_after\"\xa8\x01\n" +
-	"\x15ListCalendarsResponse\x12M\n" +
+	"\x06_after\"\xb0\x01\n" +
+	"\x15ListCalendarsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12@\n" +
 	"\tcalendars\x18\x02 \x03(\v2\x1c.resources.calendar.CalendarB\x04\xc8\xf3\x18\x01R\tcalendars\"5\n" +
 	"\x12GetCalendarRequest\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\"O\n" +
 	"\x13GetCalendarResponse\x128\n" +
-	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"Q\n" +
-	"\x15CreateCalendarRequest\x128\n" +
-	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"R\n" +
+	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"Y\n" +
+	"\x15CreateCalendarRequest\x12@\n" +
+	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarB\x06\xbaH\x03\xc8\x01\x01R\bcalendar\"R\n" +
 	"\x16CreateCalendarResponse\x128\n" +
-	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"Q\n" +
-	"\x15UpdateCalendarRequest\x128\n" +
-	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"R\n" +
+	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"Y\n" +
+	"\x15UpdateCalendarRequest\x12@\n" +
+	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarB\x06\xbaH\x03\xc8\x01\x01R\bcalendar\"R\n" +
 	"\x16UpdateCalendarResponse\x128\n" +
 	"\bcalendar\x18\x01 \x01(\v2\x1c.resources.calendar.CalendarR\bcalendar\"8\n" +
 	"\x15DeleteCalendarRequest\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\"\x18\n" +
-	"\x16DeleteCalendarResponse\"\xe4\x01\n" +
-	"\x1aListCalendarEntriesRequest\x12\x12\n" +
-	"\x04year\x18\x01 \x01(\x05R\x04year\x12\x14\n" +
-	"\x05month\x18\x02 \x01(\x05R\x05month\x12!\n" +
+	"\x16DeleteCalendarResponse\"\xf9\x01\n" +
+	"\x1aListCalendarEntriesRequest\x12\x1c\n" +
+	"\x04year\x18\x01 \x01(\x05B\b\xbaH\x05\x1a\x03(\xe7\x0fR\x04year\x12\x1f\n" +
+	"\x05month\x18\x02 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\f(\x01R\x05month\x12!\n" +
 	"\fcalendar_ids\x18\x03 \x03(\x03R\vcalendarIds\x12$\n" +
 	"\vshow_hidden\x18\x04 \x01(\bH\x00R\n" +
 	"showHidden\x88\x01\x01\x129\n" +
@@ -1505,9 +1505,9 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x17GetCalendarEntryRequest\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"S\n" +
 	"\x18GetCalendarEntryResponse\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"x\n" +
-	"\"CreateOrUpdateCalendarEntryRequest\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\x12\x19\n" +
+	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"\x80\x01\n" +
+	"\"CreateOrUpdateCalendarEntryRequest\x12?\n" +
+	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\x12\x19\n" +
 	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"^\n" +
 	"#CreateOrUpdateCalendarEntryResponse\x127\n" +
 	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"7\n" +
@@ -1517,15 +1517,15 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x19ShareCalendarEntryRequest\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12\x19\n" +
 	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"\x1c\n" +
-	"\x1aShareCalendarEntryResponse\"\x87\x01\n" +
-	"\x1cListCalendarEntryRSVPRequest\x12L\n" +
+	"\x1aShareCalendarEntryResponse\"\x8f\x01\n" +
+	"\x1cListCalendarEntryRSVPRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xb5\x01\n" +
-	"\x1dListCalendarEntryRSVPResponse\x12M\n" +
+	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xbd\x01\n" +
+	"\x1dListCalendarEntryRSVPResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12E\n" +
 	"\aentries\x18\x02 \x03(\v2%.resources.calendar.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\x9d\x01\n" +
 	"\x18RSVPCalendarEntryRequest\x12;\n" +
@@ -1535,14 +1535,14 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\a_remove\"g\n" +
 	"\x19RSVPCalendarEntryResponse\x12@\n" +
 	"\x05entry\x18\x01 \x01(\v2%.resources.calendar.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
-	"\x06_entry\"h\n" +
-	"\x18ListSubscriptionsRequest\x12L\n" +
+	"\x06_entry\"p\n" +
+	"\x18ListSubscriptionsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\"\xa5\x01\n" +
-	"\x19ListSubscriptionsResponse\x12M\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\"\xad\x01\n" +
+	"\x19ListSubscriptionsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x129\n" +
 	"\x04subs\x18\x02 \x03(\v2\x1f.resources.calendar.CalendarSubB\x04\xc8\xf3\x18\x01R\x04subs\"g\n" +
 	"\x1aSubscribeToCalendarRequest\x121\n" +

@@ -111,12 +111,12 @@ var File_resources_documents_pins_proto protoreflect.FileDescriptor
 
 const file_resources_documents_pins_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/documents/pins.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xc7\x02\n" +
-	"\vDocumentPin\x127\n" +
-	"\vdocument_id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\n" +
-	"documentId\x12-\n" +
-	"\x03job\x18\x02 \x01(\tB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"H\x00R\x03job\x88\x01\x01\x124\n" +
-	"\auser_id\x18\x03 \x01(\x05B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"H\x01R\x06userId\x88\x01\x01\x12B\n" +
+	"\x1eresources/documents/pins.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xdc\x02\n" +
+	"\vDocumentPin\x12>\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x124\n" +
+	"\x03job\x18\x02 \x01(\tB\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12;\n" +
+	"\auser_id\x18\x03 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02 \x00H\x01R\x06userId\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tcreatedAt\x88\x01\x01\x12\x14\n" +
 	"\x05state\x18\x05 \x01(\bR\x05state\x12\x1d\n" +

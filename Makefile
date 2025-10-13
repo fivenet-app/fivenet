@@ -24,12 +24,6 @@ ifeq (, $(shell which buf))
 	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.55.1
 endif
 
-protoc-gen-go:
-	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-
-protoc-gen-go-grpc:
-	$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
 protoc-gen-doc:
 	$(GO) install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
 
@@ -97,7 +91,7 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: buf protoc-gen-go protoc-gen-go-grpc protoc-gen-doc
+gen-proto: buf protoc-gen-doc
 	mkdir -p ./gen/go/proto ./gen/ts
 
 	buf generate

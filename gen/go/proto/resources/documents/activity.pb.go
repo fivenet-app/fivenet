@@ -857,35 +857,35 @@ var File_resources_documents_activity_proto protoreflect.FileDescriptor
 
 const file_resources_documents_activity_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xaa\x04\n" +
+	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcd\x04\n" +
 	"\vDocActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12I\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e2$.resources.documents.DocActivityTypeR\factivityType\x12\"\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e2$.resources.documents.DocActivityTypeR\factivityType\x12+\n" +
 	"\n" +
-	"creator_id\x18\x05 \x01(\x05H\x00R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\a \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x02R\x0fcreatorJobLabel\x88\x01\x01\x12#\n" +
-	"\x06reason\x18\t \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\x06reason\x88\x01\x01\x128\n" +
+	"creator_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x00R\tcreatorId\x88\x01\x01\x12O\n" +
+	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x01R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\x0fcreatorJobLabel\x88\x01\x01\x12+\n" +
+	"\x06reason\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x128\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2$.resources.documents.DocActivityDataR\x04dataB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
-	"\a_reason\"\xaa\x03\n" +
+	"\a_reason\"\xb1\x03\n" +
 	"\x0fDocActivityData\x12;\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1f.resources.documents.DocUpdatedH\x00R\aupdated\x12K\n" +
 	"\rowner_changed\x18\x02 \x01(\v2$.resources.documents.DocOwnerChangedH\x00R\fownerChanged\x12N\n" +
 	"\x0eaccess_updated\x18\x04 \x01(\v2%.resources.documents.DocAccessUpdatedH\x00R\raccessUpdated\x12T\n" +
 	"\x10access_requested\x18\x05 \x01(\v2'.resources.documents.DocAccessRequestedH\x00R\x0faccessRequested\x12W\n" +
-	"\x11signing_requested\x18\x06 \x01(\v2(.resources.documents.DocSigningRequestedH\x00R\x10signingRequested:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
-	"\x04data\"\x89\x02\n" +
+	"\x11signing_requested\x18\x06 \x01(\v2(.resources.documents.DocSigningRequestedH\x00R\x10signingRequested:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\x89\x02\n" +
 	"\n" +
 	"DocUpdated\x12\"\n" +
 	"\n" +
@@ -904,23 +904,23 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\x0fDocOwnerChanged\x12 \n" +
 	"\fnew_owner_id\x18\x01 \x01(\x05R\n" +
 	"newOwnerId\x127\n" +
-	"\tnew_owner\x18\x02 \x01(\v2\x1a.resources.users.UserShortR\bnewOwner\"L\n" +
-	"\x12DocAccessRequested\x126\n" +
-	"\x05level\x18\x01 \x01(\x0e2 .resources.documents.AccessLevelR\x05level\"\x8d\x01\n" +
+	"\tnew_owner\x18\x02 \x01(\v2\x1a.resources.users.UserShortR\bnewOwner\"V\n" +
+	"\x12DocAccessRequested\x12@\n" +
+	"\x05level\x18\x01 \x01(\x0e2 .resources.documents.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x05level\"\x8d\x01\n" +
 	"\x10DocAccessUpdated\x12:\n" +
 	"\x04jobs\x18\x01 \x01(\v2&.resources.documents.DocAccessJobsDiffR\x04jobs\x12=\n" +
-	"\x05users\x18\x02 \x01(\v2'.resources.documents.DocAccessUsersDiffR\x05users\"\xe2\x01\n" +
-	"\x11DocAccessJobsDiff\x12C\n" +
-	"\tto_create\x18\x01 \x03(\v2&.resources.documents.DocumentJobAccessR\btoCreate\x12C\n" +
-	"\tto_update\x18\x02 \x03(\v2&.resources.documents.DocumentJobAccessR\btoUpdate\x12C\n" +
-	"\tto_delete\x18\x03 \x03(\v2&.resources.documents.DocumentJobAccessR\btoDelete\"\xe6\x01\n" +
-	"\x12DocAccessUsersDiff\x12D\n" +
-	"\tto_create\x18\x01 \x03(\v2'.resources.documents.DocumentUserAccessR\btoCreate\x12D\n" +
-	"\tto_update\x18\x02 \x03(\v2'.resources.documents.DocumentUserAccessR\btoUpdate\x12D\n" +
-	"\tto_delete\x18\x03 \x03(\v2'.resources.documents.DocumentUserAccessR\btoDelete\"\x9d\x01\n" +
+	"\x05users\x18\x02 \x01(\v2'.resources.documents.DocAccessUsersDiffR\x05users\"\x80\x02\n" +
+	"\x11DocAccessJobsDiff\x12M\n" +
+	"\tto_create\x18\x01 \x03(\v2&.resources.documents.DocumentJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoCreate\x12M\n" +
+	"\tto_update\x18\x02 \x03(\v2&.resources.documents.DocumentJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoUpdate\x12M\n" +
+	"\tto_delete\x18\x03 \x03(\v2&.resources.documents.DocumentJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete\"\x84\x02\n" +
+	"\x12DocAccessUsersDiff\x12N\n" +
+	"\tto_create\x18\x01 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoCreate\x12N\n" +
+	"\tto_update\x18\x02 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoUpdate\x12N\n" +
+	"\tto_delete\x18\x03 \x03(\v2'.resources.documents.DocumentUserAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\btoDelete\"\xa7\x01\n" +
 	"\x13DocSigningRequested\x12?\n" +
-	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x128\n" +
-	"\tapprovers\x18\x02 \x03(\v2\x1a.resources.users.UserShortR\tapproversB\v\n" +
+	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12B\n" +
+	"\tapprovers\x18\x02 \x03(\v2\x1a.resources.users.UserShortB\b\xbaH\x05\x92\x01\x02\x10\bR\tapproversB\v\n" +
 	"\t_deadline*\xeb\t\n" +
 	"\x0fDocActivityType\x12!\n" +
 	"\x1dDOC_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +

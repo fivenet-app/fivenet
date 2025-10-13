@@ -4,6 +4,6 @@ toolchain go1.25.2
 
 use (
 	.
-	./internal/cmd/protoc-gen-customizer
-	./internal/cmd/protoc-gen-fronthelper
+	./internal/cmd/protoc-gen-backend
+	./internal/cmd/protoc-gen-frontend
 )

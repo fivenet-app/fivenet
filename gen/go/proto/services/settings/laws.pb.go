@@ -363,16 +363,16 @@ var File_services_settings_laws_proto protoreflect.FileDescriptor
 
 const file_services_settings_laws_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\"R\n" +
-	"\x1cCreateOrUpdateLawBookRequest\x122\n" +
-	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"S\n" +
+	"\x1cservices/settings/laws.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/laws/laws.proto\"Z\n" +
+	"\x1cCreateOrUpdateLawBookRequest\x12:\n" +
+	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookB\x06\xbaH\x03\xc8\x01\x01R\alawBook\"S\n" +
 	"\x1dCreateOrUpdateLawBookResponse\x122\n" +
 	"\blaw_book\x18\x01 \x01(\v2\x17.resources.laws.LawBookR\alawBook\"&\n" +
 	"\x14DeleteLawBookRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
-	"\x15DeleteLawBookResponse\"A\n" +
-	"\x18CreateOrUpdateLawRequest\x12%\n" +
-	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"B\n" +
+	"\x15DeleteLawBookResponse\"I\n" +
+	"\x18CreateOrUpdateLawRequest\x12-\n" +
+	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawB\x06\xbaH\x03\xc8\x01\x01R\x03law\"B\n" +
 	"\x19CreateOrUpdateLawResponse\x12%\n" +
 	"\x03law\x18\x01 \x01(\v2\x13.resources.laws.LawR\x03law\"\"\n" +
 	"\x10DeleteLawRequest\x12\x0e\n" +

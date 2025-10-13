@@ -412,44 +412,44 @@ var File_resources_mailer_access_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_access_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/mailer/access.proto\x12\x10resources.mailer\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x92\x02\n" +
-	"\x06Access\x12H\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1b.resources.mailer.JobAccessB\x17\x9a\x84\x9e\x03\x12alias:\"job_access\"R\x04jobs\x12L\n" +
-	"\x05users\x18\x02 \x03(\v2\x1c.resources.mailer.UserAccessB\x18\x9a\x84\x9e\x03\x13alias:\"user_access\"R\x05users\x12p\n" +
-	"\x0equalifications\x18\x03 \x03(\v2%.resources.mailer.QualificationAccessB!\x9a\x84\x9e\x03\x1calias:\"qualification_access\"R\x0equalifications\"\x8d\x03\n" +
+	"\x1dresources/mailer/access.proto\x12\x10resources.mailer\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xaa\x02\n" +
+	"\x06Access\x12P\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x1b.resources.mailer.JobAccessB\x1f\x9a\x84\x9e\x03\x12alias:\"job_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x04jobs\x12T\n" +
+	"\x05users\x18\x02 \x03(\v2\x1c.resources.mailer.UserAccessB \x9a\x84\x9e\x03\x13alias:\"user_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x05users\x12x\n" +
+	"\x0equalifications\x18\x03 \x03(\v2%.resources.mailer.QualificationAccessB)\x9a\x84\x9e\x03\x1calias:\"qualification_access\"\xbaH\x05\x92\x01\x02\x10\x14R\x0equalifications\"\xbb\x03\n" +
 	"\tJobAccess\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x05 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12#\n" +
-	"\rminimum_grade\x18\x06 \x01(\x05R\fminimumGrade\x12+\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tH\x02R\rjobGradeLabel\x88\x01\x01\x125\n" +
-	"\x06access\x18\b \x01(\x0e2\x1d.resources.mailer.AccessLevelR\x06accessB\r\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x19\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
+	"\rminimum_grade\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12?\n" +
+	"\x06access\x18\b \x01(\x0e2\x1d.resources.mailer.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_label\"\x9a\x02\n" +
+	"\x10_job_grade_label\"\xad\x02\n" +
 	"\n" +
 	"UserAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12\x17\n" +
-	"\auser_id\x18\x04 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x125\n" +
-	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelR\x06accessB\r\n" +
+	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12 \n" +
+	"\auser_id\x18\x04 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x123\n" +
+	"\x04user\x18\x05 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12?\n" +
+	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\a\n" +
-	"\x05_user\"\xe2\x02\n" +
+	"\x05_user\"\xec\x02\n" +
 	"\x13QualificationAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
 	"\ttarget_id\x18\x03 \x01(\x03R\btargetId\x12)\n" +
 	"\x10qualification_id\x18\x04 \x01(\x03R\x0fqualificationId\x12W\n" +
-	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x01R\rqualification\x88\x01\x01\x125\n" +
-	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelR\x06accessB\r\n" +
+	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x01R\rqualification\x88\x01\x01\x12?\n" +
+	"\x06access\x18\x06 \x01(\x0e2\x1d.resources.mailer.AccessLevelB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\x10\n" +
 	"\x0e_qualification*\x8d\x01\n" +
 	"\vAccessLevel\x12\x1c\n" +

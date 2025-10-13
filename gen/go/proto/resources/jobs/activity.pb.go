@@ -534,32 +534,32 @@ var File_resources_jobs_activity_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xf7\x04\n" +
+	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x9a\x05\n" +
 	"\x11ColleagueActivity\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x10\n" +
-	"\x03job\x18\x04 \x01(\tR\x03job\x12)\n" +
-	"\x0esource_user_id\x18\x05 \x01(\x05H\x01R\fsourceUserId\x88\x01\x01\x12Y\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x19\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x122\n" +
+	"\x0esource_user_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\fsourceUserId\x88\x01\x01\x12Y\n" +
 	"\vsource_user\x18\x06 \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"source_user\"H\x02R\n" +
-	"sourceUser\x88\x01\x01\x12$\n" +
-	"\x0etarget_user_id\x18\a \x01(\x05R\ftargetUserId\x12T\n" +
+	"sourceUser\x88\x01\x01\x12-\n" +
+	"\x0etarget_user_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\ftargetUserId\x12T\n" +
 	"\vtarget_user\x18\b \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"R\n" +
 	"targetUser\x12J\n" +
-	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12\x1e\n" +
+	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12&\n" +
 	"\x06reason\x18\n" +
-	" \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\x129\n" +
+	" \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\x06reason\x129\n" +
 	"\x04data\x18\v \x01(\v2%.resources.jobs.ColleagueActivityDataR\x04dataB\r\n" +
 	"\v_created_atB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
-	"\f_source_user\"\xb5\x02\n" +
+	"\f_source_user\"\xbc\x02\n" +
 	"\x15ColleagueActivityData\x12F\n" +
 	"\fabsence_date\x18\x01 \x01(\v2!.resources.jobs.AbsenceDateChangeH\x00R\vabsenceDate\x12@\n" +
 	"\fgrade_change\x18\x02 \x01(\v2\x1b.resources.jobs.GradeChangeH\x00R\vgradeChange\x12C\n" +
 	"\rlabels_change\x18\x03 \x01(\v2\x1c.resources.jobs.LabelsChangeH\x00R\flabelsChange\x12=\n" +
 	"\vname_change\x18\x04 \x01(\v2\x1a.resources.jobs.NameChangeH\x00R\n" +
-	"nameChange:\x06\xe2\xf3\x18\x02\b\x01B\x06\n" +
-	"\x04data\"\x99\x01\n" +
+	"nameChange:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\x99\x01\n" +
 	"\x11AbsenceDateChange\x12C\n" +
 	"\rabsence_begin\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\fabsenceBegin\x12?\n" +
 	"\vabsence_end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\n" +

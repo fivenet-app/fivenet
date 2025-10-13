@@ -745,29 +745,29 @@ var File_resources_collab_collab_proto protoreflect.FileDescriptor
 
 const file_resources_collab_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/collab/collab.proto\x12\x10resources.collab\x1a\x1ccodegen/audit/redacted.proto\"\x85\x02\n" +
+	"\x1dresources/collab/collab.proto\x12\x10resources.collab\x1a\x1ccodegen/audit/redacted.proto\"\x8c\x02\n" +
 	"\fClientPacket\x124\n" +
 	"\x05hello\x18\x01 \x01(\v2\x1c.resources.collab.CollabInitH\x00R\x05hello\x129\n" +
 	"\tsync_step\x18\x02 \x01(\v2\x1a.resources.collab.SyncStepH\x00R\bsyncStep\x12<\n" +
 	"\n" +
 	"yjs_update\x18\x03 \x01(\v2\x1b.resources.collab.YjsUpdateH\x00R\tyjsUpdate\x12?\n" +
-	"\tawareness\x18\x04 \x01(\v2\x1f.resources.collab.AwarenessPingH\x00R\tawarenessB\x05\n" +
-	"\x03msg\")\n" +
+	"\tawareness\x18\x04 \x01(\v2\x1f.resources.collab.AwarenessPingH\x00R\tawarenessB\f\n" +
+	"\x03msg\x12\x05\xbaH\x02\b\x01\"2\n" +
 	"\n" +
-	"CollabInit\x12\x1b\n" +
-	"\ttarget_id\x18\x01 \x01(\x03R\btargetId\"n\n" +
-	"\bSyncStep\x12\x12\n" +
-	"\x04step\x18\x01 \x01(\x05R\x04step\x12\x18\n" +
-	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\x12$\n" +
-	"\vreceiver_id\x18\x03 \x01(\x04H\x00R\n" +
+	"CollabInit\x12$\n" +
+	"\ttarget_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\btargetId\"\x82\x01\n" +
+	"\bSyncStep\x12\x1d\n" +
+	"\x04step\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x040\x010\x02R\x04step\x12\x18\n" +
+	"\x04data\x18\x02 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\x12-\n" +
+	"\vreceiver_id\x18\x03 \x01(\x04B\a\xbaH\x042\x02 \x00H\x00R\n" +
 	"receiverId\x88\x01\x01B\x0e\n" +
 	"\f_receiver_id\"%\n" +
 	"\tYjsUpdate\x12\x18\n" +
 	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\")\n" +
 	"\rAwarenessPing\x12\x18\n" +
-	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\"\xf6\x03\n" +
-	"\fServerPacket\x12\x1b\n" +
-	"\tsender_id\x18\x01 \x01(\x04R\bsenderId\x12A\n" +
+	"\x04data\x18\x01 \x01(\fB\x04\xf0\xf3\x18\x01R\x04data\"\x86\x04\n" +
+	"\fServerPacket\x12$\n" +
+	"\tsender_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\bsenderId\x12A\n" +
 	"\thandshake\x18\x02 \x01(\v2!.resources.collab.CollabHandshakeH\x00R\thandshake\x129\n" +
 	"\tsync_step\x18\x03 \x01(\v2\x1a.resources.collab.SyncStepH\x00R\bsyncStep\x12<\n" +
 	"\n" +
@@ -775,18 +775,18 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\tawareness\x18\x05 \x01(\v2\x1f.resources.collab.AwarenessPingH\x00R\tawareness\x12B\n" +
 	"\ftarget_saved\x18\x06 \x01(\v2\x1d.resources.collab.TargetSavedH\x00R\vtargetSaved\x12:\n" +
 	"\apromote\x18\a \x01(\v2\x1e.resources.collab.FirstPromoteH\x00R\apromote\x12E\n" +
-	"\rclient_update\x18\b \x01(\v2\x1e.resources.collab.ClientUpdateH\x00R\fclientUpdateB\x05\n" +
-	"\x03msg\"D\n" +
+	"\rclient_update\x18\b \x01(\v2\x1e.resources.collab.ClientUpdateH\x00R\fclientUpdateB\f\n" +
+	"\x03msg\x12\x05\xbaH\x02\b\x01\"D\n" +
 	"\x0fCollabHandshake\x12\x1b\n" +
 	"\tclient_id\x18\x01 \x01(\x04R\bclientId\x12\x14\n" +
-	"\x05first\x18\x02 \x01(\bR\x05first\"*\n" +
-	"\vTargetSaved\x12\x1b\n" +
-	"\ttarget_id\x18\x01 \x01(\x03R\btargetId\"\x0e\n" +
-	"\fFirstPromote\"h\n" +
+	"\x05first\x18\x02 \x01(\bR\x05first\"3\n" +
+	"\vTargetSaved\x12$\n" +
+	"\ttarget_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\btargetId\"\x0e\n" +
+	"\fFirstPromote\"{\n" +
 	"\fClientUpdate\x12\x16\n" +
-	"\x06joined\x18\x01 \x01(\bR\x06joined\x12\x1b\n" +
-	"\tclient_id\x18\x02 \x01(\x04R\bclientId\x12\x19\n" +
-	"\x05label\x18\x03 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
+	"\x06joined\x18\x01 \x01(\bR\x06joined\x12$\n" +
+	"\tclient_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bclientId\x12#\n" +
+	"\x05label\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x05label\x88\x01\x01B\b\n" +
 	"\x06_label*Y\n" +
 	"\n" +
 	"ClientRole\x12\x1b\n" +

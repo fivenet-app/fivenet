@@ -1687,50 +1687,50 @@ var File_services_documents_signing_proto protoreflect.FileDescriptor
 
 const file_services_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\xea\x01\n" +
-	"\x1eListSignatureTasksInboxRequest\x12L\n" +
+	" services/documents/signing.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a!resources/documents/signing.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\"\xfc\x01\n" +
+	"\x1eListSignatureTasksInboxRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12D\n" +
-	"\bstatuses\x18\x02 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatuses\x12$\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12N\n" +
+	"\bstatuses\x18\x02 \x03(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatuses\x12$\n" +
 	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
 	"onlyDrafts\x88\x01\x01B\x0e\n" +
-	"\f_only_drafts\"\xb0\x01\n" +
-	"\x1fListSignatureTasksInboxResponse\x12M\n" +
+	"\f_only_drafts\"\xb8\x01\n" +
+	"\x1fListSignatureTasksInboxResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12>\n" +
-	"\x05tasks\x18\x02 \x03(\v2\".resources.documents.SignatureTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\x84\x01\n" +
-	"\x1cListSignaturePoliciesRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\"g\n" +
+	"\x05tasks\x18\x02 \x03(\v2\".resources.documents.SignatureTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\x95\x01\n" +
+	"\x1cListSignaturePoliciesRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12K\n" +
+	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\"g\n" +
 	"\x1dListSignaturePoliciesResponse\x12F\n" +
-	"\bpolicies\x18\x01 \x03(\v2$.resources.documents.SignaturePolicyB\x04\xc8\xf3\x18\x01R\bpolicies\"\\\n" +
-	"\x1cUpsertSignaturePolicyRequest\x12<\n" +
-	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"]\n" +
+	"\bpolicies\x18\x01 \x03(\v2$.resources.documents.SignaturePolicyB\x04\xc8\xf3\x18\x01R\bpolicies\"d\n" +
+	"\x1cUpsertSignaturePolicyRequest\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyB\x06\xbaH\x03\xc8\x01\x01R\x06policy\"]\n" +
 	"\x1dUpsertSignaturePolicyResponse\x12<\n" +
-	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\";\n" +
-	"\x1cDeleteSignaturePolicyRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\"\x1f\n" +
-	"\x1dDeleteSignaturePolicyResponse\"\xf7\x01\n" +
-	"\x19ListSignatureTasksRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"D\n" +
+	"\x1cDeleteSignaturePolicyRequest\x12$\n" +
+	"\tpolicy_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bpolicyId\"\x1f\n" +
+	"\x1dDeleteSignaturePolicyResponse\"\x92\x02\n" +
+	"\x19ListSignatureTasksRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
 	"documentId\x12 \n" +
-	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12D\n" +
-	"\bstatuses\x18\x04 \x03(\x0e2(.resources.documents.SignatureTaskStatusR\bstatusesB\f\n" +
+	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12K\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\x12N\n" +
+	"\bstatuses\x18\x04 \x03(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatusesB\f\n" +
 	"\n" +
 	"_policy_id\"b\n" +
 	"\x1aListSignatureTasksResponse\x12D\n" +
 	"\n" +
 	"signatures\x18\x01 \x03(\v2\x1e.resources.documents.SignatureB\x04\xc8\xf3\x18\x01R\n" +
-	"signatures\"\xeb\x01\n" +
+	"signatures\"\xf6\x01\n" +
 	"\x11SignatureTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12\x14\n" +
-	"\x05slots\x18\x04 \x01(\x05R\x05slots\x12:\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12\x1f\n" +
+	"\x05slots\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
 	"\x06due_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05dueAt\x88\x01\x01\x12\x1d\n" +
 	"\acomment\x18\x06 \x01(\tH\x01R\acomment\x88\x01\x01B\t\n" +
 	"\a_due_atB\n" +
@@ -1744,17 +1744,17 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x1cUpsertSignatureTasksResponse\x12#\n" +
 	"\rtasks_created\x18\x01 \x01(\x05R\ftasksCreated\x12#\n" +
 	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12<\n" +
-	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x83\x01\n" +
+	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x8d\x01\n" +
 	"\x1bDeleteSignatureTasksRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12\x19\n" +
-	"\btask_ids\x18\x02 \x03(\x03R\ataskIds\x12,\n" +
+	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12#\n" +
+	"\btask_ids\x18\x02 \x03(\x03B\b\xbaH\x05\x92\x01\x02\b\x01R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1e\n" +
-	"\x1cDeleteSignatureTasksResponse\"\xe6\x02\n" +
-	"\x15ListSignaturesRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12 \n" +
-	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
-	"\atask_id\x18\x03 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12H\n" +
+	"\x1cDeleteSignatureTasksResponse\"\x81\x03\n" +
+	"\x15ListSignaturesRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12)\n" +
+	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
+	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12H\n" +
 	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\fsnapshotDate\x88\x01\x01\x12A\n" +
 	"\x06status\x18\x05 \x01(\x0e2$.resources.documents.SignatureStatusH\x03R\x06status\x88\x01\x01\x12\x1c\n" +
 	"\auser_id\x18\x06 \x01(\x05H\x04R\x06userId\x88\x01\x01B\f\n" +
@@ -1769,22 +1769,22 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x16ListSignaturesResponse\x12>\n" +
 	"\n" +
 	"signatures\x18\x01 \x03(\v2\x1e.resources.documents.SignatureR\n" +
-	"signatures\"U\n" +
-	"\x16RevokeSignatureRequest\x12!\n" +
-	"\fsignature_id\x18\x01 \x01(\x03R\vsignatureId\x12\x18\n" +
-	"\acomment\x18\x02 \x01(\tR\acomment\"W\n" +
+	"signatures\"h\n" +
+	"\x16RevokeSignatureRequest\x12*\n" +
+	"\fsignature_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\vsignatureId\x12\"\n" +
+	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"W\n" +
 	"\x17RevokeSignatureResponse\x12<\n" +
-	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\x91\x03\n" +
-	"\x16DecideSignatureRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12 \n" +
-	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
-	"\atask_id\x18\x03 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12G\n" +
+	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\xd3\x03\n" +
+	"\x16DecideSignatureRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12)\n" +
+	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
+	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12Q\n" +
 	"\n" +
-	"new_status\x18\x04 \x01(\x0e2(.resources.documents.SignatureTaskStatusR\tnewStatus\x12\x18\n" +
-	"\acomment\x18\x05 \x01(\tR\acomment\x126\n" +
-	"\x04type\x18\x06 \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x12$\n" +
-	"\vpayload_svg\x18\a \x01(\tH\x02R\n" +
+	"new_status\x18\x04 \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
+	"\acomment\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acomment\x12@\n" +
+	"\x04type\x18\x06 \x01(\x0e2\".resources.documents.SignatureTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12-\n" +
+	"\vpayload_svg\x18\a \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x02R\n" +
 	"payloadSvg\x88\x01\x01\x12\x1e\n" +
 	"\bstamp_id\x18\b \x01(\x03H\x03R\astampId\x88\x01\x01B\f\n" +
 	"\n" +
@@ -1796,35 +1796,35 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x17DecideSignatureResponse\x12<\n" +
 	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\x126\n" +
 	"\x04task\x18\x02 \x01(\v2\".resources.documents.SignatureTaskR\x04task\x12<\n" +
-	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"U\n" +
-	"\x16ReopenSignatureRequest\x12!\n" +
-	"\fsignature_id\x18\x01 \x01(\x03R\vsignatureId\x12\x18\n" +
-	"\acomment\x18\x02 \x01(\tR\acomment\"W\n" +
+	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"h\n" +
+	"\x16ReopenSignatureRequest\x12*\n" +
+	"\fsignature_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\vsignatureId\x12\"\n" +
+	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"W\n" +
 	"\x17ReopenSignatureResponse\x12<\n" +
-	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"B\n" +
-	"\x1fRecomputeSignatureStatusRequest\x12\x1f\n" +
-	"\vdocument_id\x18\x01 \x01(\x03R\n" +
+	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"K\n" +
+	"\x1fRecomputeSignatureStatusRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
 	"documentId\"`\n" +
 	" RecomputeSignatureStatusResponse\x12<\n" +
-	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x9d\x01\n" +
-	"\x17ListUsableStampsRequest\x12L\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\xa5\x01\n" +
+	"\x17ListUsableStampsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12$\n" +
 	"\vdocument_id\x18\x02 \x01(\x03H\x00R\n" +
 	"documentId\x88\x01\x01B\x0e\n" +
-	"\f_document_id\"\xa3\x01\n" +
-	"\x18ListUsableStampsResponse\x12M\n" +
+	"\f_document_id\"\xab\x01\n" +
+	"\x18ListUsableStampsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"F\n" +
-	"\x12UpsertStampRequest\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"G\n" +
+	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"N\n" +
+	"\x12UpsertStampRequest\x128\n" +
+	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampB\x06\xbaH\x03\xc8\x01\x01R\x05stamp\"G\n" +
 	"\x13UpsertStampResponse\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"/\n" +
-	"\x12DeleteStampRequest\x12\x19\n" +
-	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
+	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"8\n" +
+	"\x12DeleteStampRequest\x12\"\n" +
+	"\bstamp_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\astampId\"\x15\n" +
 	"\x13DeleteStampResponse2\xf7\x10\n" +
 	"\x0eSigningService\x12\xb5\x01\n" +
 	"\x17ListSignatureTasksInbox\x122.services.documents.ListSignatureTasksInboxRequest\x1a3.services.documents.ListSignatureTasksInboxResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\xaf\x01\n" +

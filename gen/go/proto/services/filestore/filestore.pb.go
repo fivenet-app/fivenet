@@ -213,20 +213,20 @@ var File_services_filestore_filestore_proto protoreflect.FileDescriptor
 
 const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\n" +
-	"\"services/filestore/filestore.proto\x12\x12services.filestore\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\"\x82\x01\n" +
-	"\x10ListFilesRequest\x12L\n" +
+	"\"services/filestore/filestore.proto\x12\x12services.filestore\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\"\x94\x01\n" +
+	"\x10ListFilesRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12\x17\n" +
-	"\x04path\x18\x02 \x01(\tH\x00R\x04path\x88\x01\x01B\a\n" +
-	"\x05_path\"\x94\x01\n" +
-	"\x11ListFilesResponse\x12M\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x12!\n" +
+	"\x04path\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x04path\x88\x01\x01B\a\n" +
+	"\x05_path\"\x9c\x01\n" +
+	"\x11ListFilesResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x120\n" +
-	"\x05files\x18\x02 \x03(\v2\x14.resources.file.FileB\x04\xc8\xf3\x18\x01R\x05files\"-\n" +
-	"\x17DeleteFileByPathRequest\x12\x12\n" +
-	"\x04path\x18\x01 \x01(\tR\x04path\"\x1a\n" +
+	"\x05files\x18\x02 \x03(\v2\x14.resources.file.FileB\x04\xc8\xf3\x18\x01R\x05files\"7\n" +
+	"\x17DeleteFileByPathRequest\x12\x1c\n" +
+	"\x04path\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04path\"\x1a\n" +
 	"\x18DeleteFileByPathResponse2\xd0\x03\n" +
 	"\x10FilestoreService\x12d\n" +
 	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser(\x01\x12k\n" +

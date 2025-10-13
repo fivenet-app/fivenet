@@ -146,15 +146,15 @@ var File_resources_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x86\x01\n" +
-	"\x03Job\x127\n" +
-	"\x04name\x18\x01 \x01(\tB#\x9a\x84\x9e\x03\x1esql:\"primary_key\" alias:\"name\"R\x04name\x12\x14\n" +
-	"\x05label\x18\x02 \x01(\tR\x05label\x120\n" +
-	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"c\n" +
-	"\bJobGrade\x12\x1e\n" +
-	"\bjob_name\x18\x01 \x01(\tH\x00R\ajobName\x88\x01\x01\x12\x14\n" +
-	"\x05grade\x18\x02 \x01(\x05R\x05grade\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05labelB\v\n" +
+	"\x19resources/jobs/jobs.proto\x12\x0eresources.jobs\x1a\x13tagger/tagger.proto\"\x96\x01\n" +
+	"\x03Job\x12>\n" +
+	"\x04name\x18\x01 \x01(\tB*\x9a\x84\x9e\x03\x1esql:\"primary_key\" alias:\"name\"\xbaH\x04r\x02\x182R\x04name\x12\x1d\n" +
+	"\x05label\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182R\x05label\x120\n" +
+	"\x06grades\x18\x03 \x03(\v2\x18.resources.jobs.JobGradeR\x06grades\"~\n" +
+	"\bJobGrade\x12'\n" +
+	"\bjob_name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x182H\x00R\ajobName\x88\x01\x01\x12\x1d\n" +
+	"\x05grade\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x05grade\x12\x1d\n" +
+	"\x05label\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x182R\x05labelB\v\n" +
 	"\t_job_nameBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (

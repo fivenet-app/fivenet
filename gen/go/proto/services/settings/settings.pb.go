@@ -1270,10 +1270,10 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"B\n" +
 	"\x0fGetRoleResponse\x12/\n" +
-	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\";\n" +
-	"\x11CreateRoleRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12\x14\n" +
-	"\x05grade\x18\x02 \x01(\x05R\x05grade\"E\n" +
+	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"M\n" +
+	"\x11CreateRoleRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1d\n" +
+	"\x05grade\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x05grade\"E\n" +
 	"\x12CreateRoleResponse\x12/\n" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
@@ -1300,28 +1300,30 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x03 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"\xb3\x04\n" +
-	"\x13ViewAuditLogRequest\x12L\n" +
+	"attributes\"\x82\x05\n" +
+	"\x13ViewAuditLogRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x127\n" +
 	"\x04from\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
-	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12-\n" +
-	"\bservices\x18\x06 \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\bservices\x12+\n" +
-	"\amethods\x18\a \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\amethods\x12\x1b\n" +
-	"\x06search\x18\b \x01(\tH\x03R\x06search\x88\x01\x01\x126\n" +
-	"\aactions\x18\t \x03(\x0e2\x1c.resources.audit.EventActionR\aactions\x126\n" +
+	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12;\n" +
+	"\bservices\x18\x06 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
+	"\"\x04r\x02\x18@R\bservices\x129\n" +
+	"\amethods\x18\a \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
+	"\"\x04r\x02\x18@R\amethods\x12$\n" +
+	"\x06search\x18\b \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\x06search\x88\x01\x01\x12G\n" +
+	"\aactions\x18\t \x03(\x0e2\x1c.resources.audit.EventActionB\x0f\xbaH\f\x92\x01\t\x10\x06\"\x05\x82\x01\x02\x10\x01R\aactions\x12G\n" +
 	"\aresults\x18\n" +
-	" \x03(\x0e2\x1c.resources.audit.EventResultR\aresultsB\a\n" +
+	" \x03(\x0e2\x1c.resources.audit.EventResultB\x0f\xbaH\f\x92\x01\t\x10\x06\"\x05\x82\x01\x02\x10\x01R\aresultsB\a\n" +
 	"\x05_sortB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +
-	"\a_search\"\x9c\x01\n" +
-	"\x14ViewAuditLogResponse\x12M\n" +
+	"\a_search\"\xa4\x01\n" +
+	"\x14ViewAuditLogResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x125\n" +
 	"\x04logs\x18\x02 \x03(\v2\x1b.resources.audit.AuditEntryB\x04\xc8\xf3\x18\x01R\x04logs\"\x1c\n" +
 	"\x1aListDiscordChannelsRequest\"U\n" +

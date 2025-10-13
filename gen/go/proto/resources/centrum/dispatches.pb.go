@@ -870,28 +870,28 @@ var File_resources_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x9d\a\n" +
+	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc4\a\n" +
 	"\bDispatch\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x14\n" +
-	"\x03job\x18\x04 \x01(\tB\x02\x18\x01R\x03job\x12.\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
+	"\x03job\x18\x04 \x01(\tB\t\x18\x01\xbaH\x04r\x02\x18\x14R\x03job\x12.\n" +
 	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12>\n" +
-	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12 \n" +
-	"\amessage\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\amessage\x12-\n" +
-	"\vdescription\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\vdescription\x88\x01\x01\x12J\n" +
+	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12(\n" +
+	"\amessage\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01R\amessage\x125\n" +
+	"\vdescription\x18\b \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x03R\vdescription\x88\x01\x01\x12J\n" +
 	"\n" +
 	"attributes\x18\t \x01(\v2%.resources.centrum.DispatchAttributesH\x04R\n" +
 	"attributes\x88\x01\x01\x12\f\n" +
 	"\x01x\x18\n" +
 	" \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\v \x01(\x01R\x01y\x12#\n" +
-	"\x06postal\x18\f \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x05R\x06postal\x88\x01\x01\x12\x12\n" +
-	"\x04anon\x18\r \x01(\bR\x04anon\x12\"\n" +
+	"\x01y\x18\v \x01(\x01R\x01y\x12*\n" +
+	"\x06postal\x18\f \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12\x12\n" +
+	"\x04anon\x18\r \x01(\bR\x04anon\x12+\n" +
 	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x124\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x06R\tcreatorId\x88\x01\x01\x124\n" +
 	"\acreator\x18\x0f \x01(\v2\x15.resources.users.UserH\aR\acreator\x88\x01\x01\x12;\n" +
 	"\x05units\x18\x10 \x03(\v2%.resources.centrum.DispatchAssignmentR\x05units\x12J\n" +
 	"\n" +
@@ -906,17 +906,18 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\r\n" +
-	"\v_references\">\n" +
-	"\aJobList\x123\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1f.resources.centrum.JobListEntryR\x04jobs\"G\n" +
-	"\fJobListEntry\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x19\n" +
+	"\v_references\"H\n" +
+	"\aJobList\x12=\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x1f.resources.centrum.JobListEntryB\b\xbaH\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs\"P\n" +
+	"\fJobListEntry\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x04name\x12\x19\n" +
 	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
-	"\x06_label\"\x85\x01\n" +
+	"\x06_label\"\x8e\x01\n" +
 	"\x13DispatchAssignments\x12\x1f\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03R\n" +
-	"dispatchId\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x12;\n" +
+	"dispatchId\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12;\n" +
 	"\x05units\x18\x03 \x03(\v2%.resources.centrum.DispatchAssignmentR\x05units\"\x83\x03\n" +
 	"\x12DispatchAssignment\x12K\n" +
 	"\vdispatch_id\x18\x01 \x01(\x03B*\x9a\x84\x9e\x03%sql:\"primary_key\" alias:\"dispatch_id\"R\n" +
@@ -929,7 +930,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_unitB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_expires_at\"\xb0\x05\n" +
+	"\v_expires_at\"\xe2\x05\n" +
 	"\x0eDispatchStatus\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -937,17 +938,17 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\vdispatch_id\x18\x03 \x01(\x03R\n" +
 	"dispatchId\x12\x1c\n" +
 	"\aunit_id\x18\x04 \x01(\x03H\x01R\x06unitId\x88\x01\x01\x120\n" +
-	"\x04unit\x18\x05 \x01(\v2\x17.resources.centrum.UnitH\x02R\x04unit\x88\x01\x01\x129\n" +
-	"\x06status\x18\x06 \x01(\x0e2!.resources.centrum.StatusDispatchR\x06status\x12#\n" +
-	"\x06reason\x18\a \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x03R\x06reason\x88\x01\x01\x12\x1f\n" +
-	"\x04code\x18\b \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x04R\x04code\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\t \x01(\x05H\x05R\x06userId\x88\x01\x01\x122\n" +
+	"\x04unit\x18\x05 \x01(\v2\x17.resources.centrum.UnitH\x02R\x04unit\x88\x01\x01\x12C\n" +
+	"\x06status\x18\x06 \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12+\n" +
+	"\x06reason\x18\a \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x03R\x06reason\x88\x01\x01\x12&\n" +
+	"\x04code\x18\b \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18\x14H\x04R\x04code\x88\x01\x01\x12%\n" +
+	"\auser_id\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x05R\x06userId\x88\x01\x01\x122\n" +
 	"\x04user\x18\n" +
 	" \x01(\v2\x19.resources.jobs.ColleagueH\x06R\x04user\x88\x01\x01\x12\x11\n" +
 	"\x01x\x18\v \x01(\x01H\aR\x01x\x88\x01\x01\x12\x11\n" +
-	"\x01y\x18\f \x01(\x01H\bR\x01y\x88\x01\x01\x12#\n" +
-	"\x06postal\x18\r \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\tR\x06postal\x88\x01\x01\x12$\n" +
-	"\vcreator_job\x18\x0e \x01(\tH\n" +
+	"\x01y\x18\f \x01(\x01H\bR\x01y\x88\x01\x01\x12*\n" +
+	"\x06postal\x18\r \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x180H\tR\x06postal\x88\x01\x01\x12-\n" +
+	"\vcreator_job\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x18\x14H\n" +
 	"R\n" +
 	"creatorJob\x88\x01\x01B\r\n" +
 	"\v_created_atB\n" +
@@ -966,10 +967,10 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\x12DispatchReferences\x12D\n" +
 	"\n" +
 	"references\x18\x01 \x03(\v2$.resources.centrum.DispatchReferenceR\n" +
-	"references:\x06\xe2\xf3\x18\x02\b\x01\"\x92\x01\n" +
+	"references:\x06\xe2\xf3\x18\x02\b\x01\"\x9c\x01\n" +
 	"\x11DispatchReference\x12,\n" +
-	"\x12target_dispatch_id\x18\x01 \x01(\x03R\x10targetDispatchId\x12O\n" +
-	"\x0ereference_type\x18\x02 \x01(\x0e2(.resources.centrum.DispatchReferenceTypeR\rreferenceType*\xef\x03\n" +
+	"\x12target_dispatch_id\x18\x01 \x01(\x03R\x10targetDispatchId\x12Y\n" +
+	"\x0ereference_type\x18\x02 \x01(\x0e2(.resources.centrum.DispatchReferenceTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\rreferenceType*\xef\x03\n" +
 	"\x0eStatusDispatch\x12\x1f\n" +
 	"\x1bSTATUS_DISPATCH_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13STATUS_DISPATCH_NEW\x10\x01\x12\x1e\n" +

@@ -846,39 +846,40 @@ var File_resources_documents_signing_proto protoreflect.FileDescriptor
 
 const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
-	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"R\n" +
-	"\x0eSignatureTypes\x128\n" +
-	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeR\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xe2\x03\n" +
+	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"c\n" +
+	"\x0eSignatureTypes\x12I\n" +
+	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeB\x0f\xbaH\f\x92\x01\t\x10\x03\"\x05\x82\x01\x02\x10\x01R\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xec\x03\n" +
 	"\x0fSignaturePolicy\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
 	"documentId\x12C\n" +
 	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12'\n" +
 	"\x05label\x18\x04 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x05label\x12\x1a\n" +
-	"\brequired\x18\x05 \x01(\bR\brequired\x12L\n" +
-	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeR\vbindingMode\x12H\n" +
+	"\brequired\x18\x05 \x01(\bR\brequired\x12V\n" +
+	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vbindingMode\x12H\n" +
 	"\rallowed_types\x18\a \x01(\v2#.resources.documents.SignatureTypesR\fallowedTypes\x12=\n" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xed\t\n" +
+	"updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xb8\n" +
+	"\n" +
 	"\rSignatureTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12O\n" +
-	"\rassignee_kind\x18\x05 \x01(\x0e2*.resources.documents.SignatureAssigneeKindR\fassigneeKind\x12\x1c\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12Y\n" +
+	"\rassignee_kind\x18\x05 \x01(\x0e2*.resources.documents.SignatureAssigneeKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\fassigneeKind\x12\x1c\n" +
 	"\auser_id\x18\x06 \x01(\x05H\x00R\x06userId\x88\x01\x01\x123\n" +
-	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\b \x01(\tH\x02R\x03job\x88\x01\x01\x12 \n" +
-	"\tjob_label\x18\t \x01(\tH\x03R\bjobLabel\x88\x01\x01\x12(\n" +
+	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x12)\n" +
+	"\tjob_label\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\bjobLabel\x88\x01\x01\x12(\n" +
 	"\rminimum_grade\x18\n" +
-	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x12+\n" +
-	"\x0fjob_grade_label\x18\v \x01(\tH\x05R\rjobGradeLabel\x88\x01\x01\x12\x17\n" +
-	"\aslot_no\x18\f \x01(\x05R\x06slotNo\x12@\n" +
-	"\x06status\x18\r \x01(\x0e2(.resources.documents.SignatureTaskStatusR\x06status\x12%\n" +
-	"\acomment\x18\x0e \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
+	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x124\n" +
+	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x12\"\n" +
+	"\aslot_no\x18\f \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12J\n" +
+	"\x06status\x18\r \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\x0e \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12F\n" +
 	"\fcompleted_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampH\aR\vcompletedAt\x88\x01\x01\x12:\n" +
@@ -887,8 +888,8 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"creator_id\x18\x13 \x01(\x05R\tcreatorId\x129\n" +
 	"\acreator\x18\x14 \x01(\v2\x1a.resources.users.UserShortH\n" +
-	"R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x15 \x01(\tR\n" +
+	"R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x15 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12/\n" +
 	"\x11creator_job_label\x18\x16 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
 	"\bdocument\x18\x17 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
@@ -908,7 +909,7 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_document\"\xc3\a\n" +
+	"\t_document\"\xdf\a\n" +
 	"\tSignature\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
@@ -923,13 +924,13 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"user_grade\x18\n" +
 	" \x01(\x05H\x06R\tuserGrade\x88\x01\x01\x12-\n" +
-	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x126\n" +
-	"\x04type\x18\f \x01(\x0e2\".resources.documents.SignatureTypeR\x04type\x124\n" +
+	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x12@\n" +
+	"\x04type\x18\f \x01(\x0e2\".resources.documents.SignatureTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x124\n" +
 	"\vpayload_svg\x18\r \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\n" +
 	"payloadSvg\x12\x1e\n" +
-	"\bstamp_id\x18\x0e \x01(\x03H\bR\astampId\x88\x01\x01\x12<\n" +
-	"\x06status\x18\x0f \x01(\x0e2$.resources.documents.SignatureStatusR\x06status\x12%\n" +
-	"\acomment\x18\x10 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\tR\acomment\x88\x01\x01\x12=\n" +
+	"\bstamp_id\x18\x0e \x01(\x03H\bR\astampId\x88\x01\x01\x12F\n" +
+	"\x06status\x18\x0f \x01(\x0e2$.resources.documents.SignatureStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\x10 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\tR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +

@@ -367,10 +367,10 @@ var File_resources_jobs_timeclock_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_timeclock_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/jobs/timeclock.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb3\x03\n" +
-	"\x0eTimeclockEntry\x12/\n" +
-	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x06userId\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x12J\n" +
+	"\x1eresources/jobs/timeclock.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xc3\x03\n" +
+	"\x0eTimeclockEntry\x126\n" +
+	"\auser_id\x18\x01 \x01(\x05B\x1d\x9a\x84\x9e\x03\x11sql:\"primary_key\"\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12J\n" +
 	"\x04date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x04date\x122\n" +
 	"\x04user\x18\x04 \x01(\v2\x19.resources.jobs.ColleagueH\x00R\x04user\x88\x01\x01\x12Z\n" +
 	"\n" +
@@ -380,9 +380,9 @@ const file_resources_jobs_timeclock_proto_rawDesc = "" +
 	"spent_time\x18\a \x01(\x02R\tspentTimeB\a\n" +
 	"\x05_userB\r\n" +
 	"\v_start_timeB\v\n" +
-	"\t_end_time\"\x94\x01\n" +
-	"\x0eTimeclockStats\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\x12$\n" +
+	"\t_end_time\"\x9d\x01\n" +
+	"\x0eTimeclockStats\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12$\n" +
 	"\x0espent_time_sum\x18\x02 \x01(\x02R\fspentTimeSum\x12$\n" +
 	"\x0espent_time_avg\x18\x03 \x01(\x02R\fspentTimeAvg\x12$\n" +
 	"\x0espent_time_max\x18\x04 \x01(\x02R\fspentTimeMax\"\x85\x01\n" +

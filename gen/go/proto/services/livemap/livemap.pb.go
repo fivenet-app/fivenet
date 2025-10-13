@@ -685,7 +685,7 @@ var File_services_livemap_livemap_proto protoreflect.FileDescriptor
 const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
 	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a%resources/livemap/marker_marker.proto\x1a#resources/livemap/user_marker.proto\"\x0f\n" +
-	"\rStreamRequest\"\x88\x03\n" +
+	"\rStreamRequest\"\x8f\x03\n" +
 	"\x0eStreamResponse\x12%\n" +
 	"\fuser_on_duty\x18\x01 \x01(\bH\x01R\n" +
 	"userOnDuty\x88\x01\x01\x120\n" +
@@ -693,8 +693,8 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\amarkers\x18\x03 \x01(\v2&.services.livemap.MarkerMarkersUpdatesH\x00R\amarkers\x128\n" +
 	"\bsnapshot\x18\x04 \x01(\v2\x1a.services.livemap.SnapshotH\x00R\bsnapshot\x12B\n" +
 	"\fuser_updates\x18\x05 \x01(\v2\x1d.services.livemap.UserUpdatesH\x00R\vuserUpdates\x12B\n" +
-	"\fuser_deletes\x18\x06 \x01(\v2\x1d.services.livemap.UserDeletesH\x00R\vuserDeletesB\x06\n" +
-	"\x04dataB\x0f\n" +
+	"\fuser_deletes\x18\x06 \x01(\v2\x1d.services.livemap.UserDeletesH\x00R\vuserDeletesB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01B\x0f\n" +
 	"\r_user_on_duty\"d\n" +
 	"\bJobsList\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x05users\x12-\n" +
@@ -713,9 +713,9 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
 	"UserDelete\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\"V\n" +
-	"\x1bCreateOrUpdateMarkerRequest\x127\n" +
-	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"W\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\"^\n" +
+	"\x1bCreateOrUpdateMarkerRequest\x12?\n" +
+	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerB\x06\xbaH\x03\xc8\x01\x01R\x06marker\"W\n" +
 	"\x1cCreateOrUpdateMarkerResponse\x127\n" +
 	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +

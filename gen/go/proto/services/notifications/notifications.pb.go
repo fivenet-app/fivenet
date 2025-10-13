@@ -474,32 +474,33 @@ var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a)resources/notifications/client_view.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\"\xef\x01\n" +
-	"\x17GetNotificationsRequest\x12L\n" +
+	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a)resources/notifications/client_view.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\"\x88\x02\n" +
+	"\x17GetNotificationsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12&\n" +
-	"\finclude_read\x18\x02 \x01(\bH\x00R\vincludeRead\x88\x01\x01\x12M\n" +
+	"\finclude_read\x18\x02 \x01(\bH\x00R\vincludeRead\x88\x01\x01\x12^\n" +
 	"\n" +
-	"categories\x18\x03 \x03(\x0e2-.resources.notifications.NotificationCategoryR\n" +
+	"categories\x18\x03 \x03(\x0e2-.resources.notifications.NotificationCategoryB\x0f\xbaH\f\x92\x01\t\x10\x04\"\x05\x82\x01\x02\x10\x01R\n" +
 	"categoriesB\x0f\n" +
-	"\r_include_read\"\xbc\x01\n" +
-	"\x18GetNotificationsResponse\x12M\n" +
+	"\r_include_read\"\xc4\x01\n" +
+	"\x18GetNotificationsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12Q\n" +
-	"\rnotifications\x18\x02 \x03(\v2%.resources.notifications.NotificationB\x04\xc8\xf3\x18\x01R\rnotifications\"c\n" +
+	"\rnotifications\x18\x02 \x03(\v2%.resources.notifications.NotificationB\x04\xc8\xf3\x18\x01R\rnotifications\"r\n" +
 	"\x18MarkNotificationsRequest\x12\x16\n" +
-	"\x06unread\x18\x01 \x01(\bR\x06unread\x12\x10\n" +
-	"\x03ids\x18\x02 \x03(\x03R\x03ids\x12\x15\n" +
+	"\x06unread\x18\x01 \x01(\bR\x06unread\x12\x1f\n" +
+	"\x03ids\x18\x02 \x03(\x03B\r\xbaH\n" +
+	"\xd8\x01\x01\x92\x01\x04\b\x01\x10\x14R\x03ids\x12\x15\n" +
 	"\x03all\x18\x03 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
 	"\x04_all\"5\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\x03R\aupdated\"_\n" +
+	"\aupdated\x18\x01 \x01(\x03R\aupdated\"f\n" +
 	"\rStreamRequest\x12F\n" +
 	"\vclient_view\x18\x01 \x01(\v2#.resources.notifications.ClientViewH\x00R\n" +
-	"clientViewB\x06\n" +
-	"\x04data\"\xa5\x04\n" +
+	"clientViewB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xac\x04\n" +
 	"\x0eStreamResponse\x12-\n" +
 	"\x12notification_count\x18\x01 \x01(\x03R\x11notificationCount\x12\x1d\n" +
 	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12C\n" +
@@ -509,8 +510,8 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\x0fjob_grade_event\x18\x05 \x01(\v2&.resources.notifications.JobGradeEventH\x00R\rjobGradeEvent\x12I\n" +
 	"\fsystem_event\x18\x06 \x01(\v2$.resources.notifications.SystemEventH\x00R\vsystemEvent\x12B\n" +
 	"\fmailer_event\x18\a \x01(\v2\x1d.resources.mailer.MailerEventH\x00R\vmailerEvent\x12I\n" +
-	"\fobject_event\x18\b \x01(\v2$.resources.notifications.ObjectEventH\x00R\vobjectEventB\x06\n" +
-	"\x04dataB\n" +
+	"\fobject_event\x18\b \x01(\v2$.resources.notifications.ObjectEventH\x00R\vobjectEventB\r\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01B\n" +
 	"\n" +
 	"\b_restart2\x8d\x03\n" +
 	"\x14NotificationsService\x12\x82\x01\n" +

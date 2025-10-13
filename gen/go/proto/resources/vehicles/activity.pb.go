@@ -229,20 +229,20 @@ var File_resources_vehicles_activity_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_activity_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/activity.proto\x12\x12resources.vehicles\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcb\x05\n" +
+	"!resources/vehicles/activity.proto\x12\x12resources.vehicles\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xff\x05\n" +
 	"\x0fVehicleActivity\x120\n" +
 	"\x02id\x18\x01 \x01(\x03B \x9a\x84\x9e\x03\x1balias:\"vehicle_activity.id\"R\x02id\x12i\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB%\x9a\x84\x9e\x03 alias:\"user_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x12\x14\n" +
-	"\x05plate\x18\x03 \x01(\tR\x05plate\x12p\n" +
-	"\ractivity_type\x18\x04 \x01(\x0e2'.resources.vehicles.VehicleActivityTypeB\"\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"R\factivityType\x12\"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB%\x9a\x84\x9e\x03 alias:\"user_activity.created_at\"H\x00R\tcreatedAt\x88\x01\x01\x12\x1d\n" +
+	"\x05plate\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18 R\x05plate\x12x\n" +
+	"\ractivity_type\x18\x04 \x01(\x0e2'.resources.vehicles.VehicleActivityTypeB*\x9a\x84\x9e\x03\x1dalias:\"vehicle_activity.type\"\xbaH\x05\x82\x01\x02\x10\x01R\factivityType\x12+\n" +
 	"\n" +
-	"creator_id\x18\x05 \x01(\x05H\x01R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\a \x01(\tR\n" +
-	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\b \x01(\tH\x03R\x0fcreatorJobLabel\x88\x01\x01\x12D\n" +
-	"\x06reason\x18\t \x01(\tB'\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1calias:\"user_activity.reason\"H\x04R\x06reason\x88\x01\x01\x12;\n" +
+	"creator_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x01R\tcreatorId\x88\x01\x01\x12O\n" +
+	"\acreator\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x02R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creatorJob\x128\n" +
+	"\x11creator_job_label\x18\b \x01(\tB\a\xbaH\x04r\x02\x182H\x03R\x0fcreatorJobLabel\x88\x01\x01\x12L\n" +
+	"\x06reason\x18\t \x01(\tB/\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\x1calias:\"user_activity.reason\"\xbaH\x05r\x03\x18\xff\x01H\x04R\x06reason\x88\x01\x01\x12;\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2'.resources.vehicles.VehicleActivityDataR\x04dataB\r\n" +
 	"\v_created_atB\r\n" +

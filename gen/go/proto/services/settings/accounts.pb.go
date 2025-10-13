@@ -552,16 +552,16 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a\x1bresources/users/users.proto\"\xe0\x02\n" +
-	"\x13ListAccountsRequest\x12L\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a\x1bresources/users/users.proto\"\x84\x03\n" +
+	"\x13ListAccountsRequest\x12T\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x1d\n" +
-	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01\x12\x1f\n" +
-	"\busername\x18\x05 \x01(\tH\x03R\busername\x88\x01\x01\x12$\n" +
-	"\vexternal_id\x18\x06 \x01(\tH\x04R\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12&\n" +
+	"\alicense\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\alicense\x88\x01\x01\x12\x1d\n" +
+	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01\x12(\n" +
+	"\busername\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\busername\x88\x01\x01\x12.\n" +
+	"\vexternal_id\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x04R\n" +
 	"externalId\x88\x01\x01B\a\n" +
 	"\x05_sortB\n" +
 	"\n" +
@@ -569,24 +569,24 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
 	"\b_enabledB\v\n" +
 	"\t_usernameB\x0e\n" +
-	"\f_external_id\"\xa4\x01\n" +
-	"\x14ListAccountsResponse\x12M\n" +
+	"\f_external_id\"\xac\x01\n" +
+	"\x14ListAccountsResponse\x12U\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12=\n" +
-	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\xba\x01\n" +
-	"\x14CreateAccountRequest\x12\x18\n" +
-	"\alicense\x18\x01 \x01(\tR\alicense\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername\x12 \n" +
+	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\xcc\x01\n" +
+	"\x14CreateAccountRequest\x12!\n" +
+	"\alicense\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\alicense\x12#\n" +
+	"\busername\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@R\busername\x12 \n" +
 	"\tlast_char\x18\x03 \x01(\x05H\x00R\blastChar\x88\x01\x01\x123\n" +
 	"\x04char\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04char\x88\x01\x01B\f\n" +
 	"\n" +
 	"_last_charB\a\n" +
-	"\x05_char\"4\n" +
-	"\x15CreateAccountResponse\x12\x1b\n" +
-	"\treg_token\x18\x01 \x01(\tR\bregToken\"\x81\x01\n" +
-	"\x14UpdateAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
+	"\x05_char\">\n" +
+	"\x15CreateAccountResponse\x12%\n" +
+	"\treg_token\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x98\x01\x06R\bregToken\"\x8a\x01\n" +
+	"\x14UpdateAccountRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12\x1d\n" +
 	"\aenabled\x18\x02 \x01(\bH\x00R\aenabled\x88\x01\x01\x12 \n" +
 	"\tlast_char\x18\x03 \x01(\x05H\x01R\blastChar\x88\x01\x01B\n" +
 	"\n" +
@@ -594,13 +594,13 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
 	"_last_char\"N\n" +
 	"\x15UpdateAccountResponse\x125\n" +
-	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\"X\n" +
-	"!DisconnectOAuth2ConnectionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12#\n" +
-	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\"$\n" +
-	"\"DisconnectOAuth2ConnectionResponse\"&\n" +
-	"\x14DeleteAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x17\n" +
+	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\"k\n" +
+	"!DisconnectOAuth2ConnectionRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12-\n" +
+	"\rprovider_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\fproviderName\"$\n" +
+	"\"DisconnectOAuth2ConnectionResponse\"/\n" +
+	"\x14DeleteAccountRequest\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x17\n" +
 	"\x15DeleteAccountResponse2\x89\x05\n" +
 	"\x0fAccountsService\x12r\n" +
 	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
