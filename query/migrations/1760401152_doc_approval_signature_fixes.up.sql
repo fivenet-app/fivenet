@@ -29,8 +29,8 @@ ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `label`;
 ALTER TABLE `fivenet_documents_signature_policies` DROP INDEX `idx_fivenet_doc_sig_pol_doc_snap_required`;
 ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `required`;
 
-ALTER TABLE `fivenet_documents_signatures` DROP KEY `uq_fivenet_doc_signature_user_round`;
 ALTER TABLE `fivenet_documents_signatures` DROP FOREIGN KEY `fk_fivenet_doc_signatures_policy_id`;
+ALTER TABLE `fivenet_documents_signatures` DROP KEY `uq_fivenet_doc_signature_user_round`;
 ALTER TABLE `fivenet_documents_signatures` DROP COLUMN `policy_id`;
 ALTER TABLE `fivenet_documents_signatures` ADD UNIQUE KEY `uq_fivenet_doc_signature_user_round` (`snapshot_date`, `user_id`);
 
