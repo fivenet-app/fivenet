@@ -9,6 +9,7 @@ package documents
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -424,12 +425,14 @@ type ApprovalTaskSeed struct {
 	// If user_id == 0 -> JOB task
 	Job          string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	MinimumGrade int32  `protobuf:"varint,3,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	// Label of task
+	Label *string `protobuf:"bytes,4,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
-	Slots int32 `protobuf:"varint,4,opt,name=slots,proto3" json:"slots,omitempty"`
+	Slots int32 `protobuf:"varint,5,opt,name=slots,proto3" json:"slots,omitempty"`
 	// Optional default due date for created slots
-	DueAt *timestamp.Timestamp `protobuf:"bytes,5,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	DueAt *timestamp.Timestamp `protobuf:"bytes,6,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
 	// Optional note set on created tasks
-	Comment       *string `protobuf:"bytes,6,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	Comment       *string `protobuf:"bytes,7,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -485,6 +488,13 @@ func (x *ApprovalTaskSeed) GetMinimumGrade() int32 {
 	return 0
 }
 
+func (x *ApprovalTaskSeed) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
 func (x *ApprovalTaskSeed) GetSlots() int32 {
 	if x != nil {
 		return x.Slots
@@ -508,13 +518,13 @@ func (x *ApprovalTaskSeed) GetComment() string {
 
 // Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
 // Identity rules (server-side):
-//   - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
-//   - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+//   - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id)
+//   - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
 //
 // For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 type UpsertApprovalTasksRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// If empty, use policy.snapshot_date
 	SnapshotDate  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	Seeds         []*ApprovalTaskSeed  `protobuf:"bytes,3,rep,name=seeds,proto3" json:"seeds,omitempty"`
@@ -552,9 +562,9 @@ func (*UpsertApprovalTasksRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *UpsertApprovalTasksRequest) GetPolicyId() int64 {
+func (x *UpsertApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
 	}
 	return 0
 }
@@ -637,9 +647,9 @@ func (x *UpsertApprovalTasksResponse) GetPolicy() *documents.ApprovalPolicy {
 }
 
 type DeleteApprovalTasksRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
-	TaskIds  []int64                `protobuf:"varint,2,rep,packed,name=task_ids,json=taskIds,proto3" json:"task_ids,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	TaskIds    []int64                `protobuf:"varint,2,rep,packed,name=task_ids,json=taskIds,proto3" json:"task_ids,omitempty"`
 	// If true, ignore task_ids and delete all PENDING tasks under this policy
 	DeleteAllPending bool `protobuf:"varint,3,opt,name=delete_all_pending,json=deleteAllPending,proto3" json:"delete_all_pending,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -676,9 +686,9 @@ func (*DeleteApprovalTasksRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *DeleteApprovalTasksRequest) GetPolicyId() int64 {
+func (x *DeleteApprovalTasksRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
 	}
 	return 0
 }
@@ -738,13 +748,12 @@ func (*DeleteApprovalTasksResponse) Descriptor() ([]byte, []int) {
 type ListApprovalsRequest struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId     *int64                 `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	TaskId       *int64                 `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
+	TaskId       *int64                 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	// Optional filters
-	Status *documents.ApprovalStatus `protobuf:"varint,5,opt,name=status,proto3,enum=resources.documents.ApprovalStatus,oneof" json:"status,omitempty"`
+	Status *documents.ApprovalStatus `protobuf:"varint,4,opt,name=status,proto3,enum=resources.documents.ApprovalStatus,oneof" json:"status,omitempty"`
 	// Filter by signer
-	UserId        *int32 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserId        *int32 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -782,13 +791,6 @@ func (*ListApprovalsRequest) Descriptor() ([]byte, []int) {
 func (x *ListApprovalsRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *ListApprovalsRequest) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
 	}
 	return 0
 }
@@ -964,10 +966,9 @@ func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
 type DecideApprovalRequest struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	DocumentId    int64                        `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId      *int64                       `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	TaskId        *int64                       `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus     documents.ApprovalTaskStatus `protobuf:"varint,4,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
-	Comment       string                       `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	TaskId        *int64                       `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus     documents.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
+	Comment       string                       `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1005,13 +1006,6 @@ func (*DecideApprovalRequest) Descriptor() ([]byte, []int) {
 func (x *DecideApprovalRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *DecideApprovalRequest) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
 	}
 	return 0
 }
@@ -1301,7 +1295,7 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"\xfa\x01\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/timestamp/timestamp.proto\"\xfa\x01\n" +
 	"\x1dListApprovalTasksInboxRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1329,41 +1323,42 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"documentId\x12M\n" +
 	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatuses\"Z\n" +
 	"\x19ListApprovalTasksResponse\x12=\n" +
-	"\x05tasks\x18\x01 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xf5\x01\n" +
+	"\x05tasks\x18\x01 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xb4\x02\n" +
 	"\x10ApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12\x1f\n" +
-	"\x05slots\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
-	"\x06due_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05dueAt\x88\x01\x01\x12\x1d\n" +
-	"\acomment\x18\x06 \x01(\tH\x01R\acomment\x88\x01\x01B\t\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x123\n" +
+	"\x05label\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12\x1f\n" +
+	"\x05slots\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
+	"\x06due_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12\x1d\n" +
+	"\acomment\x18\a \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
+	"\x06_labelB\t\n" +
 	"\a_due_atB\n" +
 	"\n" +
-	"\b_comment\"\xd1\x01\n" +
-	"\x1aUpsertApprovalTasksRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12H\n" +
+	"\b_comment\"\xde\x01\n" +
+	"\x1aUpsertApprovalTasksRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12H\n" +
 	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12:\n" +
 	"\x05seeds\x18\x03 \x03(\v2$.services.documents.ApprovalTaskSeedR\x05seedsB\x10\n" +
 	"\x0e_snapshot_date\"\xa4\x01\n" +
 	"\x1bUpsertApprovalTasksResponse\x12#\n" +
 	"\rtasks_created\x18\x01 \x01(\x05R\ftasksCreated\x12#\n" +
 	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12;\n" +
-	"\x06policy\x18\x03 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"\x8c\x01\n" +
-	"\x1aDeleteApprovalTasksRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12#\n" +
+	"\x06policy\x18\x03 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"\x99\x01\n" +
+	"\x1aDeleteApprovalTasksRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12#\n" +
 	"\btask_ids\x18\x02 \x03(\x03B\b\xbaH\x05\x92\x01\x02\b\x01R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1d\n" +
-	"\x1bDeleteApprovalTasksResponse\"\xff\x02\n" +
+	"\x1bDeleteApprovalTasksResponse\"\xc6\x02\n" +
 	"\x14ListApprovalsRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12)\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
-	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12H\n" +
-	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\fsnapshotDate\x88\x01\x01\x12@\n" +
-	"\x06status\x18\x05 \x01(\x0e2#.resources.documents.ApprovalStatusH\x03R\x06status\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x06 \x01(\x05H\x04R\x06userId\x88\x01\x01B\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"documentId\x12%\n" +
+	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12H\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12@\n" +
+	"\x06status\x18\x04 \x01(\x0e2#.resources.documents.ApprovalStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\x05 \x01(\x05H\x03R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\x10\n" +
 	"\x0e_snapshot_dateB\t\n" +
@@ -1377,17 +1372,14 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"approvalId\x12\"\n" +
 	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"S\n" +
 	"\x16RevokeApprovalResponse\x129\n" +
-	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xa3\x02\n" +
+	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xea\x01\n" +
 	"\x15DecideApprovalRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12)\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
-	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12P\n" +
+	"documentId\x12%\n" +
+	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12P\n" +
 	"\n" +
-	"new_status\x18\x04 \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
-	"\acomment\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acommentB\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"new_status\x18\x03 \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
+	"\acomment\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acommentB\n" +
 	"\n" +
 	"\b_task_id\"\xc7\x01\n" +
 	"\x16DecideApprovalResponse\x129\n" +

@@ -74,7 +74,6 @@ watch(policy, () => setFromProps());
 async function upsertPolicy(values: Schema): Promise<void> {
     const call = approvalClient.upsertApprovalPolicy({
         policy: {
-            id: policy.value?.id ?? 0,
             documentId: props.documentId,
             ruleKind: values.ruleKind,
             onEditBehavior: values.onEditBehavior,

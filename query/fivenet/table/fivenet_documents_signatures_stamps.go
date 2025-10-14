@@ -19,6 +19,7 @@ type fivenetDocumentsSignaturesStampsTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	Name         mysql.ColumnString
+	UserID       mysql.ColumnInteger
 	SvgTemplate  mysql.ColumnString
 	VariantsJSON mysql.ColumnString
 	SortKey      mysql.ColumnString
@@ -67,13 +68,14 @@ func newFivenetDocumentsSignaturesStampsTableImpl(schemaName, tableName, alias s
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		NameColumn         = mysql.StringColumn("name")
+		UserIDColumn       = mysql.IntegerColumn("user_id")
 		SvgTemplateColumn  = mysql.StringColumn("svg_template")
 		VariantsJSONColumn = mysql.StringColumn("variants_json")
 		SortKeyColumn      = mysql.StringColumn("sort_key")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		allColumns         = mysql.ColumnList{IDColumn, NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
-		mutableColumns     = mysql.ColumnList{NameColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, NameColumn, UserIDColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
+		mutableColumns     = mysql.ColumnList{NameColumn, UserIDColumn, SvgTemplateColumn, VariantsJSONColumn, SortKeyColumn, CreatedAtColumn, DeletedAtColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -83,6 +85,7 @@ func newFivenetDocumentsSignaturesStampsTableImpl(schemaName, tableName, alias s
 		//Columns
 		ID:           IDColumn,
 		Name:         NameColumn,
+		UserID:       UserIDColumn,
 		SvgTemplate:  SvgTemplateColumn,
 		VariantsJSON: VariantsJSONColumn,
 		SortKey:      SortKeyColumn,

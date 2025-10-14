@@ -6,7 +6,6 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = defineProps<{
     documentId: number;
-    policyId: number;
     approve: boolean;
 }>();
 
@@ -38,7 +37,6 @@ async function decideApproval(approve: boolean) {
     try {
         const call = approvalClient.decideApproval({
             documentId: props.documentId,
-            policyId: props.policyId,
             newStatus: approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
             comment: '',
         });

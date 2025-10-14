@@ -148,16 +148,13 @@ func (m *ListSignaturePoliciesResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Policies
-	for idx, item := range m.Policies {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	return nil
@@ -473,6 +470,11 @@ func (m *SignatureTaskSeed) Sanitize() error {
 
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.Sanitize(*m.Label)
+	}
 
 	return nil
 }

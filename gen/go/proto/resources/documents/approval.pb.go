@@ -183,6 +183,7 @@ const (
 	ApprovalTaskStatus_APPROVAL_TASK_STATUS_DECLINED    ApprovalTaskStatus = 3
 	ApprovalTaskStatus_APPROVAL_TASK_STATUS_EXPIRED     ApprovalTaskStatus = 4
 	ApprovalTaskStatus_APPROVAL_TASK_STATUS_CANCELLED   ApprovalTaskStatus = 5
+	ApprovalTaskStatus_APPROVAL_TASK_STATUS_COMPLETED   ApprovalTaskStatus = 6
 )
 
 // Enum value maps for ApprovalTaskStatus.
@@ -194,6 +195,7 @@ var (
 		3: "APPROVAL_TASK_STATUS_DECLINED",
 		4: "APPROVAL_TASK_STATUS_EXPIRED",
 		5: "APPROVAL_TASK_STATUS_CANCELLED",
+		6: "APPROVAL_TASK_STATUS_COMPLETED",
 	}
 	ApprovalTaskStatus_value = map[string]int32{
 		"APPROVAL_TASK_STATUS_UNSPECIFIED": 0,
@@ -202,6 +204,7 @@ var (
 		"APPROVAL_TASK_STATUS_DECLINED":    3,
 		"APPROVAL_TASK_STATUS_EXPIRED":     4,
 		"APPROVAL_TASK_STATUS_CANCELLED":   5,
+		"APPROVAL_TASK_STATUS_COMPLETED":   6,
 	}
 )
 
@@ -286,22 +289,22 @@ func (ApprovalStatus) EnumDescriptor() ([]byte, []int) {
 
 type ApprovalPolicy struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId     int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate   *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	OnEditBehavior OnEditBehavior         `protobuf:"varint,4,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
-	RuleKind       ApprovalRuleKind       `protobuf:"varint,5,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
-	RequiredCount  *int32                 `protobuf:"varint,6,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
-	AssignedCount  int32                  `protobuf:"varint,8,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
-	ApprovedCount  int32                  `protobuf:"varint,9,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
-	DeclinedCount  int32                  `protobuf:"varint,10,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
-	PendingCount   int32                  `protobuf:"varint,11,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
-	AnyDeclined    bool                   `protobuf:"varint,12,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
-	StartedAt      *timestamp.Timestamp   `protobuf:"bytes,13,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
-	CompletedAt    *timestamp.Timestamp   `protobuf:"bytes,14,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
-	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,16,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt      *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	DocumentId     int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	OnEditBehavior OnEditBehavior         `protobuf:"varint,5,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	RuleKind       ApprovalRuleKind       `protobuf:"varint,6,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
+	RequiredCount  *int32                 `protobuf:"varint,7,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
+	DueAt          *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	AssignedCount  int32                  `protobuf:"varint,9,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
+	ApprovedCount  int32                  `protobuf:"varint,10,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
+	DeclinedCount  int32                  `protobuf:"varint,11,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
+	PendingCount   int32                  `protobuf:"varint,12,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
+	AnyDeclined    bool                   `protobuf:"varint,13,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
+	StartedAt      *timestamp.Timestamp   `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	CompletedAt    *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt      *timestamp.Timestamp   `protobuf:"bytes,18,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -334,13 +337,6 @@ func (x *ApprovalPolicy) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ApprovalPolicy.ProtoReflect.Descriptor instead.
 func (*ApprovalPolicy) Descriptor() ([]byte, []int) {
 	return file_resources_documents_approval_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *ApprovalPolicy) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
 }
 
 func (x *ApprovalPolicy) GetDocumentId() int64 {
@@ -376,6 +372,13 @@ func (x *ApprovalPolicy) GetRequiredCount() int32 {
 		return *x.RequiredCount
 	}
 	return 0
+}
+
+func (x *ApprovalPolicy) GetDueAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DueAt
+	}
+	return nil
 }
 
 func (x *ApprovalPolicy) GetAssignedCount() int32 {
@@ -451,7 +454,6 @@ func (x *ApprovalPolicy) GetDeletedAt() *timestamp.Timestamp {
 type ApprovalTask struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PolicyId      int64                  `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
 	DocumentId    int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	SnapshotDate  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	AssigneeKind  ApprovalAssigneeKind   `protobuf:"varint,5,opt,name=assignee_kind,json=assigneeKind,proto3,enum=resources.documents.ApprovalAssigneeKind" json:"assignee_kind,omitempty"`
@@ -461,21 +463,23 @@ type ApprovalTask struct {
 	JobLabel      *string                `protobuf:"bytes,9,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  *int32                 `protobuf:"varint,10,opt,name=minimum_grade,json=minimumGrade,proto3,oneof" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string                `protobuf:"bytes,11,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	// "Leadership", "Counterparty Rep"
+	Label *string `protobuf:"bytes,12,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	// >=1; meaningful only for Job tasks; always 1 for User
-	SlotNo int32              `protobuf:"varint,12,opt,name=slot_no,json=slotNo,proto3" json:"slot_no,omitempty"`
-	Status ApprovalTaskStatus `protobuf:"varint,13,opt,name=status,proto3,enum=resources.documents.ApprovalTaskStatus" json:"status,omitempty"`
+	SlotNo int32              `protobuf:"varint,13,opt,name=slot_no,json=slotNo,proto3" json:"slot_no,omitempty"`
+	Status ApprovalTaskStatus `protobuf:"varint,14,opt,name=status,proto3,enum=resources.documents.ApprovalTaskStatus" json:"status,omitempty"`
 	// Optional comment on approve/decline
-	Comment         *string              `protobuf:"bytes,14,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
-	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	DecidedAt       *timestamp.Timestamp `protobuf:"bytes,16,opt,name=decided_at,json=decidedAt,proto3,oneof" json:"decided_at,omitempty"`
-	DueAt           *timestamp.Timestamp `protobuf:"bytes,17,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
-	DecisionCount   int32                `protobuf:"varint,18,opt,name=decision_count,json=decisionCount,proto3" json:"decision_count,omitempty"`
-	ApprovalId      *int64               `protobuf:"varint,19,opt,name=approval_id,json=approvalId,proto3,oneof" json:"approval_id,omitempty"`
-	CreatorId       int32                `protobuf:"varint,20,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator         *users.UserShort     `protobuf:"bytes,21,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	CreatorJob      string               `protobuf:"bytes,22,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string              `protobuf:"bytes,23,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Document        *DocumentShort       `protobuf:"bytes,24,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	Comment         *string              `protobuf:"bytes,15,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	DecidedAt       *timestamp.Timestamp `protobuf:"bytes,17,opt,name=decided_at,json=decidedAt,proto3,oneof" json:"decided_at,omitempty"`
+	DueAt           *timestamp.Timestamp `protobuf:"bytes,18,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	DecisionCount   int32                `protobuf:"varint,19,opt,name=decision_count,json=decisionCount,proto3" json:"decision_count,omitempty"`
+	ApprovalId      *int64               `protobuf:"varint,20,opt,name=approval_id,json=approvalId,proto3,oneof" json:"approval_id,omitempty"`
+	CreatorId       int32                `protobuf:"varint,21,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator         *users.UserShort     `protobuf:"bytes,22,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	CreatorJob      string               `protobuf:"bytes,23,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string              `protobuf:"bytes,24,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Document        *DocumentShort       `protobuf:"bytes,25,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -513,13 +517,6 @@ func (*ApprovalTask) Descriptor() ([]byte, []int) {
 func (x *ApprovalTask) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *ApprovalTask) GetPolicyId() int64 {
-	if x != nil {
-		return x.PolicyId
 	}
 	return 0
 }
@@ -583,6 +580,13 @@ func (x *ApprovalTask) GetMinimumGrade() int32 {
 func (x *ApprovalTask) GetJobGradeLabel() string {
 	if x != nil && x.JobGradeLabel != nil {
 		return *x.JobGradeLabel
+	}
+	return ""
+}
+
+func (x *ApprovalTask) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
 	}
 	return ""
 }
@@ -681,10 +685,8 @@ func (x *ApprovalTask) GetDocument() *DocumentShort {
 type Approval struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId   int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	// Link to originating policy (if any)
-	PolicyId *int64 `protobuf:"varint,4,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	// Link to originating task (if any)
 	TaskId         *int64               `protobuf:"varint,5,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	UserId         *int32               `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
@@ -750,13 +752,6 @@ func (x *Approval) GetSnapshotDate() *timestamp.Timestamp {
 		return x.SnapshotDate
 	}
 	return nil
-}
-
-func (x *Approval) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
-	}
-	return 0
 }
 
 func (x *Approval) GetTaskId() int64 {
@@ -840,39 +835,39 @@ var File_resources_documents_approval_proto protoreflect.FileDescriptor
 
 const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xc3\a\n" +
-	"\x0eApprovalPolicy\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\x86\b\n" +
+	"\x0eApprovalPolicy\x12\x1f\n" +
+	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12W\n" +
-	"\x10on_edit_behavior\x18\x04 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x12L\n" +
-	"\trule_kind\x18\x05 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x123\n" +
-	"\x0erequired_count\x18\x06 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12%\n" +
-	"\x0eassigned_count\x18\b \x01(\x05R\rassignedCount\x12%\n" +
-	"\x0eapproved_count\x18\t \x01(\x05R\rapprovedCount\x12%\n" +
-	"\x0edeclined_count\x18\n" +
-	" \x01(\x05R\rdeclinedCount\x12#\n" +
-	"\rpending_count\x18\v \x01(\x05R\fpendingCount\x12!\n" +
-	"\fany_declined\x18\f \x01(\bR\vanyDeclined\x12B\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12W\n" +
+	"\x10on_edit_behavior\x18\x05 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x12L\n" +
+	"\trule_kind\x18\x06 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x123\n" +
+	"\x0erequired_count\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12:\n" +
+	"\x06due_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12%\n" +
+	"\x0eassigned_count\x18\t \x01(\x05R\rassignedCount\x12%\n" +
+	"\x0eapproved_count\x18\n" +
+	" \x01(\x05R\rapprovedCount\x12%\n" +
+	"\x0edeclined_count\x18\v \x01(\x05R\rdeclinedCount\x12#\n" +
+	"\rpending_count\x18\f \x01(\x05R\fpendingCount\x12!\n" +
+	"\fany_declined\x18\r \x01(\bR\vanyDeclined\x12B\n" +
 	"\n" +
-	"started_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tstartedAt\x88\x01\x01\x12F\n" +
-	"\fcompleted_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\vcompletedAt\x88\x01\x01\x12=\n" +
+	"started_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tstartedAt\x88\x01\x01\x12F\n" +
+	"\fcompleted_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\vcompletedAt\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"updated_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"updated_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\tdeletedAt\x88\x01\x01B\x11\n" +
-	"\x0f_required_countB\r\n" +
+	"deleted_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\tdeletedAt\x88\x01\x01B\x11\n" +
+	"\x0f_required_countB\t\n" +
+	"\a_due_atB\r\n" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xd3\n" +
+	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\xfb\n" +
 	"\n" +
 	"\fApprovalTask\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
 	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12X\n" +
@@ -883,26 +878,27 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\tjob_label\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\bjobLabel\x88\x01\x01\x12(\n" +
 	"\rminimum_grade\x18\n" +
 	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x124\n" +
-	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x12\"\n" +
-	"\aslot_no\x18\f \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12I\n" +
-	"\x06status\x18\r \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
-	"\acomment\x18\x0e \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
+	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x123\n" +
+	"\x05label\x18\f \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x06R\x05label\x88\x01\x01\x12\"\n" +
+	"\aslot_no\x18\r \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12I\n" +
+	"\x06status\x18\x0e \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\x0f \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\aR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"decided_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampH\aR\tdecidedAt\x88\x01\x01\x12:\n" +
-	"\x06due_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\x05dueAt\x88\x01\x01\x12%\n" +
-	"\x0edecision_count\x18\x12 \x01(\x05R\rdecisionCount\x12$\n" +
-	"\vapproval_id\x18\x13 \x01(\x03H\tR\n" +
+	"decided_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\tdecidedAt\x88\x01\x01\x12:\n" +
+	"\x06due_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\x05dueAt\x88\x01\x01\x12%\n" +
+	"\x0edecision_count\x18\x13 \x01(\x05R\rdecisionCount\x12$\n" +
+	"\vapproval_id\x18\x14 \x01(\x03H\n" +
+	"R\n" +
 	"approvalId\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x14 \x01(\x05R\tcreatorId\x129\n" +
-	"\acreator\x18\x15 \x01(\v2\x1a.resources.users.UserShortH\n" +
-	"R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\x16 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\x15 \x01(\x05R\tcreatorId\x129\n" +
+	"\acreator\x18\x16 \x01(\v2\x1a.resources.users.UserShortH\vR\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x17 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x17 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
-	"\bdocument\x18\x18 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
+	"\x11creator_job_label\x18\x18 \x01(\tH\fR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\x19 \x01(\v2\".resources.documents.DocumentShortH\rR\bdocument\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_userB\x06\n" +
@@ -910,7 +906,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\x10\n" +
 	"\x0e_minimum_gradeB\x12\n" +
-	"\x10_job_grade_labelB\n" +
+	"\x10_job_grade_labelB\b\n" +
+	"\x06_labelB\n" +
 	"\n" +
 	"\b_commentB\r\n" +
 	"\v_decided_atB\t\n" +
@@ -919,30 +916,27 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_document\"\xb8\x06\n" +
+	"\t_documentJ\x04\b\x02\x10\x03\"\x8e\x06\n" +
 	"\bApproval\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12 \n" +
-	"\tpolicy_id\x18\x04 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
-	"\atask_id\x18\x05 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x06 \x01(\x05H\x02R\x06userId\x88\x01\x01\x123\n" +
-	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x03R\x04user\x88\x01\x01\x12\x1e\n" +
-	"\buser_job\x18\b \x01(\tH\x04R\auserJob\x88\x01\x01\x12)\n" +
-	"\x0euser_job_label\x18\t \x01(\tH\x05R\fuserJobLabel\x88\x01\x01\x12\"\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x1c\n" +
+	"\atask_id\x18\x05 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\x06 \x01(\x05H\x01R\x06userId\x88\x01\x01\x123\n" +
+	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x02R\x04user\x88\x01\x01\x12\x1e\n" +
+	"\buser_job\x18\b \x01(\tH\x03R\auserJob\x88\x01\x01\x12)\n" +
+	"\x0euser_job_label\x18\t \x01(\tH\x04R\fuserJobLabel\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"user_grade\x18\n" +
-	" \x01(\x05H\x06R\tuserGrade\x88\x01\x01\x12-\n" +
-	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x12E\n" +
+	" \x01(\x05H\x05R\tuserGrade\x88\x01\x01\x12-\n" +
+	"\x10user_grade_label\x18\v \x01(\tH\x06R\x0euserGradeLabel\x88\x01\x01\x12E\n" +
 	"\x06status\x18\f \x01(\x0e2#.resources.documents.ApprovalStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
-	"\acomment\x18\r \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\bR\acomment\x88\x01\x01\x12=\n" +
+	"\acomment\x18\r \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\aR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x0e \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\tR\trevokedAt\x88\x01\x01B\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"revoked_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\bR\trevokedAt\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\n" +
 	"\n" +
@@ -954,7 +948,7 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x11_user_grade_labelB\n" +
 	"\n" +
 	"\b_commentB\r\n" +
-	"\v_revoked_at*r\n" +
+	"\v_revoked_atJ\x04\b\x02\x10\x03*r\n" +
 	"\x0eOnEditBehavior\x12 \n" +
 	"\x1cON_EDIT_BEHAVIOR_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eON_EDIT_BEHAVIOR_KEEP_PROGRESS\x10\x01\x12\x1a\n" +
@@ -966,14 +960,15 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x14ApprovalAssigneeKind\x12&\n" +
 	"\"APPROVAL_ASSIGNEE_KIND_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bAPPROVAL_ASSIGNEE_KIND_USER\x10\x01\x12$\n" +
-	" APPROVAL_ASSIGNEE_KIND_JOB_GRADE\x10\x02*\xe8\x01\n" +
+	" APPROVAL_ASSIGNEE_KIND_JOB_GRADE\x10\x02*\x8c\x02\n" +
 	"\x12ApprovalTaskStatus\x12$\n" +
 	" APPROVAL_TASK_STATUS_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cAPPROVAL_TASK_STATUS_PENDING\x10\x01\x12!\n" +
 	"\x1dAPPROVAL_TASK_STATUS_APPROVED\x10\x02\x12!\n" +
 	"\x1dAPPROVAL_TASK_STATUS_DECLINED\x10\x03\x12 \n" +
 	"\x1cAPPROVAL_TASK_STATUS_EXPIRED\x10\x04\x12\"\n" +
-	"\x1eAPPROVAL_TASK_STATUS_CANCELLED\x10\x05*\x8a\x01\n" +
+	"\x1eAPPROVAL_TASK_STATUS_CANCELLED\x10\x05\x12\"\n" +
+	"\x1eAPPROVAL_TASK_STATUS_COMPLETED\x10\x06*\x8a\x01\n" +
 	"\x0eApprovalStatus\x12\x1f\n" +
 	"\x1bAPPROVAL_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18APPROVAL_STATUS_APPROVED\x10\x01\x12\x1c\n" +
@@ -1011,30 +1006,31 @@ var file_resources_documents_approval_proto_depIdxs = []int32{
 	8,  // 0: resources.documents.ApprovalPolicy.snapshot_date:type_name -> resources.timestamp.Timestamp
 	0,  // 1: resources.documents.ApprovalPolicy.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
 	1,  // 2: resources.documents.ApprovalPolicy.rule_kind:type_name -> resources.documents.ApprovalRuleKind
-	8,  // 3: resources.documents.ApprovalPolicy.started_at:type_name -> resources.timestamp.Timestamp
-	8,  // 4: resources.documents.ApprovalPolicy.completed_at:type_name -> resources.timestamp.Timestamp
-	8,  // 5: resources.documents.ApprovalPolicy.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 6: resources.documents.ApprovalPolicy.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 7: resources.documents.ApprovalPolicy.deleted_at:type_name -> resources.timestamp.Timestamp
-	8,  // 8: resources.documents.ApprovalTask.snapshot_date:type_name -> resources.timestamp.Timestamp
-	2,  // 9: resources.documents.ApprovalTask.assignee_kind:type_name -> resources.documents.ApprovalAssigneeKind
-	9,  // 10: resources.documents.ApprovalTask.user:type_name -> resources.users.UserShort
-	3,  // 11: resources.documents.ApprovalTask.status:type_name -> resources.documents.ApprovalTaskStatus
-	8,  // 12: resources.documents.ApprovalTask.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 13: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
-	8,  // 14: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
-	9,  // 15: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
-	10, // 16: resources.documents.ApprovalTask.document:type_name -> resources.documents.DocumentShort
-	8,  // 17: resources.documents.Approval.snapshot_date:type_name -> resources.timestamp.Timestamp
-	9,  // 18: resources.documents.Approval.user:type_name -> resources.users.UserShort
-	4,  // 19: resources.documents.Approval.status:type_name -> resources.documents.ApprovalStatus
-	8,  // 20: resources.documents.Approval.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 21: resources.documents.Approval.revoked_at:type_name -> resources.timestamp.Timestamp
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	8,  // 3: resources.documents.ApprovalPolicy.due_at:type_name -> resources.timestamp.Timestamp
+	8,  // 4: resources.documents.ApprovalPolicy.started_at:type_name -> resources.timestamp.Timestamp
+	8,  // 5: resources.documents.ApprovalPolicy.completed_at:type_name -> resources.timestamp.Timestamp
+	8,  // 6: resources.documents.ApprovalPolicy.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 7: resources.documents.ApprovalPolicy.updated_at:type_name -> resources.timestamp.Timestamp
+	8,  // 8: resources.documents.ApprovalPolicy.deleted_at:type_name -> resources.timestamp.Timestamp
+	8,  // 9: resources.documents.ApprovalTask.snapshot_date:type_name -> resources.timestamp.Timestamp
+	2,  // 10: resources.documents.ApprovalTask.assignee_kind:type_name -> resources.documents.ApprovalAssigneeKind
+	9,  // 11: resources.documents.ApprovalTask.user:type_name -> resources.users.UserShort
+	3,  // 12: resources.documents.ApprovalTask.status:type_name -> resources.documents.ApprovalTaskStatus
+	8,  // 13: resources.documents.ApprovalTask.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 14: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
+	8,  // 15: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
+	9,  // 16: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
+	10, // 17: resources.documents.ApprovalTask.document:type_name -> resources.documents.DocumentShort
+	8,  // 18: resources.documents.Approval.snapshot_date:type_name -> resources.timestamp.Timestamp
+	9,  // 19: resources.documents.Approval.user:type_name -> resources.users.UserShort
+	4,  // 20: resources.documents.Approval.status:type_name -> resources.documents.ApprovalStatus
+	8,  // 21: resources.documents.Approval.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 22: resources.documents.Approval.revoked_at:type_name -> resources.timestamp.Timestamp
+	23, // [23:23] is the sub-list for method output_type
+	23, // [23:23] is the sub-list for method input_type
+	23, // [23:23] is the sub-list for extension type_name
+	23, // [23:23] is the sub-list for extension extendee
+	0,  // [0:23] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_approval_proto_init() }

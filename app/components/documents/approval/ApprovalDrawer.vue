@@ -247,9 +247,9 @@ const taskFormDrawer = overlay.create(TaskForm);
                         </div>
 
                         <div class="flex flex-1 basis-3/4 flex-col gap-4">
-                            <ApprovalList :document-id="documentId" :policy-id="data?.id ?? 0" />
+                            <ApprovalList :document-id="documentId" />
 
-                            <TaskList :document-id="documentId" :policy-id="data?.id ?? 0">
+                            <TaskList :document-id="documentId">
                                 <template
                                     v-if="can('documents.ApprovalService/UpsertApprovalTasks').value"
                                     #header="{ refresh: tasksRefresh }"
@@ -261,7 +261,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         trailing-icon="i-mdi-task-add"
                                         @click="
                                             taskFormDrawer.open({
-                                                policyId: data?.id ?? 0,
+                                                documentId: documentId,
                                                 onClose: (val) => val && tasksRefresh(),
                                             })
                                         "
@@ -278,21 +278,11 @@ const taskFormDrawer = overlay.create(TaskForm);
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
                 <UButtonGroup class="w-full flex-1">
-                    <TaskDecideDrawer
-                        :document-id="documentId"
-                        :policy-id="data?.id ?? 0"
-                        :approve="true"
-                        @close="(val) => val && refresh()"
-                    >
+                    <TaskDecideDrawer :document-id="documentId" :approve="true" @close="(val) => val && refresh()">
                         <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
                     </TaskDecideDrawer>
 
-                    <TaskDecideDrawer
-                        :document-id="documentId"
-                        :policy-id="data?.id ?? 0"
-                        :approve="false"
-                        @close="(val) => val && refresh()"
-                    >
+                    <TaskDecideDrawer :document-id="documentId" :approve="false" @close="(val) => val && refresh()">
                         <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
                     </TaskDecideDrawer>
                 </UButtonGroup>

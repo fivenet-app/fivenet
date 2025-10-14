@@ -2567,7 +2567,7 @@
             "ApprovalRuleKind": {
                 "UNSPECIFIED": "Unbestimmt",
                 "REQUIRE_ALL": "Alle erforderlich",
-                "QUORUM_ANY": "Quorum"
+                "QUORUM_ANY": "Bestimmte Mindestanzahl"
             },
             "ApprovalTaskStatus": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2575,7 +2575,8 @@
                 "APPROVED": "Genehmigt",
                 "DECLINED": "Abgelehnt",
                 "EXPIRED": "Abgelaufen",
-                "CANCELLED": "Storniert"
+                "CANCELLED": "Storniert",
+                "COMPLETED": "Abgeschlossen"
             },
             "ApprovalStatus": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2598,13 +2599,20 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "PENDING": "Ausstehend",
                 "SIGNED": "Unterschrieben",
-                "EXPIRED": "Abgelaufen"
+                "DECLINED": "Abgelehnt",
+                "EXPIRED": "Abgelaufen",
+                "COMPLETED": "Abgeschlossen"
             },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
                 "USE": "Verwenden",
                 "MANAGE": "Verwalten"
+            },
+            "SignatureRuleKind": {
+                "UNSPECIFIED": "Unbestimmt",
+                "REQUIRE_ALL": "Alle erforderlich",
+                "QUORUM_ANY": "Bestimmte Mindestanzahl"
             }
         },
         "settings": {

@@ -20,11 +20,11 @@ type fivenetDocumentsApprovalTasksTable struct {
 	ID            mysql.ColumnInteger
 	DocumentID    mysql.ColumnInteger
 	SnapshotDate  mysql.ColumnTimestamp
-	PolicyID      mysql.ColumnInteger
 	AssigneeKind  mysql.ColumnInteger
 	UserID        mysql.ColumnInteger
 	Job           mysql.ColumnString
 	MinimumGrade  mysql.ColumnInteger
+	Label         mysql.ColumnString
 	SlotNo        mysql.ColumnInteger
 	Status        mysql.ColumnInteger
 	Comment       mysql.ColumnString
@@ -79,11 +79,11 @@ func newFivenetDocumentsApprovalTasksTableImpl(schemaName, tableName, alias stri
 		IDColumn            = mysql.IntegerColumn("id")
 		DocumentIDColumn    = mysql.IntegerColumn("document_id")
 		SnapshotDateColumn  = mysql.TimestampColumn("snapshot_date")
-		PolicyIDColumn      = mysql.IntegerColumn("policy_id")
 		AssigneeKindColumn  = mysql.IntegerColumn("assignee_kind")
 		UserIDColumn        = mysql.IntegerColumn("user_id")
 		JobColumn           = mysql.StringColumn("job")
 		MinimumGradeColumn  = mysql.IntegerColumn("minimum_grade")
+		LabelColumn         = mysql.StringColumn("label")
 		SlotNoColumn        = mysql.IntegerColumn("slot_no")
 		StatusColumn        = mysql.IntegerColumn("status")
 		CommentColumn       = mysql.StringColumn("comment")
@@ -94,8 +94,8 @@ func newFivenetDocumentsApprovalTasksTableImpl(schemaName, tableName, alias stri
 		ApprovalIDColumn    = mysql.IntegerColumn("approval_id")
 		CreatorIDColumn     = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn    = mysql.StringColumn("creator_job")
-		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, DecidedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, DecidedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, DecidedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, DecidedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns      = mysql.ColumnList{SlotNoColumn, DecisionCountColumn, CreatedAtColumn}
 	)
 
@@ -106,11 +106,11 @@ func newFivenetDocumentsApprovalTasksTableImpl(schemaName, tableName, alias stri
 		ID:            IDColumn,
 		DocumentID:    DocumentIDColumn,
 		SnapshotDate:  SnapshotDateColumn,
-		PolicyID:      PolicyIDColumn,
 		AssigneeKind:  AssigneeKindColumn,
 		UserID:        UserIDColumn,
 		Job:           JobColumn,
 		MinimumGrade:  MinimumGradeColumn,
+		Label:         LabelColumn,
 		SlotNo:        SlotNoColumn,
 		Status:        StatusColumn,
 		Comment:       CommentColumn,

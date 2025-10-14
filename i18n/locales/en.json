@@ -2567,7 +2567,7 @@
             "ApprovalRuleKind": {
                 "UNSPECIFIED": "Unspecified",
                 "REQUIRE_ALL": "Require all",
-                "QUORUM_ANY": "Quorum"
+                "QUORUM_ANY": "Require certain amount"
             },
             "ApprovalTaskStatus": {
                 "UNSPECIFIED": "Unspecified",
@@ -2575,7 +2575,8 @@
                 "APPROVED": "Approved",
                 "DECLINED": "Declined",
                 "EXPIRED": "Expired",
-                "CANCELLED": "Cancelled"
+                "CANCELLED": "Cancelled",
+                "COMPLETED": "Completed"
             },
             "ApprovalStatus": {
                 "UNSPECIFIED": "Unspecified",
@@ -2591,20 +2592,27 @@
             },
             "SignatureBindingMode": {
                 "UNSPECIFIED": "Unspecified",
-                "BINDING": "Binding",
-                "NONBINDING": "Non-binding"
+                "BINDING": "Binding: Reset signatures on edit",
+                "NONBINDING": "Non-binding: Keep signatures on edit"
             },
             "SignatureTaskStatus": {
                 "UNSPECIFIED": "Unspecified",
                 "PENDING": "Pending",
                 "SIGNED": "Signed",
-                "EXPIRED": "Expired"
+                "DECLINED": "Declined",
+                "EXPIRED": "Expired",
+                "COMPLETED": "Completed"
             },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
                 "USE": "Use",
                 "MANAGE": "Manage"
+            },
+            "SignatureRuleKind": {
+                "UNSPECIFIED":"Unspecified",
+                "REQUIRE_ALL": "Require all",
+                "QUORUM_ANY": "Require certain amount"
             }
         },
         "settings": {

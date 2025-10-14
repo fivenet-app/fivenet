@@ -17,13 +17,20 @@ type fivenetDocumentsSignaturePoliciesTable struct {
 	mysql.Table
 
 	// Columns
-	ID               mysql.ColumnInteger
 	DocumentID       mysql.ColumnInteger
 	SnapshotDate     mysql.ColumnTimestamp
-	Label            mysql.ColumnString
-	Required         mysql.ColumnBool
 	BindingMode      mysql.ColumnInteger
+	RuleKind         mysql.ColumnInteger
+	RequiredCount    mysql.ColumnInteger
 	AllowedTypesMask mysql.ColumnString
+	DueAt            mysql.ColumnTimestamp
+	AssignedCount    mysql.ColumnInteger
+	ApprovedCount    mysql.ColumnInteger
+	DeclinedCount    mysql.ColumnInteger
+	PendingCount     mysql.ColumnInteger
+	AnyDeclined      mysql.ColumnBool
+	StartedAt        mysql.ColumnTimestamp
+	CompletedAt      mysql.ColumnTimestamp
 	CreatedAt        mysql.ColumnTimestamp
 	UpdatedAt        mysql.ColumnTimestamp
 	DeletedAt        mysql.ColumnTimestamp
@@ -68,32 +75,46 @@ func newFivenetDocumentsSignaturePoliciesTable(schemaName, tableName, alias stri
 
 func newFivenetDocumentsSignaturePoliciesTableImpl(schemaName, tableName, alias string) fivenetDocumentsSignaturePoliciesTable {
 	var (
-		IDColumn               = mysql.IntegerColumn("id")
 		DocumentIDColumn       = mysql.IntegerColumn("document_id")
 		SnapshotDateColumn     = mysql.TimestampColumn("snapshot_date")
-		LabelColumn            = mysql.StringColumn("label")
-		RequiredColumn         = mysql.BoolColumn("required")
 		BindingModeColumn      = mysql.IntegerColumn("binding_mode")
+		RuleKindColumn         = mysql.IntegerColumn("rule_kind")
+		RequiredCountColumn    = mysql.IntegerColumn("required_count")
 		AllowedTypesMaskColumn = mysql.StringColumn("allowed_types_mask")
+		DueAtColumn            = mysql.TimestampColumn("due_at")
+		AssignedCountColumn    = mysql.IntegerColumn("assigned_count")
+		ApprovedCountColumn    = mysql.IntegerColumn("approved_count")
+		DeclinedCountColumn    = mysql.IntegerColumn("declined_count")
+		PendingCountColumn     = mysql.IntegerColumn("pending_count")
+		AnyDeclinedColumn      = mysql.BoolColumn("any_declined")
+		StartedAtColumn        = mysql.TimestampColumn("started_at")
+		CompletedAtColumn      = mysql.TimestampColumn("completed_at")
 		CreatedAtColumn        = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn        = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
-		allColumns             = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		mutableColumns         = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, LabelColumn, RequiredColumn, BindingModeColumn, AllowedTypesMaskColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		defaultColumns         = mysql.ColumnList{RequiredColumn, AllowedTypesMaskColumn, CreatedAtColumn}
+		allColumns             = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, BindingModeColumn, RuleKindColumn, RequiredCountColumn, AllowedTypesMaskColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns         = mysql.ColumnList{SnapshotDateColumn, BindingModeColumn, RuleKindColumn, RequiredCountColumn, AllowedTypesMaskColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		defaultColumns         = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AllowedTypesMaskColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, CreatedAtColumn}
 	)
 
 	return fivenetDocumentsSignaturePoliciesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:               IDColumn,
 		DocumentID:       DocumentIDColumn,
 		SnapshotDate:     SnapshotDateColumn,
-		Label:            LabelColumn,
-		Required:         RequiredColumn,
 		BindingMode:      BindingModeColumn,
+		RuleKind:         RuleKindColumn,
+		RequiredCount:    RequiredCountColumn,
 		AllowedTypesMask: AllowedTypesMaskColumn,
+		DueAt:            DueAtColumn,
+		AssignedCount:    AssignedCountColumn,
+		ApprovedCount:    ApprovedCountColumn,
+		DeclinedCount:    DeclinedCountColumn,
+		PendingCount:     PendingCountColumn,
+		AnyDeclined:      AnyDeclinedColumn,
+		StartedAt:        StartedAtColumn,
+		CompletedAt:      CompletedAtColumn,
 		CreatedAt:        CreatedAtColumn,
 		UpdatedAt:        UpdatedAtColumn,
 		DeletedAt:        DeletedAtColumn,

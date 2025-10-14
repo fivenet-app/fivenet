@@ -24,6 +24,7 @@ const _schema = z.union([
         user: z.custom<UserShort>().optional(),
         job: z.custom<Job>().optional(),
         minimumGrade: z.custom<JobGrade>().optional(),
+        label: z.string().max(120).default(''),
         slots: z.coerce.number().min(1).max(5).optional().default(1),
         dueAt: z.date().optional(),
         comment: z.coerce.string().max(255).optional(),
@@ -34,6 +35,7 @@ const _schema = z.union([
         user: z.custom<UserShort>().optional(),
         job: z.custom<Job>(),
         minimumGrade: z.custom<JobGrade>(),
+        label: z.string().max(120).default(''),
         slots: z.coerce.number().min(1).max(5).optional().default(1),
         dueAt: z.date().optional(),
         comment: z.coerce.string().max(255).optional(),
@@ -157,6 +159,10 @@ watch(
                     </ClientOnly>
                 </UFormField>
             </template>
+
+            <UFormField name="label" class="flex-1" :label="$t('common.name')">
+                <UInput v-model="task.label" class="w-full" />
+            </UFormField>
 
             <UFormField name="dueAt" class="flex-1" :label="$t('common.due_at')">
                 <InputDatePicker v-model="task.dueAt" class="w-full" />

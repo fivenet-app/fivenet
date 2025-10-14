@@ -18,6 +18,7 @@ type FivenetCentrumUserLocations struct {
 	X          *float64   `json:"x"`
 	Y          *float64   `json:"y"`
 	Hidden     *bool      `json:"hidden"`
+	OnDuty     *bool      `json:"on_duty"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	Data       *string    `json:"data"`
 }

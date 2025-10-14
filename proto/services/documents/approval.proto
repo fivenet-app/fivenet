@@ -5,6 +5,7 @@ package services.documents;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
 import "resources/timestamp/timestamp.proto";
@@ -61,24 +62,33 @@ message ApprovalTaskSeed {
   string job = 2;
   int32 minimum_grade = 3;
 
+  // Label of task
+  optional string label = 4 [
+    (buf.validate.field).string.max_len = 120,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+
   // Only for JOB tasks; number of PENDING slots to ensure (>=1)
-  int32 slots = 4 [(buf.validate.field).int32 = {
+  int32 slots = 5 [(buf.validate.field).int32 = {
     gte: 1
     lte: 5
   }];
   // Optional default due date for created slots
-  optional resources.timestamp.Timestamp due_at = 5;
+  optional resources.timestamp.Timestamp due_at = 6;
   // Optional note set on created tasks
-  optional string comment = 6;
+  optional string comment = 7;
 }
 
 // Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
 // Identity rules (server-side):
-//  - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
-//  - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+//  - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id)
+//  - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
 // For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 message UpsertApprovalTasksRequest {
-  int64 policy_id = 1;
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   // If empty, use policy.snapshot_date
   optional resources.timestamp.Timestamp snapshot_date = 2;
   repeated ApprovalTaskSeed seeds = 3;
@@ -94,7 +104,7 @@ message UpsertApprovalTasksResponse {
 }
 
 message DeleteApprovalTasksRequest {
-  int64 policy_id = 1;
+  int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   repeated int64 task_ids = 2 [(buf.validate.field).repeated.min_items = 1];
   // If true, ignore task_ids and delete all PENDING tasks under this policy
   bool delete_all_pending = 3;
@@ -106,13 +116,12 @@ message DeleteApprovalTasksResponse {}
 // If snapshot_date is unset, server defaults to policy.snapshot_date.
 message ListApprovalsRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
-  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
-  optional resources.timestamp.Timestamp snapshot_date = 4;
+  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
+  optional resources.timestamp.Timestamp snapshot_date = 3;
   // Optional filters
-  optional resources.documents.ApprovalStatus status = 5;
+  optional resources.documents.ApprovalStatus status = 4;
   // Filter by signer
-  optional int32 user_id = 6;
+  optional int32 user_id = 5;
 }
 
 message ListApprovalsResponse {
@@ -130,11 +139,10 @@ message RevokeApprovalResponse {
 
 message DecideApprovalRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  optional int64 policy_id = 2 [(buf.validate.field).int64.gt = 0];
-  optional int64 task_id = 3 [(buf.validate.field).int64.gt = 0];
+  optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
 
-  resources.documents.ApprovalTaskStatus new_status = 4 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
-  string comment = 5 [(buf.validate.field).string.max_len = 500];
+  resources.documents.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  string comment = 4 [(buf.validate.field).string.max_len = 500];
 }
 
 message DecideApprovalResponse {

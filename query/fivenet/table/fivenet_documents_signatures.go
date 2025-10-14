@@ -20,7 +20,6 @@ type fivenetDocumentsSignaturesTable struct {
 	ID           mysql.ColumnInteger
 	DocumentID   mysql.ColumnInteger
 	SnapshotDate mysql.ColumnTimestamp
-	PolicyID     mysql.ColumnInteger
 	TaskID       mysql.ColumnInteger
 	UserID       mysql.ColumnInteger
 	UserJob      mysql.ColumnString
@@ -76,7 +75,6 @@ func newFivenetDocumentsSignaturesTableImpl(schemaName, tableName, alias string)
 		IDColumn           = mysql.IntegerColumn("id")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
 		SnapshotDateColumn = mysql.TimestampColumn("snapshot_date")
-		PolicyIDColumn     = mysql.IntegerColumn("policy_id")
 		TaskIDColumn       = mysql.IntegerColumn("task_id")
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		UserJobColumn      = mysql.StringColumn("user_job")
@@ -88,8 +86,8 @@ func newFivenetDocumentsSignaturesTableImpl(schemaName, tableName, alias string)
 		CommentColumn      = mysql.StringColumn("comment")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		RevokedAtColumn    = mysql.TimestampColumn("revoked_at")
-		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, TypeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
-		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, PolicyIDColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, TypeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, TypeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, TypeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -100,7 +98,6 @@ func newFivenetDocumentsSignaturesTableImpl(schemaName, tableName, alias string)
 		ID:           IDColumn,
 		DocumentID:   DocumentIDColumn,
 		SnapshotDate: SnapshotDateColumn,
-		PolicyID:     PolicyIDColumn,
 		TaskID:       TaskIDColumn,
 		UserID:       UserIDColumn,
 		UserJob:      UserJobColumn,

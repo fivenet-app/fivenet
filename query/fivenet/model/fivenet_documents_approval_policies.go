@@ -12,12 +12,12 @@ import (
 )
 
 type FivenetDocumentsApprovalPolicies struct {
-	ID             int64      `sql:"primary_key" json:"id"`
-	DocumentID     int64      `json:"document_id"`
+	DocumentID     int64      `sql:"primary_key" json:"document_id"`
 	SnapshotDate   time.Time  `json:"snapshot_date"`
 	OnEditBehavior int16      `json:"on_edit_behavior"`
 	RuleKind       *int16     `json:"rule_kind"`
 	RequiredCount  int32      `json:"required_count"`
+	DueAt          *time.Time `json:"due_at"`
 	AssignedCount  int32      `json:"assigned_count"`
 	ApprovedCount  int32      `json:"approved_count"`
 	DeclinedCount  int32      `json:"declined_count"`

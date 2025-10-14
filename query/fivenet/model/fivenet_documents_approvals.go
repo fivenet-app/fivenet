@@ -15,7 +15,6 @@ type FivenetDocumentsApprovals struct {
 	ID           int64      `sql:"primary_key" json:"id"`
 	DocumentID   int64      `json:"document_id"`
 	SnapshotDate time.Time  `json:"snapshot_date"`
-	PolicyID     *int64     `json:"policy_id"`
 	TaskID       *int64     `json:"task_id"`
 	UserID       int32      `json:"user_id"`
 	UserJob      string     `json:"user_job"`

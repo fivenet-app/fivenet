@@ -8,7 +8,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import TaskFormEntry from './TaskFormEntry.vue';
 
 const props = defineProps<{
-    policyId: number;
+    documentId: number;
 }>();
 
 const emits = defineEmits<{
@@ -35,6 +35,7 @@ const schema = z.object({
                 userId: z.coerce.number(),
                 job: z.custom<Job>().optional(),
                 minimumGrade: z.custom<JobGrade>().optional(),
+                label: z.string().max(120).default(''),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
@@ -44,6 +45,7 @@ const schema = z.object({
                 userId: z.coerce.number().optional().default(0),
                 job: z.custom<Job>(),
                 minimumGrade: z.custom<JobGrade>(),
+                label: z.string().max(120).default(''),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
@@ -66,6 +68,7 @@ const state = reactive<Schema>({
             minimumGrade: activeChar.value?.jobGrade
                 ? { grade: activeChar.value.jobGrade, label: `${activeChar.value.jobGrade}`, jobName: activeChar.value.job }
                 : undefined,
+            label: '',
             slots: 1,
         },
     ],
@@ -74,7 +77,7 @@ const state = reactive<Schema>({
 async function upsertApprovalTasks(values: Schema): Promise<void> {
     try {
         const call = approvalClient.upsertApprovalTasks({
-            policyId: props.policyId,
+            documentId: props.documentId,
             seeds: values.tasks.map((task) => ({
                 userId: task.userId,
                 job: task.job?.name ?? '',
@@ -110,6 +113,7 @@ function addNewTask(): void {
         userId: 0,
         job: undefined,
         minimumGrade: undefined,
+        label: '',
         slots: 1,
     });
 }

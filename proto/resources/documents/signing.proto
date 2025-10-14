@@ -13,10 +13,16 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 enum SignatureBindingMode {
   SIGNATURE_BINDING_MODE_UNSPECIFIED = 0;
-  // Stays but marked 'signed on vX'
+  // Stays but marked 'signed on X'
   SIGNATURE_BINDING_MODE_NONBINDING = 1;
   // Invalidates on content edits
   SIGNATURE_BINDING_MODE_BINDING = 2;
+}
+
+enum SignatureRuleKind {
+  SIGNATURE_RULE_KIND_UNSPECIFIED = 0;
+  SIGNATURE_RULE_KIND_REQUIRE_ALL = 1;
+  SIGNATURE_RULE_KIND_QUORUM_ANY = 2;
 }
 
 enum SignatureType {
@@ -38,23 +44,29 @@ message SignatureTypes {
 }
 
 message SignaturePolicy {
-  int64 id = 1;
-  int64 document_id = 2;
+  reserved 1, 2; // 1=was used for id, 2=was used for policy_id
 
-  resources.timestamp.Timestamp snapshot_date = 3;
+  int64 document_id = 3;
+  resources.timestamp.Timestamp snapshot_date = 4;
 
-  // "Leader", "Counterparty Rep"
-  string label = 4 [(codegen.sanitizer.sanitizer) = {
-    enabled: true
-    method: "StripTags"
-  }];
-  bool required = 5;
+  SignatureBindingMode binding_mode = 5 [(buf.validate.field).enum.defined_only = true];
+  SignatureRuleKind rule_kind = 6 [(buf.validate.field).enum.defined_only = true];
+  optional int32 required_count = 7 [(buf.validate.field).int32.gte = 1];
+  SignatureTypes allowed_types = 8;
+  optional resources.timestamp.Timestamp due_at = 9;
 
-  SignatureBindingMode binding_mode = 6 [(buf.validate.field).enum.defined_only = true];
-  SignatureTypes allowed_types = 7;
+  int32 assigned_count = 10;
+  int32 approved_count = 11;
+  int32 declined_count = 12;
+  int32 pending_count = 13;
+  bool any_declined = 14;
 
-  resources.timestamp.Timestamp created_at = 8;
-  resources.timestamp.Timestamp updated_at = 9;
+  optional resources.timestamp.Timestamp started_at = 15;
+  optional resources.timestamp.Timestamp completed_at = 16;
+
+  resources.timestamp.Timestamp created_at = 17;
+  optional resources.timestamp.Timestamp updated_at = 18;
+  optional resources.timestamp.Timestamp deleted_at = 19;
 }
 
 enum SignatureAssigneeKind {
@@ -67,14 +79,16 @@ enum SignatureTaskStatus {
   SIGNATURE_TASK_STATUS_UNSPECIFIED = 0;
   SIGNATURE_TASK_STATUS_PENDING = 1;
   SIGNATURE_TASK_STATUS_SIGNED = 2;
-  SIGNATURE_TASK_STATUS_EXPIRED = 3;
+  SIGNATURE_TASK_STATUS_DECLINED = 3;
+  SIGNATURE_TASK_STATUS_EXPIRED = 4;
+  SIGNATURE_TASK_STATUS_COMPLETED = 5;
 }
 
 message SignatureTask {
-  int64 id = 1;
-  int64 policy_id = 2;
-  int64 document_id = 3;
+  reserved 2; // 2=was used for policy_id
 
+  int64 id = 1;
+  int64 document_id = 3;
   resources.timestamp.Timestamp snapshot_date = 4;
 
   // Who is the task for? 1=USER, 2=JOB
@@ -90,46 +104,55 @@ message SignatureTask {
   optional int32 minimum_grade = 10;
   optional string job_grade_label = 11 [(buf.validate.field).string.max_len = 20];
 
+  // "Leadership", "Counterparty Rep"
+  optional string label = 12 [
+    (buf.validate.field).string.max_len = 120,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
+
   // >=1; meaningful only for Job tasks; always 1 for User
-  int32 slot_no = 12 [(buf.validate.field).int32 = {
+  int32 slot_no = 13 [(buf.validate.field).int32 = {
     gte: 1
     lte: 5
   }];
 
-  SignatureTaskStatus status = 13 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 14 [
+  SignatureTaskStatus status = 14 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 15 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 
-  resources.timestamp.Timestamp created_at = 15;
-  optional resources.timestamp.Timestamp completed_at = 16;
-  optional resources.timestamp.Timestamp due_at = 17;
+  resources.timestamp.Timestamp created_at = 16;
+  optional resources.timestamp.Timestamp completed_at = 17;
+  optional resources.timestamp.Timestamp due_at = 18;
 
-  optional int64 signature_id = 18;
+  optional int64 signature_id = 19;
 
-  int32 creator_id = 19;
-  optional resources.users.UserShort creator = 20;
-  string creator_job = 21 [(buf.validate.field).string.max_len = 20];
-  optional string creator_job_label = 22;
+  int32 creator_id = 20;
+  optional resources.users.UserShort creator = 21;
+  string creator_job = 22 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 23;
 
-  optional resources.documents.DocumentShort document = 23;
+  optional resources.documents.DocumentShort document = 24;
 }
 
 enum SignatureStatus {
   SIGNATURE_STATUS_UNSPECIFIED = 0;
   SIGNATURE_STATUS_VALID = 1;
-  SIGNATURE_STATUS_REVOKED = 2;
-  SIGNATURE_STATUS_INVALID = 3;
+  SIGNATURE_STATUS_DECLINED = 2;
+  SIGNATURE_STATUS_REVOKED = 3;
+  SIGNATURE_STATUS_INVALID = 4;
 }
 
 message Signature {
-  int64 id = 1;
-  int64 document_id = 2;
-  resources.timestamp.Timestamp snapshot_date = 3;
+  reserved 2; // 2=was used for policy_id
 
-  // Link to originating policy (if any)
-  optional int64 policy_id = 4;
+  int64 id = 1;
+  int64 document_id = 3;
+  resources.timestamp.Timestamp snapshot_date = 4;
 
   // Link to originating task (if any)
   optional int64 task_id = 5;

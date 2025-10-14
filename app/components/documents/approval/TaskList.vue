@@ -10,7 +10,6 @@ import { approvalTaskStatusToColor } from './helpers';
 
 const props = defineProps<{
     documentId: number;
-    policyId: number;
 }>();
 
 const { can } = useAuth();
@@ -35,7 +34,7 @@ async function listApprovalTasks(): Promise<ListApprovalTasksResponse> {
 async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
     try {
         const call = approvalClient.deleteApprovalTasks({
-            policyId: props.policyId,
+            documentId: props.documentId,
             taskIds: [id],
             deleteAllPending: false,
         });

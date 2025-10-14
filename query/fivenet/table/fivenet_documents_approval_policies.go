@@ -17,12 +17,12 @@ type fivenetDocumentsApprovalPoliciesTable struct {
 	mysql.Table
 
 	// Columns
-	ID             mysql.ColumnInteger
 	DocumentID     mysql.ColumnInteger
 	SnapshotDate   mysql.ColumnTimestamp
 	OnEditBehavior mysql.ColumnInteger
 	RuleKind       mysql.ColumnInteger
 	RequiredCount  mysql.ColumnInteger
+	DueAt          mysql.ColumnTimestamp
 	AssignedCount  mysql.ColumnInteger
 	ApprovedCount  mysql.ColumnInteger
 	DeclinedCount  mysql.ColumnInteger
@@ -74,12 +74,12 @@ func newFivenetDocumentsApprovalPoliciesTable(schemaName, tableName, alias strin
 
 func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias string) fivenetDocumentsApprovalPoliciesTable {
 	var (
-		IDColumn             = mysql.IntegerColumn("id")
 		DocumentIDColumn     = mysql.IntegerColumn("document_id")
 		SnapshotDateColumn   = mysql.TimestampColumn("snapshot_date")
 		OnEditBehaviorColumn = mysql.IntegerColumn("on_edit_behavior")
 		RuleKindColumn       = mysql.IntegerColumn("rule_kind")
 		RequiredCountColumn  = mysql.IntegerColumn("required_count")
+		DueAtColumn          = mysql.TimestampColumn("due_at")
 		AssignedCountColumn  = mysql.IntegerColumn("assigned_count")
 		ApprovedCountColumn  = mysql.IntegerColumn("approved_count")
 		DeclinedCountColumn  = mysql.IntegerColumn("declined_count")
@@ -90,8 +90,8 @@ func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias s
 		CreatedAtColumn      = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
-		allColumns           = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
-		mutableColumns       = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		allColumns           = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
+		mutableColumns       = mysql.ColumnList{SnapshotDateColumn, OnEditBehaviorColumn, RuleKindColumn, RequiredCountColumn, DueAtColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, StartedAtColumn, CompletedAtColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn}
 		defaultColumns       = mysql.ColumnList{RuleKindColumn, RequiredCountColumn, AssignedCountColumn, ApprovedCountColumn, DeclinedCountColumn, PendingCountColumn, AnyDeclinedColumn, CreatedAtColumn}
 	)
 
@@ -99,12 +99,12 @@ func newFivenetDocumentsApprovalPoliciesTableImpl(schemaName, tableName, alias s
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:             IDColumn,
 		DocumentID:     DocumentIDColumn,
 		SnapshotDate:   SnapshotDateColumn,
 		OnEditBehavior: OnEditBehaviorColumn,
 		RuleKind:       RuleKindColumn,
 		RequiredCount:  RequiredCountColumn,
+		DueAt:          DueAtColumn,
 		AssignedCount:  AssignedCountColumn,
 		ApprovedCount:  ApprovedCountColumn,
 		DeclinedCount:  DeclinedCountColumn,

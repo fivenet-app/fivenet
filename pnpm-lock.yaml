@@ -169,8 +169,8 @@ importers:
         specifier: 1.0.5
         version: 1.0.5
       emoji-blast:
-        specifier: 0.10.2
-        version: 0.10.2
+        specifier: 0.11.0
+        version: 0.11.0
       google-protobuf:
         specifier: 4.0.0
         version: 4.0.0
@@ -4725,8 +4725,8 @@ packages:
   embla-carousel@8.6.0:
     resolution: {integrity: sha512-SjWyZBHJPbqxHOzckOfo8lHisEaJWmwd23XppYFYVh10bU66/Pn5tkVkbkCMZVdbUE5eTCI2nD8OyIP4Z+uwkA==}
 
-  emoji-blast@0.10.2:
-    resolution: {integrity: sha512-3VrqajirPj8QeQxQeMHUfD+03H64XTEVPGRjxP5rjDCVEC5NGF3FgutMpU5scIOhcuzG23Qvs32k0Pnj+hRzGA==}
+  emoji-blast@0.11.0:
+    resolution: {integrity: sha512-RYy1ZjHqYQLjOkficpqzvAzGfE1GUcn1Bp7Ec1wq0lVIoRgNLMx4lRZWo9p0HsEawrI9Zmh0mloLXcf8ewIzfQ==}
     engines: {node: '>=18'}
 
   emoji-regex@8.0.0:
@@ -13456,7 +13456,7 @@ snapshots:
 
   embla-carousel@8.6.0: {}
 
-  emoji-blast@0.10.2: {}
+  emoji-blast@0.11.0: {}
 
   emoji-regex@8.0.0: {}
 

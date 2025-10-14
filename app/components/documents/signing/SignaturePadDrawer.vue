@@ -2,7 +2,7 @@
 import SignaturePad from '~/components/partials/SignaturePad.vue';
 
 const props = defineProps<{
-    policyId: number;
+    documentId: number;
 }>();
 
 defineEmits<{

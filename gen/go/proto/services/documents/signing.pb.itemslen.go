@@ -3,14 +3,6 @@
 
 package documents
 
-// ItemsLen returns the length of Policies.
-func (m *ListSignaturePoliciesResponse) ItemsLen() int {
-	if m == nil {
-		return 0
-	}
-	return len(m.GetPolicies())
-}
-
 // ItemsLen returns the length of Tasks.
 func (m *ListSignatureTasksInboxResponse) ItemsLen() int {
 	if m == nil {

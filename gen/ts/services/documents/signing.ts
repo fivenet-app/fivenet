@@ -75,9 +75,9 @@ export interface ListSignaturePoliciesRequest {
  */
 export interface ListSignaturePoliciesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.SignaturePolicy policies = 1
+     * @generated from protobuf field: resources.documents.SignaturePolicy policy = 1
      */
-    policies: SignaturePolicy[];
+    policy?: SignaturePolicy;
 }
 /**
  * @generated from protobuf message services.documents.UpsertSignaturePolicyRequest
@@ -102,9 +102,9 @@ export interface UpsertSignaturePolicyResponse {
  */
 export interface DeleteSignaturePolicyRequest {
     /**
-     * @generated from protobuf field: int64 policy_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    policyId: number;
+    documentId: number;
 }
 /**
  * @generated from protobuf message services.documents.DeleteSignaturePolicyResponse
@@ -120,15 +120,11 @@ export interface ListSignatureTasksRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: optional int64 policy_id = 2
-     */
-    policyId?: number;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 3
+     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
      */
     snapshotDate?: Timestamp;
     /**
-     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 4
+     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 3
      */
     statuses: SignatureTaskStatus[];
 }
@@ -165,38 +161,44 @@ export interface SignatureTaskSeed {
      */
     minimumGrade: number;
     /**
+     * Label of task
+     *
+     * @generated from protobuf field: optional string label = 4
+     */
+    label?: string;
+    /**
      * Only for JOB tasks; number of PENDING slots to ensure (>=1)
      *
-     * @generated from protobuf field: int32 slots = 4
+     * @generated from protobuf field: int32 slots = 5
      */
     slots: number;
     /**
      * Optional default due date for created slots
      *
-     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 5
+     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 6
      */
     dueAt?: Timestamp;
     /**
      * Optional note set on created tasks
      *
-     * @generated from protobuf field: optional string comment = 6
+     * @generated from protobuf field: optional string comment = 7
      */
     comment?: string;
 }
 /**
  * Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
  * Identity rules (server-side):
- *  - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
- *  - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+ *  - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id)
+ *  - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
  * For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
  *
  * @generated from protobuf message services.documents.UpsertSignatureTasksRequest
  */
 export interface UpsertSignatureTasksRequest {
     /**
-     * @generated from protobuf field: int64 policy_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    policyId: number;
+    documentId: number;
     /**
      * If empty, use policy.snapshot_date
      *
@@ -236,9 +238,9 @@ export interface UpsertSignatureTasksResponse {
  */
 export interface DeleteSignatureTasksRequest {
     /**
-     * @generated from protobuf field: int64 policy_id = 1
+     * @generated from protobuf field: int64 document_id = 1
      */
-    policyId: number;
+    documentId: number;
     /**
      * @generated from protobuf field: repeated int64 task_ids = 2
      */
@@ -267,27 +269,23 @@ export interface ListSignaturesRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: optional int64 policy_id = 2
-     */
-    policyId?: number;
-    /**
-     * @generated from protobuf field: optional int64 task_id = 3
+     * @generated from protobuf field: optional int64 task_id = 2
      */
     taskId?: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 4
+     * @generated from protobuf field: optional resources.timestamp.Timestamp snapshot_date = 3
      */
     snapshotDate?: Timestamp;
     /**
      * Optional filters
      *
-     * @generated from protobuf field: optional resources.documents.SignatureStatus status = 5
+     * @generated from protobuf field: optional resources.documents.SignatureStatus status = 4
      */
     status?: SignatureStatus;
     /**
      * Filter by signer
      *
-     * @generated from protobuf field: optional int32 user_id = 6
+     * @generated from protobuf field: optional int32 user_id = 5
      */
     userId?: number;
 }
@@ -333,33 +331,29 @@ export interface DecideSignatureRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: optional int64 policy_id = 2
-     */
-    policyId?: number;
-    /**
-     * @generated from protobuf field: optional int64 task_id = 3
+     * @generated from protobuf field: optional int64 task_id = 2
      */
     taskId?: number;
     /**
-     * @generated from protobuf field: resources.documents.SignatureTaskStatus new_status = 4
+     * @generated from protobuf field: resources.documents.SignatureTaskStatus new_status = 3
      */
     newStatus: SignatureTaskStatus;
     /**
-     * @generated from protobuf field: string comment = 5
+     * @generated from protobuf field: string comment = 4
      */
     comment: string;
     /**
-     * @generated from protobuf field: resources.documents.SignatureType type = 6
+     * @generated from protobuf field: resources.documents.SignatureType type = 5
      */
     type: SignatureType;
     /**
-     * @generated from protobuf field: optional string payload_svg = 7
+     * @generated from protobuf field: optional string payload_svg = 6
      */
     payloadSvg?: string;
     /**
      * When type=STAMP
      *
-     * @generated from protobuf field: optional int64 stamp_id = 8
+     * @generated from protobuf field: optional int64 stamp_id = 7
      */
     stampId?: number;
 }
@@ -661,12 +655,11 @@ export const ListSignaturePoliciesRequest = new ListSignaturePoliciesRequest$Typ
 class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePoliciesResponse> {
     constructor() {
         super("services.documents.ListSignaturePoliciesResponse", [
-            { no: 1, name: "policies", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignaturePolicy, options: { "codegen.itemslen.enabled": true } }
+            { no: 1, name: "policy", kind: "message", T: () => SignaturePolicy, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListSignaturePoliciesResponse>): ListSignaturePoliciesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policies = [];
         if (value !== undefined)
             reflectionMergePartial<ListSignaturePoliciesResponse>(this, message, value);
         return message;
@@ -676,8 +669,8 @@ class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePolici
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.SignaturePolicy policies */ 1:
-                    message.policies.push(SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options));
+                case /* resources.documents.SignaturePolicy policy */ 1:
+                    message.policy = SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -691,9 +684,9 @@ class ListSignaturePoliciesResponse$Type extends MessageType<ListSignaturePolici
         return message;
     }
     internalBinaryWrite(message: ListSignaturePoliciesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.SignaturePolicy policies = 1; */
-        for (let i = 0; i < message.policies.length; i++)
-            SignaturePolicy.internalBinaryWrite(message.policies[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.SignaturePolicy policy = 1; */
+        if (message.policy)
+            SignaturePolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -800,12 +793,12 @@ export const UpsertSignaturePolicyResponse = new UpsertSignaturePolicyResponse$T
 class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolicyRequest> {
     constructor() {
         super("services.documents.DeleteSignaturePolicyRequest", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteSignaturePolicyRequest>): DeleteSignaturePolicyRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = 0;
+        message.documentId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteSignaturePolicyRequest>(this, message, value);
         return message;
@@ -815,8 +808,8 @@ class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolic
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 policy_id */ 1:
-                    message.policyId = reader.int64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -830,9 +823,9 @@ class DeleteSignaturePolicyRequest$Type extends MessageType<DeleteSignaturePolic
         return message;
     }
     internalBinaryWrite(message: DeleteSignaturePolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 policy_id = 1; */
-        if (message.policyId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.policyId);
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -886,9 +879,8 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
     constructor() {
         super("services.documents.ListSignatureTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
-            { no: 4, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
+            { no: 3, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<ListSignatureTasksRequest>): ListSignatureTasksRequest {
@@ -907,13 +899,10 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* optional int64 policy_id */ 2:
-                    message.policyId = reader.int64().toNumber();
-                    break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 3:
+                case /* resources.timestamp.Timestamp snapshot_date */ 2:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* repeated resources.documents.SignatureTaskStatus statuses */ 4:
+                case /* repeated resources.documents.SignatureTaskStatus statuses */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
@@ -935,15 +924,12 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* optional int64 policy_id = 2; */
-        if (message.policyId !== undefined)
-            writer.tag(2, WireType.Varint).int64(message.policyId);
-        /* resources.timestamp.Timestamp snapshot_date = 3; */
+        /* resources.timestamp.Timestamp snapshot_date = 2; */
         if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.SignatureTaskStatus statuses = 4; */
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignatureTaskStatus statuses = 3; */
         if (message.statuses.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
                 writer.int32(message.statuses[i]);
             writer.join();
@@ -1012,9 +998,10 @@ class SignatureTaskSeed$Type extends MessageType<SignatureTaskSeed> {
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
-            { no: 5, name: "due_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } } } },
+            { no: 5, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
+            { no: 6, name: "due_at", kind: "message", T: () => Timestamp },
+            { no: 7, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<SignatureTaskSeed>): SignatureTaskSeed {
@@ -1041,13 +1028,16 @@ class SignatureTaskSeed$Type extends MessageType<SignatureTaskSeed> {
                 case /* int32 minimum_grade */ 3:
                     message.minimumGrade = reader.int32();
                     break;
-                case /* int32 slots */ 4:
+                case /* optional string label */ 4:
+                    message.label = reader.string();
+                    break;
+                case /* int32 slots */ 5:
                     message.slots = reader.int32();
                     break;
-                case /* optional resources.timestamp.Timestamp due_at */ 5:
+                case /* optional resources.timestamp.Timestamp due_at */ 6:
                     message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
                     break;
-                case /* optional string comment */ 6:
+                case /* optional string comment */ 7:
                     message.comment = reader.string();
                     break;
                 default:
@@ -1071,15 +1061,18 @@ class SignatureTaskSeed$Type extends MessageType<SignatureTaskSeed> {
         /* int32 minimum_grade = 3; */
         if (message.minimumGrade !== 0)
             writer.tag(3, WireType.Varint).int32(message.minimumGrade);
-        /* int32 slots = 4; */
+        /* optional string label = 4; */
+        if (message.label !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.label);
+        /* int32 slots = 5; */
         if (message.slots !== 0)
-            writer.tag(4, WireType.Varint).int32(message.slots);
-        /* optional resources.timestamp.Timestamp due_at = 5; */
+            writer.tag(5, WireType.Varint).int32(message.slots);
+        /* optional resources.timestamp.Timestamp due_at = 6; */
         if (message.dueAt)
-            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional string comment = 6; */
+            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional string comment = 7; */
         if (message.comment !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.comment);
+            writer.tag(7, WireType.LengthDelimited).string(message.comment);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1094,14 +1087,14 @@ export const SignatureTaskSeed = new SignatureTaskSeed$Type();
 class UpsertSignatureTasksRequest$Type extends MessageType<UpsertSignatureTasksRequest> {
     constructor() {
         super("services.documents.UpsertSignatureTasksRequest", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp },
             { no: 3, name: "seeds", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureTaskSeed }
         ]);
     }
     create(value?: PartialMessage<UpsertSignatureTasksRequest>): UpsertSignatureTasksRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = 0;
+        message.documentId = 0;
         message.seeds = [];
         if (value !== undefined)
             reflectionMergePartial<UpsertSignatureTasksRequest>(this, message, value);
@@ -1112,8 +1105,8 @@ class UpsertSignatureTasksRequest$Type extends MessageType<UpsertSignatureTasksR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 policy_id */ 1:
-                    message.policyId = reader.int64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp snapshot_date */ 2:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
@@ -1133,9 +1126,9 @@ class UpsertSignatureTasksRequest$Type extends MessageType<UpsertSignatureTasksR
         return message;
     }
     internalBinaryWrite(message: UpsertSignatureTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 policy_id = 1; */
-        if (message.policyId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.policyId);
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* optional resources.timestamp.Timestamp snapshot_date = 2; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -1218,14 +1211,14 @@ export const UpsertSignatureTasksResponse = new UpsertSignatureTasksResponse$Typ
 class DeleteSignatureTasksRequest$Type extends MessageType<DeleteSignatureTasksRequest> {
     constructor() {
         super("services.documents.DeleteSignatureTasksRequest", [
-            { no: 1, name: "policy_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "task_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
             { no: 3, name: "delete_all_pending", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteSignatureTasksRequest>): DeleteSignatureTasksRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.policyId = 0;
+        message.documentId = 0;
         message.taskIds = [];
         message.deleteAllPending = false;
         if (value !== undefined)
@@ -1237,8 +1230,8 @@ class DeleteSignatureTasksRequest$Type extends MessageType<DeleteSignatureTasksR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 policy_id */ 1:
-                    message.policyId = reader.int64().toNumber();
+                case /* int64 document_id */ 1:
+                    message.documentId = reader.int64().toNumber();
                     break;
                 case /* repeated int64 task_ids */ 2:
                     if (wireType === WireType.LengthDelimited)
@@ -1262,9 +1255,9 @@ class DeleteSignatureTasksRequest$Type extends MessageType<DeleteSignatureTasksR
         return message;
     }
     internalBinaryWrite(message: DeleteSignatureTasksRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 policy_id = 1; */
-        if (message.policyId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.policyId);
+        /* int64 document_id = 1; */
+        if (message.documentId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.documentId);
         /* repeated int64 task_ids = 2; */
         if (message.taskIds.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
@@ -1328,11 +1321,10 @@ class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
     constructor() {
         super("services.documents.ListSignaturesRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 4, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"] },
-            { no: 6, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
+            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.SignatureStatus", SignatureStatus, "SIGNATURE_STATUS_"] },
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListSignaturesRequest>): ListSignaturesRequest {
@@ -1350,19 +1342,16 @@ class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* optional int64 policy_id */ 2:
-                    message.policyId = reader.int64().toNumber();
-                    break;
-                case /* optional int64 task_id */ 3:
+                case /* optional int64 task_id */ 2:
                     message.taskId = reader.int64().toNumber();
                     break;
-                case /* optional resources.timestamp.Timestamp snapshot_date */ 4:
+                case /* optional resources.timestamp.Timestamp snapshot_date */ 3:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* optional resources.documents.SignatureStatus status */ 5:
+                case /* optional resources.documents.SignatureStatus status */ 4:
                     message.status = reader.int32();
                     break;
-                case /* optional int32 user_id */ 6:
+                case /* optional int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -1380,21 +1369,18 @@ class ListSignaturesRequest$Type extends MessageType<ListSignaturesRequest> {
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* optional int64 policy_id = 2; */
-        if (message.policyId !== undefined)
-            writer.tag(2, WireType.Varint).int64(message.policyId);
-        /* optional int64 task_id = 3; */
+        /* optional int64 task_id = 2; */
         if (message.taskId !== undefined)
-            writer.tag(3, WireType.Varint).int64(message.taskId);
-        /* optional resources.timestamp.Timestamp snapshot_date = 4; */
+            writer.tag(2, WireType.Varint).int64(message.taskId);
+        /* optional resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.SignatureStatus status = 5; */
+            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.SignatureStatus status = 4; */
         if (message.status !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.status);
-        /* optional int32 user_id = 6; */
+            writer.tag(4, WireType.Varint).int32(message.status);
+        /* optional int32 user_id = 5; */
         if (message.userId !== undefined)
-            writer.tag(6, WireType.Varint).int32(message.userId);
+            writer.tag(5, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1558,13 +1544,12 @@ class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
     constructor() {
         super("services.documents.DecideSignatureRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "policy_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 4, name: "new_status", kind: "enum", T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 5, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
-            { no: 6, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
-            { no: 8, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+            { no: 3, name: "new_status", kind: "enum", T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 4, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
+            { no: 5, name: "type", kind: "enum", T: () => ["resources.documents.SignatureType", SignatureType, "SIGNATURE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 6, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "1" } } } },
+            { no: 7, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DecideSignatureRequest>): DecideSignatureRequest {
@@ -1585,25 +1570,22 @@ class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* optional int64 policy_id */ 2:
-                    message.policyId = reader.int64().toNumber();
-                    break;
-                case /* optional int64 task_id */ 3:
+                case /* optional int64 task_id */ 2:
                     message.taskId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.SignatureTaskStatus new_status */ 4:
+                case /* resources.documents.SignatureTaskStatus new_status */ 3:
                     message.newStatus = reader.int32();
                     break;
-                case /* string comment */ 5:
+                case /* string comment */ 4:
                     message.comment = reader.string();
                     break;
-                case /* resources.documents.SignatureType type */ 6:
+                case /* resources.documents.SignatureType type */ 5:
                     message.type = reader.int32();
                     break;
-                case /* optional string payload_svg */ 7:
+                case /* optional string payload_svg */ 6:
                     message.payloadSvg = reader.string();
                     break;
-                case /* optional int64 stamp_id */ 8:
+                case /* optional int64 stamp_id */ 7:
                     message.stampId = reader.int64().toNumber();
                     break;
                 default:
@@ -1621,27 +1603,24 @@ class DecideSignatureRequest$Type extends MessageType<DecideSignatureRequest> {
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* optional int64 policy_id = 2; */
-        if (message.policyId !== undefined)
-            writer.tag(2, WireType.Varint).int64(message.policyId);
-        /* optional int64 task_id = 3; */
+        /* optional int64 task_id = 2; */
         if (message.taskId !== undefined)
-            writer.tag(3, WireType.Varint).int64(message.taskId);
-        /* resources.documents.SignatureTaskStatus new_status = 4; */
+            writer.tag(2, WireType.Varint).int64(message.taskId);
+        /* resources.documents.SignatureTaskStatus new_status = 3; */
         if (message.newStatus !== 0)
-            writer.tag(4, WireType.Varint).int32(message.newStatus);
-        /* string comment = 5; */
+            writer.tag(3, WireType.Varint).int32(message.newStatus);
+        /* string comment = 4; */
         if (message.comment !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.comment);
-        /* resources.documents.SignatureType type = 6; */
+            writer.tag(4, WireType.LengthDelimited).string(message.comment);
+        /* resources.documents.SignatureType type = 5; */
         if (message.type !== 0)
-            writer.tag(6, WireType.Varint).int32(message.type);
-        /* optional string payload_svg = 7; */
+            writer.tag(5, WireType.Varint).int32(message.type);
+        /* optional string payload_svg = 6; */
         if (message.payloadSvg !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.payloadSvg);
-        /* optional int64 stamp_id = 8; */
+            writer.tag(6, WireType.LengthDelimited).string(message.payloadSvg);
+        /* optional int64 stamp_id = 7; */
         if (message.stampId !== undefined)
-            writer.tag(8, WireType.Varint).int64(message.stampId);
+            writer.tag(7, WireType.Varint).int64(message.stampId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

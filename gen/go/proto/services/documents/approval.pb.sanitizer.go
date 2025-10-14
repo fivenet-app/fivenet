@@ -31,6 +31,11 @@ func (m *ApprovalTaskSeed) Sanitize() error {
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
 
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
+	}
+
 	return nil
 }
 

@@ -195,8 +195,8 @@ func (x *ListSignaturePoliciesRequest) GetSnapshotDate() *timestamp.Timestamp {
 }
 
 type ListSignaturePoliciesResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Policies      []*documents.SignaturePolicy `protobuf:"bytes,1,rep,name=policies,proto3" json:"policies,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Policy        *documents.SignaturePolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -231,9 +231,9 @@ func (*ListSignaturePoliciesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListSignaturePoliciesResponse) GetPolicies() []*documents.SignaturePolicy {
+func (x *ListSignaturePoliciesResponse) GetPolicy() *documents.SignaturePolicy {
 	if x != nil {
-		return x.Policies
+		return x.Policy
 	}
 	return nil
 }
@@ -328,7 +328,7 @@ func (x *UpsertSignaturePolicyResponse) GetPolicy() *documents.SignaturePolicy {
 
 type DeleteSignaturePolicyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId      int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -363,9 +363,9 @@ func (*DeleteSignaturePolicyRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DeleteSignaturePolicyRequest) GetPolicyId() int64 {
+func (x *DeleteSignaturePolicyRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
 	}
 	return 0
 }
@@ -409,9 +409,8 @@ func (*DeleteSignaturePolicyResponse) Descriptor() ([]byte, []int) {
 type ListSignatureTasksRequest struct {
 	state         protoimpl.MessageState          `protogen:"open.v1"`
 	DocumentId    int64                           `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId      *int64                          `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	SnapshotDate  *timestamp.Timestamp            `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	Statuses      []documents.SignatureTaskStatus `protobuf:"varint,4,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
+	SnapshotDate  *timestamp.Timestamp            `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	Statuses      []documents.SignatureTaskStatus `protobuf:"varint,3,rep,packed,name=statuses,proto3,enum=resources.documents.SignatureTaskStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -449,13 +448,6 @@ func (*ListSignatureTasksRequest) Descriptor() ([]byte, []int) {
 func (x *ListSignatureTasksRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *ListSignatureTasksRequest) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
 	}
 	return 0
 }
@@ -527,12 +519,14 @@ type SignatureTaskSeed struct {
 	// If user_id == 0 -> JOB task
 	Job          string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	MinimumGrade int32  `protobuf:"varint,3,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	// Label of task
+	Label *string `protobuf:"bytes,4,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
-	Slots int32 `protobuf:"varint,4,opt,name=slots,proto3" json:"slots,omitempty"`
+	Slots int32 `protobuf:"varint,5,opt,name=slots,proto3" json:"slots,omitempty"`
 	// Optional default due date for created slots
-	DueAt *timestamp.Timestamp `protobuf:"bytes,5,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	DueAt *timestamp.Timestamp `protobuf:"bytes,6,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
 	// Optional note set on created tasks
-	Comment       *string `protobuf:"bytes,6,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	Comment       *string `protobuf:"bytes,7,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -588,6 +582,13 @@ func (x *SignatureTaskSeed) GetMinimumGrade() int32 {
 	return 0
 }
 
+func (x *SignatureTaskSeed) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
 func (x *SignatureTaskSeed) GetSlots() int32 {
 	if x != nil {
 		return x.Slots
@@ -611,13 +612,13 @@ func (x *SignatureTaskSeed) GetComment() string {
 
 // Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks.
 // Identity rules (server-side):
-//   - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id)
-//   - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
+//   - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id)
+//   - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no)
 //
 // For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 type UpsertSignatureTasksRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// If empty, use policy.snapshot_date
 	SnapshotDate  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	Seeds         []*SignatureTaskSeed `protobuf:"bytes,3,rep,name=seeds,proto3" json:"seeds,omitempty"`
@@ -655,9 +656,9 @@ func (*UpsertSignatureTasksRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *UpsertSignatureTasksRequest) GetPolicyId() int64 {
+func (x *UpsertSignatureTasksRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
 	}
 	return 0
 }
@@ -740,9 +741,9 @@ func (x *UpsertSignatureTasksResponse) GetPolicy() *documents.SignaturePolicy {
 }
 
 type DeleteSignatureTasksRequest struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	PolicyId int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
-	TaskIds  []int64                `protobuf:"varint,2,rep,packed,name=task_ids,json=taskIds,proto3" json:"task_ids,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	TaskIds    []int64                `protobuf:"varint,2,rep,packed,name=task_ids,json=taskIds,proto3" json:"task_ids,omitempty"`
 	// If true, ignore task_ids and delete all PENDING tasks under this policy
 	DeleteAllPending bool `protobuf:"varint,3,opt,name=delete_all_pending,json=deleteAllPending,proto3" json:"delete_all_pending,omitempty"`
 	unknownFields    protoimpl.UnknownFields
@@ -779,9 +780,9 @@ func (*DeleteSignatureTasksRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_signing_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *DeleteSignatureTasksRequest) GetPolicyId() int64 {
+func (x *DeleteSignatureTasksRequest) GetDocumentId() int64 {
 	if x != nil {
-		return x.PolicyId
+		return x.DocumentId
 	}
 	return 0
 }
@@ -841,13 +842,12 @@ func (*DeleteSignatureTasksResponse) Descriptor() ([]byte, []int) {
 type ListSignaturesRequest struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	DocumentId   int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId     *int64                 `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	TaskId       *int64                 `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
+	TaskId       *int64                 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	// Optional filters
-	Status *documents.SignatureStatus `protobuf:"varint,5,opt,name=status,proto3,enum=resources.documents.SignatureStatus,oneof" json:"status,omitempty"`
+	Status *documents.SignatureStatus `protobuf:"varint,4,opt,name=status,proto3,enum=resources.documents.SignatureStatus,oneof" json:"status,omitempty"`
 	// Filter by signer
-	UserId        *int32 `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserId        *int32 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -885,13 +885,6 @@ func (*ListSignaturesRequest) Descriptor() ([]byte, []int) {
 func (x *ListSignaturesRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *ListSignaturesRequest) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
 	}
 	return 0
 }
@@ -1068,14 +1061,13 @@ func (x *RevokeSignatureResponse) GetSignature() *documents.Signature {
 type DecideSignatureRequest struct {
 	state      protoimpl.MessageState        `protogen:"open.v1"`
 	DocumentId int64                         `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	PolicyId   *int64                        `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
-	TaskId     *int64                        `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus  documents.SignatureTaskStatus `protobuf:"varint,4,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.SignatureTaskStatus" json:"new_status,omitempty"`
-	Comment    string                        `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
-	Type       documents.SignatureType       `protobuf:"varint,6,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
-	PayloadSvg *string                       `protobuf:"bytes,7,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
+	TaskId     *int64                        `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus  documents.SignatureTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.SignatureTaskStatus" json:"new_status,omitempty"`
+	Comment    string                        `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	Type       documents.SignatureType       `protobuf:"varint,5,opt,name=type,proto3,enum=resources.documents.SignatureType" json:"type,omitempty"`
+	PayloadSvg *string                       `protobuf:"bytes,6,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
 	// When type=STAMP
-	StampId       *int64 `protobuf:"varint,8,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
+	StampId       *int64 `protobuf:"varint,7,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1113,13 +1105,6 @@ func (*DecideSignatureRequest) Descriptor() ([]byte, []int) {
 func (x *DecideSignatureRequest) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
-	}
-	return 0
-}
-
-func (x *DecideSignatureRequest) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
 	}
 	return 0
 }
@@ -1704,62 +1689,61 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\x1cListSignaturePoliciesRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
 	"documentId\x12K\n" +
-	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\"g\n" +
-	"\x1dListSignaturePoliciesResponse\x12F\n" +
-	"\bpolicies\x18\x01 \x03(\v2$.resources.documents.SignaturePolicyB\x04\xc8\xf3\x18\x01R\bpolicies\"d\n" +
+	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\"c\n" +
+	"\x1dListSignaturePoliciesResponse\x12B\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyB\x04\xc8\xf3\x18\x01R\x06policy\"d\n" +
 	"\x1cUpsertSignaturePolicyRequest\x12D\n" +
 	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyB\x06\xbaH\x03\xc8\x01\x01R\x06policy\"]\n" +
 	"\x1dUpsertSignaturePolicyResponse\x12<\n" +
-	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"D\n" +
-	"\x1cDeleteSignaturePolicyRequest\x12$\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bpolicyId\"\x1f\n" +
-	"\x1dDeleteSignaturePolicyResponse\"\x92\x02\n" +
+	"\x06policy\x18\x01 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"H\n" +
+	"\x1cDeleteSignaturePolicyRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\"\x1f\n" +
+	"\x1dDeleteSignaturePolicyResponse\"\xe2\x01\n" +
 	"\x19ListSignatureTasksRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12 \n" +
-	"\tpolicy_id\x18\x02 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12K\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\x12N\n" +
-	"\bstatuses\x18\x04 \x03(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatusesB\f\n" +
-	"\n" +
-	"_policy_id\"b\n" +
+	"documentId\x12K\n" +
+	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampB\x06\xbaH\x03\xc8\x01\x01R\fsnapshotDate\x12N\n" +
+	"\bstatuses\x18\x03 \x03(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatuses\"b\n" +
 	"\x1aListSignatureTasksResponse\x12D\n" +
 	"\n" +
 	"signatures\x18\x01 \x03(\v2\x1e.resources.documents.SignatureB\x04\xc8\xf3\x18\x01R\n" +
-	"signatures\"\xf6\x01\n" +
+	"signatures\"\xa4\x02\n" +
 	"\x11SignatureTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
-	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12\x1f\n" +
-	"\x05slots\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
-	"\x06due_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05dueAt\x88\x01\x01\x12\x1d\n" +
-	"\acomment\x18\x06 \x01(\tH\x01R\acomment\x88\x01\x01B\t\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x12\"\n" +
+	"\x05label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12\x1f\n" +
+	"\x05slots\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
+	"\x06due_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12\x1d\n" +
+	"\acomment\x18\a \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
+	"\x06_labelB\t\n" +
 	"\a_due_atB\n" +
 	"\n" +
-	"\b_comment\"\xd3\x01\n" +
-	"\x1bUpsertSignatureTasksRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12H\n" +
+	"\b_comment\"\xe0\x01\n" +
+	"\x1bUpsertSignatureTasksRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12H\n" +
 	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12;\n" +
 	"\x05seeds\x18\x03 \x03(\v2%.services.documents.SignatureTaskSeedR\x05seedsB\x10\n" +
 	"\x0e_snapshot_date\"\xa6\x01\n" +
 	"\x1cUpsertSignatureTasksResponse\x12#\n" +
 	"\rtasks_created\x18\x01 \x01(\x05R\ftasksCreated\x12#\n" +
 	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12<\n" +
-	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x8d\x01\n" +
-	"\x1bDeleteSignatureTasksRequest\x12\x1b\n" +
-	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12#\n" +
+	"\x06policy\x18\x03 \x01(\v2$.resources.documents.SignaturePolicyR\x06policy\"\x9a\x01\n" +
+	"\x1bDeleteSignatureTasksRequest\x12(\n" +
+	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
+	"documentId\x12#\n" +
 	"\btask_ids\x18\x02 \x03(\x03B\b\xbaH\x05\x92\x01\x02\b\x01R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1e\n" +
-	"\x1cDeleteSignatureTasksResponse\"\x81\x03\n" +
+	"\x1cDeleteSignatureTasksResponse\"\xc8\x02\n" +
 	"\x15ListSignaturesRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12)\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
-	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12H\n" +
-	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\fsnapshotDate\x88\x01\x01\x12A\n" +
-	"\x06status\x18\x05 \x01(\x0e2$.resources.documents.SignatureStatusH\x03R\x06status\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x06 \x01(\x05H\x04R\x06userId\x88\x01\x01B\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"documentId\x12%\n" +
+	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12H\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12A\n" +
+	"\x06status\x18\x04 \x01(\x0e2$.resources.documents.SignatureStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\x05 \x01(\x05H\x03R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\x10\n" +
 	"\x0e_snapshot_dateB\t\n" +
@@ -1774,21 +1758,18 @@ const file_services_documents_signing_proto_rawDesc = "" +
 	"\fsignature_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\vsignatureId\x12\"\n" +
 	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"W\n" +
 	"\x17RevokeSignatureResponse\x12<\n" +
-	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\xd3\x03\n" +
+	"\tsignature\x18\x01 \x01(\v2\x1e.resources.documents.SignatureR\tsignature\"\x9a\x03\n" +
 	"\x16DecideSignatureRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
-	"documentId\x12)\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\bpolicyId\x88\x01\x01\x12%\n" +
-	"\atask_id\x18\x03 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x01R\x06taskId\x88\x01\x01\x12Q\n" +
+	"documentId\x12%\n" +
+	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12Q\n" +
 	"\n" +
-	"new_status\x18\x04 \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
-	"\acomment\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acomment\x12@\n" +
-	"\x04type\x18\x06 \x01(\x0e2\".resources.documents.SignatureTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12-\n" +
-	"\vpayload_svg\x18\a \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x02R\n" +
+	"new_status\x18\x03 \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
+	"\acomment\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acomment\x12@\n" +
+	"\x04type\x18\x05 \x01(\x0e2\".resources.documents.SignatureTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12-\n" +
+	"\vpayload_svg\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x10\x01H\x01R\n" +
 	"payloadSvg\x88\x01\x01\x12\x1e\n" +
-	"\bstamp_id\x18\b \x01(\x03H\x03R\astampId\x88\x01\x01B\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"\bstamp_id\x18\a \x01(\x03H\x02R\astampId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\x0e\n" +
 	"\f_payload_svgB\v\n" +
@@ -1905,7 +1886,7 @@ var file_services_documents_signing_proto_depIdxs = []int32{
 	33, // 2: services.documents.ListSignatureTasksInboxResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	34, // 3: services.documents.ListSignatureTasksInboxResponse.tasks:type_name -> resources.documents.SignatureTask
 	35, // 4: services.documents.ListSignaturePoliciesRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	36, // 5: services.documents.ListSignaturePoliciesResponse.policies:type_name -> resources.documents.SignaturePolicy
+	36, // 5: services.documents.ListSignaturePoliciesResponse.policy:type_name -> resources.documents.SignaturePolicy
 	36, // 6: services.documents.UpsertSignaturePolicyRequest.policy:type_name -> resources.documents.SignaturePolicy
 	36, // 7: services.documents.UpsertSignaturePolicyResponse.policy:type_name -> resources.documents.SignaturePolicy
 	35, // 8: services.documents.ListSignatureTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
@@ -1974,7 +1955,6 @@ func file_services_documents_signing_proto_init() {
 		return
 	}
 	file_services_documents_signing_proto_msgTypes[0].OneofWrappers = []any{}
-	file_services_documents_signing_proto_msgTypes[8].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[10].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[11].OneofWrappers = []any{}
 	file_services_documents_signing_proto_msgTypes[15].OneofWrappers = []any{}

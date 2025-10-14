@@ -11,7 +11,6 @@ import StatusBadge from './StatusBadge.vue';
 
 const props = defineProps<{
     documentId: number;
-    policyId: number | undefined;
     taskId?: number;
 }>();
 
@@ -30,7 +29,6 @@ async function listApprovals(): Promise<ListApprovalsResponse> {
     try {
         const call = approvalClient.listApprovals({
             documentId: props.documentId,
-            policyId: props.policyId ?? 0,
             taskId: props.taskId,
         });
         const { response } = await call;

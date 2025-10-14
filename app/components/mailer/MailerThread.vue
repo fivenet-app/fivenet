@@ -216,7 +216,13 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                 </template>
 
                 <template #leading>
-                    <UButton icon="i-lucide-x" color="neutral" variant="ghost" class="-ms-1.5" @click="$emit('close', false)" />
+                    <UButton
+                        icon="i-mdi-close"
+                        color="neutral"
+                        variant="ghost"
+                        class="-ms-1.5"
+                        @click="$emit('close', false)"
+                    />
                 </template>
             </UDashboardNavbar>
 

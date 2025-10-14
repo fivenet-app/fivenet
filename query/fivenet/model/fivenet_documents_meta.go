@@ -17,6 +17,9 @@ type FivenetDocumentsMeta struct {
 	Approved             bool      `json:"approved"`
 	Signed               bool      `json:"signed"`
 	SigRequiredRemaining int32     `json:"sig_required_remaining"`
+	SigDeclinedCount     int32     `json:"sig_declined_count"`
+	SigPendingCount      int32     `json:"sig_pending_count"`
+	SigAnyDeclined       bool      `json:"sig_any_declined"`
 	SigRequiredTotal     int32     `json:"sig_required_total"`
 	SigCollectedValid    int32     `json:"sig_collected_valid"`
 	SigPoliciesActive    int32     `json:"sig_policies_active"`

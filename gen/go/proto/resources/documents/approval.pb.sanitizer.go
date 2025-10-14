@@ -107,6 +107,15 @@ func (m *ApprovalPolicy) Sanitize() error {
 		}
 	}
 
+	// Field: DueAt
+	if m.DueAt != nil {
+		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
@@ -215,6 +224,11 @@ func (m *ApprovalTask) Sanitize() error {
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
 	}
 
 	// Field: SnapshotDate

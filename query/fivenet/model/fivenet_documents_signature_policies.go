@@ -12,13 +12,20 @@ import (
 )
 
 type FivenetDocumentsSignaturePolicies struct {
-	ID               int64      `sql:"primary_key" json:"id"`
-	DocumentID       int64      `json:"document_id"`
+	DocumentID       int64      `sql:"primary_key" json:"document_id"`
 	SnapshotDate     time.Time  `json:"snapshot_date"`
-	Label            *string    `json:"label"`
-	Required         bool       `json:"required"`
 	BindingMode      int16      `json:"binding_mode"`
+	RuleKind         *int16     `json:"rule_kind"`
+	RequiredCount    int32      `json:"required_count"`
 	AllowedTypesMask string     `json:"allowed_types_mask"`
+	DueAt            *time.Time `json:"due_at"`
+	AssignedCount    int32      `json:"assigned_count"`
+	ApprovedCount    int32      `json:"approved_count"`
+	DeclinedCount    int32      `json:"declined_count"`
+	PendingCount     int32      `json:"pending_count"`
+	AnyDeclined      bool       `json:"any_declined"`
+	StartedAt        *time.Time `json:"started_at"`
+	CompletedAt      *time.Time `json:"completed_at"`
 	CreatedAt        *time.Time `json:"created_at"`
 	UpdatedAt        *time.Time `json:"updated_at"`
 	DeletedAt        *time.Time `json:"deleted_at"`

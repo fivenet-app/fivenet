@@ -92,6 +92,15 @@ func (m *SignaturePolicy) Sanitize() error {
 		}
 	}
 
+	// Field: CompletedAt
+	if m.CompletedAt != nil {
+		if v, ok := any(m.GetCompletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -101,12 +110,36 @@ func (m *SignaturePolicy) Sanitize() error {
 		}
 	}
 
-	// Field: Label
-	m.Label = htmlsanitizer.StripTags(m.Label)
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DueAt
+	if m.DueAt != nil {
+		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: StartedAt
+	if m.StartedAt != nil {
+		if v, ok := any(m.GetStartedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -203,6 +236,11 @@ func (m *SignatureTask) Sanitize() error {
 	// Field: JobLabel
 	if m.JobLabel != nil {
 		*m.JobLabel = htmlsanitizer.Sanitize(*m.JobLabel)
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
 	}
 
 	// Field: SnapshotDate

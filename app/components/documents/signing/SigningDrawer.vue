@@ -25,13 +25,13 @@ const { data, status, error, refresh } = useLazyAsyncData(
     () => getPolicy(),
 );
 
-async function getPolicy(): Promise<SignaturePolicy[]> {
+async function getPolicy(): Promise<SignaturePolicy | undefined> {
     const call = signingClient.listSignaturePolicies({
         documentId: props.documentId,
     });
     const { response } = await call;
 
-    return response.policies ?? [];
+    return response.policy;
 }
 
 async function recomputeSignaturePolicyCounters() {
@@ -200,7 +200,7 @@ const signaturePad = overlay.create(SignaturePadDrawer);
                         :label="$t('common.sign')"
                         @click="
                             signaturePad.open({
-                                policyId: 0,
+                                documentId: documentId,
                                 modelValue: '',
                                 'onUpdate:modelValue': ($event) => console.log($event),
                             })

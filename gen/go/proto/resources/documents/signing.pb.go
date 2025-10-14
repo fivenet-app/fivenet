@@ -29,7 +29,7 @@ type SignatureBindingMode int32
 
 const (
 	SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED SignatureBindingMode = 0
-	// Stays but marked 'signed on vX'
+	// Stays but marked 'signed on X'
 	SignatureBindingMode_SIGNATURE_BINDING_MODE_NONBINDING SignatureBindingMode = 1
 	// Invalidates on content edits
 	SignatureBindingMode_SIGNATURE_BINDING_MODE_BINDING SignatureBindingMode = 2
@@ -76,6 +76,55 @@ func (SignatureBindingMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_signing_proto_rawDescGZIP(), []int{0}
 }
 
+type SignatureRuleKind int32
+
+const (
+	SignatureRuleKind_SIGNATURE_RULE_KIND_UNSPECIFIED SignatureRuleKind = 0
+	SignatureRuleKind_SIGNATURE_RULE_KIND_REQUIRE_ALL SignatureRuleKind = 1
+	SignatureRuleKind_SIGNATURE_RULE_KIND_QUORUM_ANY  SignatureRuleKind = 2
+)
+
+// Enum value maps for SignatureRuleKind.
+var (
+	SignatureRuleKind_name = map[int32]string{
+		0: "SIGNATURE_RULE_KIND_UNSPECIFIED",
+		1: "SIGNATURE_RULE_KIND_REQUIRE_ALL",
+		2: "SIGNATURE_RULE_KIND_QUORUM_ANY",
+	}
+	SignatureRuleKind_value = map[string]int32{
+		"SIGNATURE_RULE_KIND_UNSPECIFIED": 0,
+		"SIGNATURE_RULE_KIND_REQUIRE_ALL": 1,
+		"SIGNATURE_RULE_KIND_QUORUM_ANY":  2,
+	}
+)
+
+func (x SignatureRuleKind) Enum() *SignatureRuleKind {
+	p := new(SignatureRuleKind)
+	*p = x
+	return p
+}
+
+func (x SignatureRuleKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SignatureRuleKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_documents_signing_proto_enumTypes[1].Descriptor()
+}
+
+func (SignatureRuleKind) Type() protoreflect.EnumType {
+	return &file_resources_documents_signing_proto_enumTypes[1]
+}
+
+func (x SignatureRuleKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SignatureRuleKind.Descriptor instead.
+func (SignatureRuleKind) EnumDescriptor() ([]byte, []int) {
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
+}
+
 type SignatureType int32
 
 const (
@@ -112,11 +161,11 @@ func (x SignatureType) String() string {
 }
 
 func (SignatureType) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[1].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[2].Descriptor()
 }
 
 func (SignatureType) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[1]
+	return &file_resources_documents_signing_proto_enumTypes[2]
 }
 
 func (x SignatureType) Number() protoreflect.EnumNumber {
@@ -125,7 +174,7 @@ func (x SignatureType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignatureType.Descriptor instead.
 func (SignatureType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
 }
 
 type SignatureAssigneeKind int32
@@ -161,11 +210,11 @@ func (x SignatureAssigneeKind) String() string {
 }
 
 func (SignatureAssigneeKind) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[2].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[3].Descriptor()
 }
 
 func (SignatureAssigneeKind) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[2]
+	return &file_resources_documents_signing_proto_enumTypes[3]
 }
 
 func (x SignatureAssigneeKind) Number() protoreflect.EnumNumber {
@@ -174,7 +223,7 @@ func (x SignatureAssigneeKind) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignatureAssigneeKind.Descriptor instead.
 func (SignatureAssigneeKind) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{2}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
 }
 
 type SignatureTaskStatus int32
@@ -183,7 +232,9 @@ const (
 	SignatureTaskStatus_SIGNATURE_TASK_STATUS_UNSPECIFIED SignatureTaskStatus = 0
 	SignatureTaskStatus_SIGNATURE_TASK_STATUS_PENDING     SignatureTaskStatus = 1
 	SignatureTaskStatus_SIGNATURE_TASK_STATUS_SIGNED      SignatureTaskStatus = 2
-	SignatureTaskStatus_SIGNATURE_TASK_STATUS_EXPIRED     SignatureTaskStatus = 3
+	SignatureTaskStatus_SIGNATURE_TASK_STATUS_DECLINED    SignatureTaskStatus = 3
+	SignatureTaskStatus_SIGNATURE_TASK_STATUS_EXPIRED     SignatureTaskStatus = 4
+	SignatureTaskStatus_SIGNATURE_TASK_STATUS_COMPLETED   SignatureTaskStatus = 5
 )
 
 // Enum value maps for SignatureTaskStatus.
@@ -192,13 +243,17 @@ var (
 		0: "SIGNATURE_TASK_STATUS_UNSPECIFIED",
 		1: "SIGNATURE_TASK_STATUS_PENDING",
 		2: "SIGNATURE_TASK_STATUS_SIGNED",
-		3: "SIGNATURE_TASK_STATUS_EXPIRED",
+		3: "SIGNATURE_TASK_STATUS_DECLINED",
+		4: "SIGNATURE_TASK_STATUS_EXPIRED",
+		5: "SIGNATURE_TASK_STATUS_COMPLETED",
 	}
 	SignatureTaskStatus_value = map[string]int32{
 		"SIGNATURE_TASK_STATUS_UNSPECIFIED": 0,
 		"SIGNATURE_TASK_STATUS_PENDING":     1,
 		"SIGNATURE_TASK_STATUS_SIGNED":      2,
-		"SIGNATURE_TASK_STATUS_EXPIRED":     3,
+		"SIGNATURE_TASK_STATUS_DECLINED":    3,
+		"SIGNATURE_TASK_STATUS_EXPIRED":     4,
+		"SIGNATURE_TASK_STATUS_COMPLETED":   5,
 	}
 )
 
@@ -213,11 +268,11 @@ func (x SignatureTaskStatus) String() string {
 }
 
 func (SignatureTaskStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[3].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[4].Descriptor()
 }
 
 func (SignatureTaskStatus) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[3]
+	return &file_resources_documents_signing_proto_enumTypes[4]
 }
 
 func (x SignatureTaskStatus) Number() protoreflect.EnumNumber {
@@ -226,7 +281,7 @@ func (x SignatureTaskStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignatureTaskStatus.Descriptor instead.
 func (SignatureTaskStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{3}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
 }
 
 type SignatureStatus int32
@@ -234,8 +289,9 @@ type SignatureStatus int32
 const (
 	SignatureStatus_SIGNATURE_STATUS_UNSPECIFIED SignatureStatus = 0
 	SignatureStatus_SIGNATURE_STATUS_VALID       SignatureStatus = 1
-	SignatureStatus_SIGNATURE_STATUS_REVOKED     SignatureStatus = 2
-	SignatureStatus_SIGNATURE_STATUS_INVALID     SignatureStatus = 3
+	SignatureStatus_SIGNATURE_STATUS_DECLINED    SignatureStatus = 2
+	SignatureStatus_SIGNATURE_STATUS_REVOKED     SignatureStatus = 3
+	SignatureStatus_SIGNATURE_STATUS_INVALID     SignatureStatus = 4
 )
 
 // Enum value maps for SignatureStatus.
@@ -243,14 +299,16 @@ var (
 	SignatureStatus_name = map[int32]string{
 		0: "SIGNATURE_STATUS_UNSPECIFIED",
 		1: "SIGNATURE_STATUS_VALID",
-		2: "SIGNATURE_STATUS_REVOKED",
-		3: "SIGNATURE_STATUS_INVALID",
+		2: "SIGNATURE_STATUS_DECLINED",
+		3: "SIGNATURE_STATUS_REVOKED",
+		4: "SIGNATURE_STATUS_INVALID",
 	}
 	SignatureStatus_value = map[string]int32{
 		"SIGNATURE_STATUS_UNSPECIFIED": 0,
 		"SIGNATURE_STATUS_VALID":       1,
-		"SIGNATURE_STATUS_REVOKED":     2,
-		"SIGNATURE_STATUS_INVALID":     3,
+		"SIGNATURE_STATUS_DECLINED":    2,
+		"SIGNATURE_STATUS_REVOKED":     3,
+		"SIGNATURE_STATUS_INVALID":     4,
 	}
 )
 
@@ -265,11 +323,11 @@ func (x SignatureStatus) String() string {
 }
 
 func (SignatureStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_documents_signing_proto_enumTypes[4].Descriptor()
+	return file_resources_documents_signing_proto_enumTypes[5].Descriptor()
 }
 
 func (SignatureStatus) Type() protoreflect.EnumType {
-	return &file_resources_documents_signing_proto_enumTypes[4]
+	return &file_resources_documents_signing_proto_enumTypes[5]
 }
 
 func (x SignatureStatus) Number() protoreflect.EnumNumber {
@@ -278,7 +336,7 @@ func (x SignatureStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use SignatureStatus.Descriptor instead.
 func (SignatureStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_documents_signing_proto_rawDescGZIP(), []int{4}
+	return file_resources_documents_signing_proto_rawDescGZIP(), []int{5}
 }
 
 type SignatureTypes struct {
@@ -326,17 +384,24 @@ func (x *SignatureTypes) GetTypes() []SignatureType {
 }
 
 type SignaturePolicy struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId   int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	// "Leader", "Counterparty Rep"
-	Label         string               `protobuf:"bytes,4,opt,name=label,proto3" json:"label,omitempty"`
-	Required      bool                 `protobuf:"varint,5,opt,name=required,proto3" json:"required,omitempty"`
-	BindingMode   SignatureBindingMode `protobuf:"varint,6,opt,name=binding_mode,json=bindingMode,proto3,enum=resources.documents.SignatureBindingMode" json:"binding_mode,omitempty"`
-	AllowedTypes  *SignatureTypes      `protobuf:"bytes,7,opt,name=allowed_types,json=allowedTypes,proto3" json:"allowed_types,omitempty"`
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId    int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate  *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	BindingMode   SignatureBindingMode   `protobuf:"varint,5,opt,name=binding_mode,json=bindingMode,proto3,enum=resources.documents.SignatureBindingMode" json:"binding_mode,omitempty"`
+	RuleKind      SignatureRuleKind      `protobuf:"varint,6,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.SignatureRuleKind" json:"rule_kind,omitempty"`
+	RequiredCount *int32                 `protobuf:"varint,7,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
+	AllowedTypes  *SignatureTypes        `protobuf:"bytes,8,opt,name=allowed_types,json=allowedTypes,proto3" json:"allowed_types,omitempty"`
+	DueAt         *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	AssignedCount int32                  `protobuf:"varint,10,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
+	ApprovedCount int32                  `protobuf:"varint,11,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
+	DeclinedCount int32                  `protobuf:"varint,12,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
+	PendingCount  int32                  `protobuf:"varint,13,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
+	AnyDeclined   bool                   `protobuf:"varint,14,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
+	StartedAt     *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	CompletedAt   *timestamp.Timestamp   `protobuf:"bytes,16,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,18,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,19,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -371,13 +436,6 @@ func (*SignaturePolicy) Descriptor() ([]byte, []int) {
 	return file_resources_documents_signing_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *SignaturePolicy) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
 func (x *SignaturePolicy) GetDocumentId() int64 {
 	if x != nil {
 		return x.DocumentId
@@ -392,20 +450,6 @@ func (x *SignaturePolicy) GetSnapshotDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *SignaturePolicy) GetLabel() string {
-	if x != nil {
-		return x.Label
-	}
-	return ""
-}
-
-func (x *SignaturePolicy) GetRequired() bool {
-	if x != nil {
-		return x.Required
-	}
-	return false
-}
-
 func (x *SignaturePolicy) GetBindingMode() SignatureBindingMode {
 	if x != nil {
 		return x.BindingMode
@@ -413,9 +457,79 @@ func (x *SignaturePolicy) GetBindingMode() SignatureBindingMode {
 	return SignatureBindingMode_SIGNATURE_BINDING_MODE_UNSPECIFIED
 }
 
+func (x *SignaturePolicy) GetRuleKind() SignatureRuleKind {
+	if x != nil {
+		return x.RuleKind
+	}
+	return SignatureRuleKind_SIGNATURE_RULE_KIND_UNSPECIFIED
+}
+
+func (x *SignaturePolicy) GetRequiredCount() int32 {
+	if x != nil && x.RequiredCount != nil {
+		return *x.RequiredCount
+	}
+	return 0
+}
+
 func (x *SignaturePolicy) GetAllowedTypes() *SignatureTypes {
 	if x != nil {
 		return x.AllowedTypes
+	}
+	return nil
+}
+
+func (x *SignaturePolicy) GetDueAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DueAt
+	}
+	return nil
+}
+
+func (x *SignaturePolicy) GetAssignedCount() int32 {
+	if x != nil {
+		return x.AssignedCount
+	}
+	return 0
+}
+
+func (x *SignaturePolicy) GetApprovedCount() int32 {
+	if x != nil {
+		return x.ApprovedCount
+	}
+	return 0
+}
+
+func (x *SignaturePolicy) GetDeclinedCount() int32 {
+	if x != nil {
+		return x.DeclinedCount
+	}
+	return 0
+}
+
+func (x *SignaturePolicy) GetPendingCount() int32 {
+	if x != nil {
+		return x.PendingCount
+	}
+	return 0
+}
+
+func (x *SignaturePolicy) GetAnyDeclined() bool {
+	if x != nil {
+		return x.AnyDeclined
+	}
+	return false
+}
+
+func (x *SignaturePolicy) GetStartedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.StartedAt
+	}
+	return nil
+}
+
+func (x *SignaturePolicy) GetCompletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CompletedAt
 	}
 	return nil
 }
@@ -434,10 +548,16 @@ func (x *SignaturePolicy) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+func (x *SignaturePolicy) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
 type SignatureTask struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	PolicyId     int64                  `protobuf:"varint,2,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
 	DocumentId   int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	// Who is the task for? 1=USER, 2=JOB
@@ -450,19 +570,21 @@ type SignatureTask struct {
 	JobLabel      *string `protobuf:"bytes,9,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  *int32  `protobuf:"varint,10,opt,name=minimum_grade,json=minimumGrade,proto3,oneof" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string `protobuf:"bytes,11,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	// "Leadership", "Counterparty Rep"
+	Label *string `protobuf:"bytes,12,opt,name=label,proto3,oneof" json:"label,omitempty"`
 	// >=1; meaningful only for Job tasks; always 1 for User
-	SlotNo          int32                `protobuf:"varint,12,opt,name=slot_no,json=slotNo,proto3" json:"slot_no,omitempty"`
-	Status          SignatureTaskStatus  `protobuf:"varint,13,opt,name=status,proto3,enum=resources.documents.SignatureTaskStatus" json:"status,omitempty"`
-	Comment         *string              `protobuf:"bytes,14,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
-	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,15,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CompletedAt     *timestamp.Timestamp `protobuf:"bytes,16,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
-	DueAt           *timestamp.Timestamp `protobuf:"bytes,17,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
-	SignatureId     *int64               `protobuf:"varint,18,opt,name=signature_id,json=signatureId,proto3,oneof" json:"signature_id,omitempty"`
-	CreatorId       int32                `protobuf:"varint,19,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator         *users.UserShort     `protobuf:"bytes,20,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	CreatorJob      string               `protobuf:"bytes,21,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string              `protobuf:"bytes,22,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Document        *DocumentShort       `protobuf:"bytes,23,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	SlotNo          int32                `protobuf:"varint,13,opt,name=slot_no,json=slotNo,proto3" json:"slot_no,omitempty"`
+	Status          SignatureTaskStatus  `protobuf:"varint,14,opt,name=status,proto3,enum=resources.documents.SignatureTaskStatus" json:"status,omitempty"`
+	Comment         *string              `protobuf:"bytes,15,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt     *timestamp.Timestamp `protobuf:"bytes,17,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	DueAt           *timestamp.Timestamp `protobuf:"bytes,18,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	SignatureId     *int64               `protobuf:"varint,19,opt,name=signature_id,json=signatureId,proto3,oneof" json:"signature_id,omitempty"`
+	CreatorId       int32                `protobuf:"varint,20,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator         *users.UserShort     `protobuf:"bytes,21,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	CreatorJob      string               `protobuf:"bytes,22,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string              `protobuf:"bytes,23,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Document        *DocumentShort       `protobuf:"bytes,24,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -500,13 +622,6 @@ func (*SignatureTask) Descriptor() ([]byte, []int) {
 func (x *SignatureTask) GetId() int64 {
 	if x != nil {
 		return x.Id
-	}
-	return 0
-}
-
-func (x *SignatureTask) GetPolicyId() int64 {
-	if x != nil {
-		return x.PolicyId
 	}
 	return 0
 }
@@ -570,6 +685,13 @@ func (x *SignatureTask) GetMinimumGrade() int32 {
 func (x *SignatureTask) GetJobGradeLabel() string {
 	if x != nil && x.JobGradeLabel != nil {
 		return *x.JobGradeLabel
+	}
+	return ""
+}
+
+func (x *SignatureTask) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
 	}
 	return ""
 }
@@ -661,10 +783,8 @@ func (x *SignatureTask) GetDocument() *DocumentShort {
 type Signature struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	Id           int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	DocumentId   int64                  `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	// Link to originating policy (if any)
-	PolicyId *int64 `protobuf:"varint,4,opt,name=policy_id,json=policyId,proto3,oneof" json:"policy_id,omitempty"`
+	DocumentId   int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
 	// Link to originating task (if any)
 	TaskId         *int64           `protobuf:"varint,5,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	UserId         *int32           `protobuf:"varint,6,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
@@ -735,13 +855,6 @@ func (x *Signature) GetSnapshotDate() *timestamp.Timestamp {
 		return x.SnapshotDate
 	}
 	return nil
-}
-
-func (x *Signature) GetPolicyId() int64 {
-	if x != nil && x.PolicyId != nil {
-		return *x.PolicyId
-	}
-	return 0
 }
 
 func (x *Signature) GetTaskId() int64 {
@@ -848,24 +961,40 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"!resources/documents/signing.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"c\n" +
 	"\x0eSignatureTypes\x12I\n" +
-	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeB\x0f\xbaH\f\x92\x01\t\x10\x03\"\x05\x82\x01\x02\x10\x01R\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xec\x03\n" +
-	"\x0fSignaturePolicy\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"\x05types\x18\x01 \x03(\x0e2\".resources.documents.SignatureTypeB\x0f\xbaH\f\x92\x01\t\x10\x03\"\x05\x82\x01\x02\x10\x01R\x05types:\x06\xe2\xf3\x18\x02\b\x01\"\xd1\b\n" +
+	"\x0fSignaturePolicy\x12\x1f\n" +
+	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12'\n" +
-	"\x05label\x18\x04 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x05label\x12\x1a\n" +
-	"\brequired\x18\x05 \x01(\bR\brequired\x12V\n" +
-	"\fbinding_mode\x18\x06 \x01(\x0e2).resources.documents.SignatureBindingModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vbindingMode\x12H\n" +
-	"\rallowed_types\x18\a \x01(\v2#.resources.documents.SignatureTypesR\fallowedTypes\x12=\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12V\n" +
+	"\fbinding_mode\x18\x05 \x01(\x0e2).resources.documents.SignatureBindingModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vbindingMode\x12M\n" +
+	"\trule_kind\x18\x06 \x01(\x0e2&.resources.documents.SignatureRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x123\n" +
+	"\x0erequired_count\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12H\n" +
+	"\rallowed_types\x18\b \x01(\v2#.resources.documents.SignatureTypesR\fallowedTypes\x12:\n" +
+	"\x06due_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12%\n" +
+	"\x0eassigned_count\x18\n" +
+	" \x01(\x05R\rassignedCount\x12%\n" +
+	"\x0eapproved_count\x18\v \x01(\x05R\rapprovedCount\x12%\n" +
+	"\x0edeclined_count\x18\f \x01(\x05R\rdeclinedCount\x12#\n" +
+	"\rpending_count\x18\r \x01(\x05R\fpendingCount\x12!\n" +
+	"\fany_declined\x18\x0e \x01(\bR\vanyDeclined\x12B\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12=\n" +
+	"started_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tstartedAt\x88\x01\x01\x12F\n" +
+	"\fcompleted_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\vcompletedAt\x88\x01\x01\x12=\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"\xb8\n" +
+	"created_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"updated_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x13 \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\tdeletedAt\x88\x01\x01B\x11\n" +
+	"\x0f_required_countB\t\n" +
+	"\a_due_atB\r\n" +
+	"\v_started_atB\x0f\n" +
+	"\r_completed_atB\r\n" +
+	"\v_updated_atB\r\n" +
+	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\xe0\n" +
 	"\n" +
 	"\rSignatureTask\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
-	"\tpolicy_id\x18\x02 \x01(\x03R\bpolicyId\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
 	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12Y\n" +
@@ -876,23 +1005,24 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\tjob_label\x18\t \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\bjobLabel\x88\x01\x01\x12(\n" +
 	"\rminimum_grade\x18\n" +
 	" \x01(\x05H\x04R\fminimumGrade\x88\x01\x01\x124\n" +
-	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x12\"\n" +
-	"\aslot_no\x18\f \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12J\n" +
-	"\x06status\x18\r \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
-	"\acomment\x18\x0e \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x06R\acomment\x88\x01\x01\x12=\n" +
+	"\x0fjob_grade_label\x18\v \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x05R\rjobGradeLabel\x88\x01\x01\x123\n" +
+	"\x05label\x18\f \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x06R\x05label\x88\x01\x01\x12\"\n" +
+	"\aslot_no\x18\r \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x06slotNo\x12J\n" +
+	"\x06status\x18\x0e \x01(\x0e2(.resources.documents.SignatureTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
+	"\acomment\x18\x0f \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\aR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x0f \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12F\n" +
-	"\fcompleted_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampH\aR\vcompletedAt\x88\x01\x01\x12:\n" +
-	"\x06due_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\x05dueAt\x88\x01\x01\x12&\n" +
-	"\fsignature_id\x18\x12 \x01(\x03H\tR\vsignatureId\x88\x01\x01\x12\x1d\n" +
+	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12F\n" +
+	"\fcompleted_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\vcompletedAt\x88\x01\x01\x12:\n" +
+	"\x06due_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\x05dueAt\x88\x01\x01\x12&\n" +
+	"\fsignature_id\x18\x13 \x01(\x03H\n" +
+	"R\vsignatureId\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x13 \x01(\x05R\tcreatorId\x129\n" +
-	"\acreator\x18\x14 \x01(\v2\x1a.resources.users.UserShortH\n" +
-	"R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\x15 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\x14 \x01(\x05R\tcreatorId\x129\n" +
+	"\acreator\x18\x15 \x01(\v2\x1a.resources.users.UserShortH\vR\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x16 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x16 \x01(\tH\vR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
-	"\bdocument\x18\x17 \x01(\v2\".resources.documents.DocumentShortH\fR\bdocument\x88\x01\x01B\n" +
+	"\x11creator_job_label\x18\x17 \x01(\tH\fR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\x18 \x01(\v2\".resources.documents.DocumentShortH\rR\bdocument\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_userB\x06\n" +
@@ -900,7 +1030,8 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\x10\n" +
 	"\x0e_minimum_gradeB\x12\n" +
-	"\x10_job_grade_labelB\n" +
+	"\x10_job_grade_labelB\b\n" +
+	"\x06_labelB\n" +
 	"\n" +
 	"\b_commentB\x0f\n" +
 	"\r_completed_atB\t\n" +
@@ -909,35 +1040,31 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_document\"\xdf\a\n" +
+	"\t_documentJ\x04\b\x02\x10\x03\"\xb5\a\n" +
 	"\tSignature\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
-	"\vdocument_id\x18\x02 \x01(\x03R\n" +
+	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12 \n" +
-	"\tpolicy_id\x18\x04 \x01(\x03H\x00R\bpolicyId\x88\x01\x01\x12\x1c\n" +
-	"\atask_id\x18\x05 \x01(\x03H\x01R\x06taskId\x88\x01\x01\x12\x1c\n" +
-	"\auser_id\x18\x06 \x01(\x05H\x02R\x06userId\x88\x01\x01\x123\n" +
-	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x03R\x04user\x88\x01\x01\x12\x1e\n" +
-	"\buser_job\x18\b \x01(\tH\x04R\auserJob\x88\x01\x01\x12)\n" +
-	"\x0euser_job_label\x18\t \x01(\tH\x05R\fuserJobLabel\x88\x01\x01\x12\"\n" +
+	"\rsnapshot_date\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\fsnapshotDate\x12\x1c\n" +
+	"\atask_id\x18\x05 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12\x1c\n" +
+	"\auser_id\x18\x06 \x01(\x05H\x01R\x06userId\x88\x01\x01\x123\n" +
+	"\x04user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x02R\x04user\x88\x01\x01\x12\x1e\n" +
+	"\buser_job\x18\b \x01(\tH\x03R\auserJob\x88\x01\x01\x12)\n" +
+	"\x0euser_job_label\x18\t \x01(\tH\x04R\fuserJobLabel\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"user_grade\x18\n" +
-	" \x01(\x05H\x06R\tuserGrade\x88\x01\x01\x12-\n" +
-	"\x10user_grade_label\x18\v \x01(\tH\aR\x0euserGradeLabel\x88\x01\x01\x12@\n" +
+	" \x01(\x05H\x05R\tuserGrade\x88\x01\x01\x12-\n" +
+	"\x10user_grade_label\x18\v \x01(\tH\x06R\x0euserGradeLabel\x88\x01\x01\x12@\n" +
 	"\x04type\x18\f \x01(\x0e2\".resources.documents.SignatureTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x124\n" +
 	"\vpayload_svg\x18\r \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\n" +
 	"payloadSvg\x12\x1e\n" +
-	"\bstamp_id\x18\x0e \x01(\x03H\bR\astampId\x88\x01\x01\x12F\n" +
+	"\bstamp_id\x18\x0e \x01(\x03H\aR\astampId\x88\x01\x01\x12F\n" +
 	"\x06status\x18\x0f \x01(\x0e2$.resources.documents.SignatureStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
-	"\acomment\x18\x10 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\tR\acomment\x88\x01\x01\x12=\n" +
+	"\acomment\x18\x10 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xf4\x03H\bR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
 	"created_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
 	"\n" +
-	"revoked_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\n" +
-	"R\trevokedAt\x88\x01\x01B\f\n" +
-	"\n" +
-	"_policy_idB\n" +
+	"revoked_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\trevokedAt\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\n" +
 	"\n" +
@@ -950,11 +1077,15 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\t_stamp_idB\n" +
 	"\n" +
 	"\b_commentB\r\n" +
-	"\v_revoked_at*\x89\x01\n" +
+	"\v_revoked_atJ\x04\b\x02\x10\x03*\x89\x01\n" +
 	"\x14SignatureBindingMode\x12&\n" +
 	"\"SIGNATURE_BINDING_MODE_UNSPECIFIED\x10\x00\x12%\n" +
 	"!SIGNATURE_BINDING_MODE_NONBINDING\x10\x01\x12\"\n" +
-	"\x1eSIGNATURE_BINDING_MODE_BINDING\x10\x02*\x80\x01\n" +
+	"\x1eSIGNATURE_BINDING_MODE_BINDING\x10\x02*\x81\x01\n" +
+	"\x11SignatureRuleKind\x12#\n" +
+	"\x1fSIGNATURE_RULE_KIND_UNSPECIFIED\x10\x00\x12#\n" +
+	"\x1fSIGNATURE_RULE_KIND_REQUIRE_ALL\x10\x01\x12\"\n" +
+	"\x1eSIGNATURE_RULE_KIND_QUORUM_ANY\x10\x02*\x80\x01\n" +
 	"\rSignatureType\x12\x1e\n" +
 	"\x1aSIGNATURE_TYPE_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17SIGNATURE_TYPE_FREEHAND\x10\x01\x12\x18\n" +
@@ -963,17 +1094,20 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\x15SignatureAssigneeKind\x12'\n" +
 	"#SIGNATURE_ASSIGNEE_KIND_UNSPECIFIED\x10\x00\x12 \n" +
 	"\x1cSIGNATURE_ASSIGNEE_KIND_USER\x10\x01\x12%\n" +
-	"!SIGNATURE_ASSIGNEE_KIND_JOB_GRADE\x10\x02*\xa4\x01\n" +
+	"!SIGNATURE_ASSIGNEE_KIND_JOB_GRADE\x10\x02*\xed\x01\n" +
 	"\x13SignatureTaskStatus\x12%\n" +
 	"!SIGNATURE_TASK_STATUS_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dSIGNATURE_TASK_STATUS_PENDING\x10\x01\x12 \n" +
-	"\x1cSIGNATURE_TASK_STATUS_SIGNED\x10\x02\x12!\n" +
-	"\x1dSIGNATURE_TASK_STATUS_EXPIRED\x10\x03*\x8b\x01\n" +
+	"\x1cSIGNATURE_TASK_STATUS_SIGNED\x10\x02\x12\"\n" +
+	"\x1eSIGNATURE_TASK_STATUS_DECLINED\x10\x03\x12!\n" +
+	"\x1dSIGNATURE_TASK_STATUS_EXPIRED\x10\x04\x12#\n" +
+	"\x1fSIGNATURE_TASK_STATUS_COMPLETED\x10\x05*\xaa\x01\n" +
 	"\x0fSignatureStatus\x12 \n" +
 	"\x1cSIGNATURE_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
-	"\x16SIGNATURE_STATUS_VALID\x10\x01\x12\x1c\n" +
-	"\x18SIGNATURE_STATUS_REVOKED\x10\x02\x12\x1c\n" +
-	"\x18SIGNATURE_STATUS_INVALID\x10\x03BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x16SIGNATURE_STATUS_VALID\x10\x01\x12\x1d\n" +
+	"\x19SIGNATURE_STATUS_DECLINED\x10\x02\x12\x1c\n" +
+	"\x18SIGNATURE_STATUS_REVOKED\x10\x03\x12\x1c\n" +
+	"\x18SIGNATURE_STATUS_INVALID\x10\x04BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_signing_proto_rawDescOnce sync.Once
@@ -987,49 +1121,55 @@ func file_resources_documents_signing_proto_rawDescGZIP() []byte {
 	return file_resources_documents_signing_proto_rawDescData
 }
 
-var file_resources_documents_signing_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_resources_documents_signing_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
 var file_resources_documents_signing_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_documents_signing_proto_goTypes = []any{
 	(SignatureBindingMode)(0),   // 0: resources.documents.SignatureBindingMode
-	(SignatureType)(0),          // 1: resources.documents.SignatureType
-	(SignatureAssigneeKind)(0),  // 2: resources.documents.SignatureAssigneeKind
-	(SignatureTaskStatus)(0),    // 3: resources.documents.SignatureTaskStatus
-	(SignatureStatus)(0),        // 4: resources.documents.SignatureStatus
-	(*SignatureTypes)(nil),      // 5: resources.documents.SignatureTypes
-	(*SignaturePolicy)(nil),     // 6: resources.documents.SignaturePolicy
-	(*SignatureTask)(nil),       // 7: resources.documents.SignatureTask
-	(*Signature)(nil),           // 8: resources.documents.Signature
-	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 10: resources.users.UserShort
-	(*DocumentShort)(nil),       // 11: resources.documents.DocumentShort
+	(SignatureRuleKind)(0),      // 1: resources.documents.SignatureRuleKind
+	(SignatureType)(0),          // 2: resources.documents.SignatureType
+	(SignatureAssigneeKind)(0),  // 3: resources.documents.SignatureAssigneeKind
+	(SignatureTaskStatus)(0),    // 4: resources.documents.SignatureTaskStatus
+	(SignatureStatus)(0),        // 5: resources.documents.SignatureStatus
+	(*SignatureTypes)(nil),      // 6: resources.documents.SignatureTypes
+	(*SignaturePolicy)(nil),     // 7: resources.documents.SignaturePolicy
+	(*SignatureTask)(nil),       // 8: resources.documents.SignatureTask
+	(*Signature)(nil),           // 9: resources.documents.Signature
+	(*timestamp.Timestamp)(nil), // 10: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 11: resources.users.UserShort
+	(*DocumentShort)(nil),       // 12: resources.documents.DocumentShort
 }
 var file_resources_documents_signing_proto_depIdxs = []int32{
-	1,  // 0: resources.documents.SignatureTypes.types:type_name -> resources.documents.SignatureType
-	9,  // 1: resources.documents.SignaturePolicy.snapshot_date:type_name -> resources.timestamp.Timestamp
+	2,  // 0: resources.documents.SignatureTypes.types:type_name -> resources.documents.SignatureType
+	10, // 1: resources.documents.SignaturePolicy.snapshot_date:type_name -> resources.timestamp.Timestamp
 	0,  // 2: resources.documents.SignaturePolicy.binding_mode:type_name -> resources.documents.SignatureBindingMode
-	5,  // 3: resources.documents.SignaturePolicy.allowed_types:type_name -> resources.documents.SignatureTypes
-	9,  // 4: resources.documents.SignaturePolicy.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 5: resources.documents.SignaturePolicy.updated_at:type_name -> resources.timestamp.Timestamp
-	9,  // 6: resources.documents.SignatureTask.snapshot_date:type_name -> resources.timestamp.Timestamp
-	2,  // 7: resources.documents.SignatureTask.assignee_kind:type_name -> resources.documents.SignatureAssigneeKind
-	10, // 8: resources.documents.SignatureTask.user:type_name -> resources.users.UserShort
-	3,  // 9: resources.documents.SignatureTask.status:type_name -> resources.documents.SignatureTaskStatus
-	9,  // 10: resources.documents.SignatureTask.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 11: resources.documents.SignatureTask.completed_at:type_name -> resources.timestamp.Timestamp
-	9,  // 12: resources.documents.SignatureTask.due_at:type_name -> resources.timestamp.Timestamp
-	10, // 13: resources.documents.SignatureTask.creator:type_name -> resources.users.UserShort
-	11, // 14: resources.documents.SignatureTask.document:type_name -> resources.documents.DocumentShort
-	9,  // 15: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
-	10, // 16: resources.documents.Signature.user:type_name -> resources.users.UserShort
-	1,  // 17: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
-	4,  // 18: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
-	9,  // 19: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 20: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	1,  // 3: resources.documents.SignaturePolicy.rule_kind:type_name -> resources.documents.SignatureRuleKind
+	6,  // 4: resources.documents.SignaturePolicy.allowed_types:type_name -> resources.documents.SignatureTypes
+	10, // 5: resources.documents.SignaturePolicy.due_at:type_name -> resources.timestamp.Timestamp
+	10, // 6: resources.documents.SignaturePolicy.started_at:type_name -> resources.timestamp.Timestamp
+	10, // 7: resources.documents.SignaturePolicy.completed_at:type_name -> resources.timestamp.Timestamp
+	10, // 8: resources.documents.SignaturePolicy.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 9: resources.documents.SignaturePolicy.updated_at:type_name -> resources.timestamp.Timestamp
+	10, // 10: resources.documents.SignaturePolicy.deleted_at:type_name -> resources.timestamp.Timestamp
+	10, // 11: resources.documents.SignatureTask.snapshot_date:type_name -> resources.timestamp.Timestamp
+	3,  // 12: resources.documents.SignatureTask.assignee_kind:type_name -> resources.documents.SignatureAssigneeKind
+	11, // 13: resources.documents.SignatureTask.user:type_name -> resources.users.UserShort
+	4,  // 14: resources.documents.SignatureTask.status:type_name -> resources.documents.SignatureTaskStatus
+	10, // 15: resources.documents.SignatureTask.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 16: resources.documents.SignatureTask.completed_at:type_name -> resources.timestamp.Timestamp
+	10, // 17: resources.documents.SignatureTask.due_at:type_name -> resources.timestamp.Timestamp
+	11, // 18: resources.documents.SignatureTask.creator:type_name -> resources.users.UserShort
+	12, // 19: resources.documents.SignatureTask.document:type_name -> resources.documents.DocumentShort
+	10, // 20: resources.documents.Signature.snapshot_date:type_name -> resources.timestamp.Timestamp
+	11, // 21: resources.documents.Signature.user:type_name -> resources.users.UserShort
+	2,  // 22: resources.documents.Signature.type:type_name -> resources.documents.SignatureType
+	5,  // 23: resources.documents.Signature.status:type_name -> resources.documents.SignatureStatus
+	10, // 24: resources.documents.Signature.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 25: resources.documents.Signature.revoked_at:type_name -> resources.timestamp.Timestamp
+	26, // [26:26] is the sub-list for method output_type
+	26, // [26:26] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_signing_proto_init() }
@@ -1038,6 +1178,7 @@ func file_resources_documents_signing_proto_init() {
 		return
 	}
 	file_resources_documents_documents_proto_init()
+	file_resources_documents_signing_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_documents_signing_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
@@ -1045,7 +1186,7 @@ func file_resources_documents_signing_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_signing_proto_rawDesc), len(file_resources_documents_signing_proto_rawDesc)),
-			NumEnums:      5,
+			NumEnums:      6,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,

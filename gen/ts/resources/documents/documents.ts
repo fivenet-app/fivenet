@@ -215,74 +215,90 @@ export interface DocumentMeta {
      * @generated from protobuf field: optional bool signed = 8
      */
     signed?: boolean;
-    // Signature rollups
-
     /**
+     * Signature rollups
      * How many signatures still needed to satisfy all policies
      *
      * @generated from protobuf field: optional int32 sig_required_remaining = 9
      */
     sigRequiredRemaining?: number;
     /**
+     * Number of declines for signatures
+     *
+     * @generated from protobuf field: optional int32 sig_declined_count = 10
+     */
+    sigDeclinedCount?: number;
+    /**
+     * Tasks still pending (optional)
+     *
+     * @generated from protobuf field: optional int32 sig_pending_count = 11
+     */
+    sigPendingCount?: number;
+    /**
+     * Quick flag if any signatures have been declines
+     *
+     * @generated from protobuf field: optional int32 sig_any_declined = 12
+     */
+    sigAnyDeclined?: number;
+    /**
      * Total signatures needed across policies
      *
-     * @generated from protobuf field: optional int32 sig_required_total = 10
+     * @generated from protobuf field: optional int32 sig_required_total = 13
      */
     sigRequiredTotal?: number;
     /**
      * Signatures collected
      *
-     * @generated from protobuf field: optional int32 sig_collected_valid = 11
+     * @generated from protobuf field: optional int32 sig_collected_valid = 14
      */
     sigCollectedValid?: number;
     /**
      * Number of active signature policies
      *
-     * @generated from protobuf field: optional int32 sig_policies_active = 12
+     * @generated from protobuf field: optional int32 sig_policies_active = 15
      */
     sigPoliciesActive?: number;
-    // Approval rollups
-
     /**
+     * Approval rollups
      * Total approvals needed across policies
      *
-     * @generated from protobuf field: optional int32 ap_required_total = 13
+     * @generated from protobuf field: optional int32 ap_required_total = 16
      */
     apRequiredTotal?: number;
     /**
      * Approvals collected
      *
-     * @generated from protobuf field: optional int32 ap_collected_approved = 14
+     * @generated from protobuf field: optional int32 ap_collected_approved = 17
      */
     apCollectedApproved?: number;
     /**
      * How many left to satisfy
      *
-     * @generated from protobuf field: optional int32 ap_required_remaining = 15
+     * @generated from protobuf field: optional int32 ap_required_remaining = 18
      */
     apRequiredRemaining?: number;
     /**
      * Number of declines
      *
-     * @generated from protobuf field: optional int32 ap_declined_count = 16
+     * @generated from protobuf field: optional int32 ap_declined_count = 19
      */
     apDeclinedCount?: number;
     /**
      * Tasks still pending (optional)
      *
-     * @generated from protobuf field: optional int32 ap_pending_count = 17
+     * @generated from protobuf field: optional int32 ap_pending_count = 20
      */
     apPendingCount?: number;
     /**
      * Quick flag if any declines
      *
-     * @generated from protobuf field: optional bool ap_any_declined = 18
+     * @generated from protobuf field: optional bool ap_any_declined = 21
      */
     apAnyDeclined?: boolean;
     /**
      * Number of active approval policies
      *
-     * @generated from protobuf field: optional int32 ap_policies_active = 19
+     * @generated from protobuf field: optional int32 ap_policies_active = 22
      */
     apPoliciesActive?: number;
 }
@@ -843,16 +859,19 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
             { no: 7, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "signed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "sig_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "sig_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 13, name: "ap_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 14, name: "ap_collected_approved", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 15, name: "ap_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 16, name: "ap_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 17, name: "ap_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 18, name: "ap_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 19, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 10, name: "sig_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "sig_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "sig_any_declined", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "sig_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "sig_collected_valid", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "sig_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 16, name: "ap_required_total", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 17, name: "ap_collected_approved", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 18, name: "ap_required_remaining", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 19, name: "ap_declined_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 20, name: "ap_pending_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 21, name: "ap_any_declined", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 22, name: "ap_policies_active", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentMeta>): DocumentMeta {
@@ -898,34 +917,43 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
                 case /* optional int32 sig_required_remaining */ 9:
                     message.sigRequiredRemaining = reader.int32();
                     break;
-                case /* optional int32 sig_required_total */ 10:
+                case /* optional int32 sig_declined_count */ 10:
+                    message.sigDeclinedCount = reader.int32();
+                    break;
+                case /* optional int32 sig_pending_count */ 11:
+                    message.sigPendingCount = reader.int32();
+                    break;
+                case /* optional int32 sig_any_declined */ 12:
+                    message.sigAnyDeclined = reader.int32();
+                    break;
+                case /* optional int32 sig_required_total */ 13:
                     message.sigRequiredTotal = reader.int32();
                     break;
-                case /* optional int32 sig_collected_valid */ 11:
+                case /* optional int32 sig_collected_valid */ 14:
                     message.sigCollectedValid = reader.int32();
                     break;
-                case /* optional int32 sig_policies_active */ 12:
+                case /* optional int32 sig_policies_active */ 15:
                     message.sigPoliciesActive = reader.int32();
                     break;
-                case /* optional int32 ap_required_total */ 13:
+                case /* optional int32 ap_required_total */ 16:
                     message.apRequiredTotal = reader.int32();
                     break;
-                case /* optional int32 ap_collected_approved */ 14:
+                case /* optional int32 ap_collected_approved */ 17:
                     message.apCollectedApproved = reader.int32();
                     break;
-                case /* optional int32 ap_required_remaining */ 15:
+                case /* optional int32 ap_required_remaining */ 18:
                     message.apRequiredRemaining = reader.int32();
                     break;
-                case /* optional int32 ap_declined_count */ 16:
+                case /* optional int32 ap_declined_count */ 19:
                     message.apDeclinedCount = reader.int32();
                     break;
-                case /* optional int32 ap_pending_count */ 17:
+                case /* optional int32 ap_pending_count */ 20:
                     message.apPendingCount = reader.int32();
                     break;
-                case /* optional bool ap_any_declined */ 18:
+                case /* optional bool ap_any_declined */ 21:
                     message.apAnyDeclined = reader.bool();
                     break;
-                case /* optional int32 ap_policies_active */ 19:
+                case /* optional int32 ap_policies_active */ 22:
                     message.apPoliciesActive = reader.int32();
                     break;
                 default:
@@ -967,36 +995,45 @@ class DocumentMeta$Type extends MessageType<DocumentMeta> {
         /* optional int32 sig_required_remaining = 9; */
         if (message.sigRequiredRemaining !== undefined)
             writer.tag(9, WireType.Varint).int32(message.sigRequiredRemaining);
-        /* optional int32 sig_required_total = 10; */
+        /* optional int32 sig_declined_count = 10; */
+        if (message.sigDeclinedCount !== undefined)
+            writer.tag(10, WireType.Varint).int32(message.sigDeclinedCount);
+        /* optional int32 sig_pending_count = 11; */
+        if (message.sigPendingCount !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.sigPendingCount);
+        /* optional int32 sig_any_declined = 12; */
+        if (message.sigAnyDeclined !== undefined)
+            writer.tag(12, WireType.Varint).int32(message.sigAnyDeclined);
+        /* optional int32 sig_required_total = 13; */
         if (message.sigRequiredTotal !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.sigRequiredTotal);
-        /* optional int32 sig_collected_valid = 11; */
+            writer.tag(13, WireType.Varint).int32(message.sigRequiredTotal);
+        /* optional int32 sig_collected_valid = 14; */
         if (message.sigCollectedValid !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.sigCollectedValid);
-        /* optional int32 sig_policies_active = 12; */
+            writer.tag(14, WireType.Varint).int32(message.sigCollectedValid);
+        /* optional int32 sig_policies_active = 15; */
         if (message.sigPoliciesActive !== undefined)
-            writer.tag(12, WireType.Varint).int32(message.sigPoliciesActive);
-        /* optional int32 ap_required_total = 13; */
+            writer.tag(15, WireType.Varint).int32(message.sigPoliciesActive);
+        /* optional int32 ap_required_total = 16; */
         if (message.apRequiredTotal !== undefined)
-            writer.tag(13, WireType.Varint).int32(message.apRequiredTotal);
-        /* optional int32 ap_collected_approved = 14; */
+            writer.tag(16, WireType.Varint).int32(message.apRequiredTotal);
+        /* optional int32 ap_collected_approved = 17; */
         if (message.apCollectedApproved !== undefined)
-            writer.tag(14, WireType.Varint).int32(message.apCollectedApproved);
-        /* optional int32 ap_required_remaining = 15; */
+            writer.tag(17, WireType.Varint).int32(message.apCollectedApproved);
+        /* optional int32 ap_required_remaining = 18; */
         if (message.apRequiredRemaining !== undefined)
-            writer.tag(15, WireType.Varint).int32(message.apRequiredRemaining);
-        /* optional int32 ap_declined_count = 16; */
+            writer.tag(18, WireType.Varint).int32(message.apRequiredRemaining);
+        /* optional int32 ap_declined_count = 19; */
         if (message.apDeclinedCount !== undefined)
-            writer.tag(16, WireType.Varint).int32(message.apDeclinedCount);
-        /* optional int32 ap_pending_count = 17; */
+            writer.tag(19, WireType.Varint).int32(message.apDeclinedCount);
+        /* optional int32 ap_pending_count = 20; */
         if (message.apPendingCount !== undefined)
-            writer.tag(17, WireType.Varint).int32(message.apPendingCount);
-        /* optional bool ap_any_declined = 18; */
+            writer.tag(20, WireType.Varint).int32(message.apPendingCount);
+        /* optional bool ap_any_declined = 21; */
         if (message.apAnyDeclined !== undefined)
-            writer.tag(18, WireType.Varint).bool(message.apAnyDeclined);
-        /* optional int32 ap_policies_active = 19; */
+            writer.tag(21, WireType.Varint).bool(message.apAnyDeclined);
+        /* optional int32 ap_policies_active = 22; */
         if (message.apPoliciesActive !== undefined)
-            writer.tag(19, WireType.Varint).int32(message.apPoliciesActive);
+            writer.tag(22, WireType.Varint).int32(message.apPoliciesActive);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

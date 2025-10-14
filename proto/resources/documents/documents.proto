@@ -98,32 +98,36 @@ message DocumentMeta {
   optional bool signed = 8;
 
   // Signature rollups
-
   // How many signatures still needed to satisfy all policies
   optional int32 sig_required_remaining = 9;
+  // Number of declines for signatures
+  optional int32 sig_declined_count = 10;
+  // Tasks still pending (optional)
+  optional int32 sig_pending_count = 11;
+  // Quick flag if any signatures have been declines
+  optional int32 sig_any_declined = 12;
   // Total signatures needed across policies
-  optional int32 sig_required_total = 10;
+  optional int32 sig_required_total = 13;
   // Signatures collected
-  optional int32 sig_collected_valid = 11;
+  optional int32 sig_collected_valid = 14;
   // Number of active signature policies
-  optional int32 sig_policies_active = 12;
+  optional int32 sig_policies_active = 15;
 
   // Approval rollups
-
   // Total approvals needed across policies
-  optional int32 ap_required_total = 13;
+  optional int32 ap_required_total = 16;
   // Approvals collected
-  optional int32 ap_collected_approved = 14;
+  optional int32 ap_collected_approved = 17;
   // How many left to satisfy
-  optional int32 ap_required_remaining = 15;
+  optional int32 ap_required_remaining = 18;
   // Number of declines
-  optional int32 ap_declined_count = 16;
+  optional int32 ap_declined_count = 19;
   // Tasks still pending (optional)
-  optional int32 ap_pending_count = 17;
+  optional int32 ap_pending_count = 20;
   // Quick flag if any declines
-  optional bool ap_any_declined = 18;
+  optional bool ap_any_declined = 21;
   // Number of active approval policies
-  optional int32 ap_policies_active = 19;
+  optional int32 ap_policies_active = 22;
 }
 
 enum DocReference {

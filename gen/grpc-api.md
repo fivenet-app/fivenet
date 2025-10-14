@@ -3432,9 +3432,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_APPROVAL_REMOVED` | 44 |  |
 | `DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED` | 50 | Signing |
 | `DOC_ACTIVITY_TYPE_SIGNING_SIGNED` | 51 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_DECLINED` | 52 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 53 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 54 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 52 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 53 |  |
 
 
  <!-- end enums -->
@@ -3622,11 +3621,14 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `state` | [string](#string) |  |  |
 | `approved` | [bool](#bool) | optional | Overall aggregates - At least one approval policy fully satisfied |
 | `signed` | [bool](#bool) | optional |  |
-| `sig_required_remaining` | [int32](#int32) | optional | How many signatures still needed to satisfy all policies |
+| `sig_required_remaining` | [int32](#int32) | optional | Signature rollups How many signatures still needed to satisfy all policies |
+| `sig_declined_count` | [int32](#int32) | optional | Number of declines for signatures |
+| `sig_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
+| `sig_any_declined` | [int32](#int32) | optional | Quick flag if any signatures have been declines |
 | `sig_required_total` | [int32](#int32) | optional | Total signatures needed across policies |
 | `sig_collected_valid` | [int32](#int32) | optional | Signatures collected |
 | `sig_policies_active` | [int32](#int32) | optional | Number of active signature policies |
-| `ap_required_total` | [int32](#int32) | optional | Total approvals needed across policies |
+| `ap_required_total` | [int32](#int32) | optional | Approval rollups Total approvals needed across policies |
 | `ap_collected_approved` | [int32](#int32) | optional | Approvals collected |
 | `ap_required_remaining` | [int32](#int32) | optional | How many left to satisfy |
 | `ap_declined_count` | [int32](#int32) | optional | Number of declines |
@@ -3781,7 +3783,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `policy_id` | [int64](#int64) | optional | Link to originating policy (if any) |
 | `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
 | `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -3803,12 +3804,12 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
 | `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
 | `required_count` | [int32](#int32) | optional |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `assigned_count` | [int32](#int32) |  |  |
 | `approved_count` | [int32](#int32) |  |  |
 | `declined_count` | [int32](#int32) |  |  |
@@ -3830,7 +3831,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `assignee_kind` | [ApprovalAssigneeKind](#resourcesdocumentsApprovalAssigneeKind) |  |  |
@@ -3840,6 +3840,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) | optional |  |
 | `job_grade_label` | [string](#string) | optional |  |
+| `label` | [string](#string) | optional | "Leadership", "Counterparty Rep" |
 | `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
 | `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
 | `comment` | [string](#string) | optional | Optional comment on approve/decline |
@@ -3901,6 +3902,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `APPROVAL_TASK_STATUS_DECLINED` | 3 |  |
 | `APPROVAL_TASK_STATUS_EXPIRED` | 4 |  |
 | `APPROVAL_TASK_STATUS_CANCELLED` | 5 |  |
+| `APPROVAL_TASK_STATUS_COMPLETED` | 6 |  |
 
 
 
@@ -3999,7 +4001,6 @@ Policy snapshot applied to a specific version
 | `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `policy_id` | [int64](#int64) | optional | Link to originating policy (if any) |
 | `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
 | `user_id` | [int32](#int32) | optional |  |
 | `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -4024,15 +4025,23 @@ Policy snapshot applied to a specific version
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `label` | [string](#string) |  | "Leader", "Counterparty Rep" |
-| `required` | [bool](#bool) |  |  |
 | `binding_mode` | [SignatureBindingMode](#resourcesdocumentsSignatureBindingMode) |  |  |
+| `rule_kind` | [SignatureRuleKind](#resourcesdocumentsSignatureRuleKind) |  |  |
+| `required_count` | [int32](#int32) | optional |  |
 | `allowed_types` | [SignatureTypes](#resourcesdocumentsSignatureTypes) |  |  |
+| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `assigned_count` | [int32](#int32) |  |  |
+| `approved_count` | [int32](#int32) |  |  |
+| `declined_count` | [int32](#int32) |  |  |
+| `pending_count` | [int32](#int32) |  |  |
+| `any_declined` | [bool](#bool) |  |  |
+| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 
 
 
@@ -4044,7 +4053,6 @@ Policy snapshot applied to a specific version
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) |  |  |
 | `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `assignee_kind` | [SignatureAssigneeKind](#resourcesdocumentsSignatureAssigneeKind) |  | Who is the task for? 1=USER, 2=JOB |
@@ -4054,6 +4062,7 @@ Policy snapshot applied to a specific version
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) | optional |  |
 | `job_grade_label` | [string](#string) | optional |  |
+| `label` | [string](#string) | optional | "Leadership", "Counterparty Rep" |
 | `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
 | `status` | [SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
 | `comment` | [string](#string) | optional |  |
@@ -4099,8 +4108,18 @@ Policy snapshot applied to a specific version
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_BINDING_MODE_NONBINDING` | 1 | Stays but marked 'signed on vX' |
+| `SIGNATURE_BINDING_MODE_NONBINDING` | 1 | Stays but marked 'signed on X' |
 | `SIGNATURE_BINDING_MODE_BINDING` | 2 | Invalidates on content edits |
+
+
+
+### resources.documents.SignatureRuleKind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `SIGNATURE_RULE_KIND_UNSPECIFIED` | 0 |  |
+| `SIGNATURE_RULE_KIND_REQUIRE_ALL` | 1 |  |
+| `SIGNATURE_RULE_KIND_QUORUM_ANY` | 2 |  |
 
 
 
@@ -4110,8 +4129,9 @@ Policy snapshot applied to a specific version
 | ---- | ------ | ----------- |
 | `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
 | `SIGNATURE_STATUS_VALID` | 1 |  |
-| `SIGNATURE_STATUS_REVOKED` | 2 |  |
-| `SIGNATURE_STATUS_INVALID` | 3 |  |
+| `SIGNATURE_STATUS_DECLINED` | 2 |  |
+| `SIGNATURE_STATUS_REVOKED` | 3 |  |
+| `SIGNATURE_STATUS_INVALID` | 4 |  |
 
 
 
@@ -4122,7 +4142,9 @@ Policy snapshot applied to a specific version
 | `SIGNATURE_TASK_STATUS_UNSPECIFIED` | 0 |  |
 | `SIGNATURE_TASK_STATUS_PENDING` | 1 |  |
 | `SIGNATURE_TASK_STATUS_SIGNED` | 2 |  |
-| `SIGNATURE_TASK_STATUS_EXPIRED` | 3 |  |
+| `SIGNATURE_TASK_STATUS_DECLINED` | 3 |  |
+| `SIGNATURE_TASK_STATUS_EXPIRED` | 4 |  |
+| `SIGNATURE_TASK_STATUS_COMPLETED` | 5 |  |
 
 
 
@@ -8504,6 +8526,7 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | `user_id` | [int32](#int32) |  | If set -> USER task; slots is forced to 1 |
 | `job` | [string](#string) |  | If user_id == 0 -> JOB task |
 | `minimum_grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) | optional | Label of task |
 | `slots` | [int32](#int32) |  | Only for JOB tasks; number of PENDING slots to ensure (>=1) |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Optional default due date for created slots |
 | `comment` | [string](#string) | optional | Optional note set on created tasks |
@@ -8518,7 +8541,6 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `new_status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  | APPROVED or DECLINED |
 | `comment` | [string](#string) |  |  |
@@ -8545,7 +8567,7 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `task_ids` | [int64](#int64) | repeated |  |
 | `delete_all_pending` | [bool](#bool) |  | If true, ignore task_ids and delete all PENDING tasks under this policy |
 
@@ -8639,7 +8661,6 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `status` | [resources.documents.ApprovalStatus](#resourcesdocumentsApprovalStatus) | optional | Optional filters |
@@ -8753,13 +8774,13 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 
 
 ### services.documents.UpsertApprovalTasksRequest
-Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Identity rules (server-side): - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id) - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no) For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
+Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Identity rules (server-side): - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id) - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no) For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | If empty, use policy.snapshot_date |
 | `seeds` | [ApprovalTaskSeed](#servicesdocumentsApprovalTaskSeed) | repeated |  |
 
@@ -9671,7 +9692,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `new_status` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
 | `comment` | [string](#string) |  |  |
@@ -9701,7 +9721,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 
 
 
@@ -9718,7 +9738,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `task_ids` | [int64](#int64) | repeated |  |
 | `delete_all_pending` | [bool](#bool) |  | If true, ignore task_ids and delete all PENDING tasks under this policy |
 
@@ -9766,7 +9786,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policies` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) | repeated |  |
+| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
 
 
 
@@ -9803,7 +9823,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
 
@@ -9830,7 +9849,6 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `policy_id` | [int64](#int64) | optional |  |
 | `task_id` | [int64](#int64) | optional |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `status` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | optional | Optional filters |
@@ -9955,6 +9973,7 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | `user_id` | [int32](#int32) |  | If set -> USER task; slots is forced to 1 |
 | `job` | [string](#string) |  | If user_id == 0 -> JOB task |
 | `minimum_grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) | optional | Label of task |
 | `slots` | [int32](#int32) |  | Only for JOB tasks; number of PENDING slots to ensure (>=1) |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Optional default due date for created slots |
 | `comment` | [string](#string) | optional | Optional note set on created tasks |
@@ -9986,13 +10005,13 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 
 
 ### services.documents.UpsertSignatureTasksRequest
-Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Identity rules (server-side): - USER task: unique by (policy_id, snapshot_date, assignee_kind=USER, user_id) - JOB task: unique by (policy_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no) For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
+Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Identity rules (server-side): - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id) - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no) For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `policy_id` | [int64](#int64) |  |  |
+| `document_id` | [int64](#int64) |  |  |
 | `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | If empty, use policy.snapshot_date |
 | `seeds` | [SignatureTaskSeed](#servicesdocumentsSignatureTaskSeed) | repeated |  |
 
