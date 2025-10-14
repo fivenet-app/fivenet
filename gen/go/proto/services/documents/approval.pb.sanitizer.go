@@ -322,15 +322,6 @@ func (m *ReopenApprovalTaskResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Approval
-	if m.Approval != nil {
-		if v, ok := any(m.GetApproval()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Policy
 	if m.Policy != nil {
 		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {

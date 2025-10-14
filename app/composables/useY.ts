@@ -34,8 +34,8 @@ export type MaybeMap = Primitive | Y.Map<unknown>;
  * objects.  Deep objects are handled recursively via `useYSyncStructure`.
  *
  * Fallback logic:
- *   • If remote already contains items → remote wins.
- *   • Otherwise, if `opts.authoritative === true` → local array is serialised
+ *   - If remote already contains items → remote wins.
+ *   - Otherwise, if `opts.authoritative === true` → local array is serialised
  *     and pushed to the Yjs array.
  */
 export function useYArray<T extends object | Primitive>(

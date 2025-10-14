@@ -471,7 +471,7 @@ type ApprovalTask struct {
 	// Optional comment on approve/decline
 	Comment         *string              `protobuf:"bytes,15,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
 	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	DecidedAt       *timestamp.Timestamp `protobuf:"bytes,17,opt,name=decided_at,json=decidedAt,proto3,oneof" json:"decided_at,omitempty"`
+	CompletedAt     *timestamp.Timestamp `protobuf:"bytes,17,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	DueAt           *timestamp.Timestamp `protobuf:"bytes,18,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
 	DecisionCount   int32                `protobuf:"varint,19,opt,name=decision_count,json=decisionCount,proto3" json:"decision_count,omitempty"`
 	ApprovalId      *int64               `protobuf:"varint,20,opt,name=approval_id,json=approvalId,proto3,oneof" json:"approval_id,omitempty"`
@@ -619,9 +619,9 @@ func (x *ApprovalTask) GetCreatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ApprovalTask) GetDecidedAt() *timestamp.Timestamp {
+func (x *ApprovalTask) GetCompletedAt() *timestamp.Timestamp {
 	if x != nil {
-		return x.DecidedAt
+		return x.CompletedAt
 	}
 	return nil
 }
@@ -864,8 +864,7 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\xfb\n" +
-	"\n" +
+	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\x81\v\n" +
 	"\fApprovalTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
@@ -884,9 +883,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x06status\x18\x0e \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06status\x12-\n" +
 	"\acomment\x18\x0f \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\aR\acomment\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
-	"\n" +
-	"decided_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\tdecidedAt\x88\x01\x01\x12:\n" +
+	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12F\n" +
+	"\fcompleted_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\vcompletedAt\x88\x01\x01\x12:\n" +
 	"\x06due_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\x05dueAt\x88\x01\x01\x12%\n" +
 	"\x0edecision_count\x18\x13 \x01(\x05R\rdecisionCount\x12$\n" +
 	"\vapproval_id\x18\x14 \x01(\x03H\n" +
@@ -909,8 +907,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x10_job_grade_labelB\b\n" +
 	"\x06_labelB\n" +
 	"\n" +
-	"\b_commentB\r\n" +
-	"\v_decided_atB\t\n" +
+	"\b_commentB\x0f\n" +
+	"\r_completed_atB\t\n" +
 	"\a_due_atB\x0e\n" +
 	"\f_approval_idB\n" +
 	"\n" +
@@ -1017,7 +1015,7 @@ var file_resources_documents_approval_proto_depIdxs = []int32{
 	9,  // 11: resources.documents.ApprovalTask.user:type_name -> resources.users.UserShort
 	3,  // 12: resources.documents.ApprovalTask.status:type_name -> resources.documents.ApprovalTaskStatus
 	8,  // 13: resources.documents.ApprovalTask.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 14: resources.documents.ApprovalTask.decided_at:type_name -> resources.timestamp.Timestamp
+	8,  // 14: resources.documents.ApprovalTask.completed_at:type_name -> resources.timestamp.Timestamp
 	8,  // 15: resources.documents.ApprovalTask.due_at:type_name -> resources.timestamp.Timestamp
 	9,  // 16: resources.documents.ApprovalTask.creator:type_name -> resources.users.UserShort
 	10, // 17: resources.documents.ApprovalTask.document:type_name -> resources.documents.DocumentShort

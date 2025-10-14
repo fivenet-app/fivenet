@@ -29,7 +29,7 @@ const (
 	SigningService_ListSignatures_FullMethodName           = "/services.documents.SigningService/ListSignatures"
 	SigningService_RevokeSignature_FullMethodName          = "/services.documents.SigningService/RevokeSignature"
 	SigningService_DecideSignature_FullMethodName          = "/services.documents.SigningService/DecideSignature"
-	SigningService_ReopenSignature_FullMethodName          = "/services.documents.SigningService/ReopenSignature"
+	SigningService_ReopenSignatureTask_FullMethodName      = "/services.documents.SigningService/ReopenSignatureTask"
 	SigningService_RecomputeSignatureStatus_FullMethodName = "/services.documents.SigningService/RecomputeSignatureStatus"
 	SigningService_ListUsableStamps_FullMethodName         = "/services.documents.SigningService/ListUsableStamps"
 	SigningService_UpsertStamp_FullMethodName              = "/services.documents.SigningService/UpsertStamp"
@@ -54,7 +54,7 @@ type SigningServiceClient interface {
 	ListSignatures(ctx context.Context, in *ListSignaturesRequest, opts ...grpc.CallOption) (*ListSignaturesResponse, error)
 	RevokeSignature(ctx context.Context, in *RevokeSignatureRequest, opts ...grpc.CallOption) (*RevokeSignatureResponse, error)
 	DecideSignature(ctx context.Context, in *DecideSignatureRequest, opts ...grpc.CallOption) (*DecideSignatureResponse, error)
-	ReopenSignature(ctx context.Context, in *ReopenSignatureRequest, opts ...grpc.CallOption) (*ReopenSignatureResponse, error)
+	ReopenSignatureTask(ctx context.Context, in *ReopenSignatureTaskRequest, opts ...grpc.CallOption) (*ReopenSignatureTaskResponse, error)
 	// Helpers
 	RecomputeSignatureStatus(ctx context.Context, in *RecomputeSignatureStatusRequest, opts ...grpc.CallOption) (*RecomputeSignatureStatusResponse, error)
 	// Stamps
@@ -171,10 +171,10 @@ func (c *signingServiceClient) DecideSignature(ctx context.Context, in *DecideSi
 	return out, nil
 }
 
-func (c *signingServiceClient) ReopenSignature(ctx context.Context, in *ReopenSignatureRequest, opts ...grpc.CallOption) (*ReopenSignatureResponse, error) {
+func (c *signingServiceClient) ReopenSignatureTask(ctx context.Context, in *ReopenSignatureTaskRequest, opts ...grpc.CallOption) (*ReopenSignatureTaskResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ReopenSignatureResponse)
-	err := c.cc.Invoke(ctx, SigningService_ReopenSignature_FullMethodName, in, out, cOpts...)
+	out := new(ReopenSignatureTaskResponse)
+	err := c.cc.Invoke(ctx, SigningService_ReopenSignatureTask_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +239,7 @@ type SigningServiceServer interface {
 	ListSignatures(context.Context, *ListSignaturesRequest) (*ListSignaturesResponse, error)
 	RevokeSignature(context.Context, *RevokeSignatureRequest) (*RevokeSignatureResponse, error)
 	DecideSignature(context.Context, *DecideSignatureRequest) (*DecideSignatureResponse, error)
-	ReopenSignature(context.Context, *ReopenSignatureRequest) (*ReopenSignatureResponse, error)
+	ReopenSignatureTask(context.Context, *ReopenSignatureTaskRequest) (*ReopenSignatureTaskResponse, error)
 	// Helpers
 	RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error)
 	// Stamps
@@ -286,8 +286,8 @@ func (UnimplementedSigningServiceServer) RevokeSignature(context.Context, *Revok
 func (UnimplementedSigningServiceServer) DecideSignature(context.Context, *DecideSignatureRequest) (*DecideSignatureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecideSignature not implemented")
 }
-func (UnimplementedSigningServiceServer) ReopenSignature(context.Context, *ReopenSignatureRequest) (*ReopenSignatureResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReopenSignature not implemented")
+func (UnimplementedSigningServiceServer) ReopenSignatureTask(context.Context, *ReopenSignatureTaskRequest) (*ReopenSignatureTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReopenSignatureTask not implemented")
 }
 func (UnimplementedSigningServiceServer) RecomputeSignatureStatus(context.Context, *RecomputeSignatureStatusRequest) (*RecomputeSignatureStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RecomputeSignatureStatus not implemented")
@@ -502,20 +502,20 @@ func _SigningService_DecideSignature_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SigningService_ReopenSignature_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReopenSignatureRequest)
+func _SigningService_ReopenSignatureTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReopenSignatureTaskRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SigningServiceServer).ReopenSignature(ctx, in)
+		return srv.(SigningServiceServer).ReopenSignatureTask(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SigningService_ReopenSignature_FullMethodName,
+		FullMethod: SigningService_ReopenSignatureTask_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SigningServiceServer).ReopenSignature(ctx, req.(*ReopenSignatureRequest))
+		return srv.(SigningServiceServer).ReopenSignatureTask(ctx, req.(*ReopenSignatureTaskRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -640,8 +640,8 @@ var SigningService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SigningService_DecideSignature_Handler,
 		},
 		{
-			MethodName: "ReopenSignature",
-			Handler:    _SigningService_ReopenSignature_Handler,
+			MethodName: "ReopenSignatureTask",
+			Handler:    _SigningService_ReopenSignatureTask_Handler,
 		},
 		{
 			MethodName: "RecomputeSignatureStatus",

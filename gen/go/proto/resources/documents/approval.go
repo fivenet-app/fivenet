@@ -19,3 +19,27 @@ func (x *ApprovalTask) SetJob(job string) {
 func (x *ApprovalTask) SetJobLabel(label string) {
 	x.JobLabel = &label
 }
+
+func (x *Approval) GetJob() string {
+	return *x.UserJob
+}
+
+func (x *Approval) GetJobGrade() int32 {
+	return x.GetUserGrade()
+}
+
+func (x *Approval) SetJob(job string) {
+	x.UserJob = &job
+}
+
+func (x *Approval) SetJobLabel(label string) {
+	x.UserJobLabel = &label
+}
+
+func (x *Approval) SetJobGrade(grade int32) {
+	x.UserGrade = &grade
+}
+
+func (x *Approval) SetJobGradeLabel(label string) {
+	x.UserGradeLabel = &label
+}

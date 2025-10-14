@@ -14,8 +14,8 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Stamp } from "../../resources/documents/stamp";
 import { SignatureType } from "../../resources/documents/signing";
-import { SignatureStatus } from "../../resources/documents/signing";
 import { Signature } from "../../resources/documents/signing";
+import { SignatureStatus } from "../../resources/documents/signing";
 import { SignaturePolicy } from "../../resources/documents/signing";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { SignatureTask } from "../../resources/documents/signing";
@@ -120,11 +120,7 @@ export interface ListSignatureTasksRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp snapshot_date = 2
-     */
-    snapshotDate?: Timestamp;
-    /**
-     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 3
+     * @generated from protobuf field: repeated resources.documents.SignatureTaskStatus statuses = 2
      */
     statuses: SignatureTaskStatus[];
 }
@@ -133,9 +129,9 @@ export interface ListSignatureTasksRequest {
  */
 export interface ListSignatureTasksResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Signature signatures = 1
+     * @generated from protobuf field: repeated resources.documents.SignatureTask tasks = 1
      */
-    signatures: Signature[];
+    tasks: SignatureTask[];
 }
 /**
  * A declarative "ensure" for tasks under one policy/snapshot.
@@ -337,7 +333,7 @@ export interface DecideSignatureRequest {
     /**
      * @generated from protobuf field: resources.documents.SignatureTaskStatus new_status = 3
      */
-    newStatus: SignatureTaskStatus;
+    newStatus: SignatureTaskStatus; // VALID or DECLINED
     /**
      * @generated from protobuf field: string comment = 4
      */
@@ -375,26 +371,30 @@ export interface DecideSignatureResponse {
     policy?: SignaturePolicy;
 }
 /**
- * @generated from protobuf message services.documents.ReopenSignatureRequest
+ * @generated from protobuf message services.documents.ReopenSignatureTaskRequest
  */
-export interface ReopenSignatureRequest {
+export interface ReopenSignatureTaskRequest {
     /**
-     * @generated from protobuf field: int64 signature_id = 1
+     * @generated from protobuf field: int64 task_id = 1
      */
-    signatureId: number;
+    taskId: number;
     /**
      * @generated from protobuf field: string comment = 2
      */
     comment: string;
 }
 /**
- * @generated from protobuf message services.documents.ReopenSignatureResponse
+ * @generated from protobuf message services.documents.ReopenSignatureTaskResponse
  */
-export interface ReopenSignatureResponse {
+export interface ReopenSignatureTaskResponse {
     /**
-     * @generated from protobuf field: resources.documents.Signature signature = 1
+     * @generated from protobuf field: resources.documents.SignatureTask task = 1
      */
-    signature?: Signature;
+    task?: SignatureTask;
+    /**
+     * @generated from protobuf field: resources.documents.SignaturePolicy policy = 2
+     */
+    policy?: SignaturePolicy;
 }
 /**
  * @generated from protobuf message services.documents.RecomputeSignatureStatusRequest
@@ -879,8 +879,7 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
     constructor() {
         super("services.documents.ListSignatureTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "snapshot_date", kind: "message", T: () => Timestamp, options: { "buf.validate.field": { required: true } } },
-            { no: 3, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.SignatureTaskStatus", SignatureTaskStatus, "SIGNATURE_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<ListSignatureTasksRequest>): ListSignatureTasksRequest {
@@ -899,10 +898,7 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* resources.timestamp.Timestamp snapshot_date */ 2:
-                    message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
-                    break;
-                case /* repeated resources.documents.SignatureTaskStatus statuses */ 3:
+                case /* repeated resources.documents.SignatureTaskStatus statuses */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
@@ -924,12 +920,9 @@ class ListSignatureTasksRequest$Type extends MessageType<ListSignatureTasksReque
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* resources.timestamp.Timestamp snapshot_date = 2; */
-        if (message.snapshotDate)
-            Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.SignatureTaskStatus statuses = 3; */
+        /* repeated resources.documents.SignatureTaskStatus statuses = 2; */
         if (message.statuses.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
                 writer.int32(message.statuses[i]);
             writer.join();
@@ -948,12 +941,12 @@ export const ListSignatureTasksRequest = new ListSignatureTasksRequest$Type();
 class ListSignatureTasksResponse$Type extends MessageType<ListSignatureTasksResponse> {
     constructor() {
         super("services.documents.ListSignatureTasksResponse", [
-            { no: 1, name: "signatures", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Signature, options: { "codegen.itemslen.enabled": true } }
+            { no: 1, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => SignatureTask, options: { "codegen.itemslen.enabled": true } }
         ]);
     }
     create(value?: PartialMessage<ListSignatureTasksResponse>): ListSignatureTasksResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.signatures = [];
+        message.tasks = [];
         if (value !== undefined)
             reflectionMergePartial<ListSignatureTasksResponse>(this, message, value);
         return message;
@@ -963,8 +956,8 @@ class ListSignatureTasksResponse$Type extends MessageType<ListSignatureTasksResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Signature signatures */ 1:
-                    message.signatures.push(Signature.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.documents.SignatureTask tasks */ 1:
+                    message.tasks.push(SignatureTask.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -978,9 +971,9 @@ class ListSignatureTasksResponse$Type extends MessageType<ListSignatureTasksResp
         return message;
     }
     internalBinaryWrite(message: ListSignatureTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Signature signatures = 1; */
-        for (let i = 0; i < message.signatures.length; i++)
-            Signature.internalBinaryWrite(message.signatures[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.SignatureTask tasks = 1; */
+        for (let i = 0; i < message.tasks.length; i++)
+            SignatureTask.internalBinaryWrite(message.tasks[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1692,28 +1685,28 @@ class DecideSignatureResponse$Type extends MessageType<DecideSignatureResponse> 
  */
 export const DecideSignatureResponse = new DecideSignatureResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ReopenSignatureRequest$Type extends MessageType<ReopenSignatureRequest> {
+class ReopenSignatureTaskRequest$Type extends MessageType<ReopenSignatureTaskRequest> {
     constructor() {
-        super("services.documents.ReopenSignatureRequest", [
-            { no: 1, name: "signature_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
+        super("services.documents.ReopenSignatureTaskRequest", [
+            { no: 1, name: "task_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
-    create(value?: PartialMessage<ReopenSignatureRequest>): ReopenSignatureRequest {
+    create(value?: PartialMessage<ReopenSignatureTaskRequest>): ReopenSignatureTaskRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.signatureId = 0;
+        message.taskId = 0;
         message.comment = "";
         if (value !== undefined)
-            reflectionMergePartial<ReopenSignatureRequest>(this, message, value);
+            reflectionMergePartial<ReopenSignatureTaskRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenSignatureRequest): ReopenSignatureRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenSignatureTaskRequest): ReopenSignatureTaskRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 signature_id */ 1:
-                    message.signatureId = reader.int64().toNumber();
+                case /* int64 task_id */ 1:
+                    message.taskId = reader.int64().toNumber();
                     break;
                 case /* string comment */ 2:
                     message.comment = reader.string();
@@ -1729,10 +1722,10 @@ class ReopenSignatureRequest$Type extends MessageType<ReopenSignatureRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: ReopenSignatureRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 signature_id = 1; */
-        if (message.signatureId !== 0)
-            writer.tag(1, WireType.Varint).int64(message.signatureId);
+    internalBinaryWrite(message: ReopenSignatureTaskRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 task_id = 1; */
+        if (message.taskId !== 0)
+            writer.tag(1, WireType.Varint).int64(message.taskId);
         /* string comment = 2; */
         if (message.comment !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.comment);
@@ -1743,29 +1736,33 @@ class ReopenSignatureRequest$Type extends MessageType<ReopenSignatureRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ReopenSignatureRequest
+ * @generated MessageType for protobuf message services.documents.ReopenSignatureTaskRequest
  */
-export const ReopenSignatureRequest = new ReopenSignatureRequest$Type();
+export const ReopenSignatureTaskRequest = new ReopenSignatureTaskRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ReopenSignatureResponse$Type extends MessageType<ReopenSignatureResponse> {
+class ReopenSignatureTaskResponse$Type extends MessageType<ReopenSignatureTaskResponse> {
     constructor() {
-        super("services.documents.ReopenSignatureResponse", [
-            { no: 1, name: "signature", kind: "message", T: () => Signature }
+        super("services.documents.ReopenSignatureTaskResponse", [
+            { no: 1, name: "task", kind: "message", T: () => SignatureTask },
+            { no: 2, name: "policy", kind: "message", T: () => SignaturePolicy }
         ]);
     }
-    create(value?: PartialMessage<ReopenSignatureResponse>): ReopenSignatureResponse {
+    create(value?: PartialMessage<ReopenSignatureTaskResponse>): ReopenSignatureTaskResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<ReopenSignatureResponse>(this, message, value);
+            reflectionMergePartial<ReopenSignatureTaskResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenSignatureResponse): ReopenSignatureResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ReopenSignatureTaskResponse): ReopenSignatureTaskResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Signature signature */ 1:
-                    message.signature = Signature.internalBinaryRead(reader, reader.uint32(), options, message.signature);
+                case /* resources.documents.SignatureTask task */ 1:
+                    message.task = SignatureTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
+                    break;
+                case /* resources.documents.SignaturePolicy policy */ 2:
+                    message.policy = SignaturePolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1778,10 +1775,13 @@ class ReopenSignatureResponse$Type extends MessageType<ReopenSignatureResponse> 
         }
         return message;
     }
-    internalBinaryWrite(message: ReopenSignatureResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Signature signature = 1; */
-        if (message.signature)
-            Signature.internalBinaryWrite(message.signature, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: ReopenSignatureTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.SignatureTask task = 1; */
+        if (message.task)
+            SignatureTask.internalBinaryWrite(message.task, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.SignaturePolicy policy = 2; */
+        if (message.policy)
+            SignaturePolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1789,9 +1789,9 @@ class ReopenSignatureResponse$Type extends MessageType<ReopenSignatureResponse> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.documents.ReopenSignatureResponse
+ * @generated MessageType for protobuf message services.documents.ReopenSignatureTaskResponse
  */
-export const ReopenSignatureResponse = new ReopenSignatureResponse$Type();
+export const ReopenSignatureTaskResponse = new ReopenSignatureTaskResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RecomputeSignatureStatusRequest$Type extends MessageType<RecomputeSignatureStatusRequest> {
     constructor() {
@@ -2183,7 +2183,7 @@ export const SigningService = new ServiceType("services.documents.SigningService
     { name: "ListSignatures", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: ListSignaturesRequest, O: ListSignaturesResponse },
     { name: "RevokeSignature", options: { "codegen.perms.perms": { enabled: true } }, I: RevokeSignatureRequest, O: RevokeSignatureResponse },
     { name: "DecideSignature", options: { "codegen.perms.perms": { enabled: true, service: "documents.DocumentsService", name: "ListDocuments" } }, I: DecideSignatureRequest, O: DecideSignatureResponse },
-    { name: "ReopenSignature", options: { "codegen.perms.perms": { enabled: true, name: "RevokeSignature" } }, I: ReopenSignatureRequest, O: ReopenSignatureResponse },
+    { name: "ReopenSignatureTask", options: { "codegen.perms.perms": { enabled: true, name: "RevokeSignature" } }, I: ReopenSignatureTaskRequest, O: ReopenSignatureTaskResponse },
     { name: "RecomputeSignatureStatus", options: { "codegen.perms.perms": { enabled: true, name: "DeleteSignaturePolicy" } }, I: RecomputeSignatureStatusRequest, O: RecomputeSignatureStatusResponse },
     { name: "ListUsableStamps", options: { "codegen.perms.perms": { enabled: true } }, I: ListUsableStampsRequest, O: ListUsableStampsResponse },
     { name: "UpsertStamp", options: { "codegen.perms.perms": { enabled: true } }, I: UpsertStampRequest, O: UpsertStampResponse },

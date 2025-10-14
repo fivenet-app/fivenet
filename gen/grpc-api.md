@@ -3432,8 +3432,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_APPROVAL_REMOVED` | 44 |  |
 | `DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED` | 50 | Signing |
 | `DOC_ACTIVITY_TYPE_SIGNING_SIGNED` | 51 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 52 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 53 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REJECTED` | 52 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 53 |  |
+| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 54 |  |
 
 
  <!-- end enums -->
@@ -3845,7 +3846,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
 | `comment` | [string](#string) | optional | Optional comment on approve/decline |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `decided_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `decision_count` | [int32](#int32) |  |  |
 | `approval_id` | [int64](#int64) | optional |  |
@@ -4069,6 +4070,7 @@ Policy snapshot applied to a specific version
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `decision_count` | [int32](#int32) |  |  |
 | `signature_id` | [int64](#int64) | optional |  |
 | `creator_id` | [int32](#int32) |  |  |
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
@@ -8720,7 +8722,6 @@ List approvals (artifacts) for a policy/snapshot. If snapshot_date is unset, ser
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `approval` | [resources.documents.Approval](#resourcesdocumentsApproval) |  |  |
 | `task` | [resources.documents.ApprovalTask](#resourcesdocumentsApprovalTask) |  |  |
 | `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
 
@@ -9693,7 +9694,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
 | `task_id` | [int64](#int64) | optional |  |
-| `new_status` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
+| `new_status` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  | VALID or DECLINED |
 | `comment` | [string](#string) |  |  |
 | `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
 | `payload_svg` | [string](#string) | optional |  |
@@ -9823,7 +9824,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
 | `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
 
 
@@ -9835,7 +9835,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `signatures` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated |  |
+| `tasks` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) | repeated |  |
 
 
 
@@ -9915,24 +9915,25 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 
 
 
-### services.documents.ReopenSignatureRequest
+### services.documents.ReopenSignatureTaskRequest
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `signature_id` | [int64](#int64) |  |  |
+| `task_id` | [int64](#int64) |  |  |
 | `comment` | [string](#string) |  |  |
 
 
 
 
 
-### services.documents.ReopenSignatureResponse
+### services.documents.ReopenSignatureTaskResponse
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
+| `task` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) |  |  |
+| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
 
 
 
@@ -10074,7 +10075,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `ListSignatures` | [ListSignaturesRequest](#servicesdocumentsListSignaturesRequest) | [ListSignaturesResponse](#servicesdocumentsListSignaturesResponse) |Signatures |
 | `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
 | `DecideSignature` | [DecideSignatureRequest](#servicesdocumentsDecideSignatureRequest) | [DecideSignatureResponse](#servicesdocumentsDecideSignatureResponse) | |
-| `ReopenSignature` | [ReopenSignatureRequest](#servicesdocumentsReopenSignatureRequest) | [ReopenSignatureResponse](#servicesdocumentsReopenSignatureResponse) | |
+| `ReopenSignatureTask` | [ReopenSignatureTaskRequest](#servicesdocumentsReopenSignatureTaskRequest) | [ReopenSignatureTaskResponse](#servicesdocumentsReopenSignatureTaskResponse) | |
 | `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
 | `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |Stamps |
 | `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |

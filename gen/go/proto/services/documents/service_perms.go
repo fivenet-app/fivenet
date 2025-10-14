@@ -50,7 +50,7 @@ var PermsRemap = map[string]string{
 	"documents.SigningService/ListSignatureTasksInbox":  "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/ListSignatures":           "documents.DocumentsService/ListDocuments",
 	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/ReopenSignature":          "documents.SigningService/RevokeSignature",
+	"documents.SigningService/ReopenSignatureTask":      "documents.SigningService/RevokeSignature",
 }
 
 func init() {

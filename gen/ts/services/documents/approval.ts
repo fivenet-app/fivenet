@@ -354,15 +354,11 @@ export interface ReopenApprovalTaskRequest {
  */
 export interface ReopenApprovalTaskResponse {
     /**
-     * @generated from protobuf field: resources.documents.Approval approval = 1
-     */
-    approval?: Approval;
-    /**
-     * @generated from protobuf field: resources.documents.ApprovalTask task = 2
+     * @generated from protobuf field: resources.documents.ApprovalTask task = 1
      */
     task?: ApprovalTask;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 3
+     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 2
      */
     policy?: ApprovalPolicy;
 }
@@ -1539,9 +1535,8 @@ export const ReopenApprovalTaskRequest = new ReopenApprovalTaskRequest$Type();
 class ReopenApprovalTaskResponse$Type extends MessageType<ReopenApprovalTaskResponse> {
     constructor() {
         super("services.documents.ReopenApprovalTaskResponse", [
-            { no: 1, name: "approval", kind: "message", T: () => Approval },
-            { no: 2, name: "task", kind: "message", T: () => ApprovalTask },
-            { no: 3, name: "policy", kind: "message", T: () => ApprovalPolicy }
+            { no: 1, name: "task", kind: "message", T: () => ApprovalTask },
+            { no: 2, name: "policy", kind: "message", T: () => ApprovalPolicy }
         ]);
     }
     create(value?: PartialMessage<ReopenApprovalTaskResponse>): ReopenApprovalTaskResponse {
@@ -1555,13 +1550,10 @@ class ReopenApprovalTaskResponse$Type extends MessageType<ReopenApprovalTaskResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Approval approval */ 1:
-                    message.approval = Approval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
-                    break;
-                case /* resources.documents.ApprovalTask task */ 2:
+                case /* resources.documents.ApprovalTask task */ 1:
                     message.task = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
                     break;
-                case /* resources.documents.ApprovalPolicy policy */ 3:
+                case /* resources.documents.ApprovalPolicy policy */ 2:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -1576,15 +1568,12 @@ class ReopenApprovalTaskResponse$Type extends MessageType<ReopenApprovalTaskResp
         return message;
     }
     internalBinaryWrite(message: ReopenApprovalTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Approval approval = 1; */
-        if (message.approval)
-            Approval.internalBinaryWrite(message.approval, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.ApprovalTask task = 2; */
+        /* resources.documents.ApprovalTask task = 1; */
         if (message.task)
-            ApprovalTask.internalBinaryWrite(message.task, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.ApprovalPolicy policy = 3; */
+            ApprovalTask.internalBinaryWrite(message.task, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.ApprovalPolicy policy = 2; */
         if (message.policy)
-            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -223,15 +223,6 @@ func (m *ListSignatureTasksRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: SnapshotDate
-	if m.SnapshotDate != nil {
-		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Statuses
 	for idx, item := range m.Statuses {
 		_, _ = idx, item
@@ -248,8 +239,8 @@ func (m *ListSignatureTasksResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Signatures
-	for idx, item := range m.Signatures {
+	// Field: Tasks
+	for idx, item := range m.Tasks {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -385,7 +376,7 @@ func (m *RecomputeSignatureStatusResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ReopenSignatureRequest) Sanitize() error {
+func (m *ReopenSignatureTaskRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -398,14 +389,23 @@ func (m *ReopenSignatureRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *ReopenSignatureResponse) Sanitize() error {
+func (m *ReopenSignatureTaskResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Signature
-	if m.Signature != nil {
-		if v, ok := any(m.GetSignature()).(interface{ Sanitize() error }); ok {
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Task
+	if m.Task != nil {
+		if v, ok := any(m.GetTask()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

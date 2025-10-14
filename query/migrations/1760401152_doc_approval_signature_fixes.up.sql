@@ -22,6 +22,7 @@ ALTER TABLE `fivenet_documents_approval_policies` DROP COLUMN id;
 ALTER TABLE `fivenet_documents_approval_policies` ADD PRIMARY KEY (`document_id`);
 
 ALTER TABLE `fivenet_documents_approval_tasks` ADD COLUMN `label` varchar(120) DEFAULT NULL AFTER `minimum_grade`;
+ALTER TABLE `fivenet_documents_approval_tasks` CHANGE `decided_at` `completed_at` datetime(3) NULL;
 
 -- Signature system changes
 ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `label`;
@@ -48,7 +49,7 @@ ALTER TABLE `fivenet_documents_signature_policies` DROP INDEX `idx_fivenet_doc_s
 ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `label`;
 ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `required`;
 
-
+ALTER TABLE `fivenet_documents_signature_tasks` ADD COLUMN `decision_count` int NOT NULL DEFAULT 0 AFTER `due_at`;
 ALTER TABLE `fivenet_documents_signature_tasks` ADD COLUMN `label` varchar(120) DEFAULT NULL AFTER `minimum_grade`;
 
 ALTER TABLE `fivenet_documents_signature_policies` ADD COLUMN `rule_kind` SMALLINT(2) DEFAULT 1 AFTER `binding_mode`;

@@ -232,7 +232,7 @@ export const grpcMethods = [
 	'documents.SigningService/ListSignatures',
 	'documents.SigningService/RevokeSignature',
 	'documents.SigningService/DecideSignature',
-	'documents.SigningService/ReopenSignature',
+	'documents.SigningService/ReopenSignatureTask',
 	'documents.SigningService/RecomputeSignatureStatus',
 	'documents.SigningService/ListUsableStamps',
 	'documents.SigningService/UpsertStamp',

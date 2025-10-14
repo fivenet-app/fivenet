@@ -5,7 +5,7 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-// TimestampToMySQL converts a google.protobuf.Timestamp (wrapped in your resources.documents types)
+// TimestampToMySQL converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
 // to a Jet mysql expression that can be NULL.
 func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
 	if ts == nil {

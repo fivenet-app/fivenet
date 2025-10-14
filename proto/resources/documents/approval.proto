@@ -106,7 +106,7 @@ message ApprovalTask {
   ];
 
   resources.timestamp.Timestamp created_at = 16;
-  optional resources.timestamp.Timestamp decided_at = 17;
+  optional resources.timestamp.Timestamp completed_at = 17;
   optional resources.timestamp.Timestamp due_at = 18;
   int32 decision_count = 19;
 

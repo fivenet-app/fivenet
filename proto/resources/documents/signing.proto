@@ -128,15 +128,16 @@ message SignatureTask {
   resources.timestamp.Timestamp created_at = 16;
   optional resources.timestamp.Timestamp completed_at = 17;
   optional resources.timestamp.Timestamp due_at = 18;
+  int32 decision_count = 19;
 
-  optional int64 signature_id = 19;
+  optional int64 signature_id = 20;
 
-  int32 creator_id = 20;
-  optional resources.users.UserShort creator = 21;
-  string creator_job = 22 [(buf.validate.field).string.max_len = 20];
-  optional string creator_job_label = 23;
+  int32 creator_id = 21;
+  optional resources.users.UserShort creator = 22;
+  string creator_job = 23 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 24;
 
-  optional resources.documents.DocumentShort document = 24;
+  optional resources.documents.DocumentShort document = 25;
 }
 
 enum SignatureStatus {

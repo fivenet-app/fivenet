@@ -579,12 +579,13 @@ type SignatureTask struct {
 	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt     *timestamp.Timestamp `protobuf:"bytes,17,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	DueAt           *timestamp.Timestamp `protobuf:"bytes,18,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
-	SignatureId     *int64               `protobuf:"varint,19,opt,name=signature_id,json=signatureId,proto3,oneof" json:"signature_id,omitempty"`
-	CreatorId       int32                `protobuf:"varint,20,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator         *users.UserShort     `protobuf:"bytes,21,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	CreatorJob      string               `protobuf:"bytes,22,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string              `protobuf:"bytes,23,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Document        *DocumentShort       `protobuf:"bytes,24,opt,name=document,proto3,oneof" json:"document,omitempty"`
+	DecisionCount   int32                `protobuf:"varint,19,opt,name=decision_count,json=decisionCount,proto3" json:"decision_count,omitempty"`
+	SignatureId     *int64               `protobuf:"varint,20,opt,name=signature_id,json=signatureId,proto3,oneof" json:"signature_id,omitempty"`
+	CreatorId       int32                `protobuf:"varint,21,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator         *users.UserShort     `protobuf:"bytes,22,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	CreatorJob      string               `protobuf:"bytes,23,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string              `protobuf:"bytes,24,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Document        *DocumentShort       `protobuf:"bytes,25,opt,name=document,proto3,oneof" json:"document,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -736,6 +737,13 @@ func (x *SignatureTask) GetDueAt() *timestamp.Timestamp {
 		return x.DueAt
 	}
 	return nil
+}
+
+func (x *SignatureTask) GetDecisionCount() int32 {
+	if x != nil {
+		return x.DecisionCount
+	}
+	return 0
 }
 
 func (x *SignatureTask) GetSignatureId() int64 {
@@ -991,8 +999,7 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\v_started_atB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\xe0\n" +
-	"\n" +
+	"\v_deleted_atJ\x04\b\x01\x10\x02J\x04\b\x02\x10\x03\"\x87\v\n" +
 	"\rSignatureTask\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
@@ -1013,16 +1020,17 @@ const file_resources_documents_signing_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x10 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12F\n" +
 	"\fcompleted_at\x18\x11 \x01(\v2\x1e.resources.timestamp.TimestampH\bR\vcompletedAt\x88\x01\x01\x12:\n" +
-	"\x06due_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\x05dueAt\x88\x01\x01\x12&\n" +
-	"\fsignature_id\x18\x13 \x01(\x03H\n" +
+	"\x06due_at\x18\x12 \x01(\v2\x1e.resources.timestamp.TimestampH\tR\x05dueAt\x88\x01\x01\x12%\n" +
+	"\x0edecision_count\x18\x13 \x01(\x05R\rdecisionCount\x12&\n" +
+	"\fsignature_id\x18\x14 \x01(\x03H\n" +
 	"R\vsignatureId\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\x14 \x01(\x05R\tcreatorId\x129\n" +
-	"\acreator\x18\x15 \x01(\v2\x1a.resources.users.UserShortH\vR\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\x16 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\x15 \x01(\x05R\tcreatorId\x129\n" +
+	"\acreator\x18\x16 \x01(\v2\x1a.resources.users.UserShortH\vR\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x17 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12/\n" +
-	"\x11creator_job_label\x18\x17 \x01(\tH\fR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
-	"\bdocument\x18\x18 \x01(\v2\".resources.documents.DocumentShortH\rR\bdocument\x88\x01\x01B\n" +
+	"\x11creator_job_label\x18\x18 \x01(\tH\fR\x0fcreatorJobLabel\x88\x01\x01\x12C\n" +
+	"\bdocument\x18\x19 \x01(\v2\".resources.documents.DocumentShortH\rR\bdocument\x88\x01\x01B\n" +
 	"\n" +
 	"\b_user_idB\a\n" +
 	"\x05_userB\x06\n" +

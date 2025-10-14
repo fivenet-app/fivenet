@@ -116,8 +116,8 @@ func (s *Server) ListApprovalTasksInbox(
 		LIMIT(1)
 
 	// onlyFirstSlot is true if:
-	//  • USER task (there’s only one anyway), or
-	//  • JOB task with slot_no = MIN(slot_no) among pending in its group
+	//  - USER task (there’s only one anyway), or
+	//  - JOB task with slot_no = MIN(slot_no) among pending in its group
 	onlyFirstSlot := mysql.OR(
 		tApprovalTasks.AssigneeKind.EQ(
 			mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER)),
@@ -197,7 +197,7 @@ func (s *Server) ListApprovalTasksInbox(
 			tApprovalTasks.Status,
 			tApprovalTasks.Comment,
 			tApprovalTasks.CreatedAt,
-			tApprovalTasks.DecidedAt,
+			tApprovalTasks.CompletedAt,
 			tApprovalTasks.DueAt,
 			tApprovalTasks.DecisionCount,
 			tApprovalTasks.CreatorID,
@@ -266,19 +266,17 @@ func (s *Server) ListApprovalTasksInbox(
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	tasks := resp.GetTasks()
-	for i := range tasks {
-		if tasks[i].GetJob() == "" {
-			continue
+	for _, t := range tasks {
+		if t.GetJob() != "" {
+			jobInfoFn(t)
 		}
 
-		jobInfoFn(tasks[i])
-
-		if tasks[i].GetCreator() != nil {
-			jobInfoFn(tasks[i].GetCreator())
+		if t.GetCreator() != nil {
+			jobInfoFn(t.GetCreator())
 		}
 
-		if tasks[i].GetDocument() != nil {
-			doc := tasks[i].GetDocument()
+		if t.GetDocument() != nil {
+			doc := t.GetDocument()
 			if doc.GetCreator() != nil {
 				jobInfoFn(doc.GetCreator())
 			}
@@ -350,6 +348,9 @@ func (s *Server) getApprovalPolicy(
 			tApprovalPolicy.DeclinedCount,
 			tApprovalPolicy.PendingCount,
 			tApprovalPolicy.AnyDeclined,
+			tApprovalPolicy.DueAt,
+			tApprovalPolicy.StartedAt,
+			tApprovalPolicy.CompletedAt,
 			tApprovalPolicy.CreatedAt,
 			tApprovalPolicy.UpdatedAt,
 			tApprovalPolicy.DeletedAt,
@@ -358,18 +359,18 @@ func (s *Server) getApprovalPolicy(
 		WHERE(condition).
 		LIMIT(1)
 
-	policy := &documents.ApprovalPolicy{}
-	if err := stmt.QueryContext(ctx, tx, policy); err != nil {
+	pol := &documents.ApprovalPolicy{}
+	if err := stmt.QueryContext(ctx, tx, pol); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}
 
-	if policy.DocumentId == 0 {
+	if pol.GetDocumentId() == 0 {
 		return nil, nil
 	}
 
-	return policy, nil
+	return pol, nil
 }
 
 func (s *Server) getOrCreateApprovalPolicy(
@@ -379,11 +380,9 @@ func (s *Server) getOrCreateApprovalPolicy(
 ) (*documents.ApprovalPolicy, error) {
 	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies
 
-	pol, err := s.getApprovalPolicy(
-		ctx,
-		tx,
-		tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(documentId)),
-	)
+	condition := tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(documentId))
+
+	pol, err := s.getApprovalPolicy(ctx, tx, condition)
 	if err != nil {
 		return nil, err
 	}
@@ -395,27 +394,23 @@ func (s *Server) getOrCreateApprovalPolicy(
 	if _, err := tApprovalPolicy.
 		INSERT(
 			tApprovalPolicy.DocumentID,
+			tApprovalPolicy.SnapshotDate,
 			tApprovalPolicy.RuleKind,
 			tApprovalPolicy.RequiredCount,
 			tApprovalPolicy.OnEditBehavior,
-			tApprovalPolicy.SnapshotDate,
 		).
 		VALUES(
 			documentId,
+			mysql.CURRENT_TIMESTAMP(),
 			int32(documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL),
 			1,
 			int32(documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS),
-			mysql.CURRENT_TIMESTAMP(),
 		).
 		ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pol, err = s.getApprovalPolicy(
-		ctx,
-		tx,
-		tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(documentId)),
-	)
+	pol, err = s.getApprovalPolicy(ctx, tx, condition)
 	if err != nil {
 		return nil, err
 	}
@@ -431,15 +426,15 @@ func (s *Server) UpsertApprovalPolicy(
 	ctx context.Context,
 	req *pbdocuments.UpsertApprovalPolicyRequest,
 ) (*pbdocuments.UpsertApprovalPolicyResponse, error) {
-	p := req.GetPolicy()
+	pol := req.GetPolicy()
 
-	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", p.GetDocumentId()})
+	logging.InjectFields(ctx, logging.Fields{"fivenet.documents.id", pol.GetDocumentId()})
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
-		p.GetDocumentId(),
+		pol.GetDocumentId(),
 		userInfo,
 		documents.AccessLevel_ACCESS_LEVEL_STATUS,
 	)
@@ -461,22 +456,23 @@ func (s *Server) UpsertApprovalPolicy(
 	stmt := tApprovalPolicy.
 		INSERT(
 			tApprovalPolicy.DocumentID,
+			tApprovalPolicy.SnapshotDate,
 			tApprovalPolicy.RuleKind,
 			tApprovalPolicy.RequiredCount,
 			tApprovalPolicy.OnEditBehavior,
-			tApprovalPolicy.SnapshotDate,
 		).
 		VALUES(
-			p.GetDocumentId(),
-			int32(p.GetRuleKind()),
-			p.GetRequiredCount(),
-			int32(p.GetOnEditBehavior()),
+			pol.GetDocumentId(),
 			mysql.CURRENT_TIMESTAMP(), // Initialize snapshot_date
+			int32(pol.GetRuleKind()),
+			pol.GetRequiredCount(),
+			int32(pol.GetOnEditBehavior()),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tApprovalPolicy.RuleKind.SET(mysql.Int32(int32(p.GetRuleKind()))),
-			tApprovalPolicy.RequiredCount.SET(mysql.Int32(p.GetRequiredCount())),
-			tApprovalPolicy.OnEditBehavior.SET(mysql.Int32(int32(p.GetOnEditBehavior()))),
+			tApprovalPolicy.RuleKind.SET(mysql.Int32(int32(pol.GetRuleKind()))),
+			tApprovalPolicy.RequiredCount.SET(mysql.Int32(pol.GetRequiredCount())),
+			tApprovalPolicy.OnEditBehavior.SET(mysql.Int32(int32(pol.GetOnEditBehavior()))),
+			tApprovalPolicy.DueAt.SET(mysql.TimestampExp(dbutils.TimestampToMySQL(pol.GetDueAt()))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -485,11 +481,8 @@ func (s *Server) UpsertApprovalPolicy(
 
 	tApprovalPolicy = tApprovalPolicy.AS("approval_policy")
 
-	policy, err := s.getApprovalPolicy(
-		ctx,
-		tx,
-		tApprovalPolicy.DocumentID.EQ(mysql.Int64(p.GetDocumentId())),
-	)
+	condition := tApprovalPolicy.DocumentID.EQ(mysql.Int64(pol.GetDocumentId()))
+	policy, err := s.getApprovalPolicy(ctx, tx, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -502,11 +495,7 @@ func (s *Server) UpsertApprovalPolicy(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	policy, err = s.getApprovalPolicy(
-		ctx,
-		s.db,
-		tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(p.GetDocumentId())),
-	)
+	policy, err = s.getApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -565,13 +554,15 @@ func (s *Server) ListApprovalTasks(
 			tApprovalTasks.UserID,
 			tApprovalTasks.Job,
 			tApprovalTasks.MinimumGrade,
+			tApprovalTasks.Label,
 			tApprovalTasks.SlotNo,
 			tApprovalTasks.Status,
 			tApprovalTasks.Comment,
 			tApprovalTasks.CreatedAt,
-			tApprovalTasks.DecidedAt,
+			tApprovalTasks.CompletedAt,
 			tApprovalTasks.DueAt,
 			tApprovalTasks.DecisionCount,
+			tApprovalTasks.ApprovalID,
 			tApprovalTasks.CreatorID,
 			tApprovalTasks.CreatorJob,
 			tUser.ID,
@@ -592,7 +583,9 @@ func (s *Server) ListApprovalTasks(
 		LIMIT(15)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Tasks); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -605,6 +598,52 @@ func (s *Server) ListApprovalTasks(
 	}
 
 	return resp, nil
+}
+
+func (s *Server) getApprovalTask(
+	ctx context.Context,
+	tx qrm.Queryable,
+	taskId int64,
+) (*documents.ApprovalTask, error) {
+	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
+
+	stmt := tApprovalTasks.
+		SELECT(
+			tApprovalTasks.ID,
+			tApprovalTasks.DocumentID,
+			tApprovalTasks.SnapshotDate,
+			tApprovalTasks.AssigneeKind,
+			tApprovalTasks.UserID,
+			tApprovalTasks.Job,
+			tApprovalTasks.MinimumGrade,
+			tApprovalTasks.Label,
+			tApprovalTasks.SlotNo,
+			tApprovalTasks.Status,
+			tApprovalTasks.Comment,
+			tApprovalTasks.CreatedAt,
+			tApprovalTasks.CompletedAt,
+			tApprovalTasks.DueAt,
+			tApprovalTasks.DecisionCount,
+			tApprovalTasks.CreatorID,
+			tApprovalTasks.CreatorJob,
+			tApprovalTasks.ApprovalID,
+		).
+		FROM(tApprovalTasks).
+		WHERE(tApprovalTasks.ID.EQ(mysql.Int64(taskId))).
+		LIMIT(1)
+
+	var task documents.ApprovalTask
+	if err := stmt.QueryContext(ctx, tx, &task); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	if task.Id == 0 {
+		return nil, nil
+	}
+
+	return &task, nil
 }
 
 // UpsertApprovalTasks.
@@ -631,7 +670,7 @@ func (s *Server) UpsertApprovalTasks(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if pol.GetDocumentId() == 0 {
-		return nil, errswrap.NewError(nil, errorsdocuments.ErrNotFoundOrNoPerms)
+		return nil, errorsdocuments.ErrNotFoundOrNoPerms
 	}
 	// Access: must be allowed to edit the document to seed tasks
 	ok, err := s.access.CanUserAccessTarget(
@@ -663,7 +702,7 @@ func (s *Server) UpsertApprovalTasks(
 	for _, seed := range req.GetSeeds() {
 		isUser := seed.GetUserId() > 0
 		if isUser {
-			// Ensure one User task exists
+			// Ensure one USER task exists
 			var cnt struct{ C int32 }
 			if err := tApprovalTasks.
 				SELECT(mysql.COUNT(tApprovalTasks.ID).AS("C")).
@@ -718,7 +757,7 @@ func (s *Server) UpsertApprovalTasks(
 			continue
 		}
 
-		// Job target with slots
+		// JOB target with N slots
 		slots := seed.GetSlots()
 		if slots <= 0 {
 			slots = 1
@@ -838,7 +877,7 @@ func (s *Server) DeleteApprovalTasks(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if pol.GetDocumentId() == 0 {
-		return nil, errswrap.NewError(nil, errorsdocuments.ErrNotFoundOrNoPerms)
+		return nil, errorsdocuments.ErrNotFoundOrNoPerms
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -902,53 +941,7 @@ func (s *Server) DeleteApprovalTasks(
 	return &pbdocuments.DeleteApprovalTasksResponse{}, nil
 }
 
-func (s *Server) getApprovalTask(
-	ctx context.Context,
-	tx qrm.Queryable,
-	taskId int64,
-) (*documents.ApprovalTask, error) {
-	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
-
-	stmt := tApprovalTasks.
-		SELECT(
-			tApprovalTasks.ID,
-			tApprovalTasks.DocumentID,
-			tApprovalTasks.SnapshotDate,
-			tApprovalTasks.AssigneeKind,
-			tApprovalTasks.UserID,
-			tApprovalTasks.Job,
-			tApprovalTasks.MinimumGrade,
-			tApprovalTasks.Label,
-			tApprovalTasks.SlotNo,
-			tApprovalTasks.Status,
-			tApprovalTasks.Comment,
-			tApprovalTasks.CreatedAt,
-			tApprovalTasks.DecidedAt,
-			tApprovalTasks.DueAt,
-			tApprovalTasks.DecisionCount,
-			tApprovalTasks.CreatorID,
-			tApprovalTasks.CreatorJob,
-			tApprovalTasks.ApprovalID,
-		).
-		FROM(tApprovalTasks).
-		WHERE(tApprovalTasks.ID.EQ(mysql.Int64(taskId))).
-		LIMIT(1)
-
-	var task documents.ApprovalTask
-	if err := stmt.QueryContext(ctx, tx, &task); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-		}
-	}
-
-	if task.Id == 0 {
-		return nil, nil
-	}
-
-	return &task, nil
-}
-
-func (s *Server) canUserAccessTask(
+func (s *Server) canUserAccessApprovalTask(
 	ctx context.Context,
 	tx qrm.Queryable,
 	taskId int64,
@@ -959,7 +952,7 @@ func (s *Server) canUserAccessTask(
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 
-	// Optional: also verify the actor is eligible for this task
+	// TODO also need to verify the actor is eligible for this task
 	// (user_id match OR job/minimum_grade eligibility). Your existing ACL util
 	// can be invoked here if desired.
 
@@ -985,8 +978,6 @@ func (s *Server) ListApprovals(
 ) (*pbdocuments.ListApprovalsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tApprovals := table.FivenetDocumentsApprovals.AS("approval")
-
 	// Permission: viewer can list approval artifacts
 	ok, err := s.access.CanUserAccessTarget(
 		ctx,
@@ -997,6 +988,8 @@ func (s *Server) ListApprovals(
 	if err != nil || !ok {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrDocAccessViewDenied)
 	}
+
+	tApprovals := table.FivenetDocumentsApprovals.AS("approval")
 
 	// Build filters
 	condition := tApprovals.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
@@ -1039,12 +1032,21 @@ func (s *Server) ListApprovals(
 	}
 
 	// Page fetch
+	tUser := tables.User().AS("usershort")
+
 	stmt := tApprovals.
 		SELECT(
 			tApprovals.ID, tApprovals.DocumentID, tApprovals.SnapshotDate,
 			tApprovals.UserID, tApprovals.UserJob, tApprovals.UserJobGrade,
 			tApprovals.Status, tApprovals.Comment, tApprovals.TaskID,
 			tApprovals.CreatedAt, tApprovals.RevokedAt,
+			// User info
+			tUser.ID,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
+			tUser.JobGrade,
 		).
 		FROM(tApprovals).
 		WHERE(condition).
@@ -1053,6 +1055,18 @@ func (s *Server) ListApprovals(
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Approvals); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	// Enrich labels/grades for display
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for _, t := range resp.Approvals {
+		if t.GetUserJob() != "" {
+			jobInfoFn(t)
+		}
+
+		if t.GetUser() != nil {
+			jobInfoFn(t.GetUser())
+		}
 	}
 
 	return resp, nil
@@ -1162,7 +1176,7 @@ func (s *Server) RevokeApproval(
 			UPDATE().
 			SET(
 				tApprovalTasks.Status.SET(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING))),
-				tApprovalTasks.DecidedAt.SET(mysql.TimestampExp(mysql.NULL)),
+				tApprovalTasks.CompletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 			).
 			WHERE(
 				tApprovalTasks.ID.EQ(mysql.Int64(apr.GetTaskId())),
@@ -1226,9 +1240,6 @@ func (s *Server) DecideApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrDocAccessViewDenied)
 	}
 
-	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
-	tApprovals := table.FivenetDocumentsApprovals
-
 	// Resolve policy, doc, snapshot
 	pol, err := s.getOrCreateApprovalPolicy(
 		ctx,
@@ -1240,6 +1251,9 @@ func (s *Server) DecideApproval(
 	}
 
 	snap := pol.GetSnapshotDate().AsTime()
+
+	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
+	tApprovals := table.FivenetDocumentsApprovals
 
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -1254,11 +1268,6 @@ func (s *Server) DecideApproval(
 
 	// Path A: task_id provided -> validate and mark decided
 	if req.GetTaskId() > 0 {
-		// Additional per-task access check (user or eligible job/min_grade)
-		if err := s.canUserAccessTask(ctx, s.db, req.GetTaskId(), userInfo); err != nil {
-			return nil, err
-		}
-
 		// Load the task row
 		decidedTask, err = s.getApprovalTask(ctx, tx, req.GetTaskId())
 		if err != nil {
@@ -1296,7 +1305,7 @@ func (s *Server) DecideApproval(
 			UPDATE(
 				tApprovalTasks.Status,
 				tApprovalTasks.DecisionCount,
-				tApprovalTasks.DecidedAt,
+				tApprovalTasks.CompletedAt,
 				tApprovalTasks.Comment,
 			).
 			SET(
@@ -1321,7 +1330,7 @@ func (s *Server) DecideApproval(
 			SELECT(
 				tApprovalTasks.ID, tApprovalTasks.DocumentID, tApprovalTasks.SnapshotDate, tApprovalTasks.AssigneeKind,
 				tApprovalTasks.UserID, tApprovalTasks.Job, tApprovalTasks.MinimumGrade, tApprovalTasks.Label, tApprovalTasks.SlotNo,
-				tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.DecidedAt, tApprovalTasks.DueAt,
+				tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.CompletedAt, tApprovalTasks.DueAt,
 				tApprovalTasks.DecisionCount, tApprovalTasks.CreatorID, tApprovalTasks.CreatorJob, tApprovalTasks.ApprovalID,
 			).
 			FROM(tApprovalTasks).
@@ -1348,7 +1357,7 @@ func (s *Server) DecideApproval(
 				SELECT(
 					tApprovalTasks.ID, tApprovalTasks.DocumentID, tApprovalTasks.SnapshotDate, tApprovalTasks.AssigneeKind,
 					tApprovalTasks.UserID, tApprovalTasks.Job, tApprovalTasks.MinimumGrade, tApprovalTasks.Label, tApprovalTasks.SlotNo,
-					tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.DecidedAt, tApprovalTasks.DueAt,
+					tApprovalTasks.Status, tApprovalTasks.Comment, tApprovalTasks.CreatedAt, tApprovalTasks.CompletedAt, tApprovalTasks.DueAt,
 					tApprovalTasks.DecisionCount, tApprovalTasks.CreatorID, tApprovalTasks.CreatorJob, tApprovalTasks.ApprovalID,
 				).
 				FROM(tApprovalTasks).
@@ -1380,7 +1389,7 @@ func (s *Server) DecideApproval(
 				SET(
 					tApprovalTasks.Status.SET(mysql.Int32(int32(req.GetNewStatus()))),
 					tApprovalTasks.DecisionCount.SET(tApprovalTasks.DecisionCount.ADD(mysql.Int32(1))),
-					tApprovalTasks.DecidedAt.SET(mysql.TimestampT(now)),
+					tApprovalTasks.CompletedAt.SET(mysql.TimestampT(now)),
 					tApprovalTasks.Comment.SET(mysql.String(req.GetComment())),
 				).
 				WHERE(tApprovalTasks.ID.EQ(mysql.Int64(candidate.GetId()))).
@@ -1399,7 +1408,10 @@ func (s *Server) DecideApproval(
 		Status int32 `alias:"status"`
 	}
 	if err := tApprovals.
-		SELECT(tApprovals.ID.AS("id"), tApprovals.Status.AS("status")).
+		SELECT(
+			tApprovals.ID.AS("id"),
+			tApprovals.Status.AS("status"),
+		).
 		FROM(tApprovals).
 		WHERE(mysql.AND(
 			tApprovals.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
@@ -1414,7 +1426,7 @@ func (s *Server) DecideApproval(
 	if existing.ID > 0 &&
 		(existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_APPROVED) ||
 			existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_DECLINED)) {
-		return nil, errswrap.NewError(nil, errorsdocuments.ErrApprovalTaskAlreadyHandled)
+		return nil, errorsdocuments.ErrApprovalTaskAlreadyHandled
 	}
 
 	// Write/UPSERT approval artifact (unique per (document_id, snapshot_date, user_id))
@@ -1425,12 +1437,17 @@ func (s *Server) DecideApproval(
 		artifactStatus = documents.ApprovalStatus_APPROVAL_STATUS_DECLINED
 	}
 
-	// Insert or update the approval artifact for this user in the current round
+	// Insert or update the approval artifact for this user
 	if _, err := tApprovals.
 		INSERT(
-			tApprovals.DocumentID, tApprovals.SnapshotDate,
-			tApprovals.UserID, tApprovals.UserJob, tApprovals.UserJobGrade,
-			tApprovals.Status, tApprovals.Comment, tApprovals.TaskID,
+			tApprovals.DocumentID,
+			tApprovals.SnapshotDate,
+			tApprovals.UserID,
+			tApprovals.UserJob,
+			tApprovals.UserJobGrade,
+			tApprovals.Status,
+			tApprovals.Comment,
+			tApprovals.TaskID,
 		).
 		VALUES(
 			pol.GetDocumentId(), snap,
@@ -1452,9 +1469,17 @@ func (s *Server) DecideApproval(
 	var artifact documents.Approval
 	if err := tApprovals.
 		SELECT(
-			tApprovals.ID, tApprovals.DocumentID, tApprovals.SnapshotDate,
-			tApprovals.UserID, tApprovals.UserJob, tApprovals.UserJobGrade,
-			tApprovals.Status, tApprovals.Comment, tApprovals.TaskID, tApprovals.CreatedAt, tApprovals.RevokedAt,
+			tApprovals.ID,
+			tApprovals.DocumentID,
+			tApprovals.SnapshotDate,
+			tApprovals.UserID,
+			tApprovals.UserJob,
+			tApprovals.UserJobGrade,
+			tApprovals.Status,
+			tApprovals.Comment,
+			tApprovals.TaskID,
+			tApprovals.CreatedAt,
+			tApprovals.RevokedAt,
 		).
 		FROM(tApprovals).
 		WHERE(mysql.AND(
@@ -1479,7 +1504,7 @@ func (s *Server) DecideApproval(
 		decidedTask.ApprovalId = &artifact.Id
 		// reflect status in the in-memory task too
 		decidedTask.Status = req.GetNewStatus()
-		decidedTask.DecidedAt = timestamp.New(now)
+		decidedTask.CompletedAt = timestamp.New(now)
 		comment := req.GetComment()
 		decidedTask.Comment = &comment
 	}
@@ -1529,7 +1554,7 @@ func (s *Server) ReopenApprovalTask(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.canUserAccessTask(ctx, s.db, req.GetTaskId(), userInfo); err != nil {
+	if err := s.canUserAccessApprovalTask(ctx, s.db, req.GetTaskId(), userInfo); err != nil {
 		return nil, err
 	}
 
@@ -1546,7 +1571,7 @@ func (s *Server) ReopenApprovalTask(
 		UPDATE().
 		SET(
 			tApprovalTasks.Status.SET(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING))),
-			tApprovalTasks.DecidedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tApprovalTasks.CompletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 		).
 		WHERE(
 			tApprovalTasks.ID.EQ(mysql.Int64(req.GetTaskId())),
@@ -1631,11 +1656,9 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 
 	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies.AS("approval_policy")
 
-	pol, err := s.getApprovalPolicy(
-		ctx,
-		s.db,
-		tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-	)
+	condition := tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))
+
+	pol, err := s.getApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, err
 	}
@@ -1644,11 +1667,7 @@ func (s *Server) RecomputeApprovalPolicyCounters(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	pol, err = s.getApprovalPolicy(
-		ctx,
-		s.db,
-		tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId())),
-	)
+	pol, err = s.getApprovalPolicy(ctx, s.db, condition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1847,7 +1866,7 @@ func (s *Server) handleApprovalOnEditBehaviors(
 		UPDATE().
 		SET(
 			tApprovalTasks.Status.SET(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING))),
-			tApprovalTasks.DecidedAt.SET(mysql.TimestampExp(mysql.NULL)),
+			tApprovalTasks.CompletedAt.SET(mysql.TimestampExp(mysql.NULL)),
 		).
 		WHERE(tApprovalTasks.DocumentID.EQ(mysql.Int64(doc.GetId()))).
 		ExecContext(ctx, tx); err != nil {

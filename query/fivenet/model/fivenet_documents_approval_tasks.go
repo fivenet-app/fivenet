@@ -26,7 +26,7 @@ type FivenetDocumentsApprovalTasks struct {
 	DueAt         *time.Time `json:"due_at"`
 	DecisionCount int32      `json:"decision_count"`
 	CreatedAt     *time.Time `json:"created_at"`
-	DecidedAt     *time.Time `json:"decided_at"`
+	CompletedAt   *time.Time `json:"completed_at"`
 	ApprovalID    *int64     `json:"approval_id"`
 	CreatorID     *int32     `json:"creator_id"`
 	CreatorJob    *string    `json:"creator_job"`

@@ -157,9 +157,8 @@ message ReopenApprovalTaskRequest {
 }
 
 message ReopenApprovalTaskResponse {
-  resources.documents.Approval approval = 1;
-  resources.documents.ApprovalTask task = 2;
-  resources.documents.ApprovalPolicy policy = 3;
+  resources.documents.ApprovalTask task = 1;
+  resources.documents.ApprovalPolicy policy = 2;
 }
 
 message RecomputeApprovalPolicyCountersRequest {

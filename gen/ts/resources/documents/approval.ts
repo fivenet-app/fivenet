@@ -154,9 +154,9 @@ export interface ApprovalTask {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp decided_at = 17
+     * @generated from protobuf field: optional resources.timestamp.Timestamp completed_at = 17
      */
-    decidedAt?: Timestamp;
+    completedAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 18
      */
@@ -542,7 +542,7 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
             { no: 14, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 15, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 16, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 17, name: "decided_at", kind: "message", T: () => Timestamp },
+            { no: 17, name: "completed_at", kind: "message", T: () => Timestamp },
             { no: 18, name: "due_at", kind: "message", T: () => Timestamp },
             { no: 19, name: "decision_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 20, name: "approval_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -617,8 +617,8 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
                 case /* resources.timestamp.Timestamp created_at */ 16:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* optional resources.timestamp.Timestamp decided_at */ 17:
-                    message.decidedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.decidedAt);
+                case /* optional resources.timestamp.Timestamp completed_at */ 17:
+                    message.completedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.completedAt);
                     break;
                 case /* optional resources.timestamp.Timestamp due_at */ 18:
                     message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
@@ -701,9 +701,9 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
         /* resources.timestamp.Timestamp created_at = 16; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp decided_at = 17; */
-        if (message.decidedAt)
-            Timestamp.internalBinaryWrite(message.decidedAt, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp completed_at = 17; */
+        if (message.completedAt)
+            Timestamp.internalBinaryWrite(message.completedAt, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp due_at = 18; */
         if (message.dueAt)
             Timestamp.internalBinaryWrite(message.dueAt, writer.tag(18, WireType.LengthDelimited).fork(), options).join();

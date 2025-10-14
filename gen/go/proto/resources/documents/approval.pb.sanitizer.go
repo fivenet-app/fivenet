@@ -158,6 +158,15 @@ func (m *ApprovalTask) Sanitize() error {
 		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
 	}
 
+	// Field: CompletedAt
+	if m.CompletedAt != nil {
+		if v, ok := any(m.GetCompletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -182,15 +191,6 @@ func (m *ApprovalTask) Sanitize() error {
 	// Field: CreatorJobLabel
 	if m.CreatorJobLabel != nil {
 		*m.CreatorJobLabel = htmlsanitizer.Sanitize(*m.CreatorJobLabel)
-	}
-
-	// Field: DecidedAt
-	if m.DecidedAt != nil {
-		if v, ok := any(m.GetDecidedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: Document

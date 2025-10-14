@@ -30,3 +30,27 @@ func (x *SignatureTypes) HasType(t SignatureType) bool {
 
 	return slices.Contains(x.Types, t)
 }
+
+func (x *Signature) GetJob() string {
+	return *x.UserJob
+}
+
+func (x *Signature) GetJobGrade() int32 {
+	return x.GetUserGrade()
+}
+
+func (x *Signature) SetJob(job string) {
+	x.UserJob = &job
+}
+
+func (x *Signature) SetJobLabel(label string) {
+	x.UserJobLabel = &label
+}
+
+func (x *Signature) SetJobGrade(grade int32) {
+	x.UserGrade = &grade
+}
+
+func (x *Signature) SetJobGradeLabel(label string) {
+	x.UserGradeLabel = &label
+}

@@ -13,8 +13,8 @@ import type { ListUsableStampsResponse } from "./signing";
 import type { ListUsableStampsRequest } from "./signing";
 import type { RecomputeSignatureStatusResponse } from "./signing";
 import type { RecomputeSignatureStatusRequest } from "./signing";
-import type { ReopenSignatureResponse } from "./signing";
-import type { ReopenSignatureRequest } from "./signing";
+import type { ReopenSignatureTaskResponse } from "./signing";
+import type { ReopenSignatureTaskRequest } from "./signing";
 import type { DecideSignatureResponse } from "./signing";
 import type { DecideSignatureRequest } from "./signing";
 import type { RevokeSignatureResponse } from "./signing";
@@ -91,9 +91,9 @@ export interface ISigningServiceClient {
      */
     decideSignature(input: DecideSignatureRequest, options?: RpcOptions): UnaryCall<DecideSignatureRequest, DecideSignatureResponse>;
     /**
-     * @generated from protobuf rpc: ReopenSignature
+     * @generated from protobuf rpc: ReopenSignatureTask
      */
-    reopenSignature(input: ReopenSignatureRequest, options?: RpcOptions): UnaryCall<ReopenSignatureRequest, ReopenSignatureResponse>;
+    reopenSignatureTask(input: ReopenSignatureTaskRequest, options?: RpcOptions): UnaryCall<ReopenSignatureTaskRequest, ReopenSignatureTaskResponse>;
     /**
      * Helpers
      *
@@ -203,11 +203,11 @@ export class SigningServiceClient implements ISigningServiceClient, ServiceInfo 
         return stackIntercept<DecideSignatureRequest, DecideSignatureResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: ReopenSignature
+     * @generated from protobuf rpc: ReopenSignatureTask
      */
-    reopenSignature(input: ReopenSignatureRequest, options?: RpcOptions): UnaryCall<ReopenSignatureRequest, ReopenSignatureResponse> {
+    reopenSignatureTask(input: ReopenSignatureTaskRequest, options?: RpcOptions): UnaryCall<ReopenSignatureTaskRequest, ReopenSignatureTaskResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ReopenSignatureRequest, ReopenSignatureResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ReopenSignatureTaskRequest, ReopenSignatureTaskResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * Helpers

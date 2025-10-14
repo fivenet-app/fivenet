@@ -17,23 +17,24 @@ type fivenetDocumentsSignatureTasksTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	DocumentID   mysql.ColumnInteger
-	SnapshotDate mysql.ColumnTimestamp
-	AssigneeKind mysql.ColumnInteger
-	UserID       mysql.ColumnInteger
-	Job          mysql.ColumnString
-	MinimumGrade mysql.ColumnInteger
-	Label        mysql.ColumnString
-	SlotNo       mysql.ColumnInteger
-	Status       mysql.ColumnInteger
-	Comment      mysql.ColumnString
-	CreatedAt    mysql.ColumnTimestamp
-	CompletedAt  mysql.ColumnTimestamp
-	DueAt        mysql.ColumnTimestamp
-	SignatureID  mysql.ColumnInteger
-	CreatorID    mysql.ColumnInteger
-	CreatorJob   mysql.ColumnString
+	ID            mysql.ColumnInteger
+	DocumentID    mysql.ColumnInteger
+	SnapshotDate  mysql.ColumnTimestamp
+	AssigneeKind  mysql.ColumnInteger
+	UserID        mysql.ColumnInteger
+	Job           mysql.ColumnString
+	MinimumGrade  mysql.ColumnInteger
+	Label         mysql.ColumnString
+	SlotNo        mysql.ColumnInteger
+	Status        mysql.ColumnInteger
+	Comment       mysql.ColumnString
+	CreatedAt     mysql.ColumnTimestamp
+	CompletedAt   mysql.ColumnTimestamp
+	DueAt         mysql.ColumnTimestamp
+	DecisionCount mysql.ColumnInteger
+	SignatureID   mysql.ColumnInteger
+	CreatorID     mysql.ColumnInteger
+	CreatorJob    mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -75,49 +76,51 @@ func newFivenetDocumentsSignatureTasksTable(schemaName, tableName, alias string)
 
 func newFivenetDocumentsSignatureTasksTableImpl(schemaName, tableName, alias string) fivenetDocumentsSignatureTasksTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		DocumentIDColumn   = mysql.IntegerColumn("document_id")
-		SnapshotDateColumn = mysql.TimestampColumn("snapshot_date")
-		AssigneeKindColumn = mysql.IntegerColumn("assignee_kind")
-		UserIDColumn       = mysql.IntegerColumn("user_id")
-		JobColumn          = mysql.StringColumn("job")
-		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
-		LabelColumn        = mysql.StringColumn("label")
-		SlotNoColumn       = mysql.IntegerColumn("slot_no")
-		StatusColumn       = mysql.IntegerColumn("status")
-		CommentColumn      = mysql.StringColumn("comment")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		CompletedAtColumn  = mysql.TimestampColumn("completed_at")
-		DueAtColumn        = mysql.TimestampColumn("due_at")
-		SignatureIDColumn  = mysql.IntegerColumn("signature_id")
-		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
-		defaultColumns     = mysql.ColumnList{SlotNoColumn, CreatedAtColumn}
+		IDColumn            = mysql.IntegerColumn("id")
+		DocumentIDColumn    = mysql.IntegerColumn("document_id")
+		SnapshotDateColumn  = mysql.TimestampColumn("snapshot_date")
+		AssigneeKindColumn  = mysql.IntegerColumn("assignee_kind")
+		UserIDColumn        = mysql.IntegerColumn("user_id")
+		JobColumn           = mysql.StringColumn("job")
+		MinimumGradeColumn  = mysql.IntegerColumn("minimum_grade")
+		LabelColumn         = mysql.StringColumn("label")
+		SlotNoColumn        = mysql.IntegerColumn("slot_no")
+		StatusColumn        = mysql.IntegerColumn("status")
+		CommentColumn       = mysql.StringColumn("comment")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		CompletedAtColumn   = mysql.TimestampColumn("completed_at")
+		DueAtColumn         = mysql.TimestampColumn("due_at")
+		DecisionCountColumn = mysql.IntegerColumn("decision_count")
+		SignatureIDColumn   = mysql.IntegerColumn("signature_id")
+		CreatorIDColumn     = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn    = mysql.StringColumn("creator_job")
+		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, DecisionCountColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, CreatedAtColumn, CompletedAtColumn, DueAtColumn, DecisionCountColumn, SignatureIDColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns      = mysql.ColumnList{SlotNoColumn, CreatedAtColumn, DecisionCountColumn}
 	)
 
 	return fivenetDocumentsSignatureTasksTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		DocumentID:   DocumentIDColumn,
-		SnapshotDate: SnapshotDateColumn,
-		AssigneeKind: AssigneeKindColumn,
-		UserID:       UserIDColumn,
-		Job:          JobColumn,
-		MinimumGrade: MinimumGradeColumn,
-		Label:        LabelColumn,
-		SlotNo:       SlotNoColumn,
-		Status:       StatusColumn,
-		Comment:      CommentColumn,
-		CreatedAt:    CreatedAtColumn,
-		CompletedAt:  CompletedAtColumn,
-		DueAt:        DueAtColumn,
-		SignatureID:  SignatureIDColumn,
-		CreatorID:    CreatorIDColumn,
-		CreatorJob:   CreatorJobColumn,
+		ID:            IDColumn,
+		DocumentID:    DocumentIDColumn,
+		SnapshotDate:  SnapshotDateColumn,
+		AssigneeKind:  AssigneeKindColumn,
+		UserID:        UserIDColumn,
+		Job:           JobColumn,
+		MinimumGrade:  MinimumGradeColumn,
+		Label:         LabelColumn,
+		SlotNo:        SlotNoColumn,
+		Status:        StatusColumn,
+		Comment:       CommentColumn,
+		CreatedAt:     CreatedAtColumn,
+		CompletedAt:   CompletedAtColumn,
+		DueAt:         DueAtColumn,
+		DecisionCount: DecisionCountColumn,
+		SignatureID:   SignatureIDColumn,
+		CreatorID:     CreatorIDColumn,
+		CreatorJob:    CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

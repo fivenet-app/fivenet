@@ -179,27 +179,31 @@ export interface SignatureTask {
      */
     dueAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional int64 signature_id = 19
+     * @generated from protobuf field: int32 decision_count = 19
+     */
+    decisionCount: number;
+    /**
+     * @generated from protobuf field: optional int64 signature_id = 20
      */
     signatureId?: number;
     /**
-     * @generated from protobuf field: int32 creator_id = 20
+     * @generated from protobuf field: int32 creator_id = 21
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 21
+     * @generated from protobuf field: optional resources.users.UserShort creator = 22
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: string creator_job = 22
+     * @generated from protobuf field: string creator_job = 23
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 23
+     * @generated from protobuf field: optional string creator_job_label = 24
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentShort document = 24
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 25
      */
     document?: DocumentShort;
 }
@@ -654,12 +658,13 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
             { no: 16, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 17, name: "completed_at", kind: "message", T: () => Timestamp },
             { no: 18, name: "due_at", kind: "message", T: () => Timestamp },
-            { no: 19, name: "signature_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 20, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 21, name: "creator", kind: "message", T: () => UserShort },
-            { no: 22, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 23, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 24, name: "document", kind: "message", T: () => DocumentShort }
+            { no: 19, name: "decision_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 20, name: "signature_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 21, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 22, name: "creator", kind: "message", T: () => UserShort },
+            { no: 23, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
+            { no: 24, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 25, name: "document", kind: "message", T: () => DocumentShort }
         ]);
     }
     create(value?: PartialMessage<SignatureTask>): SignatureTask {
@@ -669,6 +674,7 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
         message.assigneeKind = 0;
         message.slotNo = 0;
         message.status = 0;
+        message.decisionCount = 0;
         message.creatorId = 0;
         message.creatorJob = "";
         if (value !== undefined)
@@ -731,22 +737,25 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
                 case /* optional resources.timestamp.Timestamp due_at */ 18:
                     message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
                     break;
-                case /* optional int64 signature_id */ 19:
+                case /* int32 decision_count */ 19:
+                    message.decisionCount = reader.int32();
+                    break;
+                case /* optional int64 signature_id */ 20:
                     message.signatureId = reader.int64().toNumber();
                     break;
-                case /* int32 creator_id */ 20:
+                case /* int32 creator_id */ 21:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 21:
+                case /* optional resources.users.UserShort creator */ 22:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 22:
+                case /* string creator_job */ 23:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 23:
+                case /* optional string creator_job_label */ 24:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* optional resources.documents.DocumentShort document */ 24:
+                case /* optional resources.documents.DocumentShort document */ 25:
                     message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
                 default:
@@ -812,24 +821,27 @@ class SignatureTask$Type extends MessageType<SignatureTask> {
         /* optional resources.timestamp.Timestamp due_at = 18; */
         if (message.dueAt)
             Timestamp.internalBinaryWrite(message.dueAt, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* optional int64 signature_id = 19; */
+        /* int32 decision_count = 19; */
+        if (message.decisionCount !== 0)
+            writer.tag(19, WireType.Varint).int32(message.decisionCount);
+        /* optional int64 signature_id = 20; */
         if (message.signatureId !== undefined)
-            writer.tag(19, WireType.Varint).int64(message.signatureId);
-        /* int32 creator_id = 20; */
+            writer.tag(20, WireType.Varint).int64(message.signatureId);
+        /* int32 creator_id = 21; */
         if (message.creatorId !== 0)
-            writer.tag(20, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 21; */
+            writer.tag(21, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 22; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 22; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 23; */
         if (message.creatorJob !== "")
-            writer.tag(22, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 23; */
+            writer.tag(23, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 24; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(23, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* optional resources.documents.DocumentShort document = 24; */
+            writer.tag(24, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* optional resources.documents.DocumentShort document = 25; */
         if (message.document)
-            DocumentShort.internalBinaryWrite(message.document, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(25, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
