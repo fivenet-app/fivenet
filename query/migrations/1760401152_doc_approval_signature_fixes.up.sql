@@ -25,9 +25,6 @@ ALTER TABLE `fivenet_documents_approval_tasks` ADD COLUMN `label` varchar(120) D
 ALTER TABLE `fivenet_documents_approval_tasks` CHANGE `decided_at` `completed_at` datetime(3) NULL;
 
 -- Signature system changes
-ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `label`;
-ALTER TABLE `fivenet_documents_signature_policies` DROP COLUMN `required`;
-
 ALTER TABLE `fivenet_documents_signatures` DROP FOREIGN KEY `fk_fivenet_doc_signatures_policy_id`;
 ALTER TABLE `fivenet_documents_signatures` DROP KEY `uq_fivenet_doc_signature_user_round`;
 ALTER TABLE `fivenet_documents_signatures` DROP COLUMN `policy_id`;
