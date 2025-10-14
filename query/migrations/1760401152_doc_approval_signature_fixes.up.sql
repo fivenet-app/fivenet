@@ -68,4 +68,4 @@ ALTER TABLE `fivenet_documents_meta` ADD COLUMN `sig_declined_count` int NOT NUL
 ALTER TABLE `fivenet_documents_meta` ADD COLUMN `sig_pending_count` int NOT NULL DEFAULT 0 AFTER `sig_declined_count`;
 ALTER TABLE `fivenet_documents_meta` ADD COLUMN `sig_any_declined` tinyint(1) NOT NULL DEFAULT 0 AFTER `sig_pending_count`;
 
-COMMIT:
+COMMIT;
