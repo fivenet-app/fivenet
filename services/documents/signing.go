@@ -1490,16 +1490,16 @@ func (s *Server) DecideSignature(
 		VALUES(
 			pol.GetDocumentId(), snap,
 			userInfo.GetUserId(), userInfo.GetJob(), mysql.Int32(int32(userInfo.GetJobGrade())),
-			int32(req.GetType()), req.GetPayloadSvg(), nilOrInt64(req.GetStampId()),
-			int32(artifactStatus), req.GetComment(), nilOrInt64(taskIDForArtifact),
+			int32(req.GetType()), req.GetPayloadSvg(), dbutils.Int64P(req.GetStampId()),
+			int32(artifactStatus), req.GetComment(), dbutils.Int64P(taskIDForArtifact),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tSignatures.Type.SET(mysql.Int32(int32(req.GetType()))),
 			tSignatures.PayloadSvg.SET(mysql.String(req.GetPayloadSvg())),
-			tSignatures.StampID.SET(nilOrInt64(req.GetStampId())),
+			tSignatures.StampID.SET(dbutils.Int64P(req.GetStampId())),
 			tSignatures.Status.SET(mysql.Int32(int32(artifactStatus))),
 			tSignatures.Comment.SET(mysql.String(req.GetComment())),
-			tSignatures.TaskID.SET(nilOrInt64(taskIDForArtifact)),
+			tSignatures.TaskID.SET(dbutils.Int64P(taskIDForArtifact)),
 		)
 	if _, err := ins.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -1873,14 +1873,6 @@ func (s *Server) recomputeSignaturePolicyTx(
 	}
 
 	return nil
-}
-
-// nilOrInt64 helpers for nullable ints (IDs).
-func nilOrInt64(v int64) mysql.IntegerExpression {
-	if v == 0 {
-		return mysql.IntExp(mysql.NULL)
-	}
-	return mysql.Int64(v)
 }
 
 // handleSignatureBindingMode checks the document's signature policies and,

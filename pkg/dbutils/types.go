@@ -14,3 +14,11 @@ func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
 
 	return mysql.TimestampT(ts.AsTime())
 }
+
+// Int64P helper for nullable int64 (IDs), assumes that 0 is null.
+func Int64P(v int64) mysql.IntegerExpression {
+	if v == 0 {
+		return mysql.IntExp(mysql.NULL)
+	}
+	return mysql.Int64(v)
+}

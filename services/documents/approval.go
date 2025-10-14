@@ -1452,12 +1452,12 @@ func (s *Server) DecideApproval(
 		VALUES(
 			pol.GetDocumentId(), snap,
 			int32(userInfo.GetUserId()), userInfo.GetJob(), mysql.Int32(userInfo.GetJobGrade()),
-			artifactStatus, req.GetComment(), nilOrInt64(taskIDForArtifact),
+			artifactStatus, req.GetComment(), dbutils.Int64P(taskIDForArtifact),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tApprovals.Status.SET(mysql.Int32(int32(artifactStatus))),
 			tApprovals.Comment.SET(mysql.String(req.GetComment())),
-			tApprovals.TaskID.SET(nilOrInt64(taskIDForArtifact)),
+			tApprovals.TaskID.SET(dbutils.Int64P(taskIDForArtifact)),
 		).
 		ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
