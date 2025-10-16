@@ -99,6 +99,8 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                                         :color="approvalTaskStatusToColor(task.status)"
                                     />
 
+                                    <p v-if="task.label && task.label !== ''">{{ task.label }}</p>
+
                                     <CitizenInfoPopover v-if="task.userId" :user="task.user" :user-id="task.userId" />
                                     <p v-else>
                                         {{ task.jobLabel }}
