@@ -7,7 +7,7 @@
 
 package model
 
-type FivenetDocumentsSignaturesStampsAccess struct {
+type FivenetDocumentsStampsAccess struct {
 	ID           int64  `sql:"primary_key" json:"id"`
 	TargetID     int64  `json:"target_id"`
 	Job          string `json:"job"`

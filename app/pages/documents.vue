@@ -18,12 +18,6 @@ const itemsLeft = computed<(NavigationMenuItem & { permission?: Perms })[]>(() =
         icon: 'i-mdi-approval',
         permission: 'documents.DocumentsService/ListDocuments',
     },
-    {
-        label: t('common.signatures'),
-        to: '/documents/signatures',
-        icon: 'i-mdi-signature',
-        permission: 'TODOService/TODOMethod',
-    },
 ]);
 
 const itemsRight = computed<(NavigationMenuItem & { permission?: Perms })[]>(() => [
@@ -31,7 +25,7 @@ const itemsRight = computed<(NavigationMenuItem & { permission?: Perms })[]>(() 
         label: t('common.stamp', 2),
         to: '/documents/stamps',
         icon: 'i-mdi-stamper',
-        permission: 'documents.SigningService/ListUsableStamps',
+        permission: 'documents.StampsService/ListUsableStamps' as Perms,
     },
 ]);
 </script>

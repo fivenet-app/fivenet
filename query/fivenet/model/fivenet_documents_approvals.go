@@ -19,6 +19,8 @@ type FivenetDocumentsApprovals struct {
 	UserID       int32      `json:"user_id"`
 	UserJob      string     `json:"user_job"`
 	UserJobGrade *int32     `json:"user_job_grade"`
+	PayloadSvg   string     `json:"payload_svg"`
+	StampID      *int64     `json:"stamp_id"`
 	Status       int16      `json:"status"`
 	Comment      *string    `json:"comment"`
 	CreatedAt    *time.Time `json:"created_at"`

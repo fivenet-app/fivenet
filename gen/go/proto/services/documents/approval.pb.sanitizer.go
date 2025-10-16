@@ -49,6 +49,11 @@ func (m *DecideApprovalRequest) Sanitize() error {
 	// Field: Comment
 	m.Comment = htmlsanitizer.Sanitize(m.Comment)
 
+	// Field: PayloadSvg
+	if m.PayloadSvg != nil {
+		*m.PayloadSvg = htmlsanitizer.SanitizeSVG(*m.PayloadSvg)
+	}
+
 	return nil
 }
 

@@ -96,14 +96,15 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 break;
 
             case 'UNAUTHENTICATED':
-                useAuthStore().clearAuthInfo();
-
                 notification.type = NotificationType.WARNING;
                 notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 
+                logger.warn('Unauthenticated - logging out user');
+                useAuthStore().clearAuthInfo();
+
                 // Only update the redirect query param if it isn't already set
-                await navigateTo({
+                navigateTo({
                     name: 'auth-login',
                     query: { redirect: route.query.redirect ?? route.fullPath },
                     replace: true,

@@ -2,7 +2,7 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 
 package permsdocuments
 
@@ -14,7 +14,7 @@ const (
 	ApprovalServicePerm  perms.Category = "documents.ApprovalService"
 	CollabServicePerm    perms.Category = "documents.CollabService"
 	DocumentsServicePerm perms.Category = "documents.DocumentsService"
-	SigningServicePerm   perms.Category = "documents.SigningService"
+	StampsServicePerm    perms.Category = "documents.StampsService"
 
 	ApprovalServiceDeleteApprovalTasksPerm             perms.Name = "DeleteApprovalTasks"
 	ApprovalServiceRevokeApprovalPerm                  perms.Name = "RevokeApproval"
@@ -48,12 +48,7 @@ const (
 	DocumentsServiceToggleDocumentPinTypesPermField    perms.Key  = "Types"
 	DocumentsServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocumentsServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
-	SigningServiceDeleteSignaturePolicyPerm            perms.Name = "DeleteSignaturePolicy"
-	SigningServiceDeleteSignatureTasksPerm             perms.Name = "DeleteSignatureTasks"
-	SigningServiceDeleteStampPerm                      perms.Name = "DeleteStamp"
-	SigningServiceListUsableStampsPerm                 perms.Name = "ListUsableStamps"
-	SigningServiceRevokeSignaturePerm                  perms.Name = "RevokeSignature"
-	SigningServiceUpsertSignaturePolicyPerm            perms.Name = "UpsertSignaturePolicy"
-	SigningServiceUpsertSignatureTasksPerm             perms.Name = "UpsertSignatureTasks"
-	SigningServiceUpsertStampPerm                      perms.Name = "UpsertStamp"
+	StampsServiceDeleteStampPerm                       perms.Name = "DeleteStamp"
+	StampsServiceListUsableStampsPerm                  perms.Name = "ListUsableStamps"
+	StampsServiceUpsertStampPerm                       perms.Name = "UpsertStamp"
 )

@@ -5,6 +5,7 @@ package resources.documents;
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/documents/documents.proto";
+import "resources/documents/stamp.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 
@@ -34,7 +35,7 @@ message ApprovalPolicy {
   OnEditBehavior on_edit_behavior = 5 [(buf.validate.field).enum.defined_only = true];
   ApprovalRuleKind rule_kind = 6 [(buf.validate.field).enum.defined_only = true];
   optional int32 required_count = 7 [(buf.validate.field).int32.gte = 1];
-  optional resources.timestamp.Timestamp due_at = 8;
+  bool signature_required = 8;
 
   int32 assigned_count = 9;
   int32 approved_count = 10;
@@ -91,33 +92,34 @@ message ApprovalTask {
       method: "StripTags"
     }
   ];
+  bool signature_required = 13;
 
   // >=1; meaningful only for Job tasks; always 1 for User
-  int32 slot_no = 13 [(buf.validate.field).int32 = {
+  int32 slot_no = 14 [(buf.validate.field).int32 = {
     gte: 1
     lte: 5
   }];
 
-  ApprovalTaskStatus status = 14 [(buf.validate.field).enum.defined_only = true];
+  ApprovalTaskStatus status = 15 [(buf.validate.field).enum.defined_only = true];
   // Optional comment on approve/decline
-  optional string comment = 15 [
+  optional string comment = 16 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 
-  resources.timestamp.Timestamp created_at = 16;
-  optional resources.timestamp.Timestamp completed_at = 17;
-  optional resources.timestamp.Timestamp due_at = 18;
-  int32 decision_count = 19;
+  resources.timestamp.Timestamp created_at = 17;
+  optional resources.timestamp.Timestamp completed_at = 18;
+  optional resources.timestamp.Timestamp due_at = 19;
+  int32 decision_count = 20;
 
-  optional int64 approval_id = 20;
+  optional int64 approval_id = 21;
 
-  int32 creator_id = 21;
-  optional resources.users.UserShort creator = 22;
-  string creator_job = 23 [(buf.validate.field).string.max_len = 20];
-  optional string creator_job_label = 24;
+  int32 creator_id = 22;
+  optional resources.users.UserShort creator = 23;
+  string creator_job = 24 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 25;
 
-  optional resources.documents.DocumentShort document = 25;
+  optional resources.documents.DocumentShort document = 26;
 }
 
 enum ApprovalStatus {
@@ -145,12 +147,20 @@ message Approval {
   optional int32 user_grade = 10;
   optional string user_grade_label = 11;
 
-  ApprovalStatus status = 12 [(buf.validate.field).enum.defined_only = true];
-  optional string comment = 13 [
+  // SVG path, typed preview, stamp fill, etc.
+  optional string payload_svg = 12 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    method: "SanitizeSVG"
+  }];
+  optional int64 stamp_id = 13;
+  optional resources.documents.Stamp stamp = 14;
+
+  ApprovalStatus status = 15 [(buf.validate.field).enum.defined_only = true];
+  optional string comment = 16 [
     (buf.validate.field).string.max_len = 500,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 
-  resources.timestamp.Timestamp created_at = 14;
-  optional resources.timestamp.Timestamp revoked_at = 15;
+  resources.timestamp.Timestamp created_at = 17;
+  optional resources.timestamp.Timestamp revoked_at = 18;
 }

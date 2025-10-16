@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "buf/validate/validate.proto";
+import "codegen/itemslen/itemslen.proto";
+import "codegen/perms/perms.proto";
+import "resources/common/database/database.proto";
+import "resources/documents/stamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message ListUsableStampsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  // If set, only stamps usable for signing this document are returned
+  optional int64 document_id = 2;
+}
+
+message ListUsableStampsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.Stamp stamps = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message UpsertStampRequest {
+  resources.documents.Stamp stamp = 1 [(buf.validate.field).required = true];
+}
+
+message UpsertStampResponse {
+  resources.documents.Stamp stamp = 1;
+}
+
+message DeleteStampRequest {
+  int64 stamp_id = 1 [(buf.validate.field).int64.gt = 0];
+}
+
+message DeleteStampResponse {}
+
+service StampsService {
+  option (codegen.perms.perms_svc) = {
+    order: 57
+    icon: "i-mdi-stamper"
+  };
+
+  rpc ListUsableStamps(ListUsableStampsRequest) returns (ListUsableStampsResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc UpsertStamp(UpsertStampRequest) returns (UpsertStampResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+  rpc DeleteStamp(DeleteStampRequest) returns (DeleteStampResponse) {
+    option (codegen.perms.perms) = {enabled: true};
+  }
+}

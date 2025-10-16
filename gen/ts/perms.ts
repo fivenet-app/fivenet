@@ -7,7 +7,7 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
@@ -77,14 +77,9 @@ export type Perms =
 	| 'documents.DocumentsService/ToggleDocument'
 	| 'documents.DocumentsService/ToggleDocumentPin'
 	| 'documents.DocumentsService/UpdateDocument'
-	| 'documents.SigningService/DeleteSignaturePolicy'
-	| 'documents.SigningService/DeleteSignatureTasks'
-	| 'documents.SigningService/DeleteStamp'
-	| 'documents.SigningService/ListUsableStamps'
-	| 'documents.SigningService/RevokeSignature'
-	| 'documents.SigningService/UpsertSignaturePolicy'
-	| 'documents.SigningService/UpsertSignatureTasks'
-	| 'documents.SigningService/UpsertStamp'
+	| 'documents.StampsService/DeleteStamp'
+	| 'documents.StampsService/ListUsableStamps'
+	| 'documents.StampsService/UpsertStamp'
 	| 'jobs.ConductService/CreateConductEntry'
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'

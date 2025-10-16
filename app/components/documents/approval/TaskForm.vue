@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
-import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TaskFormEntry from './TaskFormEntry.vue';
 
@@ -33,9 +32,10 @@ const schema = z.object({
             z.object({
                 ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
                 userId: z.coerce.number(),
-                job: z.custom<Job>().optional(),
-                minimumGrade: z.custom<JobGrade>().optional(),
+                job: z.coerce.string().optional(),
+                minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
                 label: z.string().max(120).default(''),
+                signatureRequired: z.coerce.boolean().default(false),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
@@ -43,9 +43,10 @@ const schema = z.object({
             z.object({
                 ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
                 userId: z.coerce.number().optional().default(0),
-                job: z.custom<Job>(),
-                minimumGrade: z.custom<JobGrade>(),
+                job: z.coerce.string(),
+                minimumGrade: z.coerce.number().min(game.startJobGrade),
                 label: z.string().max(120).default(''),
+                signatureRequired: z.coerce.boolean().default(false),
                 slots: z.coerce.number().min(1).max(10).optional().default(1),
                 dueAt: z.date().optional(),
                 comment: z.coerce.string().max(255).optional(),
@@ -62,13 +63,10 @@ const state = reactive<Schema>({
         {
             ruleKind: ApprovalAssigneeKind.JOB_GRADE,
             userId: 0,
-            job: activeChar.value?.job
-                ? { name: activeChar.value.job, label: activeChar.value.jobLabel ?? activeChar.value.job, grades: [] }
-                : undefined,
-            minimumGrade: activeChar.value?.jobGrade
-                ? { grade: activeChar.value.jobGrade, label: `${activeChar.value.jobGrade}`, jobName: activeChar.value.job }
-                : undefined,
+            job: activeChar.value?.job,
+            minimumGrade: activeChar.value?.jobGrade ?? game.startJobGrade,
             label: '',
+            signatureRequired: false,
             slots: 1,
         },
     ],
@@ -80,8 +78,10 @@ async function upsertApprovalTasks(values: Schema): Promise<void> {
             documentId: props.documentId,
             seeds: values.tasks.map((task) => ({
                 userId: task.userId,
-                job: task.job?.name ?? '',
-                minimumGrade: task.minimumGrade?.grade ?? game.startJobGrade,
+                job: task.job ?? '',
+                minimumGrade: task.minimumGrade ?? game.startJobGrade,
+                label: task.label,
+                signatureRequired: task.signatureRequired,
                 slots: task.slots,
                 dueAt: task.dueAt ? toTimestamp(task.dueAt) : undefined,
                 comment: task.comment,
@@ -114,6 +114,7 @@ function addNewTask(): void {
         job: undefined,
         minimumGrade: undefined,
         label: '',
+        signatureRequired: false,
         slots: 1,
     });
 }

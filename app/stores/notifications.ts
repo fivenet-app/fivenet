@@ -213,13 +213,13 @@ export const useNotificationsStore = defineStore(
 
             ready.value = false;
             notificationsEvents.emit('ready', false);
-            abort.value.abort();
+            abort.value?.abort();
             logger.debug('Stopping Stream');
             abort.value = undefined;
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value.signal.aborted) return;
+            if (!abort.value || abort.value?.signal?.aborted) return;
 
             reconnecting.value = true;
 

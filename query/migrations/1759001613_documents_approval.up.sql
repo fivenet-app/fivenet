@@ -96,6 +96,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_approvals` (
   `user_job` varchar(20) NOT NULL,
   `user_job_grade` int DEFAULT NULL,
 
+  `payload_svg` longtext NOT NULL,
+  `stamp_id` bigint(20) unsigned DEFAULT NULL,
+
   -- 1=APPROVED, 2=DECLINED, 3=REVOKED (optional)
   `status` smallint(2) NOT NULL,
   `comment` varchar(500) DEFAULT NULL,

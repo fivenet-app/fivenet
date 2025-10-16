@@ -3430,11 +3430,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `DOC_ACTIVITY_TYPE_APPROVAL_REJECTED` | 42 |  |
 | `DOC_ACTIVITY_TYPE_APPROVAL_REVOKED` | 43 |  |
 | `DOC_ACTIVITY_TYPE_APPROVAL_REMOVED` | 44 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED` | 50 | Signing |
-| `DOC_ACTIVITY_TYPE_SIGNING_SIGNED` | 51 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REJECTED` | 52 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REVOKED` | 53 |  |
-| `DOC_ACTIVITY_TYPE_SIGNING_REMOVED` | 54 |  |
 
 
  <!-- end enums -->
@@ -3773,6 +3768,75 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+## resources/documents/stamp.proto
+
+
+### resources.documents.Stamp
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `name` | [string](#string) |  |  |
+| `svg_template` | [string](#string) |  | Parameterized SVG with slots |
+| `access` | [StampAccess](#resourcesdocumentsStampAccess) |  |  |
+
+
+
+
+
+### resources.documents.StampAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [StampJobAccess](#resourcesdocumentsStampJobAccess) | repeated |  |
+
+
+
+
+
+### resources.documents.StampJobAccess
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `target_id` | [int64](#int64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [StampAccessLevel](#resourcesdocumentsStampAccessLevel) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.documents.StampAccessLevel
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `STAMP_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `STAMP_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `STAMP_ACCESS_LEVEL_USE` | 2 |  |
+| `STAMP_ACCESS_LEVEL_MANAGE` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/documents/approval.proto
 
 
@@ -3791,6 +3855,9 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `user_job_label` | [string](#string) | optional |  |
 | `user_grade` | [int32](#int32) | optional |  |
 | `user_grade_label` | [string](#string) | optional |  |
+| `payload_svg` | [string](#string) | optional | SVG path, typed preview, stamp fill, etc. |
+| `stamp_id` | [int64](#int64) | optional |  |
+| `stamp` | [Stamp](#resourcesdocumentsStamp) | optional |  |
 | `status` | [ApprovalStatus](#resourcesdocumentsApprovalStatus) |  |  |
 | `comment` | [string](#string) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
@@ -3810,7 +3877,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
 | `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
 | `required_count` | [int32](#int32) | optional |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `signature_required` | [bool](#bool) |  |  |
 | `assigned_count` | [int32](#int32) |  |  |
 | `approved_count` | [int32](#int32) |  |  |
 | `declined_count` | [int32](#int32) |  |  |
@@ -3842,6 +3909,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `minimum_grade` | [int32](#int32) | optional |  |
 | `job_grade_label` | [string](#string) | optional |  |
 | `label` | [string](#string) | optional | "Leadership", "Counterparty Rep" |
+| `signature_required` | [bool](#bool) |  |  |
 | `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
 | `status` | [ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  |  |
 | `comment` | [string](#string) | optional | Optional comment on approve/decline |
@@ -3982,252 +4050,6 @@ Policy snapshot applied to a specific version
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/documents/signing.proto
-
-
-### resources.documents.Signature
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `task_id` | [int64](#int64) | optional | Link to originating task (if any) |
-| `user_id` | [int32](#int32) | optional |  |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `user_job` | [string](#string) | optional |  |
-| `user_job_label` | [string](#string) | optional |  |
-| `user_grade` | [int32](#int32) | optional |  |
-| `user_grade_label` | [string](#string) | optional |  |
-| `type` | [SignatureType](#resourcesdocumentsSignatureType) |  |  |
-| `payload_svg` | [string](#string) |  | SVG path, typed preview, stamp fill, etc. |
-| `stamp_id` | [int64](#int64) | optional | If type == STAMP |
-| `status` | [SignatureStatus](#resourcesdocumentsSignatureStatus) |  |  |
-| `comment` | [string](#string) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `revoked_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.documents.SignaturePolicy
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `binding_mode` | [SignatureBindingMode](#resourcesdocumentsSignatureBindingMode) |  |  |
-| `rule_kind` | [SignatureRuleKind](#resourcesdocumentsSignatureRuleKind) |  |  |
-| `required_count` | [int32](#int32) | optional |  |
-| `allowed_types` | [SignatureTypes](#resourcesdocumentsSignatureTypes) |  |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `assigned_count` | [int32](#int32) |  |  |
-| `approved_count` | [int32](#int32) |  |  |
-| `declined_count` | [int32](#int32) |  |  |
-| `pending_count` | [int32](#int32) |  |  |
-| `any_declined` | [bool](#bool) |  |  |
-| `started_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-
-
-
-
-
-### resources.documents.SignatureTask
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `assignee_kind` | [SignatureAssigneeKind](#resourcesdocumentsSignatureAssigneeKind) |  | Who is the task for? 1=USER, 2=JOB |
-| `user_id` | [int32](#int32) | optional | USER assignment |
-| `user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `job` | [string](#string) | optional | JOB assignment (claimable by any eligible user) |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) | optional |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `label` | [string](#string) | optional | "Leadership", "Counterparty Rep" |
-| `slot_no` | [int32](#int32) |  | >=1; meaningful only for Job tasks; always 1 for User |
-| `status` | [SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  |  |
-| `comment` | [string](#string) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `completed_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `decision_count` | [int32](#int32) |  |  |
-| `signature_id` | [int64](#int64) | optional |  |
-| `creator_id` | [int32](#int32) |  |  |
-| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `document` | [DocumentShort](#resourcesdocumentsDocumentShort) | optional |  |
-
-
-
-
-
-### resources.documents.SignatureTypes
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `types` | [SignatureType](#resourcesdocumentsSignatureType) | repeated |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.documents.SignatureAssigneeKind
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_ASSIGNEE_KIND_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_ASSIGNEE_KIND_USER` | 1 |  |
-| `SIGNATURE_ASSIGNEE_KIND_JOB_GRADE` | 2 |  |
-
-
-
-### resources.documents.SignatureBindingMode
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_BINDING_MODE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_BINDING_MODE_NONBINDING` | 1 | Stays but marked 'signed on X' |
-| `SIGNATURE_BINDING_MODE_BINDING` | 2 | Invalidates on content edits |
-
-
-
-### resources.documents.SignatureRuleKind
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_RULE_KIND_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_RULE_KIND_REQUIRE_ALL` | 1 |  |
-| `SIGNATURE_RULE_KIND_QUORUM_ANY` | 2 |  |
-
-
-
-### resources.documents.SignatureStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_STATUS_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_STATUS_VALID` | 1 |  |
-| `SIGNATURE_STATUS_DECLINED` | 2 |  |
-| `SIGNATURE_STATUS_REVOKED` | 3 |  |
-| `SIGNATURE_STATUS_INVALID` | 4 |  |
-
-
-
-### resources.documents.SignatureTaskStatus
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_TASK_STATUS_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_TASK_STATUS_PENDING` | 1 |  |
-| `SIGNATURE_TASK_STATUS_SIGNED` | 2 |  |
-| `SIGNATURE_TASK_STATUS_DECLINED` | 3 |  |
-| `SIGNATURE_TASK_STATUS_EXPIRED` | 4 |  |
-| `SIGNATURE_TASK_STATUS_COMPLETED` | 5 |  |
-
-
-
-### resources.documents.SignatureType
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `SIGNATURE_TYPE_UNSPECIFIED` | 0 |  |
-| `SIGNATURE_TYPE_FREEHAND` | 1 |  |
-| `SIGNATURE_TYPE_TYPED` | 2 |  |
-| `SIGNATURE_TYPE_STAMP` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/documents/stamp.proto
-
-
-### resources.documents.Stamp
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `name` | [string](#string) |  |  |
-| `svg_template` | [string](#string) |  | Parameterized SVG with slots |
-| `access` | [StampAccess](#resourcesdocumentsStampAccess) |  |  |
-
-
-
-
-
-### resources.documents.StampAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [StampJobAccess](#resourcesdocumentsStampJobAccess) | repeated |  |
-
-
-
-
-
-### resources.documents.StampJobAccess
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [int64](#int64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `target_id` | [int64](#int64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [StampAccessLevel](#resourcesdocumentsStampAccessLevel) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.documents.StampAccessLevel
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `STAMP_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `STAMP_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `STAMP_ACCESS_LEVEL_USE` | 2 |  |
-| `STAMP_ACCESS_LEVEL_MANAGE` | 3 |  |
-
 
  <!-- end enums -->
 
@@ -8529,6 +8351,7 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | `job` | [string](#string) |  | If user_id == 0 -> JOB task |
 | `minimum_grade` | [int32](#int32) |  |  |
 | `label` | [string](#string) | optional | Label of task |
+| `signature_required` | [bool](#bool) |  |  |
 | `slots` | [int32](#int32) |  | Only for JOB tasks; number of PENDING slots to ensure (>=1) |
 | `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Optional default due date for created slots |
 | `comment` | [string](#string) | optional | Optional note set on created tasks |
@@ -8546,6 +8369,8 @@ A declarative "ensure" for tasks under one policy/snapshot. Exactly one target m
 | `task_id` | [int64](#int64) | optional |  |
 | `new_status` | [resources.documents.ApprovalTaskStatus](#resourcesdocumentsApprovalTaskStatus) |  | APPROVED or DECLINED |
 | `comment` | [string](#string) |  |  |
+| `payload_svg` | [string](#string) | optional |  |
+| `stamp_id` | [int64](#int64) | optional | When type=STAMP |
 
 
 
@@ -9684,73 +9509,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
-## services/documents/signing.proto
-
-
-### services.documents.DecideSignatureRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `task_id` | [int64](#int64) | optional |  |
-| `new_status` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) |  | VALID or DECLINED |
-| `comment` | [string](#string) |  |  |
-| `type` | [resources.documents.SignatureType](#resourcesdocumentsSignatureType) |  |  |
-| `payload_svg` | [string](#string) | optional |  |
-| `stamp_id` | [int64](#int64) | optional | When type=STAMP |
-
-
-
-
-
-### services.documents.DecideSignatureResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
-| `task` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) |  |  |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.DeleteSignaturePolicyRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.DeleteSignaturePolicyResponse
-
-
-
-
-
-### services.documents.DeleteSignatureTasksRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `task_ids` | [int64](#int64) | repeated |  |
-| `delete_all_pending` | [bool](#bool) |  | If true, ignore task_ids and delete all PENDING tasks under this policy |
-
-
-
-
-
-### services.documents.DeleteSignatureTasksResponse
-
-
-
+## services/documents/stamps.proto
 
 
 ### services.documents.DeleteStampRequest
@@ -9765,105 +9524,6 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 ### services.documents.DeleteStampResponse
-
-
-
-
-
-### services.documents.ListSignaturePoliciesRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-
-
-
-
-
-### services.documents.ListSignaturePoliciesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.ListSignatureTasksInboxRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resourcescommondatabasePaginationRequest) |  |  |
-| `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
-| `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
-
-
-
-
-
-### services.documents.ListSignatureTasksInboxResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
-| `tasks` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) | repeated |  |
-
-
-
-
-
-### services.documents.ListSignatureTasksRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `statuses` | [resources.documents.SignatureTaskStatus](#resourcesdocumentsSignatureTaskStatus) | repeated |  |
-
-
-
-
-
-### services.documents.ListSignatureTasksResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `tasks` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) | repeated |  |
-
-
-
-
-
-### services.documents.ListSignaturesRequest
-List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, server defaults to policy.snapshot_date.
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `task_id` | [int64](#int64) | optional |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
-| `status` | [resources.documents.SignatureStatus](#resourcesdocumentsSignatureStatus) | optional | Optional filters |
-| `user_id` | [int32](#int32) | optional | Filter by signer |
-
-
-
-
-
-### services.documents.ListSignaturesResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signatures` | [resources.documents.Signature](#resourcesdocumentsSignature) | repeated |  |
 
 
 
@@ -9888,146 +9548,6 @@ List signatures (artifacts) for a policy/snapshot. If snapshot_date is unset, se
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resourcescommondatabasePaginationResponse) |  |  |
 | `stamps` | [resources.documents.Stamp](#resourcesdocumentsStamp) | repeated |  |
-
-
-
-
-
-### services.documents.RecomputeSignatureStatusRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-
-
-
-
-
-### services.documents.RecomputeSignatureStatusResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.ReopenSignatureTaskRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `task_id` | [int64](#int64) |  |  |
-| `comment` | [string](#string) |  |  |
-
-
-
-
-
-### services.documents.ReopenSignatureTaskResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `task` | [resources.documents.SignatureTask](#resourcesdocumentsSignatureTask) |  |  |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.RevokeSignatureRequest
-Revoke a signature artifact by id (sets status=REVOKED, revoked_at=now, comment=...).
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signature_id` | [int64](#int64) |  |  |
-| `comment` | [string](#string) |  |  |
-
-
-
-
-
-### services.documents.RevokeSignatureResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signature` | [resources.documents.Signature](#resourcesdocumentsSignature) |  |  |
-
-
-
-
-
-### services.documents.SignatureTaskSeed
-A declarative "ensure" for tasks under one policy/snapshot. Exactly one target must be set: user_id OR (job + minimum_grade).
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | If set -> USER task; slots is forced to 1 |
-| `job` | [string](#string) |  | If user_id == 0 -> JOB task |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `label` | [string](#string) | optional | Label of task |
-| `slots` | [int32](#int32) |  | Only for JOB tasks; number of PENDING slots to ensure (>=1) |
-| `due_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Optional default due date for created slots |
-| `comment` | [string](#string) | optional | Optional note set on created tasks |
-
-
-
-
-
-### services.documents.UpsertSignaturePolicyRequest
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.UpsertSignaturePolicyResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  |  |
-
-
-
-
-
-### services.documents.UpsertSignatureTasksRequest
-Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Identity rules (server-side): - USER task: unique by (document_id, snapshot_date, assignee_kind=USER, user_id) - JOB task: unique by (document_id, snapshot_date, assignee_kind=JOB, job, minimum_grade, slot_no) For JOB seeds with slots=N, the server ensures there are at least N PENDING slots (slot_no 1..N).
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [int64](#int64) |  |  |
-| `snapshot_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | If empty, use policy.snapshot_date |
-| `seeds` | [SignatureTaskSeed](#servicesdocumentsSignatureTaskSeed) | repeated |  |
-
-
-
-
-
-### services.documents.UpsertSignatureTasksResponse
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `tasks_created` | [int32](#int32) |  | Number of new task rows inserted |
-| `tasks_ensured` | [int32](#int32) |  | Number of requested targets already satisfied (no-op) |
-| `policy` | [resources.documents.SignaturePolicy](#resourcesdocumentsSignaturePolicy) |  | Echo (optional convenience) |
 
 
 
@@ -10061,23 +9581,11 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
  <!-- end HasExtensions -->
 
 
-### services.documents.SigningService
+### services.documents.StampsService
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListSignatureTasksInbox` | [ListSignatureTasksInboxRequest](#servicesdocumentsListSignatureTasksInboxRequest) | [ListSignatureTasksInboxResponse](#servicesdocumentsListSignatureTasksInboxResponse) |Inbox (for tasks assigned to user) |
-| `ListSignaturePolicies` | [ListSignaturePoliciesRequest](#servicesdocumentsListSignaturePoliciesRequest) | [ListSignaturePoliciesResponse](#servicesdocumentsListSignaturePoliciesResponse) |Policies |
-| `UpsertSignaturePolicy` | [UpsertSignaturePolicyRequest](#servicesdocumentsUpsertSignaturePolicyRequest) | [UpsertSignaturePolicyResponse](#servicesdocumentsUpsertSignaturePolicyResponse) | |
-| `DeleteSignaturePolicy` | [DeleteSignaturePolicyRequest](#servicesdocumentsDeleteSignaturePolicyRequest) | [DeleteSignaturePolicyResponse](#servicesdocumentsDeleteSignaturePolicyResponse) | |
-| `ListSignatureTasks` | [ListSignatureTasksRequest](#servicesdocumentsListSignatureTasksRequest) | [ListSignatureTasksResponse](#servicesdocumentsListSignatureTasksResponse) |Tasks |
-| `UpsertSignatureTasks` | [UpsertSignatureTasksRequest](#servicesdocumentsUpsertSignatureTasksRequest) | [UpsertSignatureTasksResponse](#servicesdocumentsUpsertSignatureTasksResponse) | |
-| `DeleteSignatureTasks` | [DeleteSignatureTasksRequest](#servicesdocumentsDeleteSignatureTasksRequest) | [DeleteSignatureTasksResponse](#servicesdocumentsDeleteSignatureTasksResponse) | |
-| `ListSignatures` | [ListSignaturesRequest](#servicesdocumentsListSignaturesRequest) | [ListSignaturesResponse](#servicesdocumentsListSignaturesResponse) |Signatures |
-| `RevokeSignature` | [RevokeSignatureRequest](#servicesdocumentsRevokeSignatureRequest) | [RevokeSignatureResponse](#servicesdocumentsRevokeSignatureResponse) | |
-| `DecideSignature` | [DecideSignatureRequest](#servicesdocumentsDecideSignatureRequest) | [DecideSignatureResponse](#servicesdocumentsDecideSignatureResponse) | |
-| `ReopenSignatureTask` | [ReopenSignatureTaskRequest](#servicesdocumentsReopenSignatureTaskRequest) | [ReopenSignatureTaskResponse](#servicesdocumentsReopenSignatureTaskResponse) | |
-| `RecomputeSignatureStatus` | [RecomputeSignatureStatusRequest](#servicesdocumentsRecomputeSignatureStatusRequest) | [RecomputeSignatureStatusResponse](#servicesdocumentsRecomputeSignatureStatusResponse) |Helpers |
-| `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) |Stamps |
+| `ListUsableStamps` | [ListUsableStampsRequest](#servicesdocumentsListUsableStampsRequest) | [ListUsableStampsResponse](#servicesdocumentsListUsableStampsResponse) | |
 | `UpsertStamp` | [UpsertStampRequest](#servicesdocumentsUpsertStampRequest) | [UpsertStampResponse](#servicesdocumentsUpsertStampResponse) | |
 | `DeleteStamp` | [DeleteStampRequest](#servicesdocumentsDeleteStampRequest) | [DeleteStampResponse](#servicesdocumentsDeleteStampResponse) | |
 

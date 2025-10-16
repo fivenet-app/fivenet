@@ -23,8 +23,8 @@ func (s *Server) ListUsableStamps(
 ) (*pbdocuments.ListUsableStampsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
-	tStampAccess := table.FivenetDocumentsSignaturesStampsAccess.AS("stamp_access")
+	tStamp := table.FivenetDocumentsStamps.AS("stamp")
+	tStampAccess := table.FivenetDocumentsStampsAccess.AS("stamp_access")
 
 	deletedAtCond := mysql.Bool(true)
 	if !userInfo.GetSuperuser() {
@@ -101,7 +101,7 @@ func (s *Server) ListUsableStamps(
 }
 
 func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp, error) {
-	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
+	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := mysql.
 		SELECT(
@@ -130,7 +130,7 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp,
 }
 
 func (s *Server) checkJobStampCount(ctx context.Context, job string) (int64, error) {
-	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
+	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	countStmt := tStamp.
 		SELECT(
@@ -155,7 +155,7 @@ func (s *Server) UpsertStamp(
 ) (*pbdocuments.UpsertStampResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tStamp := table.FivenetDocumentsSignaturesStamps
+	tStamp := table.FivenetDocumentsStamps
 
 	st := req.GetStamp()
 
@@ -276,7 +276,7 @@ func (s *Server) DeleteStamp(
 		return nil, errorsdocuments.ErrPermissionDenied
 	}
 
-	tStamp := table.FivenetDocumentsSignaturesStamps.AS("stamp")
+	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := tStamp.
 		DELETE().

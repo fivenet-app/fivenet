@@ -337,29 +337,7 @@ export enum DocActivityType {
     /**
      * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_APPROVAL_REMOVED = 44;
      */
-    APPROVAL_REMOVED = 44,
-    /**
-     * Signing
-     *
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED = 50;
-     */
-    SIGNING_ASSIGNED = 50,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_SIGNED = 51;
-     */
-    SIGNING_SIGNED = 51,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REJECTED = 52;
-     */
-    SIGNING_REJECTED = 52,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REVOKED = 53;
-     */
-    SIGNING_REVOKED = 53,
-    /**
-     * @generated from protobuf enum value: DOC_ACTIVITY_TYPE_SIGNING_REMOVED = 54;
-     */
-    SIGNING_REMOVED = 54
+    APPROVAL_REMOVED = 44
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DocActivity$Type extends MessageType<DocActivity> {

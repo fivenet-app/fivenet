@@ -145,21 +145,25 @@ export interface ApprovalTaskSeed {
      */
     label?: string;
     /**
+     * @generated from protobuf field: bool signature_required = 5
+     */
+    signatureRequired: boolean;
+    /**
      * Only for JOB tasks; number of PENDING slots to ensure (>=1)
      *
-     * @generated from protobuf field: int32 slots = 5
+     * @generated from protobuf field: int32 slots = 6
      */
     slots: number;
     /**
      * Optional default due date for created slots
      *
-     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 6
+     * @generated from protobuf field: optional resources.timestamp.Timestamp due_at = 7
      */
     dueAt?: Timestamp;
     /**
      * Optional note set on created tasks
      *
-     * @generated from protobuf field: optional string comment = 7
+     * @generated from protobuf field: optional string comment = 8
      */
     comment?: string;
 }
@@ -318,6 +322,16 @@ export interface DecideApprovalRequest {
      * @generated from protobuf field: string comment = 4
      */
     comment: string;
+    /**
+     * @generated from protobuf field: optional string payload_svg = 5
+     */
+    payloadSvg?: string;
+    /**
+     * When type=STAMP
+     *
+     * @generated from protobuf field: optional int64 stamp_id = 6
+     */
+    stampId?: number;
 }
 /**
  * @generated from protobuf message services.documents.DecideApprovalResponse
@@ -806,9 +820,10 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 5, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
-            { no: 6, name: "due_at", kind: "message", T: () => Timestamp },
-            { no: 7, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
+            { no: 7, name: "due_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ApprovalTaskSeed>): ApprovalTaskSeed {
@@ -816,6 +831,7 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
         message.userId = 0;
         message.job = "";
         message.minimumGrade = 0;
+        message.signatureRequired = false;
         message.slots = 0;
         if (value !== undefined)
             reflectionMergePartial<ApprovalTaskSeed>(this, message, value);
@@ -838,13 +854,16 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
                 case /* optional string label */ 4:
                     message.label = reader.string();
                     break;
-                case /* int32 slots */ 5:
+                case /* bool signature_required */ 5:
+                    message.signatureRequired = reader.bool();
+                    break;
+                case /* int32 slots */ 6:
                     message.slots = reader.int32();
                     break;
-                case /* optional resources.timestamp.Timestamp due_at */ 6:
+                case /* optional resources.timestamp.Timestamp due_at */ 7:
                     message.dueAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.dueAt);
                     break;
-                case /* optional string comment */ 7:
+                case /* optional string comment */ 8:
                     message.comment = reader.string();
                     break;
                 default:
@@ -871,15 +890,18 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
         /* optional string label = 4; */
         if (message.label !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.label);
-        /* int32 slots = 5; */
+        /* bool signature_required = 5; */
+        if (message.signatureRequired !== false)
+            writer.tag(5, WireType.Varint).bool(message.signatureRequired);
+        /* int32 slots = 6; */
         if (message.slots !== 0)
-            writer.tag(5, WireType.Varint).int32(message.slots);
-        /* optional resources.timestamp.Timestamp due_at = 6; */
+            writer.tag(6, WireType.Varint).int32(message.slots);
+        /* optional resources.timestamp.Timestamp due_at = 7; */
         if (message.dueAt)
-            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional string comment = 7; */
+            Timestamp.internalBinaryWrite(message.dueAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional string comment = 8; */
         if (message.comment !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.comment);
+            writer.tag(8, WireType.LengthDelimited).string(message.comment);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1353,7 +1375,9 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "new_status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 4, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } }
+            { no: 4, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
+            { no: 5, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
+            { no: 6, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DecideApprovalRequest>): DecideApprovalRequest {
@@ -1382,6 +1406,12 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
                 case /* string comment */ 4:
                     message.comment = reader.string();
                     break;
+                case /* optional string payload_svg */ 5:
+                    message.payloadSvg = reader.string();
+                    break;
+                case /* optional int64 stamp_id */ 6:
+                    message.stampId = reader.int64().toNumber();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1406,6 +1436,12 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
         /* string comment = 4; */
         if (message.comment !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.comment);
+        /* optional string payload_svg = 5; */
+        if (message.payloadSvg !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.payloadSvg);
+        /* optional int64 stamp_id = 6; */
+        if (message.stampId !== undefined)
+            writer.tag(6, WireType.Varint).int64(message.stampId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

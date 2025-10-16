@@ -2,7 +2,7 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 
 package documents
 
@@ -42,15 +42,6 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/UpdateDocumentReq":       "documents.DocumentsService/CreateDocumentReq",
 	"documents.DocumentsService/UpdateTemplate":          "documents.DocumentsService/CreateTemplate",
 	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
-
-	// Service: documents.SigningService
-	"documents.SigningService/DecideSignature":          "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignaturePolicies":    "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignatureTasks":       "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignatureTasksInbox":  "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/ListSignatures":           "documents.DocumentsService/ListDocuments",
-	"documents.SigningService/RecomputeSignatureStatus": "documents.SigningService/DeleteSignaturePolicy",
-	"documents.SigningService/ReopenSignatureTask":      "documents.SigningService/RevokeSignature",
 }
 
 func init() {
@@ -277,62 +268,27 @@ func init() {
 			Icon:  "i-mdi-file-document-box-multiple-outline",
 		},
 
-		// Service: documents.SigningService
+		// Service: documents.StampsService
 		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceDeleteSignaturePolicyPerm,
+			Category: permkeys.StampsServicePerm,
+			Name:     permkeys.StampsServiceDeleteStampPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
-			Icon:     "i-mdi-signature",
+			Icon:     "i-mdi-stamper",
 		},
 		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceDeleteSignatureTasksPerm,
+			Category: permkeys.StampsServicePerm,
+			Name:     permkeys.StampsServiceListUsableStampsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
-			Icon:     "i-mdi-signature",
+			Icon:     "i-mdi-stamper",
 		},
 		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceDeleteStampPerm,
+			Category: permkeys.StampsServicePerm,
+			Name:     permkeys.StampsServiceUpsertStampPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5700,
-			Icon:     "i-mdi-signature",
-		},
-		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceListUsableStampsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-signature",
-		},
-		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceRevokeSignaturePerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-signature",
-		},
-		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceUpsertSignaturePolicyPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-signature",
-		},
-		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceUpsertSignatureTasksPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-signature",
-		},
-		{
-			Category: permkeys.SigningServicePerm,
-			Name:     permkeys.SigningServiceUpsertStampPerm,
-			Attrs:    []perms.Attr{},
-			Order:    5700,
-			Icon:     "i-mdi-signature",
+			Icon:     "i-mdi-stamper",
 		},
 	})
 }

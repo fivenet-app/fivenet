@@ -1,11 +1,14 @@
 <script lang="ts" setup>
+import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import SignaturePad from '~/components/partials/SignaturePad.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { type ApprovalPolicy, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId: number;
+    policy?: ApprovalPolicy;
     approve: boolean;
 }>();
 
@@ -33,12 +36,17 @@ watch(isOpen, (newVal) => {
     if (!newVal) emits('close', false);
 });
 
-async function decideApproval(approve: boolean) {
+async function onSubmit(values: FormSubmitEvent<Schema>) {
+    const payloadSVG = saveSignature();
+
     try {
+        console.log('Deciding approval with values:', values, 'and payloadSVG:', payloadSVG);
         const call = approvalClient.decideApproval({
             documentId: props.documentId,
-            newStatus: approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
-            comment: '',
+            newStatus: props.approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,
+            comment: values.data.reason ?? '',
+            payloadSvg: payloadSVG,
+            stampId: undefined,
         });
         await call;
 
@@ -55,6 +63,16 @@ async function decideApproval(approve: boolean) {
     } catch (e) {
         handleGRPCError(e as RpcError);
     }
+}
+
+const signatureRef = useTemplateRef('signatureRef');
+
+function saveSignature(): string | undefined {
+    const sig = signatureRef.value?.signature?.saveSignature('image/svg+xml') ?? '';
+    if (sig === '') return undefined;
+
+    // atob? Yes, because supporting FiveM's NUI CEF version 103 is fun..
+    return atob(sig.replace(/^data:image\/svg\+xml;base64,/, ''));
 }
 </script>
 
@@ -74,29 +92,28 @@ async function decideApproval(approve: boolean) {
 
         <template #body>
             <div class="mx-auto w-full max-w-[80%] min-w-3/4">
-                <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-4">
-                    <UFormField name="reason" :label="$t('common.reason')">
+                <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-4" @submit="onSubmit">
+                    <UFormField
+                        v-if="approve"
+                        name="stampSVG"
+                        :label="$t('common.signature')"
+                        :required="policy?.signatureRequired"
+                    >
+                        <SignaturePad ref="signatureRef" />
+                    </UFormField>
+
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                     </UFormField>
 
                     <UFormField>
                         <UButton
-                            v-if="approve"
                             type="submit"
-                            color="success"
+                            :color="approve ? 'success' : 'red'"
                             block
                             size="lg"
-                            :label="$t('common.approve')"
-                            @click="decideApproval(true)"
-                        />
-                        <UButton
-                            v-else
-                            color="red"
-                            icon="i-mdi-close-bold"
-                            block
-                            size="lg"
-                            :label="$t('common.decline')"
-                            @click="decideApproval(false)"
+                            :label="approve ? $t('common.approve') : $t('common.decline')"
+                            :icon="approve ? 'i-mdi-check-bold' : 'i-mdi-close-bold'"
                         />
                     </UFormField>
                 </UForm>

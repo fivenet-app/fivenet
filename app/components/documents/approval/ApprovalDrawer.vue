@@ -30,7 +30,12 @@ const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
-const { data, status, error, refresh } = useLazyAsyncData(
+const {
+    data: policy,
+    status,
+    error,
+    refresh,
+} = useLazyAsyncData(
     () => `documents-approval-policy-${props.documentId}`,
     () => getPolicy(),
 );
@@ -45,7 +50,7 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
 }
 
 async function recomputeApprovalPolicyCounters() {
-    if (!data.value) return;
+    if (!policy.value) return;
 
     try {
         const call = approvalClient.recomputeApprovalPolicyCounters({
@@ -80,17 +85,17 @@ const taskFormDrawer = overlay.create(TaskForm);
             <div class="inline-flex items-center gap-2">
                 <span>{{ $t('common.approve') }}</span>
 
-                <div v-if="data?.ruleKind !== undefined && data?.approvedCount !== undefined">
+                <div v-if="policy?.ruleKind !== undefined && policy?.approvedCount !== undefined">
                     <TaskStatusBadge
-                        v-if="data.ruleKind === ApprovalRuleKind.REQUIRE_ALL"
-                        :status="data.anyDeclined ? ApprovalTaskStatus.DECLINED : ApprovalTaskStatus.APPROVED"
+                        v-if="policy.ruleKind === ApprovalRuleKind.REQUIRE_ALL"
+                        :status="policy.anyDeclined ? ApprovalTaskStatus.DECLINED : ApprovalTaskStatus.APPROVED"
                     />
                     <TaskStatusBadge
                         v-else
                         :status="
-                            data.approvedCount >= (data.requiredCount ?? 1)
+                            policy.approvedCount >= (policy.requiredCount ?? 1)
                                 ? ApprovalTaskStatus.APPROVED
-                                : data.anyDeclined
+                                : policy.anyDeclined
                                   ? ApprovalTaskStatus.PENDING
                                   : ApprovalTaskStatus.DECLINED
                         "
@@ -117,7 +122,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                     <template v-else>
                         <div class="basis-1/4 gap-4 sm:gap-0">
                             <UCard :ui="{ header: 'p-2 sm:px-2', body: 'p-2 sm:p-2', footer: 'p-2 sm:px-2' }">
-                                <template v-if="data" #header>
+                                <template v-if="policy" #header>
                                     <div class="flex flex-row flex-wrap gap-1">
                                         <UCollapsible class="flex flex-1 flex-col gap-1">
                                             <template #default>
@@ -138,15 +143,17 @@ const taskFormDrawer = overlay.create(TaskForm);
                                                     <p class="flex-1 shrink-0 text-lg font-medium">
                                                         <UTooltip :text="$t('common.approved')"
                                                             ><span class="text-success">{{
-                                                                data?.approvedCount
+                                                                policy?.approvedCount
                                                             }}</span></UTooltip
                                                         >/<UTooltip :text="$t('common.declined')"
-                                                            ><span class="text-error">{{ data?.declinedCount }}</span></UTooltip
+                                                            ><span class="text-error">{{
+                                                                policy?.declinedCount
+                                                            }}</span></UTooltip
                                                         >/<UTooltip :text="$t('enums.documents.ApprovalTaskStatus.PENDING')"
-                                                            ><span class="text-info">{{ data?.pendingCount }}</span></UTooltip
-                                                        ><template v-if="data?.ruleKind === ApprovalRuleKind.QUORUM_ANY"
+                                                            ><span class="text-info">{{ policy?.pendingCount }}</span></UTooltip
+                                                        ><template v-if="policy?.ruleKind === ApprovalRuleKind.QUORUM_ANY"
                                                             >/<UTooltip :text="$t('common.required')"
-                                                                ><span>{{ data?.requiredCount }}</span></UTooltip
+                                                                ><span>{{ policy?.requiredCount }}</span></UTooltip
                                                             ></template
                                                         >
                                                         {{ $t('common.approvals') }}
@@ -158,15 +165,15 @@ const taskFormDrawer = overlay.create(TaskForm);
                                                 <div class="flex flex-col gap-1">
                                                     <p class="text-muted-foreground text-sm">
                                                         {{ $t('common.approved') }}:
-                                                        <span class="text-success">{{ data?.approvedCount }}</span>
+                                                        <span class="text-success">{{ policy?.approvedCount }}</span>
                                                     </p>
                                                     <p class="text-muted-foreground text-sm">
                                                         {{ $t('common.declined') }}:
-                                                        <span class="text-error">{{ data?.declinedCount }}</span>
+                                                        <span class="text-error">{{ policy?.declinedCount }}</span>
                                                     </p>
                                                     <p class="text-muted-foreground text-sm">
                                                         {{ $t('enums.documents.ApprovalTaskStatus.PENDING') }}:
-                                                        <span class="text-info">{{ data?.pendingCount }}</span>
+                                                        <span class="text-info">{{ policy?.pendingCount }}</span>
                                                     </p>
                                                 </div>
                                             </template>
@@ -178,7 +185,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                                     icon="i-mdi-refresh"
                                                     size="sm"
                                                     variant="link"
-                                                    :loading="!data && isRequestPending(status)"
+                                                    :loading="!policy && isRequestPending(status)"
                                                     @click="() => refresh()"
                                                 />
                                             </UTooltip>
@@ -186,23 +193,25 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     </div>
                                 </template>
 
-                                <div v-if="data" class="flex flex-col gap-2">
+                                <div v-if="policy" class="flex flex-col gap-2">
                                     <UBadge
-                                        :label="$t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[data?.ruleKind ?? 0]}`)"
+                                        :label="
+                                            $t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[policy?.ruleKind ?? 0]}`)
+                                        "
                                         color="neutral"
                                         variant="outline"
                                     />
 
                                     <UBadge
-                                        v-if="data.ruleKind !== ApprovalRuleKind.REQUIRE_ALL"
-                                        :label="`${$t('common.required')}: ${(data?.requiredCount ?? 0) > 0 ? data?.requiredCount : $t('common.all')} ${$t('common.approvals', (data?.requiredCount ?? 0) > 0 ? (data?.requiredCount ?? 0) : 2)}`"
+                                        v-if="policy.ruleKind !== ApprovalRuleKind.REQUIRE_ALL"
+                                        :label="`${$t('common.required')}: ${(policy?.requiredCount ?? 0) > 0 ? policy?.requiredCount : $t('common.all')} ${$t('common.approvals', (policy?.requiredCount ?? 0) > 0 ? (policy?.requiredCount ?? 0) : 2)}`"
                                         color="neutral"
                                         variant="outline"
                                     />
 
                                     <UBadge
                                         :label="
-                                            $t(`enums.documents.OnEditBehavior.${OnEditBehavior[data?.onEditBehavior ?? 0]}`)
+                                            $t(`enums.documents.OnEditBehavior.${OnEditBehavior[policy?.onEditBehavior ?? 0]}`)
                                         "
                                         color="info"
                                         variant="outline"
@@ -225,11 +234,11 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             v-if="can('documents.ApprovalService/UpsertApprovalPolicy').value"
                                             block
                                             :label="$t('common.policy')"
-                                            :trailing-icon="data ? 'i-mdi-pencil' : 'i-mdi-plus'"
+                                            :trailing-icon="policy ? 'i-mdi-pencil' : 'i-mdi-plus'"
                                             @click="
                                                 policyForm.open({
                                                     documentId: props.documentId,
-                                                    modelValue: data,
+                                                    modelValue: policy,
                                                     'onUpdate:modelValue': () => refresh(),
                                                 })
                                             "
@@ -246,7 +255,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                             </UCard>
                         </div>
 
-                        <div class="flex flex-1 basis-3/4 flex-col gap-4">
+                        <div class="flex flex-1 basis-3/4 flex-col gap-4 overflow-x-hidden p-0.5">
                             <ApprovalList :document-id="documentId" />
 
                             <TaskList :document-id="documentId">
@@ -255,7 +264,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     #header="{ refresh: tasksRefresh }"
                                 >
                                     <UButton
-                                        :disabled="!data"
+                                        :disabled="!policy"
                                         variant="link"
                                         :label="$t('common.create')"
                                         trailing-icon="i-mdi-task-add"
@@ -278,11 +287,21 @@ const taskFormDrawer = overlay.create(TaskForm);
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
                 <UButtonGroup class="w-full flex-1">
-                    <TaskDecideDrawer :document-id="documentId" :approve="true" @close="(val) => val && refresh()">
+                    <TaskDecideDrawer
+                        :document-id="documentId"
+                        :policy="policy"
+                        :approve="true"
+                        @close="(val) => val && refresh()"
+                    >
                         <UButton color="success" icon="i-mdi-check-bold" block size="lg" :label="$t('common.approve')" />
                     </TaskDecideDrawer>
 
-                    <TaskDecideDrawer :document-id="documentId" :approve="false" @close="(val) => val && refresh()">
+                    <TaskDecideDrawer
+                        :document-id="documentId"
+                        :policy="policy"
+                        :approve="false"
+                        @close="(val) => val && refresh()"
+                    >
                         <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
                     </TaskDecideDrawer>
                 </UButtonGroup>

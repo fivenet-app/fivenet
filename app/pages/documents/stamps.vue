@@ -3,8 +3,8 @@ import type { NavigationMenuItem } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { getDocumentsSigningClient } from '~~/gen/ts/clients';
-import type { ListUsableStampsResponse } from '~~/gen/ts/services/documents/signing';
+import { getDocumentsStampsClient } from '~~/gen/ts/clients';
+import type { ListUsableStampsResponse } from '~~/gen/ts/services/documents/stamps';
 
 useHead({
     title: 'pages.documents.stamps.title',
@@ -13,7 +13,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.stamps.title',
     requiresAuth: true,
-    permission: 'documents.SigningService/ListUsableStamps',
+    permission: 'documents.StampsService/ListUsableStamps',
 });
 
 defineProps<{
@@ -23,7 +23,7 @@ defineProps<{
 
 const { can } = useAuth();
 
-const signingClient = await getDocumentsSigningClient();
+const stampsClient = await getDocumentsStampsClient();
 
 const { data, status, error, refresh } = useLazyAsyncData(
     () => `documents-approvals`,
@@ -31,7 +31,7 @@ const { data, status, error, refresh } = useLazyAsyncData(
 );
 
 async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
-    const call = signingClient.listUsableStamps({
+    const call = stampsClient.listUsableStamps({
         pagination: {
             offset: 0,
         },
@@ -55,7 +55,7 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                 <template #right>
                     <PartialsBackButton fallback-to="/documents" />
 
-                    <UTooltip v-if="can('documents.SigningService/UpsertStamp').value" :text="$t('common.create')">
+                    <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.create')">
                         <UButton trailing-icon="i-mdi-plus" color="neutral" truncate>
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.stamp', 1) }}
@@ -83,7 +83,7 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                             <span>{{ stamp.name }}</span>
 
                             <UTooltip
-                                v-if="can('documents.SigningService/UpsertStamp').value"
+                                v-if="can('documents.StampsService/UpsertStamp').value"
                                 class="flex-1"
                                 :text="$t('common.edit')"
                             >

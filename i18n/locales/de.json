@@ -46,9 +46,6 @@
             "approvals": {
                 "title": "Genehmigungsaufgaben"
             },
-            "signatures": {
-                "title": "Signaturaufgaben"
-            },
             "stamps": {
                 "title": "Stempel"
             }
@@ -587,7 +584,7 @@
         "personal_email": "Eigene Email",
         "participant": "Teilnehmer",
         "sender": "Absender",
-        "signature": "Signatur",
+        "signature": "Signatur | Signaturen",
         "internal": "Intern",
         "label": "Label | Labels",
         "additional_recipients": "Weitere Empfänger",
@@ -720,7 +717,6 @@
         "stamp": "Stempel",
         "due_at": "Fällig am",
         "approvals": "Genehmigungen",
-        "signatures": "Unterschriften",
         "continue": "Fortfahren",
         "policy": "Richtlinie",
         "task": "Aufgabe | Aufgaben",
@@ -729,7 +725,8 @@
         "approval": "Keine Genehmigung | {n} Genehmigung | {n} Genehmigungen",
         "revoke": "Widerrufen",
         "metadata": "Metadaten",
-        "expand_collapse": "Ausklappen/Einklappen"
+        "expand_collapse": "Ausklappen/Einklappen",
+        "no_signature": "Keine Signatur angegeben"
     },
     "components": {
         "partials": {
@@ -920,8 +917,9 @@
                     "title": "Genehmigungsanfrage-Richtlinie",
                     "rule_kind": "Regeltyp",
                     "on_edit_behavior": "Bearbeitungsverhalten",
-                    "required_signatures": "Erforderliche Unterschriften"
+                    "required_approvals": "Erforderliche Genehmigungen"
                 },
+                "signature_required": "Unterschrift(en) erforderlich",
                 "tasks": "Genehmigungsaufgaben",
                 "task_form": {
                     "title": "Aufgaben"
@@ -2262,9 +2260,9 @@
                 "title": "Genehmigungsaufgabe bereits bearbeitet!",
                 "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
             },
-            "ErrSigningTaskAlreadyHandled": {
-                "title": "Signaturaufgabe bereits bearbeitet!",
-                "content": "Diese Signaturaufgabe wurde bereits unterschrieben/abgelehnt."
+            "ErrApprovalSignatureRequired": {
+                "title": "Genehmigungsunterschrift erforderlich!",
+                "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
             },
             "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!"
         },
@@ -2552,12 +2550,7 @@
                 "APPROVAL_APPROVED": "Dokument wurde genehmigt",
                 "APPROVAL_REJECTED": "Dokument wurde abgelehnt",
                 "APPROVAL_REVOKED": "Dokumentgenehmigung widerrufen",
-                "APPROVAL_REMOVED": "Dokumentgenehmigung entfernt",
-                "SIGNING_ASSIGNED": "Signaturaufgabe zugewiesen",
-                "SIGNING_SIGNED": "Dokument wurde unterschrieben",
-                "SIGNING_DECLINED": "Dokumentensignatur wurde abgelehnt",
-                "SIGNING_REVOKED": "Dokumentensignatur widerrufen",
-                "SIGNING_REMOVED": "Dokumentensignatur entfernt"
+                "APPROVAL_REMOVED": "Dokumentgenehmigung entfernt"
             },
             "OnEditBehavior": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2584,35 +2577,11 @@
                 "DECLINED": "Abgelehnt",
                 "REVOKED": "Widerrufen"
             },
-            "SignatureType": {
-                "UNSPECIFIED": "Unbestimmt",
-                "FREEHAND": "Freihand",
-                "TYPED": "Getippt",
-                "STAMP": "Stempel"
-            },
-            "SignatureBindingMode": {
-                "UNSPECIFIED": "Unbestimmt",
-                "BINDING": "Verbindlich",
-                "NONBINDING": "Nicht verbindlich"
-            },
-            "SignatureTaskStatus": {
-                "UNSPECIFIED": "Unbestimmt",
-                "PENDING": "Ausstehend",
-                "SIGNED": "Unterschrieben",
-                "DECLINED": "Abgelehnt",
-                "EXPIRED": "Abgelaufen",
-                "COMPLETED": "Abgeschlossen"
-            },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
                 "USE": "Verwenden",
                 "MANAGE": "Verwalten"
-            },
-            "SignatureRuleKind": {
-                "UNSPECIFIED": "Unbestimmt",
-                "REQUIRE_ALL": "Alle erforderlich",
-                "QUORUM_ANY": "Bestimmte Mindestanzahl"
             }
         },
         "settings": {
@@ -3060,28 +3029,8 @@
                     "description": "Eine abgeschlossene Genehmigung widerrufen."
                 }
             },
-            "SigningService": {
-                "category": "Dokumenten-System: Unterzeichnung",
-                "UpsertSignaturePolicy": {
-                    "key": "Signaturanfrage erstellen oder aktualisieren",
-                    "description": "Erstellen oder Aktualisieren einer Signaturanfrage."
-                },
-                "DeleteSignaturePolicy": {
-                    "key": "Signaturanfrage löschen",
-                    "description": "Löschen einer Signaturanfrage."
-                },
-                "UpsertSignatureTasks": {
-                    "key": "Signaturaufgaben erstellen oder aktualisieren",
-                    "description": "Erstellen oder Aktualisieren von Signaturaufgaben für ein Dokument."
-                },
-                "DeleteSignatureTasks": {
-                    "key": "Signaturaufgaben löschen",
-                    "description": "Löschen von Signaturaufgaben für ein Dokument."
-                },
-                "RevokeSignature": {
-                    "key": "Revoke Signature",
-                    "description": "Revoke a given signature."
-                },
+            "StampService": {
+                "category": "Dokumenten-System: Stempel",
                 "ListUsableStamps": {
                     "key": "Stempel auflisten",
                     "description": "Auflisten der verfügbaren Stempel."

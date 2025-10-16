@@ -2,18 +2,28 @@
 import { z } from 'zod';
 import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
-import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
-import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { ApprovalAssigneeKind, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
-defineProps<{
-    jobs: Job[];
-}>();
+withDefaults(
+    defineProps<{
+        policy?: ApprovalPolicy;
+        jobs: Job[];
+        hideJobs?: string[];
+    }>(),
+    {
+        policy: undefined,
+        hideJobs: () => [],
+    },
+);
 
 const task = defineModel<Task>({ required: true });
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const { game } = useAppConfig();
 
 const completorStore = useCompletorStore();
 
@@ -22,9 +32,10 @@ const _schema = z.union([
         ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.USER),
         userId: z.coerce.number(),
         user: z.custom<UserShort>().optional(),
-        job: z.custom<Job>().optional(),
-        minimumGrade: z.custom<JobGrade>().optional(),
+        job: z.coerce.string().optional(),
+        minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
         label: z.string().max(120).default(''),
+        signatureRequired: z.coerce.boolean().default(false),
         slots: z.coerce.number().min(1).max(5).optional().default(1),
         dueAt: z.date().optional(),
         comment: z.coerce.string().max(255).optional(),
@@ -33,9 +44,10 @@ const _schema = z.union([
         ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
         userId: z.coerce.number().optional().default(0),
         user: z.custom<UserShort>().optional(),
-        job: z.custom<Job>(),
-        minimumGrade: z.custom<JobGrade>(),
+        job: z.coerce.string().optional(),
+        minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
         label: z.string().max(120).default(''),
+        signatureRequired: z.coerce.boolean().default(false),
         slots: z.coerce.number().min(1).max(5).optional().default(1),
         dueAt: z.date().optional(),
         comment: z.coerce.string().max(255).optional(),
@@ -50,6 +62,7 @@ watch(
         if (task.value.ruleKind === ApprovalAssigneeKind.USER) {
             task.value.job = undefined;
             task.value.minimumGrade = undefined;
+            task.value.slots = 1;
 
             task.value.userId = task.value.user?.userId ?? task.value.userId;
         } else if (task.value.ruleKind === ApprovalAssigneeKind.JOB_GRADE) {
@@ -122,15 +135,12 @@ watch(
                     <ClientOnly>
                         <USelectMenu
                             v-model="task.job"
-                            :items="jobs"
+                            :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                             :search-input="{ placeholder: $t('common.search_field') }"
                             :filter-fields="['label', 'name']"
+                            value-key="name"
                             class="w-full"
                         >
-                            <template v-if="task.job?.label" #default>
-                                {{ task.job?.label }}
-                            </template>
-
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.job')]) }}
                             </template>
@@ -142,12 +152,17 @@ watch(
                     <ClientOnly>
                         <USelectMenu
                             v-model="task.minimumGrade"
-                            :items="task.job?.grades"
+                            :items="jobs.find((j) => j.name === task.job)?.grades ?? []"
                             :search-input="{ placeholder: $t('common.search_field') }"
+                            value-key="grade"
                             class="w-full"
                         >
                             <template v-if="task.minimumGrade" #default>
-                                {{ task.minimumGrade?.label }} ({{ task.minimumGrade?.grade }})
+                                {{
+                                    jobs.find((j) => j.name === task.job)?.grades.find((g) => g.grade === task.minimumGrade)
+                                        ?.label
+                                }}
+                                ({{ task.minimumGrade }})
                             </template>
 
                             <template #item-label="{ item }"> {{ item.label }} ({{ item.grade }}) </template>
@@ -160,18 +175,24 @@ watch(
                 </UFormField>
             </template>
 
-            <UFormField name="label" class="flex-1" :label="$t('common.name')">
-                <UInput v-model="task.label" class="w-full" />
-            </UFormField>
-
             <UFormField name="dueAt" class="flex-1" :label="$t('common.due_at')">
                 <InputDatePicker v-model="task.dueAt" class="w-full" />
             </UFormField>
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-            <UFormField name="comment" class="flex-1" :label="$t('common.comment')">
-                <UInput v-model="task.comment" type="text" name="comment" class="w-full" />
+            <UFormField name="label" class="flex-1" :label="$t('common.name')">
+                <UInput v-model="task.label" class="w-full" />
+            </UFormField>
+
+            <UFormField
+                name="signatureRequired"
+                class="h-full flex-initial"
+                :label="$t('components.documents.approval.signature_required')"
+            >
+                <div class="flex flex-1 items-center justify-center">
+                    <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired" />
+                </div>
             </UFormField>
 
             <UFormField
@@ -188,6 +209,12 @@ watch(
                     :min="1"
                     :max="5"
                 />
+            </UFormField>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
+            <UFormField name="comment" class="flex-1" :label="$t('common.comment')">
+                <UInput v-model="task.comment" type="text" name="comment" class="w-full" />
             </UFormField>
         </div>
     </div>

@@ -11,10 +11,9 @@ import (
 	"time"
 )
 
-type FivenetDocumentsSignaturesStamps struct {
+type FivenetDocumentsStamps struct {
 	ID           int64      `sql:"primary_key" json:"id"`
 	Name         string     `json:"name"`
-	UserID       *int32     `json:"user_id"`
 	SvgTemplate  string     `json:"svg_template"`
 	VariantsJSON *string    `json:"variants_json"`
 	SortKey      *string    `json:"sort_key"`

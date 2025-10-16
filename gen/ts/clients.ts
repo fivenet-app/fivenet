@@ -50,10 +50,10 @@ export async function getDocumentsDocumentsClient() {
     return new DocumentsServiceClient(useGRPCTransport());
 }
 
-// Factory for documents.signing client.
-export async function getDocumentsSigningClient() {
-    const { SigningServiceClient } = await import('~~/gen/ts/services/documents/signing.client');
-    return new SigningServiceClient(useGRPCTransport());
+// Factory for documents.stamps client.
+export async function getDocumentsStampsClient() {
+    const { StampsServiceClient } = await import('~~/gen/ts/services/documents/stamps.client');
+    return new StampsServiceClient(useGRPCTransport());
 }
 
 // Factory for filestore.filestore client.

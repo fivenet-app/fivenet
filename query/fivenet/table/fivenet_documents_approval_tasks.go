@@ -17,24 +17,25 @@ type fivenetDocumentsApprovalTasksTable struct {
 	mysql.Table
 
 	// Columns
-	ID            mysql.ColumnInteger
-	DocumentID    mysql.ColumnInteger
-	SnapshotDate  mysql.ColumnTimestamp
-	AssigneeKind  mysql.ColumnInteger
-	UserID        mysql.ColumnInteger
-	Job           mysql.ColumnString
-	MinimumGrade  mysql.ColumnInteger
-	Label         mysql.ColumnString
-	SlotNo        mysql.ColumnInteger
-	Status        mysql.ColumnInteger
-	Comment       mysql.ColumnString
-	DueAt         mysql.ColumnTimestamp
-	DecisionCount mysql.ColumnInteger
-	CreatedAt     mysql.ColumnTimestamp
-	CompletedAt   mysql.ColumnTimestamp
-	ApprovalID    mysql.ColumnInteger
-	CreatorID     mysql.ColumnInteger
-	CreatorJob    mysql.ColumnString
+	ID                mysql.ColumnInteger
+	DocumentID        mysql.ColumnInteger
+	SnapshotDate      mysql.ColumnTimestamp
+	AssigneeKind      mysql.ColumnInteger
+	UserID            mysql.ColumnInteger
+	Job               mysql.ColumnString
+	MinimumGrade      mysql.ColumnInteger
+	Label             mysql.ColumnString
+	SignatureRequired mysql.ColumnBool
+	SlotNo            mysql.ColumnInteger
+	Status            mysql.ColumnInteger
+	Comment           mysql.ColumnString
+	DueAt             mysql.ColumnTimestamp
+	DecisionCount     mysql.ColumnInteger
+	CreatedAt         mysql.ColumnTimestamp
+	CompletedAt       mysql.ColumnTimestamp
+	ApprovalID        mysql.ColumnInteger
+	CreatorID         mysql.ColumnInteger
+	CreatorJob        mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,51 +77,53 @@ func newFivenetDocumentsApprovalTasksTable(schemaName, tableName, alias string) 
 
 func newFivenetDocumentsApprovalTasksTableImpl(schemaName, tableName, alias string) fivenetDocumentsApprovalTasksTable {
 	var (
-		IDColumn            = mysql.IntegerColumn("id")
-		DocumentIDColumn    = mysql.IntegerColumn("document_id")
-		SnapshotDateColumn  = mysql.TimestampColumn("snapshot_date")
-		AssigneeKindColumn  = mysql.IntegerColumn("assignee_kind")
-		UserIDColumn        = mysql.IntegerColumn("user_id")
-		JobColumn           = mysql.StringColumn("job")
-		MinimumGradeColumn  = mysql.IntegerColumn("minimum_grade")
-		LabelColumn         = mysql.StringColumn("label")
-		SlotNoColumn        = mysql.IntegerColumn("slot_no")
-		StatusColumn        = mysql.IntegerColumn("status")
-		CommentColumn       = mysql.StringColumn("comment")
-		DueAtColumn         = mysql.TimestampColumn("due_at")
-		DecisionCountColumn = mysql.IntegerColumn("decision_count")
-		CreatedAtColumn     = mysql.TimestampColumn("created_at")
-		CompletedAtColumn   = mysql.TimestampColumn("completed_at")
-		ApprovalIDColumn    = mysql.IntegerColumn("approval_id")
-		CreatorIDColumn     = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn    = mysql.StringColumn("creator_job")
-		allColumns          = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, CompletedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns      = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, CompletedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
-		defaultColumns      = mysql.ColumnList{SlotNoColumn, DecisionCountColumn, CreatedAtColumn}
+		IDColumn                = mysql.IntegerColumn("id")
+		DocumentIDColumn        = mysql.IntegerColumn("document_id")
+		SnapshotDateColumn      = mysql.TimestampColumn("snapshot_date")
+		AssigneeKindColumn      = mysql.IntegerColumn("assignee_kind")
+		UserIDColumn            = mysql.IntegerColumn("user_id")
+		JobColumn               = mysql.StringColumn("job")
+		MinimumGradeColumn      = mysql.IntegerColumn("minimum_grade")
+		LabelColumn             = mysql.StringColumn("label")
+		SignatureRequiredColumn = mysql.BoolColumn("signature_required")
+		SlotNoColumn            = mysql.IntegerColumn("slot_no")
+		StatusColumn            = mysql.IntegerColumn("status")
+		CommentColumn           = mysql.StringColumn("comment")
+		DueAtColumn             = mysql.TimestampColumn("due_at")
+		DecisionCountColumn     = mysql.IntegerColumn("decision_count")
+		CreatedAtColumn         = mysql.TimestampColumn("created_at")
+		CompletedAtColumn       = mysql.TimestampColumn("completed_at")
+		ApprovalIDColumn        = mysql.IntegerColumn("approval_id")
+		CreatorIDColumn         = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn        = mysql.StringColumn("creator_job")
+		allColumns              = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SignatureRequiredColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, CompletedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns          = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, AssigneeKindColumn, UserIDColumn, JobColumn, MinimumGradeColumn, LabelColumn, SignatureRequiredColumn, SlotNoColumn, StatusColumn, CommentColumn, DueAtColumn, DecisionCountColumn, CreatedAtColumn, CompletedAtColumn, ApprovalIDColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns          = mysql.ColumnList{SignatureRequiredColumn, SlotNoColumn, DecisionCountColumn, CreatedAtColumn}
 	)
 
 	return fivenetDocumentsApprovalTasksTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:            IDColumn,
-		DocumentID:    DocumentIDColumn,
-		SnapshotDate:  SnapshotDateColumn,
-		AssigneeKind:  AssigneeKindColumn,
-		UserID:        UserIDColumn,
-		Job:           JobColumn,
-		MinimumGrade:  MinimumGradeColumn,
-		Label:         LabelColumn,
-		SlotNo:        SlotNoColumn,
-		Status:        StatusColumn,
-		Comment:       CommentColumn,
-		DueAt:         DueAtColumn,
-		DecisionCount: DecisionCountColumn,
-		CreatedAt:     CreatedAtColumn,
-		CompletedAt:   CompletedAtColumn,
-		ApprovalID:    ApprovalIDColumn,
-		CreatorID:     CreatorIDColumn,
-		CreatorJob:    CreatorJobColumn,
+		ID:                IDColumn,
+		DocumentID:        DocumentIDColumn,
+		SnapshotDate:      SnapshotDateColumn,
+		AssigneeKind:      AssigneeKindColumn,
+		UserID:            UserIDColumn,
+		Job:               JobColumn,
+		MinimumGrade:      MinimumGradeColumn,
+		Label:             LabelColumn,
+		SignatureRequired: SignatureRequiredColumn,
+		SlotNo:            SlotNoColumn,
+		Status:            StatusColumn,
+		Comment:           CommentColumn,
+		DueAt:             DueAtColumn,
+		DecisionCount:     DecisionCountColumn,
+		CreatedAt:         CreatedAtColumn,
+		CompletedAt:       CompletedAtColumn,
+		ApprovalID:        ApprovalIDColumn,
+		CreatorID:         CreatorIDColumn,
+		CreatorJob:        CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -44,6 +44,7 @@ const schema = z.object({
     ruleKind: z.enum(ApprovalRuleKind).default(ApprovalRuleKind.REQUIRE_ALL),
     onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
     requiredCount: z.number().min(1).max(10).default(2),
+    signatureRequired: z.boolean().default(false),
 });
 
 type Schema = z.output<typeof schema>;
@@ -52,6 +53,7 @@ const state = reactive<Schema>({
     ruleKind: ApprovalRuleKind.REQUIRE_ALL,
     onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
     requiredCount: 2,
+    signatureRequired: false,
 });
 
 function setFromProps(): void {
@@ -59,6 +61,7 @@ function setFromProps(): void {
         state.ruleKind = ApprovalRuleKind.REQUIRE_ALL;
         state.onEditBehavior = OnEditBehavior.KEEP_PROGRESS;
         state.requiredCount = 2;
+        state.signatureRequired = false;
         return;
     }
 
@@ -66,6 +69,7 @@ function setFromProps(): void {
     state.onEditBehavior = policy.value.onEditBehavior;
     state.requiredCount =
         policy.value.requiredCount === undefined || policy.value.requiredCount < 0 ? 1 : policy.value.requiredCount;
+    state.signatureRequired = policy.value.signatureRequired;
 }
 
 setFromProps();
@@ -78,6 +82,7 @@ async function upsertPolicy(values: Schema): Promise<void> {
             ruleKind: values.ruleKind,
             onEditBehavior: values.onEditBehavior,
             requiredCount: values.ruleKind === ApprovalRuleKind.QUORUM_ANY ? values.requiredCount : undefined,
+            signatureRequired: values.signatureRequired,
 
             assignedCount: 0,
             approvedCount: 0,
@@ -152,9 +157,15 @@ const formRef = useTemplateRef('formRef');
                         <UFormField
                             v-if="state.ruleKind === ApprovalRuleKind.QUORUM_ANY"
                             name="requiredCount"
-                            :label="$t('components.documents.approval.policy_form.required_signatures')"
+                            :label="$t('components.documents.approval.policy_form.required_approvals')"
                         >
                             <UInputNumber v-model="state.requiredCount" :min="0" :max="10" class="w-full" />
+                        </UFormField>
+
+                        <UFormField name="signatureRequired" :label="$t('components.documents.approval.signature_required')">
+                            <div class="flex flex-1 items-center justify-center">
+                                <USwitch v-model="state.signatureRequired" />
+                            </div>
                         </UFormField>
 
                         <UFormField

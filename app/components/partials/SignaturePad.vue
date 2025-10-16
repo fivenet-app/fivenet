@@ -19,28 +19,28 @@ const colors = [
     },
 ];
 
-const signature = useTemplateRef('signature');
+const signaturePad = useTemplateRef('signaturePad');
 
 function handleUndo() {
-    signature.value?.undo();
+    signaturePad.value?.undo();
 }
 
 function handleClearCanvas() {
-    signature.value?.clearCanvas();
+    signaturePad.value?.clearCanvas();
 }
 
 defineExpose({
-    signature: signature,
+    signature: signaturePad,
 });
 </script>
 
 <template>
-    <UCard :ui="{ root: 'grow-0 max-w-[950px]', body: 'p-0 sm:p-0', footer: 'p-2 sm:px-2' }">
+    <UCard :ui="{ root: 'grow-0 max-w-[900px]', body: 'p-0 sm:p-0', footer: 'p-2 sm:px-2' }">
         <div class="relative">
             <VueSignaturePad
-                ref="signature"
-                height="400px"
-                width="950px"
+                ref="signaturePad"
+                height="350px"
+                width="900px"
                 :min-width="signatureSettings.minStrokeWidth"
                 :max-width="signatureSettings.maxStrokeWidth"
                 :options="{

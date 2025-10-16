@@ -7,19 +7,19 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
-// source: services/documents/signing.proto
+// source: services/documents/stamps.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
@@ -87,7 +87,7 @@ export const grpcServices = [
     'documents.ApprovalService',
     'documents.CollabService',
     'documents.DocumentsService',
-    'documents.SigningService',
+    'documents.StampsService',
     'filestore.FilestoreService',
     'jobs.ConductService',
     'jobs.JobsService',
@@ -222,21 +222,9 @@ export const grpcMethods = [
 	'documents.DocumentsService/ToggleDocumentPin',
 	'documents.DocumentsService/SetDocumentReminder',
 	'documents.DocumentsService/UploadFile',
-	'documents.SigningService/ListSignatureTasksInbox',
-	'documents.SigningService/ListSignaturePolicies',
-	'documents.SigningService/UpsertSignaturePolicy',
-	'documents.SigningService/DeleteSignaturePolicy',
-	'documents.SigningService/ListSignatureTasks',
-	'documents.SigningService/UpsertSignatureTasks',
-	'documents.SigningService/DeleteSignatureTasks',
-	'documents.SigningService/ListSignatures',
-	'documents.SigningService/RevokeSignature',
-	'documents.SigningService/DecideSignature',
-	'documents.SigningService/ReopenSignatureTask',
-	'documents.SigningService/RecomputeSignatureStatus',
-	'documents.SigningService/ListUsableStamps',
-	'documents.SigningService/UpsertStamp',
-	'documents.SigningService/DeleteStamp',
+	'documents.StampsService/ListUsableStamps',
+	'documents.StampsService/UpsertStamp',
+	'documents.StampsService/DeleteStamp',
 	'filestore.FilestoreService/Upload',
 	'filestore.FilestoreService/ListFiles',
 	'filestore.FilestoreService/DeleteFile',

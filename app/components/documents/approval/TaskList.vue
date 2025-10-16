@@ -108,11 +108,16 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
                                     </p>
                                 </span>
                             </p>
-                            <p class="inline-flex gap-1 text-xs leading-6 font-semibold text-toned">
+                            <p class="flex gap-1 text-xs leading-6 font-semibold text-toned">
                                 <span class="font-semibold">{{ $t('common.comment') }}:</span>
-                                <span>
+                                <span class="flex-1">
                                     {{ task.comment || $t('common.no_comment') }}
                                 </span>
+
+                                <UBadge
+                                    v-if="task.signatureRequired"
+                                    :label="$t('components.documents.approval.signature_required')"
+                                />
                             </p>
                         </div>
 

@@ -60,12 +60,6 @@ const (
 	DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_REJECTED DocActivityType = 42
 	DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_REVOKED  DocActivityType = 43
 	DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_REMOVED  DocActivityType = 44
-	// Signing
-	DocActivityType_DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED DocActivityType = 50
-	DocActivityType_DOC_ACTIVITY_TYPE_SIGNING_SIGNED   DocActivityType = 51
-	DocActivityType_DOC_ACTIVITY_TYPE_SIGNING_REJECTED DocActivityType = 52
-	DocActivityType_DOC_ACTIVITY_TYPE_SIGNING_REVOKED  DocActivityType = 53
-	DocActivityType_DOC_ACTIVITY_TYPE_SIGNING_REMOVED  DocActivityType = 54
 )
 
 // Enum value maps for DocActivityType.
@@ -98,11 +92,6 @@ var (
 		42: "DOC_ACTIVITY_TYPE_APPROVAL_REJECTED",
 		43: "DOC_ACTIVITY_TYPE_APPROVAL_REVOKED",
 		44: "DOC_ACTIVITY_TYPE_APPROVAL_REMOVED",
-		50: "DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED",
-		51: "DOC_ACTIVITY_TYPE_SIGNING_SIGNED",
-		52: "DOC_ACTIVITY_TYPE_SIGNING_REJECTED",
-		53: "DOC_ACTIVITY_TYPE_SIGNING_REVOKED",
-		54: "DOC_ACTIVITY_TYPE_SIGNING_REMOVED",
 	}
 	DocActivityType_value = map[string]int32{
 		"DOC_ACTIVITY_TYPE_UNSPECIFIED":            0,
@@ -132,11 +121,6 @@ var (
 		"DOC_ACTIVITY_TYPE_APPROVAL_REJECTED":      42,
 		"DOC_ACTIVITY_TYPE_APPROVAL_REVOKED":       43,
 		"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED":       44,
-		"DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED":       50,
-		"DOC_ACTIVITY_TYPE_SIGNING_SIGNED":         51,
-		"DOC_ACTIVITY_TYPE_SIGNING_REJECTED":       52,
-		"DOC_ACTIVITY_TYPE_SIGNING_REVOKED":        53,
-		"DOC_ACTIVITY_TYPE_SIGNING_REMOVED":        54,
 	}
 )
 
@@ -921,7 +905,7 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\x13DocSigningRequested\x12?\n" +
 	"\bdeadline\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\bdeadline\x88\x01\x01\x12B\n" +
 	"\tapprovers\x18\x02 \x03(\v2\x1a.resources.users.UserShortB\b\xbaH\x05\x92\x01\x02\x10\bR\tapproversB\v\n" +
-	"\t_deadline*\xeb\t\n" +
+	"\t_deadline*\xa7\b\n" +
 	"\x0fDocActivityType\x12!\n" +
 	"\x1dDOC_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19DOC_ACTIVITY_TYPE_CREATED\x10\x01\x12!\n" +
@@ -950,12 +934,7 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_APPROVED\x10)\x12'\n" +
 	"#DOC_ACTIVITY_TYPE_APPROVAL_REJECTED\x10*\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_APPROVAL_REVOKED\x10+\x12&\n" +
-	"\"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED\x10,\x12&\n" +
-	"\"DOC_ACTIVITY_TYPE_SIGNING_ASSIGNED\x102\x12$\n" +
-	" DOC_ACTIVITY_TYPE_SIGNING_SIGNED\x103\x12&\n" +
-	"\"DOC_ACTIVITY_TYPE_SIGNING_REJECTED\x104\x12%\n" +
-	"!DOC_ACTIVITY_TYPE_SIGNING_REVOKED\x105\x12%\n" +
-	"!DOC_ACTIVITY_TYPE_SIGNING_REMOVED\x106BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\"DOC_ACTIVITY_TYPE_APPROVAL_REMOVED\x10,BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_activity_proto_rawDescOnce sync.Once

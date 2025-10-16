@@ -28,6 +28,11 @@ func (m *Approval) Sanitize() error {
 		}
 	}
 
+	// Field: PayloadSvg
+	if m.PayloadSvg != nil {
+		*m.PayloadSvg = htmlsanitizer.SanitizeSVG(*m.PayloadSvg)
+	}
+
 	// Field: RevokedAt
 	if m.RevokedAt != nil {
 		if v, ok := any(m.GetRevokedAt()).(interface{ Sanitize() error }); ok {
@@ -40,6 +45,15 @@ func (m *Approval) Sanitize() error {
 	// Field: SnapshotDate
 	if m.SnapshotDate != nil {
 		if v, ok := any(m.GetSnapshotDate()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Stamp
+	if m.Stamp != nil {
+		if v, ok := any(m.GetStamp()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -101,15 +115,6 @@ func (m *ApprovalPolicy) Sanitize() error {
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: DueAt
-	if m.DueAt != nil {
-		if v, ok := any(m.GetDueAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

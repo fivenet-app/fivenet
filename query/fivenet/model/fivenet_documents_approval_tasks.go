@@ -12,22 +12,23 @@ import (
 )
 
 type FivenetDocumentsApprovalTasks struct {
-	ID            int64      `sql:"primary_key" json:"id"`
-	DocumentID    int64      `json:"document_id"`
-	SnapshotDate  time.Time  `json:"snapshot_date"`
-	AssigneeKind  int16      `json:"assignee_kind"`
-	UserID        *int32     `json:"user_id"`
-	Job           *string    `json:"job"`
-	MinimumGrade  *int32     `json:"minimum_grade"`
-	Label         *string    `json:"label"`
-	SlotNo        int32      `json:"slot_no"`
-	Status        int16      `json:"status"`
-	Comment       *string    `json:"comment"`
-	DueAt         *time.Time `json:"due_at"`
-	DecisionCount int32      `json:"decision_count"`
-	CreatedAt     *time.Time `json:"created_at"`
-	CompletedAt   *time.Time `json:"completed_at"`
-	ApprovalID    *int64     `json:"approval_id"`
-	CreatorID     *int32     `json:"creator_id"`
-	CreatorJob    *string    `json:"creator_job"`
+	ID                int64      `sql:"primary_key" json:"id"`
+	DocumentID        int64      `json:"document_id"`
+	SnapshotDate      time.Time  `json:"snapshot_date"`
+	AssigneeKind      int16      `json:"assignee_kind"`
+	UserID            *int32     `json:"user_id"`
+	Job               *string    `json:"job"`
+	MinimumGrade      *int32     `json:"minimum_grade"`
+	Label             *string    `json:"label"`
+	SignatureRequired bool       `json:"signature_required"`
+	SlotNo            int32      `json:"slot_no"`
+	Status            int16      `json:"status"`
+	Comment           *string    `json:"comment"`
+	DueAt             *time.Time `json:"due_at"`
+	DecisionCount     int32      `json:"decision_count"`
+	CreatedAt         *time.Time `json:"created_at"`
+	CompletedAt       *time.Time `json:"completed_at"`
+	ApprovalID        *int64     `json:"approval_id"`
+	CreatorID         *int32     `json:"creator_id"`
+	CreatorJob        *string    `json:"creator_job"`
 }

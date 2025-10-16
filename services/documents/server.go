@@ -111,7 +111,7 @@ type Server struct {
 	pbdocuments.DocumentsServiceServer
 	pbdocuments.CollabServiceServer
 	pbdocuments.ApprovalServiceServer
-	pbdocuments.SigningServiceServer
+	pbdocuments.StampsServiceServer
 
 	logger *zap.Logger
 	tracer trace.Tracer
@@ -259,41 +259,41 @@ func NewServer(p Params) Result {
 
 		signingStampAccess: access.NewGrouped[documents.StampJobAccess, *documents.StampJobAccess, access.DummyUserAccess[documents.StampAccessLevel], *access.DummyUserAccess[documents.StampAccessLevel], access.DummyQualificationAccess[documents.StampAccessLevel], *access.DummyQualificationAccess[documents.StampAccessLevel], documents.StampAccessLevel](
 			p.DB,
-			table.FivenetDocumentsSignaturesStampsAccess,
+			table.FivenetDocumentsStampsAccess,
 			&access.TargetTableColumns{
-				ID:         table.FivenetDocumentsSignaturesStamps.ID,
-				DeletedAt:  table.FivenetDocumentsSignaturesStamps.DeletedAt,
+				ID:         table.FivenetDocumentsStamps.ID,
+				DeletedAt:  table.FivenetDocumentsStamps.DeletedAt,
 				CreatorID:  nil,
 				CreatorJob: nil,
 			},
 			access.NewJobs[documents.StampJobAccess, *documents.StampJobAccess, documents.StampAccessLevel](
-				table.FivenetDocumentsSignaturesStampsAccess,
+				table.FivenetDocumentsStampsAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetDocumentsSignaturesStampsAccess.ID,
-						TargetID: table.FivenetDocumentsSignaturesStampsAccess.TargetID,
-						Access:   table.FivenetDocumentsSignaturesStampsAccess.Access,
+						ID:       table.FivenetDocumentsStampsAccess.ID,
+						TargetID: table.FivenetDocumentsStampsAccess.TargetID,
+						Access:   table.FivenetDocumentsStampsAccess.Access,
 					},
-					Job:          table.FivenetDocumentsSignaturesStampsAccess.Job,
-					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.MinimumGrade,
+					Job:          table.FivenetDocumentsStampsAccess.Job,
+					MinimumGrade: table.FivenetDocumentsStampsAccess.MinimumGrade,
 				},
-				table.FivenetDocumentsSignaturesStampsAccess.AS("stamp_job_access"),
+				table.FivenetDocumentsStampsAccess.AS("stamp_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						ID: table.FivenetDocumentsStampsAccess.AS(
 							"stamp_job_access",
 						).ID,
-						TargetID: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						TargetID: table.FivenetDocumentsStampsAccess.AS(
 							"stamp_job_access",
 						).TargetID,
-						Access: table.FivenetDocumentsSignaturesStampsAccess.AS(
+						Access: table.FivenetDocumentsStampsAccess.AS(
 							"stamp_job_access",
 						).Access,
 					},
-					Job: table.FivenetDocumentsSignaturesStampsAccess.AS(
+					Job: table.FivenetDocumentsStampsAccess.AS(
 						"stamp_job_access",
 					).Job,
-					MinimumGrade: table.FivenetDocumentsSignaturesStampsAccess.AS(
+					MinimumGrade: table.FivenetDocumentsStampsAccess.AS(
 						"stamp_job_access",
 					).MinimumGrade,
 				},
@@ -390,7 +390,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterDocumentsServiceServer(srv, s)
 	pbdocuments.RegisterCollabServiceServer(srv, s)
 	pbdocuments.RegisterApprovalServiceServer(srv, s)
-	pbdocuments.RegisterSigningServiceServer(srv, s)
+	pbdocuments.RegisterStampsServiceServer(srv, s)
 }
 
 // GetPermsRemap returns the permissions re-mapping for the services.
@@ -406,10 +406,7 @@ func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry
 		return err
 	}
 
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "documents.signature.tasks.expire",
-		Schedule: "* * * * *", // Every minute
-	}); err != nil {
+	if err := registry.UnregisterCronjob(ctx, "documents.signature.tasks.expire"); err != nil {
 		return err
 	}
 
@@ -430,29 +427,6 @@ func (s *Server) RegisterCronjobHandlers(h *croner.Handlers) error {
 				return err
 			}
 			dest.SetAttribute("affected_rows", strconv.FormatInt(rowsAffected, 10))
-
-			// Marshal the updated cron data
-			if err := data.MarshalFrom(dest); err != nil {
-				return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
-			}
-
-			return nil
-		},
-	)
-
-	h.Add(
-		"documents.signature.tasks.expire",
-		func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := s.tracer.Start(ctx, "documents.signature.tasks.expire")
-			defer span.End()
-
-			dest := &cron.GenericCronData{}
-
-			affectedRows, err := s.expireSignatureTasks(ctx)
-			if err != nil {
-				return err
-			}
-			dest.SetAttribute("affected_rows", strconv.FormatInt(affectedRows, 10))
 
 			// Marshal the updated cron data
 			if err := data.MarshalFrom(dest); err != nil {

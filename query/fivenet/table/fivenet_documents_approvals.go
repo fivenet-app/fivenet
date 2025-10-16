@@ -24,6 +24,8 @@ type fivenetDocumentsApprovalsTable struct {
 	UserID       mysql.ColumnInteger
 	UserJob      mysql.ColumnString
 	UserJobGrade mysql.ColumnInteger
+	PayloadSvg   mysql.ColumnString
+	StampID      mysql.ColumnInteger
 	Status       mysql.ColumnInteger
 	Comment      mysql.ColumnString
 	CreatedAt    mysql.ColumnTimestamp
@@ -76,12 +78,14 @@ func newFivenetDocumentsApprovalsTableImpl(schemaName, tableName, alias string) 
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		UserJobColumn      = mysql.StringColumn("user_job")
 		UserJobGradeColumn = mysql.IntegerColumn("user_job_grade")
+		PayloadSvgColumn   = mysql.StringColumn("payload_svg")
+		StampIDColumn      = mysql.IntegerColumn("stamp_id")
 		StatusColumn       = mysql.IntegerColumn("status")
 		CommentColumn      = mysql.StringColumn("comment")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		RevokedAtColumn    = mysql.TimestampColumn("revoked_at")
-		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
-		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
+		mutableColumns     = mysql.ColumnList{DocumentIDColumn, SnapshotDateColumn, TaskIDColumn, UserIDColumn, UserJobColumn, UserJobGradeColumn, PayloadSvgColumn, StampIDColumn, StatusColumn, CommentColumn, CreatedAtColumn, RevokedAtColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -96,6 +100,8 @@ func newFivenetDocumentsApprovalsTableImpl(schemaName, tableName, alias string) 
 		UserID:       UserIDColumn,
 		UserJob:      UserJobColumn,
 		UserJobGrade: UserJobGradeColumn,
+		PayloadSvg:   PayloadSvgColumn,
+		StampID:      StampIDColumn,
 		Status:       StatusColumn,
 		Comment:      CommentColumn,
 		CreatedAt:    CreatedAtColumn,

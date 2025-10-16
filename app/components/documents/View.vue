@@ -29,7 +29,6 @@ import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderModal from './ReminderModal.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
-import SigningDrawer from './signing/SigningDrawer.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -80,7 +79,6 @@ function addToClipboard(): void {
 
 const requestDrawer = overlay.create(RequestDrawer);
 const approvalDrawer = overlay.create(ApprovalDrawer);
-const signingDrawer = overlay.create(SigningDrawer);
 
 const hash = useRouteHash('', { mode: 'push' });
 
@@ -108,16 +106,6 @@ function openApprovalDrawer(): void {
     hash.value = `#approvals`;
 }
 
-function openSigningDrawer(): void {
-    signingDrawer
-        .open({
-            documentId: props.documentId,
-        })
-        .then(() => (hash.value = ''));
-
-    hash.value = `#signing`;
-}
-
 function handleHash(): void {
     if (hash.value === undefined || hash.value === null) return;
 
@@ -126,8 +114,6 @@ function handleHash(): void {
         openRequestsDrawer();
     } else if (val === 'approvals') {
         openApprovalDrawer();
-    } else if (val === 'signing') {
-        openSigningDrawer();
     } else if (val === 'comments') {
         nextTick(() => {
             const el = document.getElementById('comments');
@@ -430,17 +416,6 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 icon="i-mdi-approval"
                                 :label="$t('common.approve')"
                                 @click="() => openApprovalDrawer()"
-                            />
-                        </UTooltip>
-
-                        <UTooltip v-if="can('TODOService/TODOMethod').value" class="flex-1" :text="$t('common.sign')">
-                            <UButton
-                                block
-                                color="neutral"
-                                variant="ghost"
-                                icon="i-mdi-signature"
-                                :label="$t('common.sign')"
-                                @click="() => openSigningDrawer()"
                             />
                         </UTooltip>
 

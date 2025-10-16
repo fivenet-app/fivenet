@@ -426,13 +426,14 @@ type ApprovalTaskSeed struct {
 	Job          string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
 	MinimumGrade int32  `protobuf:"varint,3,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	// Label of task
-	Label *string `protobuf:"bytes,4,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	Label             *string `protobuf:"bytes,4,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	SignatureRequired bool    `protobuf:"varint,5,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
 	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
-	Slots int32 `protobuf:"varint,5,opt,name=slots,proto3" json:"slots,omitempty"`
+	Slots int32 `protobuf:"varint,6,opt,name=slots,proto3" json:"slots,omitempty"`
 	// Optional default due date for created slots
-	DueAt *timestamp.Timestamp `protobuf:"bytes,6,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
+	DueAt *timestamp.Timestamp `protobuf:"bytes,7,opt,name=due_at,json=dueAt,proto3,oneof" json:"due_at,omitempty"`
 	// Optional note set on created tasks
-	Comment       *string `protobuf:"bytes,7,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	Comment       *string `protobuf:"bytes,8,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -493,6 +494,13 @@ func (x *ApprovalTaskSeed) GetLabel() string {
 		return *x.Label
 	}
 	return ""
+}
+
+func (x *ApprovalTaskSeed) GetSignatureRequired() bool {
+	if x != nil {
+		return x.SignatureRequired
+	}
+	return false
 }
 
 func (x *ApprovalTaskSeed) GetSlots() int32 {
@@ -964,11 +972,14 @@ func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
 }
 
 type DecideApprovalRequest struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	DocumentId    int64                        `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	TaskId        *int64                       `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus     documents.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
-	Comment       string                       `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	state      protoimpl.MessageState       `protogen:"open.v1"`
+	DocumentId int64                        `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	TaskId     *int64                       `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus  documents.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
+	Comment    string                       `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	PayloadSvg *string                      `protobuf:"bytes,5,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
+	// When type=STAMP
+	StampId       *int64 `protobuf:"varint,6,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1029,6 +1040,20 @@ func (x *DecideApprovalRequest) GetComment() string {
 		return x.Comment
 	}
 	return ""
+}
+
+func (x *DecideApprovalRequest) GetPayloadSvg() string {
+	if x != nil && x.PayloadSvg != nil {
+		return *x.PayloadSvg
+	}
+	return ""
+}
+
+func (x *DecideApprovalRequest) GetStampId() int64 {
+	if x != nil && x.StampId != nil {
+		return *x.StampId
+	}
+	return 0
 }
 
 type DecideApprovalResponse struct {
@@ -1315,15 +1340,16 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"documentId\x12M\n" +
 	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x92\x01\x02\x10\x04R\bstatuses\"Z\n" +
 	"\x19ListApprovalTasksResponse\x12=\n" +
-	"\x05tasks\x18\x01 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xb4\x02\n" +
+	"\x05tasks\x18\x01 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xe3\x02\n" +
 	"\x10ApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
 	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x123\n" +
-	"\x05label\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12\x1f\n" +
-	"\x05slots\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
-	"\x06due_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12\x1d\n" +
-	"\acomment\x18\a \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
+	"\x05label\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12-\n" +
+	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x1f\n" +
+	"\x05slots\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12:\n" +
+	"\x06due_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05dueAt\x88\x01\x01\x12\x1d\n" +
+	"\acomment\x18\b \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
 	"\x06_labelB\t\n" +
 	"\a_due_atB\n" +
 	"\n" +
@@ -1364,16 +1390,21 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"approvalId\x12\"\n" +
 	"\acomment\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\acomment\"S\n" +
 	"\x16RevokeApprovalResponse\x129\n" +
-	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xea\x01\n" +
+	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xe2\x02\n" +
 	"\x15DecideApprovalRequest\x12(\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\n" +
 	"documentId\x12%\n" +
 	"\atask_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00H\x00R\x06taskId\x88\x01\x01\x12P\n" +
 	"\n" +
 	"new_status\x18\x03 \x01(\x0e2'.resources.documents.ApprovalTaskStatusB\b\xbaH\x05\x82\x01\x02\x10\x01R\tnewStatus\x12\"\n" +
-	"\acomment\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acommentB\n" +
+	"\acomment\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xf4\x03R\acomment\x129\n" +
+	"\vpayload_svg\x18\x05 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGH\x01R\n" +
+	"payloadSvg\x88\x01\x01\x12\x1e\n" +
+	"\bstamp_id\x18\x06 \x01(\x03H\x02R\astampId\x88\x01\x01B\n" +
 	"\n" +
-	"\b_task_id\"\xc7\x01\n" +
+	"\b_task_idB\x0e\n" +
+	"\f_payload_svgB\v\n" +
+	"\t_stamp_id\"\xc7\x01\n" +
 	"\x16DecideApprovalResponse\x129\n" +
 	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\x125\n" +
 	"\x04task\x18\x02 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +

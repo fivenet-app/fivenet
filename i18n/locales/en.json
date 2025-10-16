@@ -46,9 +46,6 @@
             "approvals": {
                 "title": "Approval Tasks"
             },
-            "signatures": {
-                "title": "Signature Tasks"
-            },
             "stamps": {
                 "title": "Stamps"
             }
@@ -587,7 +584,7 @@
         "personal_email": "Personal Email",
         "participant": "Participant | Participants",
         "sender": "Sender",
-        "signature": "Signature",
+        "signature": "Signature | Signatures",
         "internal": "Internal",
         "label": "Label | Labels",
         "additional_recipients": "Additional Recipients",
@@ -720,7 +717,6 @@
         "stamp": "Stamp | Stamps",
         "due_at": "Due at",
         "approvals": "Approvals",
-        "signatures": "Signatures",
         "continue": "Continue",
         "policy": "Policy",
         "task": "Task | Tasks",
@@ -729,7 +725,8 @@
         "approval": "No Approvals | {n} Approval | {n} Approvals",
         "revoke": "Revoke",
         "metadata": "Metadata",
-        "expand_collapse": "Expand/ Collapse"
+        "expand_collapse": "Expand/ Collapse",
+        "no_signature": "No Signature provided"
     },
     "components": {
         "partials": {
@@ -920,8 +917,9 @@
                     "title": "Approval Request Policy",
                     "rule_kind": "Rule Kind",
                     "on_edit_behavior": "On Edit Behavior",
-                    "required_signatures": "Required Signatures"
+                    "required_approvals": "Required Approvals"
                 },
+                "signature_required": "Signature(s) Required",
                 "tasks": "Approval Tasks",
                 "task_form": {
                     "title": "Tasks"
@@ -2262,9 +2260,9 @@
                 "title": "Approval task already handled!",
                 "content": "This approval task has already been approved/declined."
             },
-            "ErrSigningTaskAlreadyHandled": {
-                "title": "Signing task already handled!",
-                "content": "This signing task has already been signed/declined."
+            "ErrApprovalSignatureRequired": {
+                "title": "Approval signature required!",
+                "content": "You must provide a signature to approve this document."
             },
             "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!"
         },
@@ -2552,12 +2550,7 @@
                 "APPROVAL_APPROVED": "Document has been approved",
                 "APPROVAL_REJECTED": "Document has been rejected",
                 "APPROVAL_REVOKED": "Document approval revoked",
-                "APPROVAL_REMOVED": "Document approval removed",
-                "SIGNING_ASSIGNED": "Document signature task assigned",
-                "SIGNING_SIGNED": "Document has been signed",
-                "SIGNING_DECLINED": "Document signature has been declined",
-                "SIGNING_REVOKED": "Document signature revoked",
-                "SIGNING_REMOVED": "Document signature removed"
+                "APPROVAL_REMOVED": "Document approval removed"
             },
             "OnEditBehavior": {
                 "UNSPECIFIED": "Unspecified",
@@ -2584,35 +2577,11 @@
                 "DECLINED": "Declined",
                 "REVOKED": "Revoked"
             },
-            "SignatureType": {
-                "UNSPECIFIED": "Unspecified",
-                "FREEHAND": "Freehand",
-                "TYPED": "Typed",
-                "STAMP": "Stamp"
-            },
-            "SignatureBindingMode": {
-                "UNSPECIFIED": "Unspecified",
-                "BINDING": "Binding: Reset signatures on edit",
-                "NONBINDING": "Non-binding: Keep signatures on edit"
-            },
-            "SignatureTaskStatus": {
-                "UNSPECIFIED": "Unspecified",
-                "PENDING": "Pending",
-                "SIGNED": "Signed",
-                "DECLINED": "Declined",
-                "EXPIRED": "Expired",
-                "COMPLETED": "Completed"
-            },
             "StampAccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
                 "USE": "Use",
                 "MANAGE": "Manage"
-            },
-            "SignatureRuleKind": {
-                "UNSPECIFIED":"Unspecified",
-                "REQUIRE_ALL": "Require all",
-                "QUORUM_ANY": "Require certain amount"
             }
         },
         "settings": {
@@ -3060,28 +3029,8 @@
                     "description": "Revoke a given approval."
                 }
             },
-            "SigningService": {
-                "category": "Documents: Signing",
-                "UpsertSignaturePolicy": {
-                    "key": "Create or Update Signing Requirement",
-                    "description": "Create or update a signing requirement."
-                },
-                "DeleteSignaturePolicy": {
-                    "key": "Delete Signing Requirement",
-                    "description": "Delete a signing requirement."
-                },
-                "UpsertSignatureTasks": {
-                    "key": "Create or Update Signature Tasks",
-                    "description": "Create or update signature tasks for a document."
-                },
-                "DeleteSignatureTasks": {
-                    "key": "Delete Signature Tasks",
-                    "description": "Delete signature tasks for a document."
-                },
-                "RevokeSignature": {
-                    "key": "Revoke Signature",
-                    "description": "Revoke a given signature."
-                },
+            "StampService": {
+                "category": "Documents: Stamps",
                 "ListUsableStamps": {
                     "key": "List Stamps",
                     "description": "List all usable stamps."
