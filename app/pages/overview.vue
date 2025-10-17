@@ -100,7 +100,7 @@ const items = [
         <template #body>
             <CardsList :items="items" />
 
-            <div class="mx-auto max-w-(--breakpoint-xl)">
+            <div class="max-w-(--breakpoint-lg) sm:mx-auto">
                 <HintsBox />
             </div>
         </template>

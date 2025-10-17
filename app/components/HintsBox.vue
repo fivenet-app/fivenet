@@ -30,16 +30,20 @@ const hints = shuffleArray([
         :ui="{
             wrapper: 'flex-row gap-2',
             leadingIcon: 'size-6',
+            body: 'p-0 sm:p-0',
+            root: 'block',
         }"
         v-bind="$attrs"
     >
-        <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" class="mb-6">
-            <div class="mx-auto flex flex-col items-center gap-2 text-sm sm:flex-row">
-                <span class="max-w-xl grow sm:max-w-full">{{ $t(`components.hints.${hint.key}.content`) }}</span>
+        <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" :ui="{ dots: '-bottom-0' }">
+            <div class="box-border w-full min-w-0">
+                <div class="overflow-hidden break-words hyphens-auto whitespace-normal">
+                    <p>{{ $t(`components.hints.${hint.key}.content`) }}</p>
 
-                <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
-                    <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
-                    <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
+                    <div v-if="hint.keyboard || hint.to" class="mt-3 sm:mt-0">
+                        <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
+                        <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
+                    </div>
                 </div>
             </div>
         </UCarousel>

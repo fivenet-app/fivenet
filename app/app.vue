@@ -84,6 +84,7 @@ async function setThemeColors(): Promise<void> {
     root.style.setProperty('--color-neutral-950-rgb', `var(--color-${design.value.ui.gray}-950-rgb)`);
     root.style.setProperty('--color-neutral-rgb', `var(--color-${design.value.ui.gray}-500-rgb)`);
 }
+
 watch(design.value, () => setThemeColors());
 setThemeColors();
 

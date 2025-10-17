@@ -30,7 +30,7 @@ export default function colorMixTransparencyFallback(opts = {}) {
         } else if (val.includes('rgb(0, 0, 0)')) {
             val = val.replace('rgb(0, 0, 0)', 'var(--color-black)');
         }
-        // TODO replacement logic for the --ui-* aliases needed
+        // TODO what additional replacement logic is needed for other `--ui-*` aliases here?
         if (val.includes('--ui-bg')) {
             val = val.replace('--ui-bg', '--color-neutral');
         } else if (val.includes('-primary-') || val.includes('-secondary-')) {
