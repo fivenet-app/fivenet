@@ -58,34 +58,34 @@ async function setThemeColors(): Promise<void> {
     if (!document.documentElement.classList.contains('chrome103')) return;
 
     const root = document.documentElement;
-    root.style.setProperty('--color-primary-50-rgb', `--color-${design.value.ui.primary}-50`);
-    root.style.setProperty('--color-primary-100-rgb', `--color-${design.value.ui.primary}-100`);
-    root.style.setProperty('--color-primary-200-rgb', `--color-${design.value.ui.primary}-200`);
-    root.style.setProperty('--color-primary-300-rgb', `--color-${design.value.ui.primary}-300`);
-    root.style.setProperty('--color-primary-400-rgb', `--color-${design.value.ui.primary}-400`);
-    root.style.setProperty('--color-primary-500-rgb', `--color-${design.value.ui.primary}-500`);
-    root.style.setProperty('--color-primary-600-rgb', `--color-${design.value.ui.primary}-600`);
-    root.style.setProperty('--color-primary-700-rgb', `--color-${design.value.ui.primary}-700`);
-    root.style.setProperty('--color-primary-800-rgb', `--color-${design.value.ui.primary}-800`);
-    root.style.setProperty('--color-primary-900-rgb', `--color-${design.value.ui.primary}-900`);
-    root.style.setProperty('--color-primary-950-rgb', `--color-${design.value.ui.primary}-950`);
-    root.style.setProperty('--color-primary-rgb', `--color-${design.value.ui.primary}-500`);
+    root.style.setProperty('--color-primary-50-rgb', `var(--color-${design.value.ui.primary}-50-rgb)`);
+    root.style.setProperty('--color-primary-100-rgb', `var(--color-${design.value.ui.primary}-100-rgb)`);
+    root.style.setProperty('--color-primary-200-rgb', `var(--color-${design.value.ui.primary}-200-rgb)`);
+    root.style.setProperty('--color-primary-300-rgb', `var(--color-${design.value.ui.primary}-300-rgb)`);
+    root.style.setProperty('--color-primary-400-rgb', `var(--color-${design.value.ui.primary}-400-rgb)`);
+    root.style.setProperty('--color-primary-500-rgb', `var(--color-${design.value.ui.primary}-500-rgb)`);
+    root.style.setProperty('--color-primary-600-rgb', `var(--color-${design.value.ui.primary}-600-rgb)`);
+    root.style.setProperty('--color-primary-700-rgb', `var(--color-${design.value.ui.primary}-700-rgb)`);
+    root.style.setProperty('--color-primary-800-rgb', `var(--color-${design.value.ui.primary}-800-rgb)`);
+    root.style.setProperty('--color-primary-900-rgb', `var(--color-${design.value.ui.primary}-900-rgb)`);
+    root.style.setProperty('--color-primary-950-rgb', `var(--color-${design.value.ui.primary}-950-rgb)`);
+    root.style.setProperty('--color-primary-rgb', `var(--color-${design.value.ui.primary}-500-rgb)`);
 
-    root.style.setProperty('--color-neutral-50-rgb', `--color-${design.value.ui.gray}-50`);
-    root.style.setProperty('--color-neutral-100-rgb', `--color-${design.value.ui.gray}-100`);
-    root.style.setProperty('--color-neutral-200-rgb', `--color-${design.value.ui.gray}-200`);
-    root.style.setProperty('--color-neutral-300-rgb', `--color-${design.value.ui.gray}-300`);
-    root.style.setProperty('--color-neutral-400-rgb', `--color-${design.value.ui.gray}-400`);
-    root.style.setProperty('--color-neutral-500-rgb', `--color-${design.value.ui.gray}-500`);
-    root.style.setProperty('--color-neutral-600-rgb', `--color-${design.value.ui.gray}-600`);
-    root.style.setProperty('--color-neutral-700-rgb', `--color-${design.value.ui.gray}-700`);
-    root.style.setProperty('--color-neutral-800-rgb', `--color-${design.value.ui.gray}-800`);
-    root.style.setProperty('--color-neutral-900-rgb', `--color-${design.value.ui.gray}-900`);
-    root.style.setProperty('--color-neutral-950-rgb', `--color-${design.value.ui.gray}-950`);
-    root.style.setProperty('--color-neutral-rgb', `--color-${design.value.ui.gray}-500`);
+    root.style.setProperty('--color-neutral-50-rgb', `var(--color-${design.value.ui.gray}-50-rgb)`);
+    root.style.setProperty('--color-neutral-100-rgb', `var(--color-${design.value.ui.gray}-100-rgb)`);
+    root.style.setProperty('--color-neutral-200-rgb', `var(--color-${design.value.ui.gray}-200-rgb)`);
+    root.style.setProperty('--color-neutral-300-rgb', `var(--color-${design.value.ui.gray}-300-rgb)`);
+    root.style.setProperty('--color-neutral-400-rgb', `var(--color-${design.value.ui.gray}-400-rgb)`);
+    root.style.setProperty('--color-neutral-500-rgb', `var(--color-${design.value.ui.gray}-500-rgb)`);
+    root.style.setProperty('--color-neutral-600-rgb', `var(--color-${design.value.ui.gray}-600-rgb)`);
+    root.style.setProperty('--color-neutral-700-rgb', `var(--color-${design.value.ui.gray}-700-rgb)`);
+    root.style.setProperty('--color-neutral-800-rgb', `var(--color-${design.value.ui.gray}-800-rgb)`);
+    root.style.setProperty('--color-neutral-900-rgb', `var(--color-${design.value.ui.gray}-900-rgb)`);
+    root.style.setProperty('--color-neutral-950-rgb', `var(--color-${design.value.ui.gray}-950-rgb)`);
+    root.style.setProperty('--color-neutral-rgb', `var(--color-${design.value.ui.gray}-500-rgb)`);
 }
-setThemeColors();
 watch(design.value, () => setThemeColors());
+setThemeColors();
 
 async function setUserLocale(): Promise<void> {
     logger.info('Setting user locale to', getUserLocale.value);
