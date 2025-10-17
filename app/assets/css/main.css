@@ -381,6 +381,32 @@ html.chrome103:root {
     --tw-ease: linear;
 
     /* RGB Colors for Transparency */
+    --color-primary-50-rgb: var(--color-blue-50);
+    --color-primary-100-rgb: var(--color-blue-100);
+    --color-primary-200-rgb: var(--color-blue-200);
+    --color-primary-300-rgb: var(--color-blue-300);
+    --color-primary-400-rgb: var(--color-blue-400);
+    --color-primary-500-rgb: var(--color-blue-500);
+    --color-primary-600-rgb: var(--color-blue-600);
+    --color-primary-700-rgb: var(--color-blue-700);
+    --color-primary-800-rgb: var(--color-blue-800);
+    --color-primary-900-rgb: var(--color-blue-900);
+    --color-primary-950-rgb: var(--color-blue-950);
+    --color-primary-rgb: var(--color-blue-500);
+
+    --color-secondary-50-rgb: var(--color-blue-50);
+    --color-secondary-100-rgb: var(--color-blue-100);
+    --color-secondary-200-rgb: var(--color-blue-200);
+    --color-secondary-300-rgb: var(--color-blue-300);
+    --color-secondary-400-rgb: var(--color-blue-400);
+    --color-secondary-500-rgb: var(--color-blue-500);
+    --color-secondary-600-rgb: var(--color-blue-600);
+    --color-secondary-700-rgb: var(--color-blue-700);
+    --color-secondary-800-rgb: var(--color-blue-800);
+    --color-secondary-900-rgb: var(--color-blue-900);
+    --color-secondary-950-rgb: var(--color-blue-950);
+    --color-secondary-rgb: var(--color-blue-500);
+
     --color-red-50-rgb: 254, 242, 242;
     --color-red-100-rgb: 255, 226, 226;
     --color-red-200-rgb: 255, 201, 201;
@@ -669,4 +695,56 @@ html.chrome103:root {
 
     --color-black-rgb: 0, 0, 0;
     --color-white-rgb: 255, 255, 255;
+
+    --color-error-50-rgb: var(--color-red-50);
+    --color-error-100-rgb: var(--color-red-100);
+    --color-error-200-rgb: var(--color-red-200);
+    --color-error-300-rgb: var(--color-red-300);
+    --color-error-400-rgb: var(--color-red-400);
+    --color-error-500-rgb: var(--color-red-500);
+    --color-error-600-rgb: var(--color-red-600);
+    --color-error-700-rgb: var(--color-red-700);
+    --color-error-800-rgb: var(--color-red-800);
+    --color-error-900-rgb: var(--color-red-900);
+    --color-error-950-rgb: var(--color-red-950);
+    --color-error-rgb: var(--color-red-500);
+
+    --color-warning-50-rgb: var(--color-yellow-50);
+    --color-warning-100-rgb: var(--color-yellow-100);
+    --color-warning-200-rgb: var(--color-yellow-200);
+    --color-warning-300-rgb: var(--color-yellow-300);
+    --color-warning-400-rgb: var(--color-yellow-400);
+    --color-warning-500-rgb: var(--color-yellow-500);
+    --color-warning-600-rgb: var(--color-yellow-600);
+    --color-warning-700-rgb: var(--color-yellow-700);
+    --color-warning-800-rgb: var(--color-yellow-800);
+    --color-warning-900-rgb: var(--color-yellow-900);
+    --color-warning-950-rgb: var(--color-yellow-950);
+    --color-warning-rgb: var(--color-yellow-500);
+
+    --color-info-50-rgb: var(--color-sky-50);
+    --color-info-100-rgb: var(--color-sky-100);
+    --color-info-200-rgb: var(--color-sky-200);
+    --color-info-300-rgb: var(--color-sky-300);
+    --color-info-400-rgb: var(--color-sky-400);
+    --color-info-500-rgb: var(--color-sky-500);
+    --color-info-600-rgb: var(--color-sky-600);
+    --color-info-700-rgb: var(--color-sky-700);
+    --color-info-800-rgb: var(--color-sky-800);
+    --color-info-900-rgb: var(--color-sky-900);
+    --color-info-950-rgb: var(--color-sky-950);
+    --color-info-rgb: var(--color-sky-500);
+
+    --color-success-50-rgb: var(--color-green-50);
+    --color-success-100-rgb: var(--color-green-100);
+    --color-success-200-rgb: var(--color-green-200);
+    --color-success-300-rgb: var(--color-green-300);
+    --color-success-400-rgb: var(--color-green-400);
+    --color-success-500-rgb: var(--color-green-500);
+    --color-success-600-rgb: var(--color-green-600);
+    --color-success-700-rgb: var(--color-green-700);
+    --color-success-800-rgb: var(--color-green-800);
+    --color-success-900-rgb: var(--color-green-900);
+    --color-success-950-rgb: var(--color-green-950);
+    --color-success-rgb: var(--color-green-500);
 }
