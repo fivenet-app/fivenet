@@ -31,8 +31,9 @@ export default function colorMixTransparencyFallback(opts = {}) {
             val = val.replace('rgb(0, 0, 0)', 'var(--color-black)');
         }
         // TODO replacement logic for the --ui-* aliases needed
-        if (val.includes('--ui-bg') || val.includes('-primary-') || val.includes('-secondary-')) {
-            //val = val.replace('--ui-bg', '--color-neutral');
+        if (val.includes('--ui-bg')) {
+            val = val.replace('--ui-bg', '--color-neutral');
+        } else if (val.includes('-primary-') || val.includes('-secondary-')) {
             return null;
         } else if (!val.includes('--ui-bg') && val.includes('--ui-')) {
             val = val.replace('--ui-color-', '--color-');
