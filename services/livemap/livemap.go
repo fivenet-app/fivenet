@@ -269,7 +269,7 @@ func (s *Server) Stream(
 			FilterSubjects: buildFilters(usersJobs),
 			DeliverPolicy:  jetstream.DeliverNewPolicy,
 			AckPolicy:      jetstream.AckNonePolicy,
-			MaxWaiting:     8,
+			MaxWaiting:     16,
 		}
 		consumer, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
 		if err != nil {
@@ -295,128 +295,118 @@ func (s *Server) Stream(
 			}
 
 			for m := range batch.Messages() {
-				op := m.Headers().Get("KV-Operation")
-				if err := m.Ack(); err != nil {
-					s.logger.Error("failed to ack message", zap.Error(err))
-					continue
-				}
-
-				if op == "DEL" || op == "PURGE" {
-					// Ignore delete and purge operations when not on duty (unless superuser)
-					if !userOnDuty && !userInfo.GetSuperuser() {
-						continue
-					}
-
-					key := strings.TrimPrefix(m.Subject(), "$KV."+tracker.BucketUserLoc+".")
-					userId, job, jobGrade, err := tracker.DecodeUserMarkerKey(key)
-					if err != nil {
-						return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
-					}
-
-					if userId == userInfo.GetUserId() && job == userInfo.GetJob() &&
-						jobGrade == userInfo.GetJobGrade() {
-						userOnDuty = false
-					}
-
-					select {
-					case <-gctx.Done():
-						return nil
-
-					case outCh <- &pblivemap.StreamResponse{
-						UserOnDuty: &userOnDuty,
-						Data: &pblivemap.StreamResponse_UserDeletes{
-							UserDeletes: &pblivemap.UserDeletes{
-								Deletes: []*pblivemap.UserDelete{
-									{
-										Id:  userId,
-										Job: job,
-									},
-								},
-							},
-						},
-					}:
-					}
-					continue
-				}
-
-				um := &livemap.UserMarker{}
-				if err := proto.Unmarshal(m.Data(), um); err != nil {
-					continue
-				}
-
-				// Marker is hidden, send delete event
-				if um.GetHidden() {
-					// If the user is hidden, we toggle the on duty state and "drop" any message not related to the user
-					if um.GetUserId() == userInfo.GetUserId() && um.GetJob() == userInfo.GetJob() &&
-						(um.JobGrade == nil || um.GetJobGrade() == userInfo.GetJobGrade()) {
-						userOnDuty = false
-					}
-
-					select {
-					case <-gctx.Done():
-						return nil
-
-					case outCh <- &pblivemap.StreamResponse{
-						UserOnDuty: &userOnDuty,
-						Data: &pblivemap.StreamResponse_UserDeletes{
-							UserDeletes: &pblivemap.UserDeletes{
-								Deletes: []*pblivemap.UserDelete{
-									{
-										Id:  um.GetUserId(),
-										Job: um.GetJob(),
-									},
-								},
-							},
-						},
-					}:
-					}
-					continue
-				}
-
-				if !userOnDuty {
-                    // If the user is (back) on duty, we send the user markers snapshot
-					if um.GetUserId() == userInfo.GetUserId() {
-						userOnDuty = true
-						if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
-							return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
-						}
-					} else if !userInfo.GetSuperuser() {
-						// If the user is not on duty and not superuser, we skip sending marker updates
-						continue
-					}
-				}
-
-				job := um.GetJob()
-				if um.GetJob() == "" {
-					job = um.GetUser().GetJob()
-				}
-				jg := um.GetUser().GetJobGrade()
-				if um.JobGrade != nil {
-					jg = um.GetJobGrade()
-				}
-
-				if !userInfo.GetSuperuser() && !usersJobs.HasJobGrade(job, jg) {
-					continue
-				}
-
-				select {
-				case <-gctx.Done():
-					return nil
-
-				case outCh <- &pblivemap.StreamResponse{
-					UserOnDuty: &userOnDuty,
-					Data: &pblivemap.StreamResponse_UserUpdates{
-						UserUpdates: &pblivemap.UserUpdates{
-							Updates: []*livemap.UserMarker{um},
-						},
-					},
-				}:
+				if err := s.processMessage(srv, m, userInfo, &userOnDuty, usersJobs, outCh); err != nil {
+					return err
 				}
 			}
 		}
 	})
 
 	return g.Wait()
+}
+
+// Helper function to process a single message.
+func (s *Server) processMessage(
+	srv pblivemap.LivemapService_StreamServer,
+	m jetstream.Msg,
+	userInfo *userinfo.UserInfo,
+	userOnDuty *bool,
+	usersJobs *permissions.JobGradeList,
+	outCh chan<- *pblivemap.StreamResponse,
+) error {
+	op := m.Headers().Get("KV-Operation")
+	if err := m.Ack(); err != nil {
+		s.logger.Error("failed to ack message", zap.Error(err))
+		return nil // Log and continue processing other messages
+	}
+
+	if op == "DEL" || op == "PURGE" {
+		if !*userOnDuty && !userInfo.GetSuperuser() {
+			return nil // Ignore if not on duty and not superuser
+		}
+
+		key := strings.TrimPrefix(m.Subject(), "$KV."+tracker.BucketUserLoc+".")
+		userId, job, jobGrade, err := tracker.DecodeUserMarkerKey(key)
+		if err != nil {
+			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
+		}
+
+		if userId == userInfo.GetUserId() && job == userInfo.GetJob() &&
+			jobGrade == userInfo.GetJobGrade() && !userInfo.GetSuperuser() {
+			*userOnDuty = false
+		}
+
+		outCh <- &pblivemap.StreamResponse{
+			UserOnDuty: userOnDuty,
+			Data: &pblivemap.StreamResponse_UserDeletes{
+				UserDeletes: &pblivemap.UserDeletes{
+					Deletes: []*pblivemap.UserDelete{
+						{Id: userId, Job: job},
+					},
+				},
+			},
+		}
+		return nil
+	}
+
+	um := &livemap.UserMarker{}
+	if err := proto.Unmarshal(m.Data(), um); err != nil {
+		return nil // Ignore invalid messages
+	}
+
+	if um.GetHidden() && !userInfo.GetSuperuser() {
+		if um.GetUserId() == userInfo.GetUserId() && um.GetJob() == userInfo.GetJob() &&
+			(um.JobGrade == nil || um.GetJobGrade() == userInfo.GetJobGrade()) {
+			*userOnDuty = false
+		}
+
+		outCh <- &pblivemap.StreamResponse{
+			UserOnDuty: userOnDuty,
+			Data: &pblivemap.StreamResponse_UserDeletes{
+				UserDeletes: &pblivemap.UserDeletes{
+					Deletes: []*pblivemap.UserDelete{
+						{Id: um.GetUserId(), Job: um.GetJob()},
+					},
+				},
+			},
+		}
+		return nil
+	}
+
+	if !*userOnDuty {
+		if um.GetUserId() == userInfo.GetUserId() {
+			*userOnDuty = true
+			if err := s.sendUserMarkers(srv, usersJobs, userInfo, true); err != nil {
+				return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
+			}
+		} else if !userInfo.GetSuperuser() {
+			return nil // Skip updates for non-superusers not on duty
+		}
+	}
+
+	job := um.GetJob()
+	if job == "" {
+		job = um.GetUser().GetJob()
+	}
+	jg := um.GetUser().GetJobGrade()
+	if um.JobGrade != nil {
+		jg = um.GetJobGrade()
+	}
+
+	if !userInfo.GetSuperuser() && !usersJobs.HasJobGrade(job, jg) {
+		return nil
+	}
+
+	outCh <- &pblivemap.StreamResponse{
+		UserOnDuty: userOnDuty,
+		Data: &pblivemap.StreamResponse_UserUpdates{
+			UserUpdates: &pblivemap.UserUpdates{
+				Updates: []*livemap.UserMarker{um},
+			},
+		},
+	}
+
+	return nil
 }
 
 // Send out chunked current marker markers.
