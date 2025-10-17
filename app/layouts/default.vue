@@ -85,12 +85,6 @@ const links = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-approval',
                     to: 'documents/approvals',
                 },
-                {
-                    label: t('common.signatures'),
-                    icon: 'i-mdi-signature',
-                    to: '/documents/signatures',
-                    permission: 'TODOService/TODOMethod' as Perms,
-                },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
             active: route.name.startsWith('documents'),
