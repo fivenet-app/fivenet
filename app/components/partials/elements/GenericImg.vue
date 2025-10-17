@@ -28,8 +28,8 @@ const props = withDefaults(
     },
 );
 
-const settings = useSettingsStore();
-const { streamerMode } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { streamerMode } = storeToRefs(settingsStore);
 
 const visible = ref(props.noBlur || !streamerMode.value);
 

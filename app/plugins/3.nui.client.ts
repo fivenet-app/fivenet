@@ -7,12 +7,12 @@ export default defineNuxtPlugin(() => {
         const nuiQuery = query.nui as string;
 
         const logger = useLogger('🎮 NUI');
-        const settings = useSettingsStore();
+        const settingsStore = useSettingsStore();
         if (nuiQuery.toLowerCase() !== 'false') {
-            settings.setNuiSettings(true, nuiQuery);
-            logger.info('Enabled NUI integration, resource:', settings.nuiResourceName);
+            settingsStore.setNuiSettings(true, nuiQuery);
+            logger.info('Enabled NUI integration, resource:', settingsStore.nuiResourceName);
         } else {
-            settings.setNuiSettings(false);
+            settingsStore.setNuiSettings(false);
             logger.info('Disabled NUI integration');
         }
     }

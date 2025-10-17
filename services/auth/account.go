@@ -57,21 +57,22 @@ func (s *Server) GetAccountInfo(
 		}
 	}
 
-	oAuth2Accounts := table.FivenetAccountsOauth2.AS("oauth2_account")
-	stmt := oAuth2Accounts.
+	tOAuth2Accounts := table.FivenetAccountsOauth2.AS("oauth2_account")
+
+	stmt := tOAuth2Accounts.
 		SELECT(
-			oAuth2Accounts.AccountID,
-			oAuth2Accounts.CreatedAt,
-			oAuth2Accounts.Provider.AS("oauth2_account.providername"),
-			oAuth2Accounts.ExternalID,
-			oAuth2Accounts.Username,
-			oAuth2Accounts.Avatar,
+			tOAuth2Accounts.AccountID,
+			tOAuth2Accounts.CreatedAt,
+			tOAuth2Accounts.Provider.AS("oauth2_account.providername"),
+			tOAuth2Accounts.ExternalID,
+			tOAuth2Accounts.Username,
+			tOAuth2Accounts.Avatar,
 		).
 		FROM(
-			oAuth2Accounts,
+			tOAuth2Accounts,
 		).
 		WHERE(
-			oAuth2Accounts.AccountID.EQ(mysql.Int64(acc.ID)),
+			tOAuth2Accounts.AccountID.EQ(mysql.Int64(acc.ID)),
 		).
 		LIMIT(5)
 

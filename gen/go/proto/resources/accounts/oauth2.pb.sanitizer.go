@@ -14,6 +14,9 @@ func (m *OAuth2Account) Sanitize() error {
 		return nil
 	}
 
+	// Field: Avatar
+	m.Avatar = htmlsanitizer.Sanitize(m.Avatar)
+
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
@@ -25,9 +28,6 @@ func (m *OAuth2Account) Sanitize() error {
 
 	// Field: ExternalId
 	m.ExternalId = htmlsanitizer.Sanitize(m.ExternalId)
-
-	// Field: ProfilePicture
-	m.ProfilePicture = htmlsanitizer.Sanitize(m.ProfilePicture)
 
 	// Field: Provider
 	if m.Provider != nil {

@@ -11,8 +11,8 @@ const { locale, locales } = useI18n();
 
 const notifications = useNotificationsStore();
 
-const settings = useSettingsStore();
-const { locale: userLocale } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { locale: userLocale } = storeToRefs(settingsStore);
 
 const languages = ref<LocaleObject[]>([]);
 

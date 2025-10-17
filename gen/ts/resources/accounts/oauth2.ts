@@ -41,9 +41,9 @@ export interface OAuth2Account {
      */
     username: string;
     /**
-     * @generated from protobuf field: string profile_picture = 7
+     * @generated from protobuf field: string avatar = 7
      */
-    profilePicture: string;
+    avatar: string;
 }
 /**
  * @generated from protobuf message resources.accounts.OAuth2Provider
@@ -76,7 +76,7 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
             { no: 5, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } },
             { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
-            { no: 7, name: "profile_picture", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
+            { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<OAuth2Account>): OAuth2Account {
@@ -85,7 +85,7 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         message.providerName = "";
         message.externalId = "";
         message.username = "";
-        message.profilePicture = "";
+        message.avatar = "";
         if (value !== undefined)
             reflectionMergePartial<OAuth2Account>(this, message, value);
         return message;
@@ -113,8 +113,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
                 case /* string username */ 6:
                     message.username = reader.string();
                     break;
-                case /* string profile_picture */ 7:
-                    message.profilePicture = reader.string();
+                case /* string avatar */ 7:
+                    message.avatar = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -146,9 +146,9 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         /* string username = 6; */
         if (message.username !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.username);
-        /* string profile_picture = 7; */
-        if (message.profilePicture !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.profilePicture);
+        /* string avatar = 7; */
+        if (message.avatar !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.avatar);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -112,6 +112,7 @@ export const useAuthStore = defineStore(
 
                 const call = authAuthClient.login({ username: user, password: pass });
                 const { response } = await call;
+                refreshCookie('fivenet_authed');
 
                 loginStop(null);
 
@@ -157,6 +158,8 @@ export const useAuthStore = defineStore(
 
             try {
                 await authAuthClient.logout({});
+
+                refreshCookie('fivenet_authed');
             } catch (e) {
                 clearAuthInfo();
                 handleGRPCError(e as RpcError);
@@ -284,11 +287,11 @@ export const useAuthStore = defineStore(
             // Connect to the WebSocket if the user is logged in
             if (val !== null && val !== '') {
                 if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
-                    logger.info('Username set, opening WebSocket connection, status:', webSocket.status.value);
+                    logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
                     webSocket.open();
                 }
             } else {
-                logger.info('Username cleared, closing WebSocket connection, status:', webSocket.status.value);
+                logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
                 webSocket.close();
             }
         });

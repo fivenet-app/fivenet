@@ -7,15 +7,15 @@ const { t } = useI18n();
 
 const { can, activeChar } = useAuth();
 
-const settings = useSettingsStore();
-const { startpage, design, streamerMode } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { startpage, design, streamerMode } = storeToRefs(settingsStore);
 
 const startpages: { label: string; path: RoutePathSchema; permission?: Perms }[] = [
     { label: t('common.overview'), path: '/overview' },
     { label: t('common.mail'), path: '/mail/:thread?', permission: 'mailer.MailerService/ListEmails' },
     { label: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
     { label: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
-    { label: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService/ListDocuments' },
+    { label: t('pages.documents.title'), path: '/documents/', permission: 'documents.DocumentsService/ListDocuments' },
     { label: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService/ListColleagues' },
     { label: t('common.calendar'), path: '/calendar' },
     {

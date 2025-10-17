@@ -36,9 +36,7 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
 
 // Handle GRPC errors
 export async function handleGRPCError(err: RpcError | undefined): Promise<boolean> {
-    if (err === undefined) {
-        return true;
-    }
+    if (err === undefined) return true;
 
     const notification: Notification = {
         id: 0,

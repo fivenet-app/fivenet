@@ -13,7 +13,7 @@ const { timeouts } = useAppConfig();
 const { can, username, activeChar } = useAuth();
 
 const notificationsStore = useNotificationsStore();
-const { startStream, stopStream } = notificationsStore;
+const { restartStream, stopStream } = notificationsStore;
 const { notifications } = storeToRefs(notificationsStore);
 
 const settingsStore = useSettingsStore();
@@ -70,14 +70,14 @@ async function toggleStream(): Promise<void> {
         start();
 
         try {
-            startStream();
+            restartStream();
         } catch (e) {
             logger.error('exception during notification stream', e);
         }
     } else {
         pause();
         stop();
-        await stopStream();
+        await stopStream(true);
 
         notificationsStore.resetData();
     }
@@ -88,7 +88,7 @@ watch(activeChar, async () => toggleStream());
 
 onMounted(async () => await toggleStream());
 
-onUnmounted(async () => await stopStream());
+onUnmounted(async () => await stopStream(true));
 
 const toast = useToast();
 

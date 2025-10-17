@@ -3,8 +3,8 @@ import { reminderTimes } from '~/types/calendar';
 
 const { t } = useI18n();
 
-const settings = useSettingsStore();
-const { audio, calendar } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { audio, calendar } = storeToRefs(settingsStore);
 
 const notificationSound = useSounds('/sounds/notification.mp3');
 

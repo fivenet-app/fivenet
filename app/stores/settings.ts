@@ -58,6 +58,7 @@ export const useSettingsStore = defineStore(
         const design = ref({
             documents: {
                 listStyle: 'single' as 'single' | 'double',
+                viewCollapsedTitle: false,
             },
             ui: {
                 primary: 'sky',

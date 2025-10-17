@@ -19,7 +19,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -42,11 +41,12 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
 
+const settingsStore = useSettingsStore();
+const { design } = storeToRefs(settingsStore);
+
 const overlay = useOverlay();
 
 const documentsDocuments = await useDocumentsDocuments();
-
-const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
 const commentCount = ref<undefined | number>();
 
@@ -128,12 +128,7 @@ watch(doc, () => handleHash());
 
 async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = documentsDocumentsClient.toggleDocumentPin({
-            documentId: documentId,
-            state: state,
-            personal: personal,
-        });
-        const { response } = await call;
+        const response = await documentsDocuments.togglePin(documentId, state, personal);
 
         if (doc.value?.document) {
             doc.value.document.pin = response.pin;
@@ -239,8 +234,6 @@ defineShortcuts({
         openRequestsDrawer();
     },
 });
-
-const headToggled = ref(false);
 
 const scrollRef = useTemplateRef('scrollRef');
 
@@ -513,7 +506,10 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
             <UDashboardToolbar v-if="doc" class="print:hidden">
                 <div class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
                     <div class="mb-2">
-                        <h1 class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1" :class="headToggled && 'line-clamp-1'">
+                        <h1
+                            class="px-0.5 py-1 text-4xl font-bold break-words sm:pl-1"
+                            :class="design.documents.viewCollapsedTitle && 'line-clamp-1'"
+                        >
                             <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
                             </span>
@@ -666,8 +662,8 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                     :ui="{
                                         leadingIcon: 'transition-transform duration-200 group-data-[state=open]:rotate-180',
                                     }"
-                                    :data-state="headToggled ? 'open' : 'closed'"
-                                    @click="headToggled = !headToggled"
+                                    :data-state="design.documents.viewCollapsedTitle ? 'open' : 'closed'"
+                                    @click="design.documents.viewCollapsedTitle = !design.documents.viewCollapsedTitle"
                                 />
                             </UTooltip>
                         </div>

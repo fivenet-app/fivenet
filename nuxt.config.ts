@@ -300,6 +300,16 @@ export default defineNuxtConfig({
     },
 
     $development: {
+        vite: {
+            server: {
+                // Vite is eating the second set-cookie header, so we have to set it manually here..
+                headers: {
+                    'set-cookie': [
+                        'fivenet_authed=true; Path=/; Domain=localhost; Expires=Tue, 21 Oct 2027 12:16:42 GMT; Max-Age=345600; Secure; SameSite=None',
+                    ],
+                },
+            },
+        },
         icon: {
             iconifyApiEndpoint: 'https://api.iconify.design',
             provider: 'iconify',

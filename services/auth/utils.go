@@ -23,6 +23,7 @@ func (s *Server) getCookieBase(name string) http.Cookie {
 		Name:     name,
 		Value:    "",
 		Expires:  time.Now().Add(auth.TokenExpireTime),
+		MaxAge:   int(auth.TokenExpireTime.Seconds()),
 		Domain:   s.domain,
 		Path:     "/",
 		HttpOnly: true,

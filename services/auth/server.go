@@ -26,7 +26,7 @@ type Server struct {
 	tm       *auth.TokenMgr
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-		ui       userinfo.UserInfoRetriever
+	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 	js       *events.JSWrapper
 
@@ -46,7 +46,7 @@ type Params struct {
 	TM        *auth.TokenMgr
 	Perms     perms.Permissions
 	Enricher  *mstlystcdata.Enricher
-		UI        userinfo.UserInfoRetriever
+	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
@@ -60,7 +60,7 @@ func NewServer(p Params) *Server {
 		tm:       p.TM,
 		ps:       p.Perms,
 		enricher: p.Enricher,
-				ui:       p.UI,
+		ui:       p.UI,
 		appCfg:   p.AppConfig,
 		js:       p.JS,
 

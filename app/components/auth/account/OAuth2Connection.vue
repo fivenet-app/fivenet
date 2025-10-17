@@ -100,7 +100,7 @@ const confirmModal = overlay.create(ConfirmModal);
         <div v-if="account || nuiEnabled" class="flex flex-1 flex-col items-center justify-center gap-4">
             <template v-if="account">
                 <div v-if="account" class="inline-flex items-center gap-2">
-                    <UAvatar size="xl" :src="account.profilePicture" :alt="$t('common.image')" loading="lazy" />
+                    <UAvatar size="xl" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
 
                     <UTooltip :text="`${$t('components.auth.OAuth2Connections.external_id')}: ${account.externalId}`">
                         <span class="text-left">

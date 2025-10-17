@@ -12,6 +12,8 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
+var tOAuth2Accounts = table.FivenetAccountsOauth2
+
 func (s *Server) DeleteOAuth2Connection(
 	ctx context.Context,
 	req *pbauth.DeleteOAuth2ConnectionRequest,
@@ -28,13 +30,11 @@ func (s *Server) DeleteOAuth2Connection(
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 
-	tOAuth2Accs := table.FivenetAccountsOauth2
-
-	stmt := tOAuth2Accs.
+	stmt := tOAuth2Accounts.
 		DELETE().
 		WHERE(mysql.AND(
-			tOAuth2Accs.AccountID.EQ(mysql.Int64(claims.AccID)),
-			tOAuth2Accs.Provider.EQ(mysql.String(req.GetProvider())),
+			tOAuth2Accounts.AccountID.EQ(mysql.Int64(claims.AccID)),
+			tOAuth2Accounts.Provider.EQ(mysql.String(req.GetProvider())),
 		)).
 		LIMIT(1)
 

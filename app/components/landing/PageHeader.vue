@@ -40,8 +40,8 @@ const items = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const settings = useSettingsStore();
-const { locale: userLocale } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { locale: userLocale } = storeToRefs(settingsStore);
 
 const { locale, setLocale } = useI18n();
 </script>
@@ -71,7 +71,7 @@ const { locale, setLocale } = useI18n();
             />
 
             <template v-if="!username">
-                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="neutral" to="/auth/login" />
+                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" to="/auth/login" />
 
                 <UButton
                     v-if="login.signupEnabled"

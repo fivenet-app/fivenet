@@ -208,13 +208,15 @@ export const useNotificationsStore = defineStore(
             logger.debug('Stream ended');
         };
 
-        const stopStream = async (): Promise<void> => {
+        const stopStream = async (end?: boolean): Promise<void> => {
             if (!abort.value) return;
 
+            if (end === true) reconnecting.value = false;
+
+            logger.debug('Stopping Stream');
             ready.value = false;
             notificationsEvents.emit('ready', false);
             abort.value?.abort();
-            logger.debug('Stopping Stream');
             abort.value = undefined;
         };
 

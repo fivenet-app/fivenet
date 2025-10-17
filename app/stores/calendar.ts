@@ -31,7 +31,7 @@ export const useCalendarStore = defineStore(
     'calendar',
     () => {
         const notifications = useNotificationsStore();
-        const settings = useSettingsStore();
+        const settingsStore = useSettingsStore();
 
         // State
         const activeCalendarIds = ref<number[]>([]);
@@ -49,7 +49,7 @@ export const useCalendarStore = defineStore(
         // Actions
         const checkAppointments = async (): Promise<void> => {
             try {
-                const reminderTimes = settings.calendar.reminderTimes;
+                const reminderTimes = settingsStore.calendar.reminderTimes;
                 const highestReminder = Math.max(...reminderTimes);
 
                 const response = await getUpcomingEntries({

@@ -14,7 +14,7 @@ const clipboardStore = useClipboardStore();
 
 const searchesStore = useSearchesStore();
 
-const settings = useSettingsStore();
+const settingsStore = useSettingsStore();
 
 const authStore = useAuthStore();
 const { activeChar, sessionExpiration, attributes, permissions, isSuperuser } = storeToRefs(authStore);
@@ -87,8 +87,8 @@ const version = APP_VERSION;
             :ui="{ container: '' }"
         >
             <div class="inline-flex w-full justify-between">
-                <span> {{ version }}/ {{ settings.version }} </span>
-                <CopyToClipboardButton :value="`${version}/ ${settings.version}`" />
+                <span> {{ version }}/ {{ settingsStore.version }} </span>
+                <CopyToClipboardButton :value="`${version}/ ${settingsStore.version}`" />
             </div>
         </UFormField>
 
@@ -137,8 +137,8 @@ const version = APP_VERSION;
             :label="$t('components.debug_info.nui_info')"
             :ui="{ container: '' }"
         >
-            {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
-            {{ settings.nuiResourceName ?? $t('common.na') }}
+            {{ settingsStore.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
+            {{ settingsStore.nuiResourceName ?? $t('common.na') }}
         </UFormField>
 
         <UFormField

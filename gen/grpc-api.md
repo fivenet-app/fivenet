@@ -322,7 +322,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `provider` | [OAuth2Provider](#resourcesaccountsOAuth2Provider) |  |  |
 | `external_id` | [string](#string) |  |  |
 | `username` | [string](#string) |  |  |
-| `profile_picture` | [string](#string) |  |  |
+| `avatar` | [string](#string) |  |  |
 
 
 

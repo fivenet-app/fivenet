@@ -6,13 +6,13 @@ export default defineNuxtPlugin(() => {
     const logger = useLogger('🆕 Update Check');
 
     $update.on('update', async (version) => {
-        const settings = useSettingsStore();
-        logger.info('Detected new version', version, 'current version', APP_VERSION, 'stored version', settings.version);
+        const settingsStore = useSettingsStore();
+        logger.info('Detected new version', version, 'current version', APP_VERSION, 'stored version', settingsStore.version);
 
         if (version === 'UNKNOWN') return;
 
         if (APP_VERSION !== version) {
-            settings.setUpdateAvailable(version as string);
+            settingsStore.setUpdateAvailable(version as string);
         }
     });
 });

@@ -37,15 +37,15 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
 });
 
-const settings = useSettingsStore();
-const { getUserLocale, nuiEnabled, design, updateAvailable } = storeToRefs(settings);
+const settingsStore = useSettingsStore();
+const { getUserLocale, nuiEnabled, design, updateAvailable } = storeToRefs(settingsStore);
 
-if (APP_VERSION !== settings.version) {
-    logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
+if (APP_VERSION !== settingsStore.version) {
+    logger.info('Resetting app data because new version has been detected', settingsStore.version, APP_VERSION);
 
     useClipboardStore().clear();
     useSearchesStore().clear();
-    settings.setVersion(APP_VERSION);
+    settingsStore.setVersion(APP_VERSION);
 }
 
 // Set locale and theme colors in app config
@@ -142,16 +142,15 @@ async function handleAuthedStateChange(): Promise<void> {
     if (!!authedState.value && username.value === null) {
         await authStore.chooseCharacter(undefined, true);
     } else if (!authedState.value && username.value !== null) {
+        console.log('User logged out', authedState.value, username.value);
         await navigateTo('/auth/logout');
     }
 }
 
-watch(authedState, handleAuthedStateChange);
+watch(authedState, async () => handleAuthedStateChange());
 handleAuthedStateChange();
 
-const onBeforeEnter = async () => {
-    await finalizePendingLocaleChange();
-};
+const onBeforeEnter = async () => await finalizePendingLocaleChange();
 
 const router = useRouter();
 const route = router.currentRoute;
