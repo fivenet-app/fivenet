@@ -85,7 +85,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                     icon: 'i-mdi-approval',
                     to: 'documents/approvals',
                 },
-            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
+            ],
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
             active: route.name.startsWith('documents'),
         },
