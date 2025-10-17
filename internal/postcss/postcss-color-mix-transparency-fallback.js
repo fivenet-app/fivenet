@@ -50,7 +50,7 @@ export default function colorMixTransparencyFallback(opts = {}) {
             matched = true;
             const name = n1 || n2;
             const pct = p1 || p2;
-            return `rgb(var(${name}${rgbSuffix}) / ${pct})`;
+            return `rgb(var(${name}${rgbSuffix}), ${pct})`;
         });
 
         return matched ? out : null;
