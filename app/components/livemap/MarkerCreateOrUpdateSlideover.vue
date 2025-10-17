@@ -142,7 +142,13 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="name">
-                                <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
+                                <UInput
+                                    v-model="state.name"
+                                    type="text"
+                                    name="name"
+                                    :placeholder="$t('common.name')"
+                                    class="w-full"
+                                />
                             </UFormField>
                         </dd>
                     </div>
@@ -159,6 +165,7 @@ const formRef = useTemplateRef('formRef');
                                     type="text"
                                     name="description"
                                     :placeholder="$t('common.description')"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -184,7 +191,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="color">
-                                <ColorPicker v-model="state.color" />
+                                <ColorPicker v-model="state.color" class="w-full" />
                             </UFormField>
                         </dd>
                     </div>
@@ -203,6 +210,7 @@ const formRef = useTemplateRef('formRef');
                                         :items="markerTypes"
                                         value-key="value"
                                         :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
                                     >
                                         <template #default>
                                             {{ $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`) }}
@@ -234,6 +242,7 @@ const formRef = useTemplateRef('formRef');
                                     :min="5"
                                     :max="250"
                                     :placeholder="$t('common.radius')"
+                                    class="w-full"
                                 />
                             </UFormField>
                         </dd>
@@ -250,7 +259,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="icon">
-                                <IconSelectMenu v-model="state.icon" :color="state.color" />
+                                <IconSelectMenu v-model="state.icon" :color="state.color" class="w-full" />
                             </UFormField>
                         </dd>
                     </div>

@@ -24,6 +24,7 @@ const modelValue = defineModel<string>();
             variant="outline"
             :disabled="disabled"
             :block="block"
+            v-bind="$attrs"
         >
             <template #leading>
                 <span :style="{ backgroundColor: modelValue ?? 'black' }" class="size-5 rounded-sm" />

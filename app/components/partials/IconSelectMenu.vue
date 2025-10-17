@@ -27,7 +27,8 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
     return availableIcons.filter((icon) => {
-        if (count < 35 && icon.name?.toLowerCase()?.startsWith(query)) {
+        console.log(icon.name?.toLowerCase());
+        if (count <= 40 && icon.name?.toLowerCase()?.includes(query)) {
             count++;
             return true;
         }
@@ -45,6 +46,7 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
             v-model:search-term="searchTerm"
             :items="foundIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
+            ignore-filter
             value-key="name"
             v-bind="$attrs"
         >
