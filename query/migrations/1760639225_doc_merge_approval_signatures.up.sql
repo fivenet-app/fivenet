@@ -1,7 +1,7 @@
 BEGIN;
 
-RENAME TABLE fivenet_documents_signatures_stamps TO fivenet_documents_stamps;
-RENAME TABLE fivenet_documents_signatures_stamps_access TO fivenet_documents_stamps_access;
+RENAME TABLE `fivenet_documents_signatures_stamps` TO `fivenet_documents_stamps`;
+RENAME TABLE `fivenet_documents_signatures_stamps_access` TO `fivenet_documents_stamps_access`;
 
 ALTER TABLE `fivenet_documents_signature_tasks` DROP FOREIGN KEY `fk_fivenet_doc_sigtsks_signature_id`;
 

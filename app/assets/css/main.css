@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import "./palette-rgb.css";
 @import "@nuxt/ui-pro";
 @plugin '@tailwindcss/typography';
 
@@ -14,6 +13,9 @@
 }
 
 @theme static {
+    --color-black: rgb(0, 0, 0);
+    --color-white: rgb(255, 255, 255);
+
     --font-sans: 'Public Sans', sans-serif;
 
     --animate-wiggle: wiggle 1s infinite;
@@ -747,4 +749,42 @@ html.chrome103:root {
     --color-success-900-rgb: var(--color-green-900-rgb);
     --color-success-950-rgb: var(--color-green-950-rgb);
     --color-success-rgb: var(--color-green-500-rgb);
+}
+
+html.chrome103.dark:root {
+    --ui-primary-rgb: var(--ui-color-primary-400-rgb);
+    --ui-secondary-rgb: var(--color-secondary-400-rgb);
+    --ui-success-rgb: var(--color-success-400-rgb);
+    --ui-info-rgb: var(--color-info-400-rgb);
+    --ui-warning-rgb: var(--color-warning-400-rgb);
+    --ui-error-rgb: var(--color-error-400-rgb);
+
+    --ui-bg-rgb: var(--ui-color-neutral-900-rgb);
+    --ui-bg-muted-rgb: var(--ui-color-neutral-800-rgb);
+    --ui-bg-elevated-rgb: var(--ui-color-neutral-800-rgb);
+    --ui-bg-accented-rgb: var(--ui-color-neutral-700-rgb);
+    --ui-bg-inverted-rgb: var(--color-white-rgb);
+    --ui-border-rgb: var(--ui-color-neutral-800-rgb);
+    --ui-border-muted-rgb: var(--ui-color-neutral-700-rgb);
+    --ui-border-accented-rgb: var(--ui-color-neutral-700-rgb);
+    --ui-border-inverted-rgb: var(--color-white-rgb);
+}
+
+html.chrome103.light:root {
+    --ui-primary-rgb: var(--ui-color-primary-500-rgb);
+    --ui-secondary-rgb: var(--color-secondary-500-rgb);
+    --ui-success-rgb: var(--color-success-500-rgb);
+    --ui-info-rgb: var(--color-info-500-rgb);
+    --ui-warning-rgb: var(--color-warning-500-rgb);
+    --ui-error-rgb: var(--color-error-500-rgb);
+
+    --ui-bg-rgb: var(--color-white-rgb);
+    --ui-bg-muted-rgb: var(--ui-color-neutral-50-rgb);
+    --ui-bg-elevated-rgb: var(--ui-color-neutral-100-rgb);
+    --ui-bg-accented-rgb: var(--ui-color-neutral-200-rgb);
+    --ui-bg-inverted-rgb: var(--ui-color-neutral-900-rgb);
+    --ui-border-rgb: var(--ui-color-neutral-200-rgb);
+    --ui-border-muted-rgb: var(--ui-color-neutral-200-rgb);
+    --ui-border-accented-rgb: var(--ui-color-neutral-300-rgb);
+    --ui-border-inverted-rgb: var(--ui-color-neutral-900-rgb);
 }

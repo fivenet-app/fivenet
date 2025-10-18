@@ -1,7 +1,8 @@
 export default function colorMixTransparencyFallback(opts = {}) {
     const {
-        preserve = true, // keep the original color-mix line
-        rgbSuffix = '-rgb', // we look for --X-rgb
+        // Keep the original color-mix line
+        preserve = true,
+        rgbSuffix = '-rgb',
         props = [
             'color',
             'background',
@@ -30,20 +31,12 @@ export default function colorMixTransparencyFallback(opts = {}) {
         } else if (val.includes('rgb(0, 0, 0)')) {
             val = val.replace('rgb(0, 0, 0)', 'var(--color-black)');
         }
-        // TODO what additional replacement logic is needed for other `--ui-*` aliases here?
-        if (val.includes('--ui-bg')) {
-            val = val.replace('--ui-bg', '--color-neutral');
-        } else if (val.includes('-primary-') || val.includes('-secondary-')) {
-            return null;
-        } else if (!val.includes('--ui-bg') && val.includes('--ui-')) {
-            val = val.replace('--ui-color-', '--color-');
-            val = val.replace('--ui-', '--color-');
-        }
 
         val = val.replace('-info-', '-blue-');
         val = val.replace('-warning-', '-yellow-');
         val = val.replace('-error-', '-red-');
         val = val.replace('-success-', '-green-');
+        val = val.replace('-neutral', '-old-neutral');
 
         let matched = false;
         const out = val.replace(MIX_RE, (_, n1, p1, n2, p2) => {

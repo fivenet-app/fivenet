@@ -104,7 +104,7 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
             <USeparator />
 
             <UDashboardToolbar>
-                <div class="flex min-w-0 flex-1 flex-col justify-between gap-2 lg:flex-row">
+                <div class="flex min-w-0 flex-1 flex-row flex-wrap justify-between gap-2">
                     <UNavigationMenu v-if="itemsLeft.length > 0" orientation="horizontal" :items="itemsLeft" class="-mx-1" />
 
                     <UNavigationMenu v-if="itemsRight.length > 0" orientation="horizontal" :items="itemsRight" class="-mx-1" />

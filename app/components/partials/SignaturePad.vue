@@ -80,7 +80,7 @@ defineExpose({
         </div>
 
         <template #footer>
-            <UCollapsible>
+            <UPopover :ui="{ content: 'p-4 w-full max-w-lg' }">
                 <UButton
                     :label="$t('common.setting', 2)"
                     color="neutral"
@@ -94,25 +94,29 @@ defineExpose({
                 />
 
                 <template #content>
-                    <div class="my-2 flex w-full flex-col space-y-4">
+                    <div class="flex w-full flex-col space-y-4">
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
                             :label="$t('components.partials.signature_pad.min_stroke_width')"
                         >
-                            <USlider v-model="signatureSettings.minStrokeWidth" :min="1" :max="10" />
-                            <p>{{ signatureSettings.minStrokeWidth }}</p>
+                            <div class="flex items-center gap-2">
+                                <p>{{ signatureSettings.minStrokeWidth }}</p>
+                                <USlider v-model="signatureSettings.minStrokeWidth" :min="1" :max="10" />
+                            </div>
                         </UFormField>
 
                         <UFormField
                             class="grid grid-cols-2 items-center gap-2"
                             :label="$t('components.partials.signature_pad.max_stroke_width')"
                         >
-                            <USlider v-model="signatureSettings.maxStrokeWidth" :min="1" :max="10" />
-                            <p>{{ signatureSettings.maxStrokeWidth }}</p>
+                            <div class="flex items-center gap-2">
+                                <p>{{ signatureSettings.maxStrokeWidth }}</p>
+                                <USlider v-model="signatureSettings.maxStrokeWidth" :min="1" :max="10" />
+                            </div>
                         </UFormField>
                     </div>
                 </template>
-            </UCollapsible>
+            </UPopover>
         </template>
     </UCard>
 </template>

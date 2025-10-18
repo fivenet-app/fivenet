@@ -17,8 +17,8 @@ ALTER TABLE `fivenet_documents_approval_tasks` ADD UNIQUE KEY `uq_fivenet_doc_ap
 ALTER TABLE `fivenet_documents_approval_tasks` ADD UNIQUE KEY `uq_fivenet_doc_approval_task_job_pol_slot` (`document_id`, `snapshot_date`, `assignee_kind`, `job`, `minimum_grade`, `slot_no`);
 ALTER TABLE `fivenet_documents_approval_tasks` ADD KEY `idx_fivenet_doc_apptsk_doc_status` (`document_id`, `status`);
 
-ALTER TABLE `fivenet_documents_approval_policies` DROP INDEX uq_fivenet_doc_approval_pol_doc;
-ALTER TABLE `fivenet_documents_approval_policies` DROP COLUMN id;
+ALTER TABLE `fivenet_documents_approval_policies` DROP INDEX `uq_fivenet_doc_approval_pol_doc`;
+ALTER TABLE `fivenet_documents_approval_policies` DROP COLUMN `id`;
 ALTER TABLE `fivenet_documents_approval_policies` ADD PRIMARY KEY (`document_id`);
 
 ALTER TABLE `fivenet_documents_approval_tasks` ADD COLUMN `label` varchar(120) DEFAULT NULL AFTER `minimum_grade`;

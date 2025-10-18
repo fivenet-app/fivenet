@@ -98,6 +98,7 @@ function saveSignature(): string | undefined {
                         name="stampSVG"
                         :label="$t('common.signature')"
                         :required="policy?.signatureRequired"
+                        class="mx-auto"
                     >
                         <SignaturePad ref="signatureRef" />
                     </UFormField>

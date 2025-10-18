@@ -16,7 +16,7 @@ export const primaryColors: Color[] = [
     { label: 'rose', chip: { color: 'rose' }, class: 'bg-rose-500 dark:bg-rose-400' },
     { label: 'pink', chip: { color: 'pink' }, class: 'bg-pink-500 dark:bg-pink-400' },
     { label: 'orange', chip: { color: 'orange' }, class: 'bg-orange-500 dark:bg-orange-400' },
-    { label: 'error', chip: { color: 'error' }, class: 'bg-red-500 dark:bg-red-400' },
+    { label: 'red', chip: { color: 'red' }, class: 'bg-red-500 dark:bg-red-400' },
     { label: 'purple', chip: { color: 'purple' }, class: 'bg-purple-500 dark:bg-purple-400' },
 ] as const;
 
@@ -24,7 +24,7 @@ export const backgroundColors: Color[] = [
     // Gray Colors
     { label: 'slate', chip: { color: 'slate' }, class: 'bg-slate-500 dark:bg-slate-400' },
     { label: 'zinc', chip: { color: 'zinc' }, class: 'bg-zinc-500 dark:bg-zinc-400' },
-    { label: 'neutral', chip: { color: 'neutral' }, class: 'bg-neutral-500 dark:bg-neutral-400' },
+    { label: 'neutral', chip: { color: 'neutral' }, class: 'bg-old-neutral-500 dark:bg-old-neutral-400' },
     { label: 'stone', chip: { color: 'stone' }, class: 'bg-stone-500 dark:bg-stone-400' },
 ] as const;
 

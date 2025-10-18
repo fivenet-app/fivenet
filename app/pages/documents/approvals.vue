@@ -301,7 +301,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                 <USeparator />
 
                 <UDashboardToolbar>
-                    <div class="flex min-w-0 flex-1 flex-col justify-between gap-2 lg:flex-row">
+                    <div class="flex min-w-0 flex-1 flex-row flex-wrap justify-between gap-2">
                         <UNavigationMenu
                             v-if="itemsLeft.length > 0"
                             orientation="horizontal"
