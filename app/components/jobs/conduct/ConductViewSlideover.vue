@@ -41,7 +41,7 @@ if (props.entry.id > 0) {
 </script>
 
 <template>
-    <USlideover :title="$t('common.entry')" :overlay="false">
+    <USlideover :title="$t('common.entry')" :overlay="false" :ui="{ content: 'max-w-3xl' }">
         <template #actions>
             <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
         </template>
@@ -86,9 +86,9 @@ if (props.entry.id > 0) {
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.message') }}
                     </dt>
-                    <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                    <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                         <!-- eslint-disable-next-line vue/no-v-html -->
-                        <p class="max-h-14 overflow-y-scroll break-words" v-html="entry.message" />
+                        <p class="overflow-y-scroll break-words" v-html="entry.message" />
                     </dd>
                 </div>
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

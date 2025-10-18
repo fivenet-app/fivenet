@@ -190,8 +190,8 @@ const columns = computed(
                 cell: ({ row }) =>
                     h(
                         'p',
-                        { class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-6' },
-                        row.original.message,
+                        { class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-4' },
+                        htmlPreviewSafe(row.original.message, 200),
                     ),
             },
             {

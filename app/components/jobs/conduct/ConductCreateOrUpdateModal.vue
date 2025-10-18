@@ -125,6 +125,7 @@ const formRef = useTemplateRef('formRef');
                 ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
                 : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
         "
+        fullscreen
     >
         <template #body>
             <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">

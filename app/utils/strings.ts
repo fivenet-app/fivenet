@@ -76,3 +76,21 @@ export function formatBytes(bytes: number, decimals = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export function htmlPreviewSafe(html: string, maxLength: number): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const walker = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+
+    let result = '';
+    while (walker.nextNode()) {
+        const text = walker.currentNode.nodeValue || '';
+        if (result.length + text.length > maxLength) {
+            result += text.slice(0, maxLength - result.length);
+            break;
+        }
+        result += text;
+    }
+
+    return result.trimEnd() + (result.length >= maxLength ? '…' : '');
+}
