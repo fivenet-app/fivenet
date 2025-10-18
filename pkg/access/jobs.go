@@ -166,7 +166,7 @@ func (a *Jobs[U, T, V]) Validate(js *mstlystcdata.Jobs, in *[]T, fixEntries bool
 		return false
 	})
 
-	return !valid, nil
+	return valid, nil
 }
 
 // Compare compares the current job access entries in the database with the provided input.

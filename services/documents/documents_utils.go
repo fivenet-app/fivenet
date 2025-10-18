@@ -407,3 +407,24 @@ func (s *Server) updateDocumentOwner(
 
 	return nil
 }
+
+func (s *Server) checkIfDocumentDraft(ctx context.Context, documentId int64) (bool, error) {
+	stmt := tDocument.
+		SELECT(
+			tDocument.Draft.AS("draft"),
+		).
+		FROM(tDocument).
+		WHERE(
+			tDocument.ID.EQ(mysql.Int64(documentId)),
+		).
+		LIMIT(1)
+
+	var dest struct {
+		Draft bool `alias:"draft"`
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return false, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return dest.Draft, nil
+}

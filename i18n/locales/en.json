@@ -924,7 +924,8 @@
                 "task_form": {
                     "title": "Tasks"
                 },
-                "slots": "Approval Slots"
+                "slots": "Approval Slots",
+                "document_not_published": "Document must be published to request approvals."
             }
         },
         "livemap": {
@@ -2264,7 +2265,11 @@
                 "title": "Approval signature required!",
                 "content": "You must provide a signature to approve this document."
             },
-            "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!"
+            "ErrDocAccessInvalid": "Document access: Invalid job rank/ citizen set!",
+            "ErrApprovalDocIsDraft": {
+                "title": "Document is still a draft!",
+                "content": "You can't create approval tasks for draft documents."
+            }
         },
         "LivemapService": {
             "ErrStreamFailed": "Failed to stream Map data!",
@@ -3029,7 +3034,7 @@
                     "description": "Revoke a given approval."
                 }
             },
-            "StampService": {
+            "StampsService": {
                 "category": "Documents: Stamps",
                 "ListUsableStamps": {
                     "key": "List Stamps",

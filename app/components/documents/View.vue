@@ -400,7 +400,11 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         <UTooltip
                             v-if="can('documents.DocumentsService/ListDocuments').value"
                             class="flex-1"
-                            :text="$t('common.approve')"
+                            :text="
+                                doc?.document?.meta?.draft
+                                    ? $t('components.documents.approval.document_not_published')
+                                    : $t('common.approve')
+                            "
                         >
                             <UButton
                                 block
@@ -408,6 +412,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 variant="ghost"
                                 icon="i-mdi-approval"
                                 :label="$t('common.approve')"
+                                :disabled="doc?.document?.meta?.draft"
                                 @click="() => openApprovalDrawer()"
                             />
                         </UTooltip>

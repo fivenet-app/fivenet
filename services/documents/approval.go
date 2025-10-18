@@ -1314,6 +1314,14 @@ func (s *Server) DecideApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrDocAccessViewDenied)
 	}
 
+	isDraft, err := s.checkIfDocumentDraft(ctx, req.GetDocumentId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if isDraft {
+		return nil, errorsdocuments.ErrApprovalDocIsDraft
+	}
+
 	// Resolve policy, doc, snapshot
 	pol, err := s.getOrCreateApprovalPolicy(
 		ctx,

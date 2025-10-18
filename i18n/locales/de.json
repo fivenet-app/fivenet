@@ -924,7 +924,8 @@
                 "task_form": {
                     "title": "Aufgaben"
                 },
-                "slots": "Genehmigungs-Slots"
+                "slots": "Genehmigungs-Slots",
+                "document_not_published": "Das Dokument wurde nicht veröffentlicht."
             }
         },
         "livemap": {
@@ -2264,7 +2265,11 @@
                 "title": "Genehmigungsunterschrift erforderlich!",
                 "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
             },
-            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!"
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
+            "ErrApprovalDocIsDraft": {
+                "title": "Dokument ist ein Entwurf!",
+                "content": "Nur veröffentlichte Dokumente können genehmigt werden."
+            }
         },
         "LivemapService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
@@ -3029,7 +3034,7 @@
                     "description": "Eine abgeschlossene Genehmigung widerrufen."
                 }
             },
-            "StampService": {
+            "StampsService": {
                 "category": "Dokumenten-System: Stempel",
                 "ListUsableStamps": {
                     "key": "Stempel auflisten",

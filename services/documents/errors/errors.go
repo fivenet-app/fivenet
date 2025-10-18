@@ -181,11 +181,6 @@ var (
 		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalTaskAlreadyHandled.content"},
 		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalTaskAlreadyHandled.title"},
 	)
-	ErrSigningTaskAlreadyHandled = common.NewI18nErr(
-		codes.FailedPrecondition,
-		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.content"},
-		&common.I18NItem{Key: "errors.DocumentsService.ErrSigningTaskAlreadyHandled.title"},
-	)
 	ErrApprovalSignatureRequired = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalSignatureRequired.content"},
@@ -199,5 +194,10 @@ var (
 			Parameters: map[string]string{"max": "5"},
 		},
 		&common.I18NItem{Key: "errors.DocumentsService.ErrStampLimitReached.title"},
+	)
+	ErrApprovalDocIsDraft = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalDocIsDraft.content"},
+		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalDocIsDraft.title"},
 	)
 )
