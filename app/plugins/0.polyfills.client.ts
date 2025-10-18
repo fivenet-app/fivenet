@@ -36,6 +36,9 @@ export default defineNuxtPlugin({
             });
         }
 
+        const query = useRouter().currentRoute.value.query;
+        if (query?.cssPolyfills !== undefined && query.cssPolyfills === 'false') return;
+
         // Load and Activate the CSS polyfills
         const [cssBlankPseudoInit, cssHasPseudo] = await Promise.all([
             // @ts-expect-error No type needed for the CSS polyfill

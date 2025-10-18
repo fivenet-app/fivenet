@@ -298,7 +298,7 @@ func (s *Server) CreateDocument(
 	docRelations := []*documents.DocumentRelation{}
 
 	var tmpl *documents.Template
-	if req.TemplateId != nil {
+	if req.GetTemplateId() > 0 {
 		var err error
 		tmpl, err = s.getTemplate(ctx, req.GetTemplateId())
 		if err != nil {
@@ -549,7 +549,7 @@ func (s *Server) UpdateDocument(
 	}
 
 	var tmpl *documents.Template
-	if oldDoc.TemplateId != nil {
+	if oldDoc.GetTemplateId() > 0 {
 		var err error
 		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
 		if err != nil {
@@ -641,7 +641,7 @@ func (s *Server) UpdateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if tmpl != nil {
+		if tmpl != nil && tmpl.GetWorkflow() != nil {
 			if err := s.createOrUpdateWorkflowState(ctx, tx, oldDoc.GetId(), tmpl.GetWorkflow()); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
@@ -891,8 +891,8 @@ func (s *Server) ToggleDocument(
 	}
 
 	var tmpl *documents.Template
-	if !req.GetClosed() &&
-		doc.TemplateId != nil { // If the document is opened, get template so we can update the reminder/auto close times
+	if !req.GetClosed() && doc.GetTemplateId() > 0 {
+		// If the document is opened, get template so we can update the reminder/auto close times
 		tmpl, err = s.getTemplate(ctx, doc.GetTemplateId())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

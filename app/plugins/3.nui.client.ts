@@ -20,7 +20,7 @@ export default defineNuxtPlugin(() => {
     if (query?.refreshApp !== undefined) {
         reloadNuxtApp({
             persistState: false,
-            ttl: 8500, // 8.5 seconds
+            ttl: 7_500, // 7.5 seconds
         });
     }
 });
