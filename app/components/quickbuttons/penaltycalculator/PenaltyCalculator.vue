@@ -329,7 +329,7 @@ const columns = computed(
 
         <UButtonGroup class="mt-2 inline-flex w-full">
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" icon="i-mdi-content-copy" @click="copySummary()">
+                <UButton class="flex-1" icon="i-mdi-content-copy" @click="() => copySummary()">
                     {{ $t('common.copy') }}
                 </UButton>
                 <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
