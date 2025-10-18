@@ -3,7 +3,6 @@ import type { NavigationMenuItem } from '@nuxt/ui';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import InputMenu from './InputMenu.vue';
 
 defineProps<{
     collapsed?: boolean | undefined;
@@ -53,10 +52,12 @@ const items = computed(
             },
         ] satisfies NavigationMenuItem[],
 );
+
+onBeforeMount(async () => listJobs());
 </script>
 
 <template>
-    <InputMenu
+    <UInputMenu
         v-if="isSuperuser"
         v-model="selectedJob"
         class="relative -mb-3.5"
@@ -64,19 +65,11 @@ const items = computed(
         :filter-fields="['name', 'label']"
         :placeholder="$t('common.job', 1)"
         :items="jobs"
-        :searchable="
-            async (q?: string) => {
-                q = q?.toLowerCase()?.trim();
-                return (await listJobs()).filter(
-                    (j) => q === undefined || j.name.toLowerCase().includes(q) || j.label.toLowerCase().includes(q),
-                );
-            }
-        "
         searchable-key="superuser-job-selection"
         v-bind="$attrs"
     >
         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-    </InputMenu>
+    </UInputMenu>
 
     <UNavigationMenu orientation="vertical" tooltip popover :collapsed="collapsed" :items="items" />
 </template>

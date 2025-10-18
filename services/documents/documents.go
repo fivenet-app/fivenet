@@ -664,7 +664,7 @@ func (s *Server) UpdateDocument(
 			}
 
 			if tmpl != nil && !req.GetMeta().GetDraft() {
-				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc, tmpl); err != nil {
+				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc.GetId(), tmpl); err != nil {
 					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 				}
 			}
@@ -709,7 +709,7 @@ func (s *Server) handleDocumentPublish(
 	ctx context.Context,
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
-	doc *documents.Document,
+	documentId int64,
 	tmpl *documents.Template,
 ) error {
 	apr := tmpl.GetApproval()
@@ -717,11 +717,14 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
-	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies.AS("approval_policy")
 	pol, err := s.getApprovalPolicy(
 		ctx,
 		tx,
-		tApprovalPolicy.DocumentID.EQ(mysql.Int64(doc.GetId())),
+		table.FivenetDocumentsApprovalPolicies.AS(
+			"approval_policy",
+		).DocumentID.EQ(
+			mysql.Int64(documentId),
+		),
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -757,7 +760,7 @@ func (s *Server) handleDocumentPublish(
 		ctx,
 		tx,
 		userInfo,
-		doc.GetId(),
+		documentId,
 		now,
 		seeds,
 	); err != nil {

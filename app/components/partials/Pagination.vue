@@ -163,7 +163,7 @@ function onClickNext() {
                 <UPagination
                     v-if="!isInfinite"
                     v-model:page="currentPage"
-                    :page-count="pagination?.pageSize ?? 0"
+                    :items-per-page="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
                     :show-edges="false"
                     :ui="{ first: 'hidden', last: 'hidden' }"

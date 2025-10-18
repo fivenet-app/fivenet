@@ -1973,18 +1973,20 @@ func (s *Server) handleApprovalOnEditBehaviors(
 	tx qrm.DB,
 	doc *documents.Document,
 ) error {
-	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies.AS("approval_policy")
-
 	pol, err := s.getApprovalPolicy(
 		ctx,
 		tx,
-		tApprovalPolicy.DocumentID.EQ(mysql.Int64(doc.GetId())),
+		table.FivenetDocumentsApprovalPolicies.AS(
+			"approval_policy",
+		).DocumentID.EQ(
+			mysql.Int64(doc.GetId()),
+		),
 	)
 	if err != nil {
 		return err
 	}
 
-	if pol.OnEditBehavior <= documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS {
+	if pol == nil || pol.OnEditBehavior <= documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS {
 		// Nothing to do
 		return nil
 	}

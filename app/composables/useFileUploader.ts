@@ -91,22 +91,81 @@ export function useFileUploader(
             stream.requests.send(metaPkt);
 
             // Chunk packets
-            const reader = blob.stream().getReader({ mode: 'byob' });
-            (async () => {
-                while (true) {
-                    const buffer = new Uint8Array(MAX_READ_SIZE);
+            const rs = blob.stream();
 
-                    const { value, done } = await reader.read(buffer);
-                    if (done) break;
-                    const pkt = UploadFileRequest.create({
-                        payload: {
-                            oneofKind: 'data',
-                            data: value,
-                        },
-                    });
-                    await stream.requests.send(pkt);
+            // Try BYOB; if it fails (e.g., Chrome 103 non-byte stream), fall back to default reader.
+            let reader: ReadableStreamBYOBReader | ReadableStreamDefaultReader<Uint8Array>;
+            let useBYOB = false;
+            try {
+                // This will throw on non-byte streams (Chrome 103)
+                reader = rs.getReader({ mode: 'byob' }) as ReadableStreamBYOBReader;
+                useBYOB = true;
+            } catch {
+                reader = rs.getReader(); // default reader
+                useBYOB = false;
+            }
+
+            (async () => {
+                try {
+                    if (useBYOB) {
+                        // BYOB path
+                        while (true) {
+                            const buffer = new Uint8Array(MAX_READ_SIZE);
+                            const { value, done } = await (reader as ReadableStreamBYOBReader).read(buffer);
+                            if (done) break;
+                            // `value` is a view into `buffer` (may be a subarray)
+                            const pkt = UploadFileRequest.create({
+                                payload: { oneofKind: 'data', data: value as Uint8Array },
+                            });
+                            await stream.requests.send(pkt);
+                        }
+                    } else {
+                        // Default reader path (Chrome 103)
+                        let leftover: Uint8Array | null = null;
+
+                        while (true) {
+                            const { value, done } = await (reader as ReadableStreamDefaultReader<Uint8Array>).read();
+                            if (done && !leftover) break;
+
+                            let chunk = value;
+                            if (leftover) {
+                                // Concatenate leftover + current chunk
+                                const merged: Uint8Array = new Uint8Array(leftover.length + (chunk?.length ?? 0));
+                                merged.set(leftover, 0);
+                                if (chunk) merged.set(chunk, leftover.length);
+                                chunk = merged;
+                                leftover = null;
+                            }
+
+                            let offset = 0;
+                            while (chunk && offset < chunk.length) {
+                                const end = Math.min(offset + MAX_READ_SIZE, chunk.length);
+                                const slice = chunk.subarray(offset, end);
+                                const pkt = UploadFileRequest.create({
+                                    payload: { oneofKind: 'data', data: slice },
+                                });
+                                await stream.requests.send(pkt);
+                                offset = end;
+                            }
+
+                            // If we somehow stopped mid-chunk (shouldn’t happen), keep remainder
+                            if (chunk && offset < chunk.length) {
+                                leftover = chunk.subarray(offset);
+                            }
+
+                            if (done) break;
+                        }
+                    }
+                    await stream.requests.complete();
+                } catch (e) {
+                    reject(e);
+                } finally {
+                    try {
+                        reader.releaseLock?.();
+                    } catch {
+                        // Ignore
+                    }
                 }
-                await stream.requests.complete();
             })();
         });
 
