@@ -6,7 +6,6 @@ ALTER TABLE `fivenet_audit_log` ADD COLUMN `result` smallint NOT NULL AFTER `sta
 ALTER TABLE `fivenet_audit_log` RENAME COLUMN `state` TO `action`;
 ALTER TABLE `fivenet_audit_log` RENAME INDEX `idx_state` TO `idx_action`;
 
-
 ALTER TABLE `fivenet_audit_log` ADD INDEX `idx_result` (`result`);
 
 UPDATE `fivenet_audit_log` SET `action` = 2, `result` = 3 WHERE `action` = 1 AND `result` = 0;
