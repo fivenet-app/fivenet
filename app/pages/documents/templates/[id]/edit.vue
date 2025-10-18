@@ -11,7 +11,7 @@ definePageMeta({
     requiresAuth: true,
     permission: 'documents.DocumentsService/CreateTemplate',
     validate: async (route) => {
-        route = route as TypedRouteFromName<'documents-templates-edit-id'>;
+        route = route as TypedRouteFromName<'documents-templates-id-edit'>;
         // Check if the id is made up of digits
         if (typeof route.params.id !== 'string') {
             return false;
@@ -20,7 +20,7 @@ definePageMeta({
     },
 });
 
-const route = useRoute('documents-templates-edit-id');
+const route = useRoute('documents-templates-id-edit');
 </script>
 
 <template>

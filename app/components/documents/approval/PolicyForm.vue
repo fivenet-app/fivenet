@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalRuleKind, OnEditBehavior, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import PolicyEditor from './PolicyEditor.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -15,30 +16,9 @@ const emits = defineEmits<{
 
 const policy = defineModel<ApprovalPolicy | undefined>();
 
-const { t } = useI18n();
-
 const notifications = useNotificationsStore();
 
 const approvalClient = await getDocumentsApprovalClient();
-
-const ruleKinds = computed(() => [
-    {
-        label: t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[ApprovalRuleKind.REQUIRE_ALL]}`),
-        value: ApprovalRuleKind.REQUIRE_ALL,
-    },
-    {
-        label: t(`enums.documents.ApprovalRuleKind.${ApprovalRuleKind[ApprovalRuleKind.QUORUM_ANY]}`),
-        value: ApprovalRuleKind.QUORUM_ANY,
-    },
-]);
-
-const onEditBehaviors = computed(() => [
-    {
-        label: t(`enums.documents.OnEditBehavior.${OnEditBehavior[OnEditBehavior.KEEP_PROGRESS]}`),
-        value: OnEditBehavior.KEEP_PROGRESS,
-    },
-    { label: t(`enums.documents.OnEditBehavior.${OnEditBehavior[OnEditBehavior.RESET]}`), value: OnEditBehavior.RESET },
-]);
 
 const schema = z.object({
     ruleKind: z.enum(ApprovalRuleKind).default(ApprovalRuleKind.REQUIRE_ALL),
@@ -142,46 +122,7 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <UForm ref="formRef" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-                        <UFormField name="ruleKind" :label="$t('components.documents.approval.policy_form.rule_kind')">
-                            <USelectMenu
-                                v-model="state.ruleKind"
-                                :items="ruleKinds"
-                                value-key="value"
-                                label-key="label"
-                                class="w-full"
-                            >
-                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                            </USelectMenu>
-                        </UFormField>
-
-                        <UFormField
-                            v-if="state.ruleKind === ApprovalRuleKind.QUORUM_ANY"
-                            name="requiredCount"
-                            :label="$t('components.documents.approval.policy_form.required_approvals')"
-                        >
-                            <UInputNumber v-model="state.requiredCount" :min="0" :max="10" class="w-full" />
-                        </UFormField>
-
-                        <UFormField name="signatureRequired" :label="$t('components.documents.approval.signature_required')">
-                            <div class="flex flex-1 items-center justify-center">
-                                <USwitch v-model="state.signatureRequired" />
-                            </div>
-                        </UFormField>
-
-                        <UFormField
-                            name="onEditBehavior"
-                            :label="$t('components.documents.approval.policy_form.on_edit_behavior')"
-                        >
-                            <USelectMenu
-                                v-model="state.onEditBehavior"
-                                :items="onEditBehaviors"
-                                value-key="value"
-                                label-key="label"
-                                class="w-full"
-                            >
-                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                            </USelectMenu>
-                        </UFormField>
+                        <PolicyEditor v-model="state" />
                     </UForm>
 
                     <template #footer>

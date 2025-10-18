@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TemplateList from '~/components/documents/templates/TemplateList.vue';
+import List from '~/components/documents/templates/List.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
@@ -47,7 +47,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
         </template>
 
         <template #body>
-            <TemplateList ref="templatesListRef" @selected="selected($event)" />
+            <List ref="templatesListRef" @selected="selected($event)" />
         </template>
 
         <template #footer>

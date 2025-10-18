@@ -40,7 +40,6 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
     const payloadSVG = saveSignature();
 
     try {
-        console.log('Deciding approval with values:', values, 'and payloadSVG:', payloadSVG);
         const call = approvalClient.decideApproval({
             documentId: props.documentId,
             newStatus: props.approve ? ApprovalTaskStatus.APPROVED : ApprovalTaskStatus.DECLINED,

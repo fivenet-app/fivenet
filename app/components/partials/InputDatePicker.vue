@@ -12,7 +12,7 @@ export interface Props<R extends boolean = false, M extends boolean = false>
     clearable?: boolean;
     time?: boolean;
     dateFormat?: string | undefined;
-    customDateFormat?: string | undefined;
+    customDateFormat?: string | 'ago' | undefined;
 }
 
 const props = withDefaults(defineProps<Props<R, M>>(), {
@@ -92,7 +92,13 @@ const smallerThanSm = breakpoints.smaller('sm');
             block
         >
             <template v-if="modelValue">
-                {{ customDateFormat ? format(modelValue, customDateFormat) : $d(modelValue, dateFormat) }}
+                {{
+                    customDateFormat
+                        ? customDateFormat === 'ago'
+                            ? useLocaleTimeAgo(modelValue)
+                            : format(modelValue, customDateFormat)
+                        : $d(modelValue, dateFormat)
+                }}
             </template>
             <template v-else> {{ $t('common.pick_date') }} </template>
         </UButton>

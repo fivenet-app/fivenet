@@ -10,6 +10,27 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+// Scan implements driver.Valuer for protobuf TemplateApproval.
+func (x *TemplateApproval) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the TemplateApproval value into driver.Valuer.
+func (x *TemplateApproval) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.MarshalToJSON(x)
+	return string(out), err
+}
+
 // Scan implements driver.Valuer for protobuf TemplateSchema.
 func (x *TemplateSchema) Scan(value any) error {
 	switch t := value.(type) {

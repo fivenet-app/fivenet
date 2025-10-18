@@ -176,7 +176,6 @@ async function handleAuthedStateChange(): Promise<void> {
     if (!!authedState.value && username.value === null) {
         await authStore.chooseCharacter(undefined, true);
     } else if (!authedState.value && username.value !== null) {
-        console.log('User logged out', authedState.value, username.value);
         await navigateTo('/auth/logout');
     }
 }

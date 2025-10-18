@@ -48,6 +48,7 @@ func (s *Server) ListTemplates(
 			tDTemplates.Icon,
 			tDTemplates.Schema,
 			tDTemplates.Workflow,
+			tDTemplates.Approval,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -170,6 +171,7 @@ func (s *Server) getTemplate(ctx context.Context, templateId int64) (*documents.
 			tDTemplates.Access,
 			tDTemplates.Schema,
 			tDTemplates.Workflow,
+			tDTemplates.Approval,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -295,6 +297,7 @@ func (s *Server) CreateTemplate(
 			tDTemplates.Access,
 			tDTemplates.Schema,
 			tDTemplates.Workflow,
+			tDTemplates.Approval,
 			tDTemplates.CreatorJob,
 		).
 		VALUES(
@@ -310,6 +313,7 @@ func (s *Server) CreateTemplate(
 			req.GetTemplate().GetContentAccess(),
 			req.GetTemplate().GetSchema(),
 			req.GetTemplate().GetWorkflow(),
+			req.GetTemplate().GetApproval(),
 			userInfo.GetJob(),
 		)
 
@@ -405,6 +409,7 @@ func (s *Server) UpdateTemplate(
 			tDTemplates.Access,
 			tDTemplates.Schema,
 			tDTemplates.Workflow,
+			tDTemplates.Approval,
 		).
 		SET(
 			req.GetTemplate().GetWeight(),
@@ -419,6 +424,7 @@ func (s *Server) UpdateTemplate(
 			req.GetTemplate().GetContentAccess(),
 			req.GetTemplate().GetSchema(),
 			req.GetTemplate().GetWorkflow(),
+			req.GetTemplate().GetApproval(),
 		).
 		WHERE(
 			tDTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),

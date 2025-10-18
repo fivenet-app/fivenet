@@ -35,12 +35,22 @@ const hints = shuffleArray([
         }"
         v-bind="$attrs"
     >
-        <UCarousel v-slot="{ item: hint }" :items="hints" dots loop :autoplay="{ delay: 7500 }" :ui="{ dots: '-bottom-0' }">
+        <UCarousel
+            v-slot="{ item: hint }"
+            :items="hints"
+            dots
+            loop
+            :autoplay="{ delay: 7500 }"
+            :ui="{ dots: '-bottom-4' }"
+            class="mb-2"
+        >
             <div class="box-border w-full min-w-0">
-                <div class="overflow-hidden break-words hyphens-auto whitespace-normal">
-                    <p>{{ $t(`components.hints.${hint.key}.content`) }}</p>
+                <div class="flex min-w-0 flex-wrap items-center gap-3 overflow-hidden">
+                    <p class="min-w-0 flex-1 [overflow-wrap:anywhere] break-words hyphens-auto whitespace-normal">
+                        {{ $t(`components.hints.${hint.key}.content`) }}
+                    </p>
 
-                    <div v-if="hint.keyboard || hint.to" class="mt-3 sm:mt-0">
+                    <div v-if="hint.keyboard || hint.to" class="shrink-0">
                         <UKbd v-if="hint.keyboard" size="md" :value="$t(`components.hints.${hint.key}.keyboard`)" />
                         <UButton v-else-if="hint.to" size="sm" :to="hint.to" :label="$t('components.hints.click_me')" />
                     </div>

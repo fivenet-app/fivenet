@@ -716,7 +716,7 @@
         "unsigned": "Unsigned",
         "stamp": "Stamp | Stamps",
         "due_at": "Due at",
-        "approvals": "Approvals",
+        "approvals": "Approval | Approvals",
         "continue": "Continue",
         "policy": "Policy",
         "task": "Task | Tasks",

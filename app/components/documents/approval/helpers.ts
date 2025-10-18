@@ -1,5 +1,6 @@
 import type { BadgeProps } from '@nuxt/ui';
-import { ApprovalStatus, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { z } from 'zod';
+import { ApprovalAssigneeKind, ApprovalStatus, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
 
 export function approvalTaskStatusToColor(status: ApprovalTaskStatus): BadgeProps['color'] {
     switch (status) {
@@ -37,4 +38,31 @@ export function approvalStatusToColor(status: ApprovalStatus): BadgeProps['color
         default:
             return 'info';
     }
+}
+
+export function getZApprovalTask(startJobGrade: number) {
+    return z.union([
+        z.object({
+            ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
+            userId: z.coerce.number(),
+            job: z.coerce.string().optional(),
+            minimumGrade: z.coerce.number().min(startJobGrade).optional(),
+            label: z.string().max(120).default(''),
+            signatureRequired: z.coerce.boolean().default(false),
+            slots: z.coerce.number().min(1).max(10).optional().default(1),
+            dueAt: z.date().optional(),
+            comment: z.coerce.string().max(255).optional(),
+        }),
+        z.object({
+            ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
+            userId: z.coerce.number().optional().default(0),
+            job: z.coerce.string(),
+            minimumGrade: z.coerce.number().min(startJobGrade),
+            label: z.string().max(120).default(''),
+            signatureRequired: z.coerce.boolean().default(false),
+            slots: z.coerce.number().min(1).max(10).optional().default(1),
+            dueAt: z.date().optional(),
+            comment: z.coerce.string().max(255).optional(),
+        }),
+    ]);
 }

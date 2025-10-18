@@ -13,7 +13,7 @@ const itemsLeft = computed<(NavigationMenuItem & { permission?: Perms })[]>(() =
         permission: 'documents.DocumentsService/ListDocuments',
     },
     {
-        label: t('common.approvals'),
+        label: t('common.approvals', 2),
         to: '/documents/approvals',
         icon: 'i-mdi-approval',
         permission: 'documents.DocumentsService/ListDocuments',

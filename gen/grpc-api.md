@@ -4178,6 +4178,52 @@ Policy snapshot applied to a specific version
 | `job_access` | [TemplateJobAccess](#resourcesdocumentsTemplateJobAccess) | repeated |  |
 | `content_access` | [DocumentAccess](#resourcesdocumentsDocumentAccess) |  |  |
 | `workflow` | [Workflow](#resourcesdocumentsWorkflow) | optional |  |
+| `approval` | [TemplateApproval](#resourcesdocumentsTemplateApproval) | optional |  |
+
+
+
+
+
+### resources.documents.TemplateApproval
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `policy` | [TemplateApprovalPolicy](#resourcesdocumentsTemplateApprovalPolicy) | optional |  |
+| `tasks` | [TemplateApprovalTaskSeed](#resourcesdocumentsTemplateApprovalTaskSeed) | repeated |  |
+
+
+
+
+
+### resources.documents.TemplateApprovalPolicy
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
+| `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
+| `required_count` | [int32](#int32) | optional |  |
+| `signature_required` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.documents.TemplateApprovalTaskSeed
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `job` | [string](#string) |  | If user_id == 0 -> JOB task |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) | optional | Label of task |
+| `signature_required` | [bool](#bool) |  |  |
+| `slots` | [int32](#int32) |  | Only for JOB tasks; number of PENDING slots to ensure (>=1) |
+| `due_in_days` | [int32](#int32) | optional | Optional default due date for created slots |
+| `comment` | [string](#string) | optional | Optional note set on created tasks |
 
 
 

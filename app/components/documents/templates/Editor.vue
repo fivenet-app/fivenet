@@ -19,10 +19,13 @@ import { useCompletorStore } from '~/stores/completor';
 import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { ApprovalAssigneeKind, ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
+import PolicyEditor from '../approval/PolicyEditor.vue';
+import ApprovalTasksEditor from './ApprovalTasksEditor.vue';
 import EditorButtons from './EditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
@@ -61,6 +64,56 @@ const schema = z.object({
         users: userAccessEntry.array().max(maxAccessEntries).default([]),
     }),
     workflow: zWorkflow,
+    approval: z
+        .object({
+            enabled: z.boolean().default(false),
+
+            policy: z.object({
+                ruleKind: z.enum(ApprovalRuleKind).default(ApprovalRuleKind.REQUIRE_ALL),
+                onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
+                requiredCount: z.number().min(1).max(10).default(2),
+                signatureRequired: z.boolean().default(false),
+            }),
+
+            tasks: z
+                .union([
+                    z.object({
+                        ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
+                        userId: z.coerce.number(),
+                        job: z.coerce.string().optional(),
+                        minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
+                        label: z.string().max(120).default(''),
+                        signatureRequired: z.coerce.boolean().default(false),
+                        slots: z.coerce.number().min(1).max(10).optional().default(1),
+                        dueInDays: z.coerce.number().min(1).optional().default(1),
+                        comment: z.coerce.string().max(255).optional(),
+                    }),
+                    z.object({
+                        ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
+                        userId: z.coerce.number().optional().default(0),
+                        job: z.coerce.string(),
+                        minimumGrade: z.coerce.number().min(game.startJobGrade),
+                        label: z.string().max(120).default(''),
+                        signatureRequired: z.coerce.boolean().default(false),
+                        slots: z.coerce.number().min(1).max(10).optional().default(1),
+                        dueInDays: z.coerce.number().min(1).optional().default(1),
+                        comment: z.coerce.string().max(255).optional(),
+                    }),
+                ])
+                .array()
+                .max(20)
+                .default([]),
+        })
+        .default({
+            enabled: false,
+            policy: {
+                ruleKind: ApprovalRuleKind.REQUIRE_ALL,
+                onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
+                requiredCount: 2,
+                signatureRequired: false,
+            },
+            tasks: [],
+        }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -95,6 +148,17 @@ const state = reactive<Schema>({
                 maxReminderCount: 10,
             },
         },
+    },
+    approval: {
+        enabled: false,
+        policy: {
+            ruleKind: ApprovalRuleKind.REQUIRE_ALL,
+            onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
+            requiredCount: 2,
+            signatureRequired: false,
+        },
+
+        tasks: [],
     },
 });
 
@@ -186,6 +250,26 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                     ),
                     message: values.workflow.autoClose.autoCloseSettings.message ?? '',
                 },
+            },
+            approval: {
+                enabled: values.approval.enabled,
+                policy: {
+                    ruleKind: values.approval.policy.ruleKind,
+                    onEditBehavior: values.approval.policy.onEditBehavior,
+                    requiredCount: values.approval.policy.requiredCount,
+                    signatureRequired: values.approval.policy.signatureRequired,
+                },
+                tasks: values.approval.tasks.map((task) => ({
+                    ruleKind: task.ruleKind,
+                    userId: task.userId,
+                    job: task.job ?? '',
+                    minimumGrade: task.minimumGrade ?? 0,
+                    label: task.label,
+                    signatureRequired: task.signatureRequired,
+                    slots: task.slots,
+                    dueInDays: task.dueInDays,
+                    comment: task.comment,
+                })),
             },
         },
     };
@@ -340,6 +424,12 @@ const items = [
         label: t('common.workflow'),
         icon: 'i-mdi-workflow',
         value: 'workflow',
+    },
+    {
+        slot: 'approval' as const,
+        label: t('common.approvals', 2),
+        icon: 'i-mdi-approval',
+        value: 'approval',
     },
     {
         slot: 'content' as const,
@@ -510,6 +600,24 @@ const formRef = useTemplateRef('formRef');
 
                     <template #workflow>
                         <TemplateWorkflowEditor v-model="state.workflow" />
+                    </template>
+
+                    <template #approval>
+                        <UPageCard :title="$t('common.approvals', 2)">
+                            <UFormField name="approval.enabled" :label="$t('common.enabled')">
+                                <USwitch v-model="state.approval.enabled" />
+                            </UFormField>
+
+                            <PolicyEditor v-model="state.approval.policy" :disabled="!state.approval.enabled" />
+                        </UPageCard>
+
+                        <UPageCard :title="$t('components.documents.approval.tasks', 2)">
+                            <ApprovalTasksEditor
+                                v-model="state.approval.tasks"
+                                :disabled="!state.approval.enabled"
+                                :signature-required="state.approval.policy.signatureRequired"
+                            />
+                        </UPageCard>
                     </template>
 
                     <template #content>

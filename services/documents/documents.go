@@ -3,12 +3,14 @@ package documents
 import (
 	context "context"
 	"errors"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
@@ -514,7 +516,7 @@ func (s *Server) UpdateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	// Either the document is closed and the update request isn't re-opening the document
+	// Document is closed and the update request isn't re-opening the document
 	if oldDoc.GetMeta().GetClosed() && req.GetMeta().GetClosed() && !userInfo.GetSuperuser() {
 		return nil, errorsdocuments.ErrClosedDoc
 	}
@@ -660,6 +662,12 @@ func (s *Server) UpdateDocument(
 			}); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
+
+			if tmpl != nil && !req.GetMeta().GetDraft() {
+				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc, tmpl); err != nil {
+					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				}
+			}
 		}
 
 		if err := s.handleApprovalOnEditBehaviors(ctx, tx, oldDoc); err != nil {
@@ -695,6 +703,68 @@ func (s *Server) UpdateDocument(
 	return &pbdocuments.UpdateDocumentResponse{
 		Document: doc,
 	}, nil
+}
+
+func (s *Server) handleDocumentPublish(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	doc *documents.Document,
+	tmpl *documents.Template,
+) error {
+	apr := tmpl.GetApproval()
+	if apr == nil || !apr.GetEnabled() {
+		return nil
+	}
+
+	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies.AS("approval_policy")
+	pol, err := s.getApprovalPolicy(
+		ctx,
+		tx,
+		tApprovalPolicy.DocumentID.EQ(mysql.Int64(doc.GetId())),
+	)
+	if err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if pol != nil {
+		// A policy already exists, don't update the existing one
+		return nil
+	}
+
+	now := time.Now()
+
+	seeds := []*pbdocuments.ApprovalTaskSeed{}
+	for _, task := range apr.GetTasks() {
+		var dueAt *timestamp.Timestamp
+		if task.GetDueInDays() > 0 {
+			dueTime := now.AddDate(0, 0, int(task.GetDueInDays()))
+			dueAt = timestamp.New(dueTime)
+		}
+
+		seeds = append(seeds, &pbdocuments.ApprovalTaskSeed{
+			UserId:            task.GetUserId(),
+			Job:               task.GetJob(),
+			MinimumGrade:      task.GetMinimumGrade(),
+			DueAt:             dueAt,
+			SignatureRequired: task.GetSignatureRequired(),
+			Slots:             task.GetSlots(),
+			Label:             task.Label,
+			Comment:           task.Comment,
+		})
+	}
+
+	if _, _, err := s.createApprovalTasks(
+		ctx,
+		tx,
+		userInfo,
+		doc.GetId(),
+		now,
+		seeds,
+	); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return nil
 }
 
 func (s *Server) DeleteDocument(

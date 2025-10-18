@@ -33,6 +33,7 @@ type fivenetDocumentsTemplatesTable struct {
 	Access       mysql.ColumnString
 	Schema       mysql.ColumnString
 	Workflow     mysql.ColumnString
+	Approval     mysql.ColumnString
 	CreatorJob   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -91,9 +92,10 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		AccessColumn       = mysql.StringColumn("access")
 		SchemaColumn       = mysql.StringColumn("schema")
 		WorkflowColumn     = mysql.StringColumn("workflow")
+		ApprovalColumn     = mysql.StringColumn("approval")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, CreatorJobColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, ApprovalColumn, CreatorJobColumn}
 		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WeightColumn, ColorColumn}
 	)
 
@@ -117,6 +119,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		Access:       AccessColumn,
 		Schema:       SchemaColumn,
 		Workflow:     WorkflowColumn,
+		Approval:     ApprovalColumn,
 		CreatorJob:   CreatorJobColumn,
 
 		AllColumns:     allColumns,

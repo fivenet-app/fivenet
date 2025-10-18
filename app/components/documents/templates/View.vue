@@ -139,7 +139,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                 color="neutral"
                                 variant="ghost"
                                 icon="i-mdi-pencil"
-                                :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                                :to="{ name: 'documents-templates-id-edit', params: { id: templateId } }"
                                 :label="$t('common.edit')"
                             />
                         </UTooltip>
@@ -167,9 +167,9 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                 </template>
             </UDashboardToolbar>
 
-            <UDashboardToolbar>
+            <UDashboardToolbar v-if="template">
                 <template #default>
-                    <div v-if="template" class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
+                    <div class="mx-auto my-2 w-full max-w-(--breakpoint-xl)">
                         <div class="mb-2">
                             <h1 class="inline-flex items-center gap-2 px-0.5 py-1 text-4xl font-bold break-words sm:pl-1">
                                 <UIcon

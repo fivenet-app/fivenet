@@ -47,6 +47,7 @@ type Template struct {
 	JobAccess       []*TemplateJobAccess   `protobuf:"bytes,16,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
 	ContentAccess   *DocumentAccess        `protobuf:"bytes,17,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"`
 	Workflow        *Workflow              `protobuf:"bytes,18,opt,name=workflow,proto3,oneof" json:"workflow,omitempty"`
+	Approval        *TemplateApproval      `protobuf:"bytes,19,opt,name=approval,proto3,oneof" json:"approval,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -203,6 +204,13 @@ func (x *Template) GetContentAccess() *DocumentAccess {
 func (x *Template) GetWorkflow() *Workflow {
 	if x != nil {
 		return x.Workflow
+	}
+	return nil
+}
+
+func (x *Template) GetApproval() *TemplateApproval {
+	if x != nil {
+		return x.Approval
 	}
 	return nil
 }
@@ -716,11 +724,245 @@ func (*TemplateUserAccess) Descriptor() ([]byte, []int) {
 	return file_resources_documents_templates_proto_rawDescGZIP(), []int{7}
 }
 
+type TemplateApproval struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Enabled       bool                        `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Policy        *TemplateApprovalPolicy     `protobuf:"bytes,2,opt,name=policy,proto3,oneof" json:"policy,omitempty"`
+	Tasks         []*TemplateApprovalTaskSeed `protobuf:"bytes,3,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateApproval) Reset() {
+	*x = TemplateApproval{}
+	mi := &file_resources_documents_templates_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateApproval) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateApproval) ProtoMessage() {}
+
+func (x *TemplateApproval) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_templates_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateApproval.ProtoReflect.Descriptor instead.
+func (*TemplateApproval) Descriptor() ([]byte, []int) {
+	return file_resources_documents_templates_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *TemplateApproval) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *TemplateApproval) GetPolicy() *TemplateApprovalPolicy {
+	if x != nil {
+		return x.Policy
+	}
+	return nil
+}
+
+func (x *TemplateApproval) GetTasks() []*TemplateApprovalTaskSeed {
+	if x != nil {
+		return x.Tasks
+	}
+	return nil
+}
+
+type TemplateApprovalPolicy struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	RuleKind          ApprovalRuleKind       `protobuf:"varint,1,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
+	OnEditBehavior    OnEditBehavior         `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	RequiredCount     *int32                 `protobuf:"varint,3,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
+	SignatureRequired bool                   `protobuf:"varint,4,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *TemplateApprovalPolicy) Reset() {
+	*x = TemplateApprovalPolicy{}
+	mi := &file_resources_documents_templates_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateApprovalPolicy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateApprovalPolicy) ProtoMessage() {}
+
+func (x *TemplateApprovalPolicy) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_templates_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateApprovalPolicy.ProtoReflect.Descriptor instead.
+func (*TemplateApprovalPolicy) Descriptor() ([]byte, []int) {
+	return file_resources_documents_templates_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *TemplateApprovalPolicy) GetRuleKind() ApprovalRuleKind {
+	if x != nil {
+		return x.RuleKind
+	}
+	return ApprovalRuleKind_APPROVAL_RULE_KIND_UNSPECIFIED
+}
+
+func (x *TemplateApprovalPolicy) GetOnEditBehavior() OnEditBehavior {
+	if x != nil {
+		return x.OnEditBehavior
+	}
+	return OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED
+}
+
+func (x *TemplateApprovalPolicy) GetRequiredCount() int32 {
+	if x != nil && x.RequiredCount != nil {
+		return *x.RequiredCount
+	}
+	return 0
+}
+
+func (x *TemplateApprovalPolicy) GetSignatureRequired() bool {
+	if x != nil {
+		return x.SignatureRequired
+	}
+	return false
+}
+
+type TemplateApprovalTaskSeed struct {
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// If user_id == 0 -> JOB task
+	Job          string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	MinimumGrade int32  `protobuf:"varint,3,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
+	// Label of task
+	Label             *string `protobuf:"bytes,4,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	SignatureRequired bool    `protobuf:"varint,5,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
+	// Only for JOB tasks; number of PENDING slots to ensure (>=1)
+	Slots int32 `protobuf:"varint,6,opt,name=slots,proto3" json:"slots,omitempty"`
+	// Optional default due date for created slots
+	DueInDays *int32 `protobuf:"varint,7,opt,name=due_in_days,json=dueInDays,proto3,oneof" json:"due_in_days,omitempty"`
+	// Optional note set on created tasks
+	Comment       *string `protobuf:"bytes,8,opt,name=comment,proto3,oneof" json:"comment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TemplateApprovalTaskSeed) Reset() {
+	*x = TemplateApprovalTaskSeed{}
+	mi := &file_resources_documents_templates_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateApprovalTaskSeed) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateApprovalTaskSeed) ProtoMessage() {}
+
+func (x *TemplateApprovalTaskSeed) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_templates_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateApprovalTaskSeed.ProtoReflect.Descriptor instead.
+func (*TemplateApprovalTaskSeed) Descriptor() ([]byte, []int) {
+	return file_resources_documents_templates_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *TemplateApprovalTaskSeed) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *TemplateApprovalTaskSeed) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+func (x *TemplateApprovalTaskSeed) GetMinimumGrade() int32 {
+	if x != nil {
+		return x.MinimumGrade
+	}
+	return 0
+}
+
+func (x *TemplateApprovalTaskSeed) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
+func (x *TemplateApprovalTaskSeed) GetSignatureRequired() bool {
+	if x != nil {
+		return x.SignatureRequired
+	}
+	return false
+}
+
+func (x *TemplateApprovalTaskSeed) GetSlots() int32 {
+	if x != nil {
+		return x.Slots
+	}
+	return 0
+}
+
+func (x *TemplateApprovalTaskSeed) GetDueInDays() int32 {
+	if x != nil && x.DueInDays != nil {
+		return *x.DueInDays
+	}
+	return 0
+}
+
+func (x *TemplateApprovalTaskSeed) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
 var File_resources_documents_templates_proto protoreflect.FileDescriptor
 
 const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/templates.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xda\t\n" +
+	"#resources/documents/templates.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a\"resources/documents/approval.proto\x1a\"resources/documents/category.proto\x1a#resources/documents/documents.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x13tagger/tagger.proto\"\xaf\n" +
+	"\n" +
 	"\bTemplate\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -745,13 +987,15 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"job_access\x18\x10 \x03(\v2&.resources.documents.TemplateJobAccessB\b\xbaH\x05\x92\x01\x02\x10\x14R\tjobAccess\x12_\n" +
 	"\x0econtent_access\x18\x11 \x01(\v2#.resources.documents.DocumentAccessB\x13\x9a\x84\x9e\x03\x0ealias:\"access\"R\rcontentAccess\x12>\n" +
-	"\bworkflow\x18\x12 \x01(\v2\x1d.resources.documents.WorkflowH\x05R\bworkflow\x88\x01\x01B\r\n" +
+	"\bworkflow\x18\x12 \x01(\v2\x1d.resources.documents.WorkflowH\x05R\bworkflow\x88\x01\x01\x12F\n" +
+	"\bapproval\x18\x13 \x01(\v2%.resources.documents.TemplateApprovalH\x06R\bapproval\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\b\n" +
 	"\x06_colorB\a\n" +
 	"\x05_iconB\x14\n" +
 	"\x12_creator_job_labelB\v\n" +
-	"\t_workflow\"\xc1\x06\n" +
+	"\t_workflowB\v\n" +
+	"\t_approval\"\xc1\x06\n" +
 	"\rTemplateShort\x12\x1f\n" +
 	"\x02id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\x02id\x12B\n" +
@@ -815,7 +1059,31 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\x14\n" +
-	"\x12TemplateUserAccessBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x12TemplateUserAccess\"\xd8\x01\n" +
+	"\x10TemplateApproval\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12H\n" +
+	"\x06policy\x18\x02 \x01(\v2+.resources.documents.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12M\n" +
+	"\x05tasks\x18\x03 \x03(\v2-.resources.documents.TemplateApprovalTaskSeedB\b\xbaH\x05\x92\x01\x02\x10\x05R\x05tasks:\x06\xe2\xf3\x18\x02\b\x01B\t\n" +
+	"\a_policy\"\xb6\x02\n" +
+	"\x16TemplateApprovalPolicy\x12L\n" +
+	"\trule_kind\x18\x01 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x12W\n" +
+	"\x10on_edit_behavior\x18\x02 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x123\n" +
+	"\x0erequired_count\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12-\n" +
+	"\x12signature_required\x18\x04 \x01(\bR\x11signatureRequiredB\x11\n" +
+	"\x0f_required_count\"\xd9\x02\n" +
+	"\x18TemplateApprovalTaskSeed\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
+	"\rminimum_grade\x18\x03 \x01(\x05R\fminimumGrade\x123\n" +
+	"\x05label\x18\x04 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xH\x00R\x05label\x88\x01\x01\x12-\n" +
+	"\x12signature_required\x18\x05 \x01(\bR\x11signatureRequired\x12\x1f\n" +
+	"\x05slots\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x05(\x01R\x05slots\x12#\n" +
+	"\vdue_in_days\x18\a \x01(\x05H\x01R\tdueInDays\x88\x01\x01\x12\x1d\n" +
+	"\acomment\x18\b \x01(\tH\x02R\acomment\x88\x01\x01B\b\n" +
+	"\x06_labelB\x0e\n" +
+	"\f_due_in_daysB\n" +
+	"\n" +
+	"\b_commentBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_templates_proto_rawDescOnce sync.Once
@@ -829,54 +1097,64 @@ func file_resources_documents_templates_proto_rawDescGZIP() []byte {
 	return file_resources_documents_templates_proto_rawDescData
 }
 
-var file_resources_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_resources_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_resources_documents_templates_proto_goTypes = []any{
-	(*Template)(nil),             // 0: resources.documents.Template
-	(*TemplateShort)(nil),        // 1: resources.documents.TemplateShort
-	(*TemplateSchema)(nil),       // 2: resources.documents.TemplateSchema
-	(*TemplateRequirements)(nil), // 3: resources.documents.TemplateRequirements
-	(*ObjectSpecs)(nil),          // 4: resources.documents.ObjectSpecs
-	(*TemplateData)(nil),         // 5: resources.documents.TemplateData
-	(*TemplateJobAccess)(nil),    // 6: resources.documents.TemplateJobAccess
-	(*TemplateUserAccess)(nil),   // 7: resources.documents.TemplateUserAccess
-	(*timestamp.Timestamp)(nil),  // 8: resources.timestamp.Timestamp
-	(*Category)(nil),             // 9: resources.documents.Category
-	(*DocumentAccess)(nil),       // 10: resources.documents.DocumentAccess
-	(*Workflow)(nil),             // 11: resources.documents.Workflow
-	(*users.User)(nil),           // 12: resources.users.User
-	(*DocumentShort)(nil),        // 13: resources.documents.DocumentShort
-	(*users.UserShort)(nil),      // 14: resources.users.UserShort
-	(*vehicles.Vehicle)(nil),     // 15: resources.vehicles.Vehicle
-	(AccessLevel)(0),             // 16: resources.documents.AccessLevel
+	(*Template)(nil),                 // 0: resources.documents.Template
+	(*TemplateShort)(nil),            // 1: resources.documents.TemplateShort
+	(*TemplateSchema)(nil),           // 2: resources.documents.TemplateSchema
+	(*TemplateRequirements)(nil),     // 3: resources.documents.TemplateRequirements
+	(*ObjectSpecs)(nil),              // 4: resources.documents.ObjectSpecs
+	(*TemplateData)(nil),             // 5: resources.documents.TemplateData
+	(*TemplateJobAccess)(nil),        // 6: resources.documents.TemplateJobAccess
+	(*TemplateUserAccess)(nil),       // 7: resources.documents.TemplateUserAccess
+	(*TemplateApproval)(nil),         // 8: resources.documents.TemplateApproval
+	(*TemplateApprovalPolicy)(nil),   // 9: resources.documents.TemplateApprovalPolicy
+	(*TemplateApprovalTaskSeed)(nil), // 10: resources.documents.TemplateApprovalTaskSeed
+	(*timestamp.Timestamp)(nil),      // 11: resources.timestamp.Timestamp
+	(*Category)(nil),                 // 12: resources.documents.Category
+	(*DocumentAccess)(nil),           // 13: resources.documents.DocumentAccess
+	(*Workflow)(nil),                 // 14: resources.documents.Workflow
+	(*users.User)(nil),               // 15: resources.users.User
+	(*DocumentShort)(nil),            // 16: resources.documents.DocumentShort
+	(*users.UserShort)(nil),          // 17: resources.users.UserShort
+	(*vehicles.Vehicle)(nil),         // 18: resources.vehicles.Vehicle
+	(AccessLevel)(0),                 // 19: resources.documents.AccessLevel
+	(ApprovalRuleKind)(0),            // 20: resources.documents.ApprovalRuleKind
+	(OnEditBehavior)(0),              // 21: resources.documents.OnEditBehavior
 }
 var file_resources_documents_templates_proto_depIdxs = []int32{
-	8,  // 0: resources.documents.Template.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 1: resources.documents.Template.updated_at:type_name -> resources.timestamp.Timestamp
-	9,  // 2: resources.documents.Template.category:type_name -> resources.documents.Category
+	11, // 0: resources.documents.Template.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 1: resources.documents.Template.updated_at:type_name -> resources.timestamp.Timestamp
+	12, // 2: resources.documents.Template.category:type_name -> resources.documents.Category
 	2,  // 3: resources.documents.Template.schema:type_name -> resources.documents.TemplateSchema
 	6,  // 4: resources.documents.Template.job_access:type_name -> resources.documents.TemplateJobAccess
-	10, // 5: resources.documents.Template.content_access:type_name -> resources.documents.DocumentAccess
-	11, // 6: resources.documents.Template.workflow:type_name -> resources.documents.Workflow
-	8,  // 7: resources.documents.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 8: resources.documents.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
-	9,  // 9: resources.documents.TemplateShort.category:type_name -> resources.documents.Category
-	2,  // 10: resources.documents.TemplateShort.schema:type_name -> resources.documents.TemplateSchema
-	11, // 11: resources.documents.TemplateShort.workflow:type_name -> resources.documents.Workflow
-	3,  // 12: resources.documents.TemplateSchema.requirements:type_name -> resources.documents.TemplateRequirements
-	4,  // 13: resources.documents.TemplateRequirements.documents:type_name -> resources.documents.ObjectSpecs
-	4,  // 14: resources.documents.TemplateRequirements.users:type_name -> resources.documents.ObjectSpecs
-	4,  // 15: resources.documents.TemplateRequirements.vehicles:type_name -> resources.documents.ObjectSpecs
-	12, // 16: resources.documents.TemplateData.active_char:type_name -> resources.users.User
-	13, // 17: resources.documents.TemplateData.documents:type_name -> resources.documents.DocumentShort
-	14, // 18: resources.documents.TemplateData.users:type_name -> resources.users.UserShort
-	15, // 19: resources.documents.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
-	8,  // 20: resources.documents.TemplateJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	16, // 21: resources.documents.TemplateJobAccess.access:type_name -> resources.documents.AccessLevel
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	13, // 5: resources.documents.Template.content_access:type_name -> resources.documents.DocumentAccess
+	14, // 6: resources.documents.Template.workflow:type_name -> resources.documents.Workflow
+	8,  // 7: resources.documents.Template.approval:type_name -> resources.documents.TemplateApproval
+	11, // 8: resources.documents.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 9: resources.documents.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
+	12, // 10: resources.documents.TemplateShort.category:type_name -> resources.documents.Category
+	2,  // 11: resources.documents.TemplateShort.schema:type_name -> resources.documents.TemplateSchema
+	14, // 12: resources.documents.TemplateShort.workflow:type_name -> resources.documents.Workflow
+	3,  // 13: resources.documents.TemplateSchema.requirements:type_name -> resources.documents.TemplateRequirements
+	4,  // 14: resources.documents.TemplateRequirements.documents:type_name -> resources.documents.ObjectSpecs
+	4,  // 15: resources.documents.TemplateRequirements.users:type_name -> resources.documents.ObjectSpecs
+	4,  // 16: resources.documents.TemplateRequirements.vehicles:type_name -> resources.documents.ObjectSpecs
+	15, // 17: resources.documents.TemplateData.active_char:type_name -> resources.users.User
+	16, // 18: resources.documents.TemplateData.documents:type_name -> resources.documents.DocumentShort
+	17, // 19: resources.documents.TemplateData.users:type_name -> resources.users.UserShort
+	18, // 20: resources.documents.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
+	11, // 21: resources.documents.TemplateJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	19, // 22: resources.documents.TemplateJobAccess.access:type_name -> resources.documents.AccessLevel
+	9,  // 23: resources.documents.TemplateApproval.policy:type_name -> resources.documents.TemplateApprovalPolicy
+	10, // 24: resources.documents.TemplateApproval.tasks:type_name -> resources.documents.TemplateApprovalTaskSeed
+	20, // 25: resources.documents.TemplateApprovalPolicy.rule_kind:type_name -> resources.documents.ApprovalRuleKind
+	21, // 26: resources.documents.TemplateApprovalPolicy.on_edit_behavior:type_name -> resources.documents.OnEditBehavior
+	27, // [27:27] is the sub-list for method output_type
+	27, // [27:27] is the sub-list for method input_type
+	27, // [27:27] is the sub-list for extension type_name
+	27, // [27:27] is the sub-list for extension extendee
+	0,  // [0:27] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_templates_proto_init() }
@@ -885,6 +1163,7 @@ func file_resources_documents_templates_proto_init() {
 		return
 	}
 	file_resources_documents_access_proto_init()
+	file_resources_documents_approval_proto_init()
 	file_resources_documents_category_proto_init()
 	file_resources_documents_documents_proto_init()
 	file_resources_documents_workflow_proto_init()
@@ -893,13 +1172,16 @@ func file_resources_documents_templates_proto_init() {
 	file_resources_documents_templates_proto_msgTypes[3].OneofWrappers = []any{}
 	file_resources_documents_templates_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_documents_templates_proto_msgTypes[6].OneofWrappers = []any{}
+	file_resources_documents_templates_proto_msgTypes[8].OneofWrappers = []any{}
+	file_resources_documents_templates_proto_msgTypes[9].OneofWrappers = []any{}
+	file_resources_documents_templates_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_documents_templates_proto_rawDesc), len(file_resources_documents_templates_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

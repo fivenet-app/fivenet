@@ -11,6 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { OnEditBehavior } from "./approval";
+import { ApprovalRuleKind } from "./approval";
 import { AccessLevel } from "./access";
 import { Vehicle } from "../vehicles/vehicles";
 import { UserShort } from "../users/users";
@@ -96,6 +98,10 @@ export interface Template {
      * @generated from protobuf field: optional resources.documents.Workflow workflow = 18
      */
     workflow?: Workflow;
+    /**
+     * @generated from protobuf field: optional resources.documents.TemplateApproval approval = 19
+     */
+    approval?: TemplateApproval;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateShort
@@ -262,6 +268,91 @@ export interface TemplateJobAccess {
  */
 export interface TemplateUserAccess {
 }
+/**
+ * @generated from protobuf message resources.documents.TemplateApproval
+ */
+export interface TemplateApproval {
+    /**
+     * @generated from protobuf field: bool enabled = 1
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.TemplateApprovalPolicy policy = 2
+     */
+    policy?: TemplateApprovalPolicy;
+    /**
+     * @generated from protobuf field: repeated resources.documents.TemplateApprovalTaskSeed tasks = 3
+     */
+    tasks: TemplateApprovalTaskSeed[];
+}
+/**
+ * @generated from protobuf message resources.documents.TemplateApprovalPolicy
+ */
+export interface TemplateApprovalPolicy {
+    /**
+     * @generated from protobuf field: resources.documents.ApprovalRuleKind rule_kind = 1
+     */
+    ruleKind: ApprovalRuleKind;
+    /**
+     * @generated from protobuf field: resources.documents.OnEditBehavior on_edit_behavior = 2
+     */
+    onEditBehavior: OnEditBehavior;
+    /**
+     * @generated from protobuf field: optional int32 required_count = 3
+     */
+    requiredCount?: number;
+    /**
+     * @generated from protobuf field: bool signature_required = 4
+     */
+    signatureRequired: boolean;
+}
+/**
+ * @generated from protobuf message resources.documents.TemplateApprovalTaskSeed
+ */
+export interface TemplateApprovalTaskSeed {
+    /**
+     * @generated from protobuf field: int32 user_id = 1
+     */
+    userId: number;
+    /**
+     * If user_id == 0 -> JOB task
+     *
+     * @generated from protobuf field: string job = 2
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 3
+     */
+    minimumGrade: number;
+    /**
+     * Label of task
+     *
+     * @generated from protobuf field: optional string label = 4
+     */
+    label?: string;
+    /**
+     * @generated from protobuf field: bool signature_required = 5
+     */
+    signatureRequired: boolean;
+    /**
+     * Only for JOB tasks; number of PENDING slots to ensure (>=1)
+     *
+     * @generated from protobuf field: int32 slots = 6
+     */
+    slots: number;
+    /**
+     * Optional default due date for created slots
+     *
+     * @generated from protobuf field: optional int32 due_in_days = 7
+     */
+    dueInDays?: number;
+    /**
+     * Optional note set on created tasks
+     *
+     * @generated from protobuf field: optional string comment = 8
+     */
+    comment?: string;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Template$Type extends MessageType<Template> {
     constructor() {
@@ -283,7 +374,8 @@ class Template$Type extends MessageType<Template> {
             { no: 15, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } },
             { no: 16, name: "job_access", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TemplateJobAccess, options: { "buf.validate.field": { repeated: { maxItems: "20" } } } },
             { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess, options: { "tagger.tags": "alias:\"access\"" } },
-            { no: 18, name: "workflow", kind: "message", T: () => Workflow }
+            { no: 18, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 19, name: "approval", kind: "message", T: () => TemplateApproval }
         ]);
     }
     create(value?: PartialMessage<Template>): Template {
@@ -360,6 +452,9 @@ class Template$Type extends MessageType<Template> {
                 case /* optional resources.documents.Workflow workflow */ 18:
                     message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
                     break;
+                case /* optional resources.documents.TemplateApproval approval */ 19:
+                    message.approval = TemplateApproval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -426,6 +521,9 @@ class Template$Type extends MessageType<Template> {
         /* optional resources.documents.Workflow workflow = 18; */
         if (message.workflow)
             Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.TemplateApproval approval = 19; */
+        if (message.approval)
+            TemplateApproval.internalBinaryWrite(message.approval, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -945,3 +1043,235 @@ class TemplateUserAccess$Type extends MessageType<TemplateUserAccess> {
  * @generated MessageType for protobuf message resources.documents.TemplateUserAccess
  */
 export const TemplateUserAccess = new TemplateUserAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TemplateApproval$Type extends MessageType<TemplateApproval> {
+    constructor() {
+        super("resources.documents.TemplateApproval", [
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "policy", kind: "message", T: () => TemplateApprovalPolicy },
+            { no: 3, name: "tasks", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => TemplateApprovalTaskSeed, options: { "buf.validate.field": { repeated: { maxItems: "5" } } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<TemplateApproval>): TemplateApproval {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enabled = false;
+        message.tasks = [];
+        if (value !== undefined)
+            reflectionMergePartial<TemplateApproval>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateApproval): TemplateApproval {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enabled */ 1:
+                    message.enabled = reader.bool();
+                    break;
+                case /* optional resources.documents.TemplateApprovalPolicy policy */ 2:
+                    message.policy = TemplateApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
+                    break;
+                case /* repeated resources.documents.TemplateApprovalTaskSeed tasks */ 3:
+                    message.tasks.push(TemplateApprovalTaskSeed.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TemplateApproval, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enabled = 1; */
+        if (message.enabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* optional resources.documents.TemplateApprovalPolicy policy = 2; */
+        if (message.policy)
+            TemplateApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.TemplateApprovalTaskSeed tasks = 3; */
+        for (let i = 0; i < message.tasks.length; i++)
+            TemplateApprovalTaskSeed.internalBinaryWrite(message.tasks[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.TemplateApproval
+ */
+export const TemplateApproval = new TemplateApproval$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TemplateApprovalPolicy$Type extends MessageType<TemplateApprovalPolicy> {
+    constructor() {
+        super("resources.documents.TemplateApprovalPolicy", [
+            { no: 1, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "required_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
+            { no: 4, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TemplateApprovalPolicy>): TemplateApprovalPolicy {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.ruleKind = 0;
+        message.onEditBehavior = 0;
+        message.signatureRequired = false;
+        if (value !== undefined)
+            reflectionMergePartial<TemplateApprovalPolicy>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateApprovalPolicy): TemplateApprovalPolicy {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.ApprovalRuleKind rule_kind */ 1:
+                    message.ruleKind = reader.int32();
+                    break;
+                case /* resources.documents.OnEditBehavior on_edit_behavior */ 2:
+                    message.onEditBehavior = reader.int32();
+                    break;
+                case /* optional int32 required_count */ 3:
+                    message.requiredCount = reader.int32();
+                    break;
+                case /* bool signature_required */ 4:
+                    message.signatureRequired = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TemplateApprovalPolicy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.ApprovalRuleKind rule_kind = 1; */
+        if (message.ruleKind !== 0)
+            writer.tag(1, WireType.Varint).int32(message.ruleKind);
+        /* resources.documents.OnEditBehavior on_edit_behavior = 2; */
+        if (message.onEditBehavior !== 0)
+            writer.tag(2, WireType.Varint).int32(message.onEditBehavior);
+        /* optional int32 required_count = 3; */
+        if (message.requiredCount !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.requiredCount);
+        /* bool signature_required = 4; */
+        if (message.signatureRequired !== false)
+            writer.tag(4, WireType.Varint).bool(message.signatureRequired);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.TemplateApprovalPolicy
+ */
+export const TemplateApprovalPolicy = new TemplateApprovalPolicy$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TemplateApprovalTaskSeed$Type extends MessageType<TemplateApprovalTaskSeed> {
+    constructor() {
+        super("resources.documents.TemplateApprovalTaskSeed", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 5, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
+            { no: 7, name: "due_in_days", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TemplateApprovalTaskSeed>): TemplateApprovalTaskSeed {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        message.job = "";
+        message.minimumGrade = 0;
+        message.signatureRequired = false;
+        message.slots = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TemplateApprovalTaskSeed>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateApprovalTaskSeed): TemplateApprovalTaskSeed {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                case /* int32 minimum_grade */ 3:
+                    message.minimumGrade = reader.int32();
+                    break;
+                case /* optional string label */ 4:
+                    message.label = reader.string();
+                    break;
+                case /* bool signature_required */ 5:
+                    message.signatureRequired = reader.bool();
+                    break;
+                case /* int32 slots */ 6:
+                    message.slots = reader.int32();
+                    break;
+                case /* optional int32 due_in_days */ 7:
+                    message.dueInDays = reader.int32();
+                    break;
+                case /* optional string comment */ 8:
+                    message.comment = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TemplateApprovalTaskSeed, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* int32 minimum_grade = 3; */
+        if (message.minimumGrade !== 0)
+            writer.tag(3, WireType.Varint).int32(message.minimumGrade);
+        /* optional string label = 4; */
+        if (message.label !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.label);
+        /* bool signature_required = 5; */
+        if (message.signatureRequired !== false)
+            writer.tag(5, WireType.Varint).bool(message.signatureRequired);
+        /* int32 slots = 6; */
+        if (message.slots !== 0)
+            writer.tag(6, WireType.Varint).int32(message.slots);
+        /* optional int32 due_in_days = 7; */
+        if (message.dueInDays !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.dueInDays);
+        /* optional string comment = 8; */
+        if (message.comment !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.comment);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.TemplateApprovalTaskSeed
+ */
+export const TemplateApprovalTaskSeed = new TemplateApprovalTaskSeed$Type();

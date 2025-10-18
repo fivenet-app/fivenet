@@ -27,7 +27,6 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
     return availableIcons.filter((icon) => {
-        console.log(icon.name?.toLowerCase());
         if (count <= 40 && icon.name?.toLowerCase()?.includes(query)) {
             count++;
             return true;

@@ -2,7 +2,7 @@
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
-import TemplateList from '~/components/documents/templates/TemplateList.vue';
+import List from '~/components/documents/templates/List.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
@@ -109,7 +109,7 @@ const filteredRequirementTypes = computed(() => {
 
                 <USeparator class="my-4" />
 
-                <TemplateList @selected="templateSelected($event)" />
+                <List @selected="templateSelected($event)" />
             </template>
             <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                 <div>

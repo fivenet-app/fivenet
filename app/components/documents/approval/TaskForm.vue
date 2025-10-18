@@ -5,6 +5,7 @@ import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TaskFormEntry from './TaskFormEntry.vue';
+import { getZApprovalTask } from './helpers';
 
 const props = defineProps<{
     documentId: number;
@@ -27,33 +28,7 @@ const notifications = useNotificationsStore();
 const approvalClient = await getDocumentsApprovalClient();
 
 const schema = z.object({
-    tasks: z
-        .union([
-            z.object({
-                ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
-                userId: z.coerce.number(),
-                job: z.coerce.string().optional(),
-                minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
-                label: z.string().max(120).default(''),
-                signatureRequired: z.coerce.boolean().default(false),
-                slots: z.coerce.number().min(1).max(10).optional().default(1),
-                dueAt: z.date().optional(),
-                comment: z.coerce.string().max(255).optional(),
-            }),
-            z.object({
-                ruleKind: z.enum(ApprovalAssigneeKind).default(ApprovalAssigneeKind.JOB_GRADE),
-                userId: z.coerce.number().optional().default(0),
-                job: z.coerce.string(),
-                minimumGrade: z.coerce.number().min(game.startJobGrade),
-                label: z.string().max(120).default(''),
-                signatureRequired: z.coerce.boolean().default(false),
-                slots: z.coerce.number().min(1).max(10).optional().default(1),
-                dueAt: z.date().optional(),
-                comment: z.coerce.string().max(255).optional(),
-            }),
-        ])
-        .array()
-        .max(10),
+    tasks: getZApprovalTask(game.startJobGrade).array().max(10),
 });
 
 type Schema = z.output<typeof schema>;

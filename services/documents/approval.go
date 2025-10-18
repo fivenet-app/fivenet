@@ -694,18 +694,49 @@ func (s *Server) UpsertApprovalTasks(
 		snap = req.GetSnapshotDate().AsTime()
 	}
 
-	tApprovalTasks := table.FivenetDocumentsApprovalTasks
-
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	defer tx.Rollback()
 
+	created, ensured, err := s.createApprovalTasks(
+		ctx,
+		tx,
+		userInfo,
+		req.GetDocumentId(),
+		snap,
+		req.GetSeeds(),
+	)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return &pbdocuments.UpsertApprovalTasksResponse{
+		TasksCreated: created,
+		TasksEnsured: ensured,
+		Policy:       &pol,
+	}, nil
+}
+
+func (s *Server) createApprovalTasks(
+	ctx context.Context,
+	tx qrm.DB,
+	userInfo *userinfo.UserInfo,
+	documentId int64,
+	snap time.Time,
+	seeds []*pbdocuments.ApprovalTaskSeed,
+) (int32, int32, error) {
+	tApprovalTasks := table.FivenetDocumentsApprovalTasks
+
 	created := int32(0)
 	ensured := int32(0)
 
-	for _, seed := range req.GetSeeds() {
+	for _, seed := range seeds {
 		isUser := seed.GetUserId() > 0
 		if isUser {
 			// Ensure one USER task exists
@@ -714,14 +745,14 @@ func (s *Server) UpsertApprovalTasks(
 				SELECT(mysql.COUNT(tApprovalTasks.ID).AS("C")).
 				FROM(tApprovalTasks).
 				WHERE(mysql.AND(
-					tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
+					tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
 					tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 					tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
 					tApprovalTasks.UserID.EQ(mysql.Int32(seed.GetUserId())),
 				)).
 				LIMIT(1).
 				QueryContext(ctx, tx, &cnt); err != nil {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 			if cnt.C > 0 {
 				ensured++
@@ -745,7 +776,7 @@ func (s *Server) UpsertApprovalTasks(
 					tApprovalTasks.CreatorJob,
 				).
 				VALUES(
-					pol.GetDocumentId(),
+					documentId,
 					snap,
 					int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER),
 					seed.GetUserId(),
@@ -759,7 +790,7 @@ func (s *Server) UpsertApprovalTasks(
 					userInfo.GetJob(),
 				).
 				ExecContext(ctx, tx); err != nil {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+				return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 			created++
 			continue
@@ -776,7 +807,7 @@ func (s *Server) UpsertApprovalTasks(
 			SELECT(mysql.COUNT(tApprovalTasks.ID).AS("C")).
 			FROM(tApprovalTasks).
 			WHERE(mysql.AND(
-				tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
+				tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
 				tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
 				tApprovalTasks.Job.EQ(mysql.String(seed.GetJob())),
@@ -785,7 +816,7 @@ func (s *Server) UpsertApprovalTasks(
 			)).
 			LIMIT(1).
 			QueryContext(ctx, tx, &have); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if have.C >= int32(slots) {
 			ensured++
@@ -811,7 +842,7 @@ func (s *Server) UpsertApprovalTasks(
 			)
 		for slot := have.C + 1; slot <= slots; slot++ {
 			ins = ins.VALUES(
-				pol.GetDocumentId(),
+				documentId,
 				snap,
 				int32(
 					documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE,
@@ -831,13 +862,13 @@ func (s *Server) UpsertApprovalTasks(
 			)
 		}
 		if _, err := ins.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		created += int32(slots) - have.C
 	}
 
-	if err := s.recomputeApprovalPolicyTx(ctx, tx, pol.DocumentId, pol.SnapshotDate.AsTime()); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	if err := s.recomputeApprovalPolicyTx(ctx, tx, documentId, snap); err != nil {
+		return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	// Create document activity entry
@@ -845,23 +876,15 @@ func (s *Server) UpsertApprovalTasks(
 	userJob := userInfo.GetJob()
 
 	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   pol.GetDocumentId(),
+		DocumentId:   documentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_APPROVAL_ASSIGNED,
 		CreatorId:    &userId,
 		CreatorJob:   userJob,
 	}); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return 0, 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	return &pbdocuments.UpsertApprovalTasksResponse{
-		TasksCreated: created,
-		TasksEnsured: ensured,
-		Policy:       &pol,
-	}, nil
+	return created, ensured, nil
 }
 
 // DeleteApprovalTasks.

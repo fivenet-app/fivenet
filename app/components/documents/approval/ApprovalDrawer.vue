@@ -110,11 +110,11 @@ const taskFormDrawer = overlay.create(TaskForm);
                 <div class="flex flex-1 flex-col sm:flex-row sm:gap-4">
                     <DataPendingBlock
                         v-if="isRequestPending(status)"
-                        :message="$t('common.loading', [$t('common.approvals')])"
+                        :message="$t('common.loading', [$t('common.approvals', 2)])"
                     />
                     <DataErrorBlock
                         v-else-if="error"
-                        :title="$t('common.unable_to_load', [$t('common.approvals')])"
+                        :title="$t('common.unable_to_load', [$t('common.approvals', 2)])"
                         :error="error"
                         :retry="refresh"
                     />
@@ -156,7 +156,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                                                 ><span>{{ policy?.requiredCount }}</span></UTooltip
                                                             ></template
                                                         >
-                                                        {{ $t('common.approvals') }}
+                                                        {{ $t('common.approvals', 2) }}
                                                     </p>
                                                 </div>
                                             </template>

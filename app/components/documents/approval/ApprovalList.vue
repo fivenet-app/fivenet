@@ -65,7 +65,7 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
         <template #header>
             <div class="flex items-center justify-between gap-1">
                 <h3 class="flex-1 text-base leading-6 font-semibold">
-                    {{ $t('common.approvals') }}
+                    {{ $t('common.approvals', 2) }}
                 </h3>
 
                 <slot name="header" />
@@ -76,14 +76,14 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
             </div>
         </template>
 
-        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.approvals')])" />
+        <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.approvals', 2)])" />
         <DataErrorBlock
             v-else-if="error"
-            :title="$t('common.unable_to_load', [$t('common.approvals')])"
+            :title="$t('common.unable_to_load', [$t('common.approvals', 2)])"
             :error="error"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="data?.approvals.length === 0" icon="i-mdi-approval" :type="$t('common.approvals')" />
+        <DataNoDataBlock v-else-if="data?.approvals.length === 0" icon="i-mdi-approval" :type="$t('common.approvals', 2)" />
 
         <ul v-else class="divide-y divide-default" role="list">
             <li

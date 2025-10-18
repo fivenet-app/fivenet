@@ -24,6 +24,15 @@ func (m *Template) Sanitize() error {
 		return nil
 	}
 
+	// Field: Approval
+	if m.Approval != nil {
+		if v, ok := any(m.GetApproval()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Category
 	if m.Category != nil {
 		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
@@ -121,6 +130,70 @@ func (m *Template) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *TemplateApproval) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Policy
+	if m.Policy != nil {
+		if v, ok := any(m.GetPolicy()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Tasks
+	for idx, item := range m.Tasks {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *TemplateApprovalPolicy) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *TemplateApprovalTaskSeed) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Comment
+	if m.Comment != nil {
+		*m.Comment = htmlsanitizer.Sanitize(*m.Comment)
+	}
+
+	// Field: Job
+	m.Job = htmlsanitizer.Sanitize(m.Job)
+
+	// Field: Label
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
 	}
 
 	return nil

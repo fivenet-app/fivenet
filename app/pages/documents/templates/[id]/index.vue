@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import TemplateView from '~/components/documents/templates/TemplateView.vue';
+import View from '~/components/documents/templates/View.vue';
 
 useHead({
     title: 'pages.documents.templates.view.title',
@@ -24,5 +24,5 @@ const route = useRoute('documents-templates-id');
 </script>
 
 <template>
-    <TemplateView :template-id="parseInt(route.params.id)" />
+    <View :template-id="parseInt(route.params.id)" />
 </template>

@@ -81,7 +81,7 @@ const links = computed<NavigationMenuItem[]>(() =>
             defaultOpen: false,
             children: [
                 {
-                    label: t('common.approvals'),
+                    label: t('common.approvals', 2),
                     icon: 'i-mdi-approval',
                     to: 'documents/approvals',
                 },

@@ -716,7 +716,7 @@
         "unsigned": "Nicht unterschrieben",
         "stamp": "Stempel",
         "due_at": "Fällig am",
-        "approvals": "Genehmigungen",
+        "approvals": "Genehmigung | Genehmigungen",
         "continue": "Fortfahren",
         "policy": "Richtlinie",
         "task": "Aufgabe | Aufgaben",

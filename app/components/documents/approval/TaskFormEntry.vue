@@ -11,10 +11,12 @@ withDefaults(
         policy?: ApprovalPolicy;
         jobs: Job[];
         hideJobs?: string[];
+        disabled?: boolean;
     }>(),
     {
         policy: undefined,
         hideJobs: () => [],
+        disabled: false,
     },
 );
 
@@ -90,6 +92,7 @@ watch(
                     ]"
                     value-key="value"
                     class="w-full"
+                    :disabled="disabled"
                 />
             </UFormField>
 
@@ -117,6 +120,7 @@ watch(
                     :placeholder="$t('common.target')"
                     trailing
                     class="w-full"
+                    :disabled="disabled"
                 >
                     <template v-if="task.user" #default>
                         {{ userToLabel(task.user) }}
@@ -140,6 +144,7 @@ watch(
                             :filter-fields="['label', 'name']"
                             value-key="name"
                             class="w-full"
+                            :disabled="disabled"
                         >
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.job')]) }}
@@ -156,6 +161,7 @@ watch(
                             :search-input="{ placeholder: $t('common.search_field') }"
                             value-key="grade"
                             class="w-full"
+                            :disabled="disabled"
                         >
                             <template v-if="task.minimumGrade" #default>
                                 {{
@@ -176,13 +182,13 @@ watch(
             </template>
 
             <UFormField name="dueAt" class="flex-1" :label="$t('common.due_at')">
-                <InputDatePicker v-model="task.dueAt" class="w-full" />
+                <InputDatePicker v-model="task.dueAt" class="w-full" :disabled="disabled" />
             </UFormField>
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <UFormField name="label" class="flex-1" :label="$t('common.name')">
-                <UInput v-model="task.label" class="w-full" />
+                <UInput v-model="task.label" class="w-full" :disabled="disabled" />
             </UFormField>
 
             <UFormField
@@ -190,9 +196,7 @@ watch(
                 class="h-full flex-initial"
                 :label="$t('components.documents.approval.signature_required')"
             >
-                <div class="flex flex-1 items-center justify-center">
-                    <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired" />
-                </div>
+                <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired || disabled" />
             </UFormField>
 
             <UFormField
@@ -208,13 +212,14 @@ watch(
                     :placeholder="$t('components.documents.approval.slots')"
                     :min="1"
                     :max="5"
+                    :disabled="disabled"
                 />
             </UFormField>
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
             <UFormField name="comment" class="flex-1" :label="$t('common.comment')">
-                <UInput v-model="task.comment" type="text" name="comment" class="w-full" />
+                <UInput v-model="task.comment" type="text" name="comment" class="w-full" :disabled="disabled" />
             </UFormField>
         </div>
     </div>
