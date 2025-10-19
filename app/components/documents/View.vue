@@ -100,6 +100,7 @@ function openApprovalDrawer(): void {
     approvalDrawer
         .open({
             documentId: props.documentId,
+            doc: doc.value?.document,
         })
         .then(() => (hash.value = ''));
 

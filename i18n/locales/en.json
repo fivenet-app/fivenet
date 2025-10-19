@@ -726,7 +726,8 @@
         "revoke": "Revoke",
         "metadata": "Metadata",
         "expand_collapse": "Expand/ Collapse",
-        "no_signature": "No Signature provided"
+        "no_signature": "No Signature provided",
+        "coming_soon": "Coming Soon"
     },
     "components": {
         "partials": {
@@ -2269,6 +2270,10 @@
             "ErrApprovalDocIsDraft": {
                 "title": "Document is still a draft!",
                 "content": "You can't create approval tasks for draft documents."
+            },
+            "ErrApprovalCreatorCannotDecide": {
+                "title": "You can't approve/decline your own document!",
+                "content": "Please ask another user to approve/decline this document."
             }
         },
         "LivemapService": {

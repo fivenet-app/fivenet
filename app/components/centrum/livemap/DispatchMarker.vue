@@ -166,9 +166,9 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                         <span class="font-semibold">{{ $t('common.status') }}:</span>
                         <DispatchStatusBadge :status="dispatch.status?.status" />
                     </li>
-                    <li>
+                    <li class="inline-flex gap-1">
                         <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
-                        <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
+                        <DispatchAttributes :attributes="dispatch.attributes" size="xs" />
                     </li>
                     <li class="inline-flex gap-1">
                         <span class="font-semibold">{{ $t('common.unit') }}:</span>

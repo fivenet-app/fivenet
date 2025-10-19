@@ -1314,12 +1314,20 @@ func (s *Server) DecideApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrDocAccessViewDenied)
 	}
 
-	isDraft, err := s.checkIfDocumentDraft(ctx, req.GetDocumentId())
+	doc, err := s.getDocument(
+		ctx,
+		tDocument.ID.EQ(mysql.Int64(req.GetDocumentId())),
+		userInfo,
+		false,
+	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if isDraft {
+	if doc == nil || doc.GetMeta() == nil || doc.GetMeta().GetDraft() {
 		return nil, errorsdocuments.ErrApprovalDocIsDraft
+	}
+	if doc.GetCreatorId() == userInfo.GetUserId() {
+		return nil, errorsdocuments.ErrApprovalCreatorCannotDecide
 	}
 
 	// Resolve policy, doc, snapshot

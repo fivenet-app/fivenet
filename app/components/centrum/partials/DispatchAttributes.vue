@@ -1,21 +1,25 @@
 <script lang="ts" setup>
+import type { BadgeProps } from '@nuxt/ui';
 import { DispatchAttribute, type DispatchAttributes } from '~~/gen/ts/resources/centrum/attributes';
 
-defineProps<{
+interface Props extends /* @vue-ignore */ BadgeProps {
     attributes?: DispatchAttributes;
-}>();
+}
+
+defineProps<Props>();
 </script>
 
 <template>
     <template v-if="attributes !== undefined && attributes?.list.length > 0">
         <div class="inline-flex gap-1">
-            <span
+            <UBadge
                 v-for="attribute in attributes?.list"
                 :key="attribute"
-                class="inline-flex items-center rounded-md bg-warning-400/10 px-2 py-1 text-xs font-medium text-warning-400 ring-1 ring-warning-400/20 ring-inset"
-            >
-                {{ $t(`enums.centrum.DispatchAttribute.${DispatchAttribute[attribute]}`) }}
-            </span>
+                color="warning"
+                variant="outline"
+                :label="$t(`enums.centrum.DispatchAttribute.${DispatchAttribute[attribute]}`)"
+                v-bind="$attrs"
+            />
         </div>
     </template>
     <span v-else>

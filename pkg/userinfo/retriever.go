@@ -217,7 +217,10 @@ func (r *Retriever) GetUserInfo(
 
 	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to get user info from db. %w", err),
+			ErrAccountError,
+		)
 	}
 
 	// If account is not enabled, fail here
@@ -403,7 +406,7 @@ func (r *Retriever) SetUserInfo(
 func (r *Retriever) RefreshUserInfo(ctx context.Context, userId int32, accountId int64) error {
 	dest, err := r.getUserInfoFromDB(ctx, userId, accountId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get user info from db. %w", err)
 	}
 
 	r.checkAndSetSuperuser(dest)

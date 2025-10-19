@@ -726,7 +726,8 @@
         "revoke": "Widerrufen",
         "metadata": "Metadaten",
         "expand_collapse": "Ausklappen/Einklappen",
-        "no_signature": "Keine Signatur angegeben"
+        "no_signature": "Keine Signatur angegeben",
+        "coming_soon": "Demnächst verfügbar"
     },
     "components": {
         "partials": {

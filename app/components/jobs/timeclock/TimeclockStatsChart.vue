@@ -6,7 +6,7 @@ import type { TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 const { n, t } = useI18n();
 
 const props = defineProps<{
-    stats: TimeclockWeeklyStats[];
+    stats?: TimeclockWeeklyStats[];
     loading?: boolean;
 }>();
 
@@ -14,18 +14,19 @@ type DataRecord = TimeclockWeeklyStats & {
     date: Date;
 };
 
-const data = computed(() =>
-    props.stats.map((s) => {
-        const date = parse(s.calendarWeek.toString(), 'I', new Date());
-        date.setFullYear(s.year);
+const data = computed(
+    () =>
+        props.stats?.map((s) => {
+            const date = parse(s.calendarWeek.toString(), 'I', new Date());
+            date.setFullYear(s.year);
 
-        return {
-            date: date,
-            sum: s.sum,
-            avg: s.avg,
-            max: s.max,
-        };
-    }),
+            return {
+                date: date,
+                sum: s.sum,
+                avg: s.avg,
+                max: s.max,
+            };
+        }) ?? [],
 );
 
 const cardRef = useTemplateRef('cardRef');

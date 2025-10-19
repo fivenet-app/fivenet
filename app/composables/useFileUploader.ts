@@ -45,7 +45,7 @@ export function useFileUploader(
         to.width = w;
         to.height = h;
 
-        await pica().resize(from, to, { unsharpAmount: 80 });
+        await pica().resize(from, to, { unsharpAmount: 150 });
 
         const wantsWebp = await canEncodeWebp();
         const mime = wantsWebp ? 'image/webp' : 'image/png';

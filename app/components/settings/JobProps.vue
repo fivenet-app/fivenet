@@ -267,7 +267,7 @@ async function listGuilds() {
 }
 
 async function searchChannels() {
-    if (!canEdit.value) return [];
+    if (!userGuilds.value || dcConnectRequired.value) return [];
 
     try {
         const call = settingsSettingsClient.listDiscordChannels({});

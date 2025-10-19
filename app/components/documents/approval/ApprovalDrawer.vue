@@ -9,6 +9,7 @@ import {
     OnEditBehavior,
     type ApprovalPolicy,
 } from '~~/gen/ts/resources/documents/approval';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import ApprovalList from './ApprovalList.vue';
 import PolicyForm from './PolicyForm.vue';
 import TaskDecideDrawer from './TaskDecideDrawer.vue';
@@ -18,6 +19,7 @@ import TaskStatusBadge from './TaskStatusBadge.vue';
 
 const props = defineProps<{
     documentId: number;
+    doc?: DocumentShort;
 }>();
 
 defineEmits<{
@@ -26,7 +28,7 @@ defineEmits<{
 
 const overlay = useOverlay();
 
-const { can } = useAuth();
+const { can, activeChar } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -286,7 +288,7 @@ const taskFormDrawer = overlay.create(TaskForm);
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
-                <UButtonGroup class="w-full flex-1">
+                <UButtonGroup v-if="!doc || doc.creatorId !== activeChar?.userId" class="w-full flex-1">
                     <TaskDecideDrawer
                         :document-id="documentId"
                         :policy="policy"
