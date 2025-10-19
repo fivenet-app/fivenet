@@ -90,7 +90,11 @@ const taskFormDrawer = overlay.create(TaskForm);
                 <div v-if="policy?.ruleKind !== undefined && policy?.approvedCount !== undefined">
                     <TaskStatusBadge
                         v-if="policy.ruleKind === ApprovalRuleKind.REQUIRE_ALL"
-                        :status="policy.anyDeclined ? ApprovalTaskStatus.DECLINED : ApprovalTaskStatus.APPROVED"
+                        :status="
+                            !policy.anyDeclined && policy.approvedCount > policy.assignedCount
+                                ? ApprovalTaskStatus.APPROVED
+                                : ApprovalTaskStatus.DECLINED
+                        "
                     />
                     <TaskStatusBadge
                         v-else

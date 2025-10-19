@@ -1913,7 +1913,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 		docApproved = !anyDeclined && (agg.Approved >= aggTasks.Assigned)
 	} else if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY {
 		// Quorum-any: enough approvals, regardless of declines
-		docApproved = (agg.Approved > requiredTotal)
+		docApproved = (agg.Approved >= requiredTotal)
 	}
 
 	var apPoliciesActive int32

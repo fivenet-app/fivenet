@@ -66,6 +66,8 @@ async function upsertApprovalTasks(values: Schema): Promise<void> {
 
         emits('close', true);
 
+        state.tasks = [];
+
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
             description: { key: 'notifications.action_successful.content', parameters: {} },
