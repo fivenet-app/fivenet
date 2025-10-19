@@ -35,6 +35,7 @@
         "@pinia/nuxt": "0.11.2",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
         "@selemondev/vue3-signature-pad": "1.4.2",
+        "@svgedit/svgcanvas": "7.2.7",
         "@tailwindcss/typography": "0.5.19",
         "@tiptap/extension-character-count": "3.8.0",
         "@tiptap/extension-collaboration": "3.8.0",
