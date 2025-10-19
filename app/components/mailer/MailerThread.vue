@@ -77,7 +77,7 @@ const { data: thread, status } = useLazyAsyncData(
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const { status: messagesStatus, refresh: refreshMessages } = useLazyAsyncData(
-    () => `mailer-thread:${props.threadId}-messages:${page.value}`,
+    `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
         const response = await mailerStore.listThreadMessages({
             pagination: {

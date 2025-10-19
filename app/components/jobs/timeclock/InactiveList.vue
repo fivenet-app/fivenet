@@ -56,7 +56,7 @@ const state = reactive<Schema>({
 const page = useRouteQuery('page', '1', { transform: Number });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `jobs-timeclock-inactive-${JSON.stringify(state.sorting)}-${page.value}-${state.days}`,
+    `jobs-timeclock-inactive-${JSON.stringify(state.sorting)}-${page.value}-${state.days}`,
     () => listInactiveEmployees(state),
 );
 

@@ -69,7 +69,7 @@ const query = useSearchForm('vehicles', schema);
 const hideVehicleModell = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `vehicles-${JSON.stringify(query.sorting)}-${query.page}`,
+    `vehicles-${JSON.stringify(query.userIds)}-${JSON.stringify(query.sorting)}-${query.page}`,
     () => listVehicles(),
 );
 

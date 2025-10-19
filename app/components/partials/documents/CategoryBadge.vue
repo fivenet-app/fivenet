@@ -2,9 +2,15 @@
 import type { BadgeProps } from '@nuxt/ui';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 
-const props = defineProps<{
-    category: Category | undefined;
-}>();
+const props = withDefaults(
+    defineProps<{
+        category: Category | undefined;
+        size?: BadgeProps['size'];
+    }>(),
+    {
+        size: 'md',
+    },
+);
 
 const color = computed(() => (props.category?.color ? (props.category?.color as BadgeProps['color']) : 'primary'));
 
@@ -17,7 +23,7 @@ defineOptions({
     <UBadge
         v-if="category"
         class="inline-flex flex-initial gap-1"
-        size="md"
+        :size="size"
         :color="color"
         :icon="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'"
         v-bind="$attrs"

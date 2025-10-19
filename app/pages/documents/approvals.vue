@@ -71,9 +71,8 @@ const schema = z.object({
 
 const query = useSearchForm('documents-approvals', schema);
 
-const { data, status, error, refresh } = useLazyAsyncData(
-    () => `documents-approvals-${JSON.stringify(query)}`,
-    () => listApprovalTasksInbox(),
+const { data, status, error, refresh } = useLazyAsyncData(`documents-approvals-${JSON.stringify(query)}`, () =>
+    listApprovalTasksInbox(),
 );
 
 async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse> {

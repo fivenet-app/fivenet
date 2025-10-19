@@ -55,7 +55,7 @@ const schema = z.object({
 const query = useSearchForm('citizen_activity', schema);
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    () => `citizeninfo-activity-${JSON.stringify(query.sorting)}-${props.userId}-${query.page}`,
+    `citizeninfo-activity-${JSON.stringify(query.sorting)}-${props.userId}-${query.page}`,
     () => listUserActivity(),
 );
 
@@ -83,10 +83,12 @@ const denyView = computed(
         props.userId === activeChar.value?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value,
 );
 
-watchDebounced(query, async () => refresh(), {
+watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), {
     debounce: 500,
     maxWait: 1250,
 });
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -94,7 +96,13 @@ watchDebounced(query, async () => refresh(), {
         <template v-if="!denyView" #header>
             <UDashboardToolbar>
                 <template #default>
-                    <UForm class="my-2 flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <UForm
+                        ref="formRef"
+                        class="my-2 flex w-full flex-row gap-2"
+                        :schema="schema"
+                        :state="query"
+                        @submit="refresh()"
+                    >
                         <UFormField class="flex-1 grow" name="types" :label="$t('common.type', 2)">
                             <ClientOnly>
                                 <USelectMenu

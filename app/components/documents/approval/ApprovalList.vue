@@ -21,9 +21,8 @@ const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
-const { data, status, error, refresh } = useLazyAsyncData(
-    () => `approval-drawer-${props.documentId}-approvals`,
-    () => listApprovals(),
+const { data, status, error, refresh } = useLazyAsyncData(`approval-drawer-${props.documentId}-approvals`, () =>
+    listApprovals(),
 );
 
 async function listApprovals(): Promise<ListApprovalsResponse> {

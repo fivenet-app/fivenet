@@ -132,6 +132,7 @@ const columns = computed(() =>
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
+                sortable: true,
             },
             {
                 accessorKey: 'jobLabel',

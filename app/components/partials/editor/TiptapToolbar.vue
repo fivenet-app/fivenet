@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Range } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
+import z from 'zod';
 import { fontColors, highlightColors } from '~/types/editor';
 import type { Content, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
@@ -8,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import FileListModal from './FileListModal.vue';
 import ImageSelectPopover from './ImageSelectPopover.vue';
 import SourceCodeModal from './SourceCodeModal.vue';
+import TablePopover from './TablePopover.vue';
 import VersionHistoryModal from './VersionHistoryModal.vue';
 
 const props = defineProps<{
@@ -85,11 +87,19 @@ watch(
     },
 );
 
-const linkState = reactive({
+const linkSchema = z.object({
+    url: z.url().or(z.literal('')),
+});
+
+type LinkSchema = z.output<typeof linkSchema>;
+
+const linkState = reactive<LinkSchema>({
     url: '',
 });
 
-function setLink(data: typeof linkState): void {
+function setLink(data: LinkSchema): void {
+    if (data.url.trim() === '') return;
+
     const previousUrl = ed.value?.getAttributes('link').href;
     const url = data.url.trim() !== '' ? data.url.trim() : previousUrl;
 
@@ -211,6 +221,10 @@ function applyVersion(version: Version<unknown>): void {
         type: NotificationType.SUCCESS,
     });
 }
+
+const formRef = useTemplateRef('formRef');
+
+const isLinkOpen = ref(false);
 </script>
 
 <template>
@@ -637,7 +651,7 @@ function applyVersion(version: Version<unknown>): void {
 
         <TablePopover :editor="unref(editor)" :disabled="disabled" />
 
-        <UPopover>
+        <UPopover v-model:open="isLinkOpen">
             <UTooltip :text="$t('components.partials.tiptap_editor.link')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.link }"
@@ -648,10 +662,10 @@ function applyVersion(version: Version<unknown>): void {
                 />
             </UTooltip>
 
-            <template #panel="{ close }">
+            <template #content>
                 <div class="p-4">
-                    <UForm :state="linkState" @submit="($event) => setLink($event.data)">
-                        <UFormField :label="$t('common.url')">
+                    <UForm ref="formRef" :state="linkState" :schema="linkSchema" @submit="($event) => setLink($event.data)">
+                        <UFormField :label="$t('common.url')" name="url">
                             <UInput v-model="linkState.url" type="text" :disabled="disabled" />
                         </UFormField>
 
@@ -664,6 +678,7 @@ function applyVersion(version: Version<unknown>): void {
                                 icon="i-mdi-link"
                                 :label="$t('common.link')"
                                 :disabled="disabled"
+                                @click="formRef?.submit()"
                             />
 
                             <UButton
@@ -673,7 +688,7 @@ function applyVersion(version: Version<unknown>): void {
                                 icon="i-mdi-link-off"
                                 :label="$t('common.unlink')"
                                 @click="
-                                    close();
+                                    isLinkOpen = false;
                                     ed?.chain().focus().unsetLink().run();
                                     linkState.url = '';
                                 "

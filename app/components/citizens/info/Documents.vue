@@ -52,23 +52,25 @@ const schema = z.object({
                 .max(3)
                 .default([
                     {
-                        id: 'plate',
+                        id: 'createdAt',
                         desc: false,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'plate', desc: false }] }),
+        .default({ columns: [{ id: 'createdAt', desc: false }] }),
     page: pageNumberSchema,
 });
 
 const query = useSearchForm('citizen_documents', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${query.page}`, () =>
-    listUserDocuments(),
+const { data, status, refresh, error } = useLazyAsyncData(
+    `citizeninfo-documents-${props.userId}-${query.page}-${JSON.stringify(query)}`,
+    () => listUserDocuments(),
 );
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
+        console.log(query);
         const call = documentsDocumentsClient.listUserDocuments({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
@@ -87,7 +89,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     }
 }
 
-watchDebounced(query, async () => refresh(), { debounce: 250, maxWait: 1250 });
+watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), { debounce: 250, maxWait: 1250 });
 
 const appConfig = useAppConfig();
 
@@ -97,7 +99,7 @@ const columns = computed(
             {
                 accessorKey: 'document',
                 header: t('common.document', 1),
-                cell: ({ row }) => h(DocumentInfoPopover, { document: row.original.document, loadOnOpen: true }),
+                cell: ({ row }) => h(DocumentInfoPopover, { document: row.original.document, loadOnOpen: true, showId: true }),
             },
             {
                 accessorKey: 'closed',
@@ -136,21 +138,25 @@ const columns = computed(
                         onClick: () => column.toggleSorting(isSorted === 'asc'),
                     });
                 },
+                sortable: true,
                 cell: ({ row }) => h(GenericTime, { value: row.original.createdAt }),
             },
             {
                 accessorKey: 'creator',
                 header: t('common.creator'),
-                cell: ({ row }) => h(CitizenInfoPopover, { user: row.original.sourceUser }),
+                cell: ({ row }) =>
+                    row.original.sourceUser ? h(CitizenInfoPopover, { user: row.original.sourceUser }) : undefined,
             },
         ] as TableColumn<DocumentRelation>[],
 );
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="my-2 flex w-full flex-row gap-2" :state="query" :schema="schema">
+            <UForm ref="formRef" class="my-2 flex w-full flex-row gap-2" :state="query" :schema="schema">
                 <UFormField class="flex-1" name="closed" :label="$t('common.close', 2)">
                     <ClientOnly>
                         <USelectMenu

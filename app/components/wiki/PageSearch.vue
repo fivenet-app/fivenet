@@ -14,7 +14,7 @@ const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
 const { data: pages, status } = useLazyAsyncData(
-    () => `mailer-threads-search-${searchTermDebounced.value}`,
+    `mailer-threads-search-${searchTermDebounced.value}`,
     () => listPages(searchTerm.value),
     {
         watch: [searchTermDebounced],

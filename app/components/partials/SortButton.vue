@@ -20,6 +20,7 @@ const sorting = useVModel(props, 'modelValue', emit, {
 const { custom } = useAppConfig();
 
 function toggleDirection(): void {
+    console.log(sorting.value);
     if (sorting.value.columns.length === 0) {
         sorting.value = {
             columns: [
@@ -34,7 +35,7 @@ function toggleDirection(): void {
             columns: [
                 {
                     id: sorting.value.columns.at(0)?.id || props.fields[0]?.value || '',
-                    desc: false,
+                    desc: sorting.value.columns.at(0)?.desc ? false : true,
                 },
             ],
         };

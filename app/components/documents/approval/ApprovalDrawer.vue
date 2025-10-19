@@ -37,10 +37,7 @@ const {
     status,
     error,
     refresh,
-} = useLazyAsyncData(
-    () => `documents-approval-policy-${props.documentId}`,
-    () => getPolicy(),
-);
+} = useLazyAsyncData(`documents-approval-policy-${props.documentId}`, () => getPolicy());
 
 async function getPolicy(): Promise<ApprovalPolicy | undefined> {
     const call = approvalClient.listApprovalPolicies({

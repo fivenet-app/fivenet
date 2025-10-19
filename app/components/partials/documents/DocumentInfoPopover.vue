@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { BadgeProps } from '@nuxt/ui';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -23,6 +24,7 @@ const props = withDefaults(
         loadOnOpen?: boolean;
         buttonClass?: ClassProp;
         disableTooltip?: boolean;
+        size?: BadgeProps['size'];
     }>(),
     {
         documentId: undefined,
@@ -33,6 +35,7 @@ const props = withDefaults(
         loadOnOpen: false,
         buttonClass: 'items-center',
         disableTooltip: false,
+        size: 'xs',
     },
 );
 
@@ -101,12 +104,26 @@ watchOnce(opened, async () => {
         >
             <slot name="title" :document="document" :loading="isRequestPending(status)">
                 <template v-if="!document && isRequestPending(status)">
-                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
+                    <IDCopyBadge
+                        v-if="showId"
+                        :id="documentId"
+                        prefix="DOC"
+                        hide-icon
+                        :disable-tooltip="disableTooltip"
+                        :size="size"
+                    />
                     <USkeleton v-else class="h-8 w-full min-w-[125px]" />
                 </template>
 
                 <template v-else>
-                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
+                    <IDCopyBadge
+                        v-if="showId"
+                        :id="documentId"
+                        prefix="DOC"
+                        hide-icon
+                        :disable-tooltip="disableTooltip"
+                        :size="size"
+                    />
                     <CategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
                     <span class="text-left" v-bind="$attrs">{{ document?.title }} </span>

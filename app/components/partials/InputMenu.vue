@@ -21,7 +21,7 @@ const searchTerm = ref('');
 const searchTermDebounced = debouncedRef(searchTerm, 200);
 
 const { data } = await useAsyncData(
-    () => `${props.searchableKey}-${searchTermDebounced.value}`,
+    `${props.searchableKey}-${searchTermDebounced.value}`,
     async () => {
         if (!props.searchable) return [];
 

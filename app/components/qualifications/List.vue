@@ -33,9 +33,8 @@ const qualificationsQualificationsClient = await getQualificationsQualifications
 
 const query = useSearchForm('qualifications_list', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    () => `qualifications-${JSON.stringify(query.sorting)}-${query.page}`,
-    () => listQualifications(),
+const { data, status, refresh, error } = useLazyAsyncData(`qualifications-${JSON.stringify(query.sorting)}-${query.page}`, () =>
+    listQualifications(),
 );
 
 async function listQualifications(): Promise<ListQualificationsResponse> {

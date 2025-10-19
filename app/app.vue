@@ -101,16 +101,20 @@ async function setUserLocale(): Promise<void> {
 setUserLocale();
 watch(getUserLocale, setUserLocale);
 
-async function clickListener(event: MouseEvent): Promise<void> {
+function clickListener(event: MouseEvent): void {
     if (!event.target || event.defaultPrevented) return;
 
-    const element = event.target as HTMLElement;
-    if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) return;
+    let element: HTMLElement | null = event.target as HTMLElement;
+    for (; element && element !== document.body; element = element.parentElement as HTMLElement) {
+        if (element.tagName.toLowerCase() === 'a' || element.hasAttribute('href')) break;
+    }
+    if (!element) return;
+
     const href = element.getAttribute('href');
-    if (href?.startsWith('/') || href?.startsWith('#') || href === '') return;
+    if (!href || href?.startsWith('/') || href?.startsWith('#') || href === '') return;
 
     event.preventDefault();
-    await navigateTo({
+    navigateTo({
         name: 'dereferer',
         query: {
             target: href,

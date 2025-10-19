@@ -83,15 +83,23 @@ const schema = z.object({
 
 const query = useSearchForm('documents', schema);
 
-const { data, status, refresh, error } = useLazyAsyncData(
-    () => `documents-${JSON.stringify(query.sorting)}-${query.page}`,
-    () => listDocuments(),
+const { data, status, refresh, error } = useLazyAsyncData(`documents-${JSON.stringify(query.sorting)}-${query.page}`, () =>
+    listDocuments(),
 );
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
+    const pagination = {
+        offset: 0,
+        pageSize: 16,
+        end: 0,
+        totalCount: query.page * 16,
+
+        ...data.value?.pagination,
+    };
+
     const req: ListDocumentsRequest = {
         pagination: {
-            offset: calculateOffset(query.page, data.value?.pagination),
+            offset: calculateOffset(query.page, pagination),
         },
         sort: query.sorting,
         search: query.title ?? '',
@@ -119,7 +127,12 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         req.closed = query.closed;
     }
 
-    return documentsDocuments.listDocuments(req);
+    try {
+        return await documentsDocuments.listDocuments(req);
+    } catch (e) {
+        handleGRPCError(e);
+        throw e;
+    }
 }
 
 const formRef = useTemplateRef('formRef');

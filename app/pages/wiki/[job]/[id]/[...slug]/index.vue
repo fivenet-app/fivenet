@@ -33,10 +33,7 @@ const {
     error: pagesError,
     status: pagesStatus,
     refresh: pagesRefresh,
-} = useLazyAsyncData(
-    () => `wiki-pages:${route.params.job}`,
-    () => listPages(),
-);
+} = useLazyAsyncData(`wiki-pages:${route.params.job}`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     const job = route.params.job ?? activeChar.value?.job ?? '';

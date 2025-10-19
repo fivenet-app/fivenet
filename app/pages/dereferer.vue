@@ -27,7 +27,7 @@ onMounted(async () => {
         const url = route.query.target as string;
         useTimeoutFn(async () => {
             if (nuiEnabled.value) {
-                openURLInWindow(url);
+                await openURLInWindow(url);
                 router.back();
                 return;
             }
@@ -45,10 +45,10 @@ const target = route.query.target as string;
         <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="flex w-full flex-1 items-center justify-center">
-            <UCard class="w-full max-w-lg bg-white/75 backdrop-blur-sm dark:bg-white/5">
+            <UCard class="w-full max-w-xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
-                    <h3 class="text-2xl leading-6 font-semibold">
-                        {{ $t('pages.dereferer.title') }} - {{ $t('pages.dereferer.subtitle') }}
+                    <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
+                        <span>{{ $t('pages.dereferer.title') }}</span> - <span>{{ $t('pages.dereferer.subtitle') }}</span>
                     </h3>
                 </template>
 
@@ -59,19 +59,26 @@ const target = route.query.target as string;
                 </div>
 
                 <template #footer>
-                    <div class="inline-flex flex-col gap-2">
-                        <UButton
-                            :label="$t('pages.dereferer.goto')"
-                            trailing-icon="i-mdi-link-variant"
-                            size="lg"
-                            :to="nuiEnabled ? undefined : target"
-                            external
-                            rel="noreferrer"
-                            @click="nuiEnabled ? openURLInWindow(target) : undefined"
-                        />
+                    <UButton
+                        trailing-icon="i-mdi-link-variant"
+                        size="lg"
+                        :to="nuiEnabled ? undefined : target"
+                        external
+                        rel="noreferrer"
+                        class="mb-2"
+                        block
+                        @click="nuiEnabled ? openURLInWindow(target) : undefined"
+                    >
+                        <span>{{ $t('pages.dereferer.goto') }}</span>
+                    </UButton>
 
-                        <UButton color="error" icon="i-mdi-arrow-back" :label="$t('common.back')" @click="router.back()" />
-                    </div>
+                    <UButton
+                        color="error"
+                        leading-icon="i-mdi-arrow-back"
+                        block
+                        :label="$t('common.back')"
+                        @click="router.back()"
+                    />
                 </template>
             </UCard>
         </div>
