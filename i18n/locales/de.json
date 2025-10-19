@@ -915,7 +915,7 @@
             },
             "approval": {
                 "policy_form": {
-                    "title": "Genehmigungsanfrage-Richtlinie",
+                    "title": "Genehmigungsrichtlinie",
                     "rule_kind": "Regeltyp",
                     "on_edit_behavior": "Bearbeitungsverhalten",
                     "required_approvals": "Erforderliche Genehmigungen"

@@ -915,7 +915,7 @@
             },
             "approval": {
                 "policy_form": {
-                    "title": "Approval Request Policy",
+                    "title": "Approval Policy",
                     "rule_kind": "Rule Kind",
                     "on_edit_behavior": "On Edit Behavior",
                     "required_approvals": "Required Approvals"

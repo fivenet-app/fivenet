@@ -187,7 +187,7 @@ watch(
         </div>
 
         <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-            <UFormField name="label" class="flex-1" :label="$t('common.name')">
+            <UFormField name="label" class="flex-1" :label="$t('common.label')">
                 <UInput v-model="task.label" class="w-full" :disabled="disabled" />
             </UFormField>
 
@@ -196,7 +196,7 @@ watch(
                 class="h-full flex-initial"
                 :label="$t('components.documents.approval.signature_required')"
             >
-                <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired || disabled" />
+                <USwitch v-model="task.signatureRequired" :disabled="policy?.signatureRequired === true || disabled" />
             </UFormField>
 
             <UFormField
@@ -211,6 +211,7 @@ watch(
                     class="w-full"
                     :placeholder="$t('components.documents.approval.slots')"
                     :min="1"
+                    :step="1"
                     :max="5"
                     :disabled="disabled"
                 />

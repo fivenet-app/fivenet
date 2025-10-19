@@ -3,7 +3,7 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
-defineProps<{
+const props = defineProps<{
     disabled?: boolean;
     signatureRequired?: boolean;
 }>();
@@ -37,7 +37,7 @@ function addNewTask(): void {
         job: undefined,
         minimumGrade: undefined,
         label: '',
-        signatureRequired: false,
+        signatureRequired: props.signatureRequired ?? false,
         slots: 1,
     });
 }
@@ -45,8 +45,6 @@ function addNewTask(): void {
 function removeTask(idx: number): void {
     tasks.value.splice(idx, 1);
 }
-
-const hideJobs = computed(() => [activeChar.value?.job ?? '']);
 
 onBeforeMount(async () => listJobs());
 </script>
@@ -119,7 +117,7 @@ onBeforeMount(async () => listJobs());
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="task.job"
-                                    :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
+                                    :items="jobs ?? []"
                                     :search-input="{ placeholder: $t('common.search_field') }"
                                     :filter-fields="['label', 'name']"
                                     value-key="name"
@@ -165,13 +163,18 @@ onBeforeMount(async () => listJobs());
                     <UFormField name="dueInDays" class="flex-1" :label="$t('common.time_ago.day', 2)">
                         <UButtonGroup>
                             <UInputNumber v-model="task.dueInDays" class="w-full" :min="1" :max="30" :disabled="disabled" />
-                            <UButton icon="i-mdi-clear" @click="() => (task.dueInDays = undefined)" />
+                            <UButton
+                                icon="i-mdi-clear"
+                                :disabled="disabled"
+                                variant="outline"
+                                @click="() => (task.dueInDays = undefined)"
+                            />
                         </UButtonGroup>
                     </UFormField>
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 md:flex md:flex-1">
-                    <UFormField name="label" class="flex-1" :label="$t('common.name')">
+                    <UFormField name="label" class="flex-1" :label="$t('common.label')">
                         <UInput v-model="task.label" class="w-full" :disabled="disabled" />
                     </UFormField>
 
@@ -195,6 +198,7 @@ onBeforeMount(async () => listJobs());
                             class="w-full"
                             :placeholder="$t('components.documents.approval.slots')"
                             :min="1"
+                            :step="1"
                             :max="5"
                             :disabled="disabled"
                         />
@@ -213,7 +217,6 @@ onBeforeMount(async () => listJobs());
                     <UButton
                         color="red"
                         class="flex-initial"
-                        :class="idx === 0 ? 'pointer-events-none opacity-0' : ''"
                         icon="i-mdi-close"
                         :label="$t('components.access.remove_entry')"
                         :disabled="disabled"

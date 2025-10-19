@@ -603,7 +603,7 @@ const formRef = useTemplateRef('formRef');
                     </template>
 
                     <template #approval>
-                        <UPageCard :title="$t('common.approvals', 2)">
+                        <UPageCard :title="$t('components.documents.approval.policy_form.title', 2)">
                             <UFormField name="approval.enabled" :label="$t('common.enabled')">
                                 <USwitch v-model="state.approval.enabled" />
                             </UFormField>

@@ -2,13 +2,14 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalAssigneeKind, type ApprovalPolicy } from '~~/gen/ts/resources/documents/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TaskFormEntry from './TaskFormEntry.vue';
 import { getZApprovalTask } from './helpers';
 
 const props = defineProps<{
     documentId: number;
+    policy?: ApprovalPolicy;
 }>();
 
 const emits = defineEmits<{
@@ -91,7 +92,7 @@ function addNewTask(): void {
         job: undefined,
         minimumGrade: undefined,
         label: '',
-        signatureRequired: false,
+        signatureRequired: props.policy?.signatureRequired ?? false,
         slots: 1,
     });
 }

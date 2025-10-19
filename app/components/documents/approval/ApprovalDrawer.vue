@@ -277,6 +277,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         @click="
                                             taskFormDrawer.open({
                                                 documentId: documentId,
+                                                policy: policy,
                                                 onClose: (val) => val && tasksRefresh(),
                                             })
                                         "
