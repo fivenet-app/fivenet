@@ -394,9 +394,6 @@ sendClientView(props.documentId);
 
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
-ydoc.getText('state').observe((event) => {
-    console.log('Yjs state changed:', event);
-});
 const metaYdoc = ydoc.getMap('meta');
 useYBoolean(metaYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
 useYBoolean(metaYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
