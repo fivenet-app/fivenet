@@ -66,7 +66,8 @@ message ServerPacket {
 
 message CollabHandshake {
   uint64 client_id = 1;
-  bool first = 2;
+  // Was used for boolean "is client first" field
+  reserved 2;
 }
 
 message TargetSaved {

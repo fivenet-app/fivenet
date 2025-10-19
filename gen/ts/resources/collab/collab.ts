@@ -159,10 +159,6 @@ export interface CollabHandshake {
      * @generated from protobuf field: uint64 client_id = 1
      */
     clientId: number;
-    /**
-     * @generated from protobuf field: bool first = 2
-     */
-    first: boolean;
 }
 /**
  * @generated from protobuf message resources.collab.TargetSaved
@@ -617,14 +613,12 @@ export const ServerPacket = new ServerPacket$Type();
 class CollabHandshake$Type extends MessageType<CollabHandshake> {
     constructor() {
         super("resources.collab.CollabHandshake", [
-            { no: 1, name: "client_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "first", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "client_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CollabHandshake>): CollabHandshake {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.clientId = 0;
-        message.first = false;
         if (value !== undefined)
             reflectionMergePartial<CollabHandshake>(this, message, value);
         return message;
@@ -636,9 +630,6 @@ class CollabHandshake$Type extends MessageType<CollabHandshake> {
             switch (fieldNo) {
                 case /* uint64 client_id */ 1:
                     message.clientId = reader.uint64().toNumber();
-                    break;
-                case /* bool first */ 2:
-                    message.first = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -655,9 +646,6 @@ class CollabHandshake$Type extends MessageType<CollabHandshake> {
         /* uint64 client_id = 1; */
         if (message.clientId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.clientId);
-        /* bool first = 2; */
-        if (message.first !== false)
-            writer.tag(2, WireType.Varint).bool(message.first);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

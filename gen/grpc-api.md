@@ -2590,7 +2590,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `client_id` | [uint64](#uint64) |  |  |
-| `first` | [bool](#bool) |  |  |
 
 
 

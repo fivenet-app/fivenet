@@ -145,7 +145,6 @@ func (s *CollabServer) HandleFirstMsg(
 // sendHelloResponse sends a handshake response to the client with its client ID and whether it is the first in the room.
 func (s *CollabServer) sendHelloResponse(
 	clientId uint64,
-	first bool,
 	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
 ) error {
 	if err := stream.Send(&collab.ServerPacket{
@@ -153,7 +152,6 @@ func (s *CollabServer) sendHelloResponse(
 		Msg: &collab.ServerPacket_Handshake{
 			Handshake: &collab.CollabHandshake{
 				ClientId: clientId,
-				First:    first,
 			},
 		},
 	}); err != nil {
@@ -165,7 +163,7 @@ func (s *CollabServer) sendHelloResponse(
 
 // getOrCreateRoom retrieves an existing CollabRoom for the target or creates a new one if needed.
 // Returns the room, a boolean indicating if it was created, and any error.
-func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, bool, error) {
+func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -175,15 +173,15 @@ func (s *CollabServer) getOrCreateRoom(targetId int64) (*CollabRoom, bool, error
 	if !exists {
 		room, err = NewCollabRoom(s.ctx, s.logger, s.stateKV, targetId, s.js.JetStream, s.category)
 		if err != nil {
-			return nil, false, err
+			return nil, err
 		}
 		s.rooms[targetId] = room
 		metricTotalCollabRooms.WithLabelValues(s.category).Inc()
 
-		return room, true, err
+		return room, err
 	}
 
-	return room, false, nil
+	return room, nil
 }
 
 // HandleClient manages the lifecycle and message handling for a single collaborative client connection.
@@ -196,12 +194,12 @@ func (s *CollabServer) HandleClient(
 	role collab.ClientRole,
 	stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket],
 ) error {
-	room, created, err := s.getOrCreateRoom(targetId)
+	room, err := s.getOrCreateRoom(targetId)
 	if err != nil {
 		return fmt.Errorf("get or create room. %w", err)
 	}
 
-	if err := s.sendHelloResponse(clientId, created, stream); err != nil {
+	if err := s.sendHelloResponse(clientId, stream); err != nil {
 		return status.Error(codes.Internal, err.Error())
 	}
 

@@ -552,7 +552,6 @@ func (*ServerPacket_ClientUpdate) isServerPacket_Msg() {}
 type CollabHandshake struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ClientId      uint64                 `protobuf:"varint,1,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
-	First         bool                   `protobuf:"varint,2,opt,name=first,proto3" json:"first,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -592,13 +591,6 @@ func (x *CollabHandshake) GetClientId() uint64 {
 		return x.ClientId
 	}
 	return 0
-}
-
-func (x *CollabHandshake) GetFirst() bool {
-	if x != nil {
-		return x.First
-	}
-	return false
 }
 
 type TargetSaved struct {
@@ -776,10 +768,9 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\ftarget_saved\x18\x06 \x01(\v2\x1d.resources.collab.TargetSavedH\x00R\vtargetSaved\x12:\n" +
 	"\apromote\x18\a \x01(\v2\x1e.resources.collab.FirstPromoteH\x00R\apromote\x12E\n" +
 	"\rclient_update\x18\b \x01(\v2\x1e.resources.collab.ClientUpdateH\x00R\fclientUpdateB\f\n" +
-	"\x03msg\x12\x05\xbaH\x02\b\x01\"D\n" +
+	"\x03msg\x12\x05\xbaH\x02\b\x01\"4\n" +
 	"\x0fCollabHandshake\x12\x1b\n" +
-	"\tclient_id\x18\x01 \x01(\x04R\bclientId\x12\x14\n" +
-	"\x05first\x18\x02 \x01(\bR\x05first\"3\n" +
+	"\tclient_id\x18\x01 \x01(\x04R\bclientIdJ\x04\b\x02\x10\x03\"3\n" +
 	"\vTargetSaved\x12$\n" +
 	"\ttarget_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\btargetId\"\x0e\n" +
 	"\fFirstPromote\"{\n" +

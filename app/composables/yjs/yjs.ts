@@ -11,12 +11,6 @@ const logger = useLogger('📞 yjs:grpc');
 interface GrpcProviderOpts {
     /** Target id (e.g., document id, page id) */
     targetId: number;
-
-    /**
-     * Reconnect function - called with {attempt}. Return delay (ms).
-     * Default: exponential back-off 1 s → 32 s.
-     */
-    reconnectDelay?: (attempt: number) => number;
 }
 
 type Events = {
@@ -34,7 +28,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
     private streamConnect: StreamConnectFn;
     private stream: DuplexStreamingCall<ClientPacket, ServerPacket> | undefined;
     private connected = false;
-    private reconnectAttempt = 0;
+    private reconnectAttempt = 1;
     private authoritative = false;
     private synced = false;
     private destroyed = false;
@@ -103,27 +97,18 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 this.clientId = msg.msg.handshake.clientId;
                 this.connected = true;
 
-                if (msg.msg.handshake.first) {
-                    this.authoritative = true;
-
-                    this.triggerSync();
-                } else {
-                    const sv = Y.encodeStateVector(this.ydoc);
-                    this.authoritative = false;
-
-                    this.send(
-                        ClientPacket.create({
-                            msg: {
-                                oneofKind: 'syncStep',
-                                syncStep: {
-                                    step: 1,
-                                    data: sv,
-                                },
+                const sv = Y.encodeStateVector(this.ydoc);
+                this.send(
+                    ClientPacket.create({
+                        msg: {
+                            oneofKind: 'syncStep',
+                            syncStep: {
+                                step: 1,
+                                data: sv,
                             },
-                        }),
-                    );
-                }
-
+                        },
+                    }),
+                );
                 return;
             }
 
@@ -225,7 +210,12 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.emit('sync', [false, this.ydoc]);
         this.emit('loading', [true]);
 
-        const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
+        const delay = Math.min(this.reconnectAttempt * 750, 10_000);
+        if (delay >= 10_000) {
+            logger.info('Max reconnect delay reached, resetting attempt counter');
+            this.reconnectAttempt = 1;
+        }
+
         this.reconnectAttempt++;
         useTimeoutFn(() => this.connect(), delay);
     }
