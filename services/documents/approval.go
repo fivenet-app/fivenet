@@ -1907,8 +1907,15 @@ func (s *Server) recomputeApprovalPolicyTx(
 	anyDeclined := agg.Declined > 0
 	// Doc is approved when we have enough approved and no declines
 	// (if required_total=0, any declines block approval because all are required)
-	docApproved := (requiredTotal > 0 && agg.Approved >= requiredTotal) ||
-		(requiredTotal == 0 && !anyDeclined)
+	var docApproved bool
+	if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL {
+		// Ensure that there is at least one approval if all are required
+		docApproved = !anyDeclined && (agg.Approved >= aggTasks.Assigned)
+	} else if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY {
+		// Quorum-any: enough approvals, regardless of declines
+		docApproved = (agg.Approved > requiredTotal)
+	}
+
 	var apPoliciesActive int32
 	if pol.DocumentId > 0 {
 		apPoliciesActive = 1

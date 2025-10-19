@@ -83,7 +83,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 {
                     label: t('common.approvals', 2),
                     icon: 'i-mdi-approval',
-                    to: 'documents/approvals',
+                    to: '/documents/approvals',
                 },
             ],
             permission: 'documents.DocumentsService/ListDocuments' as Perms,
