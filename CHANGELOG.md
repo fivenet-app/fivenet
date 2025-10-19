@@ -2,6 +2,114 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.10.0] - 2025-10-19
+
+### 🚀 Features
+
+- Improve fivem nui cef styling compatibility
+- Improve transparency color compatibility for cef/nui browsers
+- Add LIKE condition string prepare utils function
+- Add actual order and icons to permissions
+- Add title toggle to document view
+- Start work on documents approval and signature system
+- Continue refining approval/signature feature
+- Simplify approval system
+- Add go-jet generated tables for approval/signing system
+- Update all go-jet generated tables and basic queries for approval
+- Approval/signing perms i18n keys
+- Rename signature tables
+- Refine approval api structure
+- Improve approval ui
+- Add nav menu with new documents pages
+- Add filters for jobs and user's job to dbsync
+- Attempt to rework dbsync config load and usage
+- Add basic jobs access validation func
+- Add approvals/signing tasks inbox methods
+- Add statuses selectmenu to signatures task inbox
+- Revamp audit log system to use grpc interceptor
+- Create activities for approval/signing decisions
+- Add approval/signature tasks expiration
+- Rename internal protoc-gen- tools to backend/frontend
+- Refine approval and signing service behaviors
+- Merge signatures into approval feature for better UX
+- Add approvals to templates
+- Improve editor performance caused by toolbar state and
+- Remove in progress layouts code
+
+### 🐛 Bug Fixes
+
+- Primary color being shown for category and templates
+- Document deletion not showing reason field causing perm denied err
+- Scroll issue in nui tablet
+- Citizen own activity view
+- Remove debug output from color-mix transparency postcss plugin
+- Load perms by guard func during create perms
+- Perms db arg issue
+- Template content and title html entities escape issue
+- Templates go html template entities escape issue
+- Dispatch sidebar not showing radio button and chip
+- Adjust wiki page list owner access check
+- Wiki list pages limited to 20 and not 250
+- Wiki page logo not showing when available
+- Wiki page grid cols
+- Update channels.json
+- Tiptap editor fields not showing errors
+- Tiptap editor computed error
+- Tweak livemap stream logic for superuser
+- Jobs conduct and timeclock service perms icons
+- Userinfo unemployed role taken away when in ignored job
+- Copy clipboard issue
+- Wiki list pages root only showing too many pages
+- Wiki.go formatting
+- Qualification editor label not set from api data
+- Colleague labels submit not working due to too many items in list
+- Add missing approval/signing counts to DocumentMeta
+- Document approval/signing table foreign key missing cascade
+- Add missing order and icon to approval and signing services
+- List tasks request fields
+- Bump documents approval/signing migrations date
+- Dev rebase issue
+- Continue refining approval and signing feature
+- Continue approval/signing service changes
+- Approval and signing task logic
+- Clean up approval and signing service perms
+- Task decide drawer issue caused by emits removal
+- Start task inbox page work
+- Update dbsync config example comment
+- Add can checks to approval and current state of signing drawers
+- Auth service test caused by cookies order change
+- Proto document server fx result change causing start to fail
+- Fx documents server registration using wrong group
+- Align approval and signing api fields
+- Doc approval signatures fixes migration issue
+- Doc approval/signing migration double drop issue
+- Duplicate migration queries
+- Migration file typo
+- Move mysql int64 nil helper to dbuitls package
+- Add label to approval task list
+- Wrong sql migration file changed
+- Doc merge approval/signing rename queries
+- Doc approval migration issue by re-ordering queries
+- Remove signatures link from sidebar
+- Type issue in sidebar
+- Additional css var overrides for primary secondary and neutral
+- Css var names for rgb compat values
+- Improve bg color rgb handling
+- Hints box carousel
+- Improve livemap superuser duty handling
+- Rgb color percent fallback
+- Icon select menu using internal search
+- Further improve chrome 103 color transparency situation
+- Approvals being decide-able for drafts
+- Pagination issue and attempt to workaround CEF 103 BYOB reader
+- Copy issue in browsers due to clipboard api shenanigans
+- Html issue in conduct list and view
+- Remove empty line in auditlog meta migration file
+- Document update issue
+- Small design issues and improve userinfo errors
+- Add missing coming soon label to create stamps button
+- Remove debug output
+
 ## [2025.9.1] - 2025-09-19
 
 ### 🐛 Bug Fixes
