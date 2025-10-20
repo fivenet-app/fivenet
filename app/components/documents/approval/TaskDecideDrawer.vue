@@ -8,13 +8,14 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = defineProps<{
     documentId: number;
-    policy?: ApprovalPolicy;
     approve: boolean;
 }>();
 
 const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const policy = defineModel<ApprovalPolicy | undefined>('policy');
 
 const notifications = useNotificationsStore();
 
@@ -47,7 +48,9 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
             payloadSvg: payloadSVG,
             stampId: undefined,
         });
-        await call;
+        const { response } = await call;
+
+        response.policy;
 
         emits('close', true);
         isOpen.value = false;

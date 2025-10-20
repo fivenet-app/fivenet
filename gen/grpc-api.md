@@ -3615,14 +3615,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `public` | [bool](#bool) |  |  |
 | `state` | [string](#string) |  |  |
 | `approved` | [bool](#bool) | optional | Overall aggregates - At least one approval policy fully satisfied |
-| `signed` | [bool](#bool) | optional |  |
-| `sig_required_remaining` | [int32](#int32) | optional | Signature rollups How many signatures still needed to satisfy all policies |
-| `sig_declined_count` | [int32](#int32) | optional | Number of declines for signatures |
-| `sig_pending_count` | [int32](#int32) | optional | Tasks still pending (optional) |
-| `sig_any_declined` | [int32](#int32) | optional | Quick flag if any signatures have been declines |
-| `sig_required_total` | [int32](#int32) | optional | Total signatures needed across policies |
-| `sig_collected_valid` | [int32](#int32) | optional | Signatures collected |
-| `sig_policies_active` | [int32](#int32) | optional | Number of active signature policies |
 | `ap_required_total` | [int32](#int32) | optional | Approval rollups Total approvals needed across policies |
 | `ap_collected_approved` | [int32](#int32) | optional | Approvals collected |
 | `ap_required_remaining` | [int32](#int32) | optional | How many left to satisfy |

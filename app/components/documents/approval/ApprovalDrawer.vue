@@ -9,7 +9,7 @@ import {
     OnEditBehavior,
     type ApprovalPolicy,
 } from '~~/gen/ts/resources/documents/approval';
-import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import type { DocumentMeta, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import ApprovalList from './ApprovalList.vue';
 import PolicyForm from './PolicyForm.vue';
 import TaskDecideDrawer from './TaskDecideDrawer.vue';
@@ -19,12 +19,14 @@ import TaskStatusBadge from './TaskStatusBadge.vue';
 
 const props = defineProps<{
     documentId: number;
-    doc?: DocumentShort;
+    doc: DocumentShort;
 }>();
 
 defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const docMeta = defineModel<DocumentMeta | undefined>('docMeta');
 
 const overlay = useOverlay();
 
@@ -45,7 +47,38 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
     });
     const { response } = await call;
 
-    return response.policy;
+    if (!response.policy) return undefined;
+
+    if (docMeta.value === undefined) {
+        docMeta.value = {
+            documentId: props.documentId,
+            approved: false,
+            closed: false,
+            draft: false,
+            public: false,
+            state: '',
+        };
+    }
+
+    const policy = response.policy;
+
+    if (
+        policy.approvedCount >= (response.policy.requiredCount ?? 1)
+            ? ApprovalTaskStatus.APPROVED
+            : policy.anyDeclined
+              ? ApprovalTaskStatus.PENDING
+              : ApprovalTaskStatus.DECLINED
+    ) {
+        docMeta.value.approved = true;
+    } else if (
+        !policy.anyDeclined && policy.approvedCount > policy.assignedCount
+            ? ApprovalTaskStatus.APPROVED
+            : ApprovalTaskStatus.DECLINED
+    ) {
+        docMeta.value.approved = true;
+    }
+
+    return policy;
 }
 
 async function recomputeApprovalPolicyCounters() {
@@ -292,8 +325,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
                 <UButtonGroup v-if="!doc || doc.creatorId !== activeChar?.userId" class="w-full flex-1">
                     <TaskDecideDrawer
+                        v-model:policy="policy"
                         :document-id="documentId"
-                        :policy="policy"
                         :approve="true"
                         @close="(val) => val && refresh()"
                     >
@@ -301,8 +334,8 @@ const taskFormDrawer = overlay.create(TaskForm);
                     </TaskDecideDrawer>
 
                     <TaskDecideDrawer
+                        v-model:policy="policy"
                         :document-id="documentId"
-                        :policy="policy"
                         :approve="false"
                         @close="(val) => val && refresh()"
                     >

@@ -95,23 +95,6 @@ message DocumentMeta {
 
   // Overall aggregates - At least one approval policy fully satisfied
   optional bool approved = 7;
-  optional bool signed = 8;
-
-  // Signature rollups
-  // How many signatures still needed to satisfy all policies
-  optional int32 sig_required_remaining = 9;
-  // Number of declines for signatures
-  optional int32 sig_declined_count = 10;
-  // Tasks still pending (optional)
-  optional int32 sig_pending_count = 11;
-  // Quick flag if any signatures have been declines
-  optional int32 sig_any_declined = 12;
-  // Total signatures needed across policies
-  optional int32 sig_required_total = 13;
-  // Signatures collected
-  optional int32 sig_collected_valid = 14;
-  // Number of active signature policies
-  optional int32 sig_policies_active = 15;
 
   // Approval rollups
   // Total approvals needed across policies

@@ -512,22 +512,6 @@ type DocumentMeta struct {
 	State        string                 `protobuf:"bytes,6,opt,name=state,proto3" json:"state,omitempty"`
 	// Overall aggregates - At least one approval policy fully satisfied
 	Approved *bool `protobuf:"varint,7,opt,name=approved,proto3,oneof" json:"approved,omitempty"`
-	Signed   *bool `protobuf:"varint,8,opt,name=signed,proto3,oneof" json:"signed,omitempty"`
-	// Signature rollups
-	// How many signatures still needed to satisfy all policies
-	SigRequiredRemaining *int32 `protobuf:"varint,9,opt,name=sig_required_remaining,json=sigRequiredRemaining,proto3,oneof" json:"sig_required_remaining,omitempty"`
-	// Number of declines for signatures
-	SigDeclinedCount *int32 `protobuf:"varint,10,opt,name=sig_declined_count,json=sigDeclinedCount,proto3,oneof" json:"sig_declined_count,omitempty"`
-	// Tasks still pending (optional)
-	SigPendingCount *int32 `protobuf:"varint,11,opt,name=sig_pending_count,json=sigPendingCount,proto3,oneof" json:"sig_pending_count,omitempty"`
-	// Quick flag if any signatures have been declines
-	SigAnyDeclined *int32 `protobuf:"varint,12,opt,name=sig_any_declined,json=sigAnyDeclined,proto3,oneof" json:"sig_any_declined,omitempty"`
-	// Total signatures needed across policies
-	SigRequiredTotal *int32 `protobuf:"varint,13,opt,name=sig_required_total,json=sigRequiredTotal,proto3,oneof" json:"sig_required_total,omitempty"`
-	// Signatures collected
-	SigCollectedValid *int32 `protobuf:"varint,14,opt,name=sig_collected_valid,json=sigCollectedValid,proto3,oneof" json:"sig_collected_valid,omitempty"`
-	// Number of active signature policies
-	SigPoliciesActive *int32 `protobuf:"varint,15,opt,name=sig_policies_active,json=sigPoliciesActive,proto3,oneof" json:"sig_policies_active,omitempty"`
 	// Approval rollups
 	// Total approvals needed across policies
 	ApRequiredTotal *int32 `protobuf:"varint,16,opt,name=ap_required_total,json=apRequiredTotal,proto3,oneof" json:"ap_required_total,omitempty"`
@@ -624,62 +608,6 @@ func (x *DocumentMeta) GetApproved() bool {
 		return *x.Approved
 	}
 	return false
-}
-
-func (x *DocumentMeta) GetSigned() bool {
-	if x != nil && x.Signed != nil {
-		return *x.Signed
-	}
-	return false
-}
-
-func (x *DocumentMeta) GetSigRequiredRemaining() int32 {
-	if x != nil && x.SigRequiredRemaining != nil {
-		return *x.SigRequiredRemaining
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigDeclinedCount() int32 {
-	if x != nil && x.SigDeclinedCount != nil {
-		return *x.SigDeclinedCount
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigPendingCount() int32 {
-	if x != nil && x.SigPendingCount != nil {
-		return *x.SigPendingCount
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigAnyDeclined() int32 {
-	if x != nil && x.SigAnyDeclined != nil {
-		return *x.SigAnyDeclined
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigRequiredTotal() int32 {
-	if x != nil && x.SigRequiredTotal != nil {
-		return *x.SigRequiredTotal
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigCollectedValid() int32 {
-	if x != nil && x.SigCollectedValid != nil {
-		return *x.SigCollectedValid
-	}
-	return 0
-}
-
-func (x *DocumentMeta) GetSigPoliciesActive() int32 {
-	if x != nil && x.SigPoliciesActive != nil {
-		return *x.SigPoliciesActive
-	}
-	return 0
 }
 
 func (x *DocumentMeta) GetApRequiredTotal() int32 {
@@ -1221,8 +1149,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xde\n" +
-	"\n" +
+	"\x0e_workflow_user\"\xa7\x06\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
@@ -1231,34 +1158,16 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x05draft\x18\x04 \x01(\bR\x05draft\x12\x16\n" +
 	"\x06public\x18\x05 \x01(\bR\x06public\x12#\n" +
 	"\x05state\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x1f\n" +
-	"\bapproved\x18\a \x01(\bH\x01R\bapproved\x88\x01\x01\x12\x1b\n" +
-	"\x06signed\x18\b \x01(\bH\x02R\x06signed\x88\x01\x01\x129\n" +
-	"\x16sig_required_remaining\x18\t \x01(\x05H\x03R\x14sigRequiredRemaining\x88\x01\x01\x121\n" +
-	"\x12sig_declined_count\x18\n" +
-	" \x01(\x05H\x04R\x10sigDeclinedCount\x88\x01\x01\x12/\n" +
-	"\x11sig_pending_count\x18\v \x01(\x05H\x05R\x0fsigPendingCount\x88\x01\x01\x12-\n" +
-	"\x10sig_any_declined\x18\f \x01(\x05H\x06R\x0esigAnyDeclined\x88\x01\x01\x121\n" +
-	"\x12sig_required_total\x18\r \x01(\x05H\aR\x10sigRequiredTotal\x88\x01\x01\x123\n" +
-	"\x13sig_collected_valid\x18\x0e \x01(\x05H\bR\x11sigCollectedValid\x88\x01\x01\x123\n" +
-	"\x13sig_policies_active\x18\x0f \x01(\x05H\tR\x11sigPoliciesActive\x88\x01\x01\x12/\n" +
-	"\x11ap_required_total\x18\x10 \x01(\x05H\n" +
-	"R\x0fapRequiredTotal\x88\x01\x01\x127\n" +
-	"\x15ap_collected_approved\x18\x11 \x01(\x05H\vR\x13apCollectedApproved\x88\x01\x01\x127\n" +
-	"\x15ap_required_remaining\x18\x12 \x01(\x05H\fR\x13apRequiredRemaining\x88\x01\x01\x12/\n" +
-	"\x11ap_declined_count\x18\x13 \x01(\x05H\rR\x0fapDeclinedCount\x88\x01\x01\x12-\n" +
-	"\x10ap_pending_count\x18\x14 \x01(\x05H\x0eR\x0eapPendingCount\x88\x01\x01\x12+\n" +
-	"\x0fap_any_declined\x18\x15 \x01(\bH\x0fR\rapAnyDeclined\x88\x01\x01\x121\n" +
-	"\x12ap_policies_active\x18\x16 \x01(\x05H\x10R\x10apPoliciesActive\x88\x01\x01B\x10\n" +
+	"\bapproved\x18\a \x01(\bH\x01R\bapproved\x88\x01\x01\x12/\n" +
+	"\x11ap_required_total\x18\x10 \x01(\x05H\x02R\x0fapRequiredTotal\x88\x01\x01\x127\n" +
+	"\x15ap_collected_approved\x18\x11 \x01(\x05H\x03R\x13apCollectedApproved\x88\x01\x01\x127\n" +
+	"\x15ap_required_remaining\x18\x12 \x01(\x05H\x04R\x13apRequiredRemaining\x88\x01\x01\x12/\n" +
+	"\x11ap_declined_count\x18\x13 \x01(\x05H\x05R\x0fapDeclinedCount\x88\x01\x01\x12-\n" +
+	"\x10ap_pending_count\x18\x14 \x01(\x05H\x06R\x0eapPendingCount\x88\x01\x01\x12+\n" +
+	"\x0fap_any_declined\x18\x15 \x01(\bH\aR\rapAnyDeclined\x88\x01\x01\x121\n" +
+	"\x12ap_policies_active\x18\x16 \x01(\x05H\bR\x10apPoliciesActive\x88\x01\x01B\x10\n" +
 	"\x0e_recomputed_atB\v\n" +
-	"\t_approvedB\t\n" +
-	"\a_signedB\x19\n" +
-	"\x17_sig_required_remainingB\x15\n" +
-	"\x13_sig_declined_countB\x14\n" +
-	"\x12_sig_pending_countB\x13\n" +
-	"\x11_sig_any_declinedB\x15\n" +
-	"\x13_sig_required_totalB\x16\n" +
-	"\x14_sig_collected_validB\x16\n" +
-	"\x14_sig_policies_activeB\x14\n" +
+	"\t_approvedB\x14\n" +
 	"\x12_ap_required_totalB\x18\n" +
 	"\x16_ap_collected_approvedB\x18\n" +
 	"\x16_ap_required_remainingB\x14\n" +

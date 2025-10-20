@@ -60,7 +60,7 @@ export class ClipboardDocument {
             draft: d.meta?.draft || false,
             public: d.meta?.public || false,
             state: d.meta?.state || '',
-            signed: d.meta?.signed || false,
+            signed: false,
             approved: d.meta?.approved || false,
         };
         this.creator = new ClipboardUser(d.creator!);
@@ -129,7 +129,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
             draft: obj.meta.draft,
             public: obj.meta.public,
             state: obj.meta.state,
-            signed: obj.meta.signed,
+            signed: false,
             approved: obj.meta.approved,
         },
     };

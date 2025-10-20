@@ -224,14 +224,6 @@ func (s *Server) ListApprovalTasksInbox(
 			tDocumentShort.Draft.AS("meta.draft"),
 			tDocumentShort.Public.AS("meta.public"),
 			tDMeta.DocumentID,
-			tDMeta.Signed,
-			tDMeta.SigRequiredTotal,
-			tDMeta.SigCollectedValid,
-			tDMeta.SigRequiredRemaining,
-			tDMeta.SigDeclinedCount,
-			tDMeta.SigPendingCount,
-			tDMeta.SigAnyDeclined,
-			tDMeta.SigPoliciesActive,
 			tDMeta.Approved,
 			tDMeta.ApRequiredTotal,
 			tDMeta.ApCollectedApproved,
@@ -1842,8 +1834,12 @@ func (s *Server) recomputeApprovalPolicyTx(
 	if err := tApprovalPolicy.
 		SELECT(
 			tApprovalPolicy.DocumentID,
-			tApprovalPolicy.SnapshotDate,
+			tApprovalPolicy.RuleKind,
 			tApprovalPolicy.RequiredCount,
+			tApprovalPolicy.SnapshotDate,
+			tApprovalPolicy.StartedAt,
+			tApprovalPolicy.CompletedAt,
+			tApprovalPolicy.OnEditBehavior,
 		).
 		FROM(tApprovalPolicy).
 		WHERE(tApprovalPolicy.DocumentID.EQ(mysql.Int64(documentID))).

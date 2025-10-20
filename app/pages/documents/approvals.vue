@@ -211,15 +211,6 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                     :label="task.document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
                                 />
 
-                                <UBadge
-                                    v-if="task.document?.meta?.sigPoliciesActive"
-                                    class="inline-flex gap-1"
-                                    size="md"
-                                    :color="task.document?.meta?.signed ? 'info' : 'warning'"
-                                    icon="i-mdi-approval"
-                                    :label="task.document?.meta?.signed ? $t('common.signed') : $t('common.unsigned')"
-                                />
-
                                 <div class="flex flex-row items-center gap-1">
                                     <OpenClosedBadge :closed="task.document?.meta?.closed" />
                                 </div>

@@ -100,7 +100,11 @@ function openApprovalDrawer(): void {
     approvalDrawer
         .open({
             documentId: props.documentId,
-            doc: doc.value?.document,
+            doc: doc.value!.document!,
+            docMeta: doc.value!.document!.meta,
+            'onUpdate:docMeta': ($event) => {
+                if (doc.value?.document) doc.value.document.meta = $event;
+            },
         })
         .then(() => (hash.value = ''));
 
@@ -537,24 +541,6 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                             :color="doc.document?.meta?.approved ? 'info' : 'warning'"
                             icon="i-mdi-approval"
                             :label="doc.document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                        />
-
-                        <UBadge
-                            v-if="doc.document?.meta?.sigPoliciesActive"
-                            class="inline-flex gap-1"
-                            size="md"
-                            :color="doc.document?.meta?.signed ? 'info' : 'warning'"
-                            icon="i-mdi-approval"
-                            :label="doc.document?.meta?.signed ? $t('common.signed') : $t('common.unsigned')"
-                        />
-
-                        <UBadge
-                            v-if="doc.document?.meta?.signed"
-                            class="inline-flex gap-1"
-                            size="md"
-                            color="info"
-                            icon="i-mdi-signature"
-                            :label="doc.document?.meta?.signed ? $t('common.signed') : $t('common.unsigned')"
                         />
 
                         <UBadge

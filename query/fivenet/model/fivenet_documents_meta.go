@@ -12,22 +12,14 @@ import (
 )
 
 type FivenetDocumentsMeta struct {
-	DocumentID           int64     `sql:"primary_key" json:"document_id"`
-	RecomputedAt         time.Time `json:"recomputed_at"`
-	Approved             bool      `json:"approved"`
-	Signed               bool      `json:"signed"`
-	SigRequiredRemaining int32     `json:"sig_required_remaining"`
-	SigDeclinedCount     int32     `json:"sig_declined_count"`
-	SigPendingCount      int32     `json:"sig_pending_count"`
-	SigAnyDeclined       bool      `json:"sig_any_declined"`
-	SigRequiredTotal     int32     `json:"sig_required_total"`
-	SigCollectedValid    int32     `json:"sig_collected_valid"`
-	SigPoliciesActive    int32     `json:"sig_policies_active"`
-	ApRequiredTotal      int32     `json:"ap_required_total"`
-	ApCollectedApproved  int32     `json:"ap_collected_approved"`
-	ApRequiredRemaining  int32     `json:"ap_required_remaining"`
-	ApDeclinedCount      int32     `json:"ap_declined_count"`
-	ApPendingCount       int32     `json:"ap_pending_count"`
-	ApAnyDeclined        bool      `json:"ap_any_declined"`
-	ApPoliciesActive     int32     `json:"ap_policies_active"`
+	DocumentID          int64     `sql:"primary_key" json:"document_id"`
+	RecomputedAt        time.Time `json:"recomputed_at"`
+	Approved            bool      `json:"approved"`
+	ApRequiredTotal     int32     `json:"ap_required_total"`
+	ApCollectedApproved int32     `json:"ap_collected_approved"`
+	ApRequiredRemaining int32     `json:"ap_required_remaining"`
+	ApDeclinedCount     int32     `json:"ap_declined_count"`
+	ApPendingCount      int32     `json:"ap_pending_count"`
+	ApAnyDeclined       bool      `json:"ap_any_declined"`
+	ApPoliciesActive    int32     `json:"ap_policies_active"`
 }

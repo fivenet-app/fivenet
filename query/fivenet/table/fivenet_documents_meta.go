@@ -17,24 +17,16 @@ type fivenetDocumentsMetaTable struct {
 	mysql.Table
 
 	// Columns
-	DocumentID           mysql.ColumnInteger
-	RecomputedAt         mysql.ColumnTimestamp
-	Approved             mysql.ColumnBool
-	Signed               mysql.ColumnBool
-	SigRequiredRemaining mysql.ColumnInteger
-	SigDeclinedCount     mysql.ColumnInteger
-	SigPendingCount      mysql.ColumnInteger
-	SigAnyDeclined       mysql.ColumnBool
-	SigRequiredTotal     mysql.ColumnInteger
-	SigCollectedValid    mysql.ColumnInteger
-	SigPoliciesActive    mysql.ColumnInteger
-	ApRequiredTotal      mysql.ColumnInteger
-	ApCollectedApproved  mysql.ColumnInteger
-	ApRequiredRemaining  mysql.ColumnInteger
-	ApDeclinedCount      mysql.ColumnInteger
-	ApPendingCount       mysql.ColumnInteger
-	ApAnyDeclined        mysql.ColumnBool
-	ApPoliciesActive     mysql.ColumnInteger
+	DocumentID          mysql.ColumnInteger
+	RecomputedAt        mysql.ColumnTimestamp
+	Approved            mysql.ColumnBool
+	ApRequiredTotal     mysql.ColumnInteger
+	ApCollectedApproved mysql.ColumnInteger
+	ApRequiredRemaining mysql.ColumnInteger
+	ApDeclinedCount     mysql.ColumnInteger
+	ApPendingCount      mysql.ColumnInteger
+	ApAnyDeclined       mysql.ColumnBool
+	ApPoliciesActive    mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,51 +68,35 @@ func newFivenetDocumentsMetaTable(schemaName, tableName, alias string) *FivenetD
 
 func newFivenetDocumentsMetaTableImpl(schemaName, tableName, alias string) fivenetDocumentsMetaTable {
 	var (
-		DocumentIDColumn           = mysql.IntegerColumn("document_id")
-		RecomputedAtColumn         = mysql.TimestampColumn("recomputed_at")
-		ApprovedColumn             = mysql.BoolColumn("approved")
-		SignedColumn               = mysql.BoolColumn("signed")
-		SigRequiredRemainingColumn = mysql.IntegerColumn("sig_required_remaining")
-		SigDeclinedCountColumn     = mysql.IntegerColumn("sig_declined_count")
-		SigPendingCountColumn      = mysql.IntegerColumn("sig_pending_count")
-		SigAnyDeclinedColumn       = mysql.BoolColumn("sig_any_declined")
-		SigRequiredTotalColumn     = mysql.IntegerColumn("sig_required_total")
-		SigCollectedValidColumn    = mysql.IntegerColumn("sig_collected_valid")
-		SigPoliciesActiveColumn    = mysql.IntegerColumn("sig_policies_active")
-		ApRequiredTotalColumn      = mysql.IntegerColumn("ap_required_total")
-		ApCollectedApprovedColumn  = mysql.IntegerColumn("ap_collected_approved")
-		ApRequiredRemainingColumn  = mysql.IntegerColumn("ap_required_remaining")
-		ApDeclinedCountColumn      = mysql.IntegerColumn("ap_declined_count")
-		ApPendingCountColumn       = mysql.IntegerColumn("ap_pending_count")
-		ApAnyDeclinedColumn        = mysql.BoolColumn("ap_any_declined")
-		ApPoliciesActiveColumn     = mysql.IntegerColumn("ap_policies_active")
-		allColumns                 = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigDeclinedCountColumn, SigPendingCountColumn, SigAnyDeclinedColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
-		mutableColumns             = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigDeclinedCountColumn, SigPendingCountColumn, SigAnyDeclinedColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
-		defaultColumns             = mysql.ColumnList{ApprovedColumn, SignedColumn, SigRequiredRemainingColumn, SigDeclinedCountColumn, SigPendingCountColumn, SigAnyDeclinedColumn, SigRequiredTotalColumn, SigCollectedValidColumn, SigPoliciesActiveColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		DocumentIDColumn          = mysql.IntegerColumn("document_id")
+		RecomputedAtColumn        = mysql.TimestampColumn("recomputed_at")
+		ApprovedColumn            = mysql.BoolColumn("approved")
+		ApRequiredTotalColumn     = mysql.IntegerColumn("ap_required_total")
+		ApCollectedApprovedColumn = mysql.IntegerColumn("ap_collected_approved")
+		ApRequiredRemainingColumn = mysql.IntegerColumn("ap_required_remaining")
+		ApDeclinedCountColumn     = mysql.IntegerColumn("ap_declined_count")
+		ApPendingCountColumn      = mysql.IntegerColumn("ap_pending_count")
+		ApAnyDeclinedColumn       = mysql.BoolColumn("ap_any_declined")
+		ApPoliciesActiveColumn    = mysql.IntegerColumn("ap_policies_active")
+		allColumns                = mysql.ColumnList{DocumentIDColumn, RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		mutableColumns            = mysql.ColumnList{RecomputedAtColumn, ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
+		defaultColumns            = mysql.ColumnList{ApprovedColumn, ApRequiredTotalColumn, ApCollectedApprovedColumn, ApRequiredRemainingColumn, ApDeclinedCountColumn, ApPendingCountColumn, ApAnyDeclinedColumn, ApPoliciesActiveColumn}
 	)
 
 	return fivenetDocumentsMetaTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		DocumentID:           DocumentIDColumn,
-		RecomputedAt:         RecomputedAtColumn,
-		Approved:             ApprovedColumn,
-		Signed:               SignedColumn,
-		SigRequiredRemaining: SigRequiredRemainingColumn,
-		SigDeclinedCount:     SigDeclinedCountColumn,
-		SigPendingCount:      SigPendingCountColumn,
-		SigAnyDeclined:       SigAnyDeclinedColumn,
-		SigRequiredTotal:     SigRequiredTotalColumn,
-		SigCollectedValid:    SigCollectedValidColumn,
-		SigPoliciesActive:    SigPoliciesActiveColumn,
-		ApRequiredTotal:      ApRequiredTotalColumn,
-		ApCollectedApproved:  ApCollectedApprovedColumn,
-		ApRequiredRemaining:  ApRequiredRemainingColumn,
-		ApDeclinedCount:      ApDeclinedCountColumn,
-		ApPendingCount:       ApPendingCountColumn,
-		ApAnyDeclined:        ApAnyDeclinedColumn,
-		ApPoliciesActive:     ApPoliciesActiveColumn,
+		DocumentID:          DocumentIDColumn,
+		RecomputedAt:        RecomputedAtColumn,
+		Approved:            ApprovedColumn,
+		ApRequiredTotal:     ApRequiredTotalColumn,
+		ApCollectedApproved: ApCollectedApprovedColumn,
+		ApRequiredRemaining: ApRequiredRemainingColumn,
+		ApDeclinedCount:     ApDeclinedCountColumn,
+		ApPendingCount:      ApPendingCountColumn,
+		ApAnyDeclined:       ApAnyDeclinedColumn,
+		ApPoliciesActive:    ApPoliciesActiveColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
