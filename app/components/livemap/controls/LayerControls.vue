@@ -48,6 +48,17 @@ const groupedLayers = computed(() => {
 
     return out;
 });
+
+function toggleAllLayers(category: string, visible: boolean) {
+    const categoryGroup = groupedLayers.value.find((c) => c.category?.key === category);
+    if (!categoryGroup) return;
+
+    categoryGroup.layers.forEach((layer) => {
+        if (layer.disabled) return;
+
+        layer.visible = visible;
+    });
+}
 </script>
 
 <template>
@@ -94,9 +105,17 @@ const groupedLayers = computed(() => {
                                 :key="key"
                                 class="grid min-w-0 grid-flow-row auto-rows-min gap-1 overflow-y-hidden px-1 pb-1 md:pb-0"
                             >
-                                <p class="truncate text-base font-bold text-highlighted">
-                                    {{ category.category?.label ?? $t('common.na') }}
-                                </p>
+                                <div class="flex items-center justify-between gap-1">
+                                    <p class="truncate text-base font-bold text-highlighted">
+                                        {{ category.category?.label ?? $t('common.na') }}
+                                    </p>
+
+                                    <USwitch
+                                        :model-value="category.layers.every((l) => l.visible)"
+                                        size="xs"
+                                        @update:model-value="(v) => toggleAllLayers(category.category?.key ?? '', v)"
+                                    />
+                                </div>
 
                                 <USwitch
                                     v-for="layer in category.layers"

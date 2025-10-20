@@ -920,12 +920,12 @@
                     "on_edit_behavior": "Bearbeitungsverhalten",
                     "required_approvals": "Erforderliche Genehmigungen"
                 },
-                "signature_required": "Unterschrift(en) erforderlich",
                 "tasks": "Genehmigungsaufgaben",
                 "task_form": {
                     "title": "Aufgaben"
                 },
                 "slots": "Genehmigungs-Slots",
+                "signature_required": "Unterschrift(en) erforderlich",
                 "document_not_published": "Das Dokument wurde nicht veröffentlicht."
             }
         },
@@ -953,7 +953,8 @@
                 "postal": "Postleitzahlen",
                 "satelite": "Satellitenansicht"
             },
-            "show_grid": "Raster anzeigen"
+            "show_grid": "Raster anzeigen",
+            "toggle_all_layers": "Alle Ebenen umschalten"
         },
         "debug_info": {
             "title": "Debug-Informationen",
@@ -2262,14 +2263,18 @@
                 "title": "Genehmigungsaufgabe bereits bearbeitet!",
                 "content": "Diese Genehmigungsaufgabe wurde bereits genehmigt/abgelehnt."
             },
+            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalSignatureRequired": {
                 "title": "Genehmigungsunterschrift erforderlich!",
                 "content": "Sie müssen eine Unterschrift leisten, um dieses Dokument zu genehmigen."
             },
-            "ErrDocAccessInvalid": "Dokumenten-Zugriff: Ungültiger Beruf oder Rang angegeben!",
             "ErrApprovalDocIsDraft": {
                 "title": "Dokument ist ein Entwurf!",
                 "content": "Nur veröffentlichte Dokumente können genehmigt werden."
+            },
+            "ErrApprovalCreatorCannotDecide": {
+                "title": "Sie können Ihr eigenes Dokument nicht genehmigen/ablehnen!",
+                "content": "Bitte bitten Sie einen anderen Benutzer, dieses Dokument zu genehmigen/abzulehnen."
             }
         },
         "LivemapService": {

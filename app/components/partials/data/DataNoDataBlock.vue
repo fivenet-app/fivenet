@@ -10,6 +10,7 @@ const props = withDefaults(
         actions?: ButtonProps[];
         focus?: () => void | Promise<void>;
         retry?: () => Promise<unknown>;
+        padded?: boolean;
     }>(),
     {
         title: undefined,
@@ -19,12 +20,13 @@ const props = withDefaults(
         actions: () => [],
         focus: undefined,
         retry: undefined,
+        padded: true,
     },
 );
 
 const { t } = useI18n();
 
-const actions = computed(() =>
+const actions = computed<ButtonProps[]>(() =>
     props.actions.length > 0
         ? props.actions
         : [
@@ -43,7 +45,7 @@ async function click() {
 </script>
 
 <template>
-    <div class="m-2">
+    <div :class="padded ? 'm-2' : ''">
         <UAlert
             :icon="icon"
             variant="outline"

@@ -953,7 +953,8 @@
                 "postal": "Postal Codes",
                 "satelite": "Satellite"
             },
-            "show_grid": "Show Grid"
+            "show_grid": "Show Grid",
+            "toggle_all_layers": "Toggle All Layers"
         },
         "debug_info": {
             "title": "Debug Info",

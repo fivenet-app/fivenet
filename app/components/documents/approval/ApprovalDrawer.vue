@@ -222,7 +222,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                 </div>
 
                                 <div v-else>
-                                    <DataNoDataBlock icon="i-mdi-approval" :type="$t('common.policy')" />
+                                    <DataNoDataBlock icon="i-mdi-approval" :type="$t('common.policy')" :padded="false" />
                                 </div>
 
                                 <template
