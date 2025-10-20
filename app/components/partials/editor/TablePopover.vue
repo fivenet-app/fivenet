@@ -35,6 +35,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
         })
         .run();
 }
+
+const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -51,21 +53,21 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
 
         <template #content>
             <div class="p-4">
-                <UForm :schema="schema" :state="{}" @submit="onSubmit">
-                    <UFormField :label="$t('common.rows')">
+                <UForm ref="formRef" :schema="schema" :state="{}" @submit="onSubmit">
+                    <UFormField :label="$t('common.rows')" name="rows">
                         <UInput v-model="state.rows" type="text" :disabled="disabled" />
                     </UFormField>
 
-                    <UFormField :label="$t('common.cols')">
+                    <UFormField :label="$t('common.cols')" name="cols">
                         <UInput v-model="state.cols" type="text" :disabled="disabled" />
                     </UFormField>
 
-                    <UFormField :label="$t('common.with_header_row')">
+                    <UFormField :label="$t('common.with_header_row')" name="withHeaderRow">
                         <USwitch v-model="state.withHeaderRow" type="text" :disabled="disabled" />
                     </UFormField>
 
-                    <UFormField>
-                        <UButton type="submit" :label="$t('common.create')" :disabled="disabled" />
+                    <UFormField class="mt-2">
+                        <UButton type="submit" block :label="$t('common.create')" :disabled="disabled" />
                     </UFormField>
                 </UForm>
             </div>

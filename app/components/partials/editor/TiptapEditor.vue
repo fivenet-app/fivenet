@@ -95,6 +95,10 @@ const emits = defineEmits<{
     (e: 'file-uploaded', file: FileGrpc): void;
 }>();
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const modelValue = defineModel<string>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
@@ -424,24 +428,53 @@ const stopWatch = watch(modelValue, (value) => {
 });
 
 const contentRef = useTemplateRef('contentRef');
-watchDebounced(
-    contentRef,
-    () => {
-        if (!contentRef.value || !contentRef.value.$el) return;
 
-        const element = contentRef.value.$el as HTMLDivElement;
-        element.addEventListener('click', (event: MouseEvent) => {
-            const element = event.target as HTMLElement;
-            if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) return;
+const openLink = ref(false);
+const openLinkPopover = refDebounced(openLink, 200);
+const anchor = ref({ x: 0, y: 0 });
 
-            event.preventDefault();
-        });
-    },
-    {
-        debounce: 500,
-        maxWait: 1750,
-    },
-);
+const selectedLink = ref('');
+const selectedAnchor = ref({ x: 0, y: 0 });
+const reference = computed(() => ({
+    getBoundingClientRect: () =>
+        ({
+            width: 0,
+            height: 0,
+            left: selectedAnchor.value.x,
+            right: selectedAnchor.value.x,
+            top: selectedAnchor.value.y,
+            bottom: selectedAnchor.value.y,
+            ...selectedAnchor.value,
+        }) as DOMRect,
+}));
+
+function onClickContent(event: MouseEvent): void {
+    let element: HTMLElement | null = event.target as HTMLElement;
+    if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
+        element = element.parentElement as HTMLElement;
+        if (!element || (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href'))) return;
+    }
+    event.preventDefault();
+
+    selectedAnchor.value = { ...anchor.value };
+    selectedLink.value = element.getAttribute('href') || '';
+    openLink.value = true;
+
+    element.addEventListener(
+        'pointerleave',
+        () => {
+            openLink.value = false;
+        },
+        { once: true },
+    );
+}
+
+watchOnce(contentRef, () => {
+    if (!contentRef.value || !contentRef.value.$el) return;
+
+    const element = contentRef.value.$el as HTMLDivElement;
+    element.addEventListener('click', onClickContent);
+});
 
 const formErrors = inject<Ref<FormError[]> | null>(formErrorsInjectionKey, null);
 
@@ -466,12 +499,15 @@ onMounted(() => {
     unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
 });
 
-onBeforeRouteLeave(() => {
-    yjsProvider?.destroy();
+onBeforeUnmount(() => {
+    if (contentRef.value?.$el) {
+        const element = contentRef.value.$el as HTMLDivElement;
+        element.removeEventListener('click', onClickContent);
+    }
 });
 
-defineOptions({
-    inheritAttrs: false,
+onBeforeRouteLeave(() => {
+    yjsProvider?.destroy();
 });
 </script>
 
@@ -489,6 +525,7 @@ defineOptions({
                 :editor="markRaw(editor)"
                 :disabled="disabled"
                 :disable-images="disableImages"
+                :history-type="historyType"
                 :file-limit="fileLimit"
                 :file-upload-handler="fileUploadHandler"
                 @update:content="modelValue = $event"
@@ -501,43 +538,62 @@ defineOptions({
             </div>
         </DragHandle>
 
-        <TiptapEditorContent
-            ref="contentRef"
-            class="min-h-0 w-full max-w-full min-w-0 flex-1 flex-auto overflow-y-auto py-2"
-            :class="[
-                wrapperClass,
-                'hover:prose-a:text-blue-500',
-                'dark:hover:prose-a:text-blue-300',
-                'prose-headings:my-0.5',
-                'prose-lead:my-0.5',
-                'prose-h1:my-0.5',
-                'prose-h2:my-0.5',
-                'prose-h3:my-0.5',
-                'prose-h4:my-0.5',
-                'prose-p:my-0.5',
-                'prose-a:my-0.5',
-                'prose-blockquote:my-0.5',
-                'prose-figure:my-0.5',
-                'prose-figcaption:my-0.5',
-                'prose-strong:my-0.5',
-                'prose-em:my-0.5',
-                'prose-kbd:my-0.5',
-                'prose-code:my-0.5',
-                'prose-pre:my-0.5',
-                'prose-ol:my-0.5',
-                'prose-ul:my-0.5',
-                'prose-li:my-0.5',
-                'prose-table:my-0.5',
-                'prose-thead:my-0.5',
-                'prose-tr:my-0.5',
-                'prose-th:my-0.5',
-                'prose-td:my-0.5',
-                'prose-img:my-0.5',
-                'prose-video:my-0.5',
-                'prose-hr:my-0.5',
-            ]"
-            :editor="editor"
-        />
+        <UPopover
+            :open="openLinkPopover"
+            :reference="reference"
+            :content="{ side: 'top', sideOffset: 16, updatePositionStrategy: 'always' }"
+        >
+            <TiptapEditorContent
+                ref="contentRef"
+                class="min-h-0 w-full max-w-full min-w-0 flex-1 flex-auto overflow-y-auto py-2"
+                :class="[
+                    wrapperClass,
+                    'hover:prose-a:text-blue-500',
+                    'dark:hover:prose-a:text-blue-300',
+                    'prose-headings:my-0.5',
+                    'prose-lead:my-0.5',
+                    'prose-h1:my-0.5',
+                    'prose-h2:my-0.5',
+                    'prose-h3:my-0.5',
+                    'prose-h4:my-0.5',
+                    'prose-p:my-0.5',
+                    'prose-a:my-0.5',
+                    'prose-blockquote:my-0.5',
+                    'prose-figure:my-0.5',
+                    'prose-figcaption:my-0.5',
+                    'prose-strong:my-0.5',
+                    'prose-em:my-0.5',
+                    'prose-kbd:my-0.5',
+                    'prose-code:my-0.5',
+                    'prose-pre:my-0.5',
+                    'prose-ol:my-0.5',
+                    'prose-ul:my-0.5',
+                    'prose-li:my-0.5',
+                    'prose-table:my-0.5',
+                    'prose-thead:my-0.5',
+                    'prose-tr:my-0.5',
+                    'prose-th:my-0.5',
+                    'prose-td:my-0.5',
+                    'prose-img:my-0.5',
+                    'prose-video:my-0.5',
+                    'prose-hr:my-0.5',
+                ]"
+                :editor="editor"
+                @pointerleave="openLink = false"
+                @pointermove="
+                    (ev: PointerEvent) => {
+                        anchor.x = ev.clientX;
+                        anchor.y = ev.clientY;
+                    }
+                "
+            />
+
+            <template #content>
+                <div class="p-2" @pointerenter="openLink = true" @pointerleave="openLink = false">
+                    <UButton variant="link" :to="selectedLink" external target="_blank" :label="selectedLink" />
+                </div>
+            </template>
+        </UPopover>
 
         <template v-if="editor" #footer>
             <div class="flex w-full flex-1 flex-col gap-1">
@@ -545,32 +601,32 @@ defineOptions({
                     <div v-if="typeof error === 'string'" :id="`${name}-error`" class="text-error">{{ error }}</div>
                 </div>
 
-                <div class="flex" :class="[{ 'flex-1': targetId }]">
-                    <template v-if="$slots.footer">
-                        <slot name="footer" />
-                    </template>
-                    <div v-else-if="saving" class="inline-flex items-center gap-1">
-                        <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
-                        <span>{{ $t('common.save', 2) }}...</span>
+                <div class="flex flex-1 flex-row flex-wrap justify-between gap-2">
+                    <div class="inline-flex">
+                        <template v-if="$slots.footer">
+                            <slot name="footer" :saving="saving" />
+                        </template>
+                        <div v-else-if="saving" class="inline-flex items-center gap-1">
+                            <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
+                            <span>{{ $t('common.save', 2) }}...</span>
+                        </div>
+
+                        <div v-if="loading" class="inline-flex items-center gap-1">
+                            <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />
+                            {{ $t('common.loading') }}
+                        </div>
                     </div>
 
-                    <div v-if="loading" class="inline-flex items-center gap-1">
-                        <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />
-                        {{ $t('common.loading') }}
+                    <YJSUserPopover v-if="enableCollab && targetId" />
+
+                    <div class="flex items-center justify-end gap-1">
+                        {{ unref(editor).storage.characterCount.characters()
+                        }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
+                        {{ $t('common.chars', unref(editor).storage.characterCount.characters()) }}
+                        |
+                        {{ unref(editor).storage.characterCount.words() }}
+                        {{ $t('common.word', unref(editor).storage.characterCount.words()) }}
                     </div>
-                </div>
-
-                <div v-if="enableCollab && targetId" class="inline-flex flex-1 items-center justify-center">
-                    <YJSUserPopover />
-                </div>
-
-                <div class="inline-flex flex-1 items-center justify-end">
-                    {{ unref(editor).storage.characterCount.characters()
-                    }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
-                    {{ $t('common.chars', unref(editor).storage.characterCount.characters()) }}
-                    |
-                    {{ unref(editor).storage.characterCount.words() }}
-                    {{ $t('common.word', unref(editor).storage.characterCount.words()) }}
                 </div>
             </div>
         </template>
