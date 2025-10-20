@@ -102,7 +102,7 @@ function saveSignature(): string | undefined {
                         <SignaturePad ref="signatureRef" />
                     </UFormField>
 
-                    <UFormField name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" :description="$t('common.optional')">
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" class="w-full" />
                     </UFormField>
 

@@ -727,7 +727,8 @@
         "metadata": "Metadata",
         "expand_collapse": "Expand/ Collapse",
         "no_signature": "No Signature provided",
-        "coming_soon": "Coming Soon"
+        "coming_soon": "Coming Soon",
+        "optional": "Optional"
     },
     "components": {
         "partials": {

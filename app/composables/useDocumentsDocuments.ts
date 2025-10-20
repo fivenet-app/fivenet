@@ -79,7 +79,7 @@ export async function useDocumentsDocuments() {
         }
     };
 
-    const deleteDocument = async (id: number, restore?: boolean, reason?: string): Promise<void> => {
+    const deleteDocument = async (id: number, restore?: boolean, reason?: string): Promise<boolean> => {
         try {
             await documentsDocumentsClient.deleteDocument({
                 documentId: id,
@@ -95,12 +95,14 @@ export async function useDocumentsDocuments() {
                 });
 
                 await navigateTo({ name: 'documents' });
+                return false;
             } else {
                 notifications.add({
                     title: { key: 'notifications.document_restored.title', parameters: {} },
                     description: { key: 'notifications.document_restored.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
+                return true;
             }
         } catch (e) {
             handleGRPCError(e as RpcError);

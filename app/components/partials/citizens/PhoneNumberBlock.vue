@@ -63,6 +63,7 @@ async function doCall(): Promise<void> {
                     icon="i-mdi-phone"
                     :label="showLabel ? $t('common.call') : undefined"
                     :ui="{ base: 'py-0 sm:py-0 px-0 sm:px-0' }"
+                    v-bind="$attrs"
                     @click="doCall"
                 />
             </UTooltip>
@@ -72,8 +73,6 @@ async function doCall(): Promise<void> {
             </span>
         </template>
 
-        <template v-else-if="!hideNaText">
-            {{ $t('common.na') }}
-        </template>
+        <span v-else-if="!hideNaText">{{ $t('common.na') }}</span>
     </div>
 </template>

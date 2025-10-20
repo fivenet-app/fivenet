@@ -37,20 +37,78 @@ func (s *Server) ListPages(
 	tJobProps := table.FivenetJobProps
 
 	condition := mysql.Bool(true)
-
-	if req.GetRootOnly() {
-		condition = condition.AND(tPageShort.ParentID.IS_NULL())
-	}
 	if req.Search != nil && req.GetSearch() != "" {
 		*req.Search = strings.TrimRight(req.GetSearch(), "*") + "*"
 
-		condition = mysql.OR(
+		condition = condition.AND(mysql.OR(
 			dbutils.MATCH(tPageShort.Title, mysql.String(req.GetSearch())),
 			dbutils.MATCH(tPageShort.Content, mysql.String(req.GetSearch())),
-		)
+		))
 	}
 
-	if !userInfo.GetSuperuser() {
+	tFiles := table.FivenetFiles.AS("logo")
+
+	columns := mysql.ProjectionList{
+		tPageShort.Job,
+		tPageShort.ParentID,
+		tPageShort.Slug,
+		tPageShort.Title,
+		tPageShort.Description,
+		tPageShort.Draft,
+		tPageShort.Public,
+	}
+
+	// Root Only request checks for access in the subquery
+	if req.GetRootOnly() {
+		columns = append(columns,
+			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
+			tFiles.ID,
+			tFiles.FilePath,
+		)
+
+		subPage := table.FivenetWikiPages.AS("sub_page")
+
+		// Use a subquery to get the first page per job (by min ID) with access checks
+		condition = condition.AND(tPageShort.ID.IN(
+			subPage.
+				SELECT(
+					mysql.MIN(subPage.ID).AS("min_id"),
+				).
+				WHERE(mysql.AND(
+					subPage.DeletedAt.IS_NULL(),
+					mysql.OR(
+						subPage.Public.IS_TRUE(),
+						mysql.AND(
+							subPage.Job.EQ(mysql.String(userInfo.GetJob())),
+							subPage.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+						),
+						mysql.EXISTS(
+							mysql.
+								SELECT(mysql.Int(1)).
+								FROM(tPAccess).
+								WHERE(mysql.AND(
+									tPAccess.TargetID.EQ(subPage.ID),
+									tPAccess.Access.IS_NOT_NULL(),
+									tPAccess.Access.GT_EQ(
+										mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+									),
+									mysql.OR(
+										tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+										mysql.AND(
+											tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+											tPAccess.MinimumGrade.LT_EQ(
+												mysql.Int32(userInfo.GetJobGrade()),
+											),
+										),
+									),
+								)),
+						),
+					),
+				)).
+				ORDER_BY(subPage.ParentID.ASC().NULLS_FIRST()).
+				GROUP_BY(subPage.Job)),
+		)
+	} else if !userInfo.GetSuperuser() {
 		accessExists := mysql.EXISTS(
 			mysql.
 				SELECT(mysql.Int(1)).
@@ -92,9 +150,13 @@ func (s *Server) ListPages(
 		condition = condition.AND(tPageShort.Job.EQ(mysql.String(req.GetJob())))
 	}
 
+	if userInfo.GetSuperuser() {
+		columns = append(columns, tPageShort.DeletedAt)
+	}
+
 	countStmt := tPageShort.
 		SELECT(
-			mysql.COUNT(mysql.DISTINCT(tPageShort.ID)).AS("data_count.total"),
+			mysql.COUNT(tPageShort.ID).AS("data_count.total"),
 		).
 		FROM(tPageShort).
 		WHERE(condition)
@@ -115,40 +177,6 @@ func (s *Server) ListPages(
 		return resp, nil
 	}
 
-	tFiles := table.FivenetFiles.AS("logo")
-
-	columns := mysql.ProjectionList{
-		tPageShort.Job,
-		tPageShort.ParentID,
-		tPageShort.Slug,
-		tPageShort.Title,
-		tPageShort.Description,
-		tPageShort.Draft,
-		tPageShort.Public,
-	}
-	if req.GetRootOnly() {
-		columns = append(columns,
-			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
-			tFiles.ID,
-			tFiles.FilePath,
-		)
-
-		subPage := table.FivenetWikiPages.AS("sub_page")
-
-		// Use a subquery to get the first page per job (by min ID)
-		condition = condition.AND(tPageShort.ID.IN(
-			subPage.
-				SELECT(
-					mysql.MIN(subPage.ID).AS("min_id"),
-				).
-				WHERE(subPage.ParentID.IS_NULL()).
-				GROUP_BY(subPage.Job)),
-		)
-	}
-	if userInfo.GetSuperuser() {
-		columns = append(columns, tPageShort.DeletedAt)
-	}
-
 	stmt := tPageShort.
 		SELECT(
 			tPageShort.ID,
@@ -164,7 +192,7 @@ func (s *Server) ListPages(
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
+		ORDER_BY(tPageShort.Job.ASC(), tPageShort.SortKey.ASC(), tPageShort.ParentID.ASC(), tPageShort.Draft.ASC()).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(defaultWikiUpperLimit)
 

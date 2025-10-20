@@ -1529,12 +1529,6 @@ func (s *Server) DecideApproval(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if existing.ID > 0 &&
-		(existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_APPROVED) ||
-			existing.Status == int32(documents.ApprovalStatus_APPROVAL_STATUS_DECLINED)) {
-		return nil, errorsdocuments.ErrApprovalTaskAlreadyHandled
-	}
-
 	// Write/UPSERT approval artifact (unique per (document_id, snapshot_date, user_id))
 	// Map task statuses APPROVED/DECLINED -> artifact status
 	artifactStatus := documents.ApprovalStatus_APPROVAL_STATUS_APPROVED
@@ -1571,6 +1565,12 @@ func (s *Server) DecideApproval(
 				dbutils.Int64P(taskIDForArtifact),
 			).
 			ON_DUPLICATE_KEY_UPDATE(
+				tApprovals.SnapshotDate.SET(mysql.TimestampT(snap)),
+				tApprovals.UserID.SET(mysql.Int32(int32(userInfo.GetUserId()))),
+				tApprovals.UserJob.SET(mysql.String(userInfo.GetJob())),
+				tApprovals.UserJobGrade.SET(mysql.Int32(userInfo.GetJobGrade())),
+				tApprovals.PayloadSvg.SET(mysql.String(req.GetPayloadSvg())),
+				tApprovals.StampID.SET(dbutils.Int64P(req.GetStampId())),
 				tApprovals.Status.SET(mysql.Int32(int32(artifactStatus))),
 				tApprovals.Comment.SET(mysql.String(req.GetComment())),
 				tApprovals.TaskID.SET(dbutils.Int64P(taskIDForArtifact)),
@@ -1581,7 +1581,6 @@ func (s *Server) DecideApproval(
 	} else {
 		if _, err := tApprovals.
 			UPDATE(
-				tApprovals.DocumentID,
 				tApprovals.SnapshotDate,
 				tApprovals.UserID,
 				tApprovals.UserJob,
@@ -1593,7 +1592,6 @@ func (s *Server) DecideApproval(
 				tApprovals.TaskID,
 			).
 			SET(
-				pol.GetDocumentId(),
 				snap,
 				int32(userInfo.GetUserId()),
 				userInfo.GetJob(),

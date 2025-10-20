@@ -727,7 +727,8 @@
         "metadata": "Metadaten",
         "expand_collapse": "Ausklappen/Einklappen",
         "no_signature": "Keine Signatur angegeben",
-        "coming_soon": "Demnächst verfügbar"
+        "coming_soon": "Demnächst verfügbar",
+        "optional": "Optional"
     },
     "components": {
         "partials": {
