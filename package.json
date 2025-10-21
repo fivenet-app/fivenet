@@ -25,7 +25,6 @@
     "dependencies": {
         "@galexrt/nuxt-update": "1.4.0",
         "@iconify-json/flagpack": "1.2.6",
-        "@iconify-json/lucide": "1.2.70",
         "@iconify-json/mdi": "1.2.3",
         "@iconify-json/simple-icons": "1.2.55",
         "@nuxt/content": "3.7.1",

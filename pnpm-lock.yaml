@@ -21,9 +21,6 @@ importers:
       '@iconify-json/flagpack':
         specifier: 1.2.6
         version: 1.2.6
-      '@iconify-json/lucide':
-        specifier: 1.2.70
-        version: 1.2.70
       '@iconify-json/mdi':
         specifier: 1.2.3
         version: 1.2.3
@@ -1156,9 +1153,6 @@ packages:
 
   '@iconify-json/flagpack@1.2.6':
     resolution: {integrity: sha512-4UMOAwKURxvGjr/EAYxt1wn8VyLM0XLlekFrXXXdXPaRB1kMd0p0zJD+TYunYQY9RiyD4xF0KSDt80zZxpRwJw==}
-
-  '@iconify-json/lucide@1.2.70':
-    resolution: {integrity: sha512-56s9NdBKgshywVY1e4gOcxzAbU1J649e/jLHBJU1tyNqRs7mFLVEGwj2mmzHJ5YAZB5Tsngi4f/ocTBPlG06ZA==}
 
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
@@ -9435,10 +9429,6 @@ snapshots:
   '@iarna/toml@3.0.0': {}
 
   '@iconify-json/flagpack@1.2.6':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/lucide@1.2.70':
     dependencies:
       '@iconify/types': 2.0.0
 

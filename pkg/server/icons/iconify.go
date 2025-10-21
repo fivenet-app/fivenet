@@ -38,7 +38,7 @@ func New(p Params) (*IconifyAPI, error) {
 			"/api/icons",
 			p.Config.Icons.Path,
 			iconifygo.WithHandlers("json"),
-			iconifygo.WithPreloadIconsets([]string{"simple-icons", "lucide", "mdi", "flagpack"}),
+			iconifygo.WithPreloadIconsets([]string{"mdi", "simple-icons", "flagpack"}),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create iconify server. %w", err)
