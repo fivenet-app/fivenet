@@ -66,7 +66,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
 
-                <UForm :schema="schema" :state="query" @submit="refresh">
+                <UForm :schema="schema" :state="query" class="flex items-center gap-2" @submit="refresh">
                     <UFormField name="search">
                         <UInput
                             v-model="query.search"
@@ -76,9 +76,11 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                             leading-icon="i-mdi-search"
                         />
                     </UFormField>
-                </UForm>
 
-                <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                    <UFormField>
+                        <SortButton v-model="query.sorting" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                    </UFormField>
+                </UForm>
             </div>
         </template>
 

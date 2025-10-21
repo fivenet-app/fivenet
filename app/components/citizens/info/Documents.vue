@@ -53,11 +53,11 @@ const schema = z.object({
                 .default([
                     {
                         id: 'createdAt',
-                        desc: false,
+                        desc: true,
                     },
                 ]),
         })
-        .default({ columns: [{ id: 'createdAt', desc: false }] }),
+        .default({ columns: [{ id: 'createdAt', desc: true }] }),
     page: pageNumberSchema,
 });
 
@@ -238,6 +238,7 @@ const formRef = useTemplateRef('formRef');
 
     <UTable
         v-else
+        v-model:sorting="query.sorting.columns"
         class="flex-1"
         :loading="isRequestPending(status)"
         :columns="columns"
