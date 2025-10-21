@@ -3,7 +3,6 @@ package wiki
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
@@ -217,8 +216,6 @@ func (s *Server) ListPages(
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 	}
-
-	fmt.Println(stmt.DebugSql())
 
 	for i := range pages {
 		s.enricher.EnrichJobName(pages[i])

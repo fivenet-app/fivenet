@@ -70,7 +70,6 @@ const { data, status, refresh, error } = useLazyAsyncData(
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
-        console.log(query);
         const call = documentsDocumentsClient.listUserDocuments({
             pagination: {
                 offset: calculateOffset(query.page, data.value?.pagination),
