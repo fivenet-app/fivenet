@@ -21,7 +21,7 @@ const { activeChar, can } = useAuth();
 
 const wikiWikiClient = await getWikiWikiClient();
 
-const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
+const { data: pages, status, refresh, error } = useLazyAsyncData(`wiki-pages-index`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {

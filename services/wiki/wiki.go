@@ -205,7 +205,7 @@ func (s *Server) ListPages(
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(tPageShort.Job.ASC(), tPageShort.SortKey.ASC(), tPageShort.ParentID.ASC(), tPageShort.Draft.ASC()).
+		ORDER_BY(tPageShort.Job.ASC(), tPageShort.ParentID.ASC().NULLS_FIRST(), tPageShort.SortKey.ASC(), tPageShort.Draft.ASC()).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(defaultWikiUpperLimit)
 

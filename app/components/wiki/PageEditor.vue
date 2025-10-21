@@ -120,7 +120,7 @@ const state = reactive<Schema>({
     files: [],
 });
 
-const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-${props.pageId}-editor`, () => listPages(), {
+const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-id:${props.pageId}-editor`, () => listPages(), {
     default: () => [] as PageShort[],
 });
 
