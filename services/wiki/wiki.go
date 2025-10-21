@@ -3,6 +3,7 @@ package wiki
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
@@ -75,8 +76,9 @@ func (s *Server) ListPages(
 				mysql.ROW_NUMBER().OVER(
 					mysql.PARTITION_BY(subPage.Job).
 						ORDER_BY(
-							subPage.SortKey.ASC(),
 							subPage.ParentID.ASC().NULLS_FIRST(),
+							subPage.SortKey.ASC(),
+							subPage.Draft.ASC(),
 							subPage.ID.ASC(),
 						),
 				).AS("rn"),
@@ -215,6 +217,8 @@ func (s *Server) ListPages(
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 	}
+
+	fmt.Println(stmt.DebugSql())
 
 	for i := range pages {
 		s.enricher.EnrichJobName(pages[i])
