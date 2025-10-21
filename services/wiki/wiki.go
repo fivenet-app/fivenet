@@ -68,46 +68,59 @@ func (s *Server) ListPages(
 
 		subPage := table.FivenetWikiPages.AS("sub_page")
 
-		// Use a subquery to get the first page per job (by min ID) with access checks
-		condition = condition.AND(tPageShort.ID.IN(
-			subPage.
-				SELECT(
-					mysql.MIN(subPage.ID).AS("min_id"),
-				).
-				WHERE(mysql.AND(
-					subPage.DeletedAt.IS_NULL(),
-					mysql.OR(
-						subPage.Public.IS_TRUE(),
-						mysql.AND(
-							subPage.Job.EQ(mysql.String(userInfo.GetJob())),
-							subPage.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+		rankedPages := subPage.
+			SELECT(
+				subPage.ID,
+				subPage.Job,
+				mysql.ROW_NUMBER().OVER(
+					mysql.PARTITION_BY(subPage.Job).
+						ORDER_BY(
+							subPage.SortKey.ASC(),
+							subPage.ParentID.ASC().NULLS_FIRST(),
+							subPage.ID.ASC(),
 						),
-						mysql.EXISTS(
-							mysql.
-								SELECT(mysql.Int(1)).
-								FROM(tPAccess).
-								WHERE(mysql.AND(
-									tPAccess.TargetID.EQ(subPage.ID),
-									tPAccess.Access.IS_NOT_NULL(),
-									tPAccess.Access.GT_EQ(
-										mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
-									),
-									mysql.OR(
-										tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
-										mysql.AND(
-											tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
-											tPAccess.MinimumGrade.LT_EQ(
-												mysql.Int32(userInfo.GetJobGrade()),
-											),
+				).AS("rn"),
+			).
+			FROM(subPage).
+			WHERE(mysql.AND(
+				subPage.DeletedAt.IS_NULL(),
+				mysql.OR(
+					subPage.Public.IS_TRUE(),
+					mysql.AND(
+						subPage.Job.EQ(mysql.String(userInfo.GetJob())),
+						subPage.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+					),
+					mysql.EXISTS(
+						mysql.
+							SELECT(mysql.Int(1)).
+							FROM(tPAccess).
+							WHERE(mysql.AND(
+								tPAccess.TargetID.EQ(subPage.ID),
+								tPAccess.Access.IS_NOT_NULL(),
+								tPAccess.Access.GT_EQ(
+									mysql.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)),
+								),
+								mysql.OR(
+									tPAccess.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
+									mysql.AND(
+										tPAccess.Job.EQ(mysql.String(userInfo.GetJob())),
+										tPAccess.MinimumGrade.LT_EQ(
+											mysql.Int32(userInfo.GetJobGrade()),
 										),
 									),
-								)),
-						),
+								),
+							)),
 					),
-				)).
-				ORDER_BY(subPage.ParentID.ASC().NULLS_FIRST()).
-				GROUP_BY(subPage.Job)),
-		)
+				),
+			),
+			).AsTable("ranked_pages")
+
+		condition = condition.AND(tPageShort.ID.IN(
+			rankedPages.
+				SELECT(mysql.IntegerColumn("sub_page.id")).
+				FROM(rankedPages).
+				WHERE(mysql.RawBool("ranked_pages.rn = 1")),
+		))
 	} else if !userInfo.GetSuperuser() {
 		accessExists := mysql.EXISTS(
 			mysql.

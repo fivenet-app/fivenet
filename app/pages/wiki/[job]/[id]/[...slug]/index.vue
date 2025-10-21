@@ -79,7 +79,9 @@ async function getPage(id: number): Promise<Page | undefined> {
 
 useHead({
     title: () =>
-        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.id.title')}` : t('pages.wiki.id.title'),
+        page.value?.meta?.title
+            ? `${page.value.meta.title} - ${page.value.jobLabel} - ${t('pages.wiki.id.title')}`
+            : t('pages.wiki.id.title'),
 });
 </script>
 

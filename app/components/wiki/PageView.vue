@@ -47,7 +47,8 @@ const breadcrumbs = computed(() => [
     },
     ...[
         !props.page && !isRequestPending(props.status) ? { label: t('pages.notfound.page_not_found') } : undefined,
-        props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
+        props.page?.jobLabel ? { label: props.page?.jobLabel } : undefined,
+        props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
         props.page?.meta
             ? {
                   label: !props.page.meta.title ? t('common.untitled') : props.page.meta.title,

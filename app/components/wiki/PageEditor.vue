@@ -65,7 +65,9 @@ async function getPage(id: number): Promise<Page | undefined> {
 
 useHead({
     title: () =>
-        page.value?.meta?.title ? `${page.value.meta.title} - ${t('pages.wiki.edit.title')}` : t('pages.wiki.edit.title'),
+        page.value?.meta?.title
+            ? `${page.value.meta.title} - ${page.value.jobLabel} - ${t('pages.wiki.edit.title')}`
+            : t('pages.wiki.edit.title'),
 });
 
 const notifications = useNotificationsStore();
