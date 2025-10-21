@@ -5,7 +5,7 @@ go 1.25.3
 require (
 	buf.build/go/protovalidate v1.0.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
-	github.com/DeRuina/timberjack v1.3.8
+	github.com/DeRuina/timberjack v1.3.9
 	github.com/HugoSmits86/nativewebp v1.2.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.40.0
