@@ -44,10 +44,10 @@ defineEmits</* @vue-ignore */ SelectMenuEmits<T, VK, M>>();
 const loading = ref(false);
 
 const searchTerm = ref('');
-const searchTermDebounced = debouncedRef(searchTerm, 200);
+const searchTermDebounced = debouncedRef(searchTerm, 175);
 
 const { data: items } = await useAsyncData(
-    `${props.searchableKey}-${searchTermDebounced.value}`,
+    () => `${props.searchableKey}-${searchTermDebounced.value}`,
     async () => {
         if (props.searchable === undefined) return [];
 
