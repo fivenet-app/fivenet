@@ -104,7 +104,7 @@ const formRef = useTemplateRef('formRef');
                         label="Max number of total reminders"
                         class="w-full"
                     >
-                        <UInput v-model="state.maxReminderCount" type="number" :min="1" :max="10" :step="1" />
+                        <UInputNumber v-model="state.maxReminderCount" :min="1" :max="10" :step="1" />
                     </UFormField>
                     -->
             </UForm>

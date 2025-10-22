@@ -84,6 +84,8 @@ if (nuiEnabled.value) {
     });
 }
 
+const baseMapRef = useTemplateRef('baseMapRef');
+
 const inititedDebounced = useDebounce(initiated, 750);
 const stoppingLivemapDebounced = useDebounce(stoppingLivemap, 500);
 const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
@@ -95,7 +97,7 @@ const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
             <DataErrorBlock :title="$t('components.livemap.failed_datastream')" :error="error" :retry="startStream" />
         </div>
 
-        <BaseMap :map-options="mapOptions">
+        <BaseMap ref="baseMapRef" :map-options="mapOptions">
             <template #default>
                 <SettingsButton />
 

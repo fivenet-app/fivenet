@@ -69,11 +69,21 @@ watchDebounced(query, async () => refresh(), {
     maxWait: 1250,
 });
 
+const baseMapRef = useTemplateRef('baseMapRef');
+const mapResizeFn = () => baseMapRef.value?.mapResize();
+
 onBeforeMount(() => (showLocationMarker.value = true));
-onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
+onMounted(async () => {
+    useTimeoutFn(() => (mount.value = true), 35);
+
+    nuiEvents.on('openTablet', mapResizeFn);
+});
 
 onBeforeUnmount(() => {
     showLocationMarker.value = false;
+});
+onUnmounted(() => {
+    nuiEvents.off('openTablet', mapResizeFn);
 });
 
 const input = useTemplateRef('input');
@@ -106,7 +116,7 @@ const mount = ref(false);
                 <Splitpanes v-if="mount" class="relative">
                     <Pane :min-size="25">
                         <ClientOnly>
-                            <BaseMap :map-options="{ zoomControl: false }">
+                            <BaseMap ref="baseMapRef" :map-options="{ zoomControl: false }">
                                 <template #default>
                                     <LazyLivemapTempMarker />
 
