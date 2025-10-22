@@ -1,5 +1,17 @@
 import type { TypedRouteFromName } from '@typed-router';
+import mitt from 'mitt';
 import { useSettingsStore } from '~/stores/settings';
+
+type NUIEvent<T = string> = {
+    type: T;
+};
+
+type NUIEvents = {
+    openTablet: NUIEvent<'openTablet'> & { state: boolean };
+    closeTablet: NUIEvent<'closeTablet'> & { state: boolean };
+};
+
+export const nuiEvents = mitt<NUIEvents>();
 
 const logger = useLogger('🎮 NUI');
 
@@ -17,7 +29,7 @@ function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
 }
 
-const focusNUITargets = ['input', 'textarea'];
+const focusNUITargets = ['input', 'textarea'] as const;
 
 /**
  *
@@ -60,12 +72,18 @@ type NUIMessage =
           route: TypedRouteFromName<any>;
       }
     | {
+          type: 'openTablet';
+          state: boolean;
+      }
+    | {
           type: undefined;
       };
 
 export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<void> {
     if (event.data.type === 'navigateTo') {
         await navigateTo(event.data.route);
+    } else if (event.data.type === 'openTablet') {
+        nuiEvents.emit('openTablet', { type: 'openTablet', state: event.data.state });
     } else {
         logger.error('Message - Unknown message type received', event.data);
     }

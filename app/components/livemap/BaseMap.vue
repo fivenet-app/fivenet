@@ -76,8 +76,7 @@ const customCRS = extend({}, CRS.Simple, {
     infinite: true,
 });
 
-// eslint-disable-next-line prefer-const
-let center: PointExpression = [0, 0];
+const center = ref<PointExpression>([0, 0]);
 
 const mouseLat = ref<number>(0);
 const mouseLong = ref<number>(0);
@@ -252,6 +251,10 @@ watch(
         }
     },
 );
+
+defineExpose({
+    mapResize,
+});
 
 onBeforeUnmount(() => {
     map = undefined;

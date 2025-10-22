@@ -729,7 +729,8 @@
         "no_signature": "Keine Signatur angegeben",
         "coming_soon": "Demnächst verfügbar",
         "optional": "Optional",
-        "startpage": "Startseite"
+        "startpage": "Startseite",
+        "shape": "Form | Formen"
     },
     "components": {
         "partials": {
