@@ -125,10 +125,8 @@ function clickListener(event: MouseEvent): void {
 onMounted(async () => {
     if (!import.meta.client) return;
 
-    if (nuiEnabled.value) {
-        // NUI message handling
-        window.addEventListener('message', onNUIMessage);
-    }
+    // NUI message handling
+    if (nuiEnabled.value) window.addEventListener('message', onNUIMessage);
 
     window.addEventListener('click', clickListener);
     window.addEventListener('focusin', onFocusHandler, true);
@@ -138,10 +136,8 @@ onMounted(async () => {
 onBeforeUnmount(async () => {
     if (!import.meta.client) return;
 
-    if (nuiEnabled.value) {
-        // NUI message handling
-        window.removeEventListener('message', onNUIMessage);
-    }
+    // NUI message handling
+    if (nuiEnabled.value) window.removeEventListener('message', onNUIMessage);
 
     window.removeEventListener('click', clickListener);
     window.removeEventListener('focusin', onFocusHandler);

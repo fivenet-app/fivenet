@@ -736,7 +736,8 @@
         "hidden_markers": "Hidden Markers",
         "month": "month | months",
         "singular": "Singular",
-        "plural": "Plural"
+        "plural": "Plural",
+        "shape": "Shape | Shapes"
     },
     "components": {
         "partials": {

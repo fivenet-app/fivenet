@@ -97,6 +97,7 @@ const smallerThanSm = breakpoints.smaller('sm');
             :icon="hideIcon || smallerThanSm ? undefined : 'i-mdi-calendar'"
             class="inline-flex w-full gap-2"
             block
+            v-bind="button"
         >
             <template v-if="modelValue">
                 {{
