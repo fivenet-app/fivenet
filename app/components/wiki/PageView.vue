@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
+import type { ContentNavigationItem } from '@nuxt/content';
 import type { ContentSurroundLink } from '@nuxt/ui-pro/runtime/components/content/ContentSurround.vue.js';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
@@ -22,6 +23,7 @@ import PageSearch from './PageSearch.vue';
 const props = defineProps<{
     page: Page | undefined;
     pages: PageShort[];
+    navItems?: ContentNavigationItem[];
     status: AsyncDataRequestStatus;
     refresh: () => Promise<void>;
     error: Error | undefined;
@@ -167,7 +169,7 @@ const scrollRef = useTemplateRef('scrollRef');
 </script>
 
 <template>
-    <UDashboardPanel :ui="{ body: 'gap-0 sm:gap-0' }">
+    <UDashboardPanel :ui="{ body: 'py-0 sm:py-0 lg:py-6 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
                 <template #leading>
@@ -202,12 +204,14 @@ const scrollRef = useTemplateRef('scrollRef');
         </template>
 
         <template #body>
-            <UPage ref="scrollRef">
+            <UPage ref="scrollRef" :ui="{}">
                 <template #left>
                     <slot name="left" />
                 </template>
 
-                <UBreadcrumb class="pb-1" :items="breadcrumbs" />
+                <UContentNavigation class="mt-4 lg:hidden" :navigation="navItems" />
+
+                <UBreadcrumb class="pt-4 lg:pt-0" :items="breadcrumbs" />
 
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock
@@ -252,7 +256,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     <UPageHeader
                         v-if="page?.meta"
                         :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
-                        :ui="{ wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
+                        :ui="{ root: 'py-4', wrapper: 'py-4', title: !page.meta.title ? 'italic' : '' }"
                     >
                         <template #links>
                             <UTooltip :text="$t('common.refresh')">
@@ -399,8 +403,11 @@ const scrollRef = useTemplateRef('scrollRef');
                     </UPageBody>
                 </template>
 
-                <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                    <UContentToc class="lg:col-span-2" :title="$t('common.toc')" :links="tocLinks" />
+                <template
+                    v-if="(page?.meta?.toc === undefined || page?.meta?.toc === true) && tocLinks && tocLinks?.length > 0"
+                    #right
+                >
+                    <UContentToc class="lg:col-span-2" :title="$t('common.toc')" :links="tocLinks" :ui="{ root: 'top-0' }" />
                 </template>
             </UPage>
 
