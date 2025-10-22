@@ -734,7 +734,8 @@
         "unfollow": "Unfollow",
         "choose_one": "Choose one",
         "hidden_markers": "Hidden Markers",
-        "month": "month | months"
+        "month": "month | months",
+        "shape": "Shape | Shapes"
     },
     "components": {
         "partials": {

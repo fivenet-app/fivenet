@@ -369,9 +369,8 @@ const formRef = useTemplateRef('formRef');
                                 name="configuration.deduplicationDuration"
                                 :label="$t('components.centrum.settings.deduplication.deduplication_duration')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.configuration.deduplicationDuration"
-                                    type="number"
                                     :min="30"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
@@ -385,9 +384,8 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('components.centrum.settings.deduplication.deduplication_radius')"
                                 :description="$t('components.centrum.settings.deduplication.deduplication_radius_description')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.configuration.deduplicationRadius"
-                                    type="number"
                                     :min="5"
                                     :placeholder="$t('common.meters', 2)"
                                     :disabled="!canSubmit"
@@ -398,7 +396,7 @@ const formRef = useTemplateRef('formRef');
                                             {{ $t('common.meters', 2) }}
                                         </span>
                                     </template>
-                                </UInput>
+                                </UInputNumber>
                             </UFormField>
                         </UPageCard>
                     </template>
@@ -505,9 +503,8 @@ const formRef = useTemplateRef('formRef');
                                 name="timings.dispatchMaxWait"
                                 :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.timings.dispatchMaxWait"
-                                    type="number"
                                     :min="30"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
@@ -528,9 +525,8 @@ const formRef = useTemplateRef('formRef');
                                 name="timings.requireUnitReminderSeconds"
                                 :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.timings.requireUnitReminderSeconds"
-                                    type="number"
                                     :min="60"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
