@@ -4,7 +4,7 @@ services:
   # Database - Used for testing only
   mysql:
     container_name: mysql
-    image: docker.io/library/mysql:9.4.0
+    image: docker.io/library/mysql:9.5.0
     command:
       - "mysqld"
       - "--innodb-ft-min-token-size=2"
