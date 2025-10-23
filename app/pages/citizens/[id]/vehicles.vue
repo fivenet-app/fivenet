@@ -6,5 +6,5 @@ const user = defineModel<User>('user', { required: true });
 </script>
 
 <template>
-    <List :user-id="user.userId" hide-owner hide-citizen-link />
+    <List :user-id="user.userId" hide-owner hide-citizen-link search-key="citizen_vehicles" />
 </template>

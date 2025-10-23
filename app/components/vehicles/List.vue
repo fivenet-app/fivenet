@@ -29,12 +29,14 @@ const props = withDefaults(
         hideOwner?: boolean;
         hideCitizenLink?: boolean;
         hideCopy?: boolean;
+        searchKey?: string;
     }>(),
     {
         userId: undefined,
         hideOwner: false,
         hideCitizenLink: false,
         hideCopy: false,
+        searchKey: 'vehicles',
     },
 );
 
@@ -67,10 +69,10 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
-const query = useSearchForm('vehicles', schema);
+const query = useSearchForm(props.searchKey, schema);
 
 if (props.userId !== undefined && !query.userIds?.includes(props.userId)) {
-    query.userIds = [...(query.userIds ?? []), props.userId];
+    query.userIds = [props.userId];
 }
 
 const hideVehicleModell = ref(false);
