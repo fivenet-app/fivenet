@@ -2,7 +2,7 @@
 import type { Range } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
-import { fontColors, highlightColors } from '~/types/editor';
+import { fontColors, fonts, highlightColors } from '~/types/editor';
 import type { Content, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -28,8 +28,6 @@ const emits = defineEmits<{
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
-const { t } = useI18n();
-
 const overlay = useOverlay();
 
 const settingsStore = useSettingsStore();
@@ -43,33 +41,6 @@ const { ui, attach, detach } = useTiptapToolbar(() => unref(ed));
 
 onMounted(attach);
 onBeforeUnmount(detach);
-
-const fonts = [
-    {
-        label: t('common.default'),
-        value: 'Public Sans',
-    },
-    {
-        label: 'Arial',
-        value: 'arial, helvetica, sans-serif',
-    },
-    {
-        label: 'Serif',
-        value: 'serif',
-    },
-    {
-        label: 'Times New Romain',
-        value: 'times new roman, times, serif',
-    },
-    {
-        label: 'Comic Sans',
-        value: 'Comic Sans MS, Comic Sans',
-    },
-    {
-        label: 'Monospace',
-        value: 'monospace',
-    },
-];
 
 const fileListModal = overlay.create(FileListModal);
 const sourceCodeModal = overlay.create(SourceCodeModal);
@@ -393,10 +364,14 @@ const isLinkOpen = ref(false);
                 :style="{ fontFamily: selectedFont.value }"
             >
                 <template #item-label="{ item }">
-                    <span class="truncate" :style="{ fontFamily: item.value }">{{ item.label }}</span>
+                    <span class="truncate" :style="{ fontFamily: item.value }">{{
+                        item.label.includes('.') ? $t(item.label) : item.label
+                    }}</span>
                 </template>
 
-                <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                <template #empty>
+                    {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
+                </template>
             </UInputMenu>
         </UTooltip>
 

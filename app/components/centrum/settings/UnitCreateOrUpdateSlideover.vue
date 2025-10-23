@@ -44,7 +44,7 @@ const schema = z.object({
     description: z.union([z.coerce.string().min(1).max(255), z.coerce.string().length(0).optional()]),
     color: z.coerce.string().length(7),
     icon: z.coerce.string().max(128).optional(),
-    homePostal: z.union([z.coerce.string().min(1).max(48), z.coerce.string().length(0).optional()]),
+    homePostal: z.union([z.coerce.string().trim().min(1).max(48), z.coerce.string().trim().length(0).optional()]),
     attributes: z.enum(UnitAttribute).array().max(5).default([]),
     access: z.object({
         jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),

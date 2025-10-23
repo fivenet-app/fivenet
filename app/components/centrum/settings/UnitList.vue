@@ -163,8 +163,7 @@ const columns = [
         accessorKey: 'icon',
         header: t('common.icon'),
         cell: ({ row }) =>
-            h('component', {
-                is: availableIcons.find((item) => item.name === row.original.icon)?.component ?? fallbackIcon.component,
+            h(availableIcons.find((item) => item.name === row.original.icon)?.component ?? fallbackIcon.component, {
                 class: 'size-5',
                 fill: row.original.color ?? 'currentColor',
             }),

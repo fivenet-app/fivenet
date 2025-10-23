@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import Vehicles from '~/components/citizens/info/Vehicles.vue';
+import List from '~/components/vehicles/List.vue';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 const user = defineModel<User>('user', { required: true });
 </script>
 
 <template>
-    <Vehicles :user-id="user.userId" />
+    <List :user-id="user.userId" hide-owner hide-citizen-link />
 </template>

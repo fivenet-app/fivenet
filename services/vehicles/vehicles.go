@@ -127,9 +127,7 @@ func (s *Server) ListVehicles(
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []mysql.OrderByClause{
-		tVehicles.Type.ASC(),
-	}
+	orderBys := []mysql.OrderByClause{}
 	if req.GetSort() != nil {
 		var column mysql.Column
 		switch req.GetSort().GetColumn() {
@@ -149,6 +147,7 @@ func (s *Server) ListVehicles(
 	} else {
 		orderBys = append(orderBys, tVehicles.Plate.ASC())
 	}
+	orderBys = append(orderBys, tVehicles.Type.ASC())
 
 	columns := dbutils.Columns{
 		modelColumn,

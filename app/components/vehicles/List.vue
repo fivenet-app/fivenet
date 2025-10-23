@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { UBadge, UButton } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -37,6 +38,8 @@ const props = withDefaults(
     },
 );
 
+const appConfig = useAppConfig();
+
 const clipboardStore = useClipboardStore();
 
 const notifications = useNotificationsStore();
@@ -66,6 +69,10 @@ const schema = z.object({
 
 const query = useSearchForm('vehicles', schema);
 
+if (props.userId !== undefined && !query.userIds?.includes(props.userId)) {
+    query.userIds = [...(query.userIds ?? []), props.userId];
+}
+
 const hideVehicleModell = ref(false);
 
 const { data, status, refresh, error } = useLazyAsyncData(
@@ -85,6 +92,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             userIds: query.userIds,
             wanted: query.wanted,
         });
+        console.log('query', query);
         const { response } = await call;
 
         if (response.vehicles.length > 0) {
@@ -124,10 +132,6 @@ function updateVehicle(plate: string, vehicle: Vehicle): void {
         data.value.vehicles[index] = vehicle;
     }
 }
-
-const UBadge = resolveComponent('UBadge');
-const UButton = resolveComponent('UButton');
-const appConfig = useAppConfig();
 
 const columns = computed(() =>
     (

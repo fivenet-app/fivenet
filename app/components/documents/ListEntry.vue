@@ -153,7 +153,7 @@ const links = computed(() =>
                         </div>
 
                         <div class="flex flex-1 items-center justify-center gap-1.5">
-                            <template v-if="document.workflowState?.autoCloseTime">
+                            <template v-if="!document.meta?.closed && document.workflowState?.autoCloseTime">
                                 <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
                                 <p class="inline-flex gap-1 text-nowrap">
                                     <span class="hidden truncate lg:block">

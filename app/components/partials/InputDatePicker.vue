@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="R extends boolean, M extends boolean">
 import { CalendarDate, getLocalTimeZone } from '@internationalized/date';
-import type { CalendarProps } from '@nuxt/ui';
+import type { ButtonProps, CalendarProps } from '@nuxt/ui';
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { format } from 'date-fns';
 
@@ -13,6 +13,9 @@ export interface Props<R extends boolean = false, M extends boolean = false>
     time?: boolean;
     dateFormat?: string | undefined;
     customDateFormat?: string | 'ago' | undefined;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    button?: ButtonProps & { style?: Record<string, any> };
+    hideIcon?: boolean;
 }
 
 const props = withDefaults(defineProps<Props<R, M>>(), {
@@ -21,6 +24,8 @@ const props = withDefaults(defineProps<Props<R, M>>(), {
     class: '',
     dateFormat: 'short',
     customDateFormat: undefined,
+    button: undefined,
+    hideIcon: false,
 });
 
 const emits = defineEmits<{
@@ -87,7 +92,7 @@ const smallerThanSm = breakpoints.smaller('sm');
         <UButton
             color="neutral"
             variant="subtle"
-            :icon="smallerThanSm ? undefined : 'i-mdi-calendar'"
+            :icon="hideIcon || smallerThanSm ? undefined : 'i-mdi-calendar'"
             class="inline-flex w-full gap-2"
             block
         >

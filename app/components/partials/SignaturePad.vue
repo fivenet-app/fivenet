@@ -1,4 +1,11 @@
 <script lang="ts" setup>
+defineProps<{
+    transparent?: boolean;
+    disabled?: boolean;
+}>();
+
+const signatureSvg = defineModel<string | undefined>();
+
 const settingsStore = useSettingsStore();
 const { signature: signatureSettings } = storeToRefs(settingsStore);
 
@@ -21,6 +28,17 @@ const colors = [
 
 const signaturePad = useTemplateRef('signaturePad');
 
+function handleSave() {
+    const sig = signaturePad.value?.saveSignature('image/svg+xml') ?? '';
+    if (sig === '' || !sig.startsWith('data:image/svg+xml;')) {
+        signatureSvg.value = undefined;
+        return;
+    }
+
+    // atob? Yes, because supporting FiveM's NUI CEF version 103 is fun..
+    signatureSvg.value = atob(sig.replace(/^data:image\/svg\+xml;base64,/, ''));
+}
+
 function handleUndo() {
     signaturePad.value?.undo();
 }
@@ -41,15 +59,17 @@ defineExpose({
                 ref="signaturePad"
                 height="350px"
                 width="900px"
+                :disabled="disabled"
                 :min-width="signatureSettings.minStrokeWidth"
                 :max-width="signatureSettings.maxStrokeWidth"
                 :options="{
                     penColor: signatureSettings.penColor,
-                    backgroundColor: 'rgb(255, 255, 255)',
+                    backgroundColor: !transparent ? 'rgb(255, 255, 255)' : 'rgba(255,255,255,0)',
                 }"
+                @end-stroke="handleSave"
             />
 
-            <UButtonGroup class="absolute bottom-0 left-0 flex flex-row">
+            <UButtonGroup v-if="!disabled" class="absolute bottom-0 left-0 flex flex-row">
                 <UBadge icon="i-mdi-color" class="!cursor-default rounded-l-none" size="lg" />
 
                 <UButton
@@ -68,7 +88,7 @@ defineExpose({
                 </UButton>
             </UButtonGroup>
 
-            <UButtonGroup class="absolute right-0 bottom-0 flex flex-row">
+            <UButtonGroup v-if="!disabled" class="absolute right-0 bottom-0 flex flex-row">
                 <UTooltip :text="$t('common.undo')">
                     <UButton icon="i-mdi-undo" class="rounded-bl-none" @click="handleUndo" />
                 </UTooltip>
@@ -79,7 +99,7 @@ defineExpose({
             </UButtonGroup>
         </div>
 
-        <template #footer>
+        <template v-if="!disabled" #footer>
             <UPopover :ui="{ content: 'p-4 w-full max-w-lg' }">
                 <UButton
                     :label="$t('common.setting', 2)"

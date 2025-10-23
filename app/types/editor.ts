@@ -117,3 +117,30 @@ export const highlightColors = [
         value: '#b197fc',
     } as const,
 ];
+
+export const fonts = [
+    {
+        label: 'common.default',
+        value: 'Public Sans',
+    },
+    {
+        label: 'Arial',
+        value: 'arial, helvetica, sans-serif',
+    },
+    {
+        label: 'Serif',
+        value: 'serif',
+    },
+    {
+        label: 'Times New Romain',
+        value: 'times new roman, times, serif',
+    },
+    {
+        label: 'Comic Sans',
+        value: 'Comic Sans MS, Comic Sans',
+    },
+    {
+        label: 'Monospace',
+        value: 'monospace',
+    },
+];
