@@ -955,7 +955,8 @@
                 "satelite": "Satellitenansicht"
             },
             "show_grid": "Raster anzeigen",
-            "toggle_all_layers": "Alle Ebenen umschalten"
+            "toggle_all_layers": "Alle Ebenen umschalten",
+            "use_unit_color": "Einheitsfarbe für Icon verwenden"
         },
         "debug_info": {
             "title": "Debug-Informationen",

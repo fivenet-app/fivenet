@@ -44,6 +44,7 @@ export const useSettingsStore = defineStore(
             showAllDispatches: false,
             showGrid: false,
             showHeatmap: false,
+            useUnitColor: true,
         });
 
         const centrum = ref({

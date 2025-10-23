@@ -16,6 +16,7 @@ const schema = z.object({
     showUnitStatus: z.coerce.boolean(),
     showAllDispatches: z.coerce.boolean(),
     showGrid: z.coerce.boolean(),
+    useUnitColor: z.coerce.boolean(),
 });
 </script>
 
@@ -64,6 +65,10 @@ const schema = z.object({
 
                     <UFormField name="showGrid" :label="$t('components.livemap.show_grid')">
                         <USwitch v-model="livemap.showGrid" />
+                    </UFormField>
+
+                    <UFormField name="useUnitColor" :label="$t('components.livemap.use_unit_color')">
+                        <USwitch v-model="livemap.useUnitColor" />
                     </UFormField>
                 </UForm>
             </UContainer>

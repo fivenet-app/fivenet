@@ -955,7 +955,8 @@
                 "satelite": "Satellite"
             },
             "show_grid": "Show Grid",
-            "toggle_all_layers": "Toggle All Layers"
+            "toggle_all_layers": "Toggle All Layers",
+            "use_unit_color": "Use Unit Color for Icon"
         },
         "debug_info": {
             "title": "Debug Info",

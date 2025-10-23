@@ -8,6 +8,7 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
+import Pagination from '~/components/partials/Pagination.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -185,45 +186,61 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('common.unit', 2)">
-        <template #right>
-            <PartialsBackButton fallback-to="/centrum" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('common.unit', 2)">
+                <template #right>
+                    <PartialsBackButton fallback-to="/centrum" />
 
-            <UTooltip v-if="can('centrum.CentrumService/Stream').value" :text="$t('common.setting', 2)">
-                <UButton icon="i-mdi-settings" to="/centrum/settings">
-                    <span class="hidden truncate sm:block">
-                        {{ $t('common.setting', 2) }}
-                    </span>
-                </UButton>
-            </UTooltip>
+                    <UTooltip v-if="can('centrum.CentrumService/Stream').value" :text="$t('common.setting', 2)">
+                        <UButton icon="i-mdi-settings" to="/centrum/settings">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.setting', 2) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
 
-            <UButton
-                v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
-                trailing-icon="i-mdi-plus"
-                color="neutral"
-                @click="
-                    unitCreateOrUpdateSlideover.open({
-                        onCreated: async () => refresh(),
-                        onUpdated: async () => refresh(),
-                    })
-                "
-            >
-                <span class="hidden truncate sm:block">
-                    {{ $t('components.centrum.units.create_unit') }}
-                </span>
-            </UButton>
+                    <UButton
+                        v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
+                        trailing-icon="i-mdi-plus"
+                        color="neutral"
+                        @click="
+                            unitCreateOrUpdateSlideover.open({
+                                onCreated: async () => refresh(),
+                                onUpdated: async () => refresh(),
+                            })
+                        "
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('components.centrum.units.create_unit') }}
+                        </span>
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
         </template>
-    </UDashboardNavbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :error="error" :retry="refresh" />
+        <template #body>
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.unit', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
 
-    <UTable
-        class="flex-1"
-        :loading="isRequestPending(status)"
-        :columns="columns"
-        :data="units?.units"
-        :empty="$t('common.not_found', [$t('common.unit', 2)])"
-        :sorting-options="{ manualSorting: true }"
-        :pagination-options="{ manualPagination: true }"
-    />
+            <UTable
+                v-else
+                class="flex-1"
+                :loading="isRequestPending(status)"
+                :columns="columns"
+                :data="units?.units"
+                :empty="$t('common.not_found', [$t('common.unit', 2)])"
+                :sorting-options="{ manualSorting: true }"
+                :pagination-options="{ manualPagination: true }"
+            />
+        </template>
+
+        <template #footer>
+            <Pagination :status="status" :refresh="refresh" />
+        </template>
+    </UDashboardPanel>
 </template>

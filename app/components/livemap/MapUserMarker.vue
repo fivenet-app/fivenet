@@ -17,11 +17,13 @@ const props = withDefaults(
         size?: number;
         showUnitNames?: boolean;
         showUnitStatus?: boolean;
+        useUnitColor?: boolean;
     }>(),
     {
         size: 20,
         showUnitNames: false,
         showUnitStatus: false,
+        useUnitColor: false,
     },
 );
 
@@ -48,9 +50,7 @@ const markerColor = computed(() =>
 
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
 const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
-const unitInverseColor = computed(() => {
-    return hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, rgbBlack)!;
-});
+const unitInverseColor = computed(() => hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, rgbBlack)!);
 
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
@@ -89,8 +89,13 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                 >
                     {{ unit?.initials }}
                 </span>
-                <component :is="icon" class="size-full" :style="{ color: markerColor }" />
+                <component
+                    :is="icon"
+                    class="size-full"
+                    :style="{ color: useUnitColor ? (unit?.color ?? markerColor) : markerColor }"
+                />
             </div>
+
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute top-0 right-0 -mt-1.5 -mr-2 flex size-3">
                     <span

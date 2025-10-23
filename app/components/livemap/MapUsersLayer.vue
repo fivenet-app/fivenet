@@ -96,6 +96,7 @@ const playerMarkersFiltered = computedAsync(async () =>
             :size="livemap.markerSize"
             :show-unit-names="showUnitNames || livemap.showUnitNames"
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
+            :use-unit-color="livemap.useUnitColor"
             @selected="$emit('userSelected', marker)"
         />
     </LLayerGroup>
