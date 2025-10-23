@@ -22,3 +22,11 @@ func Int64P(v int64) mysql.IntegerExpression {
 	}
 	return mysql.Int64(v)
 }
+
+// Int32P helper for nullable int32, assumes that 0 is null.
+func Int32P(v int32) mysql.IntegerExpression {
+	if v == 0 {
+		return mysql.IntExp(mysql.NULL)
+	}
+	return mysql.Int32(v)
+}

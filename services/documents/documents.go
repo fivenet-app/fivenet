@@ -734,6 +734,23 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
+	// Fill in and create new approval policy
+	newPol := &documents.ApprovalPolicy{}
+	if apr.GetPolicy() != nil {
+		newPol.RuleKind = apr.GetPolicy().GetRuleKind()
+		newPol.OnEditBehavior = apr.GetPolicy().GetOnEditBehavior()
+		requiredCount := apr.GetPolicy().GetRequiredCount()
+		if requiredCount > 0 {
+			newPol.RequiredCount = &requiredCount
+		}
+		newPol.SignatureRequired = apr.GetPolicy().GetSignatureRequired()
+	}
+	newPol.Default()
+
+	if err = s.createApprovalPolicy(ctx, tx, documentId, newPol); err != nil {
+		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	now := time.Now()
 
 	seeds := []*pbdocuments.ApprovalTaskSeed{}

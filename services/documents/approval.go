@@ -383,6 +383,35 @@ func (s *Server) getOrCreateApprovalPolicy(
 		return pol, nil
 	}
 
+	requiredCount := int32(1)
+	if err = s.createApprovalPolicy(ctx, tx, documentId, &documents.ApprovalPolicy{
+		SnapshotDate:      timestamp.Now(),
+		RuleKind:          documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL,
+		RequiredCount:     &requiredCount,
+		OnEditBehavior:    documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS,
+		SignatureRequired: false,
+	}); err != nil {
+		return nil, err
+	}
+
+	pol, err = s.getApprovalPolicy(ctx, tx, condition)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+	if pol == nil {
+		return nil, errorsdocuments.ErrFailedQuery
+	}
+
+	return pol, nil
+}
+
+func (s *Server) createApprovalPolicy(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId int64,
+	pol *documents.ApprovalPolicy,
+) error {
+	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies
 	// Create a new policy if it doesn't exist
 	if _, err := tApprovalPolicy.
 		INSERT(
@@ -395,25 +424,17 @@ func (s *Server) getOrCreateApprovalPolicy(
 		).
 		VALUES(
 			documentId,
-			mysql.CURRENT_TIMESTAMP(),
-			int32(documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL),
-			1,
-			int32(documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS),
-			false,
+			pol.GetSnapshotDate(),
+			int32(pol.GetRuleKind()),
+			dbutils.Int32P(pol.GetRequiredCount()),
+			pol.GetOnEditBehavior(),
+			pol.GetSignatureRequired(),
 		).
 		ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return err
 	}
 
-	pol, err = s.getApprovalPolicy(ctx, tx, condition)
-	if err != nil {
-		return nil, err
-	}
-	if pol == nil {
-		return nil, errorsdocuments.ErrFailedQuery
-	}
-
-	return pol, nil
+	return nil
 }
 
 // UpsertApprovalPolicy.
