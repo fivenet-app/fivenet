@@ -25,17 +25,18 @@ export function getPageAtivityIcon(activityType: PageActivityType): string {
     }
 }
 
-export function checkPageAccess(access: PageAccess | undefined, creator: UserLike | undefined, level: AccessLevel) {
+export function checkPageAccess(
+    access: PageAccess | undefined,
+    creator: UserLike | undefined,
+    level: AccessLevel,
+    creatorJob?: string,
+): boolean {
     const { activeChar, isSuperuser } = useAuth();
-    if (isSuperuser.value) {
-        return true;
-    }
+    if (isSuperuser.value) return true;
 
-    if (activeChar.value === null) {
-        return false;
-    }
+    if (activeChar.value === null) return false;
 
-    return checkAccess(activeChar.value, access, creator, level);
+    return checkAccess(activeChar.value, access, creator, level, creatorJob);
 }
 
 export function pageToURL(page: PageShort | Page, fullUrl: boolean = false): string {

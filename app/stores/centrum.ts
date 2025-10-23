@@ -381,9 +381,7 @@ export const useCentrumStore = defineStore(
                     const resp = respRaw as StreamResponse;
                     error.value = undefined;
 
-                    if (!resp || !resp.change) {
-                        continue;
-                    }
+                    if (!resp || !resp.change) continue;
 
                     logger.debug('Received change - oneofKind:', resp.change.oneofKind, resp.change);
 

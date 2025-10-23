@@ -365,7 +365,7 @@ func (s *Server) handlPermissionsUpdate(
 
 	removePermIds := make([]int64, len(permsUpdate.GetToRemove()))
 	for i := range permsUpdate.GetToRemove() {
-		removePermIds[i] = permsUpdate.GetToUpdate()[i].GetId()
+		removePermIds[i] = permsUpdate.GetToRemove()[i].GetId()
 	}
 	toDelete, err := s.filterPermissionIDs(ctx, role.GetJob(), removePermIds)
 	if err != nil {

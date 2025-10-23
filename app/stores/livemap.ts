@@ -85,17 +85,20 @@ export const useLivemapStore = defineStore(
                     const resp = respRaw as StreamResponse;
                     error.value = undefined;
 
-                    if (!resp || !resp.data) {
-                        continue;
-                    }
+                    if (!resp || !resp.data) continue;
 
-                    if (resp.userOnDuty !== undefined) {
-                        userOnDuty.value = resp.userOnDuty;
-                    }
+                    if (resp.userOnDuty !== undefined) userOnDuty.value = resp.userOnDuty;
 
                     logger.debug('Received change - oneofKind:', resp.data.oneofKind, resp.data);
 
                     if (resp.data.oneofKind === 'jobs') {
+                        logger.info(
+                            'Jobs received. Users:',
+                            resp.data.jobs.users.length,
+                            'markers:',
+                            resp.data.jobs.markers.length,
+                        );
+
                         jobsMarkers.value = resp.data.jobs.markers;
                         jobsUsers.value = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {

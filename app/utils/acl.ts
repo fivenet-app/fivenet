@@ -30,18 +30,15 @@ export function checkAccess<L = number>(
     level: L,
     creatorJob?: string,
 ): boolean {
-    if (access === undefined) {
-        return false;
-    }
+    if (access === undefined) return false;
 
     if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job)) {
+        console.log('here', creatorJob, creator.job);
         return true;
     }
 
     const ju = access.users?.find((ua) => ua.userId === activeChar.userId && level <= ua.access);
-    if (ju !== undefined) {
-        return true;
-    }
+    if (ju !== undefined) return true;
 
     if (access.jobs !== undefined) {
         let lowestAccess: L | undefined = undefined;

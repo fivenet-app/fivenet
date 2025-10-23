@@ -79,8 +79,8 @@ const confirmModal = overlay.create(ConfirmModal);
 const { ydoc, provider } = await useCollabDoc('wiki', props.pageId);
 
 const canDo = computed(() => ({
-    access: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.ACCESS),
-    edit: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.EDIT),
+    access: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.ACCESS, page.value?.job),
+    edit: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.EDIT, page.value?.job),
     public: attr('wiki.WikiService/UpdatePage', 'Fields', 'Public').value,
 }));
 

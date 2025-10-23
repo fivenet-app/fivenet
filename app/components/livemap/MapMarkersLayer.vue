@@ -17,8 +17,8 @@ const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
-watch(jobsMarkers, () =>
-    jobsMarkers.value.forEach((job) =>
+watch(jobsMarkers, (val) =>
+    val.forEach((job) =>
         addOrUpdateLivemapLayer({
             key: `markers_${job.name}`,
             category: 'markers',

@@ -76,6 +76,11 @@ const _useAuth = () => {
                 return a.value.validValues.stringList.strings.includes(val);
             } else if (a?.value?.validValues.oneofKind === 'jobList') {
                 return a.value.validValues.jobList.strings.includes(val);
+            } else if (a?.value?.validValues.oneofKind === 'jobGradeList') {
+                return (
+                    a.value.validValues.jobGradeList.jobs[val] !== undefined ||
+                    a.value.validValues.jobGradeList.grades[val] !== undefined
+                );
             }
 
             return false;

@@ -3,6 +3,7 @@ package documents
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
@@ -1649,7 +1650,10 @@ func (s *Server) DecideApproval(
 		)).
 		LIMIT(1).
 		QueryContext(ctx, tx, &artifact); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		return nil, errswrap.NewError(
+			fmt.Errorf("failed to get approval artifact. %w", err),
+			errorsdocuments.ErrFailedQuery,
+		)
 	}
 
 	if decidedTask != nil && artifact.Id > 0 {

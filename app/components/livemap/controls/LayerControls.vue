@@ -20,6 +20,7 @@ const groupedLayers = computed(() => {
         },
         {} as Record<string, LivemapLayer[]>,
     );
+
     // Sort the layers within each category
     Object.keys(reduced).forEach((key) => reduced[key]?.sort((a, b) => a.label.localeCompare(b.label)));
 

@@ -134,11 +134,13 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             {{ dispatch.jobs?.jobs.map((j) => j.label ?? j.name).join(', ') }}
                         </span>
                     </li>
+
                     <li>
                         <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                         {{ $d(toDate(dispatch.createdAt), 'short') }}
                     </li>
-                    <li class="inline-flex gap-1">
+
+                    <li class="flex gap-1">
                         <span class="flex-initial">
                             <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
                         </span>
@@ -152,25 +154,31 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             </template>
                         </span>
                     </li>
+
                     <li>
                         <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
                     </li>
+
                     <li>
                         <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
                     </li>
+
                     <li class="truncate">
                         <span class="font-semibold">{{ $t('common.description') }}:</span>
                         {{ dispatch.description ?? $t('common.na') }}
                     </li>
-                    <li class="inline-flex gap-1">
+
+                    <li class="flex gap-1">
                         <span class="font-semibold">{{ $t('common.status') }}:</span>
                         <DispatchStatusBadge :status="dispatch.status?.status" />
                     </li>
-                    <li class="inline-flex gap-1">
+
+                    <li class="flex gap-1">
                         <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
                         <DispatchAttributes :attributes="dispatch.attributes" size="xs" />
                     </li>
-                    <li class="inline-flex gap-1">
+
+                    <li class="flex gap-1">
                         <span class="font-semibold">{{ $t('common.unit') }}:</span>
 
                         <span v-if="dispatch.units.length === 0" class="italic">{{

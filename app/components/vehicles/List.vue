@@ -94,7 +94,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             userIds: query.userIds,
             wanted: query.wanted,
         });
-        console.log('query', query);
         const { response } = await call;
 
         if (response.vehicles.length > 0) {

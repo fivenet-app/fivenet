@@ -101,7 +101,7 @@ const accordionItems = computed(() =>
     [
         { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
         can('wiki.WikiService/ListPageActivity').value &&
-        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW, props.page?.job)
             ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -266,7 +266,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UTooltip
                                 v-if="
                                     can('wiki.WikiService/UpdatePage').value &&
-                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
+                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT, page?.job)
                                 "
                                 :text="$t('common.edit')"
                             >
@@ -280,7 +280,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UTooltip
                                 v-if="
                                     can('wiki.WikiService/DeletePage').value &&
-                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
+                                    checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT, page?.job)
                                 "
                                 :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
                             >
@@ -394,7 +394,13 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </UContainer>
                             </template>
 
-                            <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
+                            <template
+                                v-if="
+                                    can('wiki.WikiService/ListPageActivity').value &&
+                                    checkPageAccess(page?.access, page?.meta?.creator, AccessLevel.VIEW, page?.job)
+                                "
+                                #activity
+                            >
                                 <UContainer class="mb-2">
                                     <List :page-id="page.id" />
                                 </UContainer>
