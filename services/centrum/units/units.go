@@ -681,6 +681,7 @@ func (s *UnitDB) UpdateUnitAssignments(
 			if unit.Status, err = s.AddStatus(ctx, s.db, &centrum.UnitStatus{
 				CreatedAt: timestamp.Now(),
 				UnitId:    unit.GetId(),
+				Unit:      proto.Clone(unit).(*centrum.Unit),
 				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:    userId,
 				CreatorId: userId,
@@ -757,6 +758,7 @@ func (s *UnitDB) CreateUnit(
 	if unit.Status, err = s.AddStatus(ctx, tx, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.GetId(),
+		Unit:      unit,
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false, ""); err != nil {
 		return nil, err

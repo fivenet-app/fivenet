@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	"github.com/gogo/protobuf/proto"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -115,6 +116,7 @@ func (s *Housekeeper) handleUnitKVPing(ctx context.Context, id int64) error {
 	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
+		Unit:       proto.Clone(unit).(*centrum.Unit),
 		Status:     centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 		UserId:     userId,
 		CreatorJob: &unit.Job,
