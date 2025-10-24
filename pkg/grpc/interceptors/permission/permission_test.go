@@ -26,7 +26,6 @@ func failFromMD(ctx context.Context) (bool, error) {
 
 func buildDummyUnaryPermsFunction(
 	t *testing.T,
-	hasRemap bool,
 ) func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
 	t.Helper()
 	return func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
@@ -34,9 +33,6 @@ func buildDummyUnaryPermsFunction(
 		if err != nil {
 			return nil, err
 		}
-
-		_, ok := info.Server.(GetPermsRemapFunc)
-		assert.Equal(t, hasRemap, ok, "expected grpc server have or have not a perms remap func")
 
 		if fail {
 			return nil, status.Error(
@@ -50,7 +46,6 @@ func buildDummyUnaryPermsFunction(
 
 func buildDummyStreamPermsFunction(
 	t *testing.T,
-	hasRemap bool,
 ) func(ctx context.Context, srv any, _ *grpc.StreamServerInfo) (context.Context, error) {
 	t.Helper()
 	return func(ctx context.Context, srv any, _ *grpc.StreamServerInfo) (context.Context, error) {
@@ -58,9 +53,6 @@ func buildDummyStreamPermsFunction(
 		if err != nil {
 			return nil, err
 		}
-
-		_, ok := srv.(GetPermsRemapFunc)
-		assert.Equal(t, hasRemap, ok)
 
 		if fail {
 			return nil, status.Error(
@@ -103,10 +95,10 @@ func TestPermsTestSuite(t *testing.T) {
 			TestService: &assertingPingService{&testpb.TestPingService{}, t},
 			ServerOpts: []grpc.ServerOption{
 				grpc.StreamInterceptor(
-					StreamServerInterceptor(buildDummyStreamPermsFunction(t, false)),
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t)),
 				),
 				grpc.UnaryInterceptor(
-					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false)),
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t)),
 				),
 			},
 		},
@@ -184,7 +176,7 @@ func (s *permsOverrideTestService) AuthFuncOverride(
 	fullMethodName string,
 ) (context.Context, error) {
 	assert.NotEmpty(s.T, fullMethodName, "method name of caller is passed around")
-	return buildDummyUnaryPermsFunction(s.T, false)(ctx, &grpc.UnaryServerInfo{
+	return buildDummyUnaryPermsFunction(s.T)(ctx, &grpc.UnaryServerInfo{
 		Server:     s,
 		FullMethod: fullMethodName,
 	})
@@ -199,10 +191,10 @@ func TestPermsOverrideTestSuite(t *testing.T) {
 			},
 			ServerOpts: []grpc.ServerOption{
 				grpc.StreamInterceptor(
-					StreamServerInterceptor(buildDummyStreamPermsFunction(t, false)),
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t)),
 				),
 				grpc.UnaryInterceptor(
-					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, false)),
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t)),
 				),
 			},
 		},
@@ -235,12 +227,6 @@ type permsRemapTestService struct {
 	T *testing.T
 }
 
-func (s *permsRemapTestService) GetPermsRemap() map[string]string {
-	return map[string]string{
-		"": "",
-	}
-}
-
 func TestPermsRemapTestSuite(t *testing.T) {
 	s := &PermsRemapTestSuite{
 		InterceptorTestSuite: &testpb.InterceptorTestSuite{
@@ -250,10 +236,10 @@ func TestPermsRemapTestSuite(t *testing.T) {
 			},
 			ServerOpts: []grpc.ServerOption{
 				grpc.StreamInterceptor(
-					StreamServerInterceptor(buildDummyStreamPermsFunction(t, true)),
+					StreamServerInterceptor(buildDummyStreamPermsFunction(t)),
 				),
 				grpc.UnaryInterceptor(
-					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t, true)),
+					UnaryServerInterceptor(buildDummyUnaryPermsFunction(t)),
 				),
 			},
 		},
