@@ -664,7 +664,7 @@ func (s *Server) UpdateDocument(
 			}
 
 			if tmpl != nil && !req.GetMeta().GetDraft() {
-				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc.GetId(), tmpl); err != nil {
+				if err := s.handleDocumentPublish(ctx, tx, userInfo, oldDoc, tmpl); err != nil {
 					return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 				}
 			}
@@ -709,7 +709,7 @@ func (s *Server) handleDocumentPublish(
 	ctx context.Context,
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
-	documentId int64,
+	doc *documents.Document,
 	tmpl *documents.Template,
 ) error {
 	apr := tmpl.GetApproval()
@@ -723,7 +723,7 @@ func (s *Server) handleDocumentPublish(
 		table.FivenetDocumentsApprovalPolicies.AS(
 			"approval_policy",
 		).DocumentID.EQ(
-			mysql.Int64(documentId),
+			mysql.Int64(doc.GetId()),
 		),
 	)
 	if err != nil {
@@ -734,24 +734,39 @@ func (s *Server) handleDocumentPublish(
 		return nil
 	}
 
+	now := time.Now()
+
 	// Fill in and create new approval policy
-	newPol := &documents.ApprovalPolicy{}
+	newPol := &documents.ApprovalPolicy{
+		SnapshotDate: timestamp.New(now),
+	}
 	if apr.GetPolicy() != nil {
 		newPol.RuleKind = apr.GetPolicy().GetRuleKind()
 		newPol.OnEditBehavior = apr.GetPolicy().GetOnEditBehavior()
 		requiredCount := apr.GetPolicy().GetRequiredCount()
+
+		switch newPol.RuleKind {
+		case documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL:
+			requiredCount = 0
+		case documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY:
+			if requiredCount <= 0 {
+				requiredCount = int32(len(apr.GetTasks()))
+				if requiredCount == 0 {
+					requiredCount = 1
+				}
+			}
+		}
 		if requiredCount > 0 {
 			newPol.RequiredCount = &requiredCount
 		}
+
 		newPol.SignatureRequired = apr.GetPolicy().GetSignatureRequired()
 	}
 	newPol.Default()
 
-	if err = s.createApprovalPolicy(ctx, tx, documentId, newPol); err != nil {
+	if err = s.createApprovalPolicy(ctx, tx, doc.GetId(), newPol); err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-
-	now := time.Now()
 
 	seeds := []*pbdocuments.ApprovalTaskSeed{}
 	for _, task := range apr.GetTasks() {
@@ -777,7 +792,7 @@ func (s *Server) handleDocumentPublish(
 		ctx,
 		tx,
 		userInfo,
-		documentId,
+		doc.GetId(),
 		now,
 		seeds,
 	); err != nil {

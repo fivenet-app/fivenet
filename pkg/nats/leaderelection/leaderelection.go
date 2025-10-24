@@ -145,6 +145,7 @@ func (le *LeaderElector) demote(reason string) {
 func (le *LeaderElector) retryLoop() {
 	t := time.NewTicker(le.heartbeat)
 	defer t.Stop()
+
 	for {
 		select {
 		case <-le.ctx.Done():

@@ -371,6 +371,7 @@ func (s *Server) getOrCreateApprovalPolicy(
 	ctx context.Context,
 	tx qrm.DB,
 	documentId int64,
+	snapshotDate *timestamp.Timestamp,
 ) (*documents.ApprovalPolicy, error) {
 	tApprovalPolicy := table.FivenetDocumentsApprovalPolicies
 
@@ -386,7 +387,7 @@ func (s *Server) getOrCreateApprovalPolicy(
 
 	requiredCount := int32(1)
 	if err = s.createApprovalPolicy(ctx, tx, documentId, &documents.ApprovalPolicy{
-		SnapshotDate:      timestamp.Now(),
+		SnapshotDate:      snapshotDate,
 		RuleKind:          documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL,
 		RequiredCount:     &requiredCount,
 		OnEditBehavior:    documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS,
@@ -1344,11 +1345,16 @@ func (s *Server) DecideApproval(
 		return nil, errorsdocuments.ErrApprovalCreatorCannotDecide
 	}
 
+	docSnap := doc.GetUpdatedAt()
+	if docSnap == nil {
+		docSnap = timestamp.Now()
+	}
 	// Resolve policy, doc, snapshot
 	pol, err := s.getOrCreateApprovalPolicy(
 		ctx,
 		s.db,
 		req.GetDocumentId(),
+		docSnap,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -1900,12 +1906,12 @@ func (s *Server) recomputeApprovalPolicyTx(
 
 	// Pending tasks
 	var aggTasks struct {
-		Pending  int32
-		Assigned int32
+		Total   int32
+		Pending int32
 	}
 	if err := tApprovalTasks.
 		SELECT(
-			mysql.COUNT(tApprovalTasks.ID).AS("assigned"),
+			mysql.COUNT(tApprovalTasks.ID).AS("total"),
 			mysql.SUM(mysql.CASE().
 				WHEN(tApprovalTasks.Status.EQ(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)))).
 				THEN(mysql.Int(1)).
@@ -1929,7 +1935,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 	var docApproved bool
 	if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL {
 		// Ensure that there is at least one approval if all are required
-		docApproved = !anyDeclined && (agg.Approved >= aggTasks.Assigned)
+		docApproved = !anyDeclined && aggTasks.Total > 0 && (agg.Approved >= aggTasks.Total)
 	} else if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY {
 		// Quorum-any: enough approvals, regardless of declines
 		docApproved = (agg.Approved >= requiredTotal)
@@ -1984,7 +1990,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 	if _, err := tApprovalPolicy.
 		UPDATE().
 		SET(
-			tApprovalPolicy.AssignedCount.SET(mysql.Int32(aggTasks.Assigned)),
+			tApprovalPolicy.AssignedCount.SET(mysql.Int32(aggTasks.Total)),
 			tApprovalPolicy.ApprovedCount.SET(mysql.Int32(agg.Approved)),
 			tApprovalPolicy.DeclinedCount.SET(mysql.Int32(agg.Declined)),
 			tApprovalPolicy.PendingCount.SET(mysql.Int32(aggTasks.Pending)),
