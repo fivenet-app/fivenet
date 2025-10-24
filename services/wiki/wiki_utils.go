@@ -19,6 +19,7 @@ func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {
 		mapping[page.GetId()] = page
 	}
 
+	noRoot := false
 	for _, page := range pages {
 		if page.GetParentId() > 0 {
 			if parent, ok := mapping[page.GetParentId()]; ok {
@@ -26,20 +27,8 @@ func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {
 			}
 		} else {
 			rootPages = append(rootPages, page)
+			noRoot = true
 		}
-	}
-
-	// If no root pages are found, use a dummy root
-	if len(rootPages) == 0 {
-		firstPage := pages[0]
-		dummy := &wiki.PageShort{
-			Id:       0,
-			Title:    "",
-			Job:      firstPage.GetJob(),
-			JobLabel: firstPage.JobLabel,
-			Children: []*wiki.PageShort{},
-		}
-		rootPages = append(rootPages, dummy)
 	}
 
 	// Handle orphans (pages whose parent is not in the list)
@@ -47,8 +36,12 @@ func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {
 		if page.ParentId != nil && page.GetParentId() > 0 {
 			if _, ok := mapping[page.GetParentId()]; !ok {
 				// Attach to all roots (or dummy)
-				for _, root := range rootPages {
-					root.Children = append(root.Children, page)
+				if !noRoot {
+					rootPages = append(rootPages, page)
+				} else {
+					for _, root := range rootPages {
+						root.Children = append(root.Children, page)
+					}
 				}
 			}
 		}
@@ -68,8 +61,8 @@ func mapPagesToNavItems(pages []*wiki.PageShort) []*wiki.PageShort {
 	}
 
 	result := []*wiki.PageShort{}
-	for _, root := range mapped {
-		result = append(result, root)
+	for _, page := range mapped {
+		result = append(result, page)
 	}
 
 	slices.SortStableFunc(result, func(a, b *wiki.PageShort) int {

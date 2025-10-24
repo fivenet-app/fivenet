@@ -54,10 +54,12 @@ const breadcrumbs = computed(() => {
     if (props.page && props.pages) {
         const addBreadcrumbs = (pages: PageShort[], currentPage: Page | PageShort) => {
             for (const page of pages) {
-                breadcrumbList.push({
-                    label: page.title || t('common.untitled'),
-                    to: `/wiki/${page.job}/${page.id}/${page.slug}`,
-                });
+                if (page.id !== 0) {
+                    breadcrumbList.push({
+                        label: page.title || t('common.untitled'),
+                        to: `/wiki/${page.job}/${page.id}/${page.slug}`,
+                    });
+                }
 
                 if (page.id === currentPage.id) {
                     return true;
@@ -73,7 +75,7 @@ const breadcrumbs = computed(() => {
         };
 
         addBreadcrumbs(props.pages, props.page);
-    } else if (!isRequestPending(props.status)) {
+    } else if (!isRequestPending(props.status) && !props.page) {
         breadcrumbList.push({ label: t('pages.notfound.page_not_found') });
     }
 
