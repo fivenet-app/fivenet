@@ -128,7 +128,7 @@ DELETE FROM `fivenet_rbac_permissions` WHERE `category` = 'completor.CompletorSe
 INSERT IGNORE INTO fivenet_rbac_permissions
 (`category`, `name`, `guard_name`, `order`, `icon`)
 SELECT 'wiki.WikiService', 'CreatePage', 'wiki-wikiservice-createpage', 11000, 'i-mdi-brain'
-WHERE NOT EXISTS (
+WHERE EXISTS (
   SELECT NULL FROM fivenet_rbac_permissions
 );
 
