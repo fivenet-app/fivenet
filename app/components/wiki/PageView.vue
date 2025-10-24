@@ -15,6 +15,7 @@ import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import GenericImg from '../partials/elements/GenericImg.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import List from './activity/List.vue';
 import { checkPageAccess } from './helpers';
@@ -116,13 +117,25 @@ const wikiService = await useWikiWiki();
 
 const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
 
+const canAccessActivity = computed(
+    () =>
+        can('wiki.WikiService/ListPageActivity').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW, props.page?.job),
+);
+
+const canAccessFiles = computed(
+    () =>
+        can('wiki.WikiService/ListPageActivity').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.ACCESS, props.page?.job),
+);
+
 const accordionItems = computed(() =>
     [
         { slot: 'access' as const, label: t('common.access'), icon: 'i-mdi-lock' },
-        can('wiki.WikiService/ListPageActivity').value &&
-        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW, props.page?.job)
+        canAccessActivity.value
             ? { slot: 'activity' as const, label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
+        canAccessFiles.value ? { slot: 'files' as const, label: t('common.file', 2), icon: 'i-mdi-file' } : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
@@ -423,15 +436,57 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </UContainer>
                             </template>
 
-                            <template
-                                v-if="
-                                    can('wiki.WikiService/ListPageActivity').value &&
-                                    checkPageAccess(page?.access, page?.meta?.creator, AccessLevel.VIEW, page?.job)
-                                "
-                                #activity
-                            >
+                            <template v-if="canAccessActivity" #activity>
                                 <UContainer class="mb-2">
                                     <List :page-id="page.id" />
+                                </UContainer>
+                            </template>
+
+                            <template v-if="canAccessFiles" #files>
+                                <DataNoDataBlock
+                                    v-if="!page.files || page.files.length === 0"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.file', 2)])"
+                                />
+                                <UContainer v-else class="p-2">
+                                    <UPageGrid class="flex-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2">
+                                        <UPageCard
+                                            v-for="file in page.files"
+                                            :key="file.id"
+                                            :title="file.filePath"
+                                            icon="i-mdi-file-document"
+                                            orientation="horizontal"
+                                            :ui="{ title: 'line-clamp-3! whitespace-normal!' }"
+                                        >
+                                            <template #default>
+                                                <div class="inline-flex items-center justify-center">
+                                                    <GenericImg
+                                                        v-if="file.contentType.startsWith('image/')"
+                                                        :src="file.filePath"
+                                                        :alt="file.filePath"
+                                                        size="3xl"
+                                                        class="h-full max-h-40 w-40"
+                                                    />
+                                                    <UIcon
+                                                        v-else
+                                                        class="h-20 w-20 text-3xl"
+                                                        :name="
+                                                            file.contentType.startsWith('video/')
+                                                                ? 'i-mdi-video'
+                                                                : 'i-mdi-file-document'
+                                                        "
+                                                    />
+                                                </div>
+                                            </template>
+
+                                            <template #description>
+                                                <ul>
+                                                    <li>{{ file.contentType }}</li>
+                                                    <li>{{ formatBytes(file.byteSize) }}</li>
+                                                </ul>
+                                            </template>
+                                        </UPageCard>
+                                    </UPageGrid>
                                 </UContainer>
                             </template>
                         </UAccordion>
