@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.10.1] - 2025-10-24
+
+### 🚀 Features
+
+- Add toggle all layers button to livemap controls
+- Add content nav to wiki smaller screens
+- Add option to use unit color for user marker icon
+- Allow multiple root wiki pages and improve wiki nav ui
+- Add file list to wiki page view
+
+### 🐛 Bug Fixes
+
+- Document approved state calculation
+- Approval badge showing in ui when it shouldn't
+- Approval policy template form issue
+- Pagination and sorting issues
+- Doc deletion error and wiki root only acces check
+- Tiptap editor table popover and add link display
+- Remove signature-related columns and fields
+- Wiki root only page listing using wrong page
+- Wiki page list not showing all accessible pages
+- Wiki startpage selection not ordering by parent id nulls first
+- Remove debug output from list pages in wiki
+- Citizen user docs sorting not working
+- Select menu search not working due to key
+- Citizen vehicles list showing all vehicles and qol fixes
+- Vehicle list user id override
+- Document template not creating policy on publish
+- Livemap layer issue with users
+- Unit housekeeping for unavailable not adding unit data to status
+- Editor font selection showing untranslated value
+- Grpc permission interceptor test
+- Approval data not showing in template editor
+- Wiki nav showing dummy page
+- Permission multiple names screw up
+- Perms cleanup migration
+- Remove test json file
+- Update helm version in channels file
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove lucide icon pack
+
 ## [2025.10.0] - 2025-10-19
 
 ### 🚀 Features
