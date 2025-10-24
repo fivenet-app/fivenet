@@ -24,7 +24,6 @@ const (
 	JobsServiceGetColleagueTypesPermField           perms.Key  = "Types"
 	JobsServiceGetColleagueLabelsPerm               perms.Name = "GetColleagueLabels"
 	JobsServiceGetColleagueLabelsStatsPerm          perms.Name = "GetColleagueLabelsStats"
-	JobsServiceGetMOTDPerm                          perms.Name = "GetMOTD"
 	JobsServiceGetSelfPerm                          perms.Name = "GetSelf"
 	JobsServiceListColleagueActivityPerm            perms.Name = "ListColleagueActivity"
 	JobsServiceListColleagueActivityTypesPermField  perms.Key  = "Types"

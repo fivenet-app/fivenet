@@ -49,21 +49,7 @@ func init() {
 		},
 		{
 			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceDeleteMessagePerm,
-			Attrs:    []perms.Attr{},
-			Order:    2000,
-			Icon:     "i-mdi-inbox-full-outline",
-		},
-		{
-			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceDeleteTemplatePerm,
-			Attrs:    []perms.Attr{},
-			Order:    2000,
-			Icon:     "i-mdi-inbox-full-outline",
-		},
-		{
-			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceDeleteThreadPerm,
 			Attrs:    []perms.Attr{},
 			Order:    2000,
 			Icon:     "i-mdi-inbox-full-outline",

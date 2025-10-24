@@ -64,7 +64,10 @@ service CompletorService {
   };
 
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensResponse) {
-    option (codegen.perms.perms) = {enabled: true};
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "Any"
+    };
   }
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse) {
     option (codegen.perms.perms) = {

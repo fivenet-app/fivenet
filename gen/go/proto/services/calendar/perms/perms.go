@@ -10,20 +10,6 @@ import (
 const (
 	CalendarServicePerm perms.Category = "calendar.CalendarService"
 
-	CalendarServiceCreateCalendarPerm              perms.Name = "CreateCalendar"
-	CalendarServiceCreateCalendarFieldsPermField   perms.Key  = "Fields"
-	CalendarServiceCreateOrUpdateCalendarEntryPerm perms.Name = "CreateOrUpdateCalendarEntry"
-	CalendarServiceDeleteCalendarPerm              perms.Name = "DeleteCalendar"
-	CalendarServiceDeleteCalendarEntryPerm         perms.Name = "DeleteCalendarEntry"
-	CalendarServiceGetCalendarPerm                 perms.Name = "GetCalendar"
-	CalendarServiceGetCalendarEntryPerm            perms.Name = "GetCalendarEntry"
-	CalendarServiceGetUpcomingEntriesPerm          perms.Name = "GetUpcomingEntries"
-	CalendarServiceListCalendarEntriesPerm         perms.Name = "ListCalendarEntries"
-	CalendarServiceListCalendarEntryRSVPPerm       perms.Name = "ListCalendarEntryRSVP"
-	CalendarServiceListCalendarsPerm               perms.Name = "ListCalendars"
-	CalendarServiceListSubscriptionsPerm           perms.Name = "ListSubscriptions"
-	CalendarServiceRSVPCalendarEntryPerm           perms.Name = "RSVPCalendarEntry"
-	CalendarServiceShareCalendarEntryPerm          perms.Name = "ShareCalendarEntry"
-	CalendarServiceSubscribeToCalendarPerm         perms.Name = "SubscribeToCalendar"
-	CalendarServiceUpdateCalendarPerm              perms.Name = "UpdateCalendar"
+	CalendarServiceCreateCalendarPerm            perms.Name = "CreateCalendar"
+	CalendarServiceCreateCalendarFieldsPermField perms.Key  = "Fields"
 )

@@ -27,13 +27,6 @@ func init() {
 		},
 		{
 			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceCompleteCitizensPerm,
-			Attrs:    []perms.Attr{},
-			Order:    1000,
-			Icon:     "i-mdi-keyboard-tab",
-		},
-		{
-			Category: permkeys.CompletorServicePerm,
 			Name:     permkeys.CompletorServiceCompleteDocumentCategoriesPerm,
 			Attrs: []perms.Attr{
 				{
@@ -43,20 +36,6 @@ func init() {
 			},
 			Order: 1000,
 			Icon:  "i-mdi-keyboard-tab",
-		},
-		{
-			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceCompleteJobsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    1000,
-			Icon:     "i-mdi-keyboard-tab",
-		},
-		{
-			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceListLawBooksPerm,
-			Attrs:    []perms.Attr{},
-			Order:    1000,
-			Icon:     "i-mdi-keyboard-tab",
 		},
 	})
 }

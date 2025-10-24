@@ -12,9 +12,6 @@ const (
 
 	CompletorServiceCompleteCitizenLabelsPerm               perms.Name = "CompleteCitizenLabels"
 	CompletorServiceCompleteCitizenLabelsJobsPermField      perms.Key  = "Jobs"
-	CompletorServiceCompleteCitizensPerm                    perms.Name = "CompleteCitizens"
 	CompletorServiceCompleteDocumentCategoriesPerm          perms.Name = "CompleteDocumentCategories"
 	CompletorServiceCompleteDocumentCategoriesJobsPermField perms.Key  = "Jobs"
-	CompletorServiceCompleteJobsPerm                        perms.Name = "CompleteJobs"
-	CompletorServiceListLawBooksPerm                        perms.Name = "ListLawBooks"
 )

@@ -226,8 +226,14 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 							".services.",
 						)
 
+						var service *string
+						if perm.Service != nil {
+							s := *perm.Service
+							service = &s
+						}
+
 						pm := &Perm{
-							Service: perm.Service,
+							Service: service,
 							Name:    name,
 							Attrs:   perm.Attrs,
 							Order:   perm.Order,
@@ -249,7 +255,8 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 					}
 				}
 
-				if perm.Name == "Superuser" || perm.Name == "Any" || perm.Service != nil {
+				if slices.Contains(names, "Superuser") || slices.Contains(names, "Any") ||
+					perm.Service != nil {
 					continue
 				}
 

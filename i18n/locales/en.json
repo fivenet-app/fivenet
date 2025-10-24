@@ -2826,10 +2826,6 @@
         "completor": {
             "CompletorService": {
                 "category": "Auto Complete",
-                "CompleteCitizens": {
-                    "key": "Citizen Names",
-                    "description": "Complete citizen names."
-                },
                 "CompleteJobs": {
                     "key": "Complete job names and ranks",
                     "description": "Complete job names and ranks."

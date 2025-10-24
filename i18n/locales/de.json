@@ -2826,10 +2826,6 @@
         "completor": {
             "CompletorService": {
                 "category": "Autovervollständigung",
-                "CompleteCitizens": {
-                    "key": "Bürger-Namen",
-                    "description": "Vollständige Bürger-Namen."
-                },
                 "CompleteJobs": {
                     "key": "Vollständige Job-Namen und Ränge",
                     "description": "Vollständige Job-Namen und Ränge."

@@ -15,13 +15,6 @@ func init() {
 		// Service: citizens.CitizensService
 		{
 			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceDeleteAvatarPerm,
-			Attrs:    []perms.Attr{},
-			Order:    3000,
-			Icon:     "i-mdi-account-multiple-outline",
-		},
-		{
-			Category: permkeys.CitizensServicePerm,
 			Name:     permkeys.CitizensServiceDeleteMugshotPerm,
 			Attrs:    []perms.Attr{},
 			Order:    3000,
@@ -84,13 +77,6 @@ func init() {
 			},
 			Order: 3000,
 			Icon:  "i-mdi-account-multiple-outline",
-		},
-		{
-			Category: permkeys.CitizensServicePerm,
-			Name:     permkeys.CitizensServiceUploadAvatarPerm,
-			Attrs:    []perms.Attr{},
-			Order:    3000,
-			Icon:     "i-mdi-account-multiple-outline",
 		},
 		{
 			Category: permkeys.CitizensServicePerm,

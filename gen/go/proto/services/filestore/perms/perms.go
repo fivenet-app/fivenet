@@ -9,9 +9,4 @@ import (
 
 const (
 	FilestoreServicePerm perms.Category = "filestore.FilestoreService"
-
-	FilestoreServiceDeleteFilePerm       perms.Name = "DeleteFile"
-	FilestoreServiceDeleteFileByPathPerm perms.Name = "DeleteFileByPath"
-	FilestoreServiceListFilesPerm        perms.Name = "ListFiles"
-	FilestoreServiceUploadPerm           perms.Name = "Upload"
 )

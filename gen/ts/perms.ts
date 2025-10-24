@@ -50,7 +50,6 @@ export type Perms =
 	| 'citizens.CitizensService/ManageLabels'
 	| 'citizens.CitizensService/SetUserProps'
 	| 'completor.CompletorService/CompleteCitizenLabels'
-	| 'completor.CompletorService/CompleteCitizens'
 	| 'completor.CompletorService/CompleteDocumentCategories'
 	| 'documents.ApprovalService/DeleteApprovalTasks'
 	| 'documents.ApprovalService/RevokeApproval'

@@ -85,13 +85,6 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceGetMOTDPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceGetSelfPerm,
 			Attrs:    []perms.Attr{},
 			Order:    6000,

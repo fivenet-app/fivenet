@@ -16,60 +16,6 @@ import (
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: settings.AccountsService
-		{
-			Category: permkeys.AccountsServicePerm,
-			Name:     permkeys.AccountsServiceCreateAccountPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.AccountsServicePerm,
-			Name:     permkeys.AccountsServiceDeleteAccountPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.AccountsServicePerm,
-			Name:     permkeys.AccountsServiceDisconnectOAuth2ConnectionPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.AccountsServicePerm,
-			Name:     permkeys.AccountsServiceListAccountsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.AccountsServicePerm,
-			Name:     permkeys.AccountsServiceUpdateAccountPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-
-		// Service: settings.ConfigService
-		{
-			Category: permkeys.ConfigServicePerm,
-			Name:     permkeys.ConfigServiceGetAppConfigPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.ConfigServicePerm,
-			Name:     permkeys.ConfigServiceUpdateAppConfigPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-
-		// Service: settings.CronService
-		{
-			Category: permkeys.CronServicePerm,
-			Name:     permkeys.CronServiceListCronjobsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-
 		// Service: settings.LawsService
 		{
 			Category: permkeys.LawsServicePerm,
@@ -198,38 +144,6 @@ func init() {
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
-		},
-
-		// Service: settings.SystemService
-		{
-			Category: permkeys.SystemServicePerm,
-			Name:     permkeys.SystemServiceDeleteFactionPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.SystemServicePerm,
-			Name:     permkeys.SystemServiceGetAllPermissionsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.SystemServicePerm,
-			Name:     permkeys.SystemServiceGetJobLimitsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.SystemServicePerm,
-			Name:     permkeys.SystemServiceGetStatusPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.SystemServicePerm,
-			Name:     permkeys.SystemServiceUpdateJobLimitsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
 		},
 	})
 }

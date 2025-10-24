@@ -9,8 +9,4 @@ import (
 
 const (
 	NotificationsServicePerm perms.Category = "notifications.NotificationsService"
-
-	NotificationsServiceGetNotificationsPerm  perms.Name = "GetNotifications"
-	NotificationsServiceMarkNotificationsPerm perms.Name = "MarkNotifications"
-	NotificationsServiceStreamPerm            perms.Name = "Stream"
 )

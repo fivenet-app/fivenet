@@ -642,7 +642,7 @@ export const CompleteCitizenLabelsResponse = new CompleteCitizenLabelsResponse$T
  * @generated ServiceType for protobuf service services.completor.CompletorService
  */
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
-    { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
+    { name: "CompleteCitizens", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteCitizensRequest, O: CompleteCitizensResponse },
     { name: "CompleteJobs", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: CompleteJobsRequest, O: CompleteJobsResponse },
     { name: "CompleteDocumentCategories", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Jobs", type: "ATTRIBUTE_TYPE_JOB_LIST" }] } }, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
     { name: "ListLawBooks", options: { "codegen.perms.perms": { enabled: true, name: "Any" } }, I: ListLawBooksRequest, O: ListLawBooksResponse },
