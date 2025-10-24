@@ -30,6 +30,19 @@ const selectedJob = ref<undefined | Job>(
     },
 );
 
+watch(activeChar, () => {
+    if (!activeChar.value) {
+        selectedJob.value = undefined;
+        return;
+    }
+
+    selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job) ?? {
+        name: activeChar.value?.job ?? 'na',
+        label: activeChar.value?.jobLabel ?? 'N/A',
+        grades: [],
+    };
+});
+
 watchOnce(jobs, () => (selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job)));
 
 watch(selectedJob, async () => {

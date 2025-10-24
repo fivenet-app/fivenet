@@ -353,7 +353,7 @@ const isLinkOpen = ref(false);
 
         <!-- Font Family -->
         <UTooltip :text="$t('components.partials.tiptap_editor.font_family')">
-            <UInputMenu
+            <USelectMenu
                 v-model="selectedFont"
                 class="w-full max-w-44"
                 name="selectedFont"
@@ -363,6 +363,12 @@ const isLinkOpen = ref(false);
                 :disabled="disabled"
                 :style="{ fontFamily: selectedFont.value }"
             >
+                <template #default>
+                    <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{
+                        selectedFont.label.includes('.') ? $t(selectedFont.label) : selectedFont.label
+                    }}</span>
+                </template>
+
                 <template #item-label="{ item }">
                     <span class="truncate" :style="{ fontFamily: item.value }">{{
                         item.label.includes('.') ? $t(item.label) : item.label
@@ -372,7 +378,7 @@ const isLinkOpen = ref(false);
                 <template #empty>
                     {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
                 </template>
-            </UInputMenu>
+            </USelectMenu>
         </UTooltip>
 
         <UButtonGroup>

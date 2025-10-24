@@ -499,12 +499,7 @@ const formRef = useTemplateRef('formRef');
                                 <UDashboardToolbar>
                                     <template #default>
                                         <div class="mx-auto my-2 flex w-full max-w-(--breakpoint-xl) flex-col gap-2">
-                                            <UFormField
-                                                v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
-                                                class="flex-1"
-                                                name="meta.parentId"
-                                                :label="$t('common.parent_page')"
-                                            >
+                                            <UFormField class="flex-1" name="meta.parentId" :label="$t('common.parent_page')">
                                                 <div class="flex items-center gap-1">
                                                     <ClientOnly>
                                                         <USelectMenu
