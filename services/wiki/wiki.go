@@ -56,6 +56,7 @@ func (s *Server) ListPages(
 		tPageShort.Description,
 		tPageShort.Draft,
 		tPageShort.Public,
+		tPageShort.Startpage,
 	}
 
 	// Root Only request checks for access in the subquery
@@ -75,6 +76,7 @@ func (s *Server) ListPages(
 				mysql.ROW_NUMBER().OVER(
 					mysql.PARTITION_BY(subPage.Job).
 						ORDER_BY(
+							subPage.Startpage.DESC(),
 							subPage.ParentID.ASC().NULLS_FIRST(),
 							subPage.SortKey.ASC(),
 							subPage.Draft.ASC(),
@@ -206,7 +208,13 @@ func (s *Server) ListPages(
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(tPageShort.Job.ASC(), tPageShort.ParentID.ASC().NULLS_FIRST(), tPageShort.SortKey.ASC(), tPageShort.Draft.ASC()).
+		ORDER_BY(
+			tPageShort.Job.ASC(),
+			tPageShort.Startpage.DESC(),
+			tPageShort.ParentID.ASC().NULLS_FIRST(),
+			tPageShort.SortKey.ASC(),
+			tPageShort.Draft.ASC(),
+		).
 		OFFSET(req.GetPagination().GetOffset()).
 		LIMIT(defaultWikiUpperLimit)
 
@@ -350,6 +358,7 @@ func (s *Server) getPage(
 		tPage.Toc.AS("page_meta.toc"),
 		tPage.Public.AS("page_meta.public"),
 		tPage.Draft.AS("page_meta.draft"),
+		tPage.Startpage.AS("page_meta.startpage"),
 	}
 	if withContent {
 		columns = append(columns,
@@ -406,38 +415,8 @@ func (s *Server) CreatePage(
 ) (*pbwiki.CreatePageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// No parent ID?
-	// If so, check if there are any existing pages for the user's job and use one as the parent.
-	if req.GetParentId() <= 0 {
-		tPageShort := table.FivenetWikiPages.AS("page_short")
-
-		parentStmt := tPageShort.
-			SELECT(
-				tPageShort.ID.AS("id"),
-			).
-			FROM(tPageShort).
-			WHERE(mysql.AND(
-				tPageShort.Job.EQ(mysql.String(userInfo.GetJob())),
-				tPageShort.DeletedAt.IS_NULL(),
-			)).
-			ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
-			LIMIT(1)
-
-		ids := struct{ ID int64 }{}
-		if err := parentStmt.QueryContext(ctx, s.db, &ids); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-			}
-		}
-
-		// Found a potential parent page
-		if ids.ID > 0 {
-			req.ParentId = &ids.ID
-			logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.parent_id", req.GetParentId()})
-		} else {
-			req.ParentId = nil
-		}
-	} else {
+	// Check that the user has access to the parent page.
+	if req.GetParentId() > 0 {
 		logging.InjectFields(ctx, logging.Fields{"fivenet.wiki.parent_id", req.GetParentId()})
 
 		p, err := s.getPage(ctx, req.GetParentId(), false, false, nil)
@@ -452,7 +431,12 @@ func (s *Server) CreatePage(
 			return nil, errorswiki.ErrPageDenied
 		}
 
-		parentCheck, err := s.access.CanUserAccessTarget(ctx, req.GetParentId(), userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+		parentCheck, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetParentId(),
+			userInfo,
+			wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
@@ -503,6 +487,7 @@ func (s *Server) CreatePage(
 			tPage.Toc,
 			tPage.Draft,
 			tPage.Public,
+			tPage.Startpage,
 			tPage.Slug,
 			tPage.Title,
 			tPage.Description,
@@ -516,6 +501,7 @@ func (s *Server) CreatePage(
 			req.GetContentType(),
 			true,
 			true,
+			false,
 			false,
 			"",
 			"",
@@ -583,33 +569,7 @@ func (s *Server) UpdatePage(
 		return nil, errorswiki.ErrPageDenied
 	}
 
-	if req.Page.ParentId == nil || req.GetPage().GetParentId() <= 0 {
-		tPage := table.FivenetWikiPages.AS("page")
-
-		stmt := tPage.
-			SELECT(
-				tPage.ID.AS("id"),
-			).
-			FROM(tPage).
-			WHERE(mysql.AND(
-				tPage.Job.EQ(mysql.String(userInfo.GetJob())),
-				tPage.DeletedAt.IS_NULL(),
-				tPage.ParentID.IS_NULL(),
-			))
-
-		var ids struct {
-			ID int64 `alias:"id"`
-		}
-		if err := stmt.QueryContext(ctx, s.db, &ids); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-			}
-		}
-
-		if ids.ID != req.GetPage().GetId() && !userInfo.GetSuperuser() {
-			return nil, errorswiki.ErrPageDenied
-		}
-	} else {
+	if req.GetPage().GetParentId() > 0 {
 		p, err := s.getPage(ctx, req.GetPage().GetParentId(), false, false, nil)
 		if err != nil {
 			if errors.Is(err, qrm.ErrNoRows) {
@@ -622,7 +582,12 @@ func (s *Server) UpdatePage(
 			return nil, errorswiki.ErrPageDenied
 		}
 
-		parentCheck, err := s.access.CanUserAccessTarget(ctx, req.GetPage().GetParentId(), userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+		parentCheck, err := s.access.CanUserAccessTarget(
+			ctx,
+			req.GetPage().GetParentId(),
+			userInfo,
+			wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
@@ -632,13 +597,10 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	if req.Page.ParentId != nil {
-		if req.GetPage().GetParentId() == req.GetPage().GetId() {
-			req.Page.ParentId = nil
-		} else if req.GetPage().GetParentId() <= 0 {
-			// If the parent ID is not set, we can set it to nil
-			req.Page.ParentId = nil
-		}
+	// If the parent ID is set to itself or unset, set it to nil
+	if req.GetPage().GetParentId() == req.GetPage().GetId() ||
+		req.GetPage().GetParentId() <= 0 {
+		req.Page.ParentId = nil
 	}
 
 	oldPage, err := s.getPage(ctx, req.GetPage().GetId(), true, true, userInfo)
@@ -697,6 +659,7 @@ func (s *Server) UpdatePage(
 			tPage.Toc,
 			tPage.Draft,
 			tPage.Public,
+			tPage.Startpage,
 			tPage.Slug,
 			tPage.Title,
 			tPage.Description,
@@ -709,6 +672,7 @@ func (s *Server) UpdatePage(
 			req.GetPage().GetMeta().Toc,
 			req.GetPage().GetMeta().GetDraft(),
 			req.GetPage().GetMeta().GetPublic(),
+			req.GetPage().GetMeta().GetStartpage(),
 			slug.Make(utils.StringFirstN(req.GetPage().GetMeta().GetTitle(), 100)),
 			req.GetPage().GetMeta().GetTitle(),
 			req.GetPage().GetMeta().GetDescription(),

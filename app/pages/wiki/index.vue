@@ -33,7 +33,7 @@ async function listPages(): Promise<PageShort[]> {
         });
         const { response } = await call;
 
-        const pages = response.pages.sort((a, b) => a.job.localeCompare(b.job));
+        const pages = response.pages.sort((a, b) => (a.jobLabel ?? a.job).localeCompare(b.jobLabel ?? b.job));
         if (pages.length > 0) {
             const ownPageIdx = pages.findIndex((p) => p.job === activeChar.value?.job);
             pages.unshift(pages.splice(ownPageIdx, 1)[0]!);

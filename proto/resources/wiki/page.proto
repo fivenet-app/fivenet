@@ -65,6 +65,7 @@ message PageMeta {
   optional bool toc = 11;
   bool public = 12;
   bool draft = 13;
+  bool startpage = 14;
 }
 
 message PageShort {
@@ -86,6 +87,7 @@ message PageShort {
   optional PageRootInfo root_info = 10;
   optional int32 level = 11 [(buf.validate.field).int32.gte = 0];
   bool draft = 13;
+  bool startpage = 14;
 }
 
 message PageRootInfo {

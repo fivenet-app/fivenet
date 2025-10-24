@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"path"
 	"path/filepath"
 	"slices"
@@ -22,6 +23,7 @@ type PermifyModule struct {
 	ctx      pgsgo.Context
 	tpl      *template.Template
 	constTpl *template.Template
+	remapTpl *template.Template
 }
 
 // Permify returns an initialized PermifyModule.
@@ -36,21 +38,20 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 		return after
 	}
 
-	tpl := template.New("permify").Funcs(map[string]any{
+	funcs := map[string]any{
 		"package":     p.ctx.PackageName,
 		"name":        p.ctx.Name,
 		"serviceName": serviceNameFn,
-	})
+	}
 
+	tpl := template.New("permify").Funcs(funcs)
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
-	constTpl := template.New("permify_const").Funcs(map[string]any{
-		"package":     p.ctx.PackageName,
-		"name":        p.ctx.Name,
-		"serviceName": serviceNameFn,
-	})
-
+	constTpl := template.New("permify_const").Funcs(funcs)
 	p.constTpl = template.Must(constTpl.Parse(permifyConstTpl))
+
+	remapTpl := template.New("permify_remap").Funcs(funcs)
+	p.remapTpl = template.Must(remapTpl.Parse(permifyRemapTpl))
 }
 
 // Name satisfies the generator.Plugin interface.
@@ -71,14 +72,38 @@ func (p *PermifyModule) Execute(
 		visited[key] = []pgs.File{t}
 	}
 
+	remaps := map[string]map[string][]*Perm{}
 	for _, fs := range visited {
-		p.generate(fs)
+		remap := p.generate(fs)
+		maps.Copy(remaps, remap)
 	}
+
+	fs := []pgs.File{}
+	for _, v := range visited {
+		for _, f := range v {
+			if !strings.Contains(f.File().InputPath().String(), "services/") {
+				continue
+			}
+			fs = append(fs, f)
+		}
+	}
+
+	p.AddGeneratorTemplateFile(
+		path.Join("perms_remap.go"),
+		p.remapTpl,
+		struct {
+			FS              []pgs.File
+			PermissionRemap map[string]map[string][]*Perm
+		}{
+			FS:              fs,
+			PermissionRemap: remaps,
+		},
+	)
 
 	return p.Artifacts()
 }
 
-func (p *PermifyModule) generate(fs []pgs.File) {
+func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 	f := fs[0]
 
 	fqn := strings.Split(f.FullyQualifiedName(), ".")
@@ -88,7 +113,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		GoPath                string
 		PermissionServiceKeys []string
 		Permissions           map[string]map[string]*Perm
-		PermissionRemap       map[string]map[string]*Perm
+		PermissionRemap       map[string]map[string][]*Perm
 		Attributes            map[string]map[string]*Attr
 	}{
 		FS: fs,
@@ -99,7 +124,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		),
 		PermissionServiceKeys: []string{},
 		Permissions:           map[string]map[string]*Perm{},
-		PermissionRemap:       map[string]map[string]*Perm{},
+		PermissionRemap:       map[string]map[string][]*Perm{},
 	}
 
 	slices.SortFunc(fs, func(a, b pgs.File) int {
@@ -134,7 +159,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				mName = strings.TrimPrefix(mName, "services.")
 
 				// Check if the field option is present and true
-				var val permspb.FieldOptions
+				var val permspb.PermsOptions
 				ok, err := m.Extension(permspb.E_Perms, &val)
 				if err != nil {
 					p.Fail("error reading perms option:", err)
@@ -153,8 +178,11 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				perm = &Perm{
 					Name: mName,
 				}
-				if val.Name != nil && *val.Name != "" {
-					perm.Name = *val.Name
+				names := []string{}
+				if len(val.Names) > 0 {
+					names = val.Names
+				} else if val.Name != nil && *val.Name != "" {
+					names = append(names, *val.Name)
 				}
 				if val.Service != nil && *val.Service != "" {
 					perm.Service = val.Service
@@ -190,24 +218,34 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 					}
 				}
 
-				if perm.Name != mName {
-					remapServiceName := strings.TrimPrefix(
-						string(s.FullyQualifiedName()),
-						".services.",
-					)
+				for _, name := range names {
+					if name != mName || len(names) > 1 {
+						p.Debugf("names %+v; name: %s, mName: %s", names, name, mName)
+						remapServiceName := strings.TrimPrefix(
+							string(s.FullyQualifiedName()),
+							".services.",
+						)
 
-					if _, ok := data.PermissionRemap[remapServiceName]; !ok {
-						data.PermissionRemap[remapServiceName] = map[string]*Perm{}
-					}
-					if _, ok := data.PermissionRemap[remapServiceName][mName]; !ok {
-						data.PermissionRemap[remapServiceName][mName] = perm
+						pm := &Perm{
+							Service: perm.Service,
+							Name:    name,
+							Attrs:   perm.Attrs,
+							Order:   perm.Order,
+							Icon:    perm.Icon,
+						}
+						if _, ok := data.PermissionRemap[remapServiceName]; !ok {
+							data.PermissionRemap[remapServiceName] = map[string][]*Perm{}
+						}
+
+						data.PermissionRemap[remapServiceName][mName] = append(
+							data.PermissionRemap[remapServiceName][mName],
+							pm,
+						)
 						svc := sName
 						if perm.Service != nil {
-							svc = *perm.Service
+							svc = *pm.Service
 						}
-						p.Debugf("Permission Remap added: %q → %q/%q\n", mName, svc, perm.Name)
-					} else {
-						p.Debugf("Permission Remap already exists: %q → %q\n", mName, perm.Name)
+						p.Debugf("Permission Remap added: %q → %q/%q\n", mName, svc, pm.Name)
 					}
 				}
 
@@ -233,7 +271,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 	}
 
 	if len(data.Permissions) == 0 && len(data.PermissionRemap) == 0 {
-		return
+		return nil
 	}
 
 	sort.Strings(data.PermissionServiceKeys)
@@ -247,6 +285,8 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 
 	constPath := path.Join(filepath.Dir(name.String()), "perms", "perms.go")
 	p.AddGeneratorTemplateFile(constPath, p.constTpl, data)
+
+	return data.PermissionRemap
 }
 
 const permifyTpl = `// Code generated by protoc-gen-backend. DO NOT EDIT.
@@ -262,17 +302,6 @@ import (
     "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
     permkeys "{{ .GoPath }}"
 )
-
-{{ with .PermissionRemap }}
-var PermsRemap = map[string]string{
-    {{- range $service, $remap := . }}
-	// Service: {{ $service }}
-	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": "{{- if and (ne $target.Name "Superuser") (ne $target.Name "Any") }}{{ or $target.Service $service }}/{{ end }}{{ $target.Name }}",
-    {{ end }}
-    {{ end }}
-}
-{{ end }}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
@@ -327,6 +356,29 @@ const (
 		{{- end }}
 	{{- end }}
 )
+{{ end }}
+`
+
+const permifyRemapTpl = `// Code generated by protoc-gen-backend. DO NOT EDIT.
+{{- range $f := .FS }}
+// source: {{ $f.File.InputPath }}
+{{- end }}
+
+package goproto
+
+{{ with .PermissionRemap }}
+var PermsRemap = map[string][]string{
+    {{- range $service, $remap := . }}
+	// Service: {{ $service }}
+	{{ range $key, $target := $remap -}}
+	"{{ $service }}/{{ $key }}": []string{
+        {{ range $t := $target -}}
+        "{{- if and (ne $t.Name "Superuser") (ne $t.Name "Any") }}{{ or $t.Service $service }}/{{ end }}{{ $t.Name }}",
+        {{- end }}
+    },
+    {{ end }}
+    {{ end }}
+}
 {{ end }}
 `
 

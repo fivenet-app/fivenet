@@ -33,7 +33,7 @@ func (m *Attr) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *FieldOptions) Sanitize() error {
+func (m *PermsOptions) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -53,6 +53,14 @@ func (m *FieldOptions) Sanitize() error {
 	// Field: Name
 	if m.Name != nil {
 		*m.Name = htmlsanitizer.Sanitize(*m.Name)
+	}
+
+	// Field: Names
+	for idx, item := range m.Names {
+		_, _ = idx, item
+
+		m.Names[idx] = htmlsanitizer.Sanitize(m.Names[idx])
+
 	}
 
 	// Field: Service

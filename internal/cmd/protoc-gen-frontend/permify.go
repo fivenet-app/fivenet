@@ -95,7 +95,7 @@ func (p *PermifyModule) Execute(
 					mName = strings.TrimPrefix(mName, "services.")
 
 					// check if the field option is present and true
-					var val permspb.FieldOptions
+					var val permspb.PermsOptions
 					ok, err := m.Extension(permspb.E_Perms, &val)
 					if err != nil {
 						p.Fail("error reading perms option:", err)

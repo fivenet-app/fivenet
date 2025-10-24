@@ -9,27 +9,31 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: qualifications.QualificationsService
-	"qualifications.QualificationsService/CreateOrUpdateQualificationRequest": "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/CreateOrUpdateQualificationResult":  "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/CreateQualification":                "qualifications.QualificationsService/UpdateQualification",
-	"qualifications.QualificationsService/DeleteQualificationReq":             "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/DeleteQualificationResult":          "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/GetExamInfo":                        "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/GetQualification":                   "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/GetUserExam":                        "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/ListQualificationRequests":          "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/ListQualificationsResults":          "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/SubmitExam":                         "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/TakeExam":                           "qualifications.QualificationsService/ListQualifications",
-	"qualifications.QualificationsService/UploadFile":                         "qualifications.QualificationsService/UpdateQualification",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: qualifications.QualificationsService
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationRequestPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationResultPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceCreateQualificationPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceDeleteQualificationPerm,
@@ -45,7 +49,70 @@ func init() {
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceDeleteQualificationReqPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceDeleteQualificationResultPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceGetExamInfoPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceGetQualificationPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceGetUserExamPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceListQualificationRequestsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceListQualificationsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceListQualificationsResultsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceSubmitExamPerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceTakeExamPerm,
 			Attrs:    []perms.Attr{},
 			Order:    8000,
 			Icon:     "i-mdi-school-outline",
@@ -67,6 +134,13 @@ func init() {
 			},
 			Order: 8000,
 			Icon:  "i-mdi-school-outline",
+		},
+		{
+			Category: permkeys.QualificationsServicePerm,
+			Name:     permkeys.QualificationsServiceUploadFilePerm,
+			Attrs:    []perms.Attr{},
+			Order:    8000,
+			Icon:     "i-mdi-school-outline",
 		},
 	})
 }

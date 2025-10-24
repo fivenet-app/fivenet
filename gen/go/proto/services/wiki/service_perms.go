@@ -10,23 +10,27 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: wiki.CollabService
-	"wiki.CollabService/JoinRoom": "wiki.WikiService/UpdatePage",
-
-	// Service: wiki.WikiService
-	"wiki.WikiService/CreatePage": "wiki.WikiService/UpdatePage",
-	"wiki.WikiService/GetPage":    "wiki.WikiService/ListPages",
-	"wiki.WikiService/UploadFile": "wiki.WikiService/UpdatePage",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: wiki.WikiService
 		{
 			Category: permkeys.WikiServicePerm,
+			Name:     permkeys.WikiServiceCreatePagePerm,
+			Attrs:    []perms.Attr{},
+			Order:    11000,
+			Icon:     "i-mdi-brain",
+		},
+		{
+			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceDeletePagePerm,
+			Attrs:    []perms.Attr{},
+			Order:    11000,
+			Icon:     "i-mdi-brain",
+		},
+		{
+			Category: permkeys.WikiServicePerm,
+			Name:     permkeys.WikiServiceGetPagePerm,
 			Attrs:    []perms.Attr{},
 			Order:    11000,
 			Icon:     "i-mdi-brain",
@@ -57,6 +61,13 @@ func init() {
 			},
 			Order: 11000,
 			Icon:  "i-mdi-brain",
+		},
+		{
+			Category: permkeys.WikiServicePerm,
+			Name:     permkeys.WikiServiceUploadFilePerm,
+			Attrs:    []perms.Attr{},
+			Order:    11000,
+			Icon:     "i-mdi-brain",
 		},
 	})
 }

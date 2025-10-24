@@ -10,6 +10,8 @@ import (
 const (
 	CitizensServicePerm perms.Category = "citizens.CitizensService"
 
+	CitizensServiceDeleteAvatarPerm                perms.Name = "DeleteAvatar"
+	CitizensServiceDeleteMugshotPerm               perms.Name = "DeleteMugshot"
 	CitizensServiceGetUserPerm                     perms.Name = "GetUser"
 	CitizensServiceGetUserJobsPermField            perms.Key  = "Jobs"
 	CitizensServiceListCitizensPerm                perms.Name = "ListCitizens"
@@ -19,4 +21,6 @@ const (
 	CitizensServiceManageLabelsPerm                perms.Name = "ManageLabels"
 	CitizensServiceSetUserPropsPerm                perms.Name = "SetUserProps"
 	CitizensServiceSetUserPropsFieldsPermField     perms.Key  = "Fields"
+	CitizensServiceUploadAvatarPerm                perms.Name = "UploadAvatar"
+	CitizensServiceUploadMugshotPerm               perms.Name = "UploadMugshot"
 )

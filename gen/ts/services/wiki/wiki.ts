@@ -784,9 +784,9 @@ export const ListPageActivityResponse = new ListPageActivityResponse$Type();
 export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "ListPages", options: { "codegen.perms.perms": { enabled: true } }, I: ListPagesRequest, O: ListPagesResponse },
     { name: "GetPage", options: { "codegen.perms.perms": { enabled: true, name: "ListPages" } }, I: GetPageRequest, O: GetPageResponse },
-    { name: "CreatePage", options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: CreatePageRequest, O: CreatePageResponse },
-    { name: "UpdatePage", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdatePageRequest, O: UpdatePageResponse },
+    { name: "CreatePage", options: { "codegen.perms.perms": { enabled: true } }, I: CreatePageRequest, O: CreatePageResponse },
+    { name: "UpdatePage", options: { "codegen.perms.perms": { enabled: true, names: ["UpdatePage", "CreatePage"], attrs: [{ key: "Fields", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Public"] }] } }, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: { "codegen.perms.perms": { enabled: true } }, I: DeletePageRequest, O: DeletePageResponse },
     { name: "ListPageActivity", options: { "codegen.perms.perms": { enabled: true } }, I: ListPageActivityRequest, O: ListPageActivityResponse },
-    { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, name: "UpdatePage" } }, I: UploadFileRequest, O: UploadFileResponse }
+    { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, names: ["CreatePage", "UpdatePage"] } }, I: UploadFileRequest, O: UploadFileResponse }
 ], { "codegen.perms.perms_svc": { order: 110, icon: "i-mdi-brain" } });

@@ -142,6 +142,7 @@ type PageMeta struct {
 	Toc           *bool                  `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
 	Public        bool                   `protobuf:"varint,12,opt,name=public,proto3" json:"public,omitempty"`
 	Draft         bool                   `protobuf:"varint,13,opt,name=draft,proto3" json:"draft,omitempty"`
+	Startpage     bool                   `protobuf:"varint,14,opt,name=startpage,proto3" json:"startpage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -267,6 +268,13 @@ func (x *PageMeta) GetDraft() bool {
 	return false
 }
 
+func (x *PageMeta) GetStartpage() bool {
+	if x != nil {
+		return x.Startpage
+	}
+	return false
+}
+
 type PageShort struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
@@ -281,6 +289,7 @@ type PageShort struct {
 	RootInfo      *PageRootInfo          `protobuf:"bytes,10,opt,name=root_info,json=rootInfo,proto3,oneof" json:"root_info,omitempty"`
 	Level         *int32                 `protobuf:"varint,11,opt,name=level,proto3,oneof" json:"level,omitempty"`
 	Draft         bool                   `protobuf:"varint,13,opt,name=draft,proto3" json:"draft,omitempty"`
+	Startpage     bool                   `protobuf:"varint,14,opt,name=startpage,proto3" json:"startpage,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -399,6 +408,13 @@ func (x *PageShort) GetDraft() bool {
 	return false
 }
 
+func (x *PageShort) GetStartpage() bool {
+	if x != nil {
+		return x.Startpage
+	}
+	return false
+}
+
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	LogoFileId    *int64                 `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
@@ -468,7 +484,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
-	"_parent_id\"\xf1\x05\n" +
+	"_parent_id\"\x8f\x06\n" +
 	"\bPageMeta\x12=\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
@@ -487,14 +503,15 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	" \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x04tags\x12\x15\n" +
 	"\x03toc\x18\v \x01(\bH\x05R\x03toc\x88\x01\x01\x12\x16\n" +
 	"\x06public\x18\f \x01(\bR\x06public\x12\x14\n" +
-	"\x05draft\x18\r \x01(\bR\x05draftB\r\n" +
+	"\x05draft\x18\r \x01(\bR\x05draft\x12\x1c\n" +
+	"\tstartpage\x18\x0e \x01(\bR\tstartpageB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\a\n" +
 	"\x05_slugB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x06\n" +
-	"\x04_toc\"\xd2\x04\n" +
+	"\x04_toc\"\xf0\x04\n" +
 	"\tPageShort\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x182R\x03job\x12)\n" +
@@ -509,7 +526,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\troot_info\x18\n" +
 	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01\x12\"\n" +
 	"\x05level\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x05R\x05level\x88\x01\x01\x12\x14\n" +
-	"\x05draft\x18\r \x01(\bR\x05draftB\f\n" +
+	"\x05draft\x18\r \x01(\bR\x05draft\x12\x1c\n" +
+	"\tstartpage\x18\x0e \x01(\bR\tstartpageB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +

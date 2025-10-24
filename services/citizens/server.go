@@ -31,7 +31,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-		st       storage.IStorage
+	st       storage.IStorage
 	appCfg   appconfig.IConfig
 	cfg      *config.Config
 	customDB config.CustomDB
@@ -47,7 +47,7 @@ type Params struct {
 	DB        *sql.DB
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
-		Config    *config.Config
+	Config    *config.Config
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notifi    notifi.INotifi
@@ -87,7 +87,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
-				st:       p.Storage,
+		st:       p.Storage,
 		appCfg:   p.AppConfig,
 		cfg:      p.Config,
 		customDB: p.Config.Database.Custom,
@@ -149,9 +149,4 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcitizens.RegisterCitizensServiceServer(srv, s)
-}
-
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbcitizens.PermsRemap
 }

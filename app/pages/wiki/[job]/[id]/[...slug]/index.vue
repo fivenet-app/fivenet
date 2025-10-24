@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '#build/typed-router';
-import type { ContentNavigationItem } from '@nuxt/content';
+import type { NavigationMenuItem } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import PageList from '~/components/wiki/PageList.vue';
 import PageView from '~/components/wiki/PageView.vue';
@@ -85,26 +85,36 @@ useHead({
             : t('pages.wiki.id.title'),
 });
 
-function mapNavItemToNavItem(page: PageShort): ContentNavigationItem {
+function mapPageToNavItem(page: PageShort): NavigationMenuItem {
+    const isActive = (currentPage: PageShort): boolean => {
+        if (currentPage.id === parseInt(route.params.id)) {
+            return true;
+        }
+        return currentPage.children.some(isActive);
+    };
+
+    const active = isActive(page);
     return {
-        id: page.id.toString(),
-        title: page.title !== '' ? page.title : `${page?.jobLabel ? page?.jobLabel + ': ' : ''}${t('common.wiki')}`,
-        path: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
+        label: page.title,
+        to: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
         icon: page.deletedAt !== undefined ? 'i-mdi-delete' : page.draft ? 'i-mdi-pencil' : undefined,
-        children: page.children.map((p) => mapNavItemToNavItem(p)),
+        children: page.children.map((p) => mapPageToNavItem(p)),
+        active: active,
+        defaultOpen: active,
     };
 }
 
-const navItems = computed(() => pages.value?.map((p) => mapNavItemToNavItem(p)) ?? []);
+const navItems = computed(() => pages.value?.map((p) => mapPageToNavItem(p)) ?? []);
 </script>
 
 <template>
     <PageView :status="status" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []" :nav-items="navItems ?? []">
         <template #left>
             <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
-            <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3' }">
+
+            <UPageAside v-else :ui="{ root: 'px-0 lg:pe-3 lg:gap-2' }">
                 <ClientOnly>
-                    <PageList :nav-items="navItems" />
+                    <PageList :items="navItems" />
 
                     <UTooltip :text="$t('common.refresh')">
                         <UButton

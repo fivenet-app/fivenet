@@ -8,13 +8,14 @@ import "resources/permissions/attributes.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;perms";
 
 extend google.protobuf.MethodOptions {
-  FieldOptions perms = 51002;
+  PermsOptions perms = 51002;
 }
 
-message FieldOptions {
+message PermsOptions {
   bool enabled = 1;
   optional string service = 2;
   optional string name = 3;
+  repeated string names = 6;
   int32 order = 4;
   repeated Attr attrs = 5;
 }

@@ -85,14 +85,15 @@ service WikiService {
     };
   }
   rpc CreatePage(CreatePageRequest) returns (CreatePageResponse) {
-    option (codegen.perms.perms) = {
-      enabled: true
-      name: "UpdatePage"
-    };
+    option (codegen.perms.perms) = {enabled: true};
   }
   rpc UpdatePage(UpdatePageRequest) returns (UpdatePageResponse) {
     option (codegen.perms.perms) = {
       enabled: true
+      names: [
+        "UpdatePage",
+        "CreatePage"
+      ]
       attrs: [
         {
           key: "Fields"
@@ -113,7 +114,10 @@ service WikiService {
   rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
     option (codegen.perms.perms) = {
       enabled: true
-      name: "UpdatePage"
+      names: [
+        "CreatePage",
+        "UpdatePage"
+      ]
     };
   }
 }

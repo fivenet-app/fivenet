@@ -9,18 +9,24 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: citizens.CitizensService
-	"citizens.CitizensService/DeleteAvatar":  "Any",
-	"citizens.CitizensService/DeleteMugshot": "citizens.CitizensService/SetUserProps",
-	"citizens.CitizensService/UploadAvatar":  "Any",
-	"citizens.CitizensService/UploadMugshot": "citizens.CitizensService/SetUserProps",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: citizens.CitizensService
+		{
+			Category: permkeys.CitizensServicePerm,
+			Name:     permkeys.CitizensServiceDeleteAvatarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    3000,
+			Icon:     "i-mdi-account-multiple-outline",
+		},
+		{
+			Category: permkeys.CitizensServicePerm,
+			Name:     permkeys.CitizensServiceDeleteMugshotPerm,
+			Attrs:    []perms.Attr{},
+			Order:    3000,
+			Icon:     "i-mdi-account-multiple-outline",
+		},
 		{
 			Category: permkeys.CitizensServicePerm,
 			Name:     permkeys.CitizensServiceGetUserPerm,
@@ -78,6 +84,20 @@ func init() {
 			},
 			Order: 3000,
 			Icon:  "i-mdi-account-multiple-outline",
+		},
+		{
+			Category: permkeys.CitizensServicePerm,
+			Name:     permkeys.CitizensServiceUploadAvatarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    3000,
+			Icon:     "i-mdi-account-multiple-outline",
+		},
+		{
+			Category: permkeys.CitizensServicePerm,
+			Name:     permkeys.CitizensServiceUploadMugshotPerm,
+			Attrs:    []perms.Attr{},
+			Order:    3000,
+			Icon:     "i-mdi-account-multiple-outline",
 		},
 	})
 }

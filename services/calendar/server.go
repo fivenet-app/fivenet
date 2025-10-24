@@ -157,7 +157,3 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcalendar.RegisterCalendarServiceServer(srv, s)
 }
 
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbcalendar.PermsRemap
-}

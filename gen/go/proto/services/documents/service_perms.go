@@ -12,38 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: documents.ApprovalService
-	"documents.ApprovalService/DecideApproval":                  "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovalPolicies":            "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovalTasks":               "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovalTasksInbox":          "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/ListApprovals":                   "documents.DocumentsService/ListDocuments",
-	"documents.ApprovalService/RecomputeApprovalPolicyCounters": "documents.ApprovalService/RevokeApproval",
-	"documents.ApprovalService/ReopenApprovalTask":              "documents.ApprovalService/RevokeApproval",
-
-	// Service: documents.CollabService
-	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
-
-	// Service: documents.DocumentsService
-	"documents.DocumentsService/CreateDocument":          "documents.DocumentsService/UpdateDocument",
-	"documents.DocumentsService/EditComment":             "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetComments":             "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetDocument":             "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetDocumentAccess":       "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetDocumentReferences":   "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetDocumentRelations":    "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/GetTemplate":             "documents.DocumentsService/ListTemplates",
-	"documents.DocumentsService/ListDocumentPins":        "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/PostComment":             "documents.DocumentsService/ListDocuments",
-	"documents.DocumentsService/RemoveDocumentReference": "documents.DocumentsService/AddDocumentReference",
-	"documents.DocumentsService/RemoveDocumentRelation":  "documents.DocumentsService/AddDocumentRelation",
-	"documents.DocumentsService/SetDocumentAccess":       "documents.DocumentsService/UpdateDocument",
-	"documents.DocumentsService/UpdateDocumentReq":       "documents.DocumentsService/CreateDocumentReq",
-	"documents.DocumentsService/UpdateTemplate":          "documents.DocumentsService/CreateTemplate",
-	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
@@ -51,6 +19,20 @@ func init() {
 		{
 			Category: permkeys.ApprovalServicePerm,
 			Name:     permkeys.ApprovalServiceDeleteApprovalTasksPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5200,
+			Icon:     "i-mdi-approval",
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceRecomputeApprovalPolicyCountersPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5200,
+			Icon:     "i-mdi-approval",
+		},
+		{
+			Category: permkeys.ApprovalServicePerm,
+			Name:     permkeys.ApprovalServiceReopenApprovalTaskPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5200,
 			Icon:     "i-mdi-approval",
@@ -104,6 +86,13 @@ func init() {
 			},
 			Order: 5000,
 			Icon:  "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceCreateDocumentPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 		{
 			Category: permkeys.DocumentsServicePerm,
@@ -181,6 +170,55 @@ func init() {
 		},
 		{
 			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceEditCommentPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetCommentsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetDocumentPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetDocumentAccessPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetDocumentReferencesPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetDocumentRelationsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceGetTemplatePerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
 			Name:     permkeys.DocumentsServiceListCategoriesPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5000,
@@ -189,6 +227,13 @@ func init() {
 		{
 			Category: permkeys.DocumentsServicePerm,
 			Name:     permkeys.DocumentsServiceListDocumentActivityPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceListDocumentPinsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5000,
 			Icon:     "i-mdi-file-document-box-multiple-outline",
@@ -217,6 +262,34 @@ func init() {
 		{
 			Category: permkeys.DocumentsServicePerm,
 			Name:     permkeys.DocumentsServiceListUserDocumentsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServicePostCommentPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceRemoveDocumentReferencePerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceRemoveDocumentRelationPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceSetDocumentAccessPerm,
 			Attrs:    []perms.Attr{},
 			Order:    5000,
 			Icon:     "i-mdi-file-document-box-multiple-outline",
@@ -266,6 +339,27 @@ func init() {
 			},
 			Order: 5000,
 			Icon:  "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceUpdateDocumentReqPerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceUpdateTemplatePerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
+		},
+		{
+			Category: permkeys.DocumentsServicePerm,
+			Name:     permkeys.DocumentsServiceUploadFilePerm,
+			Attrs:    []perms.Attr{},
+			Order:    5000,
+			Icon:     "i-mdi-file-document-box-multiple-outline",
 		},
 
 		// Service: documents.StampsService

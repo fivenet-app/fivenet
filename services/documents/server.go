@@ -393,10 +393,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterStampsServiceServer(srv, s)
 }
 
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbdocuments.PermsRemap
-}
 
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{

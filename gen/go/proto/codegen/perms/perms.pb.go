@@ -23,31 +23,32 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type FieldOptions struct {
+type PermsOptions struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Service       *string                `protobuf:"bytes,2,opt,name=service,proto3,oneof" json:"service,omitempty"`
 	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Names         []string               `protobuf:"bytes,6,rep,name=names,proto3" json:"names,omitempty"`
 	Order         int32                  `protobuf:"varint,4,opt,name=order,proto3" json:"order,omitempty"`
 	Attrs         []*Attr                `protobuf:"bytes,5,rep,name=attrs,proto3" json:"attrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *FieldOptions) Reset() {
-	*x = FieldOptions{}
+func (x *PermsOptions) Reset() {
+	*x = PermsOptions{}
 	mi := &file_codegen_perms_perms_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *FieldOptions) String() string {
+func (x *PermsOptions) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*FieldOptions) ProtoMessage() {}
+func (*PermsOptions) ProtoMessage() {}
 
-func (x *FieldOptions) ProtoReflect() protoreflect.Message {
+func (x *PermsOptions) ProtoReflect() protoreflect.Message {
 	mi := &file_codegen_perms_perms_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -59,40 +60,47 @@ func (x *FieldOptions) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use FieldOptions.ProtoReflect.Descriptor instead.
-func (*FieldOptions) Descriptor() ([]byte, []int) {
+// Deprecated: Use PermsOptions.ProtoReflect.Descriptor instead.
+func (*PermsOptions) Descriptor() ([]byte, []int) {
 	return file_codegen_perms_perms_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *FieldOptions) GetEnabled() bool {
+func (x *PermsOptions) GetEnabled() bool {
 	if x != nil {
 		return x.Enabled
 	}
 	return false
 }
 
-func (x *FieldOptions) GetService() string {
+func (x *PermsOptions) GetService() string {
 	if x != nil && x.Service != nil {
 		return *x.Service
 	}
 	return ""
 }
 
-func (x *FieldOptions) GetName() string {
+func (x *PermsOptions) GetName() string {
 	if x != nil && x.Name != nil {
 		return *x.Name
 	}
 	return ""
 }
 
-func (x *FieldOptions) GetOrder() int32 {
+func (x *PermsOptions) GetNames() []string {
+	if x != nil {
+		return x.Names
+	}
+	return nil
+}
+
+func (x *PermsOptions) GetOrder() int32 {
 	if x != nil {
 		return x.Order
 	}
 	return 0
 }
 
-func (x *FieldOptions) GetAttrs() []*Attr {
+func (x *PermsOptions) GetAttrs() []*Attr {
 	if x != nil {
 		return x.Attrs
 	}
@@ -222,7 +230,7 @@ func (x *ServiceOptions) GetIcon() string {
 var file_codegen_perms_perms_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.MethodOptions)(nil),
-		ExtensionType: (*FieldOptions)(nil),
+		ExtensionType: (*PermsOptions)(nil),
 		Field:         51002,
 		Name:          "codegen.perms.perms",
 		Tag:           "bytes,51002,opt,name=perms",
@@ -240,7 +248,7 @@ var file_codegen_perms_perms_proto_extTypes = []protoimpl.ExtensionInfo{
 
 // Extension fields to descriptorpb.MethodOptions.
 var (
-	// optional codegen.perms.FieldOptions perms = 51002;
+	// optional codegen.perms.PermsOptions perms = 51002;
 	E_Perms = &file_codegen_perms_perms_proto_extTypes[0]
 )
 
@@ -254,11 +262,12 @@ var File_codegen_perms_perms_proto protoreflect.FileDescriptor
 
 const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a&resources/permissions/attributes.proto\"\xb6\x01\n" +
-	"\fFieldOptions\x12\x18\n" +
+	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a&resources/permissions/attributes.proto\"\xcc\x01\n" +
+	"\fPermsOptions\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
 	"\aservice\x18\x02 \x01(\tH\x00R\aservice\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x03 \x01(\tH\x01R\x04name\x88\x01\x01\x12\x14\n" +
+	"\x05names\x18\x06 \x03(\tR\x05names\x12\x14\n" +
 	"\x05order\x18\x04 \x01(\x05R\x05order\x12)\n" +
 	"\x05attrs\x18\x05 \x03(\v2\x13.codegen.perms.AttrR\x05attrsB\n" +
 	"\n" +
@@ -273,7 +282,7 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
 	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
 	"\x05_icon:S\n" +
-	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.FieldOptionsR\x05perms:]\n" +
+	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.PermsOptionsR\x05perms:]\n" +
 	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;permsb\x06proto3"
 
 var (
@@ -290,7 +299,7 @@ func file_codegen_perms_perms_proto_rawDescGZIP() []byte {
 
 var file_codegen_perms_perms_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_codegen_perms_perms_proto_goTypes = []any{
-	(*FieldOptions)(nil),                // 0: codegen.perms.FieldOptions
+	(*PermsOptions)(nil),                // 0: codegen.perms.PermsOptions
 	(*Attr)(nil),                        // 1: codegen.perms.Attr
 	(*ServiceOptions)(nil),              // 2: codegen.perms.ServiceOptions
 	(permissions.AttributeType)(0),      // 3: resources.permissions.AttributeType
@@ -298,11 +307,11 @@ var file_codegen_perms_perms_proto_goTypes = []any{
 	(*descriptorpb.ServiceOptions)(nil), // 5: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
-	1, // 0: codegen.perms.FieldOptions.attrs:type_name -> codegen.perms.Attr
+	1, // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
 	3, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.AttributeType
 	4, // 2: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
 	5, // 3: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
-	0, // 4: codegen.perms.perms:type_name -> codegen.perms.FieldOptions
+	0, // 4: codegen.perms.perms:type_name -> codegen.perms.PermsOptions
 	2, // 5: codegen.perms.perms_svc:type_name -> codegen.perms.ServiceOptions
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type

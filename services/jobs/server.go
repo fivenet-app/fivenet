@@ -73,7 +73,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-		notifi   notifi.INotifi
+	notifi   notifi.INotifi
 
 	customDB config.CustomDB
 }
@@ -87,7 +87,7 @@ type Params struct {
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
-		Notifi            notifi.INotifi
+	Notifi            notifi.INotifi
 	Config            *config.Config
 }
 
@@ -99,7 +99,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
-				notifi:   p.Notifi,
+		notifi:   p.Notifi,
 
 		customDB: p.Config.Database.Custom,
 	}
@@ -111,9 +111,4 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbjobs.RegisterConductServiceServer(srv, s)
 	pbjobs.RegisterJobsServiceServer(srv, s)
 	pbjobs.RegisterTimeclockServiceServer(srv, s)
-}
-
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbjobs.PermsRemap
 }

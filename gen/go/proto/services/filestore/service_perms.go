@@ -4,17 +4,37 @@
 package filestore
 
 import (
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: filestore.FilestoreService
-	"filestore.FilestoreService/DeleteFile":       "Superuser",
-	"filestore.FilestoreService/DeleteFileByPath": "Superuser",
-	"filestore.FilestoreService/ListFiles":        "Superuser",
-	"filestore.FilestoreService/Upload":           "Superuser",
-}
-
 func init() {
-	perms.AddPermsToList([]*perms.Perm{})
+	perms.AddPermsToList([]*perms.Perm{
+
+		// Service: filestore.FilestoreService
+		{
+			Category: permkeys.FilestoreServicePerm,
+			Name:     permkeys.FilestoreServiceDeleteFilePerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.FilestoreServicePerm,
+			Name:     permkeys.FilestoreServiceDeleteFileByPathPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.FilestoreServicePerm,
+			Name:     permkeys.FilestoreServiceListFilesPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.FilestoreServicePerm,
+			Name:     permkeys.FilestoreServiceUploadPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+	})
 }

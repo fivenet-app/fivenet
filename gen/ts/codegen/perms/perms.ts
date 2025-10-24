@@ -13,9 +13,9 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { AttributeType } from "../../resources/permissions/attributes";
 /**
- * @generated from protobuf message codegen.perms.FieldOptions
+ * @generated from protobuf message codegen.perms.PermsOptions
  */
-export interface FieldOptions {
+export interface PermsOptions {
     /**
      * @generated from protobuf field: bool enabled = 1
      */
@@ -28,6 +28,10 @@ export interface FieldOptions {
      * @generated from protobuf field: optional string name = 3
      */
     name?: string;
+    /**
+     * @generated from protobuf field: repeated string names = 6
+     */
+    names: string[];
     /**
      * @generated from protobuf field: int32 order = 4
      */
@@ -72,26 +76,28 @@ export interface ServiceOptions {
     icon?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class FieldOptions$Type extends MessageType<FieldOptions> {
+class PermsOptions$Type extends MessageType<PermsOptions> {
     constructor() {
-        super("codegen.perms.FieldOptions", [
+        super("codegen.perms.PermsOptions", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "names", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "attrs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Attr }
         ]);
     }
-    create(value?: PartialMessage<FieldOptions>): FieldOptions {
+    create(value?: PartialMessage<PermsOptions>): PermsOptions {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.enabled = false;
+        message.names = [];
         message.order = 0;
         message.attrs = [];
         if (value !== undefined)
-            reflectionMergePartial<FieldOptions>(this, message, value);
+            reflectionMergePartial<PermsOptions>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FieldOptions): FieldOptions {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PermsOptions): PermsOptions {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -104,6 +110,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
                     break;
                 case /* optional string name */ 3:
                     message.name = reader.string();
+                    break;
+                case /* repeated string names */ 6:
+                    message.names.push(reader.string());
                     break;
                 case /* int32 order */ 4:
                     message.order = reader.int32();
@@ -122,7 +131,7 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         }
         return message;
     }
-    internalBinaryWrite(message: FieldOptions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PermsOptions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool enabled = 1; */
         if (message.enabled !== false)
             writer.tag(1, WireType.Varint).bool(message.enabled);
@@ -138,6 +147,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         /* repeated codegen.perms.Attr attrs = 5; */
         for (let i = 0; i < message.attrs.length; i++)
             Attr.internalBinaryWrite(message.attrs[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string names = 6; */
+        for (let i = 0; i < message.names.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.names[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -145,9 +157,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
     }
 }
 /**
- * @generated MessageType for protobuf message codegen.perms.FieldOptions
+ * @generated MessageType for protobuf message codegen.perms.PermsOptions
  */
-export const FieldOptions = new FieldOptions$Type();
+export const PermsOptions = new PermsOptions$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Attr$Type extends MessageType<Attr> {
     constructor() {

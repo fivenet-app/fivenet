@@ -728,7 +728,8 @@
         "expand_collapse": "Expand/ Collapse",
         "no_signature": "No Signature provided",
         "coming_soon": "Coming Soon",
-        "optional": "Optional"
+        "optional": "Optional",
+        "startpage": "Startpage"
     },
     "components": {
         "partials": {
@@ -3342,14 +3343,18 @@
                     "description": "Viewing page history."
                 },
                 "UpdatePage": {
-                    "key": "Create and Update Pages",
-                    "description": "Create and update wiki pages.",
+                    "key": "Update Pages",
+                    "description": "Update wiki pages (does not allow creation of pages).",
                     "attrs": {
                         "Public": "Public pages for anyone to view"
                     },
                     "attrs_types": {
                         "Fields": "Access to creating pages with specific access"
                     }
+                },
+                "CreatePage": {
+                    "key": "Create Pages",
+                    "description": "Creating wiki pages (does implicitly allow to update pages)"
                 }
             }
         },

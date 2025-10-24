@@ -9,12 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: completor.CompletorService
-	"completor.CompletorService/CompleteJobs": "Any",
-	"completor.CompletorService/ListLawBooks": "Any",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
@@ -49,6 +43,20 @@ func init() {
 			},
 			Order: 1000,
 			Icon:  "i-mdi-keyboard-tab",
+		},
+		{
+			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceCompleteJobsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    1000,
+			Icon:     "i-mdi-keyboard-tab",
+		},
+		{
+			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceListLawBooksPerm,
+			Attrs:    []perms.Attr{},
+			Order:    1000,
+			Icon:     "i-mdi-keyboard-tab",
 		},
 	})
 }

@@ -4,17 +4,17 @@ import (
 	"context"
 	"strings"
 
+	goproto "github.com/fivenet-app/fivenet/v2025/gen/go/proto"
 	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	pkgperms "github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"google.golang.org/grpc"
 )
 
 type GRPCPerm struct {
-	p perms.Permissions
+	p pkgperms.Permissions
 }
 
-func NewGRPCPerms(p perms.Permissions) *GRPCPerm {
+func NewGRPCPerms(p pkgperms.Permissions) *GRPCPerm {
 	return &GRPCPerm{
 		p: p,
 	}
@@ -39,26 +39,26 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(
 		return nil, errorsgrpcauth.ErrPermissionDenied
 	}
 
-	if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
-		remap := overrideSrv.GetPermsRemap()
-		if _, ok := remap[perm]; ok {
-			perm = remap[perm]
-		}
+	perms := []string{perm}
+	if _, ok := goproto.PermsRemap[perm]; ok {
+		perms = goproto.PermsRemap[perm]
 	}
 
-	if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
-		return ctx, nil
-	} else if perm == PermAny {
-		return ctx, nil
-	}
-
-	permSplit := strings.Split(perm, "/")
-	if len(permSplit) > 1 {
-		category := perms.Category(permSplit[0])
-		name := perms.Name(permSplit[1])
-
-		if g.p.Can(userInfo, category, name) {
+	for _, p := range perms {
+		if p == PermSuperuser.GetName() && userInfo.GetSuperuser() {
 			return ctx, nil
+		} else if p == PermAny {
+			return ctx, nil
+		}
+
+		permSplit := strings.Split(p, "/")
+		if len(permSplit) > 1 {
+			category := pkgperms.Category(permSplit[0])
+			name := pkgperms.Name(permSplit[1])
+
+			if g.p.Can(userInfo, category, name) {
+				return ctx, nil
+			}
 		}
 	}
 
@@ -85,26 +85,26 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(
 		return nil, errorsgrpcauth.ErrPermissionDenied
 	}
 
-	if overrideSrv, ok := srv.(grpc_permission.GetPermsRemapFunc); ok {
-		remap := overrideSrv.GetPermsRemap()
-		if _, ok := remap[perm]; ok {
-			perm = remap[perm]
-		}
+	perms := []string{perm}
+	if _, ok := goproto.PermsRemap[perm]; ok {
+		perms = goproto.PermsRemap[perm]
 	}
 
-	if perm == PermSuperuser.GetName() && userInfo.GetSuperuser() {
-		return ctx, nil
-	} else if perm == PermAny {
-		return ctx, nil
-	}
-
-	permSplit := strings.Split(perm, "/")
-	if len(permSplit) > 1 {
-		category := perms.Category(permSplit[0])
-		name := perms.Name(permSplit[1])
-
-		if g.p.Can(userInfo, category, name) {
+	for _, p := range perms {
+		if p == PermSuperuser.GetName() && userInfo.GetSuperuser() {
 			return ctx, nil
+		} else if p == PermAny {
+			return ctx, nil
+		}
+
+		permSplit := strings.Split(p, "/")
+		if len(permSplit) > 1 {
+			category := pkgperms.Category(permSplit[0])
+			name := pkgperms.Name(permSplit[1])
+
+			if g.p.Can(userInfo, category, name) {
+				return ctx, nil
+			}
 		}
 	}
 

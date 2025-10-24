@@ -11,17 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: jobs.JobsService
-	"jobs.JobsService/GetColleagueLabels":      "jobs.JobsService/GetColleague",
-	"jobs.JobsService/GetColleagueLabelsStats": "jobs.JobsService/GetColleague",
-	"jobs.JobsService/GetMOTD":                 "Any",
-	"jobs.JobsService/GetSelf":                 "jobs.JobsService/ListColleagues",
-
-	// Service: jobs.TimeclockService
-	"jobs.TimeclockService/GetTimeclockStats": "jobs.TimeclockService/ListTimeclock",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
@@ -82,6 +71,34 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceGetColleagueLabelsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceGetColleagueLabelsStatsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceGetMOTDPerm,
+			Attrs:    []perms.Attr{},
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceGetSelfPerm,
+			Attrs:    []perms.Attr{},
+			Order:    6000,
+			Icon:     "i-mdi-briefcase-outline",
+		},
+		{
+			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleagueActivityPerm,
 			Attrs: []perms.Attr{
 				{
@@ -134,6 +151,13 @@ func init() {
 		},
 
 		// Service: jobs.TimeclockService
+		{
+			Category: permkeys.TimeclockServicePerm,
+			Name:     permkeys.TimeclockServiceGetTimeclockStatsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    6200,
+			Icon:     "i-mdi-timeline-clock-outline",
+		},
 		{
 			Category: permkeys.TimeclockServicePerm,
 			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,

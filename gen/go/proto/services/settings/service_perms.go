@@ -13,49 +13,81 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: settings.AccountsService
-	"settings.AccountsService/CreateAccount":              "Superuser",
-	"settings.AccountsService/DeleteAccount":              "Superuser",
-	"settings.AccountsService/DisconnectOAuth2Connection": "Superuser",
-	"settings.AccountsService/ListAccounts":               "Superuser",
-	"settings.AccountsService/UpdateAccount":              "Superuser",
-
-	// Service: settings.ConfigService
-	"settings.ConfigService/GetAppConfig":    "Superuser",
-	"settings.ConfigService/UpdateAppConfig": "Superuser",
-
-	// Service: settings.CronService
-	"settings.CronService/ListCronjobs": "Superuser",
-
-	// Service: settings.LawsService
-	"settings.LawsService/CreateOrUpdateLaw": "settings.LawsService/CreateOrUpdateLawBook",
-	"settings.LawsService/DeleteLaw":         "settings.LawsService/DeleteLawBook",
-
-	// Service: settings.SettingsService
-	"settings.SettingsService/DeleteJobLogo":           "settings.SettingsService/SetJobProps",
-	"settings.SettingsService/GetEffectivePermissions": "settings.SettingsService/GetRoles",
-	"settings.SettingsService/GetPermissions":          "settings.SettingsService/GetRoles",
-	"settings.SettingsService/GetRole":                 "settings.SettingsService/GetRoles",
-	"settings.SettingsService/ListDiscordChannels":     "settings.SettingsService/SetJobProps",
-	"settings.SettingsService/ListUserGuilds":          "settings.SettingsService/SetJobProps",
-	"settings.SettingsService/UploadJobLogo":           "settings.SettingsService/SetJobProps",
-
-	// Service: settings.SystemService
-	"settings.SystemService/DeleteFaction":     "Superuser",
-	"settings.SystemService/GetAllPermissions": "Superuser",
-	"settings.SystemService/GetJobLimits":      "Superuser",
-	"settings.SystemService/GetStatus":         "Superuser",
-	"settings.SystemService/UpdateJobLimits":   "Superuser",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
+		// Service: settings.AccountsService
+		{
+			Category: permkeys.AccountsServicePerm,
+			Name:     permkeys.AccountsServiceCreateAccountPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.AccountsServicePerm,
+			Name:     permkeys.AccountsServiceDeleteAccountPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.AccountsServicePerm,
+			Name:     permkeys.AccountsServiceDisconnectOAuth2ConnectionPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.AccountsServicePerm,
+			Name:     permkeys.AccountsServiceListAccountsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.AccountsServicePerm,
+			Name:     permkeys.AccountsServiceUpdateAccountPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+
+		// Service: settings.ConfigService
+		{
+			Category: permkeys.ConfigServicePerm,
+			Name:     permkeys.ConfigServiceGetAppConfigPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.ConfigServicePerm,
+			Name:     permkeys.ConfigServiceUpdateAppConfigPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+
+		// Service: settings.CronService
+		{
+			Category: permkeys.CronServicePerm,
+			Name:     permkeys.CronServiceListCronjobsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
 
 		// Service: settings.LawsService
 		{
 			Category: permkeys.LawsServicePerm,
+			Name:     permkeys.LawsServiceCreateOrUpdateLawPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12200,
+			Icon:     "i-mdi-scale-balance",
+		},
+		{
+			Category: permkeys.LawsServicePerm,
 			Name:     permkeys.LawsServiceCreateOrUpdateLawBookPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12200,
+			Icon:     "i-mdi-scale-balance",
+		},
+		{
+			Category: permkeys.LawsServicePerm,
+			Name:     permkeys.LawsServiceDeleteLawPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12200,
 			Icon:     "i-mdi-scale-balance",
@@ -78,7 +110,21 @@ func init() {
 		},
 		{
 			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceDeleteJobLogoPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceDeleteRolePerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceGetEffectivePermissionsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
@@ -92,7 +138,35 @@ func init() {
 		},
 		{
 			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceGetPermissionsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceGetRolePerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceGetRolesPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceListDiscordChannelsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceListUserGuildsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
@@ -113,10 +187,49 @@ func init() {
 		},
 		{
 			Category: permkeys.SettingsServicePerm,
+			Name:     permkeys.SettingsServiceUploadJobLogoPerm,
+			Attrs:    []perms.Attr{},
+			Order:    12000,
+			Icon:     "i-mdi-cog-outline",
+		},
+		{
+			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceViewAuditLogPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
+		},
+
+		// Service: settings.SystemService
+		{
+			Category: permkeys.SystemServicePerm,
+			Name:     permkeys.SystemServiceDeleteFactionPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.SystemServicePerm,
+			Name:     permkeys.SystemServiceGetAllPermissionsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.SystemServicePerm,
+			Name:     permkeys.SystemServiceGetJobLimitsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.SystemServicePerm,
+			Name:     permkeys.SystemServiceGetStatusPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.SystemServicePerm,
+			Name:     permkeys.SystemServiceUpdateJobLimitsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

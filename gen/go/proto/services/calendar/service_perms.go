@@ -9,24 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: calendar.CalendarService
-	"calendar.CalendarService/CreateOrUpdateCalendarEntry": "Any",
-	"calendar.CalendarService/DeleteCalendar":              "Any",
-	"calendar.CalendarService/DeleteCalendarEntry":         "Any",
-	"calendar.CalendarService/GetCalendar":                 "Any",
-	"calendar.CalendarService/GetCalendarEntry":            "Any",
-	"calendar.CalendarService/GetUpcomingEntries":          "Any",
-	"calendar.CalendarService/ListCalendarEntries":         "Any",
-	"calendar.CalendarService/ListCalendarEntryRSVP":       "Any",
-	"calendar.CalendarService/ListCalendars":               "Any",
-	"calendar.CalendarService/ListSubscriptions":           "Any",
-	"calendar.CalendarService/RSVPCalendarEntry":           "Any",
-	"calendar.CalendarService/ShareCalendarEntry":          "Any",
-	"calendar.CalendarService/SubscribeToCalendar":         "Any",
-	"calendar.CalendarService/UpdateCalendar":              "Any",
-}
-
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
@@ -43,6 +25,104 @@ func init() {
 			},
 			Order: 7000,
 			Icon:  "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarEntryPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceDeleteCalendarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceDeleteCalendarEntryPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceGetCalendarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceGetCalendarEntryPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceGetUpcomingEntriesPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceListCalendarEntriesPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceListCalendarEntryRSVPPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceListCalendarsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceListSubscriptionsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceRSVPCalendarEntryPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceShareCalendarEntryPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceSubscribeToCalendarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
+		},
+		{
+			Category: permkeys.CalendarServicePerm,
+			Name:     permkeys.CalendarServiceUpdateCalendarPerm,
+			Attrs:    []perms.Attr{},
+			Order:    7000,
+			Icon:     "i-mdi-calendar-outline",
 		},
 	})
 }

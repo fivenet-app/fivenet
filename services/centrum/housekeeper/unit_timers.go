@@ -11,9 +11,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
-	"github.com/gogo/protobuf/proto"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *Housekeeper) runTTLWatcher(ctx context.Context) error {

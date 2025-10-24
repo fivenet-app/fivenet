@@ -89,9 +89,10 @@ const schema = z.object({
     meta: z.object({
         title: z.coerce.string().min(3).max(255),
         description: z.coerce.string().max(255),
-        public: z.coerce.boolean(),
-        draft: z.coerce.boolean(),
         toc: z.coerce.boolean(),
+        draft: z.coerce.boolean(),
+        public: z.coerce.boolean(),
+        startpage: z.coerce.boolean(),
     }),
     content: z.coerce.string().min(3).max(1750000),
     access: z.object({
@@ -108,9 +109,10 @@ const state = reactive<Schema>({
     meta: {
         title: '',
         description: '',
-        public: false,
-        draft: true,
         toc: true,
+        draft: true,
+        public: false,
+        startpage: false,
     },
     content: '',
     access: {
@@ -197,22 +199,14 @@ watchDebounced(
 function setFromProps(): void {
     if (!page.value) return;
 
-    state.parentId =
-        (page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
-            ? undefined
-            : (page.value?.parentId ??
-              (pages.value.length === 0
-                  ? undefined
-                  : pages.value.at(0)?.job !== undefined && pages.value.at(0)?.job === activeChar.value?.job
-                    ? pages.value.at(0)?.id
-                    : undefined))) ?? 0;
-
+    state.parentId = page.value?.parentId ?? 0;
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
     state.content = page.value.content?.rawContent ?? '';
-    state.meta.public = page.value.meta?.public ?? false;
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
+    state.meta.public = page.value.meta?.public ?? false;
+    state.meta.startpage = page.value.meta?.startpage ?? false;
     if (page.value.access) {
         state.access.jobs = page.value.access.jobs;
         state.access.users = page.value.access.users;
@@ -249,6 +243,7 @@ async function updatePage(values: Schema): Promise<void> {
             public: values.meta.public,
             toc: values.meta.toc,
             draft: values.meta.draft,
+            startpage: values.meta.startpage,
             tags: [],
         },
         content: {
@@ -321,6 +316,12 @@ const parentPages = computedAsync(() => {
             draft: page.value.meta?.draft ?? false,
         });
     }
+
+    pagesList.unshift({
+        id: 0,
+        title: t('common.none_selected', [t('common.parent_page')]),
+        draft: false,
+    });
 
     return pagesList;
 });
@@ -556,7 +557,7 @@ const formRef = useTemplateRef('formRef');
                                             <div class="flex flex-1 gap-2">
                                                 <UFormField
                                                     class="flex-1 md:grid md:grid-cols-2 md:items-center"
-                                                    name="public"
+                                                    name="meta.public"
                                                     :label="$t('common.public')"
                                                 >
                                                     <USwitch
@@ -566,8 +567,20 @@ const formRef = useTemplateRef('formRef');
                                                 </UFormField>
 
                                                 <UFormField
+                                                    v-if="canDo.public"
                                                     class="flex-1 md:grid md:grid-cols-2 md:items-center"
-                                                    name="closed"
+                                                    name="meta.startpage"
+                                                    :label="`${$t('common.startpage')}?`"
+                                                >
+                                                    <USwitch
+                                                        v-model="state.meta.startpage"
+                                                        :disabled="!canDo.edit || !canDo.public"
+                                                    />
+                                                </UFormField>
+
+                                                <UFormField
+                                                    class="flex-1 md:grid md:grid-cols-2 md:items-center"
+                                                    name="meta.toc"
                                                     :label="`${$t('common.toc', 2)}?`"
                                                 >
                                                     <USwitch v-model="state.meta.toc" :disabled="!canDo.edit" />

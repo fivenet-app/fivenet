@@ -234,10 +234,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcentrum.RegisterCentrumServiceServer(srv, s)
 }
 
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbcentrum.PermsRemap
-}
 
 func (s *Server) loadData(ctx context.Context) error {
 	g, gctx := errgroup.WithContext(ctx)

@@ -4,16 +4,31 @@
 package notifications
 
 import (
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: notifications.NotificationsService
-	"notifications.NotificationsService/GetNotifications":  "Any",
-	"notifications.NotificationsService/MarkNotifications": "Any",
-	"notifications.NotificationsService/Stream":            "Any",
-}
-
 func init() {
-	perms.AddPermsToList([]*perms.Perm{})
+	perms.AddPermsToList([]*perms.Perm{
+
+		// Service: notifications.NotificationsService
+		{
+			Category: permkeys.NotificationsServicePerm,
+			Name:     permkeys.NotificationsServiceGetNotificationsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.NotificationsServicePerm,
+			Name:     permkeys.NotificationsServiceMarkNotificationsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.NotificationsServicePerm,
+			Name:     permkeys.NotificationsServiceStreamPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+	})
 }

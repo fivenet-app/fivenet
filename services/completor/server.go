@@ -56,7 +56,3 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcompletor.RegisterCompletorServiceServer(srv, s)
 }
 
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbcompletor.PermsRemap
-}

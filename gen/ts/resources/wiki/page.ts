@@ -110,6 +110,10 @@ export interface PageMeta {
      * @generated from protobuf field: bool draft = 13
      */
     draft: boolean;
+    /**
+     * @generated from protobuf field: bool startpage = 14
+     */
+    startpage: boolean;
 }
 /**
  * @generated from protobuf message resources.wiki.PageShort
@@ -163,6 +167,10 @@ export interface PageShort {
      * @generated from protobuf field: bool draft = 13
      */
     draft: boolean;
+    /**
+     * @generated from protobuf field: bool startpage = 14
+     */
+    startpage: boolean;
 }
 /**
  * @generated from protobuf message resources.wiki.PageRootInfo
@@ -291,7 +299,8 @@ class PageMeta$Type extends MessageType<PageMeta> {
             { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 11, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "startpage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PageMeta>): PageMeta {
@@ -302,6 +311,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
         message.tags = [];
         message.public = false;
         message.draft = false;
+        message.startpage = false;
         if (value !== undefined)
             reflectionMergePartial<PageMeta>(this, message, value);
         return message;
@@ -349,6 +359,9 @@ class PageMeta$Type extends MessageType<PageMeta> {
                     break;
                 case /* bool draft */ 13:
                     message.draft = reader.bool();
+                    break;
+                case /* bool startpage */ 14:
+                    message.startpage = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -401,6 +414,9 @@ class PageMeta$Type extends MessageType<PageMeta> {
         /* bool draft = 13; */
         if (message.draft !== false)
             writer.tag(13, WireType.Varint).bool(message.draft);
+        /* bool startpage = 14; */
+        if (message.startpage !== false)
+            writer.tag(14, WireType.Varint).bool(message.startpage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -426,7 +442,8 @@ class PageShort$Type extends MessageType<PageShort> {
             { no: 9, name: "children", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageShort },
             { no: 10, name: "root_info", kind: "message", T: () => PageRootInfo },
             { no: 11, name: "level", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
-            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "startpage", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PageShort>): PageShort {
@@ -437,6 +454,7 @@ class PageShort$Type extends MessageType<PageShort> {
         message.description = "";
         message.children = [];
         message.draft = false;
+        message.startpage = false;
         if (value !== undefined)
             reflectionMergePartial<PageShort>(this, message, value);
         return message;
@@ -481,6 +499,9 @@ class PageShort$Type extends MessageType<PageShort> {
                     break;
                 case /* bool draft */ 13:
                     message.draft = reader.bool();
+                    break;
+                case /* bool startpage */ 14:
+                    message.startpage = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -530,6 +551,9 @@ class PageShort$Type extends MessageType<PageShort> {
         /* bool draft = 13; */
         if (message.draft !== false)
             writer.tag(13, WireType.Varint).bool(message.draft);
+        /* bool startpage = 14; */
+        if (message.startpage !== false)
+            writer.tag(14, WireType.Varint).bool(message.startpage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

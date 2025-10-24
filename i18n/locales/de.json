@@ -728,7 +728,8 @@
         "expand_collapse": "Ausklappen/Einklappen",
         "no_signature": "Keine Signatur angegeben",
         "coming_soon": "Demnächst verfügbar",
-        "optional": "Optional"
+        "optional": "Optional",
+        "startpage": "Startseite"
     },
     "components": {
         "partials": {
@@ -3342,14 +3343,18 @@
                     "description": "Historische Aktivität von Seiten anzeigen lassen."
                 },
                 "UpdatePage": {
-                    "key": "Seiten erstellen und aktualisieren",
-                    "description": "Lexikon Seiten erstellen und aktualisieren können.",
+                    "key": "Seiten aktualisieren",
+                    "description": "Lexikon Seiten aktualisieren können (erlaubt nicht das erstellen von Seiten).",
                     "attrs": {
                         "Public": "Öffentliche Seiten, die jeder aufrufen kann"
                     },
                     "attrs_types": {
                         "Fields": "Zugriff auf spezielle Freigaben von Seiten"
                     }
+                },
+                "CreatePage": {
+                    "key": "Seiten erstellen",
+                    "description": "Lexikon Seiten erstellen können (erlaubt implizit das Aktualisieren von Seiten)."
                 }
             }
         },

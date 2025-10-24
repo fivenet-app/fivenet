@@ -162,7 +162,3 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbmailer.RegisterMailerServiceServer(srv, s)
 }
 
-// GetPermsRemap returns the permissions re-mapping for the services.
-func (s *Server) GetPermsRemap() map[string]string {
-	return pbmailer.PermsRemap
-}

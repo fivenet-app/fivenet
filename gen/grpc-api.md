@@ -264,7 +264,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-### codegen.perms.FieldOptions
+### codegen.perms.PermsOptions
 
 
 | Field | Type | Label | Description |
@@ -272,6 +272,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `enabled` | [bool](#bool) |  |  |
 | `service` | [string](#string) | optional |  |
 | `name` | [string](#string) | optional |  |
+| `names` | [string](#string) | repeated |  |
 | `order` | [int32](#int32) |  |  |
 | `attrs` | [Attr](#codegenpermsAttr) | repeated |  |
 
@@ -299,7 +300,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Extension | Type | Base | Number | Description |
 | --------- | ---- | ---- | ------ | ----------- |
-| `perms` | FieldOptions | .google.protobuf.MethodOptions | 51002 |  |
+| `perms` | PermsOptions | .google.protobuf.MethodOptions | 51002 |  |
 | `perms_svc` | ServiceOptions | .google.protobuf.ServiceOptions | 51005 |  |
 
  <!-- end HasExtensions -->
@@ -6831,6 +6832,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `toc` | [bool](#bool) | optional |  |
 | `public` | [bool](#bool) |  |  |
 | `draft` | [bool](#bool) |  |  |
+| `startpage` | [bool](#bool) |  |  |
 
 
 
@@ -6865,6 +6867,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `root_info` | [PageRootInfo](#resourceswikiPageRootInfo) | optional |  |
 | `level` | [int32](#int32) | optional |  |
 | `draft` | [bool](#bool) |  |  |
+| `startpage` | [bool](#bool) |  |  |
 
 
 

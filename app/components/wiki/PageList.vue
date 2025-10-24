@@ -1,11 +1,18 @@
 <script lang="ts" setup>
-import type { ContentNavigationItem } from '@nuxt/content';
+import type { NavigationMenuItem } from '@nuxt/ui';
 
 defineProps<{
-    navItems: ContentNavigationItem[];
+    items: NavigationMenuItem[];
 }>();
 </script>
 
 <template>
-    <UContentNavigation class="mt-1 sm:mt-0" :navigation="navItems" type="multiple" highlight default-open />
+    <UNavigationMenu
+        orientation="vertical"
+        :items="items"
+        class="mt-1 sm:mt-0"
+        highlight
+        color="primary"
+        :ui="{ link: 'data-[active=]:font-bold' }"
+    />
 </template>

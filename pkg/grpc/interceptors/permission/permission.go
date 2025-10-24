@@ -48,7 +48,7 @@ type ServiceStreamPermissionFuncOverride interface {
 
 // GetPermsRemapFunc allows a service to remap permission names for custom logic.
 type GetPermsRemapFunc interface {
-	GetPermsRemap() map[string]string
+	GetPermsRemap() map[string][]string
 }
 
 // UnaryServerInterceptor returns a new unary server interceptor that performs per-request permission checks.

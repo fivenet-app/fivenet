@@ -112,7 +112,9 @@ export type Perms =
 	| 'settings.SettingsService/ViewAuditLog'
 	| 'vehicles.VehiclesService/ListVehicles'
 	| 'vehicles.VehiclesService/SetVehicleProps'
+	| 'wiki.WikiService/CreatePage'
 	| 'wiki.WikiService/DeletePage'
 	| 'wiki.WikiService/ListPageActivity'
 	| 'wiki.WikiService/ListPages'
-	| 'wiki.WikiService/UpdatePage';
+	| 'wiki.WikiService/UpdatePage'
+	| 'wiki.WikiService/UploadFile';

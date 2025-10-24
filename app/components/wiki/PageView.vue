@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
-import type { ContentNavigationItem } from '@nuxt/content';
+import type { NavigationMenuItem } from '@nuxt/ui';
 import type { ContentSurroundLink } from '@nuxt/ui-pro/runtime/components/content/ContentSurround.vue.js';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
@@ -23,7 +23,7 @@ import PageSearch from './PageSearch.vue';
 const props = defineProps<{
     page: Page | undefined;
     pages: PageShort[];
-    navItems?: ContentNavigationItem[];
+    navItems?: NavigationMenuItem[];
     status: AsyncDataRequestStatus;
     refresh: () => Promise<void>;
     error: Error | undefined;
@@ -41,24 +41,43 @@ const wikiWikiClient = await getWikiWikiClient();
 
 const confirmModal = overlay.create(ConfirmModal);
 
-const breadcrumbs = computed(() => [
-    {
-        label: t('common.wiki'),
-        icon: 'i-mdi-home',
-        to: '/wiki',
-    },
-    ...[
-        !props.page && !isRequestPending(props.status) ? { label: t('pages.notfound.page_not_found') } : undefined,
-        props.page?.jobLabel ? { label: props.page?.jobLabel } : undefined,
-        props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
-        props.page?.meta
-            ? {
-                  label: !props.page.meta.title ? t('common.untitled') : props.page.meta.title,
-                  to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}`,
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
-]);
+const breadcrumbs = computed(() => {
+    const breadcrumbList: { label: string; icon?: string; to?: string }[] = [
+        {
+            label: t('common.wiki'),
+            icon: 'i-mdi-home',
+            to: '/wiki',
+        },
+    ];
+
+    if (props.page && props.pages) {
+        const addBreadcrumbs = (pages: PageShort[], currentPage: Page | PageShort) => {
+            for (const page of pages) {
+                breadcrumbList.push({
+                    label: page.title || t('common.untitled'),
+                    to: `/wiki/${page.job}/${page.id}/${page.slug}`,
+                });
+
+                if (page.id === currentPage.id) {
+                    return true;
+                }
+
+                if (page.children && addBreadcrumbs(page.children, currentPage)) {
+                    return true;
+                }
+
+                breadcrumbList.pop();
+            }
+            return false;
+        };
+
+        addBreadcrumbs(props.pages, props.page);
+    } else if (!isRequestPending(props.status)) {
+        breadcrumbList.push({ label: t('pages.notfound.page_not_found') });
+    }
+
+    return breadcrumbList;
+});
 
 async function deletePage(id: number): Promise<void> {
     try {
@@ -204,12 +223,12 @@ const scrollRef = useTemplateRef('scrollRef');
         </template>
 
         <template #body>
-            <UPage ref="scrollRef" :ui="{}">
+            <UPage ref="scrollRef" :ui="{ left: 'lg:top-0', root: 'lg:gap-4' }">
                 <template #left>
                     <slot name="left" />
                 </template>
 
-                <UContentNavigation class="mt-4 lg:hidden" :navigation="navItems" />
+                <UNavigationMenu class="mt-4 lg:hidden" :items="navItems" orientation="vertical" />
 
                 <UBreadcrumb class="pt-4 lg:pt-0" :items="breadcrumbs" />
 
@@ -220,6 +239,7 @@ const scrollRef = useTemplateRef('scrollRef');
                     :error="error"
                     :retry="refresh"
                 />
+
                 <template v-else-if="!page">
                     <UPageHero
                         :title="$t('pages.notfound.page_not_found')"
@@ -347,6 +367,15 @@ const scrollRef = useTemplateRef('scrollRef');
                                     icon="i-mdi-earth"
                                     :label="$t('common.public')"
                                     size="md"
+                                />
+
+                                <UBadge
+                                    v-if="page.meta.startpage"
+                                    class="inline-flex gap-1"
+                                    color="neutral"
+                                    icon="i-mdi-home"
+                                    size="md"
+                                    :label="$t('common.startpage')"
                                 />
                             </div>
 
