@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.10.2] - 2025-10-24
+
+### 🐛 Bug Fixes
+
+- Aliased permissions appearing and type issues
+- Approval recalculation and badges in ui
+
 ## [2025.10.1] - 2025-10-24
 
 ### 🚀 Features
