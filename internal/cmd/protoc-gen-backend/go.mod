@@ -3,7 +3,7 @@ module github.com/fivenet-app/fivenet/v2025/internal/cmd/protoc-gen-backend
 go 1.25.3
 
 require (
-	github.com/fivenet-app/fivenet/v2025 v2025.10.0
+	github.com/fivenet-app/fivenet/v2025 v2025.10.1
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
 	google.golang.org/protobuf v1.36.10
 )
@@ -25,7 +25,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.10 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/gin-gonic/gin v1.11.1-0.20251011112041-c3d1092b3b48 // indirect
-	github.com/go-jet/jet/v2 v2.13.0 // indirect
+	github.com/go-jet/jet/v2 v2.14.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.28.0 // indirect
