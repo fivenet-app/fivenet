@@ -82,10 +82,10 @@ const schema = z.object({
                         userId: z.coerce.number(),
                         job: z.coerce.string().optional(),
                         minimumGrade: z.coerce.number().min(game.startJobGrade).optional(),
-                        label: z.string().max(120).default(''),
+                        label: z.string().max(120).optional(),
                         signatureRequired: z.coerce.boolean().default(false),
                         slots: z.coerce.number().min(1).max(10).optional().default(1),
-                        dueInDays: z.coerce.number().min(1).optional().default(1),
+                        dueInDays: z.coerce.number().min(1).optional(),
                         comment: z.coerce.string().max(255).optional(),
                     }),
                     z.object({
@@ -93,10 +93,10 @@ const schema = z.object({
                         userId: z.coerce.number().optional().default(0),
                         job: z.coerce.string(),
                         minimumGrade: z.coerce.number().min(game.startJobGrade),
-                        label: z.string().max(120).default(''),
+                        label: z.string().max(120).optional(),
                         signatureRequired: z.coerce.boolean().default(false),
                         slots: z.coerce.number().min(1).max(10).optional().default(1),
-                        dueInDays: z.coerce.number().min(1).optional().default(1),
+                        dueInDays: z.coerce.number().min(1).optional(),
                         comment: z.coerce.string().max(255).optional(),
                     }),
                 ])
@@ -363,6 +363,28 @@ function setValuesFromTemplate(tpl: Template): void {
                 duration: autoCloseDuration > 0 ? autoCloseDuration / 24 / 60 / 60 : 7,
             },
         },
+    };
+
+    state.approval = {
+        enabled: tpl.approval?.enabled ?? false,
+        policy: {
+            ruleKind: tpl.approval?.policy?.ruleKind ?? ApprovalRuleKind.REQUIRE_ALL,
+            onEditBehavior: tpl.approval?.policy?.onEditBehavior ?? OnEditBehavior.KEEP_PROGRESS,
+            requiredCount: tpl.approval?.policy?.requiredCount ?? 2,
+            signatureRequired: tpl.approval?.policy?.signatureRequired ?? false,
+        },
+        tasks:
+            tpl.approval?.tasks.map((task) => ({
+                ruleKind: task.userId == 0 ? ApprovalAssigneeKind.JOB_GRADE : ApprovalAssigneeKind.USER,
+                userId: task.userId,
+                job: task.job,
+                minimumGrade: task.minimumGrade,
+                label: task.label,
+                signatureRequired: task.signatureRequired,
+                slots: task.slots,
+                dueInDays: task.dueInDays,
+                comment: task.comment,
+            })) ?? [],
     };
 
     schemaEditor.value.users = tpl.schema?.requirements?.users;

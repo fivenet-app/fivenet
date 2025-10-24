@@ -16,7 +16,7 @@ const tasks = defineModel<
         job?: string;
         minimumGrade?: number;
         dueInDays?: number;
-        label: string;
+        label?: string;
         signatureRequired: boolean;
         slots: number;
         comment?: string;
