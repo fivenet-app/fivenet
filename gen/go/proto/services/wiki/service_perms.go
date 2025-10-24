@@ -30,13 +30,6 @@ func init() {
 		},
 		{
 			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceGetPagePerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
-		},
-		{
-			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPageActivityPerm,
 			Attrs:    []perms.Attr{},
 			Order:    11000,
@@ -61,13 +54,6 @@ func init() {
 			},
 			Order: 11000,
 			Icon:  "i-mdi-brain",
-		},
-		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceUploadFilePerm,
-			Attrs:    []perms.Attr{},
-			Order:    11000,
-			Icon:     "i-mdi-brain",
 		},
 	})
 }

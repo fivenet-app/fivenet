@@ -51,11 +51,6 @@ export const useCompletorStore = defineStore(
         };
 
         const completeCitizens = async (req: CompleteCitizensRequest): Promise<UserShort[]> => {
-            const { can } = useAuth();
-            if (!can('completor.CompletorService/CompleteCitizens').value) {
-                return [];
-            }
-
             const completorCompletorClient = await getCompletorCompletorClient();
 
             try {

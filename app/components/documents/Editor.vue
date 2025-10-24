@@ -237,7 +237,6 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             public: values.public,
             state: values.state,
             approved: false,
-            signed: false,
         },
         categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
         access: values.access,

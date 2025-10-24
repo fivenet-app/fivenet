@@ -81,7 +81,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
         <template v-if="connection" #footer>
             <div class="inline-flex items-center gap-4">
                 <template v-if="connection">
-                    <UAvatar size="lg" :src="connection.profilePicture" :alt="$t('common.image')" />
+                    <UAvatar size="lg" :src="connection.avatar" :alt="$t('common.image')" />
 
                     <UTooltip :text="`ID: ${connection.externalId}`">
                         <span class="text-left">

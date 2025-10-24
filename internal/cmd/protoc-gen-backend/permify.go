@@ -181,8 +181,10 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 				names := []string{}
 				if len(val.Names) > 0 {
 					names = val.Names
+					perm.Name = val.Names[0]
 				} else if val.Name != nil && *val.Name != "" {
 					names = append(names, *val.Name)
+					perm.Name = *val.Name
 				}
 				if val.Service != nil && *val.Service != "" {
 					perm.Service = val.Service

@@ -15,27 +15,6 @@ func init() {
 		// Service: qualifications.QualificationsService
 		{
 			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationRequestPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationResultPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateQualificationPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceDeleteQualificationPerm,
 			Attrs: []perms.Attr{
 				{
@@ -49,70 +28,7 @@ func init() {
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceDeleteQualificationReqPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceDeleteQualificationResultPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceGetExamInfoPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceGetQualificationPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceGetUserExamPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceListQualificationRequestsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceListQualificationsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceListQualificationsResultsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceSubmitExamPerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceTakeExamPerm,
 			Attrs:    []perms.Attr{},
 			Order:    8000,
 			Icon:     "i-mdi-school-outline",
@@ -134,13 +50,6 @@ func init() {
 			},
 			Order: 8000,
 			Icon:  "i-mdi-school-outline",
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceUploadFilePerm,
-			Attrs:    []perms.Attr{},
-			Order:    8000,
-			Icon:     "i-mdi-school-outline",
 		},
 	})
 }

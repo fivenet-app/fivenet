@@ -30,8 +30,24 @@ const actions = computed<ButtonProps[]>(() =>
     props.actions.length > 0
         ? props.actions
         : [
-              props.focus ? { label: t('common.search'), icon: 'i-mdi-search', onClick: () => props.focus!() } : undefined,
-              props.retry ? { label: t('common.refresh'), icon: 'i-mdi-refresh', onClick: () => props.retry!() } : undefined,
+              props.focus
+                  ? {
+                        label: t('common.search'),
+                        icon: 'i-mdi-search',
+                        onClick: () => {
+                            props.focus!();
+                        },
+                    }
+                  : undefined,
+              props.retry
+                  ? {
+                        label: t('common.refresh'),
+                        icon: 'i-mdi-refresh',
+                        onClick: () => {
+                            props.retry!();
+                        },
+                    }
+                  : undefined,
           ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 

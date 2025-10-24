@@ -95,7 +95,7 @@ watchOnce(opened, async () => {
             </template>
 
             <USkeleton v-if="!user && isRequestPending(status)" class="h-8 w-[125px]" />
-            <span v-else class="truncate" :class="textClass"> <ColleagueName :colleague="user" /> </span>
+            <span v-else class="truncate" :class="textClass"> <ColleagueName v-if="user" :colleague="user" /> </span>
             <slot name="after" />
         </UButton>
 

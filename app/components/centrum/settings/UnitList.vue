@@ -240,7 +240,7 @@ const confirmModal = overlay.create(ConfirmModal);
         </template>
 
         <template #footer>
-            <Pagination :status="status" :refresh="refresh" />
+            <Pagination hide-buttons hide-text :status="status" :refresh="refresh" />
         </template>
     </UDashboardPanel>
 </template>

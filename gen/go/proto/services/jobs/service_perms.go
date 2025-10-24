@@ -71,27 +71,6 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceGetColleagueLabelsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceGetColleagueLabelsStatsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceGetSelfPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6000,
-			Icon:     "i-mdi-briefcase-outline",
-		},
-		{
-			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleagueActivityPerm,
 			Attrs: []perms.Attr{
 				{
@@ -144,13 +123,6 @@ func init() {
 		},
 
 		// Service: jobs.TimeclockService
-		{
-			Category: permkeys.TimeclockServicePerm,
-			Name:     permkeys.TimeclockServiceGetTimeclockStatsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    6200,
-			Icon:     "i-mdi-timeline-clock-outline",
-		},
 		{
 			Category: permkeys.TimeclockServicePerm,
 			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,

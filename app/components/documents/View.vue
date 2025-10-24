@@ -169,7 +169,6 @@ async function toggleDocument(): Promise<void> {
             closed: false,
             draft: false,
             approved: false,
-            signed: false,
             public: false,
             state: '',
         };

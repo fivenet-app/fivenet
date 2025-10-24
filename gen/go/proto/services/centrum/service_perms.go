@@ -15,20 +15,6 @@ func init() {
 		// Service: centrum.CentrumService
 		{
 			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceAssignDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceAssignUnitPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceCreateDispatchPerm,
 			Attrs:    []perms.Attr{},
 			Order:    10000,
@@ -51,69 +37,6 @@ func init() {
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceDeleteUnitPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceGetDispatchPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceGetDispatchHeatmapPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceGetSettingsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceJoinUnitPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceListDispatchActivityPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceListDispatchTargetJobsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceListDispatchesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceListUnitActivityPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceListUnitsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    10000,
 			Icon:     "i-mdi-car-emergency",
@@ -148,13 +71,6 @@ func init() {
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateDispatchStatusPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceUpdateDispatchersPerm,
 			Attrs:    []perms.Attr{},
 			Order:    10000,
@@ -172,13 +88,6 @@ func init() {
 			},
 			Order: 10000,
 			Icon:  "i-mdi-car-emergency",
-		},
-		{
-			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateUnitStatusPerm,
-			Attrs:    []perms.Attr{},
-			Order:    10000,
-			Icon:     "i-mdi-car-emergency",
 		},
 	})
 }

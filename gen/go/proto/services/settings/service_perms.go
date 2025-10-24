@@ -19,21 +19,7 @@ func init() {
 		// Service: settings.LawsService
 		{
 			Category: permkeys.LawsServicePerm,
-			Name:     permkeys.LawsServiceCreateOrUpdateLawPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12200,
-			Icon:     "i-mdi-scale-balance",
-		},
-		{
-			Category: permkeys.LawsServicePerm,
 			Name:     permkeys.LawsServiceCreateOrUpdateLawBookPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12200,
-			Icon:     "i-mdi-scale-balance",
-		},
-		{
-			Category: permkeys.LawsServicePerm,
-			Name:     permkeys.LawsServiceDeleteLawPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12200,
 			Icon:     "i-mdi-scale-balance",
@@ -56,21 +42,7 @@ func init() {
 		},
 		{
 			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceDeleteJobLogoPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceDeleteRolePerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceGetEffectivePermissionsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
@@ -84,35 +56,7 @@ func init() {
 		},
 		{
 			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceGetPermissionsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceGetRolePerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceGetRolesPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceListDiscordChannelsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceListUserGuildsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",
@@ -127,13 +71,6 @@ func init() {
 		{
 			Category: permkeys.SettingsServicePerm,
 			Name:     permkeys.SettingsServiceUpdateRolePermsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    12000,
-			Icon:     "i-mdi-cog-outline",
-		},
-		{
-			Category: permkeys.SettingsServicePerm,
-			Name:     permkeys.SettingsServiceUploadJobLogoPerm,
 			Attrs:    []perms.Attr{},
 			Order:    12000,
 			Icon:     "i-mdi-cog-outline",

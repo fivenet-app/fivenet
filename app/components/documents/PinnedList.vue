@@ -148,7 +148,7 @@ const editing = ref(false);
                         >
                             <template #title="{ document }">
                                 <div class="inline-flex items-center gap-1 overflow-hidden">
-                                    <IDCopyBadge :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
+                                    <IDCopyBadge v-if="document" :id="document?.id" prefix="DOC" size="xs" disable-tooltip />
                                     <CategoryBadge v-if="document?.category" :category="document?.category" />
                                 </div>
 
