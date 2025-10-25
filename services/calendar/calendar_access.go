@@ -39,7 +39,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 		return dest, nil
 	}
 
-	// Allow superusers access to any docs
+	// Allow superusers access to any ids
 	if userInfo.GetSuperuser() {
 		for i := range calendarIds {
 			dest = append(dest, &calendarAccessEntry{
@@ -56,7 +56,10 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(
 		ids[i] = mysql.Int64(calendarIds[i])
 	}
 
-	condition := mysql.Bool(false)
+	condition := mysql.AND(
+		tCalendar.Job.IS_NULL(),
+		tCalendar.CreatorID.EQ(mysql.Int32(userInfo.GetUserId())),
+	)
 	if publicOk {
 		condition = tCalendar.Public.IS_TRUE()
 	}
