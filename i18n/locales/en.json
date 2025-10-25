@@ -735,7 +735,8 @@
         "choose_one": "Choose one",
         "hidden_markers": "Hidden Markers",
         "month": "month | months",
-        "shape": "Shape | Shapes"
+        "shape": "Shape | Shapes",
+        "form": "Form | Forms"
     },
     "components": {
         "partials": {

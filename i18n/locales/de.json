@@ -735,7 +735,8 @@
         "choose_one": "Wählen Sie eins aus",
         "hidden_markers": "Versteckte Marker",
         "month": "Monat | Monate",
-        "shape": "Form | Formen"
+        "shape": "Form | Formen",
+        "form": "Formular | Formulare"
     },
     "components": {
         "partials": {
