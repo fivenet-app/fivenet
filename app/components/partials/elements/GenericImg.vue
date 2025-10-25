@@ -57,7 +57,12 @@ const src = computed(() => {
         <UButton
             variant="link"
             :disabled="!src || !enablePopup"
-            :ui="{ base: !src || !enablePopup ? 'disabled:cursor-default' : 'cursor-pointer' }"
+            :ui="{
+                base:
+                    !src || !enablePopup
+                        ? 'disabled:cursor-default disabled:opacity-100 aria-disabled:opacity-100'
+                        : 'cursor-pointer',
+            }"
         >
             <UAvatar
                 :class="[visible ? '' : 'blur', imgClass]"
