@@ -1000,10 +1000,6 @@ func (s *Server) canUserAccessApprovalTask(
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}
 
-	// TODO also need to verify the actor is eligible for this task
-	// (user_id match OR job/minimum_grade eligibility). Your existing ACL util
-	// can be invoked here if desired.
-
 	check, err := s.access.CanUserAccessTarget(
 		ctx,
 		task.DocumentId,
