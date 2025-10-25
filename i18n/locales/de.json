@@ -737,7 +737,8 @@
         "month": "Monat | Monate",
         "singular": "Singular",
         "plural": "Plural",
-        "shape": "Form | Formen"
+        "shape": "Form | Formen",
+        "form": "Formular | Formulare"
     },
     "components": {
         "partials": {

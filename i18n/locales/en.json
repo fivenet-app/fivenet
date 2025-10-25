@@ -737,7 +737,8 @@
         "month": "month | months",
         "singular": "Singular",
         "plural": "Plural",
-        "shape": "Shape | Shapes"
+        "shape": "Shape | Shapes",
+        "form": "Form | Forms"
     },
     "components": {
         "partials": {

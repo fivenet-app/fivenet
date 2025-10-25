@@ -2,11 +2,11 @@
 import EditorContainer from '~/components/fabriceditor/EditorContainer.vue';
 
 useHead({
-    title: 'Document Layouts',
+    title: 'Document Forms',
 });
 
 definePageMeta({
-    title: 'Document Layouts',
+    title: 'Document Forms',
     requiresAuth: true,
     permission: 'TODOService/TODOMethod',
 });

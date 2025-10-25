@@ -2,11 +2,11 @@
 import CanvasRenderer from '~/components/fabriceditor/CanvasRenderer.vue';
 
 useHead({
-    title: 'Document Layout',
+    title: 'Document Form',
 });
 
 definePageMeta({
-    title: 'Document Layout',
+    title: 'Document Form',
     requiresAuth: true,
     permission: 'TODOService/TODOMethod',
 });
