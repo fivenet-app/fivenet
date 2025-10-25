@@ -733,7 +733,8 @@
         "follow": "Folgen",
         "unfollow": "Nicht mehr folgen",
         "choose_one": "Wählen Sie eins aus",
-        "shape": "Form | Formen"
+        "shape": "Form | Formen",
+        "form": "Formular | Formulare"
     },
     "components": {
         "partials": {

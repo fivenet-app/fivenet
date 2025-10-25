@@ -35,6 +35,17 @@ const templatesListRef = useTemplateRef('templatesListRef');
                 <template #right>
                     <PartialsBackButton to="/documents" />
 
+                    <UButton
+                        v-if="can('TODOService/TODOMethod').value"
+                        :to="{ name: 'documents-templates-forms' }"
+                        icon="i-mdi-form"
+                        truncate
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.form', 2) }}
+                        </span>
+                    </UButton>
+
                     <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
                         <UButton :to="{ name: 'documents-templates-create' }" color="neutral" trailing-icon="i-mdi-plus">
                             <span class="hidden truncate sm:block">

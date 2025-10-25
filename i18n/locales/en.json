@@ -733,7 +733,8 @@
         "follow": "Follow",
         "unfollow": "Unfollow",
         "choose_one": "Choose one",
-        "shape": "Shape | Shapes"
+        "shape": "Shape | Shapes",
+        "form": "Form | Forms"
     },
     "components": {
         "partials": {
