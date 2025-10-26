@@ -29,7 +29,7 @@ const { can } = useAuth();
 
 const overlay = useOverlay();
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { dispatches, timeCorrection } = storeToRefs(centrumStore);
@@ -132,7 +132,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
-                                        @click="goto({ x: dispatch.x, y: dispatch.y })"
+                                        @click="gotoCoords({ x: dispatch.x, y: dispatch.y })"
                                     >
                                         {{ $t('common.go_to_location') }}
                                     </UButton>
@@ -261,7 +261,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                         variant="link"
                                         icon="i-mdi-map-marker"
                                         @click="
-                                            goto({
+                                            gotoCoords({
                                                 x: dispatch.status?.x,
                                                 y: dispatch.status?.y,
                                             })

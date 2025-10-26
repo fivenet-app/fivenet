@@ -14,7 +14,7 @@ const { t } = useI18n();
 const { can } = useAuth();
 
 const livemapStore = useLivemapStore();
-const { deleteMarkerMarker, goto } = livemapStore;
+const { deleteMarkerMarker, gotoCoords } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
 
 const overlay = useOverlay();
@@ -46,7 +46,7 @@ const columns = computed(
                             h(UButton, {
                                 variant: 'link',
                                 icon: 'i-mdi-map-marker',
-                                onClick: () => goto({ x: row.original.x, y: row.original.y }),
+                                onClick: () => gotoCoords({ x: row.original.x, y: row.original.y }),
                             }),
                         ),
                         h(UTooltip, { text: t('common.delete') }, () =>

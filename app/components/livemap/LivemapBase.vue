@@ -105,6 +105,7 @@ const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
                         :show-unit-status="showUnitStatus"
                         @user-selected="selectedMarker = $event"
                     />
+
                     <MapMarkersLayer />
                 </template>
 

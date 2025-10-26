@@ -37,7 +37,9 @@ const { livemap } = useAppConfig();
 
 const overlay = useOverlay();
 
-const { goto } = useLivemapStore();
+const livemapStore = useLivemapStore();
+const { gotoCoords } = livemapStore;
+const { followMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
@@ -61,6 +63,15 @@ const icon = computed(() =>
 );
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
+
+function toggleFollow(): void {
+    if (!followMarker.value) {
+        followMarker.value = true;
+    } else {
+        followMarker.value = false;
+        selectedMarker.value = undefined;
+    }
+}
 
 const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
 </script>
@@ -106,20 +117,20 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
             </div>
         </LIcon>
 
-        <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
+        <LPopup class="min-w-[175px] md:min-w-[305px] xl:min-w-[350px]" :options="{ closeButton: false }">
             <UCard
                 class="-my-[13px] -mr-[24px] -ml-[20px] flex flex-col"
-                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
+                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
             >
                 <template #header>
-                    <div class="grid grid-cols-2 gap-2 !text-primary">
+                    <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2 xl:grid-cols-3">
                         <UButton
                             v-if="marker.x !== undefined && marker.y !== undefined"
                             variant="link"
                             icon="i-mdi-map-marker"
                             block
                             :label="$t('common.mark')"
-                            @click="goto({ x: marker.x, y: marker.y })"
+                            @click="gotoCoords({ x: marker.x, y: marker.y })"
                         />
 
                         <UButton
@@ -153,6 +164,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             hide-number
                             show-label
                             block
+                            class="px-2.5 py-1.5"
                         />
 
                         <UButton
@@ -167,6 +179,18 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                                 })
                             "
                         />
+
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-track-changes"
+                            block
+                            :label="
+                                followMarker && selectedMarker?.userId === marker.userId
+                                    ? $t('common.unfollow')
+                                    : $t('common.follow')
+                            "
+                            @click="toggleFollow"
+                        />
                     </div>
                 </template>
 
@@ -179,11 +203,13 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                         <span class="font-semibold"> {{ $t('common.name') }} </span>:
                         <ColleagueName v-if="marker.user" :colleague="marker.user" />
                     </li>
+
                     <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
                         <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
                             marker.user?.jobGrade
                         }})
                     </li>
+
                     <li v-if="unit">
                         <span class="font-semibold">{{ $t('common.units') }}:</span> {{ unit.name }} ({{ unit.initials }})
                     </li>

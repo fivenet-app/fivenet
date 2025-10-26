@@ -17,7 +17,7 @@ const { can } = useAuth();
 const overlay = useOverlay();
 
 const livemapStore = useLivemapStore();
-const { deleteMarkerMarker, goto } = livemapStore;
+const { deleteMarkerMarker, gotoCoords } = livemapStore;
 
 const livemapLivemapClient = await getLivemapLivemapClient();
 
@@ -40,19 +40,20 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
 </script>
 
 <template>
-    <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
+    <LPopup class="min-w-[175px] md:min-w-[305px] xl:min-w-[330px]" :options="{ closeButton: false }">
         <UCard
             class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
-            :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
+            :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
         >
             <template #header>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2 xl:grid-cols-3">
                     <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
                         <UButton
                             variant="link"
                             icon="i-mdi-map-marker"
                             :label="$t('common.mark')"
-                            @click="goto({ x: marker.x, y: marker.y })"
+                            block
+                            @click="gotoCoords({ x: marker.x, y: marker.y })"
                         />
                     </UTooltip>
 
@@ -61,6 +62,7 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
                             variant="link"
                             icon="i-mdi-pencil"
                             :label="$t('common.edit')"
+                            block
                             @click="
                                 markerCreateOrUpdateSlideover.open({
                                     marker: marker,
@@ -74,6 +76,7 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
                             variant="link"
                             icon="i-mdi-delete"
                             color="error"
+                            block
                             :label="$t('common.delete')"
                             @click="
                                 confirmModal.open({
@@ -114,22 +117,19 @@ const markerCreateOrUpdateSlideover = overlay.create(MarkerCreateOrUpdateSlideov
                     {{ marker.description ?? $t('common.na') }}
                 </li>
 
-                <li class="inline-flex gap-1">
+                <li class="flex gap-1">
                     <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
                     <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
                     <span v-else>{{ $t('common.na') }}</span>
                 </li>
 
-                <li class="inline-flex gap-1">
-                    <span class="flex-initial">
-                        <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                    </span>
-                    <span class="flex-1">
-                        <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
-                        <template v-else>
-                            {{ $t('common.unknown') }}
-                        </template>
-                    </span>
+                <li class="flex gap-1">
+                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+
+                    <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" size="sm" />
+                    <template v-else>
+                        {{ $t('common.unknown') }}
+                    </template>
                 </li>
             </ul>
         </UCard>

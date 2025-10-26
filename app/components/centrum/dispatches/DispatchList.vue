@@ -37,7 +37,7 @@ const { t } = useI18n();
 
 const overlay = useOverlay();
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { getSortedDispatches, settings, abort, stopping } = storeToRefs(centrumStore);
@@ -105,7 +105,7 @@ const columns = [
                         h(UButton, {
                             variant: 'link',
                             icon: 'i-mdi-map-marker',
-                            onClick: () => goto({ x: row.original.x, y: row.original.y }),
+                            onClick: () => gotoCoords({ x: row.original.x, y: row.original.y }),
                         }),
                     ],
                 ),
@@ -314,7 +314,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                             <UButton
                                                 variant="link"
                                                 icon="i-mdi-map-marker"
-                                                @click="() => goto({ x: dispatch.x, y: dispatch.y })"
+                                                @click="() => gotoCoords({ x: dispatch.x, y: dispatch.y })"
                                             />
                                         </UTooltip>
 

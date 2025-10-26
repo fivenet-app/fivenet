@@ -15,6 +15,7 @@ import TakeDispatchSlideover from '~/components/centrum/livemap/TakeDispatchSlid
 import DispatchStatusBreakdown from '~/components/centrum/partials/DispatchStatusBreakdown.vue';
 import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
+import FollowMarker from '~/components/livemap/controls/FollowMarker.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
@@ -394,6 +395,8 @@ defineShortcuts({
                                 </UButton>
                             </UChip>
                         </LControl>
+
+                        <FollowMarker />
                     </template>
 
                     <template v-if="canStream && settings?.enabled" #afterMap>

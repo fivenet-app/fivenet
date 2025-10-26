@@ -34,7 +34,7 @@ const overlay = useOverlay();
 
 const dispatchAssignModal = overlay.create(DispatchAssignModal);
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const { selfAssign, canDo } = useCentrumStore();
 
@@ -71,24 +71,26 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
             </div>
         </LIcon>
 
-        <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
+        <LPopup class="min-w-[175px] md:min-w-[305px]" :options="{ closeButton: false }">
             <UCard
                 class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
-                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2', footer: 'p-1 sm:px-2' }"
+                :ui="{ header: 'p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
             >
                 <template #header>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 gap-2 !text-primary md:grid-cols-2">
                         <UButton
                             v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
                             variant="link"
                             icon="i-mdi-map-marker"
+                            block
                             :label="$t('common.mark')"
-                            @click="goto({ x: dispatch?.x, y: dispatch?.y })"
+                            @click="gotoCoords({ x: dispatch?.x, y: dispatch?.y })"
                         />
 
                         <UButton
                             variant="link"
                             icon="i-mdi-car-emergency"
+                            block
                             :label="$t('common.detail', 2)"
                             @click="selected(dispatch.id)"
                         />
@@ -98,6 +100,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             class="truncate"
                             icon="i-mdi-account-multiple-plus"
                             variant="link"
+                            block
                             :label="$t('common.assign')"
                             @click="
                                 dispatchAssignModal.open({
@@ -148,7 +151,7 @@ const zIndexOffset = computed(() => calculateDispatchZIndexOffset(props.dispatch
                             <template v-if="dispatch.anon">
                                 {{ $t('common.anon') }}
                             </template>
-                            <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                            <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" size="sm" />
                             <template v-else>
                                 {{ $t('common.unknown') }}
                             </template>

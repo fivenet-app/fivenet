@@ -15,7 +15,7 @@ const modelValue = defineModel<number | undefined>({ required: true });
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const overlay = useOverlay();
 
@@ -48,7 +48,7 @@ useIntervalFn(
                 :ui="{ label: 'hidden', item: 'items-end', wrapper: 'ms-0' }"
             />
 
-            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
+            <UButton variant="link" icon="i-mdi-map-marker" @click="gotoCoords({ x: dispatch.x, y: dispatch.y })" />
         </div>
 
         <UChip

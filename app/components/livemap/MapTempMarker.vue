@@ -22,9 +22,7 @@ watch(location, () => {
 });
 
 watch(showLocationMarker, () => {
-    if (!showLocationMarker.value) {
-        showMarker.value = false;
-    }
+    if (!showLocationMarker.value) showMarker.value = false;
 });
 </script>
 

@@ -729,7 +729,9 @@
         "no_signature": "No Signature provided",
         "coming_soon": "Coming Soon",
         "optional": "Optional",
-        "startpage": "Startpage"
+        "startpage": "Startpage",
+        "follow": "Follow",
+        "unfollow": "Unfollow"
     },
     "components": {
         "partials": {
@@ -960,7 +962,8 @@
             },
             "show_grid": "Show Grid",
             "toggle_all_layers": "Toggle All Layers",
-            "use_unit_color": "Use Unit Color for Icon"
+            "use_unit_color": "Use Unit Color for Icon",
+            "unfollow_marker": "Unfollow Marker"
         },
         "debug_info": {
             "title": "Debug Info",
@@ -1876,6 +1879,14 @@
             "failed_loading_postals": {
                 "title": "Failed to load Postal codes",
                 "content": "Postal codes couldn't be loaded"
+            },
+            "follow_marker": {
+                "title": "Following user on the map",
+                "content": "You are now following {name} on the map."
+            },
+            "unfollow_marker": {
+                "title": "Stopped following user on the map",
+                "content": "You have stopped following {name} on the map."
             }
         },
         "superuser_menu": {

@@ -87,21 +87,21 @@ const currentLocationQuery = useRouteQuery<string>('loc', '');
 function getZoomOffset(zoom: number): number {
     switch (zoom) {
         case 1:
-            return 2150;
+            return 1950;
         case 2:
-            return 1650;
+            return 1450;
         case 3:
-            return 1350;
+            return 1150;
         case 4:
-            return 750;
+            return 650;
         case 5:
-            return 425;
+            return 375;
         case 6:
-            return 225;
+            return 200;
         case 7:
-            return 100;
+            return 75;
         default:
-            return 400;
+            return 350;
     }
 }
 

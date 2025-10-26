@@ -729,7 +729,9 @@
         "no_signature": "Keine Signatur angegeben",
         "coming_soon": "Demnächst verfügbar",
         "optional": "Optional",
-        "startpage": "Startseite"
+        "startpage": "Startseite",
+        "follow": "Folgen",
+        "unfollow": "Nicht mehr folgen"
     },
     "components": {
         "partials": {
@@ -960,7 +962,8 @@
             },
             "show_grid": "Raster anzeigen",
             "toggle_all_layers": "Alle Ebenen umschalten",
-            "use_unit_color": "Einheitsfarbe für Icon verwenden"
+            "use_unit_color": "Einheitsfarbe für Icon verwenden",
+            "unfollow_marker": "Markierung nicht mehr verfolgen"
         },
         "debug_info": {
             "title": "Debug-Informationen",
@@ -1876,6 +1879,14 @@
             "failed_loading_postals": {
                 "title": "Laden der Postleitzahlen fehlgeschlagen",
                 "content": "Postleitzahlen konnten nicht geladen werden"
+            },
+            "follow_marker": {
+                "title": "Benutzer auf der Karte folgen",
+                "content": "Sie folgen jetzt {name} auf der Karte."
+            },
+            "unfollow_marker": {
+                "title": "Benutzer auf der Karte nicht mehr folgen",
+                "content": "Sie folgen {name} auf der Karte nicht mehr."
             }
         },
         "superuser_menu": {

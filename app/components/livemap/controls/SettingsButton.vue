@@ -13,7 +13,7 @@ const settingsModal = overlay.create(SettingsDrawer);
                 icon="i-mdi-cog"
                 size="xs"
                 block
-                @click="settingsModal.open({})"
+                @click="settingsModal.open()"
             />
         </UTooltip>
     </LControl>

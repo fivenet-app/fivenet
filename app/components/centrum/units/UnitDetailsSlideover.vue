@@ -21,7 +21,7 @@ defineEmits<{
 }>();
 
 const { canDo } = useCentrumStore();
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const overlay = useOverlay();
 
@@ -120,7 +120,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 size="xs"
                                 variant="link"
                                 icon="i-mdi-map-marker"
-                                @click="goto({ x: unit.status?.x, y: unit.status?.y })"
+                                @click="gotoCoords({ x: unit.status?.x, y: unit.status?.y })"
                             >
                                 {{ $t('common.go_to_location') }}
                             </UButton>

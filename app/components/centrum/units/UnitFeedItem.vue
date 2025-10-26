@@ -11,7 +11,7 @@ defineProps<{
     activityItemIdx: number;
 }>();
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -71,7 +71,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -100,7 +100,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -129,7 +129,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -158,7 +158,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -187,7 +187,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
@@ -216,7 +216,7 @@ const { goto } = useLivemapStore();
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="goto({ x: item.x, y: item.y })"
+                        @click="gotoCoords({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>

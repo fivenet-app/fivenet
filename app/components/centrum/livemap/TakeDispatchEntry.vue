@@ -23,7 +23,7 @@ const emit = defineEmits<{
     (e: 'selected', state: boolean): void;
 }>();
 
-const { goto } = useLivemapStore();
+const { gotoCoords } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -109,7 +109,7 @@ onBeforeMount(() => {
                             size="xs"
                             variant="link"
                             icon="i-mdi-map-marker"
-                            @click="goto({ x: dispatch.x, y: dispatch.y })"
+                            @click="gotoCoords({ x: dispatch.x, y: dispatch.y })"
                         >
                             {{ $t('common.go_to_location') }}
                         </UButton>

@@ -40,6 +40,7 @@ export const useLivemapStore = defineStore(
         const ownMarker = ref<UserMarker | undefined>();
 
         const selectedMarker = ref<UserMarker | undefined>(undefined);
+        const followMarker = ref<boolean>(false);
 
         // Actions
         const cleanupMarkerMarkers = (): void => {
@@ -153,6 +154,7 @@ export const useLivemapStore = defineStore(
                             // If the deleted user was selected, clear the selection
                             if (selectedMarker.value?.userId === userId) {
                                 selectedMarker.value = undefined;
+                                followMarker.value = false;
                             }
                             if (ownMarker.value?.userId === userId) {
                                 ownMarker.value = undefined;
@@ -375,13 +377,11 @@ export const useLivemapStore = defineStore(
             markersMarkers.value.delete(id);
         };
 
-        const goto = async (loc: Coordinate, ingame = true): Promise<void> => {
-            location.value = loc;
+        const gotoCoords = async (loc: Coordinate, ingame = true): Promise<void> => {
+            location.value = { x: loc.x, y: loc.y };
 
-            if (ingame) {
-                // Set in-game waypoint via NUI
-                return setWaypoint(loc.x, loc.y);
-            }
+            // Set in-game waypoint via NUI
+            if (ingame) return setWaypoint(loc.x, loc.y);
         };
 
         return {
@@ -401,6 +401,7 @@ export const useLivemapStore = defineStore(
             markersUsers,
             ownMarker,
             selectedMarker,
+            followMarker,
 
             // Actions
             startStream,
@@ -411,7 +412,7 @@ export const useLivemapStore = defineStore(
             updateUserMarker,
             updateUserInfo,
             deleteMarkerMarker,
-            goto,
+            gotoCoords,
         };
     },
     {
