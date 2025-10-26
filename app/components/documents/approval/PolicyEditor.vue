@@ -8,7 +8,7 @@ defineProps<{
 const policy = defineModel<{
     ruleKind: ApprovalRuleKind;
     onEditBehavior: OnEditBehavior;
-    requiredCount: number;
+    requiredCount?: number;
     signatureRequired: boolean;
 }>({
     default: () => ({

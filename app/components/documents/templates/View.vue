@@ -10,8 +10,11 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import PolicyEditor from '../approval/PolicyEditor.vue';
+import ApprovalTasksEditor from './ApprovalTasksEditor.vue';
 import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
 
 const props = defineProps<{
@@ -355,6 +358,31 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                                     </li>
                                 </ol>
                             </template>
+                        </UPageCard>
+
+                        <UPageCard :title="$t('components.documents.approval.policy_form.title', 2)">
+                            <UFormField name="approval.enabled" :label="$t('common.enabled')">
+                                <USwitch :model-value="template?.approval?.enabled" disabled />
+                            </UFormField>
+
+                            <PolicyEditor
+                                v-if="template?.approval?.policy"
+                                :model-value="template?.approval?.policy"
+                                disabled
+                            />
+                        </UPageCard>
+
+                        <UPageCard :title="$t('components.documents.approval.tasks', 2)">
+                            <ApprovalTasksEditor
+                                :model-value="
+                                    (template?.approval?.tasks ?? [])?.map((task) => ({
+                                        ...task,
+                                        ruleKind: task.userId ? ApprovalAssigneeKind.USER : ApprovalAssigneeKind.JOB_GRADE,
+                                    }))
+                                "
+                                disabled
+                                :signature-required="template?.approval?.policy?.signatureRequired"
+                            />
                         </UPageCard>
                     </div>
                 </template>

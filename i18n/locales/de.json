@@ -915,6 +915,9 @@
                     "description": "Die maximale Anzahl an Erinnerungen, die an den Ersteller eines Dokuments gesendet werden. Wenn das Maximum (10) erreicht ist, werden keine weiteren Erinnerungen gesendet."
                 }
             },
+            "template_approval_editor": {
+                "due_in": "Fällig in Tagen"
+            },
             "approval": {
                 "policy_form": {
                     "title": "Genehmigungsrichtlinie",

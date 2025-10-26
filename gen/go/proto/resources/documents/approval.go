@@ -56,7 +56,8 @@ func (x *ApprovalPolicy) Default() {
 	}
 
 	if x.RuleKind == ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY && x.GetRequiredCount() == 0 {
-		x.RequiredCount = &[]int32{1}[0]
+		requiredCount := int32(0)
+		x.RequiredCount = &requiredCount
 	}
 
 	if x.OnEditBehavior == OnEditBehavior_ON_EDIT_BEHAVIOR_UNSPECIFIED {

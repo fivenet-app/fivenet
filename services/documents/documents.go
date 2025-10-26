@@ -776,13 +776,18 @@ func (s *Server) handleDocumentPublish(
 			dueAt = timestamp.New(dueTime)
 		}
 
+		slots := task.GetSlots()
+		if slots <= 0 {
+			slots = 1
+		}
+
 		seeds = append(seeds, &pbdocuments.ApprovalTaskSeed{
 			UserId:            task.GetUserId(),
 			Job:               task.GetJob(),
 			MinimumGrade:      task.GetMinimumGrade(),
 			DueAt:             dueAt,
 			SignatureRequired: task.GetSignatureRequired(),
-			Slots:             task.GetSlots(),
+			Slots:             slots,
 			Label:             task.Label,
 			Comment:           task.Comment,
 		})

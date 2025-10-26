@@ -160,7 +160,11 @@ onBeforeMount(async () => listJobs());
                         </UFormField>
                     </template>
 
-                    <UFormField name="dueInDays" class="flex-1" :label="$t('common.time_ago.day', 2)">
+                    <UFormField
+                        name="dueInDays"
+                        class="flex-1"
+                        :label="$t('components.documents.template_approval_editor.due_in')"
+                    >
                         <UButtonGroup>
                             <UInputNumber v-model="task.dueInDays" class="w-full" :min="1" :max="30" :disabled="disabled" />
                             <UButton

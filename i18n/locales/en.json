@@ -915,6 +915,9 @@
                     "description": "The maximum number of reminders that will be sent to the creator of a document. If the maximum (10) is reached, no further reminders will be sent."
                 }
             },
+            "template_approval_editor": {
+                "due_in": "Due in (days)"
+            },
             "approval": {
                 "policy_form": {
                     "title": "Approval Policy",

@@ -428,7 +428,7 @@ func (s *Server) createApprovalPolicy(
 			documentId,
 			pol.GetSnapshotDate(),
 			int32(pol.GetRuleKind()),
-			dbutils.Int32P(pol.GetRequiredCount()),
+			pol.GetRequiredCount(),
 			pol.GetOnEditBehavior(),
 			pol.GetSignatureRequired(),
 		).
