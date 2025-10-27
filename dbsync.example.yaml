@@ -2,7 +2,10 @@ mode: "release"
 
 log:
   logToFile: false
-  file: "dbsync.log"
+  file:
+    path: "dbsync.log"
+    rotation:
+      compress: false
 
 watchConfig: true
 

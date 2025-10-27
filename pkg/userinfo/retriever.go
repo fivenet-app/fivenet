@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/cache"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
@@ -169,7 +170,7 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 	}
 
 	var evt pbuserinfo.UserInfoChanged
-	if err := proto.Unmarshal(m.Data(), &evt); err != nil {
+	if err := protoutils.UnmarshalPartialJSON(m.Data(), &evt); err != nil {
 		r.logger.Error("failed to unmarshal user info changed event",
 			zap.Error(err),
 			zap.String("subject", m.Subject()),

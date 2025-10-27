@@ -181,6 +181,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                         />
 
                         <UButton
+                            v-if="activeChar && activeChar?.userId !== marker.userId"
                             variant="link"
                             icon="i-mdi-track-changes"
                             block
