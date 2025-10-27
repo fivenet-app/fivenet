@@ -33,7 +33,6 @@ export function checkAccess<L = number>(
     if (access === undefined) return false;
 
     if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job)) {
-        console.log('here', creatorJob, creator.job);
         return true;
     }
 

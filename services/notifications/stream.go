@@ -234,7 +234,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 		for {
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
 
 			default:
 			}

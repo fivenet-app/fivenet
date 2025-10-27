@@ -56,7 +56,7 @@ export const useNotificationsStore = defineStore(
 
             logger.debug('Starting Stream');
             abort.value = new AbortController();
-            reconnecting.value = false;
+            reconnecting.value = true;
 
             const notificationsNotificationsClient = await getNotificationsNotificationsClient();
 
@@ -201,6 +201,10 @@ export const useNotificationsStore = defineStore(
                 if (!abort.value?.signal.aborted) {
                     await restartStream();
                 }
+            } finally {
+                ready.value = false;
+                notificationsEvents.emit('ready', false);
+                logger.debug('Stream ended');
             }
 
             ready.value = false;
@@ -210,10 +214,15 @@ export const useNotificationsStore = defineStore(
 
         const stopStream = async (end?: boolean): Promise<void> => {
             if (!abort.value) return;
-
-            if (end === true) reconnecting.value = false;
-
             logger.debug('Stopping Stream');
+
+            if (end) {
+                reconnecting.value = false;
+                reconnectBackoffTime.value = 0;
+            } else {
+                reconnecting.value = true;
+            }
+
             ready.value = false;
             notificationsEvents.emit('ready', false);
             abort.value?.abort();
@@ -221,9 +230,14 @@ export const useNotificationsStore = defineStore(
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value?.signal?.aborted) return;
+            if (!reconnecting.value) {
+                logger.debug('Reconnect is disabled, not restarting stream');
+                return;
+            }
 
             reconnecting.value = true;
+
+            if (!abort.value || abort.value?.signal?.aborted) return;
 
             if (reconnectBackoffTime.value > maxBackoffTime) {
                 reconnectBackoffTime.value = initialReconnectBackoffTime;

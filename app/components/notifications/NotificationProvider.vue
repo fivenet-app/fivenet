@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/notifications/helpers';
+import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
 import { useSettingsStore } from '~/stores/settings';
@@ -12,8 +13,10 @@ const { timeouts } = useAppConfig();
 
 const { can, username, activeChar } = useAuth();
 
+const { webSocket } = useGRPCWebsocketTransport();
+
 const notificationsStore = useNotificationsStore();
-const { restartStream, stopStream } = notificationsStore;
+const { startStream, stopStream } = notificationsStore;
 const { notifications } = storeToRefs(notificationsStore);
 
 const settingsStore = useSettingsStore();
@@ -66,11 +69,11 @@ const { start, stop } = useTimeoutFn(
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
-    if (username.value !== null && activeChar.value !== null) {
+    if (username.value !== null && activeChar.value !== null && webSocket.status.value === 'OPEN') {
         start();
 
         try {
-            restartStream();
+            startStream();
         } catch (e) {
             logger.error('exception during notification stream', e);
         }
@@ -83,8 +86,7 @@ async function toggleStream(): Promise<void> {
     }
 }
 
-watch(username, async () => toggleStream());
-watch(activeChar, async () => toggleStream());
+watch([username, activeChar, webSocket], async () => toggleStream());
 
 onMounted(async () => await toggleStream());
 
