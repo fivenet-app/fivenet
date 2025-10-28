@@ -17,7 +17,7 @@ const searchesStore = useSearchesStore();
 const settingsStore = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, sessionExpiration, attributes, permissions, isSuperuser } = storeToRefs(authStore);
+const { activeChar, sessionExpiration, attributes, permissions } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificationsStore();
@@ -72,8 +72,6 @@ function toggleLogLevel(): void {
     setDefaultLogLevel(getDefaultLogLevel() !== LogLevels.debug ? LogLevels.debug : LogLevels.warn);
     console.warn('Log Level set to', getDefaultLogLevel() === 4 ? 'DEBUG' : 'WARN');
 }
-
-const isDevEnv = import.meta.dev;
 
 const version = APP_VERSION;
 </script>
