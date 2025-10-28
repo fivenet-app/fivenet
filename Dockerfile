@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.19-labs
 
 # Frontend Build
-FROM docker.io/library/node:23.11.1-alpine3.22 AS nodebuilder
+FROM docker.io/library/node:24.10.0-alpine3.22 AS nodebuilder
 
 ARG NUXT_UI_PRO_LICENSE
 
