@@ -23,17 +23,15 @@ const { selectedMarker } = storeToRefs(livemapStore);
 const groupedMarkers = computed(() =>
     [
         { key: 'userMarkers', label: t('common.user', 2), items: props.hits.filter((h) => h.userMarker) },
-        { key: 'markerMarkers', label: t('common.marker', 2), items: props.hits.filter((h) => h.markerMarker) },
         { key: 'dispatchMarkers', label: t('common.dispatch', 2), items: props.hits.filter((h) => h.dispatchMarker) },
+        { key: 'markerMarkers', label: t('common.marker', 2), items: props.hits.filter((h) => h.markerMarker) },
     ].filter((group) => group.items.length > 0),
 );
 
 function clicked(h: Hit): void {
     h.openPopup();
 
-    if (!h.userMarker) return;
-
-    selectedMarker.value = h.userMarker;
+    if (h.userMarker) selectedMarker.value = h.userMarker;
 }
 </script>
 
