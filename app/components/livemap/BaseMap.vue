@@ -218,7 +218,7 @@ const chooserRef = useTemplateRef('chooserRef');
 
 async function showChooser(latlng: LatLngExpression, hits: Marker[]) {
     chooser.value = {
-        latlng,
+        latlng: latlng,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         hits: hits.map((m: Marker & { options?: any }) => ({
             userMarker: m.options?.userMarker as UserMarker | undefined,
@@ -284,7 +284,7 @@ async function onMapReady(m: Map): Promise<void> {
         showChooser(latlng, hits);
     }
 
-    map.on('preclick', (e: LeafletMouseEvent) => {
+    map.on('preclick', async (e: LeafletMouseEvent) => {
         if (!map) return;
 
         const px = e.containerPoint;
@@ -292,7 +292,8 @@ async function onMapReady(m: Map): Promise<void> {
 
         if (hits.length === 0) return;
         if (hits.length === 1) {
-            hits[0]?.openPopup?.();
+            await nextTick();
+            hits[0]?.openPopup();
             return;
         }
 
