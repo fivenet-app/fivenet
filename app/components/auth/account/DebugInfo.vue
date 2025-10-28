@@ -159,31 +159,44 @@ const version = APP_VERSION;
             <UButtonGroup class="flex w-full break-words" orientation="vertical">
                 <UButton
                     block
+                    :label="$t('components.debug_info.reset_clipboard')"
                     @click="
                         clipboardStore.clear();
                         searchesStore.clear();
                     "
-                >
-                    <span>{{ $t('components.debug_info.reset_clipboard') }}</span>
-                </UButton>
-                <UButton block @click="() => resetLocalStorage()">
-                    <span>{{ $t('components.debug_info.reset_local_storage') }}</span>
-                </UButton>
-                <UButton block color="error" external to="/api/clear-site-data">
-                    <span>{{ $t('components.debug_info.factory_reset') }}</span>
-                </UButton>
-                <UButton block color="neutral" @click="() => sendTestNotifications()">
-                    <span>{{ $t('components.debug_info.test_notifications') }}</span>
-                </UButton>
-                <UButton block color="neutral" @click="() => triggerBannerMessage()">
-                    <span>{{ $t('components.debug_info.trigger_banner_message') }}</span>
-                </UButton>
-                <UButton block color="neutral" @click="() => triggerErrorPage()">
-                    <span>{{ $t('components.debug_info.trigger_error') }}</span>
-                </UButton>
-                <UButton v-if="isDevEnv || isSuperuser" block color="neutral" @click="() => toggleLogLevel()">
-                    <span>{{ $t('components.debug_info.toggle_log_level') }}</span>
-                </UButton>
+                />
+                <UButton block :label="$t('components.debug_info.reset_local_storage')" @click="() => resetLocalStorage()" />
+                <UButton
+                    block
+                    color="error"
+                    external
+                    to="/api/clear-site-data"
+                    :label="$t('components.debug_info.factory_reset')"
+                />
+                <UButton
+                    block
+                    color="neutral"
+                    :label="$t('components.debug_info.test_notifications')"
+                    @click="() => sendTestNotifications()"
+                />
+                <UButton
+                    block
+                    color="neutral"
+                    :label="$t('components.debug_info.trigger_banner_message')"
+                    @click="() => triggerBannerMessage()"
+                />
+                <UButton
+                    block
+                    color="neutral"
+                    :label="$t('components.debug_info.trigger_error')"
+                    @click="() => triggerErrorPage()"
+                />
+                <UButton
+                    block
+                    color="neutral"
+                    :label="$t('components.debug_info.toggle_log_level')"
+                    @click="() => toggleLogLevel()"
+                />
             </UButtonGroup>
         </UFormField>
 
