@@ -445,7 +445,7 @@ defineShortcuts({
     <UDashboardPanel
         v-if="open"
         resizable
-        :min-size="16.25"
+        :min-size="14.25"
         :max-size="25"
         :default-size="16.25"
         :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"

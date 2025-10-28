@@ -13,6 +13,9 @@ import type { User } from '~~/gen/ts/resources/users/users';
 
 const logger = useLogger('🔑 Auth');
 
+/**
+ * Pinia store for managing user sessions, permissions, and state.
+ */
 export const useAuthStore = defineStore(
     'auth',
     () => {
@@ -20,15 +23,49 @@ export const useAuthStore = defineStore(
         const notifications = useNotificationsStore();
 
         // State
+        /**
+         * The expiration date of the current session.
+         */
         const sessionExpiration = ref<Date | null>(null);
+
+        /**
+         * The username of the currently logged-in user.
+         */
         const username = ref<string | null>(null);
+
+        /**
+         * The ID of the last selected character.
+         */
         const lastCharID = ref<number | undefined>(0);
 
+        /**
+         * The currently active character.
+         */
         const activeChar = ref<User | null>(null);
+
+        /**
+         * Indicates whether a login operation is in progress.
+         */
         const loggingIn = ref<boolean>(false);
+
+        /**
+         * Stores any error that occurred during login.
+         */
         const loginError = ref<RpcError | null>(null);
+
+        /**
+         * The list of permissions assigned to the user.
+         */
         const permissions = ref<Permission[]>([]);
+
+        /**
+         * The list of role attributes assigned to the user.
+         */
         const attributes = ref<RoleAttribute[]>([]);
+
+        /**
+         * The job properties of the user.
+         */
         const jobProps = ref<JobProps | null>({
             job: '',
             livemapMarkerColor: '',
@@ -41,54 +78,71 @@ export const useAuthStore = defineStore(
             logoFile: undefined,
         });
 
-        // Actions
+        /**
+         * Starts the login process by setting the loggingIn state to true and clearing any previous errors.
+         */
         const loginStart = (): void => {
             loggingIn.value = true;
             loginError.value = null;
         };
 
+        /**
+         * Stops the login process and sets the provided error, if any.
+         * @param error - The error that occurred during login, or null if successful.
+         */
         const loginStop = (error: RpcError | null): void => {
             loggingIn.value = false;
             loginError.value = error;
         };
 
+        /**
+         * Sets the expiration date of the access token.
+         * @param expiration - The expiration date as a string, Date object, or null.
+         */
         const setAccessTokenExpiration = (expiration: string | Date | null): void => {
             if (typeof expiration === 'string') {
                 expiration = new Date(expiration);
             }
         };
 
+        /**
+         * Sets the currently active character and updates the last character ID.
+         * @param char - The character to set as active, or null to clear.
+         */
         const setActiveChar = (char: User | null): void => {
             activeChar.value = char;
             lastCharID.value = char ? char.userId : lastCharID.value;
         };
 
+        /**
+         * Updates the user's permissions and role attributes.
+         * @param perms - The list of permissions to set.
+         * @param attrs - The list of role attributes to set.
+         */
         const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
-            permissions.value.length = 0;
-            permissions.value.push(...perms.sort());
-            attributes.value.length = 0;
-            attributes.value.push(...attrs.sort());
+            permissions.value = [...perms.sort()];
+            attributes.value = [...attrs.sort()];
         };
 
+        /**
+         * Updates the job properties of the user.
+         * @param jp - The new job properties to set, or undefined to clear.
+         */
         const setJobProps = (jp: JobProps | undefined): void => {
-            if (jp === undefined) {
+            if (!jp) {
                 jobProps.value = null;
-            } else {
-                if (!jobProps.value) {
-                    jobProps.value = jp;
-                } else {
-                    jobProps.value.job = jp.job;
-                    jobProps.value.jobLabel = jp.jobLabel;
-                    jobProps.value.livemapMarkerColor = jp.livemapMarkerColor;
-                    jobProps.value.radioFrequency = jp.radioFrequency;
-                    jobProps.value.quickButtons = jp.quickButtons;
-                    jobProps.value.discordGuildId = jp.discordGuildId;
-                    jobProps.value.logoFileId = jp.logoFileId;
-                    jobProps.value.logoFile = jp.logoFile;
-                }
+                return;
             }
+
+            jobProps.value = {
+                ...jobProps.value,
+                ...jp,
+            };
         };
 
+        /**
+         * Clears all authentication-related information and closes the WebSocket connection.
+         */
         const clearAuthInfo = (): void => {
             logger.info('Clearing auth info');
             username.value = null;
@@ -102,6 +156,11 @@ export const useAuthStore = defineStore(
         };
 
         // GRPC Calls
+        /**
+         * Logs in the user with the provided credentials.
+         * @param user - The username of the user.
+         * @param pass - The password of the user.
+         */
         const doLogin = async (user: string, pass: string): Promise<void> => {
             loginStart();
             setActiveChar(null);
@@ -151,6 +210,9 @@ export const useAuthStore = defineStore(
             }
         };
 
+        /**
+         * Logs out the currently logged-in user and clears authentication information.
+         */
         const doLogout = async (): Promise<void> => {
             loggingIn.value = true;
 
@@ -178,6 +240,11 @@ export const useAuthStore = defineStore(
             }
         };
 
+        /**
+         * Selects a character for the user and optionally redirects to a specified page.
+         * @param charId - The ID of the character to select. If undefined, the last character ID is used.
+         * @param redirect - Whether to redirect the user after selecting the character.
+         */
         const chooseCharacter = async (charId?: number, redirect?: boolean): Promise<void> => {
             if (charId === undefined || charId <= 0) {
                 if (!lastCharID.value) {
@@ -233,30 +300,40 @@ export const useAuthStore = defineStore(
             }
         };
 
+        /**
+         * Sets the superuser mode for the user and updates permissions accordingly.
+         * @param superuser - Whether to enable or disable superuser mode.
+         * @param job - The job associated with the superuser mode, if any.
+         */
         const setSuperuserMode = async (superuser: boolean, job?: Job): Promise<void> => {
             const authAuthClient = await getAuthAuthClient();
 
             try {
                 const call = authAuthClient.setSuperuserMode({
-                    superuser: superuser,
+                    superuser,
                     job: job?.name,
                 });
                 const { response } = await call;
 
                 await navigateTo({ name: 'overview' });
 
+                // Update permissions based on superuser mode
                 if (superuser) {
-                    permissions.value.push({
+                    const superuserPermission: Permission = {
                         id: 0,
                         category: 'Superuser',
                         name: 'Superuser',
                         guardName: 'superuser-superuser',
                         val: true,
-                    } as Permission);
+                    };
+                    if (!permissions.value.some((p) => p.guardName === superuserPermission.guardName)) {
+                        permissions.value.push(superuserPermission);
+                    }
                 } else {
-                    permissions.value = permissions.value.filter((p) => p.guardName === 'superuser-superuser');
+                    permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser-superuser');
                 }
 
+                // Notify user about the change
                 notifications.add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
                     description: {
@@ -268,6 +345,7 @@ export const useAuthStore = defineStore(
                     type: NotificationType.INFO,
                 });
 
+                // Update state with response data
                 setActiveChar(response.char!);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
@@ -283,18 +361,26 @@ export const useAuthStore = defineStore(
         });
 
         // Watchers
-        watch(username, (val) => {
-            // Connect to the WebSocket if the user is logged in
-            if (val !== null && val !== '') {
-                if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
-                    logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
-                    webSocket.open();
-                }
-            } else {
-                logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
-                webSocket.close();
-            }
-        });
+        watch(
+            username,
+            useThrottleFn(
+                (val) => {
+                    // Connect to the WebSocket if the user is logged in
+                    if (val) {
+                        if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                            logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
+                            webSocket.open();
+                        }
+                    } else {
+                        logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
+                        webSocket.close();
+                    }
+                },
+                500,
+                true,
+                false,
+            ),
+        );
 
         return {
             // State

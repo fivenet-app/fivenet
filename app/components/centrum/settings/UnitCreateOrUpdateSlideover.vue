@@ -11,6 +11,7 @@ import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { defaultUnitIcon } from '../helpers';
 
 const props = defineProps<{
     unit?: Unit;
@@ -59,7 +60,7 @@ const state = reactive<Schema>({
     initials: '',
     description: '',
     color: '#000000',
-    icon: 'MapMarkerIcon',
+    icon: defaultUnitIcon,
     attributes: [],
     access: {
         jobs: [],

@@ -3,7 +3,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import { useCentrumStore } from '~/stores/centrum';
 import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
-import { unitStatusToBGColor } from '../helpers';
+import { defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '../helpers';
 
 const centrumStore = useCentrumStore();
 const { timeCorrection } = storeToRefs(centrumStore);
@@ -13,10 +13,12 @@ const props = withDefaults(
         unit: Unit | undefined;
         initialsOnly?: boolean;
         assignment?: DispatchAssignment;
+        showIcon?: boolean;
     }>(),
     {
         initialsOnly: false,
         assignment: undefined,
+        showIcon: false,
     },
 );
 
@@ -30,9 +32,16 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
             <span>{{ $t('common.na') }}</span>
         </span>
     </template>
+
     <UPopover v-else>
-        <UButton class="inline-flex items-center gap-1 p-0.5" variant="outline" size="xs">
+        <UButton class="inline-flex items-center gap-1 p-0.5 px-1" variant="outline" size="xs">
             <slot name="before" />
+
+            <UIcon
+                v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
+                :name="convertComponentIconNameToDynamic(unit.icon)"
+                class="size-4"
+            />
 
             <span>
                 <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
@@ -46,11 +55,25 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
 
         <template #content>
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
-                <p class="text-base leading-none font-semibold">{{ unit.name }} ({{ unit.initials }})</p>
+                <p class="text-base leading-none font-semibold">
+                    <UIcon
+                        v-if="showIcon && unit.icon && unit.icon !== defaultUnitIcon"
+                        :name="convertComponentIconNameToDynamic(unit.icon)"
+                        class="!size-4"
+                        :style="{ color: unit.color ?? 'currentColor' }"
+                    />
+
+                    {{ unit.name }} ({{ unit.initials }})
+                </p>
 
                 <p v-if="unit.jobLabel" class="text-base leading-none font-semibold">({{ unit.jobLabel }})</p>
 
-                <UBadge class="rounded-sm font-semibold" :class="unitStatusColor" size="xs">
+                <UBadge
+                    class="rounded-sm font-semibold shadow-xs"
+                    :class="unitStatusColor"
+                    :icon="unitStatusToIcon(unit.status?.status)"
+                    size="sm"
+                >
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
                 </UBadge>
 

@@ -10,6 +10,8 @@ export function convertDynamicIconNameToComponent(search: string): string {
 }
 
 export function convertComponentIconNameToDynamic(search: string): string {
+    if (search.startsWith('i-mdi-')) return search;
+
     return (
         'i-mdi-' +
         search.replace(/Icon$/, '').replace(/[A-Z]+(?![a-z])|[A-Z1-9]/g, ($, ofs) => (ofs ? '-' : '') + $.toLowerCase())

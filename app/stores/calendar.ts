@@ -34,19 +34,48 @@ export const useCalendarStore = defineStore(
         const settingsStore = useSettingsStore();
 
         // State
+        /**
+         * List of active calendar IDs selected by the user.
+         */
         const activeCalendarIds = ref<number[]>([]);
+
+        /**
+         * Current calendar view mode (month, week, summary).
+         */
         const view = ref<'month' | 'week' | 'summary'>('month');
+
+        /**
+         * Current date context for calendar display.
+         */
         const currentDate = ref({
             year: new Date().getFullYear(),
             month: new Date().getMonth() + 1,
         });
+
+        /**
+         * List of loaded calendars.
+         */
         const calendars = ref<Calendar[]>([]);
+
+        /**
+         * List of loaded calendar entries/events.
+         */
         const entries = ref<CalendarEntry[]>([]);
+
+        /**
+         * Map of event reminders (eventId -> reminder time).
+         */
         const eventReminders = ref<Map<number, number>>(new Map());
 
+        /**
+         * Notification sound for calendar events.
+         */
         const notificationSound = useSounds('/sounds/notification.mp3');
 
         // Actions
+        /**
+         * Checks for upcoming calendar appointments and triggers notifications/reminders.
+         */
         const checkAppointments = async (): Promise<void> => {
             try {
                 const reminderTimes = settingsStore.calendar.reminderTimes;
@@ -66,7 +95,6 @@ export const useCalendarStore = defineStore(
                     );
 
                     if (eventReminders.value.get(entry.id) === closestTime) return;
-
                     if (closestTime > time) return;
 
                     if (time <= 0) {
@@ -108,7 +136,7 @@ export const useCalendarStore = defineStore(
             }
         };
 
-        // Calendars
+        // Calendar CRUD Methods
         const getCalendar = async (req: GetCalendarRequest): Promise<GetCalendarResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -224,7 +252,7 @@ export const useCalendarStore = defineStore(
             }
         };
 
-        // Entries
+        // Calendar Entry Methods
         const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -337,7 +365,7 @@ export const useCalendarStore = defineStore(
             }
         };
 
-        // RSVP
+        // RSVP Methods
         const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -392,6 +420,7 @@ export const useCalendarStore = defineStore(
         });
 
         return {
+            // State
             activeCalendarIds,
             view,
             currentDate,

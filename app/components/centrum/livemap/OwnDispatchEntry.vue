@@ -39,12 +39,13 @@ useIntervalFn(
 </script>
 
 <template>
-    <li class="my-1 flex flex-row items-center gap-1">
+    <li class="my-1 flex flex-row items-center gap-0.5">
         <div class="flex flex-col items-center gap-2">
             <URadioGroup
                 v-model="modelValue"
                 name="active"
-                :items="[dispatch.id]"
+                :items="[{ value: dispatch.id }]"
+                value-key="value"
                 :ui="{ label: 'hidden', item: 'items-end', wrapper: 'ms-0' }"
             />
 

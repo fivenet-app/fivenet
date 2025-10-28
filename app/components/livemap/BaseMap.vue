@@ -3,11 +3,19 @@ import { breakpointsTailwind } from '@vueuse/core';
 import {
     CRS,
     extend,
-    type default as L,
+    type HeatLayer,
     LatLng,
     latLngBounds,
+    type LatLngExpression,
+    type Layer,
+    type LayersControlEvent,
+    type LeafletMouseEvent,
+    type Map,
+    Marker,
+    type Point,
     type PointExpression,
     Projection,
+    stamp,
     Transformation,
 } from 'leaflet';
 import 'leaflet-contextmenu';
@@ -17,8 +25,12 @@ import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
 import { backgroundColorList, tileLayers } from '~/types/livemap';
 import type { ValueOf } from '~/utils/types';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
+import MultiHitPopupCard from './MultiHitPopupCard.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -26,9 +38,9 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'mapReady', map: L.Map): void;
-    (e: 'overlayadd', event: L.LayersControlEvent): void;
-    (e: 'overlayremove', event: L.LayersControlEvent): void;
+    (e: 'mapReady', map: Map): void;
+    (e: 'overlayadd', event: LayersControlEvent): void;
+    (e: 'overlayremove', event: LayersControlEvent): void;
 }>();
 
 const { can } = useAuth();
@@ -39,7 +51,7 @@ const { livemapTileLayer, livemap: livemapSettings } = storeToRefs(settingsStore
 const livemapStore = useLivemapStore();
 const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
 
-let map: L.Map | undefined;
+let map: Map | undefined;
 
 function mapResize(): void {
     if (map === undefined) return;
@@ -67,7 +79,7 @@ const customCRS = extend({}, CRS.Simple, {
     zoom: function (sc: number): number {
         return Math.log(sc) / 0.6931471805599453;
     },
-    distance: function (pos1: L.LatLng, pos2: L.LatLng): number {
+    distance: function (pos1: LatLng, pos2: LatLng): number {
         const xDiff = pos2.lng - pos1.lng;
         const yDiff = pos2.lat - pos1.lat;
         return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
@@ -162,7 +174,7 @@ function stringifyHash(currZoom: number, centerLat: number, centerLong: number):
     return hash;
 }
 
-function parseLocationQuery(query: string): { latlng: L.LatLng; zoom: number } | undefined {
+function parseLocationQuery(query: string): { latlng: LatLng; zoom: number } | undefined {
     const args = query.split('/');
 
     const zoom = args[0] ? parseInt(args[0]) : 2;
@@ -189,9 +201,42 @@ const graticuleLayer = simpleGraticule({
     ],
 });
 
-const heat = ref<L.HeatLayer | undefined>(undefined);
+const heat = ref<HeatLayer | undefined>(undefined);
 
-async function onMapReady(m: L.Map): Promise<void> {
+const chooser = ref<null | {
+    latlng: LatLngExpression;
+    hits: {
+        userMarker?: UserMarker;
+        dispatchMarker?: Dispatch;
+        markerMarker?: MarkerMarker;
+
+        openPopup: () => void;
+    }[];
+}>(null);
+
+const chooserRef = useTemplateRef('chooserRef');
+
+async function showChooser(latlng: LatLngExpression, hits: Marker[]) {
+    chooser.value = {
+        latlng,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        hits: hits.map((m: Marker & { options?: any }) => ({
+            userMarker: m.options?.userMarker as UserMarker | undefined,
+            dispatchMarker: m.options?.dispatchMarker as Dispatch | undefined,
+            markerMarker: m.options?.markerMarker as MarkerMarker | undefined,
+
+            openPopup: () => {
+                chooser.value = null;
+                m.openPopup();
+            },
+        })),
+    };
+
+    await nextTick();
+    chooserRef.value?.leafletObject?.openPopup();
+}
+
+async function onMapReady(m: Map): Promise<void> {
     updateBackground(livemapTileLayer.value);
 
     map = m;
@@ -202,12 +247,12 @@ async function onMapReady(m: L.Map): Promise<void> {
         map.setView(startPos.latlng, startPos.zoom);
     }
 
-    map.on('baselayerchange', async (event: L.LayersControlEvent) => updateBackground(event.name));
+    map.on('baselayerchange', async (event: LayersControlEvent) => updateBackground(event.name));
 
     map.on('overlayadd', (event) => emit('overlayadd', event));
     map.on('overlayremove', (event) => emit('overlayremove', event));
 
-    map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
+    map.addEventListener('mousemove', async (event: LeafletMouseEvent) => {
         if (!event.latlng) return;
 
         mouseLat.value = Math.round(event.latlng.lat * 100000) / 100000;
@@ -221,6 +266,44 @@ async function onMapReady(m: L.Map): Promise<void> {
     map.on('moveend', async () => {
         isMoving.value = false;
     });
+
+    function gatherNearbyMarkers(map: Map, px: Point, radiusPx = 35): Marker[] {
+        const hits: Marker[] = [];
+        map.eachLayer((layer) => {
+            eachMarkerIn(layer, (m) => {
+                const pos = map.latLngToContainerPoint(m.getLatLng());
+                if (pos.distanceTo(px) <= radiusPx && !hits.find((hit) => stamp(hit) === stamp(m))) hits.push(m);
+            });
+        });
+        return hits;
+    }
+
+    function showMultiSelectPopup(latlng: LatLngExpression, hits: Marker[]) {
+        hits.sort((a, b) => (a.options?.zIndexOffset || 0) - (b.options?.zIndexOffset || 0));
+
+        showChooser(latlng, hits);
+    }
+
+    map.on('preclick', (e: LeafletMouseEvent) => {
+        if (!map) return;
+
+        const px = e.containerPoint;
+        const hits = gatherNearbyMarkers(map, px, 35);
+
+        if (hits.length === 0) return;
+        if (hits.length === 1) {
+            hits[0]?.openPopup?.();
+            return;
+        }
+
+        showMultiSelectPopup(e.latlng, hits);
+    });
+
+    function eachMarkerIn(layer: Layer, cb: (m: Marker) => void) {
+        if (layer instanceof Marker) return cb(layer);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if ((layer as any).eachLayer) (layer as any).eachLayer((l: Layer) => eachMarkerIn(l, cb));
+    }
 
     emit('mapReady', map);
 
@@ -316,6 +399,12 @@ onBeforeUnmount(() => {
             <slot />
 
             <HeatmapLayer :show="livemapSettings.showHeatmap" />
+
+            <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
+                <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
+                    <MultiHitPopupCard :hits="chooser.hits" />
+                </LPopup>
+            </LMarker>
         </LMap>
 
         <slot name="afterMap" />

@@ -5,6 +5,8 @@ import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
+export const defaultUnitIcon = 'MapMarkerIcon';
+
 export type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
 
 export function dispatchStatusToFillColor(status: StatusDispatch | undefined): string {

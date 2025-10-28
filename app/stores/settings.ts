@@ -25,6 +25,23 @@ export type LivemapLayerCategory = {
     order?: number;
 };
 
+export type LivemapSettings = {
+    markerSize: number;
+    centerSelectedMarker: boolean;
+    showUnitNames: boolean;
+    showUnitStatus: boolean;
+    showAllDispatches: boolean;
+    showGrid: boolean;
+    showHeatmap: boolean;
+    useUnitColor: boolean;
+};
+
+export type SignatureSettings = {
+    penColor: string;
+    minStrokeWidth: number;
+    maxStrokeWidth: number;
+};
+
 export const useSettingsStore = defineStore(
     'settings',
     () => {
@@ -36,7 +53,7 @@ export const useSettingsStore = defineStore(
         const nuiEnabled = ref<boolean>(false);
         const nuiResourceName = ref<string | undefined>(undefined);
 
-        const livemap = ref({
+        const livemap = ref<LivemapSettings>({
             markerSize: 22,
             centerSelectedMarker: false,
             showUnitNames: true,
@@ -84,7 +101,7 @@ export const useSettingsStore = defineStore(
             showInvisibleCharacters: false,
         });
 
-        const signature = ref({
+        const signature = ref<SignatureSettings>({
             penColor: 'rgb(0, 0, 0)',
             minStrokeWidth: 2,
             maxStrokeWidth: 6,

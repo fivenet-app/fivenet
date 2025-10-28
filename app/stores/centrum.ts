@@ -803,7 +803,7 @@ export const useCentrumStore = defineStore(
             if (route.name !== 'centrum' && route.name !== 'livemap') {
                 return [
                     {
-                        label: { key: 'common.click_here' },
+                        label: { key: 'common.click_here', parameters: {} },
                         to: '/livemap',
                     },
                 ];
@@ -814,8 +814,8 @@ export const useCentrumStore = defineStore(
         const selfAssign = async (id: number): Promise<void> => {
             if (ownUnitId.value === undefined) {
                 notifications.add({
-                    title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
-                    description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
+                    title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title', parameters: {} },
+                    description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content', parameters: {} },
                     type: NotificationType.ERROR,
                 });
 

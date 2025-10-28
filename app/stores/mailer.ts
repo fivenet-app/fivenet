@@ -2,7 +2,7 @@ import type { NotificationActionI18n } from '~/types/notifications';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
-import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
+import type { Message, MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
@@ -37,9 +37,23 @@ export const useMailerStore = defineStore(
         const notifications = useNotificationsStore();
 
         // State
+        /**
+         * Indicates whether the mailer store has finished loading its data.
+         */
         const loaded = ref<boolean>(false);
+
+        /**
+         * Stores any error encountered during operations in the mailer store.
+         */
         const error = ref<Error | undefined>(undefined);
 
+        /**
+         * Holds the current email draft being composed.
+         * @property {string} title - The title of the email draft.
+         * @property {string} content - The content of the email draft.
+         * @property {Array<{label: string}>} recipients - The list of recipients for the email draft.
+         * @property {Array<MessageAttachment>} attachments - The list of attachments for the email draft.
+         */
         const draft = ref({
             title: '',
             content: '',
@@ -47,21 +61,148 @@ export const useMailerStore = defineStore(
             attachments: [] as MessageAttachment[],
         });
 
+        /**
+         * Contains the list of email accounts available to the user.
+         */
         const emails = ref<Email[]>([]);
+
+        /**
+         * The ID of the currently selected email account.
+         */
         const selectedEmailId = ref<number | undefined>(undefined);
+
+        /**
+         * The currently selected email account object.
+         */
         const selectedEmail = ref<Email | undefined>(undefined);
+
+        /**
+         * The currently selected email thread.
+         */
         const selectedThread = ref<Thread | undefined>(undefined);
 
+        /**
+         * Keeps track of thread IDs that have unread messages.
+         */
         const unreadThreadIds = ref<number[]>([]);
 
+        /**
+         * Contains the list of threads for the selected email account.
+         */
         const threads = ref<ListThreadsResponse | undefined>(undefined);
+
+        /**
+         * Contains the list of messages in the currently selected thread.
+         */
         const messages = ref<ListThreadMessagesResponse | undefined>(undefined);
 
+        /**
+         * Stores a list of email addresses and their optional names.
+         * @property {string} label - The email address.
+         * @property {string} [name] - The optional name associated with the email address.
+         */
         const addressBook = ref<{ label: string; name?: string }[]>([]);
 
         const notificationSound = useSounds('/sounds/notification.mp3');
 
+        // Function to handle thread updates
+        const handleThreadUpdate = async (data: Thread): Promise<void> => {
+            console.debug('threadUpdate', data);
+
+            if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
+                await setThreadState({ threadId: data.id, archived: true, muted: true });
+                return;
+            }
+
+            if (data.creatorEmailId === selectedEmail.value?.id || data.creatorEmail?.email === selectedEmail.value?.email) {
+                if (data.state) {
+                    data.state.unread = false;
+                } else {
+                    data.state = {
+                        emailId: selectedEmail.value?.id ?? 0,
+                        threadId: data.id,
+                        unread: false,
+                    };
+                }
+                return;
+            }
+
+            await setThreadState({ threadId: data.id, unread: true });
+
+            const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.id);
+            if (threadIdx !== undefined && threadIdx > -1) {
+                const thread = threads.value!.threads[threadIdx]!;
+                threads.value!.threads.splice(threadIdx, 1);
+                threads.value!.threads.unshift(thread);
+            }
+
+            notifications.add({
+                title: { key: 'notifications.mailer.new_email.title', parameters: {} },
+                description: {
+                    key: 'notifications.mailer.new_email.content',
+                    parameters: {
+                        title: data.title,
+                        from: data.creatorEmail?.email ?? 'N/A',
+                    },
+                },
+                type: NotificationType.INFO,
+                actions: getNotificationActions(data.id),
+            });
+            notificationSound.play();
+        };
+
+        // Function to handle message updates
+        const handleMessageUpdate = async (data: Message): Promise<void> => {
+            const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.threadId);
+            if (threadIdx !== undefined && threadIdx > -1) {
+                const thread = threads.value!.threads[threadIdx]!;
+                thread.updatedAt = toTimestamp(new Date());
+                threads.value!.threads.splice(threadIdx, 1);
+                threads.value!.threads.unshift(thread);
+            }
+
+            if (selectedThread.value?.id === data.threadId) {
+                selectedThread.value!.updatedAt = toTimestamp(new Date());
+                messages.value?.messages?.unshift({
+                    id: 0, // Placeholder ID
+                    threadId: data.threadId,
+                    senderId: data.senderId ?? 0,
+                    title: data.title,
+                });
+            }
+
+            console.debug('messageUpdate', data);
+
+            // Handle email sent by blocked email
+            if (data.sender?.email && checkIfEmailBlocked(data.sender?.email)) {
+                // Make sure to set thread state accordingly (locally)
+                await setThreadState({ threadId: data.threadId, archived: true, muted: true });
+                return;
+            }
+
+            if (data.senderId === selectedEmail.value?.id) return;
+
+            // Only set unread state when message isn't from same email and the user isn't active on that thread
+            const state = await setThreadState({ threadId: data.threadId, unread: data.threadId !== selectedThread.value?.id });
+            if (state?.muted) return;
+
+            notifications.add({
+                title: { key: 'notifications.mailer.new_email.title', parameters: {} },
+                description: {
+                    key: 'notifications.mailer.new_email.content',
+                    parameters: {
+                        title: data.title,
+                        from: data.sender?.email ?? 'N/A',
+                    },
+                },
+                type: NotificationType.INFO,
+                actions: getNotificationActions(data.threadId),
+            });
+            notificationSound.play();
+        };
+
         // Actions
+        // `handleEvent` processes incoming mailer events and updates the store accordingly.
         const handleEvent = async (event: MailerEvent): Promise<void> => {
             logger.debug('Received change - oneofKind:', event.data.oneofKind, event.data);
 
@@ -84,64 +225,7 @@ export const useMailerStore = defineStore(
                     emails.value[idx].settings = event.data.emailSettingsUpdated;
                 }
             } else if (event.data.oneofKind === 'threadUpdate') {
-                const data = event.data.threadUpdate;
-                console.debug('threadUpdate', data);
-
-                // Handle email sent by blocked email
-                if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
-                    // Make sure to set thread state accordingly (locally)
-                    await setThreadState({
-                        threadId: data.id,
-                        archived: true,
-                        muted: true,
-                    });
-                    return;
-                }
-
-                // Either creator id or email address matches
-                if (
-                    data.creatorEmailId === selectedEmail.value?.id ||
-                    data.creatorEmail?.email === selectedEmail.value?.email
-                ) {
-                    if (data.state) {
-                        data.state.unread = false;
-                    } else {
-                        data.state = {
-                            emailId: selectedEmail.value?.id ?? 0,
-                            threadId: data.id,
-                            unread: false,
-                        };
-                    }
-                    return;
-                }
-
-                await setThreadState({
-                    threadId: data.id,
-                    unread: true,
-                });
-
-                // Update thread order in list
-                const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.id);
-                if (threadIdx !== undefined && threadIdx > -1) {
-                    const thread = threads.value!.threads[threadIdx]!;
-
-                    threads.value!.threads.splice(threadIdx, 1);
-                    threads.value!.threads.unshift(thread);
-                }
-
-                notifications.add({
-                    title: { key: 'notifications.mailer.new_email.title', parameters: {} },
-                    description: {
-                        key: 'notifications.mailer.new_email.content',
-                        parameters: {
-                            title: data.title,
-                            from: data.creatorEmail?.email ?? 'N/A',
-                        },
-                    },
-                    type: NotificationType.INFO,
-                    actions: getNotificationActions(data.id),
-                });
-                notificationSound.play();
+                await handleThreadUpdate(event.data.threadUpdate);
             } else if (event.data.oneofKind === 'threadDelete') {
                 const id = event.data.threadDelete;
                 if (selectedThread.value?.id === id) {
@@ -154,58 +238,7 @@ export const useMailerStore = defineStore(
                     threads.value?.threads.splice(idx, 1);
                 }
             } else if (event.data.oneofKind === 'messageUpdate') {
-                const data = event.data.messageUpdate;
-                // Update thread updatedAt time and move to beginning of list
-                const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.threadId);
-                if (threadIdx !== undefined && threadIdx > -1) {
-                    const thread = threads.value!.threads[threadIdx]!;
-                    thread.updatedAt = toTimestamp(new Date());
-
-                    threads.value!.threads.splice(threadIdx, 1);
-                    threads.value!.threads.unshift(thread);
-                }
-
-                if (selectedThread.value?.id === data.threadId) {
-                    selectedThread.value.updatedAt = toTimestamp(new Date());
-
-                    messages.value?.messages?.unshift(data);
-                }
-
-                console.debug('messageUpdate', data);
-
-                // Handle email sent by blocked email
-                if (data.sender?.email && checkIfEmailBlocked(data.sender?.email)) {
-                    // Make sure to set thread state accordingly (locally)
-                    await setThreadState({
-                        threadId: data.threadId,
-                        archived: true,
-                        muted: true,
-                    });
-                    return;
-                }
-
-                if (data.senderId === selectedEmail.value?.id) return;
-
-                // Only set unread state when message isn't from same email and the user isn't active on that thread
-                const state = await setThreadState({
-                    threadId: data.threadId,
-                    unread: data.threadId !== selectedThread.value?.id,
-                });
-                if (state?.muted) return;
-
-                notifications.add({
-                    title: { key: 'notifications.mailer.new_email.title', parameters: {} },
-                    description: {
-                        key: 'notifications.mailer.new_email.content',
-                        parameters: {
-                            title: data.title,
-                            from: data.sender?.email ?? 'N/A',
-                        },
-                    },
-                    type: NotificationType.INFO,
-                    actions: getNotificationActions(data.threadId),
-                });
-                notificationSound.play();
+                await handleMessageUpdate(event.data.messageUpdate);
             } else if (event.data.oneofKind === 'messageDelete') {
                 // Remove message if it is currently in our messages list
                 const id = event.data.messageDelete;
@@ -281,6 +314,7 @@ export const useMailerStore = defineStore(
         };
 
         // Emails
+        // `listEmails` fetches the list of email accounts and updates the store.
         const listEmails = async (
             all: boolean = false,
             offset: number = 0,
@@ -422,6 +456,7 @@ export const useMailerStore = defineStore(
         };
 
         // Threads
+        // `listThreads` fetches the list of threads for the selected email account.
         const listThreads = async (
             req: ListThreadsRequest,
             store: boolean = true,
@@ -574,6 +609,33 @@ export const useMailerStore = defineStore(
             }
         };
 
+        // Method to update thread state
+        const updateThreadState = (threadId: number, newState: ThreadState): void => {
+            const thread = threads.value?.threads.find((t) => t.id === threadId);
+            if (thread) {
+                thread.state = { ...thread.state, ...newState } as ThreadState;
+            }
+
+            if (selectedThread.value?.id === threadId) {
+                selectedThread.value.state = { ...selectedThread.value.state, ...newState };
+
+                // Reset selected thread when archived
+                if (newState.archived === true) {
+                    selectedThread.value = undefined;
+                }
+            }
+        };
+
+        // Method to update unread thread IDs
+        const updateUnreadThreadIds = (threadId: number, unread: boolean): void => {
+            const idx = unreadThreadIds.value.findIndex((id) => id === threadId);
+            if (unread && idx === -1) {
+                unreadThreadIds.value.push(threadId);
+            } else if (!unread && idx > -1) {
+                unreadThreadIds.value.splice(idx, 1);
+            }
+        };
+
         const setThreadState = async (
             state: Partial<ThreadState>,
             notify: boolean = false,
@@ -590,30 +652,9 @@ export const useMailerStore = defineStore(
                 },
             });
 
-            if (selectedThread.value && selectedThread.value?.id === state.threadId) {
-                selectedThread.value.state = response.state;
-
-                // Reset selected thread when archived
-                if (state.archived === true) {
-                    selectedThread.value = undefined;
-                }
-            }
-
-            const thread = threads.value?.threads.find((t) => t.id === state.threadId);
-            if (thread) {
-                thread.state = response.state;
-            }
-
-            // Add/Remove thread from unreadThreadIds
-            const unreadThreadIdx = unreadThreadIds.value.findIndex((t) => t === state.threadId);
-            if (!response.state?.unread) {
-                if (unreadThreadIdx > -1) {
-                    unreadThreadIds.value.splice(unreadThreadIdx, 1);
-                }
-            } else {
-                if (unreadThreadIdx === -1) {
-                    unreadThreadIds.value.push(response.state.threadId);
-                }
+            if (response.state) {
+                updateThreadState(state.threadId!, response.state);
+                updateUnreadThreadIds(state.threadId!, response.state.unread ?? false);
             }
 
             if (notify) {

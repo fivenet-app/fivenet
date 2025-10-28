@@ -26,4 +26,6 @@ export const availableIcons: IconEntry[] = Object.entries(modules).map(([path, l
     };
 });
 
-export const fallbackIcon = availableIcons.find((icon) => icon.name === 'MapMarkerQuestionIcon')!;
+export const fallbackIconName = 'MapMarkerQuestionIcon';
+
+export const fallbackIcon = availableIcons.find((icon) => icon.name === fallbackIconName)!;

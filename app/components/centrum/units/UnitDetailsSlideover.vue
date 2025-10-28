@@ -28,7 +28,7 @@ const overlay = useOverlay();
 const unitStatusUpdateModal = overlay.create(UnitStatusUpdateModal);
 const unitAssignUsersModal = overlay.create(UnitAssignUsersModal);
 
-const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status));
+const unitStatusColor = computed(() => unitStatusToBGColor(props.unit.status?.status));
 </script>
 
 <template>
@@ -71,7 +71,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                     <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                         <UButton
                             class="rounded-sm px-2 py-1 text-sm font-semibold shadow-xs"
-                            :class="unitStatusColors"
+                            :class="unitStatusColor"
                             :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             :icon="unitStatusToIcon(props.unit.status?.status)"
                             @click="

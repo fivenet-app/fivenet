@@ -731,7 +731,8 @@
         "optional": "Optional",
         "startpage": "Startpage",
         "follow": "Follow",
-        "unfollow": "Unfollow"
+        "unfollow": "Unfollow",
+        "choose_one": "Choose one"
     },
     "components": {
         "partials": {

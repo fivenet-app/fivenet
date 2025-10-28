@@ -11,6 +11,7 @@ type ObjectEvents = {
     [ObjectType.JOBS_COLLEAGUE]: ObjectEvent;
     [ObjectType.JOBS_CONDUCT]: ObjectEvent;
 };
+
 export const notificationsEvents = mitt<ObjectEvents>();
 
 export function useClientUpdate(objType: ObjectType, callback: (event: ObjectEvent) => void) {

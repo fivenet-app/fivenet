@@ -214,6 +214,7 @@ const columns = [
                               initialsOnly: true,
                               badge: true,
                               assignment: unit,
+                              showIcon: true,
                           }),
                       ),
                   ),
@@ -413,6 +414,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                                         :assignment="unit"
                                         initials-only
                                         badge
+                                        show-icon
                                     />
                                 </span>
 

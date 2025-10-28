@@ -731,7 +731,8 @@
         "optional": "Optional",
         "startpage": "Startseite",
         "follow": "Folgen",
-        "unfollow": "Nicht mehr folgen"
+        "unfollow": "Nicht mehr folgen",
+        "choose_one": "Wählen Sie eins aus"
     },
     "components": {
         "partials": {
