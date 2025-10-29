@@ -64,7 +64,7 @@ func (s *Server) getAndSendACL(
 		if usersJobs.Jobs == nil {
 			usersJobs.Jobs = make(map[string]int32)
 		}
-		// Disable fine-grained permissions for superuser as the it is now just a list of jobs
+		// Disable fine-grained permissions for superuser as it is now just a list of jobs
 		usersJobs.FineGrained = false
 		for _, j := range s.tracker.ListTrackedJobs() {
 			usersJobs.Jobs[j] = -1
@@ -118,7 +118,7 @@ func buildFilters(jobs *permissions.JobGradeList) []string {
 	for job, grades := range jobs.Iter() {
 		if jobs.GetFineGrained() {
 			for _, g := range grades {
-				f = append(f, fmt.Sprintf("$KV.%s.%s.%d", tracker.BucketUserLoc, job, g))
+				f = append(f, fmt.Sprintf("$KV.%s.%s.%d.>", tracker.BucketUserLoc, job, g))
 			}
 		} else {
 			// Non-fine-grained is expressed as a wildcard; higher grades are excluded in the stream's filter

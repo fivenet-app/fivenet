@@ -54,6 +54,8 @@ export const useLivemapStore = defineStore(
         // Marker Management
         /**
          * Remove expired marker markers from the map.
+         *
+         * This function iterates through all marker markers and removes those that have expired based on their `expiresAt` property.
          */
         const cleanupMarkerMarkers = (): void => {
             const now = new Date();
@@ -65,7 +67,10 @@ export const useLivemapStore = defineStore(
         };
 
         /**
-         * Add or update a marker marker in the map.
+         * Add a new marker to the map or update an existing one.
+         * If the marker already exists, its properties will be updated.
+         *
+         * @param {MarkerMarker} marker - The marker object containing the data to add or update.
          */
         const addOrUpdateMarkerMarker = (marker: MarkerMarker): void => {
             const m = markersMarkers.value.get(marker.id);
@@ -78,6 +83,9 @@ export const useLivemapStore = defineStore(
 
         /**
          * Update an existing marker marker with new data.
+         *
+         * @param {MarkerMarker} dest - The existing marker to be updated.
+         * @param {MarkerMarker} src - The new marker data to update the existing marker with.
          */
         const updateMarkerMarker = (dest: MarkerMarker, src: MarkerMarker): void => {
             if (dest.x !== src.x) dest.x = src.x;
@@ -101,7 +109,9 @@ export const useLivemapStore = defineStore(
         };
 
         /**
-         * Delete a marker marker by id.
+         * Delete a marker marker by its ID.
+         *
+         * @param {number} id - The ID of the marker to delete.
          */
         const deleteMarkerMarker = (id: number): void => {
             markersMarkers.value.delete(id);
@@ -110,6 +120,8 @@ export const useLivemapStore = defineStore(
         // User Marker Management
         /**
          * Add or update a user marker in the map.
+         *
+         * @param {UserMarker} marker - The user marker object containing the data to add or update.
          */
         const addOrUpdateUserMarker = (marker: UserMarker): void => {
             const m = markersUsers.value.get(marker.userId);
@@ -122,6 +134,9 @@ export const useLivemapStore = defineStore(
 
         /**
          * Update an existing user marker with new data.
+         *
+         * @param {UserMarker} dest - The existing user marker to be updated.
+         * @param {UserMarker} src - The new user marker data to update the existing marker with.
          */
         const updateUserMarker = (dest: UserMarker, src: UserMarker): void => {
             if (dest.x !== src.x) dest.x = src.x;
@@ -142,7 +157,10 @@ export const useLivemapStore = defineStore(
         };
 
         /**
-         * Update user info for a UserShort object.
+         * Update user information for a UserShort object.
+         *
+         * @param {UserShort} dest - The existing user information to be updated.
+         * @param {UserShort} src - The new user information to update the existing data with.
          */
         const updateUserInfo = (dest: UserShort, src: UserShort): void => {
             if (dest.firstname !== src.firstname) dest.firstname = src.firstname;
@@ -161,13 +179,18 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle a single stream response.
+         *
+         * @param {StreamResponse} resp - The stream response object containing the data to process.
+         * @param {number[]} foundMarkers - An array to track found marker IDs.
+         * @param {UserLike | null} activeChar - The currently active character, if any.
+         * @param {LivemapSettings} livemap - The livemap settings to use during processing.
          */
         const handleStreamResponse = async (
             resp: StreamResponse,
             foundMarkers: number[],
             activeChar: UserLike | null,
             livemap: LivemapSettings,
-        ) => {
+        ): Promise<void> => {
             error.value = undefined;
             if (!resp || !resp.data) return;
             if (resp.userOnDuty !== undefined) userOnDuty.value = resp.userOnDuty;
@@ -201,8 +224,10 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle jobs update from stream response.
+         *
+         * @param {JobsList} jobs - The jobs list containing updated job data.
          */
-        const handleJobsUpdate = (jobs: JobsList) => {
+        const handleJobsUpdate = (jobs: JobsList): void => {
             logger.info('Jobs received. Users:', jobs.users.length, 'markers:', jobs.markers.length);
             jobsMarkers.value = jobs.markers;
             jobsUsers.value = jobs.users;
@@ -210,8 +235,11 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle markers update from stream response.
+         *
+         * @param {MarkerMarkersUpdates} markers - The markers update data.
+         * @param {number[]} foundMarkers - An array to track found marker IDs.
          */
-        const handleMarkersUpdate = (markers: MarkerMarkersUpdates, foundMarkers: number[]) => {
+        const handleMarkersUpdate = (markers: MarkerMarkersUpdates, foundMarkers: number[]): void => {
             markers.updated.forEach((v: MarkerMarker) => {
                 if (!markers.partial) {
                     foundMarkers.push(v.id);
@@ -234,8 +262,10 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle snapshot update from stream response.
+         *
+         * @param {Snapshot} snapshot - The snapshot data containing the current state of markers.
          */
-        const handleSnapshotUpdate = (snapshot: Snapshot) => {
+        const handleSnapshotUpdate = (snapshot: Snapshot): void => {
             markersUsers.value.clear();
             snapshot.markers.forEach((marker: UserMarker) => addOrUpdateUserMarker(marker));
             initiated.value = true;
@@ -243,8 +273,10 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle user deletions from stream response.
+         *
+         * @param {UserDeletes} deletes - The user deletions data.
          */
-        const handleUserDeletes = (deletes: UserDeletes) => {
+        const handleUserDeletes = (deletes: UserDeletes): void => {
             for (const userDelete of deletes.deletes) {
                 const userId = userDelete.id;
                 const um = markersUsers.value.get(userId);
@@ -263,8 +295,12 @@ export const useLivemapStore = defineStore(
 
         /**
          * Handle user updates from stream response.
+         *
+         * @param {UserUpdates} updates - The user updates data.
+         * @param {LivemapSettings} livemap - The livemap settings to use during processing.
+         * @param {UserLike | null} activeChar - The currently active character, if any.
          */
-        const handleUserUpdates = (updates: UserUpdates, livemap: LivemapSettings, activeChar: UserLike | null) => {
+        const handleUserUpdates = (updates: UserUpdates, livemap: LivemapSettings, activeChar: UserLike | null): void => {
             for (const userUpdate of updates.updates) {
                 addOrUpdateUserMarker(userUpdate);
                 if (livemap.centerSelectedMarker && userUpdate.userId === selectedMarker.value?.userId) {
@@ -324,6 +360,8 @@ export const useLivemapStore = defineStore(
 
         /**
          * Stop the gRPC stream.
+         *
+         * @param {boolean} [end] - Whether to mark the stream as stopping.
          */
         const stopStream = async (end?: boolean): Promise<void> => {
             if (end === true) stopping.value = true;
@@ -355,11 +393,14 @@ export const useLivemapStore = defineStore(
 
         // Misc Actions
         /**
-         * Move to the given coordinates and optionally set in-game waypoint.
+         * Move to the given coordinates and optionally set an in-game waypoint.
+         *
+         * @param {Coordinate} loc - The coordinates to move to.
+         * @param {boolean} [ingame=true] - Whether to set an in-game waypoint.
          */
-        const gotoCoords = async (loc: Coordinate, ingame = true): Promise<void> => {
+        const gotoCoords = async (loc: Coordinate, ingame: boolean = true): Promise<void> => {
             location.value = { x: loc.x, y: loc.y };
-            if (ingame) return setWaypoint(loc.x, loc.y);
+            if (ingame) return await setWaypoint(loc.x, loc.y);
         };
 
         return {

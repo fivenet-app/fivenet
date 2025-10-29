@@ -108,19 +108,40 @@ export const useSettingsStore = defineStore(
         });
 
         // Actions
+        /**
+         * Set the application version.
+         *
+         * @param {string} newVersion - The new version string to set.
+         */
         const setVersion = (newVersion: string): void => {
             version.value = newVersion;
         };
 
+        /**
+         * Set the update availability status.
+         *
+         * @param {string} newVersion - The version string indicating the available update.
+         */
         const setUpdateAvailable = async (newVersion: string): Promise<void> => {
             updateAvailable.value = newVersion;
         };
 
+        /**
+         * Configure NUI settings.
+         *
+         * @param {boolean} enabled - Whether NUI is enabled.
+         * @param {string | undefined} [resourceName] - The name of the NUI resource, if applicable.
+         */
         const setNuiSettings = (enabled: boolean, resourceName?: string | undefined): void => {
             nuiEnabled.value = enabled;
             nuiResourceName.value = resourceName;
         };
 
+        /**
+         * Add or update a livemap layer category.
+         *
+         * @param {LivemapLayerCategory} category - The category object containing the data to add or update.
+         */
         const addOrUpdateLivemapCategory = (category: LivemapLayerCategory): void => {
             const idx = livemapLayerCategories.value.findIndex((l) => l.key === category.key);
             if (idx === -1) {
@@ -134,6 +155,12 @@ export const useSettingsStore = defineStore(
             }
             current.order = category.order;
         };
+
+        /**
+         * Add or update a livemap layer.
+         *
+         * @param {LivemapLayer} layer - The layer object containing the data to add or update.
+         */
         const addOrUpdateLivemapLayer = (layer: LivemapLayer): void => {
             const idx = livemapLayers.value.findIndex((l) => l.key === layer.key);
             if (idx === -1) {
@@ -155,6 +182,12 @@ export const useSettingsStore = defineStore(
             current.disabled = layer.disabled;
             current.order = layer.order;
         };
+
+        /**
+         * Remove a livemap layer by its key.
+         *
+         * @param {string} key - The key of the layer to remove.
+         */
         const removeLivemapLayer = (key: string): void => {
             const idx = livemapLayers.value.findIndex((l) => l.key === key);
             if (idx === -1) return;
@@ -162,6 +195,11 @@ export const useSettingsStore = defineStore(
         };
 
         // Getters
+        /**
+         * Get the user's locale.
+         *
+         * @returns {Locale} - The user's locale, falling back to the default locale if not set.
+         */
         const getUserLocale = computed<Locale>(() => {
             if (locale.value !== undefined) {
                 return locale.value;

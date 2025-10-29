@@ -54,6 +54,10 @@ export const useCentrumStore = defineStore(
         const sosSound = useSounds('/sounds/centrum/morse-sos.mp3');
 
         // Helpers
+        /**
+         * Removes a dispatch from the user's own dispatches.
+         * @param {number} id - The ID of the dispatch to remove.
+         */
         const removeOwnDispatch = (id: number): void => {
             const idx = ownDispatches.value.findIndex((d) => d === id);
             if (idx > -1) {
@@ -61,6 +65,10 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Removes a dispatch from the pending dispatches.
+         * @param {number} id - The ID of the dispatch to remove.
+         */
         const removePendingDispatch = (id: number): void => {
             const idx = pendingDispatches.value.findIndex((d) => d === id);
             if (idx > -1) {
@@ -69,17 +77,29 @@ export const useCentrumStore = defineStore(
         };
 
         // Getters
+        /**
+         * Gets the current mode of the centrum.
+         * @returns {CentrumMode} The current mode of the centrum.
+         */
         const getCurrentMode = computed<CentrumMode>(() => {
             return dispatchers.value.length > 0
                 ? (settings.value?.mode ?? CentrumMode.UNSPECIFIED)
                 : (settings.value?.fallbackMode ?? CentrumMode.UNSPECIFIED);
         });
 
+        /**
+         * Gets the dispatchers for the current job.
+         * @returns {Dispatchers | undefined} The dispatchers for the current job, or undefined if none exist.
+         */
         const getJobDispatchers = computed((): Dispatchers | undefined => {
             const { activeChar } = useAuth();
             return dispatchers.value.find((d) => d.job === activeChar.value?.job);
         });
 
+        /**
+         * Checks if any dispatchers are active.
+         * @returns {boolean} True if any dispatchers are active, false otherwise.
+         */
         const anyDispatchersActive = computed(() => {
             return (
                 dispatchers.value !== undefined &&
@@ -88,10 +108,18 @@ export const useCentrumStore = defineStore(
             );
         });
 
+        /**
+         * Gets the user's own unit.
+         * @returns {Unit | undefined} The user's own unit, or undefined if none exists.
+         */
         const getOwnUnit = computed<Unit | undefined>(() => {
             return ownUnitId.value !== undefined ? units.value.get(ownUnitId.value) : undefined;
         });
 
+        /**
+         * Gets the sorted list of units for the current job.
+         * @returns {Unit[]} The sorted list of units.
+         */
         const getSortedUnits = computed<Unit[]>(() => {
             const { activeChar } = useAuth();
 
@@ -105,15 +133,27 @@ export const useCentrumStore = defineStore(
             );
         });
 
+        /**
+         * Gets the sorted list of dispatches.
+         * @returns {Dispatch[]} The sorted list of dispatches.
+         */
         const getSortedDispatches = computed<Dispatch[]>(() => {
             return Array.from(dispatches.value, ([_, dsp]) => dsp).sort((a, b) => a.id - b.id);
         });
 
+        /**
+         * Gets the sorted list of the user's own dispatches.
+         * @returns {number[]} The sorted list of the user's own dispatches in descending order.
+         */
         const getSortedOwnDispatches = computed<number[]>(() => {
             // Sort descending
             return ownDispatches.value.sort((a, b) => b - a);
         });
 
+        /**
+         * Checks if the centrum supports multiple jobs.
+         * @returns {boolean} True if multiple jobs are supported, false otherwise.
+         */
         const isMultiJob = computed((): boolean => {
             return (
                 settings.value?.effectiveAccess?.dispatches?.jobs !== undefined &&
@@ -123,6 +163,10 @@ export const useCentrumStore = defineStore(
 
         // Actions
 
+        /**
+         * Sets or updates the centrum settings.
+         * @param {Settings} newSettings - The new settings to apply.
+         */
         const setOrUpdateSettings = (newSettings: Settings): void => {
             if (settings.value !== undefined) {
                 settings.value.enabled = newSettings.enabled;
@@ -136,6 +180,10 @@ export const useCentrumStore = defineStore(
         };
 
         // Units
+        /**
+         * Adds or updates a unit in the store.
+         * @param {Unit} unit - The unit to add or update.
+         */
         const addOrUpdateUnit = (unit: Unit): void => {
             const existing = units.value.get(unit.id);
             if (!existing) {
@@ -176,6 +224,10 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Updates the status of a unit.
+         * @param {UnitStatus | undefined} status - The new status of the unit.
+         */
         const updateUnitStatus = (status: UnitStatus | undefined): void => {
             if (!status) return;
             const u = units.value.get(status.unitId);
@@ -209,10 +261,18 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Sets the user's own unit.
+         * @param {number | undefined} id - The ID of the unit to set as the user's own, or undefined to unset.
+         */
         const setOwnUnit = (id: number | undefined): void => {
             ownUnitId.value = id;
         };
 
+        /**
+         * Removes a unit from the store.
+         * @param {number} id - The ID of the unit to remove.
+         */
         const removeUnit = (id: number): void => {
             if (ownUnitId.value === id) {
                 setOwnUnit(undefined);
@@ -221,11 +281,21 @@ export const useCentrumStore = defineStore(
         };
 
         // Dispatches
+        /**
+         * Checks if a unit is assigned to a dispatch.
+         * @param {Dispatch} dsp - The dispatch to check.
+         * @param {number | undefined} unit - The ID of the unit to check.
+         * @returns {boolean} True if the unit is assigned to the dispatch, false otherwise.
+         */
         const checkIfUnitAssignedToDispatch = (dsp: Dispatch, unit: number | undefined): boolean => {
             if (!unit) return false;
             return dsp.units.findIndex((u) => u.unitId === unit) > -1;
         };
 
+        /**
+         * Adds or updates a dispatch in the store.
+         * @param {Dispatch} dispatchObj - The dispatch to add or update.
+         */
         const addOrUpdateDispatch = (dispatchObj: Dispatch): void => {
             const existing = dispatches.value.get(dispatchObj.id);
             if (!existing) {
@@ -263,6 +333,10 @@ export const useCentrumStore = defineStore(
             handleDispatchAssignment(dispatchObj);
         };
 
+        /**
+         * Updates the status of a dispatch.
+         * @param {DispatchStatus | undefined} status - The new status of the dispatch.
+         */
         const updateDispatchStatus = (status: DispatchStatus | undefined): void => {
             if (!status) return;
             const disp = dispatches.value.get(status.dispatchId);
@@ -297,18 +371,30 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Removes a dispatch from the store.
+         * @param {number} id - The ID of the dispatch to remove.
+         */
         const removeDispatch = (id: number): void => {
             removePendingDispatch(id);
             removeOwnDispatch(id);
             dispatches.value.delete(id);
         };
 
+        /**
+         * Adds or updates a dispatch in the user's own dispatches.
+         * @param {number} id - The ID of the dispatch to add or update.
+         */
         const addOrUpdateOwnDispatch = (id: number): void => {
             if (!ownDispatches.value.includes(id)) {
                 ownDispatches.value.push(id);
             }
         };
 
+        /**
+         * Handles the assignment of a dispatch to the user's own unit.
+         * @param {Dispatch} dsp - The dispatch to handle.
+         */
         const handleDispatchAssignment = (dsp: Dispatch): void => {
             if (!ownUnitId.value) return;
             const assignment = dsp.units.find((ua) => ua.unitId === ownUnitId.value);
@@ -334,6 +420,10 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Adds or updates a dispatch in the pending dispatches.
+         * @param {number} id - The ID of the dispatch to add or update.
+         */
         const addOrUpdatePendingDispatch = (id: number): void => {
             if (!pendingDispatches.value.includes(id)) {
                 pendingDispatches.value.push(id);
@@ -349,6 +439,11 @@ export const useCentrumStore = defineStore(
         };
 
         // Dispatchers
+        /**
+         * Checks if the user is a dispatcher.
+         * @param {number} [userId] - The ID of the user to check.
+         * @returns {boolean} True if the user is a dispatcher, false otherwise.
+         */
         const checkIfDispatcher = (userId?: number): boolean => {
             return !!dispatchers.value.find((d) => d.dispatchers.find((c) => c.userId === userId));
         };
@@ -356,6 +451,10 @@ export const useCentrumStore = defineStore(
         // Stream
         let currentStream: ServerStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
 
+        /**
+         * Starts the centrum stream.
+         * @returns {Promise<void>} A promise that resolves when the stream starts.
+         */
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) return;
             stopping.value = false;
@@ -637,6 +736,11 @@ export const useCentrumStore = defineStore(
             logger.debug('Stream ended');
         };
 
+        /**
+         * Stops the centrum stream.
+         * @param {boolean} [end] - Whether to end the stream completely.
+         * @returns {Promise<void>} A promise that resolves when the stream stops.
+         */
         const stopStream = async (end?: boolean): Promise<void> => {
             if (end === true) stopping.value = true;
 
@@ -656,6 +760,10 @@ export const useCentrumStore = defineStore(
             abort.value = undefined;
         };
 
+        /**
+         * Restarts the centrum stream.
+         * @returns {Promise<void>} A promise that resolves when the stream restarts.
+         */
         const restartStream = async (): Promise<void> => {
             if (!abort.value || abort.value.signal.aborted) return;
 
@@ -675,6 +783,10 @@ export const useCentrumStore = defineStore(
         };
 
         // Helpers
+        /**
+         * Calculates the time correction based on the server time.
+         * @param {Timestamp} serverTime - The server time to calculate the correction from.
+         */
         const calculateTimeCorrection = (serverTime: Timestamp): void => {
             const now = new Date().getTime();
             const st = toDate(serverTime).getTime();
@@ -692,6 +804,10 @@ export const useCentrumStore = defineStore(
             );
         };
 
+        /**
+         * Adds an item to the feed.
+         * @param {DispatchStatus | UnitStatus} item - The item to add to the feed.
+         */
         const addFeedItem = (item: DispatchStatus | UnitStatus): void => {
             const idx = feed.value.findIndex((fi) => fi.id === item.id);
             if (idx === -1) {
@@ -699,6 +815,12 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Checks if the user can perform a specific action.
+         * @param {canDoAction} action - The action to check.
+         * @param {Dispatch} [dispatchParam] - The dispatch parameter for the action.
+         * @returns {boolean} True if the user can perform the action, false otherwise.
+         */
         const canDo = (action: canDoAction, dispatchParam?: Dispatch): boolean => {
             const { can } = useAuth();
 
@@ -724,6 +846,10 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Runs cleanup tasks for the centrum store.
+         * @returns {Promise<void>} A promise that resolves when cleanup is complete.
+         */
         const cleanup = async (): Promise<void> => {
             logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - timeCorrection.value;
@@ -778,6 +904,11 @@ export const useCentrumStore = defineStore(
             logger.info('Cleaned up dispatches, count:', count, 'skipped:', skipped);
         };
 
+        /**
+         * Removes assignments from a dispatch.
+         * @param {Dispatch} dispatchObj - The dispatch to remove assignments from.
+         * @param {number} [unitId] - The ID of the unit to remove assignments for.
+         */
         const removeDispatchAssignments = (dispatchObj: Dispatch, unitId?: number): void => {
             removeOwnDispatch(dispatchObj.id);
             removePendingDispatch(dispatchObj.id);
@@ -798,6 +929,10 @@ export const useCentrumStore = defineStore(
             });
         };
 
+        /**
+         * Gets the notification actions for the centrum store.
+         * @returns {NotificationActionI18n[]} The notification actions.
+         */
         const getNotificationActions = (): NotificationActionI18n[] => {
             const route = useRoute();
             if (route.name !== 'centrum' && route.name !== 'livemap') {
@@ -811,6 +946,11 @@ export const useCentrumStore = defineStore(
             return [];
         };
 
+        /**
+         * Self-assigns the user to a dispatch.
+         * @param {number} id - The ID of the dispatch to self-assign to.
+         * @returns {Promise<void>} A promise that resolves when the self-assignment is complete.
+         */
         const selfAssign = async (id: number): Promise<void> => {
             if (ownUnitId.value === undefined) {
                 notifications.add({
@@ -836,6 +976,11 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        /**
+         * Updates the dispatchers in the centrum store.
+         * @param {number[]} toRemove - The IDs of the dispatchers to remove.
+         * @returns {Promise<void>} A promise that resolves when the dispatchers are updated.
+         */
         const updateDispatchers = async (toRemove: number[]): Promise<void> => {
             const centrumCentrumClient = await getCentrumCentrumClient();
 

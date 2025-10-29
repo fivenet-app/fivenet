@@ -105,9 +105,13 @@ export const useMailerStore = defineStore(
 
         const notificationSound = useSounds('/sounds/notification.mp3');
 
-        // Function to handle thread updates
+        /**
+         * Handle updates to a thread.
+         *
+         * @param {Thread} data - The thread data to process.
+         */
         const handleThreadUpdate = async (data: Thread): Promise<void> => {
-            console.debug('threadUpdate', data);
+            logger.debug('threadUpdate', data);
 
             if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
                 await setThreadState({ threadId: data.id, archived: true, muted: true });
@@ -151,7 +155,11 @@ export const useMailerStore = defineStore(
             notificationSound.play();
         };
 
-        // Function to handle message updates
+        /**
+         * Handle updates to a message.
+         *
+         * @param {Message} data - The message data to process.
+         */
         const handleMessageUpdate = async (data: Message): Promise<void> => {
             const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.threadId);
             if (threadIdx !== undefined && threadIdx > -1) {
@@ -171,7 +179,7 @@ export const useMailerStore = defineStore(
                 });
             }
 
-            console.debug('messageUpdate', data);
+            logger.debug('messageUpdate', data);
 
             // Handle email sent by blocked email
             if (data.sender?.email && checkIfEmailBlocked(data.sender?.email)) {
@@ -203,6 +211,11 @@ export const useMailerStore = defineStore(
 
         // Actions
         // `handleEvent` processes incoming mailer events and updates the store accordingly.
+        /**
+         * Process incoming mailer events and update the store accordingly.
+         *
+         * @param {MailerEvent} event - The mailer event to handle.
+         */
         const handleEvent = async (event: MailerEvent): Promise<void> => {
             logger.debug('Received change - oneofKind:', event.data.oneofKind, event.data);
 
@@ -276,6 +289,9 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Check and update the list of emails.
+         */
         const checkEmails = async (): Promise<void> => {
             try {
                 if (emails.value.length === 0) {
@@ -314,7 +330,14 @@ export const useMailerStore = defineStore(
         };
 
         // Emails
-        // `listEmails` fetches the list of email accounts and updates the store.
+        /**
+         * Fetch the list of email accounts and update the store.
+         *
+         * @param {boolean} [all=false] - Whether to fetch all email accounts.
+         * @param {number} [offset=0] - The pagination offset.
+         * @param {boolean} [redirect=true] - Whether to redirect if no emails are found.
+         * @returns {Promise<ListEmailsResponse>} - The response containing the list of emails.
+         */
         const listEmails = async (
             all: boolean = false,
             offset: number = 0,
@@ -371,6 +394,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Fetch details of a specific email by its ID.
+         *
+         * @param {number} id - The ID of the email to fetch.
+         * @returns {Promise<Email | undefined>} - The email details, if found.
+         */
         const getEmail = async (id: number): Promise<Email | undefined> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -397,6 +426,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Create or update an email account.
+         *
+         * @param {CreateOrUpdateEmailRequest} req - The request data for creating or updating the email.
+         * @returns {Promise<CreateOrUpdateEmailResponse>} - The response containing the created or updated email.
+         */
         const createOrUpdateEmail = async (req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -424,6 +459,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Delete an email account.
+         *
+         * @param {DeleteEmailRequest} req - The request data for deleting the email.
+         * @returns {Promise<DeleteEmailResponse>} - The response confirming the deletion.
+         */
         const deleteEmail = async (req: DeleteEmailRequest): Promise<DeleteEmailResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -457,6 +498,13 @@ export const useMailerStore = defineStore(
 
         // Threads
         // `listThreads` fetches the list of threads for the selected email account.
+        /**
+         * Fetch the list of threads for the selected email account.
+         *
+         * @param {ListThreadsRequest} req - The request data for fetching threads.
+         * @param {boolean} [store=true] - Whether to store the fetched threads in the store.
+         * @returns {Promise<ListThreadsResponse | undefined>} - The response containing the list of threads.
+         */
         const listThreads = async (
             req: ListThreadsRequest,
             store: boolean = true,
@@ -506,6 +554,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Fetch details of a specific thread by its ID.
+         *
+         * @param {number} threadId - The ID of the thread to fetch.
+         * @returns {Promise<Thread | undefined>} - The thread details, if found.
+         */
         const getThread = async (threadId: number): Promise<Thread | undefined> => {
             if (!selectedEmail.value) return;
 
@@ -544,6 +598,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Create a new thread.
+         *
+         * @param {CreateThreadRequest} req - The request data for creating the thread.
+         * @returns {Promise<CreateThreadResponse>} - The response containing the created thread.
+         */
         const createThread = async (req: CreateThreadRequest): Promise<CreateThreadResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -567,6 +627,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Delete a thread.
+         *
+         * @param {DeleteThreadRequest} req - The request data for deleting the thread.
+         * @returns {Promise<DeleteThreadResponse>} - The response confirming the deletion.
+         */
         const deleteThread = async (req: DeleteThreadRequest): Promise<DeleteThreadResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -591,7 +657,12 @@ export const useMailerStore = defineStore(
             }
         };
 
-        // Thread User State
+        /**
+         * Fetch the state of a specific thread by its ID.
+         *
+         * @param {number} threadId - The ID of the thread to fetch the state for.
+         * @returns {Promise<ThreadState | undefined>} - The thread state, if found.
+         */
         const getThreadState = async (threadId: number): Promise<ThreadState | undefined> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -609,7 +680,12 @@ export const useMailerStore = defineStore(
             }
         };
 
-        // Method to update thread state
+        /**
+         * Update the state of a thread locally.
+         *
+         * @param {number} threadId - The ID of the thread to update.
+         * @param {ThreadState} newState - The new state to apply to the thread.
+         */
         const updateThreadState = (threadId: number, newState: ThreadState): void => {
             const thread = threads.value?.threads.find((t) => t.id === threadId);
             if (thread) {
@@ -626,7 +702,12 @@ export const useMailerStore = defineStore(
             }
         };
 
-        // Method to update unread thread IDs
+        /**
+         * Update the list of unread thread IDs.
+         *
+         * @param {number} threadId - The ID of the thread to update.
+         * @param {boolean} unread - Whether the thread is unread.
+         */
         const updateUnreadThreadIds = (threadId: number, unread: boolean): void => {
             const idx = unreadThreadIds.value.findIndex((id) => id === threadId);
             if (unread && idx === -1) {
@@ -636,6 +717,13 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Set the state of a thread.
+         *
+         * @param {Partial<ThreadState>} state - The partial state to apply to the thread.
+         * @param {boolean} [notify=false] - Whether to show a notification after updating the state.
+         * @returns {Promise<ThreadState | undefined>} - The updated thread state, if successful.
+         */
         const setThreadState = async (
             state: Partial<ThreadState>,
             notify: boolean = false,
@@ -669,6 +757,12 @@ export const useMailerStore = defineStore(
         };
 
         // Messages
+        /**
+         * Fetch the list of messages for a specific thread.
+         *
+         * @param {ListThreadMessagesRequest} req - The request data for fetching thread messages.
+         * @returns {Promise<ListThreadMessagesResponse | undefined>} - The response containing the list of messages.
+         */
         const listThreadMessages = async (req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> => {
             if (!selectedEmail.value) return;
 
@@ -694,6 +788,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Post a new message to a thread.
+         *
+         * @param {PostMessageRequest} req - The request data for posting the message.
+         * @returns {Promise<PostMessageResponse>} - The response containing the posted message.
+         */
         const postMessage = async (req: PostMessageRequest): Promise<PostMessageResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -714,6 +814,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Delete a message from a thread.
+         *
+         * @param {DeleteMessageRequest} req - The request data for deleting the message.
+         * @returns {Promise<DeleteMessageResponse>} - The response confirming the deletion.
+         */
         const deleteMessage = async (req: DeleteMessageRequest): Promise<DeleteMessageResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -735,6 +841,12 @@ export const useMailerStore = defineStore(
         };
 
         // User Settings
+        /**
+         * Fetch the email settings for a specific email account.
+         *
+         * @param {GetEmailSettingsRequest} req - The request data for fetching email settings.
+         * @returns {Promise<GetEmailSettingsResponse>} - The response containing the email settings.
+         */
         const getEmailSettings = async (req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -753,6 +865,12 @@ export const useMailerStore = defineStore(
             }
         };
 
+        /**
+         * Update the email settings for a specific email account.
+         *
+         * @param {SetEmailSettingsRequest} req - The request data for updating email settings.
+         * @returns {Promise<SetEmailSettingsResponse>} - The response confirming the update.
+         */
         const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
             const mailerMailerClient = await getMailerMailerClient();
 
@@ -778,6 +896,12 @@ export const useMailerStore = defineStore(
         };
 
         // Utility
+        /**
+         * Check if an email address is blocked.
+         *
+         * @param {string} emailAddress - The email address to check.
+         * @returns {boolean} - Whether the email address is blocked.
+         */
         const checkIfEmailBlocked = (emailAddress: string): boolean => {
             if (!selectedEmail.value?.settings?.blockedEmails) {
                 return false;
@@ -785,6 +909,12 @@ export const useMailerStore = defineStore(
             return selectedEmail.value.settings.blockedEmails.includes(emailAddress.toLowerCase());
         };
 
+        /**
+         * Get notification actions for a specific thread.
+         *
+         * @param {number} [threadId] - The ID of the thread to generate actions for.
+         * @returns {NotificationActionI18n[]} - The list of notification actions.
+         */
         const getNotificationActions = (threadId?: number): NotificationActionI18n[] => {
             return [
                 {
@@ -795,6 +925,12 @@ export const useMailerStore = defineStore(
         };
 
         // Address book
+        /**
+         * Add an email address to the address book.
+         *
+         * @param {string} emailAddress - The email address to add.
+         * @param {string} [label] - An optional label for the email address.
+         */
         const addToAddressBook = (emailAddress: string, label?: string): void => {
             const email = emailAddress.trim();
             const name = label?.trim();

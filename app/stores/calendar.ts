@@ -75,6 +75,7 @@ export const useCalendarStore = defineStore(
         // Actions
         /**
          * Checks for upcoming calendar appointments and triggers notifications/reminders.
+         * @returns {Promise<void>} A promise that resolves when the appointments are checked.
          */
         const checkAppointments = async (): Promise<void> => {
             try {
@@ -137,6 +138,11 @@ export const useCalendarStore = defineStore(
         };
 
         // Calendar CRUD Methods
+        /**
+         * Retrieves a calendar by its request parameters.
+         * @param {GetCalendarRequest} req - The request parameters to fetch the calendar.
+         * @returns {Promise<GetCalendarResponse>} A promise that resolves with the calendar response.
+         */
         const getCalendar = async (req: GetCalendarRequest): Promise<GetCalendarResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -155,6 +161,11 @@ export const useCalendarStore = defineStore(
             return response;
         };
 
+        /**
+         * Lists calendars based on the provided request parameters.
+         * @param {ListCalendarsRequest} req - The request parameters to list calendars.
+         * @returns {Promise<ListCalendarsResponse>} A promise that resolves with the list of calendars.
+         */
         const listCalendars = async (req: ListCalendarsRequest): Promise<ListCalendarsResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -202,6 +213,11 @@ export const useCalendarStore = defineStore(
             }
         };
 
+        /**
+         * Creates or updates a calendar.
+         * @param {Calendar} calendarParam - The calendar object to create or update.
+         * @returns {Promise<CreateCalendarResponse | UpdateCalendarResponse>} A promise that resolves with the response of the operation.
+         */
         const createOrUpdateCalendar = async (
             calendarParam: Calendar,
         ): Promise<CreateCalendarResponse | UpdateCalendarResponse> => {
@@ -233,6 +249,11 @@ export const useCalendarStore = defineStore(
             return response;
         };
 
+        /**
+         * Deletes a calendar by its ID.
+         * @param {number} id - The ID of the calendar to delete.
+         * @returns {Promise<void>} A promise that resolves when the calendar is deleted.
+         */
         const deleteCalendar = async (id: number): Promise<void> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -253,6 +274,11 @@ export const useCalendarStore = defineStore(
         };
 
         // Calendar Entry Methods
+        /**
+         * Retrieves a calendar entry by its request parameters.
+         * @param {GetCalendarEntryRequest} req - The request parameters to fetch the calendar entry.
+         * @returns {Promise<GetCalendarEntryResponse>} A promise that resolves with the calendar entry response.
+         */
         const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -271,6 +297,11 @@ export const useCalendarStore = defineStore(
             return response;
         };
 
+        /**
+         * Lists calendar entries based on the provided request parameters.
+         * @param {ListCalendarEntriesRequest} [req] - The request parameters to list calendar entries. Defaults to the current active calendar IDs and date context.
+         * @returns {Promise<ListCalendarEntriesResponse>} A promise that resolves with the list of calendar entries.
+         */
         const listCalendarEntries = async (req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> => {
             if (!req) {
                 req = {
@@ -308,6 +339,11 @@ export const useCalendarStore = defineStore(
             }
         };
 
+        /**
+         * Retrieves upcoming calendar entries based on the provided request parameters.
+         * @param {GetUpcomingEntriesRequest} req - The request parameters to fetch upcoming entries.
+         * @returns {Promise<GetUpcomingEntriesResponse>} A promise that resolves with the upcoming entries response.
+         */
         const getUpcomingEntries = async (req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -322,6 +358,12 @@ export const useCalendarStore = defineStore(
             }
         };
 
+        /**
+         * Creates or updates a calendar entry.
+         * @param {CalendarEntry} entryParam - The calendar entry object to create or update.
+         * @param {number[]} [users] - The list of user IDs associated with the entry.
+         * @returns {Promise<CreateOrUpdateCalendarEntryResponse>} A promise that resolves with the response of the operation.
+         */
         const createOrUpdateCalendarEntry = async (
             entryParam: CalendarEntry,
             users?: number[],
@@ -346,6 +388,11 @@ export const useCalendarStore = defineStore(
             return response;
         };
 
+        /**
+         * Deletes a calendar entry by its ID.
+         * @param {number} entryId - The ID of the calendar entry to delete.
+         * @returns {Promise<void>} A promise that resolves when the calendar entry is deleted.
+         */
         const deleteCalendarEntry = async (entryId: number): Promise<void> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -366,6 +413,11 @@ export const useCalendarStore = defineStore(
         };
 
         // RSVP Methods
+        /**
+         * Lists RSVP responses for a calendar entry.
+         * @param {ListCalendarEntryRSVPRequest} req - The request parameters to list RSVP responses.
+         * @returns {Promise<ListCalendarEntryRSVPResponse>} A promise that resolves with the RSVP responses.
+         */
         const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -380,6 +432,11 @@ export const useCalendarStore = defineStore(
             }
         };
 
+        /**
+         * Sends an RSVP response for a calendar entry.
+         * @param {RSVPCalendarEntryRequest} req - The request parameters to send the RSVP response.
+         * @returns {Promise<RSVPCalendarEntryResponse>} A promise that resolves with the RSVP response.
+         */
         const rsvpCalendarEntry = async (req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> => {
             const calendarCalendarClient = await getCalendarCalendarClient();
 
@@ -405,11 +462,19 @@ export const useCalendarStore = defineStore(
         };
 
         // Getters
+        /**
+         * Checks if the user has a private calendar.
+         * @returns {boolean} True if the user has a private calendar, false otherwise.
+         */
         const hasPrivateCalendar = computed(() => {
             const { activeChar } = useAuth();
             return !!calendars.value.find((c) => c.job === undefined && c.creatorId === activeChar.value?.userId);
         });
 
+        /**
+         * Checks if the user has edit access to any calendar.
+         * @returns {boolean} True if the user has edit access, false otherwise.
+         */
         const hasEditAccessToCalendar = computed(() => {
             const { activeChar } = useAuth();
             return !!calendars.value.find((c) => {

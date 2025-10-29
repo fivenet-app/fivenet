@@ -9,7 +9,6 @@ import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
 /**
  * Represents a user in the clipboard.
- * @typedef {Object} ClipboardUser
  * @property {number | undefined} userId - The ID of the user.
  * @property {string | undefined} job - The job of the user.
  * @property {string | undefined} jobLabel - The label for the user's job.
@@ -51,7 +50,6 @@ export class ClipboardUser {
 
 /**
  * Represents a document in the clipboard.
- * @typedef {Object} ClipboardDocument
  * @property {number} id - The ID of the document.
  * @property {string | undefined} createdAt - The creation date of the document.
  * @property {string} title - The title of the document.
@@ -96,7 +94,6 @@ export class ClipboardDocument {
 
 /**
  * Represents a vehicle in the clipboard.
- * @typedef {Object} ClipboardVehicle
  * @property {string} plate - The license plate of the vehicle.
  * @property {string | undefined} model - The model of the vehicle.
  * @property {string} type - The type of the vehicle.
@@ -190,7 +187,6 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
 
 /**
  * Represents the clipboard data structure.
- * @typedef {Object} ClipboardData
  * @property {ClipboardDocument[]} documents - The list of documents in the clipboard.
  * @property {ClipboardUser[]} users - The list of users in the clipboard.
  * @property {ClipboardVehicle[]} vehicles - The list of vehicles in the clipboard.
