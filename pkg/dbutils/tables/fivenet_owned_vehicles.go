@@ -18,11 +18,11 @@ type fivenetOwnedVehiclesTable struct {
 
 	// Columns
 	Owner mysql.ColumnString
-    Job   mysql.ColumnString
+	Job   mysql.ColumnString
 	Plate mysql.ColumnString
 	Model mysql.ColumnString
 	Type  mysql.ColumnString
-    Data  mysql.ColumnString
+	Data  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,11 +64,11 @@ func newFivenetOwnedVehiclesTable(schemaName, tableName, alias string) *FivenetO
 func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fivenetOwnedVehiclesTable {
 	var (
 		OwnerColumn    = mysql.StringColumn("owner")
-        JobColumn      = mysql.StringColumn("job")
+		JobColumn      = mysql.StringColumn("job")
 		PlateColumn    = mysql.StringColumn("plate")
 		ModelColumn    = mysql.StringColumn("model")
 		TypeColumn     = mysql.StringColumn("type")
-        DataColumn     = mysql.StringColumn("data")
+		DataColumn     = mysql.StringColumn("data")
 		allColumns     = mysql.ColumnList{OwnerColumn, JobColumn, PlateColumn, ModelColumn, TypeColumn, DataColumn}
 		mutableColumns = mysql.ColumnList{OwnerColumn, JobColumn, ModelColumn, TypeColumn, DataColumn}
 	)
@@ -78,11 +78,11 @@ func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fiven
 
 		//Columns
 		Owner: OwnerColumn,
-        Job:   JobColumn,
+		Job:   JobColumn,
 		Plate: PlateColumn,
 		Model: ModelColumn,
 		Type:  TypeColumn,
-        Data:  DataColumn,
+		Data:  DataColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

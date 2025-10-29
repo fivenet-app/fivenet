@@ -84,4 +84,3 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbnotifications.RegisterNotificationsServiceServer(srv, s)
 }
-

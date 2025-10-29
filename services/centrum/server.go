@@ -94,7 +94,7 @@ type Server struct {
 
 	db       *sql.DB
 	ps       perms.Permissions
-		js       *events.JSWrapper
+	js       *events.JSWrapper
 	tracker  tracker.ITracker
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
@@ -117,7 +117,7 @@ type Params struct {
 	TP        *tracesdk.TracerProvider
 	DB        *sql.DB
 	Perms     perms.Permissions
-		JS        *events.JSWrapper
+	JS        *events.JSWrapper
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker
@@ -151,7 +151,7 @@ func NewServer(p Params) Result {
 
 		db:       p.DB,
 		ps:       p.Perms,
-				js:       p.JS,
+		js:       p.JS,
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 		appCfg:   p.AppConfig,
@@ -233,7 +233,6 @@ func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcentrum.RegisterCentrumServiceServer(srv, s)
 }
-
 
 func (s *Server) loadData(ctx context.Context) error {
 	g, gctx := errgroup.WithContext(ctx)

@@ -54,7 +54,7 @@ func (a FivenetJobsGradesTable) WithSuffix(suffix string) *FivenetJobsGradesTabl
 func newFivenetJobsGradesTable(schemaName, tableName, alias string) *FivenetJobsGradesTable {
 	return &FivenetJobsGradesTable{
 		fivenetJobsGradesTable: newFivenetJobsGradesTableImpl(schemaName, tableName, alias),
-		NEW:                   newFivenetJobsGradesTableImpl("", "new", ""),
+		NEW:                    newFivenetJobsGradesTableImpl("", "new", ""),
 	}
 }
 

@@ -59,7 +59,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-		js       *events.JSWrapper
+	js       *events.JSWrapper
 
 	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel]
 }
@@ -70,7 +70,7 @@ type Params struct {
 	DB       *sql.DB
 	P        perms.Permissions
 	Enricher *mstlystcdata.UserAwareEnricher
-		JS       *events.JSWrapper
+	JS       *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
@@ -78,7 +78,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
-				js:       p.JS,
+		js:       p.JS,
 
 		access: access.NewGrouped(
 			p.DB,
@@ -161,4 +161,3 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbmailer.RegisterMailerServiceServer(srv, s)
 }
-

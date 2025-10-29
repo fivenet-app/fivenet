@@ -22,7 +22,6 @@ func (s *Server) GetAppConfig(
 	req *pbsettings.GetAppConfigRequest,
 ) (*pbsettings.GetAppConfigResponse, error) {
 
-
 	cfg, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
@@ -39,7 +38,6 @@ func (s *Server) UpdateAppConfig(
 	ctx context.Context,
 	req *pbsettings.UpdateAppConfigRequest,
 ) (*pbsettings.UpdateAppConfigResponse, error) {
-
 
 	req.GetConfig().Default()
 	if req.GetConfig().GetSystem().GetBannerMessage() != nil {

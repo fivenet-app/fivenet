@@ -393,7 +393,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterStampsServiceServer(srv, s)
 }
 
-
 func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "documents.approval.tasks.expire",

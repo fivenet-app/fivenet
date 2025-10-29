@@ -21,7 +21,7 @@ type Server struct {
 
 	logger   *zap.Logger
 	db       *sql.DB
-		st       storage.IStorage
+	st       storage.IStorage
 	fHandler *filestore.Handler[int64]
 }
 
@@ -31,7 +31,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	PS        perms.Permissions
-		Enricher  *mstlystcdata.Enricher
+	Enricher  *mstlystcdata.Enricher
 	Laws      *mstlystcdata.Laws
 	Storage   storage.IStorage
 	Config    *config.Config
@@ -55,7 +55,7 @@ func NewServer(p Params) *Server {
 	return &Server{
 		logger:   p.Logger,
 		db:       p.DB,
-				st:       p.Storage,
+		st:       p.Storage,
 		fHandler: fHandler,
 	}
 }
@@ -63,4 +63,3 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbfilestore.RegisterFilestoreServiceServer(srv, s)
 }
-

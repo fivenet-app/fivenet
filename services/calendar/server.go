@@ -69,7 +69,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-		appCfg   appconfig.IConfig
+	appCfg   appconfig.IConfig
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 
@@ -82,7 +82,7 @@ type Params struct {
 	DB        *sql.DB
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
-		AppConfig appconfig.IConfig
+	AppConfig appconfig.IConfig
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
 }
@@ -92,7 +92,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
-				appCfg:   p.AppConfig,
+		appCfg:   p.AppConfig,
 		notif:    p.Notif,
 		js:       p.JS,
 		access: access.NewGrouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, access.DummyQualificationAccess[calendar.AccessLevel], *access.DummyQualificationAccess[calendar.AccessLevel], calendar.AccessLevel](
@@ -156,4 +156,3 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbcalendar.RegisterCalendarServiceServer(srv, s)
 }
-

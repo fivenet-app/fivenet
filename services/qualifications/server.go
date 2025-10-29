@@ -68,7 +68,7 @@ type Server struct {
 	db       *sql.DB
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-		notif    notifi.INotifi
+	notif    notifi.INotifi
 	st       storage.IStorage
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
@@ -85,7 +85,7 @@ type Params struct {
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
-		Config            *config.Config
+	Config            *config.Config
 	Notif             notifi.INotifi
 	Storage           storage.IStorage
 }
@@ -112,7 +112,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
-				notif:    p.Notif,
+		notif:    p.Notif,
 		st:       p.Storage,
 
 		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel](
@@ -169,4 +169,3 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbqualifications.RegisterQualificationsServiceServer(srv, s)
 }
-

@@ -17,7 +17,7 @@ type Server struct {
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
-		customDB config.CustomDB
+	customDB config.CustomDB
 }
 
 type Params struct {
@@ -26,7 +26,7 @@ type Params struct {
 	DB       *sql.DB
 	Ps       perms.Permissions
 	Enricher *mstlystcdata.Enricher
-		Config   *config.Config
+	Config   *config.Config
 }
 
 func NewServer(p Params) *Server {
@@ -34,7 +34,7 @@ func NewServer(p Params) *Server {
 		db:       p.DB,
 		ps:       p.Ps,
 		enricher: p.Enricher,
-				customDB: p.Config.Database.Custom,
+		customDB: p.Config.Database.Custom,
 	}
 }
 

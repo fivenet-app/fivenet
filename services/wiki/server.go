@@ -191,4 +191,3 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbwiki.RegisterWikiServiceServer(srv, s)
 	pbwiki.RegisterCollabServiceServer(srv, s)
 }
-

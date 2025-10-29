@@ -68,7 +68,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
-		appCfg   appconfig.IConfig
+	appCfg   appconfig.IConfig
 	postals  postals.Postals
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
@@ -90,7 +90,7 @@ type Params struct {
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
 	Tracker   tracker.ITracker
-		AppConfig appconfig.IConfig
+	AppConfig appconfig.IConfig
 	Postals   postals.Postals
 }
 
@@ -111,7 +111,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
-				appCfg:   p.AppConfig,
+		appCfg:   p.AppConfig,
 		postals:  p.Postals,
 
 		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),

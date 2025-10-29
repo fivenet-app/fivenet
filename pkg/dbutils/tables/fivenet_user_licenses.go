@@ -53,7 +53,7 @@ func (a FivenetUserLicensesTable) WithSuffix(suffix string) *FivenetUserLicenses
 func newFivenetUserLicensesTable(schemaName, tableName, alias string) *FivenetUserLicensesTable {
 	return &FivenetUserLicensesTable{
 		fivenetCitizensLicensesTable: newFivenetUserLicensesTableImpl(schemaName, tableName, alias),
-		NEW:                      newFivenetUserLicensesTableImpl("", "new", ""),
+		NEW:                          newFivenetUserLicensesTableImpl("", "new", ""),
 	}
 }
 
