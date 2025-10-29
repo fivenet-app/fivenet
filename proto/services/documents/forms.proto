@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package services.documents;
+
+import "resources/documents/forms.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+
+message GetFormRequest {
+  int64 form_id = 1;
+}
+
+message GetFormResponse {
+  resources.documents.Form form = 1;
+}
+
+message ListFormsRequest {}
+
+message ListFormsResponse {
+  repeated resources.documents.Form forms = 1;
+}
+
+service FormsService {
+  rpc GetForm(GetFormRequest) returns (GetFormResponse) {}
+  rpc ListForms(ListFormsRequest) returns (ListFormsResponse) {}
+}
