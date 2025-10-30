@@ -23,21 +23,25 @@ watch(notificationsCount, () => {
 
     currentCount.value = notificationsCount.value;
 });
+
+const version = APP_VERSION;
 </script>
 
 <template>
-    <UButton
-        class="w-full"
-        color="neutral"
-        variant="ghost"
-        :avatar="{
-            src: '/images/logo.png',
-            alt: 'FiveNet',
-        }"
-        :ui="{ base: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)', leadingAvatar: 'rounded-none' }"
-    >
-        <span v-if="!collapsed" class="truncate font-semibold text-highlighted">FiveNet</span>
-    </UButton>
+    <UTooltip :text="version">
+        <UButton
+            class="w-full"
+            color="neutral"
+            variant="ghost"
+            :avatar="{
+                src: '/images/logo.png',
+                alt: 'FiveNet',
+            }"
+            :ui="{ base: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)', leadingAvatar: 'rounded-none' }"
+        >
+            <span v-if="!collapsed" class="truncate font-semibold text-highlighted">FiveNet</span>
+        </UButton>
+    </UTooltip>
 
     <UTooltip v-if="!collapsed" :text="$t('components.partials.sidebar_notifications')" :kbds="['B']">
         <UChip

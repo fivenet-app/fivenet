@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
-import TemplateSchemaEditor from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import { zWorkflow } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
@@ -24,10 +23,11 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
-import PolicyEditor from '../approval/PolicyEditor.vue';
+import PolicyEditor from '../../approval/PolicyEditor.vue';
 import ApprovalTasksEditor from './ApprovalTasksEditor.vue';
-import EditorButtons from './EditorButtons.vue';
-import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
+import SchemaEditor from './SchemaEditor.vue';
+import ToolbarButtons from './ToolbarButtons.vue';
+import WorkflowEditor from './WorkflowEditor.vue';
 
 const props = defineProps<{
     templateId?: number;
@@ -616,12 +616,12 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard :title="$t('common.requirements', 2)">
-                            <TemplateSchemaEditor v-model="schemaEditor" />
+                            <SchemaEditor v-model="schemaEditor" />
                         </UPageCard>
                     </template>
 
                     <template #workflow>
-                        <TemplateWorkflowEditor v-model="state.workflow" />
+                        <WorkflowEditor v-model="state.workflow" />
                     </template>
 
                     <template #approval>
@@ -709,7 +709,7 @@ const formRef = useTemplateRef('formRef');
                                         :extensions="extensions"
                                     >
                                         <template #toolbar="{ editor }">
-                                            <EditorButtons :editor="editor" />
+                                            <ToolbarButtons :editor="editor" />
                                         </template>
                                     </TiptapEditor>
                                 </ClientOnly>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
+import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
@@ -14,8 +14,8 @@ import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import PolicyEditor from '../approval/PolicyEditor.vue';
-import ApprovalTasksEditor from './ApprovalTasksEditor.vue';
-import TemplateSchemaEditor from './TemplateSchemaEditor.vue';
+import ApprovalTasksEditor from './editor/ApprovalTasksEditor.vue';
+import SchemaEditor from './editor/SchemaEditor.vue';
 
 const props = defineProps<{
     templateId: number;
@@ -90,7 +90,7 @@ const contentAccessTypes: AccessType[] = [
 ];
 
 const confirmModal = overlay.create(ConfirmModal);
-const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { templateId: props.templateId } });
+const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId: props.templateId } });
 </script>
 
 <template>
@@ -280,7 +280,7 @@ const templatePreviewModal = overlay.create(TemplatePreviewModal, { props: { tem
                         </UPageCard>
 
                         <UPageCard v-if="reqs" :title="$t('common.requirements')">
-                            <TemplateSchemaEditor :model-value="reqs" disabled />
+                            <SchemaEditor :model-value="reqs" disabled />
                         </UPageCard>
 
                         <UPageCard :title="`${$t('common.workflow')}: ${$t('common.auto_close')}`">

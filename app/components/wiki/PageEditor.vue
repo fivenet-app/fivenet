@@ -152,7 +152,7 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'wiki'): Promise<void> {
+async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
     if (saving.value) return;
 
     const now = Date.now();
@@ -168,7 +168,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
             content: values.content,
             files: values.files,
         },
-        name,
+        `${t('common.wiki')}: ${values.meta.title === '' ? t('common.untitled') : values.meta.title}`,
     );
 
     useTimeoutFn(() => {
@@ -179,7 +179,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
     lastSaveTimestamp = now;
 }
 
-historyStore.handleRefresh(() => saveHistory(state, 'wiki'));
+historyStore.handleRefresh(() => saveHistory(state));
 
 watchDebounced(
     state,

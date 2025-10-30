@@ -13,21 +13,21 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: Comment;
+        documentId: number;
         canComment?: boolean;
     }>(),
     {
-        modelValue: undefined,
         canComment: false,
     },
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', comment: Comment | undefined): void;
     (e: 'deleted', id: number | undefined): void;
 }>();
 
-const comment = useVModel(props, 'modelValue', emit);
+const comment = defineModel<Comment | undefined>();
+
+const { t } = useI18n();
 
 const overlay = useOverlay();
 
@@ -58,7 +58,7 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document_comments'): Promise<void> {
+async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
     if (saving.value) return;
 
     const now = Date.now();
@@ -69,12 +69,12 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
 
     historyStore.addVersion<Content>(
         type,
-        props.modelValue!.documentId,
+        props.documentId,
         {
             content: values.content,
             files: [],
         },
-        name,
+        `${t('common.comment')}: DOC-${props.documentId}`,
     );
 
     useTimeoutFn(() => {
@@ -85,7 +85,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
     lastSaveTimestamp = now;
 }
 
-historyStore.handleRefresh(() => saveHistory(state, 'document'));
+historyStore.handleRefresh(() => saveHistory(state));
 
 watchDebounced(
     state,

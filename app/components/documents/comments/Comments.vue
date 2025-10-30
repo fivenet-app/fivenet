@@ -31,6 +31,8 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
+const { t } = useI18n();
+
 const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
@@ -85,7 +87,7 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document_comments'): Promise<void> {
+async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
     if (saving.value) return;
 
     const now = Date.now();
@@ -101,7 +103,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
             content: values.content,
             files: [],
         },
-        name,
+        `${t('common.comment')}: DOC-${props.documentId}`,
     );
 
     useTimeoutFn(() => {
@@ -112,7 +114,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
     lastSaveTimestamp = now;
 }
 
-historyStore.handleRefresh(() => saveHistory(state, 'document'));
+historyStore.handleRefresh(() => saveHistory(state));
 
 watchDebounced(
     state,
@@ -245,6 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"
                     v-model="data.comments[idx]"
+                    :document-id="documentId"
                     @deleted="removeComment(comment.id)"
                 />
             </ul>

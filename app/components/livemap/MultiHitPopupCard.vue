@@ -38,12 +38,13 @@ function clicked(h: Hit): void {
 <template>
     <UCard
         class="-my-[13px] -mr-[24px] -ml-[20px] flex min-w-[200px] flex-col"
-        :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto', footer: 'p-1 sm:px-2' }"
+        :ui="{ header: 'mx-auto p-1 sm:px-2', body: 'p-1 sm:p-2 xl:mx-auto max-h-[90%]', footer: 'p-1 sm:px-2' }"
     >
         <template #header>
             <div class="font-semibold">{{ $t('common.choose_one') }} ({{ hits.length }})</div>
         </template>
-        <div class="space-y-1 divide-y divide-y-0 divide-default">
+
+        <div class="space-y-1 divide-y divide-y-0 divide-default overflow-y-auto">
             <ul v-for="(group, idx) in groupedMarkers" :key="idx" class="space-y-1">
                 <li class="text-center font-semibold">{{ group.label }}</li>
                 <li v-for="(h, i) in group.items" :key="i">

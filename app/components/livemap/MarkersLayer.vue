@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
+import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 
 defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;
@@ -49,7 +48,7 @@ onBeforeMount(async () =>
         layer-type="overlay"
         :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible === true"
     >
-        <MapMarkerMarker
+        <MarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.job === job.name)"
             :key="marker.id"
             :marker="marker"

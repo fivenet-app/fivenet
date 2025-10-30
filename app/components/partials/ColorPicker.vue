@@ -45,7 +45,7 @@ watch(manual, (val) => {
         </UButton>
 
         <template #content>
-            <UColorPicker v-model="modelValue" class="p-2" />
+            <UColorPicker v-model="modelValue" class="p-2" format="hex" />
 
             <UInput
                 v-model="manual"

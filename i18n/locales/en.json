@@ -830,7 +830,8 @@
                         }
                     }
                 },
-                "invisible_characters": "Show/Hide Invisible Characters"
+                "invisible_characters": "Show/Hide Invisible Characters",
+                "font_size": "Font Size"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",
@@ -2504,7 +2505,8 @@
                 "UPDATED": "Page updated",
                 "ACCESS_UPDATED": "Page Access updated",
                 "OWNER_CHANGED": "Page Owner changed",
-                "DELETED": "Page deleted"
+                "DELETED": "Page deleted",
+                "DRAFT_TOGGLED": "Draft status updated"
             }
         },
         "mailer": {

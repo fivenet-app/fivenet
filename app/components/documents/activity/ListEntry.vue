@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
+import DocUpdatedDiff from '~/components/documents/activity/DocUpdatedDiff.vue';
 
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { getDocAtivityIcon } from '../helpers';
-import ActivityAccessUpdated from './ActivityAccessUpdated.vue';
+import AccessUpdated from './AccessUpdated.vue';
 
 defineProps<{
     entry: DocActivity;
@@ -124,7 +124,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                 <div class="p-2">
                     <template v-if="entry.activityType === DocActivityType.UPDATED">
                         <div class="rounded-md bg-default p-2">
-                            <ActivityDocUpdatedDiff
+                            <DocUpdatedDiff
                                 v-if="entry.data?.data.oneofKind === 'updated'"
                                 :update="entry.data?.data.updated"
                             />
@@ -137,7 +137,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                         "
                     >
                         <div class="rounded-md bg-default p-2">
-                            <ActivityAccessUpdated :data="entry.data?.data.accessUpdated" />
+                            <AccessUpdated :data="entry.data?.data.accessUpdated" />
                         </div>
                     </template>
                 </div>

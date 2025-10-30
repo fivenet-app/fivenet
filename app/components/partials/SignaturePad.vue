@@ -53,12 +53,18 @@ defineExpose({
 </script>
 
 <template>
-    <UCard :ui="{ root: 'grow-0 max-w-[900px]', body: 'p-0 sm:p-0', footer: 'p-2 sm:px-2' }">
+    <UCard
+        :ui="{
+            root: 'grow-0 max-h-[350px] max-w-[900px]' + (transparent ? ' bg-transparent' : ''),
+            body: 'p-0 sm:p-0',
+            footer: 'p-2 sm:px-2',
+        }"
+    >
         <div class="relative">
             <VueSignaturePad
                 ref="signaturePad"
                 height="350px"
-                width="900px"
+                width="100%"
                 :disabled="disabled"
                 :min-width="signatureSettings.minStrokeWidth"
                 :max-width="signatureSettings.maxStrokeWidth"

@@ -4,7 +4,7 @@ import type { Version } from '~/types/history';
 /**
  * Maximum number of history entries allowed per type.
  */
-const MAX_HISTORY_LENGTH = 20;
+const MAX_HISTORY_LENGTH = 30;
 
 export const useHistoryStore = defineStore(
     'historyStore',

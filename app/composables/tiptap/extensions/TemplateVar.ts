@@ -1,4 +1,4 @@
-import { Mark, mergeAttributes } from '@tiptap/core';
+import { Node, mergeAttributes } from '@tiptap/core';
 
 export interface TemplateVarOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,8 +30,14 @@ declare module '@tiptap/core' {
     }
 }
 
-export const TemplateVar = Mark.create<TemplateVarOptions>({
+export const TemplateVar = Node.create({
     name: 'templateVar',
+
+    inline: true,
+
+    group: 'inline',
+
+    atom: true,
 
     addOptions() {
         return {
@@ -41,14 +47,14 @@ export const TemplateVar = Mark.create<TemplateVarOptions>({
 
     addAttributes() {
         return {
-            value: {
+            'data-template-var': {
                 default: '',
             },
-            leftTrim: {
+            'data-left-trim': {
                 default: false,
                 parseHTML: (element) => element.getAttribute('data-left-trim') === 'true',
             },
-            rightTrim: {
+            'data-right-trim': {
                 default: false,
                 parseHTML: (element) => element.getAttribute('data-right-trim') === 'true',
             },
@@ -64,19 +70,22 @@ export const TemplateVar = Mark.create<TemplateVarOptions>({
     },
 
     renderHTML({ HTMLAttributes }) {
-        const { value, leftTrim, rightTrim } = HTMLAttributes;
-        const opening = leftTrim ? '{{-' : '{{';
-        const closing = rightTrim ? '-}}' : '}}';
+        const {
+            'data-template-var': dataTemplateVar,
+            'data-left-trim': dataLeftTrim,
+            'data-right-trim': dataRightTrim,
+        } = HTMLAttributes;
+        const opening = dataLeftTrim ? '{{-' : '{{';
+        const closing = dataRightTrim ? '-}}' : '}}';
         return [
             'span',
             mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-                'data-template-var': value,
-                'data-left-trim': leftTrim,
-                'data-right-trim': rightTrim,
+                'data-template-var': dataTemplateVar,
+                'data-left-trim': dataLeftTrim,
+                'data-right-trim': dataRightTrim,
                 class: 'template-var',
-                contenteditable: 'false',
             }),
-            `${opening} ${value} ${closing}`,
+            `${opening} ${dataTemplateVar} ${closing}`,
         ];
     },
 
@@ -85,17 +94,9 @@ export const TemplateVar = Mark.create<TemplateVarOptions>({
             insertTemplateVar:
                 ({ value, leftTrim = false, rightTrim = false }) =>
                 ({ commands }) => {
-                    const opening = leftTrim ? '{{-' : '{{';
-                    const closing = rightTrim ? '-}}' : '}}';
                     return commands.insertContent({
-                        type: 'text',
-                        text: `${opening} ${value} ${closing}`,
-                        marks: [
-                            {
-                                type: 'templateVar',
-                                attrs: { value, leftTrim, rightTrim },
-                            },
-                        ],
+                        type: this.name,
+                        attrs: { 'data-template-var': value, 'data-left-trim': leftTrim, 'data-right-trim': rightTrim },
                     });
                 },
         };

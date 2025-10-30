@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
-import type { zWorkflowSchema } from './types';
+import type { zWorkflowSchema } from '../types';
 
 const props = defineProps<{
     modelValue: zWorkflowSchema;

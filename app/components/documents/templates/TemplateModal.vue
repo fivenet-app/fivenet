@@ -3,7 +3,7 @@ import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vu
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
 import List from '~/components/documents/templates/List.vue';
-import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
+import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
@@ -123,7 +123,7 @@ const filteredRequirementTypes = computed(() => {
                         >
                             <template #header>
                                 <span class="text-sm">
-                                    <TemplateRequirementsList
+                                    <RequirementsList
                                         :name="$t('common.' + type.slice(0, -1), 2)"
                                         :plural="$t('common.' + type.slice(0, -1), 2)"
                                         :specs="reqs[type === 'citizens' ? 'users' : type]!"

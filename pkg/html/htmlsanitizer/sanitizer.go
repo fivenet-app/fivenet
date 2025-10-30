@@ -127,6 +127,12 @@ func setupSanitizer() {
 	// ## Checkboxes
 	sanitizer.AllowAttrs("data-checked").OnElements("li", "span")
 	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol", "li", "span")
+
+	// Custom Template Blocks / Variables
+	sanitizer.AllowAttrs("data-template-block", "data-left-trim", "data-right-trim").
+		OnElements("div")
+	sanitizer.AllowAttrs("data-template-var", "data-left-trim", "data-right-trim").
+		OnElements("span")
 }
 
 // New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.

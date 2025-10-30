@@ -165,7 +165,7 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document'): Promise<void> {
+async function saveHistory(values: Schema, type = 'document'): Promise<void> {
     if (saving.value) return;
 
     const now = Date.now();
@@ -181,7 +181,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
             content: values.content,
             files: values.files,
         },
-        name,
+        `${t('common.document', 1)}: ${values.title === '' ? t('common.untitled') : values.title}`,
     );
 
     useTimeoutFn(() => {
@@ -192,7 +192,7 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
     lastSaveTimestamp = now;
 }
 
-historyStore.handleRefresh(() => saveHistory(state, 'document'));
+historyStore.handleRefresh(() => saveHistory(state));
 
 watchDebounced(
     state,

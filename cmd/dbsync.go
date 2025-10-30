@@ -16,7 +16,7 @@ var svcConfig = &service.Config{
 }
 
 type DBSyncCmd struct {
-	RunCmd struct{} `cmd:"" default:"1" help:"Run the DBSync service (default if not subcommand is specified)" name:"run"`
+	RunCmd RunCmd `cmd:"" default:"1" help:"Run the DBSync service (default if not subcommand is specified)" name:"run"`
 
 	Start StartCmd `cmd:"" help:"Start the DBSync service via your OS's service manager"`
 	Stop  StopCmd  `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
@@ -42,7 +42,9 @@ func getService() service.Service {
 	return s
 }
 
-func (c *DBSyncCmd) Run(_ *Context) error {
+type RunCmd struct{}
+
+func (c *RunCmd) Run(ctx *Context) error {
 	instance.SetComponent("dbsync")
 
 	s := getService()

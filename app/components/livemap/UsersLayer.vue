@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
+import UserMarker from '~/components/livemap/UserMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 
 withDefaults(
     defineProps<{
@@ -89,7 +88,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         layer-type="overlay"
         :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible === true"
     >
-        <MapUserMarker
+        <UserMarker
             v-for="marker in playerMarkersFiltered?.filter((m) => m.job === job.name)"
             :key="marker.userId"
             :marker="marker"

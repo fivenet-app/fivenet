@@ -197,8 +197,11 @@ export default defineNuxtConfig({
             // so we can use `allowedHosts: true` to allow any host
             allowedHosts: true,
             proxy: {
-                '/api/grpc': {
+                '/api/grpcws': {
                     target: 'http://localhost:8080',
+                    ws: true,
+                    proxyTimeout: 60 * 60 * 1000,
+                    timeout: 60 * 60 * 1000,
                     changeOrigin: true,
                     configure: (proxy, options) => {
                         // changeOrigin doesn't work "correctly"
@@ -210,11 +213,8 @@ export default defineNuxtConfig({
                         });
                     },
                 },
-                '/api/grpcws': {
+                '/api/grpc': {
                     target: 'http://localhost:8080',
-                    ws: true,
-                    proxyTimeout: 60 * 60 * 1000,
-                    timeout: 60 * 60 * 1000,
                     changeOrigin: true,
                     configure: (proxy, options) => {
                         // changeOrigin doesn't work "correctly"
@@ -300,16 +300,6 @@ export default defineNuxtConfig({
     },
 
     $development: {
-        vite: {
-            server: {
-                // Vite is eating the second set-cookie header, so we have to set it manually here..
-                headers: {
-                    'set-cookie': [
-                        'fivenet_authed=true; Path=/; Domain=localhost; Expires=Tue, 21 Oct 2027 12:16:42 GMT; Max-Age=345600; Secure; SameSite=None',
-                    ],
-                },
-            },
-        },
         icon: {
             iconifyApiEndpoint: 'https://api.iconify.design',
             provider: 'iconify',

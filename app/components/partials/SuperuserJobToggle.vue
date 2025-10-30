@@ -79,6 +79,8 @@ onBeforeMount(async () => listJobs());
         :placeholder="$t('common.job', 1)"
         :items="jobs"
         searchable-key="superuser-job-selection"
+        autocomplete="off"
+        name="job"
         v-bind="$attrs"
     >
         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>

@@ -261,7 +261,7 @@ html {
     }
 
     /* Tiptap Editor Extensions */
-    .template-block {
+    div.template-block {
         border-left: 1px dashed var(--color-primary-500);
         background-color: var(--color-gray-800);
         padding: 0.25rem;
@@ -275,7 +275,7 @@ html {
         margin-bottom: 0.25rem;
     }
 
-    .template-var {
+    span.template-var {
         background-color: var(--color-gray-800);
         border-radius: 4px;
         padding: 2px 2px;
@@ -283,7 +283,7 @@ html {
         border: 1px dashed var(--color-primary-500);
     }
 
-    .template-var[data-hidden='true'] {
+    span.template-var[data-hidden='true'] {
         display: none;
     }
 }

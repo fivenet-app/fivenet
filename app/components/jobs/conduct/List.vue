@@ -4,7 +4,7 @@ import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { z } from 'zod';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
-import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
+import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -16,8 +16,8 @@ import type { SortByColumn } from '~~/gen/ts/resources/common/database/database'
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueName from '../colleagues/ColleagueName.vue';
-import ConductViewSlideover from './ConductViewSlideover.vue';
 import { conductTypesToBadgeColor } from './helpers';
+import ViewSlideover from './ViewSlideover.vue';
 
 const props = defineProps<{
     userId?: number;
@@ -127,8 +127,8 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     refresh();
 }
 
-const conductViewSlideover = overlay.create(ConductViewSlideover);
-const conductCreateOrUpdateModal = overlay.create(ConductCreateOrUpdateModal);
+const conductViewSlideover = overlay.create(ViewSlideover);
+const conductCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
 const confirmModal = overlay.create(ConfirmModal);
 
 const appConfig = useAppConfig();

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import CountUp from 'vue-countup-v3';
 import { useAuthStore } from '~/stores/auth';
 import { getStatsStatsClient } from '~~/gen/ts/clients';
 import type { Stat } from '~~/gen/ts/resources/stats/stats';
@@ -20,6 +19,11 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const statsStatsClient = await getStatsStatsClient();
+
+const CountUp = defineAsyncComponent(async () => {
+    const m = await import('vue-countup-v3');
+    return m.default;
+});
 
 type Stats = { [key: string]: Stat & { unit?: string; icon?: string } };
 

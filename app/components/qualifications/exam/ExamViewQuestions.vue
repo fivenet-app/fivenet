@@ -277,7 +277,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             class="w-full"
                             type="submit"
-                            icon="i-mdi-save-content"
+                            icon="i-mdi-content-save"
                             block
                             :disabled="!canSubmit"
                             :loading="!canSubmit"

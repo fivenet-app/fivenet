@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import ActivityList from '~/components/documents/activity/ActivityList.vue';
+import List from '~/components/documents/activity/List.vue';
 import Comments from '~/components/documents/comments/Comments.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import References from '~/components/documents/References.vue';
@@ -744,7 +744,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
 
                     <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
                         <UContainer class="mb-2">
-                            <ActivityList :document-id="documentId" />
+                            <List :document-id="documentId" />
                         </UContainer>
                     </template>
                 </UAccordion>

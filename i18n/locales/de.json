@@ -830,7 +830,8 @@
                         }
                     }
                 },
-                "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen"
+                "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen",
+                "font_size": "Schriftgröße"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",
@@ -2504,7 +2505,8 @@
                 "UPDATED": "Seite aktualisiert",
                 "ACCESS_UPDATED": "Seiten-Zugriff aktualisiert",
                 "OWNER_CHANGED": "Seiten-Besitzer geändert",
-                "DELETED": "Seite gelöscht"
+                "DELETED": "Seite gelöscht",
+                "DRAFT_TOGGLED": "Entwurfstatus aktualisiert"
             }
         },
         "mailer": {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import Editor from '~/components/documents/templates/Editor.vue';
+import Editor from '~/components/documents/templates/editor/Editor.vue';
 
 useHead({
     title: 'pages.documents.templates.edit.title',

@@ -35,14 +35,20 @@ export const TemplateBlock = Node.create({
     defining: true,
     isolating: true,
 
+    addOptions() {
+        return {
+            HTMLAttributes: {},
+        };
+    },
+
     addAttributes() {
         return {
-            value: { default: '' }, // e.g. "range .Items"
-            leftTrim: {
+            'data-template-block': { default: '' }, // e.g. "range .Items"
+            'data-left-trim': {
                 default: false,
                 parseHTML: (element) => element.getAttribute('data-left-trim') === 'true',
             },
-            rightTrim: {
+            'data-right-trim': {
                 default: false,
                 parseHTML: (element) => element.getAttribute('data-right-trim') === 'true',
             },
@@ -57,19 +63,21 @@ export const TemplateBlock = Node.create({
         ];
     },
 
-    renderHTML({ HTMLAttributes }) {
-        const { value, leftTrim, rightTrim } = HTMLAttributes;
+    renderHTML(element) {
+        const { HTMLAttributes } = element;
+        const { 'data-template-block': value, 'data-left-trim': leftTrim, 'data-right-trim': rightTrim } = HTMLAttributes;
         const opening = leftTrim ? '{{-' : '{{';
         const closing = rightTrim ? '-}}' : '}}';
+
         return [
             'div',
             mergeAttributes(HTMLAttributes, {
                 'data-template-block': value,
                 class: 'template-block',
             }),
-            ['div', { class: 'template-open' }, `${opening} ${value} }}`],
+            ['div', { class: 'template-open' }, `${opening} ${value} ${closing}`],
             ['div', { class: 'template-inner' }, 0],
-            ['div', { class: 'template-close' }, `{{ end ${closing}`],
+            ['div', { class: 'template-close' }, `{{ end }}`],
         ];
     },
 
@@ -80,7 +88,7 @@ export const TemplateBlock = Node.create({
                 ({ commands }) =>
                     commands.insertContent({
                         type: this.name,
-                        attrs: { value, leftTrim, rightTrim },
+                        attrs: { 'data-template-block': value, 'data-left-trim': leftTrim, 'data-right-trim': rightTrim },
                         content: [{ type: 'paragraph' }],
                     }),
         };

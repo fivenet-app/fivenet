@@ -529,7 +529,11 @@ onBeforeRouteLeave(() => {
                 :file-limit="fileLimit"
                 :file-upload-handler="fileUploadHandler"
                 @update:content="modelValue = $event"
-            />
+            >
+                <template #toolbar>
+                    <slot name="toolbar" :editor="editor" :disabled="disabled" />
+                </template>
+            </TiptapToolbar>
         </template>
 
         <DragHandle v-if="editor !== undefined" :editor="editor">

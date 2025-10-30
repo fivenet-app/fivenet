@@ -28,11 +28,12 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-1">
+    <div class="flex flex-col gap-1 divide-y divide-default">
         <UFormField
             v-if="templateSchema.users"
             :label="$t('common.citizen', 2)"
-            :ui="{ container: 'flex flex-1 flex-row gap-1' }"
+            class="pb-2"
+            :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="users.required" :label="$t('common.required')">
                 <USwitch v-model="templateSchema.users.required" :disabled="disabled" />
@@ -44,27 +45,19 @@ onBeforeMount(() => {
                     :min="0"
                     :max="100"
                     :disabled="disabled || !templateSchema.users.required"
-                    oninput="validity.valid||(value='');"
-                    name="users"
                 />
             </UFormField>
 
             <UFormField class="flex-1" name="users.max" :label="$t('common.max')">
-                <UInputNumber
-                    v-model="templateSchema.users.max"
-                    :min="0"
-                    :max="100"
-                    :disabled="disabled"
-                    oninput="validity.valid||(value='');"
-                    name="users"
-                />
+                <UInputNumber v-model="templateSchema.users.max" :min="0" :max="100" :disabled="disabled" />
             </UFormField>
         </UFormField>
 
         <UFormField
             v-if="templateSchema.documents"
             :label="$t('common.document', 2)"
-            :ui="{ container: 'flex flex-1 flex-row gap-1' }"
+            class="pb-2"
+            :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1' }"
         >
             <UFormField class="flex-1" name="documents.required" :label="$t('common.required')">
                 <USwitch v-model="templateSchema.documents.required" :disabled="disabled" />
@@ -76,27 +69,19 @@ onBeforeMount(() => {
                     :min="0"
                     :max="100"
                     :disabled="disabled || !templateSchema.documents.required"
-                    oninput="validity.valid||(value='');"
-                    name="documents"
                 />
             </UFormField>
 
             <UFormField class="flex-1" name="documents.max" :label="$t('common.max')">
-                <UInputNumber
-                    v-model="templateSchema.documents.max"
-                    :min="0"
-                    :max="100"
-                    :disabled="disabled"
-                    oninput="validity.valid||(value='');"
-                    name="documents"
-                />
+                <UInputNumber v-model="templateSchema.documents.max" :min="0" :max="100" :disabled="disabled" />
             </UFormField>
         </UFormField>
 
         <UFormField
             v-if="templateSchema.vehicles"
             :label="$t('common.vehicle', 2)"
-            :ui="{ container: 'flex flex-1 flex-row gap-1 justify-between' }"
+            class="pb-2"
+            :ui="{ label: 'font-bold', container: 'flex flex-1 flex-row gap-1 justify-between' }"
         >
             <UFormField class="flex-1" name="vehicles.required" :label="$t('common.required')">
                 <USwitch v-model="templateSchema.vehicles.required" :disabled="disabled" />
@@ -108,19 +93,11 @@ onBeforeMount(() => {
                     :min="0"
                     :max="100"
                     :disabled="disabled || !templateSchema.vehicles.required"
-                    oninput="validity.valid||(value='');"
                 />
             </UFormField>
 
             <UFormField class="flex-1" name="vehicles.max" :label="$t('common.max')">
-                <UInputNumber
-                    v-model="templateSchema.vehicles.max"
-                    :min="0"
-                    :max="100"
-                    :disabled="disabled"
-                    oninput="validity.valid||(value='');"
-                    name="vehicles"
-                />
+                <UInputNumber v-model="templateSchema.vehicles.max" :min="0" :max="100" :disabled="disabled" />
             </UFormField>
         </UFormField>
     </div>

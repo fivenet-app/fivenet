@@ -98,6 +98,7 @@ const formRef = useTemplateRef('formRef');
                         :max="9999999"
                         :step="1"
                         :placeholder="$t('common.traffic_infraction_points')"
+                        class="w-full"
                     />
                 </UFormField>
             </UForm>
@@ -105,7 +106,14 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.add')" />
+                <UButton
+                    class="flex-1"
+                    block
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :label="$t('common.add')"
+                    @click="formRef?.submit()"
+                />
 
                 <UButton
                     color="error"

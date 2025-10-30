@@ -277,7 +277,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_ed?.code')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.code')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.code }"
                     :disabled="disabled"
@@ -601,7 +601,7 @@ const isLinkOpen = ref(false);
                 />
             </UTooltip>
 
-            <UTooltip :text="$t('components.partials.tiptap_ed?.checkbox')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.checkbox')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.checkboxStandalone }"
                     icon="i-mdi-checkbox-marked-outline"
@@ -681,7 +681,7 @@ const isLinkOpen = ref(false);
         </UPopover>
 
         <UButtonGroup>
-            <UTooltip :text="$t('components.partials.tiptap_ed?.code_block')">
+            <UTooltip :text="$t('components.partials.tiptap_editor.code_block')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.codeBlock }"
                     color="neutral"
@@ -735,22 +735,22 @@ const isLinkOpen = ref(false);
             </UTooltip>
 
             <template #content>
-                <div class="flex flex-1 gap-0.5 p-4">
-                    <UForm :state="searchAndReplace">
+                <div class="flex gap-0.5 p-4">
+                    <UForm :state="searchAndReplace" class="flex flex-col gap-2">
                         <UFormField name="search" :label="$t('common.search')">
-                            <UInput v-model="searchAndReplace.search" :disabled="disabled" />
+                            <UInput v-model="searchAndReplace.search" class="w-full" :disabled="disabled" />
                         </UFormField>
 
                         <UFormField name="replace" :label="$t('components.partials.tiptap_editor.replace')">
-                            <UInput v-model="searchAndReplace.replace" :disabled="disabled" />
+                            <UInput v-model="searchAndReplace.replace" class="w-full" :disabled="disabled" />
                         </UFormField>
 
                         <UFormField name="caseSensitive" :label="$t('common.case_sensitive')">
-                            <USwitch v-model="searchAndReplace.caseSensitive" :disabled="disabled" />
+                            <USwitch v-model="searchAndReplace.caseSensitive" class="w-full" :disabled="disabled" />
                         </UFormField>
 
                         <UFormField class="flex flex-col lg:flex-row">
-                            <UButtonGroup>
+                            <UButtonGroup class="w-full">
                                 <UButton
                                     color="error"
                                     variant="outline"
@@ -792,8 +792,9 @@ const isLinkOpen = ref(false);
                                 />
                             </UButtonGroup>
 
-                            <div class="mt-1 block text-sm font-medium">
-                                {{ $t('common.result', 2) }}:
+                            <div class="mt-1 block text-sm">
+                                <span class="font-semibold">{{ $t('common.result', 2) }}</span
+                                >:
                                 {{
                                     ed?.storage?.searchAndReplace?.resultIndex > 0
                                         ? ed?.storage?.searchAndReplace?.resultIndex + 1

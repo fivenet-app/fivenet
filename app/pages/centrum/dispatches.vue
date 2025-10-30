@@ -108,7 +108,7 @@ const mount = ref(false);
                         <ClientOnly>
                             <BaseMap :map-options="{ zoomControl: false }">
                                 <template #default>
-                                    <LazyLivemapMapTempMarker />
+                                    <LazyLivemapTempMarker />
 
                                     <DispatchLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
                                 </template>

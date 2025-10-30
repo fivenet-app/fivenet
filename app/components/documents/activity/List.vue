@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import ActivityListEntry from '~/components/documents/activity/ActivityListEntry.vue';
+import ListEntry from '~/components/documents/activity/ListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -54,7 +54,7 @@ async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
         />
 
         <ul v-else class="mb-1 divide-y divide-default" role="list">
-            <ActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+            <ListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
         </ul>
 
         <Pagination v-model="page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
