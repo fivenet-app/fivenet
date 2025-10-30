@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CodeDiff } from 'v-code-diff';
+import { LazyPartialsCodeDiff } from '#components';
 import { computed } from 'vue';
 import type { Content, Version } from '~/types/history';
 
@@ -79,7 +79,7 @@ function applySelected() {
             <div class="space-y-4">
                 <div>
                     <div class="mb-1 font-semibold">{{ $t('common.content') }}</div>
-                    <CodeDiff
+                    <LazyPartialsCodeDiff
                         class="rounded border"
                         :old-string="prettyCurrent"
                         :new-string="prettySelected"
@@ -88,12 +88,11 @@ function applySelected() {
                         language="text"
                         :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
                     >
-                        <!-- @vue-expect-error v-code-diff doesn't type the slot vars not even the slots currently -->
                         <template #stat="{ stat }">
                             <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
                             <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
                         </template>
-                    </CodeDiff>
+                    </LazyPartialsCodeDiff>
                 </div>
             </div>
         </template>

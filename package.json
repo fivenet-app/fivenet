@@ -74,7 +74,7 @@
         "date-fns": "4.1.0",
         "diff-match-patch": "1.0.5",
         "emoji-blast": "0.11.0",
-        "fabric": "6.9.0",
+        "fabric": "6.9.1",
         "google-protobuf": "4.0.1",
         "grpc-web": "2.0.2",
         "leaflet": "1.9.4",

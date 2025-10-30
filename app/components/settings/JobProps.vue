@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { LazyPartialsCodeDiff } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { vMaska } from 'maska/vue';
-import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -1138,7 +1138,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                             </USelectMenu>
                                         </ClientOnly>
 
-                                        <CodeDiff
+                                        <LazyPartialsCodeDiff
                                             class="codediff"
                                             theme="dark"
                                             :old-string="jobProps.discordSyncChanges.changes[0]?.plan ?? ''"

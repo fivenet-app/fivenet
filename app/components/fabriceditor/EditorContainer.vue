@@ -1,7 +1,17 @@
 <script setup lang="ts">
-import EditorCanvas from './EditorCanvas.vue';
-import EditorSidebar from './EditorSidebar.vue';
 import EditorToolbar from './EditorToolbar.vue';
+import EditorWrapper from './EditorWrapper.vue';
+
+withDefaults(
+    defineProps<{
+        maxHeight?: number;
+        maxWidth?: number;
+    }>(),
+    {
+        maxHeight: 350,
+        maxWidth: 900,
+    },
+);
 </script>
 
 <template>
@@ -25,19 +35,7 @@ import EditorToolbar from './EditorToolbar.vue';
         </template>
 
         <template #body>
-            <!-- Container: full-screen flex layout with top toolbar and content area -->
-            <div class="flex h-full max-w-screen flex-col">
-                <!-- Main content: canvas and sidebar -->
-                <div class="flex flex-1 overflow-hidden">
-                    <div ref="canvasContainer" class="flex-1 overflow-hidden">
-                        <!-- Canvas area fills remaining space -->
-                        <EditorCanvas />
-                    </div>
-
-                    <!-- Sidebar on the right with fixed width -->
-                    <EditorSidebar class="w-full max-w-sm min-w-64 shrink-0 border-l border-l-default bg-default" />
-                </div>
-            </div>
+            <EditorWrapper :max-height="maxHeight" :max-width="maxWidth" />
         </template>
     </UDashboardPanel>
 </template>

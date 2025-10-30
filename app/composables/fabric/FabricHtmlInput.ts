@@ -70,9 +70,8 @@ export class FabricHtmlInput<
     }
 
     override toObject(propertiesToInclude?: any): any {
-        const base = super.toObject(propertiesToInclude);
         return {
-            ...base,
+            ...super.toObject(propertiesToInclude),
             name: this.name,
             inputType: this.inputType || 'text',
             value: this.value,

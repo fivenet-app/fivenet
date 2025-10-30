@@ -2,7 +2,15 @@
 import type { FabricObject } from 'fabric';
 import { useFabricEditor } from '~/composables/useFabricEditor';
 
+const props = defineProps<{
+    maxHeight?: number;
+    maxWidth?: number;
+    backgroundColor?: string;
+    loadExample?: boolean;
+}>();
+
 const canvasEl = ref<HTMLCanvasElement | null>(null);
+
 // Get composable state and methods
 const { canvas, documentSize, initCanvas } = useFabricEditor();
 
@@ -11,8 +19,21 @@ onMounted(async () => {
     const canvasElement = canvasEl.value!;
     // Set canvas dimensions to container size
     const parent = canvasElement.parentElement;
-    const width = parent?.clientWidth || 800;
-    const height = parent?.clientHeight || 600;
+    const width = props.maxWidth || parent?.clientWidth || 800;
+    const height = props.maxHeight || parent?.clientHeight || 600;
+
+    // If max dimensions are provided, set them in document size and disable resize
+    if (props.maxHeight) {
+        documentSize.value.height = props.maxHeight;
+        documentSize.value.disabled = true;
+    }
+    if (props.maxWidth) {
+        documentSize.value.width = props.maxWidth;
+        documentSize.value.disabled = true;
+    }
+    if (props.backgroundColor) {
+        documentSize.value.fill = props.backgroundColor;
+    }
 
     initCanvas(canvasElement, {
         width,
@@ -20,8 +41,10 @@ onMounted(async () => {
     });
 
     const fabric = await import('fabric');
-    const loadedSvg = await fabric.loadSVGFromString(
-        `<?xml version="1.0"?>
+
+    if (props.loadExample) {
+        const loadedSvg = await fabric.loadSVGFromString(
+            `<?xml version="1.0"?>
 <svg width="1080" height="768.0000000000001" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <title>arbeitsunfähigkeitsbescheinigung</title>
  <defs>
@@ -86,15 +109,16 @@ onMounted(async () => {
   <line id="svg_70" stroke="#cc2a2a" stroke-width="2" transform="matrix(1, 0, 0, 1, 0, 0)" x1="406.15" x2="406.15" y1="269.36" y2="337.12"/>
  </g>
 </svg>`,
-    );
+        );
 
-    if (loadedSvg.objects) {
-        if (loadedSvg.options['width'] && loadedSvg.options['height']) {
-            documentSize.value.width = parseInt(loadedSvg.options['width']);
-            documentSize.value.height = parseInt(loadedSvg.options['height']);
+        if (loadedSvg.objects) {
+            if (loadedSvg.options['width'] && loadedSvg.options['height']) {
+                documentSize.value.width = parseInt(loadedSvg.options['width']);
+                documentSize.value.height = parseInt(loadedSvg.options['height']);
+            }
+
+            canvas.value?.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
         }
-
-        canvas.value?.add(...loadedSvg.objects.filter((obj): obj is FabricObject => !!obj));
     }
 });
 </script>

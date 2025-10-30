@@ -1660,6 +1660,19 @@
                 "title": "System Status"
             },
             "system_settings": "System Settings"
+        },
+        "fabric_editor": {
+            "text": "Text",
+            "curved_text": {
+                "title": "Curved Text",
+                "half_circle_up": "Half Circle Up",
+                "half_circle_down": "Half Circle Down",
+                "full_circle": "Full Circle"
+            },
+            "placeholder": "Placeholder",
+            "rectangle": "Rectangle",
+            "circle": "Circle",
+            "input": "Input"
         }
     },
     "notifications": {

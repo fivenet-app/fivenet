@@ -4,6 +4,7 @@ import {
     type CanvasEvents,
     type CanvasOptions,
     Circle,
+    FabricImage,
     type FabricObject,
     Group,
     Pattern,
@@ -14,6 +15,7 @@ import {
 } from 'fabric';
 import { ref, shallowRef } from 'vue';
 import '~/composables/fabric/FabricHtmlInput';
+import { FabricCurvedText, type FabricCurvedTextOptions } from './fabric/FabricCurvedText';
 
 export const formatPresets = {
     // 72 DPI
@@ -69,6 +71,13 @@ export const svgPatterns = [
     },
 ];
 
+export const strokeDashes = [
+    { name: 'Solid', value: null },
+    { name: 'Large Dashes', value: [10, 5] },
+    { name: 'Medium Dashes', value: [5, 3] },
+    { name: 'Small Dashes', value: [1, 1] },
+];
+
 let instance: ReturnType<typeof createFabricEditor> | null = null;
 
 function createFabricEditor() {
@@ -85,6 +94,7 @@ function createFabricEditor() {
         width: 800,
         height: 600,
         fill: '#ffffff',
+        disabled: false,
     });
 
     const history = ref<string[]>([]);
@@ -104,10 +114,31 @@ function createFabricEditor() {
 
     const clipboard = ref<FabricObject | null>(null);
 
-    // Keep track of element and window sizes
-    const { width: containerWidth, height: containerHeight } = useElementSize(canvasEl);
+    const borderBox = shallowRef<Rect | null>(null);
 
     // Methods
+    const createBorder = () => {
+        const box = new Rect({
+            left: 0,
+            top: 0,
+            width: documentSize.value.width,
+            height: documentSize.value.height,
+            stroke: '#999',
+            strokeWidth: 1,
+            fill: '',
+            strokeDashOffset: 4,
+            selectable: false,
+            evented: false,
+            excludeFromExport: true,
+            name: 'document-border',
+        });
+
+        canvas.value?.add(box);
+        canvas.value?.sendObjectToBack(box);
+
+        borderBox.value = box;
+    };
+
     const initCanvas = (canvasContainerElement: HTMLCanvasElement, opts: Partial<CanvasOptions>) => {
         const fabricCanvas = new Canvas(canvasContainerElement, {
             backgroundColor: '#ffffff00', // Transparent
@@ -119,6 +150,8 @@ function createFabricEditor() {
         canvasEl.value = canvasContainerElement;
         canvasContainer.value = canvasContainerElement.parentElement?.parentElement || null;
 
+        const { width: containerWidth, height: containerHeight } = useElementSize(canvasContainer.value);
+
         const resizeCanvas = () => {
             if (!canvas.value) return;
 
@@ -126,6 +159,7 @@ function createFabricEditor() {
             const containerEl = canvasContainer.value;
             if (!containerEl) return;
 
+            // Keep track of element and window sizes
             const ratio = window.devicePixelRatio || 1;
             const width = containerWidth.value;
             const height = containerHeight.value;
@@ -157,6 +191,8 @@ function createFabricEditor() {
         fabricCanvas.on('object:removed', saveHistory);
 
         saveHistory();
+
+        createBorder();
 
         // Zoom with mouse wheel
         canvasContainer.value?.addEventListener('wheel', (evt) => {
@@ -223,17 +259,32 @@ function createFabricEditor() {
             canvasHeight.value = c.getHeight();
         });
 
-        watch([containerWidth, containerHeight], () => {
-            resizeCanvas();
+        watchThrottled([containerWidth, containerHeight], () => resizeCanvas(), {
+            leading: true,
+            trailing: true,
+            throttle: 200,
         });
+
+        watchThrottled(
+            documentSize,
+            () => {
+                if (!canvas.value) return;
+
+                borderBox.value?.set({
+                    width: documentSize.value.width,
+                    height: documentSize.value.height,
+                });
+                if (borderBox.value) {
+                    borderBox.value.fill = documentSize.value.fill;
+                }
+                canvas.value.renderAll();
+            },
+            { immediate: true, leading: true, trailing: true, throttle: 200, deep: true },
+        );
 
         watch(pickingColor, (newVal) => {
             // Enable/Disable selection
             if (canvas.value) canvas.value.selection = !newVal;
-        });
-
-        onMounted(() => {
-            resizeCanvas();
         });
 
         onUnmounted(() => {
@@ -259,7 +310,7 @@ function createFabricEditor() {
         const active = canvas.value.getActiveObject();
         // Delete or Backspace: remove selected object
         if ((e.key === 'Delete' || e.key === 'Backspace') && active) {
-            canvas.value.remove(active);
+            canvas.value.remove(...canvas.value.getActiveObjects());
             canvas.value.discardActiveObject();
             canvas.value.renderAll();
             activeObject.value = null;
@@ -445,6 +496,14 @@ function createFabricEditor() {
         if (text.enterEditing) text.enterEditing();
     }
 
+    function addCurvedText(text: string, radius: number = 100, opts: FabricCurvedTextOptions = {}) {
+        if (!canvas.value) return;
+
+        const curved = new FabricCurvedText(text, radius, opts);
+        canvas.value.add(curved);
+        canvas.value.setActiveObject(curved);
+    }
+
     function addPlaceholder() {
         if (!canvas.value) return;
         const placeholderText = new Textbox('{{placeholder}}', {
@@ -489,6 +548,21 @@ function createFabricEditor() {
         });
         canvas.value.add(circle);
         canvas.value.setActiveObject(circle);
+    }
+
+    function addImage(src: string) {
+        if (!canvas.value) return;
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            const fi = new FabricImage(img, {
+                left: 100,
+                top: 100,
+            });
+            canvas.value?.add(fi);
+            canvas.value?.setActiveObject(fi);
+            canvas.value?.requestRenderAll();
+        };
     }
 
     function exportJSON() {
@@ -699,9 +773,11 @@ function createFabricEditor() {
 
         initCanvas,
         addText,
+        addCurvedText,
         addPlaceholder,
         addRectangle,
         addCircle,
+        addImage,
         exportJSON,
         exportSVG,
 

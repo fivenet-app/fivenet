@@ -169,8 +169,8 @@ importers:
         specifier: 0.11.0
         version: 0.11.0
       fabric:
-        specifier: 6.9.0
-        version: 6.9.0
+        specifier: 6.9.1
+        version: 6.9.1
       google-protobuf:
         specifier: 4.0.1
         version: 4.0.1
@@ -5449,8 +5449,8 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  fabric@6.9.0:
-    resolution: {integrity: sha512-ILIbG4Us/41Z4rU8/gveN4Hb7NvgBorqV9xj+9Dl7YsXiyUPXdxV8+q5OvaNghmYzQoK1Am3m0wTvmovOxrJAg==}
+  fabric@6.9.1:
+    resolution: {integrity: sha512-TqG08Xbt4rtlPsXgCjSUcZz/RsyEP57Qo21nCVRkw7zz9nR0co4SLkL9Q/zQh3tC1Yxap6M5jKFHUKV6SgPovg==}
     engines: {node: '>=16.20.0'}
 
   fake-indexeddb@6.2.5:
@@ -14780,7 +14780,7 @@ snapshots:
 
   extend@3.0.2: {}
 
-  fabric@6.9.0:
+  fabric@6.9.1:
     optionalDependencies:
       canvas: 2.11.2
       jsdom: 20.0.3(canvas@2.11.2)

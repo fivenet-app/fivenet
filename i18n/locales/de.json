@@ -1660,6 +1660,19 @@
                 "title": "System-Status"
             },
             "system_settings": "System-Einstellungen"
+        },
+        "fabric_editor": {
+            "text": "Text",
+            "curved_text": {
+                "title": "Gebogener Text",
+                "half_circle_up": "Halber Kreis Oben",
+                "half_circle_down": "Halber Kreis Unten",
+                "full_circle": "Ganzer Kreis"
+            },
+            "placeholder": "Platzhalter",
+            "rectangle": "Rechteck",
+            "circle": "Kreis",
+            "input": "Eingabe"
         }
     },
     "notifications": {
