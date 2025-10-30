@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Textbox } from 'fabric';
+import type { FabricCurvedText } from '~/composables/fabric/FabricCurvedText';
 import type { FabricHtmlInput } from '~/composables/fabric/FabricHtmlInput';
 import { svgPatterns, useFabricEditor } from '~/composables/useFabricEditor';
 import { fonts } from '~/types/editor';
@@ -53,6 +54,13 @@ const updateStrokeWidth = (val: number) => {
     }
 };
 
+const updateStrokeDash = (dashArray: number[] | null) => {
+    if (activeObject.value) {
+        activeObject.value.set('strokeDashArray', dashArray);
+        canvas.value?.renderAll();
+    }
+};
+
 const updateOpacity = (opacity: number) => {
     if (!isNaN(opacity) && activeObject.value) {
         activeObject.value.set('opacity', opacity);
@@ -61,7 +69,7 @@ const updateOpacity = (opacity: number) => {
 };
 
 const selectedPattern = ref<string | undefined>(undefined);
-const selectedPatternColor = ref<string>('#333');
+const selectedPatternColor = ref<string>('#333333');
 
 watch([selectedPattern, selectedPatternColor], async () => {
     if (activeObject.value) {
@@ -74,6 +82,38 @@ watch([selectedPattern, selectedPatternColor], async () => {
         }
     }
 });
+
+const updateCurvedText = (val: string) => {
+    if (!activeObject.value || !activeObject.value.isType('curved-text')) return;
+
+    (activeObject.value as FabricCurvedText).set('text', val);
+    (activeObject.value as FabricCurvedText).update();
+    canvas.value?.renderAll();
+};
+
+const updateCurvedTextFontSize = (size: number) => {
+    if (!isNaN(size) && activeObject.value && activeObject.value.isType('curved-text')) {
+        const curvedText = activeObject.value as FabricCurvedText;
+        curvedText.update(undefined, undefined, { ...curvedText.options, fontSize: size });
+        canvas.value?.renderAll();
+    }
+};
+
+const updateCurvedTextFontFamily = (fontFamily: string) => {
+    if (activeObject.value && activeObject.value.isType('curved-text')) {
+        const curvedText = activeObject.value as FabricCurvedText;
+        curvedText.update(undefined, undefined, { ...curvedText.options, fontFamily });
+        canvas.value?.renderAll();
+    }
+};
+
+const updateCurvedTextFillColor = (val: string) => {
+    if (activeObject.value && activeObject.value.isType('curved-text')) {
+        const curvedText = activeObject.value as FabricCurvedText;
+        curvedText.update(undefined, undefined, { ...curvedText.options, fill: val });
+        canvas.value?.renderAll();
+    }
+};
 </script>
 
 <template>
@@ -140,6 +180,65 @@ watch([selectedPattern, selectedPatternColor], async () => {
                     </UFormField>
                 </div>
 
+                <div v-else-if="activeObject.isType('curved-text')" class="flex flex-col gap-2">
+                    <UFormField :label="$t('common.content')">
+                        <UInput
+                            type="text"
+                            :model-value="(activeObject as FabricCurvedText).text"
+                            class="w-full"
+                            @update:model-value="updateCurvedText($event)"
+                        />
+                    </UFormField>
+
+                    <UFormField :label="$t('components.partials.tiptap_editor.font_size')">
+                        <UInputNumber
+                            :model-value="(activeObject as FabricCurvedText).options?.fontSize ?? 16"
+                            :min="8"
+                            :max="100"
+                            class="w-full"
+                            @update:model-value="updateCurvedTextFontSize($event)"
+                        />
+                    </UFormField>
+
+                    <UFormField :label="$t('components.partials.tiptap_editor.font_family')">
+                        <UInputMenu
+                            :model-value="(activeObject as FabricCurvedText).options?.fontFamily"
+                            class="w-full"
+                            name="selectedFont"
+                            :filter-fields="['label']"
+                            :items="fonts"
+                            :placeholder="$t('common.font', 1)"
+                            value-key="value"
+                            label-key="label"
+                            @update:model-value="updateCurvedTextFontFamily"
+                        >
+                            <template #item-label="{ item }">
+                                <span class="truncate" :style="{ fontFamily: item.value }">{{
+                                    item.label.includes('.') ? $t(item.label) : item.label
+                                }}</span>
+                            </template>
+
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('components.partials.tiptap_editor.font_family')]) }}
+                            </template>
+                        </UInputMenu>
+                    </UFormField>
+
+                    <UFormField label="Text Color">
+                        {{ (activeObject as FabricCurvedText).fill }}
+
+                        <ColorPicker
+                            :model-value="
+                                typeof (activeObject as FabricCurvedText).fill === 'string'
+                                    ? ((activeObject as FabricCurvedText).fill as string)
+                                    : '#000000'
+                            "
+                            class="w-full"
+                            @update:model-value="updateCurvedTextFillColor($event ?? '#000000')"
+                        />
+                    </UFormField>
+                </div>
+
                 <!-- Shape (Rectangle/Circle) properties -->
                 <div v-else-if="activeObject.isType('rect', 'circle')" class="flex flex-col gap-2">
                     <UFormField label="Fill Color">
@@ -177,6 +276,17 @@ watch([selectedPattern, selectedPatternColor], async () => {
                         />
                     </UFormField>
 
+                    <UFormField label="Stroke Pattern">
+                        <USelectMenu
+                            :model-value="activeObject.strokeDashArray"
+                            :items="strokeDashes"
+                            label-key="name"
+                            value-key="value"
+                            class="w-full"
+                            @update:model-value="updateStrokeDash($event)"
+                        />
+                    </UFormField>
+
                     <UFormField label="Opacity">
                         <USlider
                             :min="0"
@@ -200,6 +310,19 @@ watch([selectedPattern, selectedPatternColor], async () => {
 
                     <UFormField label="Pattern Color">
                         <ColorPicker v-model="selectedPatternColor" class="w-full" />
+                    </UFormField>
+                </div>
+
+                <div v-else-if="activeObject.isType('image')" class="flex flex-col gap-2">
+                    <UFormField label="Opacity">
+                        <USlider
+                            :min="0"
+                            :max="1"
+                            :step="0.1"
+                            :model-value="activeObject.opacity ?? 1"
+                            class="w-full"
+                            @update:model-value="updateOpacity($event ?? 1)"
+                        />
                     </UFormField>
                 </div>
 
