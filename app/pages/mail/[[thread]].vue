@@ -343,15 +343,11 @@ const isMobile = breakpoints.smaller('lg');
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel id="mailerthreadview" :ui="{ root: 'min-h-full', body: 'p-0 sm:p-0 gap-0 sm:gap-0 overflow-y-hidden' }">
-        <template #default>
-            <MailerThread v-if="selectedThread" :thread-id="selectedThread.id" @close="selectedThread = undefined" />
-            <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
-                <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
-                <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
-            </div>
-        </template>
-    </UDashboardPanel>
+    <MailerThread v-if="selectedThread" :thread-id="selectedThread.id" @close="selectedThread = undefined" />
+    <div v-else class="hidden flex-1 flex-col items-center justify-center gap-2 text-dimmed lg:flex">
+        <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
+        <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
+    </div>
 
     <ClientOnly>
         <USlideover v-if="isMobile" v-model:open="isMailPanelOpen">

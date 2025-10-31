@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui';
 import type { TypedRouteFromName } from '@typed-router';
+import { breakpointsTailwind } from '@vueuse/core';
 import Actions from '~/components/citizens/info/Actions.vue';
 import SetLabels from '~/components/citizens/info/props/SetLabels.vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
@@ -138,6 +139,9 @@ const items = computed<NavigationMenuItem[]>(() =>
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isMobile = breakpoints.smaller('lg');
+
 const isOpen = ref(false);
 </script>
 
@@ -241,43 +245,96 @@ const isOpen = ref(false);
         </template>
     </UDashboardPanel>
 
-    <UDashboardSidebar id="citizen-id-actions" v-model:open="isOpen" side="right" class="bg-elevated/25">
+    <UDashboardPanel
+        v-if="!isMobile"
+        id="citizen-id-actions"
+        :default-size="25"
+        :min-size="20"
+        :max-size="40"
+        resizable
+        class="bg-elevated/25"
+        :ui="{ body: 'gap-2 sm:gap-2' }"
+    >
         <template #header>
-            <div class="flex min-w-0 items-center gap-1.5">
-                <h1 class="flex items-center gap-1.5 truncate font-semibold text-highlighted">
-                    {{ $t('common.action', 2) }}
-                </h1>
-            </div>
+            <UDashboardNavbar :title="$t('common.action', 2)" :toggle="false" />
         </template>
 
-        <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
-        <Actions
-            v-if="user"
-            :user="user"
-            register-kbds
-            @update:wanted-status="user.props!.wanted = $event"
-            @update:job="
-                user.job = $event.job.name;
-                user.jobLabel = $event.job.label;
-                user.jobGrade = $event.grade.grade;
-                user.jobGradeLabel = $event.grade.label;
-            "
-            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-            @update:mug-shot="user.props!.mugshot = $event"
-        />
+        <template #body>
+            <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
+            <Actions
+                v-if="user"
+                :user="user"
+                register-kbds
+                @update:wanted-status="user.props!.wanted = $event"
+                @update:job="
+                    user.job = $event.job.name;
+                    user.jobLabel = $event.job.label;
+                    user.jobGrade = $event.grade.grade;
+                    user.jobGradeLabel = $event.grade.label;
+                "
+                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                @update:mug-shot="user.props!.mugshot = $event"
+            />
 
-        <USeparator />
+            <USeparator />
 
-        <template v-if="user">
-            <div class="flex shrink-0 items-center gap-1.5">
-                <div class="flex min-w-0 items-center gap-1.5">
-                    <h1 class="flex items-center gap-1.5 truncate font-semibold text-highlighted">
-                        {{ $t('common.label', 2) }}
-                    </h1>
-                </div>
+            <div v-if="user" class="flex flex-col gap-2">
+                <h2 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
+                    {{ $t('common.label', 2) }}
+                </h2>
+
+                <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
             </div>
-
-            <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
         </template>
-    </UDashboardSidebar>
+    </UDashboardPanel>
+
+    <ClientOnly>
+        <USlideover v-if="isMobile" v-model:open="isOpen">
+            <template #content>
+                <UDashboardPanel id="citizens-id-actions-mobile" :ui="{ root: 'min-h-full', body: 'gap-2 sm:gap-2' }">
+                    <template #header>
+                        <UDashboardNavbar :title="$t('common.action', 2)" :ui="{ toggle: 'hidden' }">
+                            <template #leading>
+                                <UButton
+                                    icon="i-mdi-close"
+                                    color="neutral"
+                                    variant="ghost"
+                                    class="-ms-1.5"
+                                    @click="isOpen = false"
+                                />
+                            </template>
+                        </UDashboardNavbar>
+                    </template>
+
+                    <template #body>
+                        <!-- Register kbds for the citizens actions here as it will always be available not like the profile tab content -->
+                        <Actions
+                            v-if="user"
+                            :user="user"
+                            register-kbds
+                            @update:wanted-status="user.props!.wanted = $event"
+                            @update:job="
+                                user.job = $event.job.name;
+                                user.jobLabel = $event.job.label;
+                                user.jobGrade = $event.grade.grade;
+                                user.jobGradeLabel = $event.grade.label;
+                            "
+                            @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                            @update:mug-shot="user.props!.mugshot = $event"
+                        />
+
+                        <USeparator />
+
+                        <div v-if="user" class="flex flex-col gap-2">
+                            <h1 class="flex min-w-0 items-center truncate font-semibold text-highlighted">
+                                {{ $t('common.label', 2) }}
+                            </h1>
+
+                            <SetLabels v-model="user.props!.labels" :user-id="user.userId" class="flex-1" />
+                        </div>
+                    </template>
+                </UDashboardPanel>
+            </template>
+        </USlideover>
+    </ClientOnly>
 </template>
