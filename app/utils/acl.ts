@@ -32,9 +32,8 @@ export function checkAccess<L = number>(
 ): boolean {
     if (access === undefined) return false;
 
-    if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job)) {
+    if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job))
         return true;
-    }
 
     const ju = access.users?.find((ua) => ua.userId === activeChar.userId && level <= ua.access);
     if (ju !== undefined) return true;
@@ -43,18 +42,13 @@ export function checkAccess<L = number>(
         let lowestAccess: L | undefined = undefined;
         for (let index = 0; index < access.jobs?.length; index++) {
             const ja = access.jobs[index]!;
-            if (ja.job !== activeChar.job) {
-                continue;
-            }
-            if (ja.minimumGrade > activeChar.jobGrade) {
-                continue;
-            }
-            if (ja.access < level) {
-                continue;
-            }
-            if (lowestAccess === undefined || ja.access < lowestAccess!) {
-                lowestAccess = ja.access;
-            }
+            if (ja.job !== activeChar.job) continue;
+
+            if (ja.minimumGrade > activeChar.jobGrade) continue;
+
+            if (ja.access < level) continue;
+
+            if (lowestAccess === undefined || ja.access < lowestAccess!) lowestAccess = ja.access;
         }
 
         if (level <= (lowestAccess ?? 0)) {
@@ -66,17 +60,11 @@ export function checkAccess<L = number>(
         for (let index = 0; index < access.qualifications.length; index++) {
             const jq = access.qualifications[index]!;
 
-            if (jq.qualification === undefined || jq.qualification.result === undefined) {
-                continue;
-            }
+            if (jq.qualification === undefined || jq.qualification.result === undefined) continue;
 
-            if (jq.qualification.result.status !== ResultStatus.SUCCESSFUL) {
-                continue;
-            }
+            if (jq.qualification.result.status !== ResultStatus.SUCCESSFUL) continue;
 
-            if (level <= jq?.access) {
-                return true;
-            }
+            if (level <= jq?.access) return true;
         }
     }
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { nanoid } from 'nanoid';
 import { VueDraggable } from 'vue-draggable-plus';
 
 const props = defineProps<{
@@ -23,7 +22,7 @@ type Block = { id: string; type: 'text'; value: string } | { id: string; type: '
 
 // Parse the format string into an array of blocks
 function parseBlocks(str: string): Block[] {
-    if (!str) return [{ id: nanoid(), type: 'text', value: '' }];
+    if (!str) return [{ id: randomUUID(), type: 'text', value: '' }];
     const regex = /%([a-zA-Z0-9_]+)%/g;
     let result: RegExpExecArray | null,
         lastIndex = 0;
@@ -32,14 +31,14 @@ function parseBlocks(str: string): Block[] {
         // Add any text before the matched token
         if (result.index > lastIndex) {
             blocks.push({
-                id: nanoid(),
+                id: randomUUID(),
                 type: 'text',
                 value: str.slice(lastIndex, result.index),
             });
         }
         // Add the token block
         blocks.push({
-            id: nanoid(),
+            id: randomUUID(),
             type: 'token',
             value: result[1] ?? '',
         });
@@ -48,14 +47,14 @@ function parseBlocks(str: string): Block[] {
     // Add trailing text, if any
     if (lastIndex < str.length) {
         blocks.push({
-            id: nanoid(),
+            id: randomUUID(),
             type: 'text',
             value: str.slice(lastIndex),
         });
     }
     // Always at least one block
     if (blocks.length === 0) {
-        blocks.push({ id: nanoid(), type: 'text', value: '' });
+        blocks.push({ id: randomUUID(), type: 'text', value: '' });
     }
     return blocks;
 }
@@ -101,14 +100,14 @@ function handleTextInput(index: number, value: string) {
     while ((result = regex.exec(value)) !== null) {
         if (result.index > lastIndex) {
             newBlocks.push({
-                id: firstText ? (originalId ?? nanoid()) : nanoid(),
+                id: firstText ? (originalId ?? randomUUID()) : randomUUID(),
                 type: 'text',
                 value: value.slice(lastIndex, result.index),
             });
             firstText = false;
         }
         newBlocks.push({
-            id: nanoid(),
+            id: randomUUID(),
             type: 'token',
             value: result[1] ?? '',
         });
@@ -116,7 +115,7 @@ function handleTextInput(index: number, value: string) {
     }
     if (lastIndex < value.length) {
         newBlocks.push({
-            id: firstText ? (originalId ?? nanoid()) : nanoid(),
+            id: firstText ? (originalId ?? randomUUID()) : randomUUID(),
             type: 'text',
             value: value.slice(lastIndex),
         });
@@ -129,7 +128,7 @@ function handleTextInput(index: number, value: string) {
 
 function insertToken(tokenValue: string) {
     blocks.value.push({
-        id: nanoid(),
+        id: randomUUID(),
         type: 'token',
         value: tokenValue,
     });
@@ -137,7 +136,7 @@ function insertToken(tokenValue: string) {
 
 function insertTextBlock() {
     blocks.value.push({
-        id: nanoid(),
+        id: randomUUID(),
         type: 'text',
         value: '',
     });
@@ -159,7 +158,7 @@ function ensureTrailingTextBlock() {
     const last = blocks.value[blocks.value.length - 1];
     if (!last || last.type !== 'text') {
         blocks.value.push({
-            id: nanoid(),
+            id: randomUUID(),
             type: 'text',
             value: '',
         });
