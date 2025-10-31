@@ -49,8 +49,8 @@ importers:
         specifier: 2.11.1
         version: 2.11.1
       '@selemondev/vue3-signature-pad':
-        specifier: 1.6.0
-        version: 1.6.0(vue@3.5.22(typescript@5.9.3))
+        specifier: 1.6.1
+        version: 1.6.1(vue@3.5.22(typescript@5.9.3))
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.1.16)
@@ -2521,8 +2521,8 @@ packages:
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
 
-  '@selemondev/vue3-signature-pad@1.6.0':
-    resolution: {integrity: sha512-9lOSo7SshuFaJFFXm7QK+xqKZYl38eBmIuDcEiytLtI0LQl66lFxBZ9EDCsmwfBwSMBS6CglgrKaDH7H0PwgCA==}
+  '@selemondev/vue3-signature-pad@1.6.1':
+    resolution: {integrity: sha512-kssfz7jzezRMqYdCSjWMJ+UwgEQE7nlJJYfOkCNHTZg1Y35nGTYKquAE9/c6iUKHKJY3ibek/Kh1glKuDK2vMA==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -11223,9 +11223,8 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@selemondev/vue3-signature-pad@1.6.0(vue@3.5.22(typescript@5.9.3))':
+  '@selemondev/vue3-signature-pad@1.6.1(vue@3.5.22(typescript@5.9.3))':
     dependencies:
-      nanoid: 5.1.6
       signature_pad: 5.1.1
       vue: 3.5.22(typescript@5.9.3)
 
