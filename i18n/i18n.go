@@ -107,12 +107,13 @@ func getNestedValue(data map[string]any, keys []string) (any, error) {
 	return val, nil
 }
 
+var replaceVarsRegex = regexp.MustCompile(`\{(\w+)}`)
+
 // replaceVars replace vars of `{KEY}` format in s and handles if variables are missing.
 // It returns the original string if no replacements are made.
 func replaceVars(s string, vars map[string]any) string {
-	re := regexp.MustCompile(`\{(\w+)}`)
-	return re.ReplaceAllStringFunc(s, func(match string) string {
-		key := re.FindStringSubmatch(match)[1]
+	return replaceVarsRegex.ReplaceAllStringFunc(s, func(match string) string {
+		key := replaceVarsRegex.FindStringSubmatch(match)[1]
 		if val, ok := vars[key]; ok {
 			return fmt.Sprintf("%v", val)
 		}
