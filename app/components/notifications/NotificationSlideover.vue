@@ -8,15 +8,15 @@ const { isNotificationSlideoverOpen } = useDashboard();
 <template>
     <USlideover
         v-model:open="isNotificationSlideoverOpen"
-        :title="$t('common.notification', 2)"
-        :ui="{ body: 'flex flex-col p-0 sm:p-0' }"
+        :title="$t('components.notifications.title')"
+        :ui="{ body: 'flex flex-col p-0 sm:p-0 overflow-y-hidden' }"
     >
         <template #actions>
             <DNBToggle />
         </template>
 
         <template #body>
-            <List @clicked="isNotificationSlideoverOpen = false" />
+            <List hide-header hide-footer scrollable @clicked="isNotificationSlideoverOpen = false" />
         </template>
 
         <template #footer>

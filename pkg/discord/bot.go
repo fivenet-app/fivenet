@@ -142,10 +142,7 @@ func New(p BotParams) Result {
 
 		// Start bot workers
 		for range botWorkerCount {
-			b.wg.Add(1)
-			go func() {
-				defer b.wg.Done()
-
+			b.wg.Go(func() {
 				for {
 					select {
 					case <-cancelCtx.Done():
@@ -170,7 +167,7 @@ func New(p BotParams) Result {
 						}()
 					}
 				}
-			}()
+			})
 		}
 
 		if err := registerStreams(ctxStartup, b.js); err != nil {
@@ -211,6 +208,8 @@ func New(p BotParams) Result {
 		}
 
 		cancel()
+
+		b.wg.Wait()
 
 		return nil
 	}))

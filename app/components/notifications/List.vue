@@ -8,7 +8,14 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetNotificationsResponse } from '~~/gen/ts/services/notifications/notifications';
+import DNBToggle from './DNBToggle.vue';
 import { notificationCategoryToIcon } from './helpers';
+
+defineProps<{
+    hideHeader?: boolean;
+    hideFooter?: boolean;
+    scrollable?: boolean;
+}>();
 
 defineEmits<{
     (e: 'clicked'): void;
@@ -93,65 +100,85 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UDashboardToolbar>
-        <template #default>
-            <UForm class="my-2 flex-1" :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-row gap-2">
-                    <UFormField
-                        class="flex flex-initial flex-col"
-                        name="includeRead"
-                        :label="$t('components.notifications.include_read')"
-                        :ui="{ container: 'flex-1 flex' }"
-                    >
-                        <div class="flex flex-1 items-center">
-                            <USwitch v-model="query.includeRead" />
-                        </div>
-                    </UFormField>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' + (scrollable ? ' overflow-y-auto' : '') }">
+        <template #header>
+            <UDashboardNavbar v-if="!hideHeader" :title="$t('components.notifications.title')">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
 
-                    <UFormField class="flex-1" name="categories" :label="$t('common.category', 2)">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.categories"
-                                multiple
-                                name="categories"
-                                :items="categories"
-                                value-key="mode"
-                                :search-input="{ placeholder: $t('common.search_field') }"
-                                class="w-full"
+                <template #right>
+                    <DNBToggle />
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <template #default>
+                    <UForm class="my-2 flex-1" :schema="schema" :state="query" @submit="refresh()">
+                        <div class="flex flex-row gap-2">
+                            <UFormField
+                                class="flex flex-initial flex-col"
+                                name="includeRead"
+                                :label="$t('components.notifications.include_read')"
+                                :ui="{ container: 'flex-1 flex' }"
                             >
-                                <template #default>
-                                    {{
-                                        query.categories.length === 0 || query.categories.length === categories.length
-                                            ? $t('components.notifications.all_categories')
-                                            : query.categories
-                                                  .map((c) =>
-                                                      $t(`enums.notifications.NotificationCategory.${NotificationCategory[c]}`),
-                                                  )
-                                                  .join(', ')
-                                    }}
-                                </template>
-                                <template #item-label="{ item }">
-                                    {{ $t(`enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormField>
+                                <div class="flex flex-1 items-center">
+                                    <USwitch v-model="query.includeRead" />
+                                </div>
+                            </UFormField>
 
-                    <UFormField class="flex-initial" label="&nbsp;">
-                        <UButton
-                            icon="i-mdi-notification-clear-all"
-                            :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            :label="$t('components.notifications.mark_all_read')"
-                            @click="() => markAll().finally(timeoutFn)"
-                        />
-                    </UFormField>
-                </div>
-            </UForm>
+                            <UFormField class="flex-1" name="categories" :label="$t('common.category', 2)">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.categories"
+                                        multiple
+                                        name="categories"
+                                        :items="categories"
+                                        value-key="mode"
+                                        :search-input="{ placeholder: $t('common.search_field') }"
+                                        class="w-full"
+                                    >
+                                        <template #default>
+                                            {{
+                                                query.categories.length === 0 || query.categories.length === categories.length
+                                                    ? $t('components.notifications.all_categories')
+                                                    : query.categories
+                                                          .map((c) =>
+                                                              $t(
+                                                                  `enums.notifications.NotificationCategory.${NotificationCategory[c]}`,
+                                                              ),
+                                                          )
+                                                          .join(', ')
+                                            }}
+                                        </template>
+                                        <template #item-label="{ item }">
+                                            {{
+                                                $t(
+                                                    `enums.notifications.NotificationCategory.${NotificationCategory[item.mode ?? 0]}`,
+                                                )
+                                            }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormField>
+
+                            <UFormField class="flex-initial" label="&nbsp;">
+                                <UButton
+                                    icon="i-mdi-notification-clear-all"
+                                    :disabled="
+                                        !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
+                                    "
+                                    :label="$t('components.notifications.mark_all_read')"
+                                    @click="() => markAll().finally(timeoutFn)"
+                                />
+                            </UFormField>
+                        </div>
+                    </UForm>
+                </template>
+            </UDashboardToolbar>
         </template>
-    </UDashboardToolbar>
 
-    <div class="flex flex-1 flex-col">
-        <div class="flex-1">
+        <template #body>
             <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.notification', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -165,7 +192,7 @@ const canSubmit = ref(true);
                 icon="i-mdi-bell"
             />
 
-            <ul v-else class="flex flex-1 flex-col divide-y divide-default" role="list">
+            <ul v-else class="min-w-full divide-y divide-default" :class="scrollable ? 'pb-2' : ''" role="list">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
@@ -182,19 +209,19 @@ const canSubmit = ref(true);
                                     :color="!not.readAt ? 'primary' : 'neutral'"
                                     :to="not.data.link.to"
                                     trailing-icon="i-mdi-link-variant"
+                                    class="w-full pr-1 pl-0"
+                                    :label="$t(not.title!.key, not.title?.parameters ?? {})"
                                     @click="
                                         markUnread(false, not.id);
                                         $emit('clicked');
                                     "
-                                >
-                                    {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                </UButton>
+                                />
                                 <span v-else>
                                     {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                 </span>
                             </h3>
 
-                            <p class="flex text-sm leading-6 text-gray-200">
+                            <p class="flex text-sm leading-6 break-words text-gray-200">
                                 {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
                             </p>
                         </div>
@@ -208,12 +235,10 @@ const canSubmit = ref(true);
                             </p>
 
                             <div class="flex items-center gap-x-2">
-                                <template v-if="not.readAt">
-                                    <p class="text-xs leading-5">
-                                        {{ $t('common.read') }}
-                                        <GenericTime :value="not.readAt" ago />
-                                    </p>
-                                </template>
+                                <p v-if="not.readAt" class="text-xs leading-5">
+                                    {{ $t('common.read') }}
+                                    <GenericTime :value="not.readAt" ago />
+                                </p>
                                 <template v-else>
                                     <div class="flex-none rounded-full bg-error-500/20 p-1">
                                         <div class="size-1.5 rounded-full bg-error-500" />
@@ -247,8 +272,16 @@ const canSubmit = ref(true);
                     </div>
                 </li>
             </ul>
-        </div>
+        </template>
 
-        <Pagination v-model="query.page" :pagination="data?.pagination" :status="status" :refresh="refresh" />
-    </div>
+        <template #footer>
+            <Pagination
+                v-if="!hideFooter"
+                v-model="query.page"
+                :pagination="data?.pagination"
+                :status="status"
+                :refresh="refresh"
+            />
+        </template>
+    </UDashboardPanel>
 </template>

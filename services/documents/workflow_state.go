@@ -300,7 +300,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 
 func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Reminder {
 	count := int32(0)
-	if state.NextReminderCount != nil {
+	if state.GetNextReminderCount() > 0 {
 		count = state.GetNextReminderCount()
 	}
 
