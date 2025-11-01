@@ -36,28 +36,29 @@ func (s *Server) CompleteCitizens(
 	currentJob := req.CurrentJob != nil && req.GetCurrentJob()
 
 	orderBys := []mysql.OrderByClause{}
-	if len(req.GetUserIds()) == 0 {
-		if currentJob {
-			condition = condition.AND(
-				tUsers.Job.EQ(mysql.String(userInfo.GetJob())),
-			)
-		}
 
-		search := dbutils.PrepareForLikeSearch(req.GetSearch())
-		if search != "" {
-			condition = condition.AND(
-				mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
-					LIKE(mysql.String(search)),
-			)
-		}
-	} else {
+	if currentJob {
+		condition = condition.AND(
+			tUsers.Job.EQ(mysql.String(userInfo.GetJob())),
+		)
+	}
+
+	search := dbutils.PrepareForLikeSearch(req.GetSearch())
+	if search != "" {
+		condition = condition.AND(
+			mysql.CONCAT(tUsers.Firstname, mysql.String(" "), tUsers.Lastname).
+				LIKE(mysql.String(search)),
+		)
+	}
+
+	if len(req.GetUserIds()) > 0 {
 		userIds := []mysql.Expression{}
 		for _, v := range req.GetUserIds() {
 			userIds = append(userIds, mysql.Int32(v))
 		}
 
 		if req.UserIdsOnly != nil && req.GetUserIdsOnly() {
-			condition = condition.AND(tUsers.ID.IN(userIds...))
+			condition = condition.OR(tUsers.ID.IN(userIds...))
 		}
 
 		// Make sure to sort by the user IDs if provided

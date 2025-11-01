@@ -28,11 +28,15 @@ const props = withDefaults(
         qualification: Qualification;
         status?: ResultStatus[];
         examMode?: QualificationExamMode;
+        searchQuery?: {
+            users: number[];
+        };
     }>(),
     {
         qualificationId: undefined,
         status: () => [],
         examMode: QualificationExamMode.UNSPECIFIED,
+        searchQuery: () => ({ users: [] }),
     },
 );
 
@@ -77,11 +81,17 @@ const query = reactive<Schema>({
 });
 
 const { data, status, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${JSON.stringify(query)}-${query.page}-${props.qualification.id}`,
+    `qualifications-results-${JSON.stringify(query)}-${query.page}-${props.qualification.id}-${JSON.stringify(props.searchQuery)}`,
     () => listQualificationResults(props.qualification.id, props.status),
     {
         watch: [query],
     },
+);
+
+watchDebounced(
+    () => props.searchQuery,
+    async () => refresh(),
+    { deep: true, debounce: 250, maxWait: 1250 },
 );
 
 defineExpose({

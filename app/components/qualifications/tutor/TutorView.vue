@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
-import InputMenu from '~/components/partials/InputMenu.vue';
+import SelectMenu from '~/components/partials/SelectMenu.vue';
 import RequestList from '~/components/qualifications/tutor/RequestList.vue';
 import ResultList from '~/components/qualifications/tutor/ResultList.vue';
 import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
@@ -24,7 +23,7 @@ const resultTutorModal = overlay.create(ResultTutorModal, {
 });
 
 const schema = z.object({
-    user: z.coerce.number().optional(),
+    users: z.coerce.number().array().max(5).default([]),
 });
 
 const query = useSearchForm('qualifications_tutor', schema);
@@ -38,17 +37,17 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
         <template #header>
             <UDashboardToolbar>
                 <UForm :schema="schema" :state="query" class="mb-2 flex-1">
-                    <UFormField class="flex-1" name="user" :label="$t('common.search')">
-                        <InputMenu
-                            v-model="query.user"
+                    <UFormField class="flex-1" name="users" :label="$t('common.search')">
+                        <SelectMenu
+                            v-model="query.users"
+                            multiple
                             :filter-fields="['firstname', 'lastname']"
-                            :placeholder="$t('common.citizen', 1)"
-                            trailing
+                            :placeholder="$t('common.citizen', 2)"
                             :searchable="
                                 async (q: string): Promise<UserShort[]> =>
                                     await completorStore.completeCitizens({
                                         search: q,
-                                        userIds: query.user ? [query.user] : [],
+                                        userIds: query.users ? query.users : [],
                                     })
                             "
                             searchable-key="completor-citizens"
@@ -56,12 +55,16 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                             value-key="userId"
                             class="w-full"
                         >
-                            <template #item-label="{ item }">
-                                <ColleagueName :colleague="item" />
+                            <template v-if="query.users.length > 0" #default>
+                                {{ $t('common.selected', query.users.length) }}
+                            </template>
+
+                            <template #item-label="{ item: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
-                        </InputMenu>
+                        </SelectMenu>
                     </UFormField>
                 </UForm>
             </UDashboardToolbar>
@@ -75,6 +78,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                         class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
+                        :search-query="query"
                         @refresh="async () => results?.refresh()"
                     />
                 </template>
@@ -104,6 +108,7 @@ const results = ref<InstanceType<typeof ResultList> | null>(null);
                         class="-mx-4 -mb-4 sm:-mx-6 sm:-mb-6"
                         :qualification="qualification"
                         :exam-mode="qualification.examMode"
+                        :search-query="query"
                         @refresh="async () => requests?.refresh()"
                     />
                 </template>
