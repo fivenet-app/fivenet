@@ -478,14 +478,6 @@ const selectedTab = computed({
     },
 });
 
-watch(
-    state,
-    () => {
-        console.log(state);
-    },
-    { deep: true },
-);
-
 const formRef = useTemplateRef('formRef');
 </script>
 

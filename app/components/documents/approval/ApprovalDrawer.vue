@@ -252,6 +252,20 @@ const taskFormDrawer = overlay.create(TaskForm);
                                         color="info"
                                         variant="outline"
                                     />
+
+                                    <UBadge
+                                        v-if="policy?.signatureRequired"
+                                        :label="$t('components.documents.approval.signature_required')"
+                                        color="info"
+                                        variant="outline"
+                                    />
+
+                                    <UBadge
+                                        v-if="policy?.selfApproveAllowed"
+                                        :label="$t('components.documents.approval.self_approve_allowed_badge')"
+                                        color="info"
+                                        variant="outline"
+                                    />
                                 </div>
 
                                 <div v-else>
@@ -292,7 +306,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                         </div>
 
                         <div class="flex flex-1 basis-3/4 flex-col gap-4 overflow-x-hidden p-0.5">
-                            <ApprovalList :document-id="documentId" />
+                            <ApprovalList :document-id="documentId" :doc-creator-id="doc.creatorId" />
 
                             <TaskList :document-id="documentId">
                                 <template

@@ -12,7 +12,7 @@ import StatusBadge from './StatusBadge.vue';
 const props = defineProps<{
     documentId: number;
     policy?: ApprovalPolicy;
-    taskId?: number;
+    docCreatorId?: number;
 }>();
 
 const overlay = useOverlay();
@@ -29,7 +29,6 @@ async function listApprovals(): Promise<ListApprovalsResponse> {
     try {
         const call = approvalClient.listApprovals({
             documentId: props.documentId,
-            taskId: props.taskId,
         });
         const { response } = await call;
 
@@ -110,6 +109,14 @@ const confirmModal = overlay.create(ConfirmModalWithReason);
                                 :user="approval.user"
                                 :user-id="approval.userId"
                                 size="xs"
+                            />
+
+                            <UBadge
+                                v-if="props.docCreatorId === approval.userId"
+                                color="info"
+                                variant="subtle"
+                                :label="$t('common.creator')"
+                                size="sm"
                             />
                         </p>
                     </div>

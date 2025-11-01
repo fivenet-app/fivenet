@@ -51,7 +51,7 @@ function setFromProps(): void {
     state.ruleKind = policy.value.ruleKind;
     state.onEditBehavior = policy.value.onEditBehavior;
     state.requiredCount =
-        policy.value.requiredCount === undefined || policy.value.requiredCount < 0 ? 1 : policy.value.requiredCount;
+        policy.value.requiredCount === undefined || policy.value.requiredCount <= 0 ? 1 : policy.value.requiredCount;
     state.signatureRequired = policy.value.signatureRequired;
     state.selfApproveAllowed = policy.value.selfApproveAllowed;
 }

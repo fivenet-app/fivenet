@@ -191,11 +191,6 @@ var (
 		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalDocIsDraft.content"},
 		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalDocIsDraft.title"},
 	)
-	ErrApprovalCreatorCannotDecide = common.NewI18nErr(
-		codes.InvalidArgument,
-		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalCreatorCannotDecide.content"},
-		&common.I18NItem{Key: "errors.DocumentsService.ErrApprovalCreatorCannotDecide.title"},
-	)
 
 	ErrStampLimitReached = common.NewI18nErr(
 		codes.InvalidArgument,

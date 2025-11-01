@@ -937,9 +937,10 @@
                 "slots": "Approval Slots",
                 "document_not_published": "Document must be published to request approvals.",
                 "self_approve_allowed": {
-                    "title": "Self-approve allowed",
-                    "description": "Allow users to approve their own documents."
-                }
+                    "title": "Count self-approve",
+                    "description": "Count self-approvals towards required approvals."
+                },
+                "self_approve_allowed_badge": "Self-approvals allowed"
             }
         },
         "livemap": {
@@ -2294,10 +2295,6 @@
             "ErrApprovalDocIsDraft": {
                 "title": "Document is still a draft!",
                 "content": "You can't create approval tasks for draft documents."
-            },
-            "ErrApprovalCreatorCannotDecide": {
-                "title": "You can't approve/decline your own document!",
-                "content": "Please ask another user to approve/decline this document."
             }
         },
         "LivemapService": {

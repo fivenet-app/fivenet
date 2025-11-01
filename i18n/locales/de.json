@@ -937,9 +937,10 @@
                 "signature_required": "Unterschrift(en) erforderlich",
                 "document_not_published": "Das Dokument wurde nicht veröffentlicht.",
                 "self_approve_allowed": {
-                    "title": "Selbstgenehmigung erlaubt",
-                    "description": "Erlaubt dem Ersteller des Dokuments, seine eigenen Genehmigungen zu erteilen."
-                }
+                    "title": "Selbstgenehmigung zulassen",
+                    "description": "Sollen Genehmigungen vom Dokumenten-Ersteller zu den Benötigten Genehmigungen zählen."
+                },
+                "self_approve_allowed_badge": "Selbstgenehmigung zugelassen"
             }
         },
         "livemap": {
@@ -2294,10 +2295,6 @@
             "ErrApprovalDocIsDraft": {
                 "title": "Dokument ist ein Entwurf!",
                 "content": "Nur veröffentlichte Dokumente können genehmigt werden."
-            },
-            "ErrApprovalCreatorCannotDecide": {
-                "title": "Sie können Ihr eigenes Dokument nicht genehmigen/ablehnen!",
-                "content": "Bitte bitten Sie einen anderen Benutzer, dieses Dokument zu genehmigen/abzulehnen."
             }
         },
         "LivemapService": {

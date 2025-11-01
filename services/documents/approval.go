@@ -338,6 +338,7 @@ func (s *Server) getApprovalPolicy(
 			tApprovalPolicy.StartedAt,
 			tApprovalPolicy.CompletedAt,
 			tApprovalPolicy.OnEditBehavior,
+			tApprovalPolicy.SelfApproveAllowed,
 			tApprovalPolicy.AssignedCount,
 			tApprovalPolicy.ApprovedCount,
 			tApprovalPolicy.DeclinedCount,
@@ -424,6 +425,7 @@ func (s *Server) createApprovalPolicy(
 			tApprovalPolicy.RequiredCount,
 			tApprovalPolicy.OnEditBehavior,
 			tApprovalPolicy.SignatureRequired,
+			tApprovalPolicy.SelfApproveAllowed,
 		).
 		VALUES(
 			documentId,
@@ -432,6 +434,7 @@ func (s *Server) createApprovalPolicy(
 			pol.GetRequiredCount(),
 			pol.GetOnEditBehavior(),
 			pol.GetSignatureRequired(),
+			pol.GetSelfApproveAllowed(),
 		).
 		ExecContext(ctx, tx); err != nil {
 		return err
@@ -480,6 +483,7 @@ func (s *Server) UpsertApprovalPolicy(
 			tApprovalPolicy.RuleKind,
 			tApprovalPolicy.RequiredCount,
 			tApprovalPolicy.SignatureRequired,
+			tApprovalPolicy.SelfApproveAllowed,
 		).
 		VALUES(
 			pol.GetDocumentId(),
@@ -488,12 +492,14 @@ func (s *Server) UpsertApprovalPolicy(
 			int32(pol.GetRuleKind()),
 			pol.GetRequiredCount(),
 			pol.GetSignatureRequired(),
+			pol.GetSelfApproveAllowed(),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tApprovalPolicy.OnEditBehavior.SET(mysql.Int32(int32(pol.GetOnEditBehavior()))),
 			tApprovalPolicy.RuleKind.SET(mysql.Int32(int32(pol.GetRuleKind()))),
 			tApprovalPolicy.RequiredCount.SET(mysql.Int32(pol.GetRequiredCount())),
 			tApprovalPolicy.SignatureRequired.SET(mysql.Bool(pol.GetSignatureRequired())),
+			tApprovalPolicy.SelfApproveAllowed.SET(mysql.Bool(pol.GetSelfApproveAllowed())),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -1338,9 +1344,6 @@ func (s *Server) DecideApproval(
 	if doc == nil || doc.GetMeta() == nil || doc.GetMeta().GetDraft() {
 		return nil, errorsdocuments.ErrApprovalDocIsDraft
 	}
-	if doc.GetCreatorId() == userInfo.GetUserId() {
-		return nil, errorsdocuments.ErrApprovalCreatorCannotDecide
-	}
 
 	docSnap := doc.GetUpdatedAt()
 	if docSnap == nil {
@@ -1855,25 +1858,50 @@ func (s *Server) recomputeApprovalPolicyTx(
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks
 	tDocumentsMeta := table.FivenetDocumentsMeta
 
-	// Load policy (required_count, etc.) if given and exists
-	var pol documents.ApprovalPolicy
-	if err := tApprovalPolicy.
-		SELECT(
-			tApprovalPolicy.DocumentID,
-			tApprovalPolicy.RuleKind,
-			tApprovalPolicy.RequiredCount,
-			tApprovalPolicy.SnapshotDate,
-			tApprovalPolicy.StartedAt,
-			tApprovalPolicy.CompletedAt,
-			tApprovalPolicy.OnEditBehavior,
-		).
-		FROM(tApprovalPolicy).
-		WHERE(tApprovalPolicy.DocumentID.EQ(mysql.Int64(documentID))).
-		LIMIT(1).
-		QueryContext(ctx, tx, &pol); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+	// Load policy if exists
+	pol, err := s.getApprovalPolicy(
+		ctx,
+		tx,
+		tApprovalPolicy.AS("approval_policy").DocumentID.EQ(mysql.Int64(documentID)),
+	)
+	if err != nil {
+		return err
+	}
+	if pol == nil {
+		pol = &documents.ApprovalPolicy{}
+	}
+	pol.Default()
+
+	var docCreatorId int32
+	if !pol.SelfApproveAllowed {
+		// Get document creator ID
+		var docCreator struct {
+			CreatorId int32 `alias:"creator_id"`
+		}
+		tDocuments := table.FivenetDocuments
+		if err := tDocuments.
+			SELECT(
+				tDocuments.CreatorID.AS("creator_id"),
+			).
+			FROM(tDocuments).
+			WHERE(tDocuments.ID.EQ(mysql.Int64(documentID))).
+			LIMIT(1).
+			QueryContext(ctx, tx, &docCreator); err != nil {
 			return err
 		}
+
+		// In case the document has no creator (anymore).
+		if docCreator.CreatorId > 0 {
+			docCreatorId = docCreator.CreatorId
+		}
+	}
+
+	approvalCondition := tApprovals.DocumentID.EQ(mysql.Int(documentID))
+	if !pol.SelfApproveAllowed && docCreatorId > 0 {
+		approvalCondition = mysql.AND(
+			approvalCondition,
+			tApprovals.UserID.NOT_EQ(mysql.Int32(docCreatorId)),
+		)
 	}
 
 	var agg struct {
@@ -1892,9 +1920,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 				ELSE(mysql.Int(0))).AS("declined"),
 		).
 		FROM(tApprovals).
-		WHERE(mysql.AND(
-			tApprovals.DocumentID.EQ(mysql.Int(documentID)),
-		)).
+		WHERE(approvalCondition).
 		QueryContext(ctx, tx, &agg); err != nil {
 		return err
 	}
@@ -1994,6 +2020,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 		WHERE(mysql.AND(
 			tApprovalPolicy.DocumentID.EQ(mysql.Int(documentID)),
 		)).
+		LIMIT(1).
 		ExecContext(ctx, tx); err != nil {
 		return err
 	}
