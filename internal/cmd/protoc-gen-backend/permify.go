@@ -88,6 +88,10 @@ func (p *PermifyModule) Execute(
 		}
 	}
 
+	slices.SortFunc(fs, func(a, b pgs.File) int {
+		return strings.Compare(a.File().InputPath().String(), b.File().InputPath().String())
+	})
+
 	p.AddGeneratorTemplateFile(
 		path.Join("perms_remap.go"),
 		p.remapTpl,

@@ -305,6 +305,10 @@ export interface TemplateApprovalPolicy {
      * @generated from protobuf field: bool signature_required = 4
      */
     signatureRequired: boolean;
+    /**
+     * @generated from protobuf field: bool self_approve_allowed = 5
+     */
+    selfApproveAllowed: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateApprovalTaskSeed
@@ -1112,7 +1116,8 @@ class TemplateApprovalPolicy$Type extends MessageType<TemplateApprovalPolicy> {
             { no: 1, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 2, name: "on_edit_behavior", kind: "enum", T: () => ["resources.documents.OnEditBehavior", OnEditBehavior, "ON_EDIT_BEHAVIOR_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "required_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
-            { no: 4, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "self_approve_allowed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<TemplateApprovalPolicy>): TemplateApprovalPolicy {
@@ -1120,6 +1125,7 @@ class TemplateApprovalPolicy$Type extends MessageType<TemplateApprovalPolicy> {
         message.ruleKind = 0;
         message.onEditBehavior = 0;
         message.signatureRequired = false;
+        message.selfApproveAllowed = false;
         if (value !== undefined)
             reflectionMergePartial<TemplateApprovalPolicy>(this, message, value);
         return message;
@@ -1140,6 +1146,9 @@ class TemplateApprovalPolicy$Type extends MessageType<TemplateApprovalPolicy> {
                     break;
                 case /* bool signature_required */ 4:
                     message.signatureRequired = reader.bool();
+                    break;
+                case /* bool self_approve_allowed */ 5:
+                    message.selfApproveAllowed = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1165,6 +1174,9 @@ class TemplateApprovalPolicy$Type extends MessageType<TemplateApprovalPolicy> {
         /* bool signature_required = 4; */
         if (message.signatureRequired !== false)
             writer.tag(4, WireType.Varint).bool(message.signatureRequired);
+        /* bool self_approve_allowed = 5; */
+        if (message.selfApproveAllowed !== false)
+            writer.tag(5, WireType.Varint).bool(message.selfApproveAllowed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

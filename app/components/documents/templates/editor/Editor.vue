@@ -73,6 +73,7 @@ const schema = z.object({
                 onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
                 requiredCount: z.number().min(1).max(10).default(2),
                 signatureRequired: z.boolean().default(false),
+                selfApproveAllowed: z.boolean().default(true),
             }),
 
             tasks: z
@@ -156,6 +157,7 @@ const state = reactive<Schema>({
             onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
             requiredCount: 2,
             signatureRequired: false,
+            selfApproveAllowed: true,
         },
 
         tasks: [],
@@ -258,6 +260,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                     onEditBehavior: values.approval.policy.onEditBehavior,
                     requiredCount: values.approval.policy.requiredCount,
                     signatureRequired: values.approval.policy.signatureRequired,
+                    selfApproveAllowed: values.approval.policy.selfApproveAllowed,
                 },
                 tasks: values.approval.tasks.map((task) => ({
                     ruleKind: task.ruleKind,
@@ -372,6 +375,7 @@ function setValuesFromTemplate(tpl: Template): void {
             onEditBehavior: tpl.approval?.policy?.onEditBehavior ?? OnEditBehavior.KEEP_PROGRESS,
             requiredCount: tpl.approval?.policy?.requiredCount ?? 2,
             signatureRequired: tpl.approval?.policy?.signatureRequired ?? false,
+            selfApproveAllowed: tpl.approval?.policy?.selfApproveAllowed ?? true,
         },
         tasks:
             tpl.approval?.tasks.map((task) => ({
@@ -473,6 +477,14 @@ const selectedTab = computed({
         router.push({ query: { tab: tab }, hash: '#control-active-item' });
     },
 });
+
+watch(
+    state,
+    () => {
+        console.log(state);
+    },
+    { deep: true },
+);
 
 const formRef = useTemplateRef('formRef');
 </script>

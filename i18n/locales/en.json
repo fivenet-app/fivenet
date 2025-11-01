@@ -935,7 +935,11 @@
                     "title": "Tasks"
                 },
                 "slots": "Approval Slots",
-                "document_not_published": "Document must be published to request approvals."
+                "document_not_published": "Document must be published to request approvals.",
+                "self_approve_allowed": {
+                    "title": "Self-approve allowed",
+                    "description": "Allow users to approve their own documents."
+                }
             }
         },
         "livemap": {

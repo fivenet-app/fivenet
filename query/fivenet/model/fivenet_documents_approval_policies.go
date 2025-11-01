@@ -12,20 +12,21 @@ import (
 )
 
 type FivenetDocumentsApprovalPolicies struct {
-	DocumentID        int64      `sql:"primary_key" json:"document_id"`
-	SnapshotDate      time.Time  `json:"snapshot_date"`
-	OnEditBehavior    int16      `json:"on_edit_behavior"`
-	RuleKind          *int16     `json:"rule_kind"`
-	RequiredCount     int32      `json:"required_count"`
-	SignatureRequired bool       `json:"signature_required"`
-	AssignedCount     int32      `json:"assigned_count"`
-	ApprovedCount     int32      `json:"approved_count"`
-	DeclinedCount     int32      `json:"declined_count"`
-	PendingCount      int32      `json:"pending_count"`
-	AnyDeclined       bool       `json:"any_declined"`
-	StartedAt         *time.Time `json:"started_at"`
-	CompletedAt       *time.Time `json:"completed_at"`
-	CreatedAt         *time.Time `json:"created_at"`
-	UpdatedAt         *time.Time `json:"updated_at"`
-	DeletedAt         *time.Time `json:"deleted_at"`
+	DocumentID         int64      `sql:"primary_key" json:"document_id"`
+	SnapshotDate       time.Time  `json:"snapshot_date"`
+	OnEditBehavior     int16      `json:"on_edit_behavior"`
+	RuleKind           *int16     `json:"rule_kind"`
+	RequiredCount      int32      `json:"required_count"`
+	SignatureRequired  bool       `json:"signature_required"`
+	SelfApproveAllowed bool       `json:"self_approve_allowed"`
+	AssignedCount      int32      `json:"assigned_count"`
+	ApprovedCount      int32      `json:"approved_count"`
+	DeclinedCount      int32      `json:"declined_count"`
+	PendingCount       int32      `json:"pending_count"`
+	AnyDeclined        bool       `json:"any_declined"`
+	StartedAt          *time.Time `json:"started_at"`
+	CompletedAt        *time.Time `json:"completed_at"`
+	CreatedAt          *time.Time `json:"created_at"`
+	UpdatedAt          *time.Time `json:"updated_at"`
+	DeletedAt          *time.Time `json:"deleted_at"`
 }

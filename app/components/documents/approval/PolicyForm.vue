@@ -25,6 +25,7 @@ const schema = z.object({
     onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
     requiredCount: z.number().min(1).max(10).default(2),
     signatureRequired: z.boolean().default(false),
+    selfApproveAllowed: z.boolean().default(true),
 });
 
 type Schema = z.output<typeof schema>;
@@ -34,6 +35,7 @@ const state = reactive<Schema>({
     onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
     requiredCount: 2,
     signatureRequired: false,
+    selfApproveAllowed: true,
 });
 
 function setFromProps(): void {
@@ -42,6 +44,7 @@ function setFromProps(): void {
         state.onEditBehavior = OnEditBehavior.KEEP_PROGRESS;
         state.requiredCount = 2;
         state.signatureRequired = false;
+        state.selfApproveAllowed = true;
         return;
     }
 
@@ -50,6 +53,7 @@ function setFromProps(): void {
     state.requiredCount =
         policy.value.requiredCount === undefined || policy.value.requiredCount < 0 ? 1 : policy.value.requiredCount;
     state.signatureRequired = policy.value.signatureRequired;
+    state.selfApproveAllowed = policy.value.selfApproveAllowed;
 }
 
 setFromProps();
@@ -63,6 +67,7 @@ async function upsertPolicy(values: Schema): Promise<void> {
             onEditBehavior: values.onEditBehavior,
             requiredCount: values.ruleKind === ApprovalRuleKind.QUORUM_ANY ? values.requiredCount : undefined,
             signatureRequired: values.signatureRequired,
+            selfApproveAllowed: values.selfApproveAllowed,
 
             assignedCount: 0,
             approvedCount: 0,

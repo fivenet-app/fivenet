@@ -387,11 +387,12 @@ func (s *Server) getOrCreateApprovalPolicy(
 
 	requiredCount := int32(1)
 	if err = s.createApprovalPolicy(ctx, tx, documentId, &documents.ApprovalPolicy{
-		SnapshotDate:      snapshotDate,
-		RuleKind:          documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL,
-		RequiredCount:     &requiredCount,
-		OnEditBehavior:    documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS,
-		SignatureRequired: false,
+		SnapshotDate:       snapshotDate,
+		RuleKind:           documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL,
+		RequiredCount:      &requiredCount,
+		OnEditBehavior:     documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS,
+		SignatureRequired:  false,
+		SelfApproveAllowed: true,
 	}); err != nil {
 		return nil, err
 	}
@@ -1526,13 +1527,11 @@ func (s *Server) DecideApproval(
 	}
 
 	var existing struct {
-		ID     int64 `alias:"id"`
-		Status int32 `alias:"status"`
+		ID int64 `alias:"id"`
 	}
 	if err := tApprovals.
 		SELECT(
 			tApprovals.ID.AS("id"),
-			tApprovals.Status.AS("status"),
 		).
 		FROM(tApprovals).
 		WHERE(mysql.AND(

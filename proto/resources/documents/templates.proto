@@ -178,6 +178,7 @@ message TemplateApprovalPolicy {
   resources.documents.OnEditBehavior on_edit_behavior = 2 [(buf.validate.field).enum.defined_only = true];
   optional int32 required_count = 3 [(buf.validate.field).int32.gte = 1];
   bool signature_required = 4;
+  bool self_approve_allowed = 5;
 }
 
 message TemplateApprovalTaskSeed {

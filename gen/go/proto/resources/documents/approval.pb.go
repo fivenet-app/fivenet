@@ -288,25 +288,26 @@ func (ApprovalStatus) EnumDescriptor() ([]byte, []int) {
 }
 
 type ApprovalPolicy struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	DocumentId        int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	SnapshotDate      *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
-	OnEditBehavior    OnEditBehavior         `protobuf:"varint,5,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
-	RuleKind          ApprovalRuleKind       `protobuf:"varint,6,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
-	RequiredCount     *int32                 `protobuf:"varint,7,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
-	SignatureRequired bool                   `protobuf:"varint,8,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
-	AssignedCount     int32                  `protobuf:"varint,9,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
-	ApprovedCount     int32                  `protobuf:"varint,10,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
-	DeclinedCount     int32                  `protobuf:"varint,11,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
-	PendingCount      int32                  `protobuf:"varint,12,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
-	AnyDeclined       bool                   `protobuf:"varint,13,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
-	StartedAt         *timestamp.Timestamp   `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
-	CompletedAt       *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
-	CreatedAt         *timestamp.Timestamp   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt         *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt         *timestamp.Timestamp   `protobuf:"bytes,18,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId         int64                  `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	SnapshotDate       *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=snapshot_date,json=snapshotDate,proto3" json:"snapshot_date,omitempty"`
+	OnEditBehavior     OnEditBehavior         `protobuf:"varint,5,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	RuleKind           ApprovalRuleKind       `protobuf:"varint,6,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
+	RequiredCount      *int32                 `protobuf:"varint,7,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
+	SignatureRequired  bool                   `protobuf:"varint,8,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
+	SelfApproveAllowed bool                   `protobuf:"varint,19,opt,name=self_approve_allowed,json=selfApproveAllowed,proto3" json:"self_approve_allowed,omitempty"`
+	AssignedCount      int32                  `protobuf:"varint,9,opt,name=assigned_count,json=assignedCount,proto3" json:"assigned_count,omitempty"`
+	ApprovedCount      int32                  `protobuf:"varint,10,opt,name=approved_count,json=approvedCount,proto3" json:"approved_count,omitempty"`
+	DeclinedCount      int32                  `protobuf:"varint,11,opt,name=declined_count,json=declinedCount,proto3" json:"declined_count,omitempty"`
+	PendingCount       int32                  `protobuf:"varint,12,opt,name=pending_count,json=pendingCount,proto3" json:"pending_count,omitempty"`
+	AnyDeclined        bool                   `protobuf:"varint,13,opt,name=any_declined,json=anyDeclined,proto3" json:"any_declined,omitempty"`
+	StartedAt          *timestamp.Timestamp   `protobuf:"bytes,14,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
+	CompletedAt        *timestamp.Timestamp   `protobuf:"bytes,15,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
+	CreatedAt          *timestamp.Timestamp   `protobuf:"bytes,16,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt          *timestamp.Timestamp   `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt          *timestamp.Timestamp   `protobuf:"bytes,18,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *ApprovalPolicy) Reset() {
@@ -377,6 +378,13 @@ func (x *ApprovalPolicy) GetRequiredCount() int32 {
 func (x *ApprovalPolicy) GetSignatureRequired() bool {
 	if x != nil {
 		return x.SignatureRequired
+	}
+	return false
+}
+
+func (x *ApprovalPolicy) GetSelfApproveAllowed() bool {
+	if x != nil {
+		return x.SelfApproveAllowed
 	}
 	return false
 }
@@ -868,7 +876,7 @@ var File_resources_documents_approval_proto protoreflect.FileDescriptor
 
 const file_resources_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xee\a\n" +
+	"\"resources/documents/approval.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/documents/documents.proto\x1a\x1fresources/documents/stamp.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa0\b\n" +
 	"\x0eApprovalPolicy\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12C\n" +
@@ -876,7 +884,8 @@ const file_resources_documents_approval_proto_rawDesc = "" +
 	"\x10on_edit_behavior\x18\x05 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x12L\n" +
 	"\trule_kind\x18\x06 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x123\n" +
 	"\x0erequired_count\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12-\n" +
-	"\x12signature_required\x18\b \x01(\bR\x11signatureRequired\x12%\n" +
+	"\x12signature_required\x18\b \x01(\bR\x11signatureRequired\x120\n" +
+	"\x14self_approve_allowed\x18\x13 \x01(\bR\x12selfApproveAllowed\x12%\n" +
 	"\x0eassigned_count\x18\t \x01(\x05R\rassignedCount\x12%\n" +
 	"\x0eapproved_count\x18\n" +
 	" \x01(\x05R\rapprovedCount\x12%\n" +

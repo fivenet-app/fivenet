@@ -935,7 +935,11 @@
                 },
                 "slots": "Genehmigungs-Slots",
                 "signature_required": "Unterschrift(en) erforderlich",
-                "document_not_published": "Das Dokument wurde nicht veröffentlicht."
+                "document_not_published": "Das Dokument wurde nicht veröffentlicht.",
+                "self_approve_allowed": {
+                    "title": "Selbstgenehmigung erlaubt",
+                    "description": "Erlaubt dem Ersteller des Dokuments, seine eigenen Genehmigungen zu erteilen."
+                }
             }
         },
         "livemap": {

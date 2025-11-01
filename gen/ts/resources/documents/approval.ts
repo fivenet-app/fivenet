@@ -44,6 +44,10 @@ export interface ApprovalPolicy {
      */
     signatureRequired: boolean;
     /**
+     * @generated from protobuf field: bool self_approve_allowed = 19
+     */
+    selfApproveAllowed: boolean;
+    /**
      * @generated from protobuf field: int32 assigned_count = 9
      */
     assignedCount: number;
@@ -393,6 +397,7 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
             { no: 6, name: "rule_kind", kind: "enum", T: () => ["resources.documents.ApprovalRuleKind", ApprovalRuleKind, "APPROVAL_RULE_KIND_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 7, name: "required_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 1 } } } },
             { no: 8, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 19, name: "self_approve_allowed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "assigned_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "approved_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "declined_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
@@ -411,6 +416,7 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
         message.onEditBehavior = 0;
         message.ruleKind = 0;
         message.signatureRequired = false;
+        message.selfApproveAllowed = false;
         message.assignedCount = 0;
         message.approvedCount = 0;
         message.declinedCount = 0;
@@ -442,6 +448,9 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
                     break;
                 case /* bool signature_required */ 8:
                     message.signatureRequired = reader.bool();
+                    break;
+                case /* bool self_approve_allowed */ 19:
+                    message.selfApproveAllowed = reader.bool();
                     break;
                 case /* int32 assigned_count */ 9:
                     message.assignedCount = reader.int32();
@@ -533,6 +542,9 @@ class ApprovalPolicy$Type extends MessageType<ApprovalPolicy> {
         /* optional resources.timestamp.Timestamp deleted_at = 18; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* bool self_approve_allowed = 19; */
+        if (message.selfApproveAllowed !== false)
+            writer.tag(19, WireType.Varint).bool(message.selfApproveAllowed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

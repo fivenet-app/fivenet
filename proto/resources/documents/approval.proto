@@ -36,6 +36,7 @@ message ApprovalPolicy {
   ApprovalRuleKind rule_kind = 6 [(buf.validate.field).enum.defined_only = true];
   optional int32 required_count = 7 [(buf.validate.field).int32.gte = 1];
   bool signature_required = 8;
+  bool self_approve_allowed = 19;
 
   int32 assigned_count = 9;
   int32 approved_count = 10;

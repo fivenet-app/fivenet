@@ -761,6 +761,7 @@ func (s *Server) handleDocumentPublish(
 		}
 
 		newPol.SignatureRequired = apr.GetPolicy().GetSignatureRequired()
+		newPol.SelfApproveAllowed = apr.GetPolicy().GetSelfApproveAllowed()
 	}
 	newPol.Default()
 

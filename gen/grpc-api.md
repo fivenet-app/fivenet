@@ -3870,6 +3870,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `rule_kind` | [ApprovalRuleKind](#resourcesdocumentsApprovalRuleKind) |  |  |
 | `required_count` | [int32](#int32) | optional |  |
 | `signature_required` | [bool](#bool) |  |  |
+| `self_approve_allowed` | [bool](#bool) |  |  |
 | `assigned_count` | [int32](#int32) |  |  |
 | `approved_count` | [int32](#int32) |  |  |
 | `declined_count` | [int32](#int32) |  |  |
@@ -4198,6 +4199,7 @@ Policy snapshot applied to a specific version
 | `on_edit_behavior` | [OnEditBehavior](#resourcesdocumentsOnEditBehavior) |  |  |
 | `required_count` | [int32](#int32) | optional |  |
 | `signature_required` | [bool](#bool) |  |  |
+| `self_approve_allowed` | [bool](#bool) |  |  |
 
 
 

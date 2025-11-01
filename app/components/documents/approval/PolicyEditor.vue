@@ -10,12 +10,14 @@ const policy = defineModel<{
     onEditBehavior: OnEditBehavior;
     requiredCount?: number;
     signatureRequired: boolean;
+    selfApproveAllowed: boolean;
 }>({
     default: () => ({
         ruleKind: ApprovalRuleKind.REQUIRE_ALL,
         onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
         requiredCount: 2,
         signatureRequired: false,
+        selfApproveAllowed: true,
     }),
 });
 
@@ -65,6 +67,14 @@ const onEditBehaviors = computed(() => [
 
     <UFormField name="signatureRequired" :label="$t('components.documents.approval.signature_required')">
         <USwitch v-model="policy.signatureRequired" :disabled="disabled" />
+    </UFormField>
+
+    <UFormField
+        name="selfApproveAllowed"
+        :label="$t('components.documents.approval.self_approve_allowed.title')"
+        :description="$t('components.documents.approval.self_approve_allowed.description')"
+    >
+        <USwitch v-model="policy.selfApproveAllowed" :disabled="disabled" />
     </UFormField>
 
     <UFormField name="onEditBehavior" :label="$t('components.documents.approval.policy_form.on_edit_behavior')">

@@ -785,13 +785,14 @@ func (x *TemplateApproval) GetTasks() []*TemplateApprovalTaskSeed {
 }
 
 type TemplateApprovalPolicy struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	RuleKind          ApprovalRuleKind       `protobuf:"varint,1,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
-	OnEditBehavior    OnEditBehavior         `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
-	RequiredCount     *int32                 `protobuf:"varint,3,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
-	SignatureRequired bool                   `protobuf:"varint,4,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	RuleKind           ApprovalRuleKind       `protobuf:"varint,1,opt,name=rule_kind,json=ruleKind,proto3,enum=resources.documents.ApprovalRuleKind" json:"rule_kind,omitempty"`
+	OnEditBehavior     OnEditBehavior         `protobuf:"varint,2,opt,name=on_edit_behavior,json=onEditBehavior,proto3,enum=resources.documents.OnEditBehavior" json:"on_edit_behavior,omitempty"`
+	RequiredCount      *int32                 `protobuf:"varint,3,opt,name=required_count,json=requiredCount,proto3,oneof" json:"required_count,omitempty"`
+	SignatureRequired  bool                   `protobuf:"varint,4,opt,name=signature_required,json=signatureRequired,proto3" json:"signature_required,omitempty"`
+	SelfApproveAllowed bool                   `protobuf:"varint,5,opt,name=self_approve_allowed,json=selfApproveAllowed,proto3" json:"self_approve_allowed,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *TemplateApprovalPolicy) Reset() {
@@ -848,6 +849,13 @@ func (x *TemplateApprovalPolicy) GetRequiredCount() int32 {
 func (x *TemplateApprovalPolicy) GetSignatureRequired() bool {
 	if x != nil {
 		return x.SignatureRequired
+	}
+	return false
+}
+
+func (x *TemplateApprovalPolicy) GetSelfApproveAllowed() bool {
+	if x != nil {
+		return x.SelfApproveAllowed
 	}
 	return false
 }
@@ -1064,12 +1072,13 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12H\n" +
 	"\x06policy\x18\x02 \x01(\v2+.resources.documents.TemplateApprovalPolicyH\x00R\x06policy\x88\x01\x01\x12M\n" +
 	"\x05tasks\x18\x03 \x03(\v2-.resources.documents.TemplateApprovalTaskSeedB\b\xbaH\x05\x92\x01\x02\x10\x05R\x05tasks:\x06\xe2\xf3\x18\x02\b\x01B\t\n" +
-	"\a_policy\"\xb6\x02\n" +
+	"\a_policy\"\xe8\x02\n" +
 	"\x16TemplateApprovalPolicy\x12L\n" +
 	"\trule_kind\x18\x01 \x01(\x0e2%.resources.documents.ApprovalRuleKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\bruleKind\x12W\n" +
 	"\x10on_edit_behavior\x18\x02 \x01(\x0e2#.resources.documents.OnEditBehaviorB\b\xbaH\x05\x82\x01\x02\x10\x01R\x0eonEditBehavior\x123\n" +
 	"\x0erequired_count\x18\x03 \x01(\x05B\a\xbaH\x04\x1a\x02(\x01H\x00R\rrequiredCount\x88\x01\x01\x12-\n" +
-	"\x12signature_required\x18\x04 \x01(\bR\x11signatureRequiredB\x11\n" +
+	"\x12signature_required\x18\x04 \x01(\bR\x11signatureRequired\x120\n" +
+	"\x14self_approve_allowed\x18\x05 \x01(\bR\x12selfApproveAllowedB\x11\n" +
 	"\x0f_required_count\"\xd9\x02\n" +
 	"\x18TemplateApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
