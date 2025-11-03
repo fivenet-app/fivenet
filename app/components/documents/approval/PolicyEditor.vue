@@ -17,7 +17,7 @@ const policy = defineModel<{
         onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
         requiredCount: 2,
         signatureRequired: false,
-        selfApproveAllowed: true,
+        selfApproveAllowed: false,
     }),
 });
 

@@ -3,6 +3,7 @@ package dbsync
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"sync/atomic"
 	"time"
 
@@ -85,6 +86,10 @@ func (s *Config) LoadConfig() error {
 		return fmt.Errorf("failed to read config file data into the system. %w", err)
 	}
 
+	if err := c.Init(); err != nil {
+		return fmt.Errorf("failed to initialize config. %w", err)
+	}
+
 	s.cfg.Store(c)
 
 	return nil
@@ -138,13 +143,30 @@ type DBSyncDestination struct {
 }
 
 type DBSyncSourceTables struct {
-	Jobs      DBSyncTable `yaml:"jobs"`
-	JobGrades DBSyncTable `yaml:"jobGrades"`
-	Licenses  DBSyncTable `yaml:"licenses"`
+	Jobs      JobsDBSyncTable `yaml:"jobs"`
+	JobGrades DBSyncTable     `yaml:"jobGrades"`
+	Licenses  DBSyncTable     `yaml:"licenses"`
 
 	Users            UsersDBSyncTable `yaml:"users"`
 	CitizensLicenses DBSyncTable      `yaml:"userLicenses"`
 	Vehicles         DBSyncTable      `yaml:"vehicles"`
+}
+
+type FilterAction string
+
+const (
+	// Replace the matching pattern with the replacement string.
+	FilterActionReplace FilterAction = "replace"
+	// Drop the whole record if the pattern matches.
+	FilterActionDrop FilterAction = "drop"
+)
+
+type Filter struct {
+	Pattern     string       `yaml:"pattern"`
+	Action      FilterAction `yaml:"action"      default:"replace"`
+	Replacement string       `yaml:"replacement"`
+
+	compiledPattern *regexp.Regexp
 }
 
 type DBSyncTable struct {
@@ -162,21 +184,6 @@ func (c *DBSyncTable) GetSyncInterval() *time.Duration {
 	}
 
 	return c.SyncInterval
-}
-
-type FilterAction string
-
-const (
-	// Replace the matching pattern with the replacement string.
-	FilterActionReplace FilterAction = "replace"
-	// Drop the whole record if the pattern matches.
-	FilterActionDrop FilterAction = "drop"
-)
-
-type Filter struct {
-	Pattern     string       `yaml:"pattern"`
-	Action      FilterAction `yaml:"action"      default:"replace"`
-	Replacement string       `yaml:"replacement"`
 }
 
 type JobsDBSyncTable struct {
@@ -249,4 +256,27 @@ func (c *DBSyncConfig) GetSyncInterval(table DBSyncTableSyncInterval) time.Durat
 	}
 
 	return c.Destination.SyncInterval
+}
+
+func (c *DBSyncConfig) Init() error {
+	// Compile filter regex patterns
+	for k := range c.Tables.Jobs.Filters {
+		filter := &c.Tables.Jobs.Filters[k]
+		var err error
+		filter.compiledPattern, err = regexp.Compile(filter.Pattern)
+		if err != nil {
+			return fmt.Errorf("failed to compile regex for filter %d: %w", k, err)
+		}
+	}
+
+	for k := range c.Tables.Users.Filters.Jobs {
+		filter := &c.Tables.Users.Filters.Jobs[k]
+		var err error
+		filter.compiledPattern, err = regexp.Compile(filter.Pattern)
+		if err != nil {
+			return fmt.Errorf("failed to compile regex for user job filter %d: %w", k, err)
+		}
+	}
+
+	return nil
 }

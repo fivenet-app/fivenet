@@ -73,7 +73,7 @@ const schema = z.object({
                 onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
                 requiredCount: z.number().min(1).max(10).default(2),
                 signatureRequired: z.boolean().default(false),
-                selfApproveAllowed: z.boolean().default(true),
+                selfApproveAllowed: z.boolean().default(false),
             }),
 
             tasks: z
@@ -112,6 +112,7 @@ const schema = z.object({
                 onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
                 requiredCount: 2,
                 signatureRequired: false,
+                selfApproveAllowed: false,
             },
             tasks: [],
         }),
@@ -157,7 +158,7 @@ const state = reactive<Schema>({
             onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
             requiredCount: 2,
             signatureRequired: false,
-            selfApproveAllowed: true,
+            selfApproveAllowed: false,
         },
 
         tasks: [],
@@ -375,7 +376,7 @@ function setValuesFromTemplate(tpl: Template): void {
             onEditBehavior: tpl.approval?.policy?.onEditBehavior ?? OnEditBehavior.KEEP_PROGRESS,
             requiredCount: tpl.approval?.policy?.requiredCount ?? 2,
             signatureRequired: tpl.approval?.policy?.signatureRequired ?? false,
-            selfApproveAllowed: tpl.approval?.policy?.selfApproveAllowed ?? true,
+            selfApproveAllowed: tpl.approval?.policy?.selfApproveAllowed ?? false,
         },
         tasks:
             tpl.approval?.tasks.map((task) => ({

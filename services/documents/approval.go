@@ -393,7 +393,7 @@ func (s *Server) getOrCreateApprovalPolicy(
 		RequiredCount:      &requiredCount,
 		OnEditBehavior:     documents.OnEditBehavior_ON_EDIT_BEHAVIOR_KEEP_PROGRESS,
 		SignatureRequired:  false,
-		SelfApproveAllowed: true,
+		SelfApproveAllowed: false,
 	}); err != nil {
 		return nil, err
 	}

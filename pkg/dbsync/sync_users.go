@@ -47,8 +47,8 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		s.state.LastCheck = nil
 	}
 
-	sQuery := s.cfg.Tables.Users.DBSyncTable
-	query := prepareStringQuery(sQuery, s.state, offset, limit)
+	sQuery := s.cfg.Tables.Users
+	query := prepareStringQuery(sQuery.DBSyncTable, s.state, offset, limit)
 
 	us := []*users.User{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
@@ -73,30 +73,6 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		s.state.SyncedUp = true
 	}
 
-	if s.cfg.Tables.CitizensLicenses.Enabled {
-		// Retrieve user' licenses
-		errs := multierr.Combine()
-		var err error
-		for k := range us {
-			identifier := ""
-			if us[k].Identifier != nil {
-				identifier = us[k].GetIdentifier()
-			}
-
-			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
-			if err != nil {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
-				)
-			}
-		}
-
-		if errs != nil {
-			return errs
-		}
-	}
-
 	if s.cfg.Tables.Users.IgnoreEmptyName {
 		us = slices.DeleteFunc(us, func(in *users.User) bool {
 			// If the user has no firstname and lastname, skip it
@@ -104,12 +80,41 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		})
 	}
 
+	hasFilters := len(sQuery.Filters.Jobs) > 0
+
+outer:
 	for k := range us {
 		// Value mapping logic
 		if s.cfg.Tables.Users.ValueMapping != nil {
 			if us[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
 				//nolint:protogetter // The value is updated via the pointer
 				s.cfg.Tables.Users.ValueMapping.Sex.Process(us[k].Sex)
+			}
+		}
+
+		if hasFilters {
+			// Apply filters
+			for _, filter := range sQuery.Filters.Jobs {
+				if filter.compiledPattern.MatchString(us[k].GetJob()) {
+					switch filter.Action {
+					case FilterActionDrop:
+						us = slices.Delete(us, k, 1)
+						continue outer
+
+					case FilterActionReplace:
+						us[k].Job = filter.compiledPattern.ReplaceAllString(
+							us[k].GetJob(),
+							filter.Replacement,
+						)
+
+					default:
+						s.logger.Warn(
+							"unknown filter action",
+							zap.String("action", string(filter.Action)),
+						)
+					}
+					continue
+				}
 			}
 		}
 
@@ -140,6 +145,36 @@ func (s *usersSync) Sync(ctx context.Context) error {
 			// Format dates to the output format so all are the same if parseable
 			us[k].Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
 			break
+		}
+	}
+
+	// Log a warning when no users are left after filtering
+	if hasFilters && len(us) == 0 {
+		s.logger.Warn("no users left after filtering")
+		return nil
+	}
+
+	if s.cfg.Tables.CitizensLicenses.Enabled {
+		// Retrieve user' licenses if enabled
+		errs := multierr.Combine()
+		var err error
+		for k := range us {
+			identifier := ""
+			if us[k].Identifier != nil {
+				identifier = us[k].GetIdentifier()
+			}
+
+			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
+			if err != nil {
+				errs = multierr.Append(
+					errs,
+					fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
+				)
+			}
+		}
+
+		if errs != nil {
+			return errs
 		}
 	}
 

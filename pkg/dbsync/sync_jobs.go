@@ -3,6 +3,7 @@ package dbsync
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
@@ -33,7 +34,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	limit := int64(200)
 
 	sQuery := s.cfg.Tables.Jobs
-	query := prepareStringQuery(sQuery, s.state, 0, limit)
+	query := prepareStringQuery(sQuery.DBSyncTable, s.state, 0, limit)
 
 	jobs := []*jobs.Job{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
@@ -48,13 +49,45 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
+	hasFilters := len(sQuery.Filters) > 0
+
 	// Retrieve grades per job
 	var err error
+outer:
 	for k := range jobs {
+		if hasFilters {
+			// Apply filters
+			for _, filter := range sQuery.Filters {
+				if filter.compiledPattern.MatchString(jobs[k].Name) {
+					switch filter.Action {
+					case FilterActionDrop:
+						jobs = slices.Delete(jobs, k, 1)
+						continue outer
+
+					case FilterActionReplace:
+						jobs[k].Name = filter.compiledPattern.ReplaceAllString(
+							jobs[k].Name,
+							filter.Replacement,
+						)
+
+					default:
+						s.logger.Warn("unknown filter action", zap.String("action", string(filter.Action)))
+					}
+					continue
+				}
+			}
+		}
+
 		jobs[k].Grades, err = s.getGrades(ctx, jobs[k].GetName())
 		if err != nil {
 			return err
 		}
+	}
+
+	// Log a warning when no jobs are left after filtering
+	if hasFilters && len(jobs) == 0 {
+		s.logger.Warn("no jobs left after filtering")
+		return nil
 	}
 
 	// Sync jobs to FiveNet server

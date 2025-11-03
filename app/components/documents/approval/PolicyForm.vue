@@ -25,7 +25,7 @@ const schema = z.object({
     onEditBehavior: z.enum(OnEditBehavior).default(OnEditBehavior.KEEP_PROGRESS),
     requiredCount: z.number().min(1).max(10).default(2),
     signatureRequired: z.boolean().default(false),
-    selfApproveAllowed: z.boolean().default(true),
+    selfApproveAllowed: z.boolean().default(false),
 });
 
 type Schema = z.output<typeof schema>;
@@ -35,7 +35,7 @@ const state = reactive<Schema>({
     onEditBehavior: OnEditBehavior.KEEP_PROGRESS,
     requiredCount: 2,
     signatureRequired: false,
-    selfApproveAllowed: true,
+    selfApproveAllowed: false,
 });
 
 function setFromProps(): void {
@@ -44,7 +44,7 @@ function setFromProps(): void {
         state.onEditBehavior = OnEditBehavior.KEEP_PROGRESS;
         state.requiredCount = 2;
         state.signatureRequired = false;
-        state.selfApproveAllowed = true;
+        state.selfApproveAllowed = false;
         return;
     }
 
