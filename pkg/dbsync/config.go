@@ -40,14 +40,9 @@ type ResultConfig struct {
 func NewConfig(p ParamsConfig) (ResultConfig, error) {
 	s := &Config{
 		shutdowner: p.Shutdowner,
+		v:          viper.New(),
 	}
 
-	r := ResultConfig{
-		Config: s,
-		Cfg:    &config.Config{},
-	}
-
-	s.v = viper.New()
 	// Viper config reading setup
 	s.v.SetEnvPrefix("FIVENET")
 	s.v.SetConfigType("yaml")
@@ -58,6 +53,19 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 		s.v.SetConfigName("dbsync")
 		s.v.AddConfigPath(".")
 		s.v.AddConfigPath("/config")
+	}
+
+	cc := s.cfg.Load()
+	r := ResultConfig{
+		Config: s,
+		Cfg: &config.Config{
+			Mode:     cc.Mode,
+			LogLevel: cc.LogLevel,
+			Log:      cc.Log,
+			// Ignore db requirements, dbsync doesn't need them
+			IgnoreRequirements: true,
+			UpdateCheck:        cc.UpdateCheck,
+		},
 	}
 
 	if err := s.LoadConfig(); err != nil {
@@ -117,7 +125,8 @@ func (s *Config) setupWatch(logger *zap.Logger, restartFn func() error) {
 type DBSyncConfig struct {
 	Mode string `default:"release" yaml:"mode"`
 
-	Log config.Log `yaml:"log"`
+	LogLevel string     `default:"INFO" yaml:"logLevel" enum:"DEBUG,INFO,WARN,ERROR,PANIC,FATAL"`
+	Log      config.Log `               yaml:"log"`
 
 	WatchConfig bool `default:"true" yaml:"watchConfig"`
 
@@ -127,11 +136,12 @@ type DBSyncConfig struct {
 	Source      DBSyncSource      `yaml:"source"`
 
 	Tables DBSyncSourceTables `yaml:"tables"`
+
+	UpdateCheck config.UpdateCheck `yaml:"updateCheck"`
 }
 
 type DBSyncSource struct {
-	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	DSN string `yaml:"dsn"`
+	config.DatabaseConnection `yaml:",inline" mapstructure:",squash"`
 }
 
 type DBSyncDestination struct {

@@ -31,16 +31,9 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := int64(200)
-
-	sQuery := s.cfg.Tables.Jobs
-	query := prepareStringQuery(sQuery.DBSyncTable, s.state, 0, limit)
-
-	jobs := []*jobs.Job{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
-		}
+	jobs, err := s.fetchJobs(ctx)
+	if err != nil {
+		return err
 	}
 
 	s.logger.Debug("jobsSync", zap.Int("len", len(jobs)))
@@ -49,10 +42,58 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	hasFilters := len(sQuery.Filters) > 0
+	hasFilters := len(s.cfg.Tables.Jobs.Filters) > 0
+	jobs, err = s.applyFiltersAndRetrieveGrades(ctx, jobs, hasFilters)
+	if err != nil {
+		return err
+	}
 
-	// Retrieve grades per job
-	var err error
+	// Log a warning when no jobs are left after filtering
+	if hasFilters && len(jobs) == 0 {
+		s.logger.Warn("no jobs left after filtering")
+		return nil
+	}
+
+	// Sync jobs to FiveNet server
+	if s.cli != nil {
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Jobs{
+				Jobs: &sync.DataJobs{
+					Jobs: jobs,
+				},
+			},
+		}); err != nil {
+			return err
+		}
+	}
+
+	s.state.Set(0, nil)
+
+	return nil
+}
+
+func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
+	limit := int64(200)
+	sQuery := s.cfg.Tables.Jobs
+	query := prepareStringQuery(sQuery.DBSyncTable, s.state, 0, limit)
+
+	jobs := []*jobs.Job{}
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return jobs, nil
+}
+
+func (s *jobsSync) applyFiltersAndRetrieveGrades(
+	ctx context.Context,
+	jobs []*jobs.Job,
+	hasFilters bool,
+) ([]*jobs.Job, error) {
+	sQuery := s.cfg.Tables.Jobs
+
 outer:
 	for k := range jobs {
 		if hasFilters {
@@ -78,34 +119,14 @@ outer:
 			}
 		}
 
-		jobs[k].Grades, err = s.getGrades(ctx, jobs[k].GetName())
+		grades, err := s.getGrades(ctx, jobs[k].GetName())
 		if err != nil {
-			return err
+			return nil, err
 		}
+		jobs[k].Grades = grades
 	}
 
-	// Log a warning when no jobs are left after filtering
-	if hasFilters && len(jobs) == 0 {
-		s.logger.Warn("no jobs left after filtering")
-		return nil
-	}
-
-	// Sync jobs to FiveNet server
-	if s.cli != nil {
-		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Jobs{
-				Jobs: &sync.DataJobs{
-					Jobs: jobs,
-				},
-			},
-		}); err != nil {
-			return err
-		}
-	}
-
-	s.state.Set(0, nil)
-
-	return nil
+	return jobs, nil
 }
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {

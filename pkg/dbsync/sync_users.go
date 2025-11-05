@@ -36,25 +36,17 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	limit := int64(500)
-	var offset int64
-	if s.state != nil && s.state.Offset > 0 {
-		offset = s.state.Offset
-	}
+	offset := s.getInitialOffset()
 	s.logger.Debug("usersSync", zap.Int64("offset", offset))
 
-	// Ensure to zero the last check time if the data hasn't fully synced yet
-	if !s.state.SyncedUp {
-		s.state.LastCheck = nil
-	}
+	s.resetLastCheckIfNotSynced()
 
 	sQuery := s.cfg.Tables.Users
 	query := prepareStringQuery(sQuery.DBSyncTable, s.state, offset, limit)
 
-	us := []*users.User{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query users table. %w", err)
-		}
+	us, err := s.fetchUsers(ctx, query)
+	if err != nil {
+		return err
 	}
 
 	s.logger.Debug("usersSync", zap.Int("len", len(us)))
@@ -65,129 +57,25 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	// If less users than limit are returned, we probably have reached the "end" of the table
-	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
-	// sync loop of checking the "updatedAt" date.
-	if int64(len(us)) < limit {
-		offset = 0
-		s.state.SyncedUp = true
+	offset, err = s.updateSyncState(us, offset, limit)
+	if err != nil {
+		return err
 	}
 
-	if s.cfg.Tables.Users.IgnoreEmptyName {
-		us = slices.DeleteFunc(us, func(in *users.User) bool {
-			// If the user has no firstname and lastname, skip it
-			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
-		})
+	s.applyFiltersAndTransformations(us, sQuery)
+
+	if err := s.retrieveAndAttachLicenses(ctx, us); err != nil {
+		return err
 	}
 
-	hasFilters := len(sQuery.Filters.Jobs) > 0
-
-outer:
-	for k := range us {
-		// Value mapping logic
-		if s.cfg.Tables.Users.ValueMapping != nil {
-			if us[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
-				//nolint:protogetter // The value is updated via the pointer
-				s.cfg.Tables.Users.ValueMapping.Sex.Process(us[k].Sex)
-			}
-		}
-
-		if hasFilters {
-			// Apply filters
-			for _, filter := range sQuery.Filters.Jobs {
-				if filter.compiledPattern.MatchString(us[k].GetJob()) {
-					switch filter.Action {
-					case FilterActionDrop:
-						us = slices.Delete(us, k, 1)
-						continue outer
-
-					case FilterActionReplace:
-						us[k].Job = filter.compiledPattern.ReplaceAllString(
-							us[k].GetJob(),
-							filter.Replacement,
-						)
-
-					default:
-						s.logger.Warn(
-							"unknown filter action",
-							zap.String("action", string(filter.Action)),
-						)
-					}
-					continue
-				}
-			}
-		}
-
-		// Split names if only one field is used by the source data structure and only if we get 2 names out of it
-		if s.cfg.Tables.Users.SplitName {
-			if us[k].GetLastname() == "" {
-				ss := strings.Split(us[k].GetFirstname(), " ")
-				if len(ss) > 1 {
-					us[k].Lastname = ss[len(ss)-1]
-
-					us[k].Firstname = strings.Replace(
-						us[k].GetFirstname(),
-						" "+us[k].GetLastname(),
-						"",
-						1,
-					)
-				}
-			}
-		}
-
-		// Attempt to parse date of birth via list of input formats
-		for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
-			parsedTime, err := time.Parse(format, us[k].GetDateofbirth())
-			if err != nil {
-				continue
-			}
-
-			// Format dates to the output format so all are the same if parseable
-			us[k].Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
-			break
-		}
-	}
-
-	// Log a warning when no users are left after filtering
-	if hasFilters && len(us) == 0 {
-		s.logger.Warn("no users left after filtering")
-		return nil
-	}
-
-	if s.cfg.Tables.CitizensLicenses.Enabled {
-		// Retrieve user' licenses if enabled
-		errs := multierr.Combine()
-		var err error
-		for k := range us {
-			identifier := ""
-			if us[k].Identifier != nil {
-				identifier = us[k].GetIdentifier()
-			}
-
-			us[k].Licenses, err = s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
-			if err != nil {
-				errs = multierr.Append(
-					errs,
-					fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
-				)
-			}
-		}
-
-		if errs != nil {
-			return errs
-		}
-	}
-
-	if s.cli != nil {
-		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
-			Data: &pbsync.SendDataRequest_Users{
-				Users: &sync.DataUsers{
-					Users: us,
-				},
+	if err := s.sendData(ctx, &pbsync.SendDataRequest{
+		Data: &pbsync.SendDataRequest_Users{
+			Users: &sync.DataUsers{
+				Users: us,
 			},
-		}); err != nil {
-			return fmt.Errorf("failed to send users data to server. %w", err)
-		}
+		},
+	}); err != nil {
+		return err
 	}
 
 	s.logger.Debug("usersSync", zap.Bool("syncedUp", s.state.SyncedUp))
@@ -196,6 +84,134 @@ outer:
 	s.state.Set(offset+limit, &lastUserId)
 
 	return nil
+}
+
+func (s *usersSync) getInitialOffset() int64 {
+	if s.state != nil && s.state.Offset > 0 {
+		return s.state.Offset
+	}
+	return 0
+}
+
+func (s *usersSync) resetLastCheckIfNotSynced() {
+	if !s.state.SyncedUp {
+		s.state.LastCheck = nil
+	}
+}
+
+func (s *usersSync) fetchUsers(ctx context.Context, query string) ([]*users.User, error) {
+	us := []*users.User{}
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &us); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query users table. %w", err)
+		}
+	}
+	return us, nil
+}
+
+func (s *usersSync) updateSyncState(us []*users.User, offset, limit int64) (int64, error) {
+	if int64(len(us)) < limit {
+		offset = 0
+		s.state.SyncedUp = true
+	}
+	return offset, nil
+}
+
+func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery UsersDBSyncTable) {
+	if s.cfg.Tables.Users.IgnoreEmptyName {
+		us = slices.DeleteFunc(us, func(in *users.User) bool {
+			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
+		})
+	}
+
+	hasFilters := len(sQuery.Filters.Jobs) > 0
+
+	for k := 0; k < len(us); {
+		if s.cfg.Tables.Users.ValueMapping != nil {
+			s.applyValueMapping(us[k])
+		}
+
+		if hasFilters {
+			if s.applyFilters(us, k, sQuery) {
+				continue
+			}
+		}
+
+		s.splitNamesIfRequired(us[k])
+		s.parseDateOfBirth(us[k])
+		k++
+	}
+}
+
+func (s *usersSync) applyValueMapping(user *users.User) {
+	if user.Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+		s.cfg.Tables.Users.ValueMapping.Sex.Process(user.Sex)
+	}
+}
+
+func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersDBSyncTable) bool {
+	for _, filter := range sQuery.Filters.Jobs {
+		if filter.compiledPattern.MatchString(us[k].GetJob()) {
+			switch filter.Action {
+			case FilterActionDrop:
+				us = append(us[:k], us[k+1:]...)
+				return true
+			case FilterActionReplace:
+				us[k].Job = filter.compiledPattern.ReplaceAllString(
+					us[k].GetJob(),
+					filter.Replacement,
+				)
+			default:
+				s.logger.Warn("unknown filter action", zap.String("action", string(filter.Action)))
+			}
+		}
+	}
+	return false
+}
+
+func (s *usersSync) splitNamesIfRequired(user *users.User) {
+	if s.cfg.Tables.Users.SplitName && user.GetLastname() == "" {
+		ss := strings.Split(user.GetFirstname(), " ")
+		if len(ss) > 1 {
+			user.Lastname = ss[len(ss)-1]
+			user.Firstname = strings.Replace(user.GetFirstname(), " "+user.GetLastname(), "", 1)
+		}
+	}
+}
+
+func (s *usersSync) parseDateOfBirth(user *users.User) {
+	for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
+		parsedTime, err := time.Parse(format, user.GetDateofbirth())
+		if err == nil {
+			user.Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
+			break
+		}
+	}
+}
+
+func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*users.User) error {
+	if !s.cfg.Tables.CitizensLicenses.Enabled {
+		return nil
+	}
+
+	errs := multierr.Combine()
+	for k := range us {
+		identifier := ""
+		if us[k].Identifier != nil {
+			identifier = us[k].GetIdentifier()
+		}
+
+		licenses, err := s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
+		if err != nil {
+			errs = multierr.Append(
+				errs,
+				fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
+			)
+		}
+		us[k].Licenses = licenses
+	}
+
+	return errs
 }
 
 func (s *usersSync) retrieveLicenses(
@@ -259,7 +275,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	}
 
 	if s.cli != nil {
-		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+		if err := s.sendData(ctx, &pbsync.SendDataRequest{
 			Data: &pbsync.SendDataRequest_Users{
 				Users: &sync.DataUsers{
 					Users: []*users.User{user},

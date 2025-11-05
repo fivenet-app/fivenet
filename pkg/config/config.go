@@ -12,8 +12,8 @@ import (
 type Config struct {
 	Mode string `default:"release" yaml:"mode"`
 
-	LogLevel string `default:"DEBUG" yaml:"logLevel" enum:""`
-	Log      Log    `                yaml:"log"`
+	LogLevel string `default:"INFO" yaml:"logLevel" enum:"DEBUG,INFO,WARN,ERROR,PANIC,FATAL"`
+	Log      Log    `               yaml:"log"`
 
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
@@ -118,6 +118,13 @@ type Links struct {
 // Database represents the configuration for connecting to a MySQL database.
 // It includes credentials, connection settings, and additional options.
 type Database struct {
+	DatabaseConnection `yaml:",inline" mapstructure:",squash"`
+
+	// Custom contains additional custom database configuration options.
+	Custom CustomDB `yaml:"custom"`
+}
+
+type DatabaseConnection struct {
 	// DSN is the Data Source Name used to connect to the database.
 	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details.
 	DSN string `yaml:"dsn"`
@@ -144,28 +151,20 @@ type Database struct {
 	Collation string `default:"utf8mb4_unicode_ci" yaml:"collation"`
 
 	// MaxOpenConns defines the maximum number of open connections to the database.
-	MaxOpenConns int `default:"32" yaml:"maxOpenConns"`
-
+	MaxOpenConns int `default:"32"    yaml:"maxOpenConns"`
 	// MaxIdleConns defines the maximum number of idle connections to the database.
-	MaxIdleConns int `default:"5" yaml:"maxIdleConns"`
-
+	MaxIdleConns int `default:"5"     yaml:"maxIdleConns"`
 	// ConnMaxIdleTime specifies the maximum amount of time a connection can remain idle.
-	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
-
+	ConnMaxIdleTime time.Duration `default:"15m"   yaml:"connMaxIdleTime"`
 	// ConnMaxLifetime specifies the maximum amount of time a connection can remain open.
-	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
-
+	ConnMaxLifetime time.Duration `default:"60m"   yaml:"connMaxLifetime"`
 	// DisableLocking disables the use of table locking in the database (mainly for migrations).
 	DisableLocking bool `default:"false" yaml:"disableLocking"`
 
 	// ESXCompat enables compatibility mode for ESX-specific database configurations.
 	ESXCompat bool `default:"false" yaml:"esxCompat"`
-
 	// SkipMigrations indicates whether to skip database migrations on startup.
 	SkipMigrations bool `default:"false" yaml:"skipMigrations"`
-
-	// Custom contains additional custom database configuration options.
-	Custom CustomDB `yaml:"custom"`
 }
 
 type CustomDB struct {

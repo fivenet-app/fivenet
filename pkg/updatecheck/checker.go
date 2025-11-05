@@ -22,11 +22,14 @@ var Module = fx.Module("updatecheck",
 	fx.Provide(New),
 )
 
-const minInterval = 15 * time.Minute // Minimum interval for update checks
+const minInterval = 30 * time.Minute // Minimum interval for update checks
+
+var ErrNoVersionInfo = errors.New("no version info available")
 
 // Checker periodically checks for updates to the application by querying the GitHub Releases API.
 type Checker struct {
 	mu sync.Mutex
+	wg sync.WaitGroup
 
 	logger *zap.Logger
 
@@ -38,34 +41,61 @@ type Checker struct {
 	releasedAt time.Time
 }
 
-func New(cfg *config.Config, logger *zap.Logger) *Checker {
-	if !cfg.UpdateCheck.Enabled {
-		logger.Info("update checker is disabled")
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Config *config.Config
+	Logger *zap.Logger
+}
+
+func New(p Params) *Checker {
+	if !p.Config.UpdateCheck.Enabled {
+		p.Logger.Info("update checker is disabled")
 		return nil
 	}
 
-	interval := cfg.UpdateCheck.Interval
-	if cfg.UpdateCheck.Interval < minInterval {
+	logger := p.Logger.Named("updatechecker")
+
+	interval := p.Config.UpdateCheck.Interval
+	if p.Config.UpdateCheck.Interval < minInterval {
 		logger.Warn(
 			fmt.Sprintf("update check interval is too short, using minimum %s", minInterval),
 		)
 		interval = minInterval
 	}
 
-	return &Checker{
-		logger: logger.Named("updatechecker"),
+	c := &Checker{
+		logger: logger,
 
 		interval:   interval,
-		httpClient: &http.Client{Timeout: 15 * time.Second},
+		httpClient: &http.Client{Timeout: 10 * time.Second},
 
 		currentTag: version.Version, // Initialize with the current version to avoid logging on first run
 	}
+
+	cancelCtx, cancel := context.WithCancel(context.Background())
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		c.wg.Go(func() {
+			c.Start(cancelCtx)
+		})
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+		c.wg.Wait()
+
+		return nil
+	}))
+
+	return c
 }
 
 // Start launches the update loop and blocks until ctx is done.
-func (c *Checker) Start(ctx context.Context) error {
+func (c *Checker) Start(ctx context.Context) {
 	if version.Version == version.UnknownVersion {
-		return errors.New("version.Version is not set, cannot start update checker")
+		c.logger.Warn("no version info found, unable to check for updates")
 	}
 
 	ticker := time.NewTicker(c.interval)
@@ -87,7 +117,7 @@ func (c *Checker) Start(ctx context.Context) error {
 
 		select {
 		case <-ctx.Done():
-			return ctx.Err()
+			return
 
 		case <-time.After(delay):
 		}
@@ -118,10 +148,10 @@ func (c *Checker) Start(ctx context.Context) error {
 		}
 
 		select {
-		case <-ticker.C:
-
 		case <-ctx.Done():
-			return ctx.Err()
+			return
+
+		case <-ticker.C:
 		}
 	}
 }
