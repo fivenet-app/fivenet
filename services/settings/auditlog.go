@@ -43,12 +43,12 @@ func (s *Server) ViewAuditLog(
 	}
 	if req.GetFrom() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.GT_EQ(
-			mysql.TimestampT(req.GetFrom().AsTime()),
+			mysql.DateTimeT(req.GetFrom().AsTime()),
 		))
 	}
 	if req.GetTo() != nil {
 		condition = condition.AND(tAuditLog.CreatedAt.LT_EQ(
-			mysql.TimestampT(req.GetTo().AsTime()),
+			mysql.DateTimeT(req.GetTo().AsTime()),
 		))
 	}
 	if len(req.GetServices()) > 0 {

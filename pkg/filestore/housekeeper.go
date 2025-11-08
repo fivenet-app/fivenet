@@ -169,7 +169,7 @@ func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	// A) soft-deleted & expired
 	softExpired := mysql.AND(
 		tFiles.DeletedAt.IS_NOT_NULL(),
-		tFiles.DeletedAt.LT(mysql.TimestampT(cutoff)),
+		tFiles.DeletedAt.LT(mysql.DateTimeT(cutoff)),
 	)
 
 	// B) orphaned & not yet soft-deleted

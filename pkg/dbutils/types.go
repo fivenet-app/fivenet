@@ -12,7 +12,7 @@ func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
 		return mysql.NULL
 	}
 
-	return mysql.TimestampT(ts.AsTime())
+	return mysql.DateTimeT(ts.AsTime())
 }
 
 // Int64P helper for nullable int64 (IDs), assumes that 0 is null.
