@@ -1364,7 +1364,6 @@ func (s *Server) DecideApproval(
 		return nil, errorsdocuments.ErrApprovalSignatureRequired
 	}
 
-	snap := pol.GetSnapshotDate()
 	snapTime := pol.GetSnapshotDate().AsTime()
 
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks.AS("approval_task")
@@ -1451,7 +1450,7 @@ func (s *Server) DecideApproval(
 			FROM(tApprovalTasks).
 			WHERE(mysql.AND(
 				tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-				tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap.AsTime())),
+				tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snapTime)),
 				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
 				tApprovalTasks.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tApprovalTasks.Status.IN(
@@ -1573,7 +1572,7 @@ func (s *Server) DecideApproval(
 			).
 			VALUES(
 				pol.GetDocumentId(),
-				snap,
+				dbutils.TimestampToMySQL(pol.GetSnapshotDate()),
 				userInfo.GetUserId(),
 				userInfo.GetJob(),
 				mysql.Int32(userInfo.GetJobGrade()),
