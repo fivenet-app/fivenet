@@ -80,7 +80,13 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
 </script>
 
 <template>
-    <LLayerGroup key="dispatches_own" :name="$t('common.your_dispatches')" layer-type="overlay" visible>
+    <LLayerGroup
+        key="dispatches_own"
+        :name="$t('common.your_dispatches')"
+        layer-type="overlay"
+        visible
+        :options="{ name: 'dispatches_own' }"
+    >
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :key="dispatch"
@@ -94,7 +100,13 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
         />
     </LLayerGroup>
 
-    <LLayerGroup key="dispatches_all" :name="$t('common.dispatch', 2)" layer-type="overlay" visible>
+    <LLayerGroup
+        key="dispatches_all"
+        :name="$t('common.dispatch', 2)"
+        layer-type="overlay"
+        visible
+        :options="{ name: 'dispatches_all' }"
+    >
         <DispatchMarker
             v-for="dispatch in dispatchesFiltered"
             :key="dispatch.id"

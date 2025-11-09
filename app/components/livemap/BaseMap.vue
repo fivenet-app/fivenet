@@ -28,9 +28,9 @@ import type { ValueOf } from '~/utils/types';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import ClusterPickerCard from './ClusterPickerCard.vue';
 import LayerControls from './controls/LayerControls.vue';
 import HeatmapLayer from './HeatmapLayer.vue';
-import MultiHitPopupCard from './MultiHitPopupCard.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -46,7 +46,7 @@ const emit = defineEmits<{
 const { can } = useAuth();
 
 const settingsStore = useSettingsStore();
-const { livemapTileLayer, livemap: livemapSettings } = storeToRefs(settingsStore);
+const { livemapTileLayer, livemapLayers, livemap: livemapSettings } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
@@ -212,11 +212,12 @@ const chooser = ref<null | {
 
         openPopup: () => void;
     }[];
+    hiddenCount: number;
 }>(null);
 
 const chooserRef = useTemplateRef('chooserRef');
 
-async function showChooser(latlng: LatLngExpression, hits: Marker[]) {
+async function showChooser(latlng: LatLngExpression, hits: Marker[], hiddenCount: number): Promise<void> {
     chooser.value = {
         latlng: latlng,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -230,6 +231,7 @@ async function showChooser(latlng: LatLngExpression, hits: Marker[]) {
                 m.openPopup();
             },
         })),
+        hiddenCount: hiddenCount,
     };
 
     await nextTick();
@@ -267,21 +269,29 @@ async function onMapReady(m: Map): Promise<void> {
         isMoving.value = false;
     });
 
-    function gatherNearbyMarkers(map: Map, px: Point, radiusPx = 35): Marker[] {
+    function gatherNearbyMarkers(map: Map, px: Point, radiusPx = 35): { hits: Marker[]; hiddenCount: number } {
         const hits: Marker[] = [];
+        let hiddenCount = 0;
         map.eachLayer((layer) => {
+            const name = (layer.options as { name?: string })['name'];
+            if (name === undefined) return;
+            if (!livemapLayers.value.find((l) => l.key === name)?.visible) {
+                hiddenCount++;
+                return;
+            }
+
             eachMarkerIn(layer, (m) => {
                 const pos = map.latLngToContainerPoint(m.getLatLng());
                 if (pos.distanceTo(px) <= radiusPx && !hits.find((hit) => stamp(hit) === stamp(m))) hits.push(m);
             });
         });
-        return hits;
+        return { hits: hits, hiddenCount: hiddenCount };
     }
 
-    function showMultiSelectPopup(latlng: LatLngExpression, hits: Marker[]) {
+    function showMultiSelectPopup(latlng: LatLngExpression, hits: Marker[], hiddenCount: number): void {
         hits.sort((a, b) => (a.options?.zIndexOffset || 0) - (b.options?.zIndexOffset || 0));
 
-        showChooser(latlng, hits);
+        showChooser(latlng, hits, hiddenCount);
     }
 
     map.on('preclick', async (e: LeafletMouseEvent) => {
@@ -290,14 +300,14 @@ async function onMapReady(m: Map): Promise<void> {
         const px = e.containerPoint;
         const hits = gatherNearbyMarkers(map, px, 35);
 
-        if (hits.length === 0) return;
-        if (hits.length === 1) {
+        if (hits.hits.length === 0) return;
+        if (hits.hits.length === 1) {
             await nextTick();
-            hits[0]?.openPopup();
+            hits.hits[0]?.openPopup();
             return;
         }
 
-        showMultiSelectPopup(e.latlng, hits);
+        showMultiSelectPopup(e.latlng, hits.hits, hits.hiddenCount);
     });
 
     function eachMarkerIn(layer: Layer, cb: (m: Marker) => void) {
@@ -403,7 +413,7 @@ onBeforeUnmount(() => {
 
             <LMarker v-if="chooser" ref="chooserRef" :lat-lng="chooser.latlng" :options="{ opacity: 0 }">
                 <LPopup class="min-w-[110px] md:min-w-[200px]" :options="{ closeButton: false }">
-                    <MultiHitPopupCard :hits="chooser.hits" />
+                    <ClusterPickerCard :hits="chooser.hits" :hidden-count="chooser.hiddenCount" />
                 </LPopup>
             </LMarker>
         </LMap>

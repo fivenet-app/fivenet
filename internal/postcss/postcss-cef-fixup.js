@@ -1,4 +1,5 @@
-module.exports = () => {
+// Chromium Embedded Framework (CEF) in FiveM is too old to support the syntax without a space after the first value
+export default function cefFixup() {
     return {
         postcssPlugin: 'postcss-cef-fixup',
         Declaration(decl) {
@@ -9,6 +10,6 @@ module.exports = () => {
             decl.value = decl.value.replaceAll(/var\(\s*--tw-ring-inset\s*,?\)/g, 'var(--tw-ring-inset, ) ');
         },
     };
-};
+}
 
-module.exports.postcss = true;
+export const postcss = true;

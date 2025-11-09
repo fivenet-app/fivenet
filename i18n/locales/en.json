@@ -732,7 +732,8 @@
         "startpage": "Startpage",
         "follow": "Follow",
         "unfollow": "Unfollow",
-        "choose_one": "Choose one"
+        "choose_one": "Choose one",
+        "hidden_markers": "Hidden Markers"
     },
     "components": {
         "partials": {

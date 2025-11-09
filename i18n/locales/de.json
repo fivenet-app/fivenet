@@ -732,7 +732,8 @@
         "startpage": "Startseite",
         "follow": "Folgen",
         "unfollow": "Nicht mehr folgen",
-        "choose_one": "Wählen Sie eins aus"
+        "choose_one": "Wählen Sie eins aus",
+        "hidden_markers": "Versteckte Marker"
     },
     "components": {
         "partials": {
