@@ -146,7 +146,7 @@
     },
     "resolutions": {
         "@intlify/shared": "11.1.12",
-        "@nuxt/kit": "4.1.3",
+        "@nuxt/kit": "4.2.1",
         "@tiptap/core": "3.10.5",
         "@tiptap/pm": "3.10.5",
         "@tiptap/vue-3": "3.10.5"
