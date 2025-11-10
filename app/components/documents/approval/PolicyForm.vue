@@ -131,7 +131,7 @@ const formRef = useTemplateRef('formRef');
                     </UForm>
 
                     <template #footer>
-                        <UButtonGroup class="w-full flex-1">
+                        <UFieldGroup class="w-full flex-1">
                             <UButton
                                 :disabled="!canSubmit"
                                 block
@@ -139,7 +139,7 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('common.save')"
                                 @click="formRef?.submit()"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </template>
                 </UCard>
             </div>
@@ -147,7 +147,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col">
-                <UButtonGroup class="w-full flex-1">
+                <UFieldGroup class="w-full flex-1">
                     <UButton
                         color="neutral"
                         variant="subtle"
@@ -156,7 +156,7 @@ const formRef = useTemplateRef('formRef');
                         :label="$t('common.back')"
                         @click="() => $emit('close', false)"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
     </UDrawer>

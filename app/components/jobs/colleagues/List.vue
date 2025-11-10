@@ -598,7 +598,7 @@ defineShortcuts({
                                 "
                                 #footer
                             >
-                                <UButtonGroup class="w-full min-w-0">
+                                <UFieldGroup class="w-full min-w-0">
                                     <UTooltip
                                         v-if="
                                             canDo.setJobsUserProps &&
@@ -642,7 +642,7 @@ defineShortcuts({
                                             }"
                                         />
                                     </UTooltip>
-                                </UButtonGroup>
+                                </UFieldGroup>
                             </template>
                         </UPageCard>
                     </UPageGrid>

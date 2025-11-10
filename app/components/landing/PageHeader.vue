@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { de, en } from '@nuxt/ui-pro/locale';
+import { de, en } from '@nuxt/ui/locale';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
 

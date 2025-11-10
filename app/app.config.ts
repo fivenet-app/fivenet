@@ -216,9 +216,7 @@ export default defineAppConfig({
                 td: 'p-1.5',
             },
         },
-    },
 
-    uiPro: {
         pageGrid: {
             base: 'gap-4',
         },

@@ -259,7 +259,7 @@ const formRef = useTemplateRef('formRef');
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UFormField name="icon">
-                                <IconSelectMenu v-model="state.icon" :color="state.color" class="w-full" />
+                                <IconSelectMenu v-model="state.icon" :hex-color="state.color" class="w-full" />
                             </UFormField>
                         </dd>
                     </div>
@@ -268,7 +268,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton
                     class="flex-1"
                     block
@@ -279,7 +279,7 @@ const formRef = useTemplateRef('formRef');
                 />
 
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

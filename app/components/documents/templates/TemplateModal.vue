@@ -137,7 +137,7 @@ const filteredRequirementTypes = computed(() => {
         </template>
 
         <template #footer>
-            <UButtonGroup
+            <UFieldGroup
                 v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                 class="inline-flex w-full"
             >
@@ -148,7 +148,7 @@ const filteredRequirementTypes = computed(() => {
                 <UButton class="flex-1" block :disabled="!readyToCreate" @click="clipboardDialog()">
                     {{ $t('common.create') }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
 
             <UButton v-else class="flex-1" color="neutral" block @click="$emit('close', false)">
                 {{ $t('common.close', 1) }}

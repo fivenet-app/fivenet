@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UIcon, UTooltip } from '#components';
+import { UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -115,12 +115,13 @@ const columns = computed(
 </script>
 
 <template>
-    <UButton v-if="selectedLaws.length === 0" class="relative block w-full p-4 text-center" disabled variant="outline">
-        <UIcon class="mx-auto size-8" name="i-mdi-calculator" />
-        <span class="mt-2 block text-sm font-semibold">
-            {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
-        </span>
-    </UButton>
+    <UAlert
+        v-if="selectedLaws.length === 0"
+        class="h-[64px] max-h-[64px] w-full items-center p-2"
+        :title="$t('common.none_selected', [$t('common.crime')])"
+        icon="i-mdi-calculator"
+        variant="outline"
+    />
 
     <UTable
         v-else

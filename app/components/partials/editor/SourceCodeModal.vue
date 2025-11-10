@@ -25,11 +25,11 @@ const content = useVModel(props, 'content', emit);
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

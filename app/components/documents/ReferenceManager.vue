@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { UButton, UButtonGroup, UTooltip } from '#components';
+import { UButton, UFieldGroup, UTooltip } from '#components';
 import type { TableColumn, TabsItem } from '@nuxt/ui';
 import { h } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -197,7 +197,7 @@ const columnsClipboard = computed(
                 header: t('components.documents.document_managers.add_reference'),
                 cell: ({ row }) =>
                     h(
-                        UButtonGroup,
+                        UFieldGroup,
                         {},
                         {
                             default: () => [
@@ -279,7 +279,7 @@ const columnsNew = computed(
                 header: t('components.documents.document_managers.add_reference'),
                 cell: ({ row }) =>
                     h(
-                        UButtonGroup,
+                        UFieldGroup,
                         {},
                         {
                             default: () => [

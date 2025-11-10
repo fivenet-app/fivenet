@@ -192,7 +192,7 @@ const formRef = useTemplateRef('formRef');
                 </UFormField>
 
                 <UFormField class="flex-1" name="icon" :label="$t('common.icon')">
-                    <IconSelectMenu v-model="state.icon" :color="state.color" class="w-full" />
+                    <IconSelectMenu v-model="state.icon" :hex-color="state.color" class="w-full" />
                 </UFormField>
 
                 <UFormField class="flex-1" name="homePostal" :label="`${$t('common.department')} ${$t('common.postal_code')}`">
@@ -224,7 +224,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
@@ -239,7 +239,7 @@ const formRef = useTemplateRef('formRef');
                     "
                     @click="formRef?.submit()"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

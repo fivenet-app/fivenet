@@ -5,7 +5,7 @@ defineEmits(['update:modelValue']);
 </script>
 
 <template>
-    <UButtonGroup>
+    <UFieldGroup>
         <UButton
             :disabled="modelValue === 'left'"
             :title="$t('components.partials.tiptap_editor.align_left')"
@@ -32,5 +32,5 @@ defineEmits(['update:modelValue']);
         >
             <UIcon name="i-mdi-align-horizontal-right" />
         </UButton>
-    </UButtonGroup>
+    </UFieldGroup>
 </template>

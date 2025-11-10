@@ -69,7 +69,7 @@ watch(
                                 <p v-if="version.name" class="text-xs italic">{{ version.name }}</p>
                             </div>
 
-                            <UButtonGroup>
+                            <UFieldGroup>
                                 <UButton
                                     size="sm"
                                     color="primary"
@@ -78,7 +78,7 @@ watch(
                                     @click="emitApply(version as Version<Content>)"
                                 />
                                 <UButton icon="i-mdi-trash" color="error" @click="historyStore.deleteVersion(version.date)" />
-                            </UButtonGroup>
+                            </UFieldGroup>
                         </div>
                     </li>
                 </ul>
@@ -87,11 +87,11 @@ watch(
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

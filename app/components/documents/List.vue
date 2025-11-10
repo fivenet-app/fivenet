@@ -171,7 +171,7 @@ defineShortcuts({
                         </span>
                     </UButton>
 
-                    <UButtonGroup class="inline-flex">
+                    <UFieldGroup class="inline-flex">
                         <UButton
                             v-if="can('completor.CompletorService/CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
@@ -193,7 +193,7 @@ defineShortcuts({
                                 {{ $t('common.template', 2) }}
                             </span>
                         </UButton>
-                    </UButtonGroup>
+                    </UFieldGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
                         <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="templateModal.open({})">

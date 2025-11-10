@@ -80,9 +80,9 @@ watch(props, setFromProps);
                                         </p>
                                     </div>
 
-                                    <UButtonGroup class="inline-flex flex-initial">
+                                    <UFieldGroup class="inline-flex flex-initial">
                                         <UButton color="green" variant="solid" icon="i-mdi-check" disabled />
-                                    </UButtonGroup>
+                                    </UFieldGroup>
                                 </div>
 
                                 <template v-for="(attr, idx) in attrList" :key="attr.attrId">

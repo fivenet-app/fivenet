@@ -211,7 +211,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                     </ul>
                                 </div>
 
-                                <UButtonGroup class="inline-flex w-full">
+                                <UFieldGroup class="inline-flex w-full">
                                     <UButton
                                         v-if="canDo('TakeControl') && canAccessDispatch.dispatch"
                                         icon="i-mdi-account-multiple-plus"
@@ -228,7 +228,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                                     >
                                         {{ $t('common.self_assign') }}
                                     </UButton>
-                                </UButtonGroup>
+                                </UFieldGroup>
                             </dd>
                         </div>
                     </dl>
@@ -321,7 +321,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton color="neutral" class="flex-1" block @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
@@ -340,7 +340,7 @@ const dispatchStatusUpdateModal = overlay.create(DispatchStatusUpdateModal);
                         "
                     />
                 </UTooltip>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

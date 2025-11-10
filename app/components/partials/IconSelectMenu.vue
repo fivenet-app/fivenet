@@ -5,10 +5,12 @@ import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './i
 withDefaults(
     defineProps<{
         color?: string;
+        hexColor?: string;
         fallbackIcon?: DefineComponent | IconEntry;
     }>(),
     {
         color: undefined,
+        hexColor: undefined,
         fallbackIcon: () => defaultIcon,
     },
 );
@@ -18,35 +20,17 @@ defineOptions({
 });
 
 const icon = defineModel<string | undefined>('modelValue');
-
-const searchTerm = ref('');
-const searchTermDebounced = debouncedRef(searchTerm, 200);
-
-async function iconSearch(query: string): Promise<IconEntry[]> {
-    // Remove spaces from query as icon names don't have spaces
-    query = query.toLowerCase().replaceAll(' ', '').trim();
-    let count = 0;
-    return availableIcons.filter((icon) => {
-        if (count <= 40 && icon.name?.toLowerCase()?.includes(query)) {
-            count++;
-            return true;
-        }
-        return false;
-    });
-}
-
-const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
 </script>
 
 <template>
     <ClientOnly>
         <USelectMenu
             v-model="icon"
-            v-model:search-term="searchTerm"
-            :items="foundIcons"
+            :items="availableIcons"
             :search-input="{ placeholder: $t('common.search_field') }"
-            ignore-filter
+            :filter-fields="['name']"
             value-key="name"
+            virtualize
             v-bind="$attrs"
         >
             <template v-if="icon" #default>
@@ -54,7 +38,7 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
                     <component
                         :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
                         class="size-5"
-                        :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
+                        :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-500)` }"
                     />
 
                     <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
@@ -66,7 +50,7 @@ const foundIcons = computedAsync(() => iconSearch(searchTermDebounced.value));
                     <component
                         :is="item?.component"
                         class="size-5"
-                        :style="{ color: `var(--color-${color ?? 'primary'}-500)` }"
+                        :style="{ color: hexColor ?? `var(--color-${color ?? 'primary'}-500)` }"
                     />
 
                     <span class="truncate">{{ camelCaseToTitleCase(item.name) }}</span>

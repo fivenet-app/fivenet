@@ -237,10 +237,10 @@ const { moveUp, moveDown } = useListReorder(blocks);
                             />
 
                             <div class="inline-flex items-center gap-1">
-                                <UButtonGroup>
+                                <UFieldGroup>
                                     <UButton size="xs" variant="link" icon="i-mdi-arrow-left" @click="moveUp(index)" />
                                     <UButton size="xs" variant="link" icon="i-mdi-arrow-right" @click="moveDown(index)" />
-                                </UButtonGroup>
+                                </UFieldGroup>
 
                                 <UTooltip :text="$t('common.draggable')">
                                     <UButton

@@ -165,7 +165,7 @@ onBeforeMount(async () => listJobs());
                     </UForm>
 
                     <template #footer>
-                        <UButtonGroup class="w-full flex-1">
+                        <UFieldGroup class="w-full flex-1">
                             <UButton
                                 type="submit"
                                 :disabled="!canSubmit"
@@ -175,7 +175,7 @@ onBeforeMount(async () => listJobs());
                                 trailing-icon="i-mdi-arrow-forward"
                                 @click="formRef?.submit()"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </template>
                 </UCard>
             </div>
@@ -183,7 +183,7 @@ onBeforeMount(async () => listJobs());
 
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col">
-                <UButtonGroup class="w-full flex-1">
+                <UFieldGroup class="w-full flex-1">
                     <UButton
                         color="neutral"
                         variant="subtle"
@@ -192,7 +192,7 @@ onBeforeMount(async () => listJobs());
                         :label="$t('common.back')"
                         @click="() => $emit('close', false)"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
     </UDrawer>

@@ -20,7 +20,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton
                     class="flex-1"
                     block
@@ -38,7 +38,7 @@ const { isNotificationSlideoverOpen } = useDashboard();
                     :label="$t('common.close', 1)"
                     @click="isNotificationSlideoverOpen = false"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

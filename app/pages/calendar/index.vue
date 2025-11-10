@@ -274,7 +274,7 @@ const viewOptions = [
                 </template>
 
                 <template #right>
-                    <UButtonGroup
+                    <UFieldGroup
                         v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full xl:hidden"
                     >
@@ -297,7 +297,7 @@ const viewOptions = [
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"
                         />
-                    </UButtonGroup>
+                    </UFieldGroup>
                 </template>
             </UDashboardNavbar>
 
@@ -534,7 +534,7 @@ const viewOptions = [
         <template #header>
             <UDashboardNavbar>
                 <template #right>
-                    <UButtonGroup
+                    <UFieldGroup
                         v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full"
                     >
@@ -557,7 +557,7 @@ const viewOptions = [
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"
                         />
-                    </UButtonGroup>
+                    </UFieldGroup>
                 </template>
             </UDashboardNavbar>
         </template>

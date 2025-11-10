@@ -99,10 +99,10 @@ function applySelected() {
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="primary" @click="applySelected">{{ $t('common.apply') }}</UButton>
                 <UButton class="flex-1" color="neutral" @click="$emit('close', false)">{{ $t('common.cancel') }}</UButton>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

@@ -249,7 +249,7 @@ const confirmModal = overlay.create(ConfirmModal);
     <UCard v-if="lawBook" class="overflow-y-auto">
         <template #header>
             <div v-if="!editing" class="inline-flex w-full items-center gap-x-2">
-                <UButtonGroup class="inline-flex">
+                <UFieldGroup class="inline-flex">
                     <UTooltip :text="$t('common.edit')">
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                     </UTooltip>
@@ -266,7 +266,7 @@ const confirmModal = overlay.create(ConfirmModal);
                             "
                         />
                     </UTooltip>
-                </UButtonGroup>
+                </UFieldGroup>
 
                 <div class="inline-flex w-full flex-col">
                     <h2 class="text-xl">{{ lawBook.name }}</h2>

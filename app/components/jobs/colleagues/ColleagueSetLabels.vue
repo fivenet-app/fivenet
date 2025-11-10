@@ -142,7 +142,7 @@ const editing = ref(false);
             </p>
 
             <template v-else>
-                <UButtonGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                <UFieldGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
                     <UBadge
                         class="justify-between gap-2"
                         :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
@@ -170,7 +170,7 @@ const editing = ref(false);
                             "
                         />
                     </UTooltip>
-                </UButtonGroup>
+                </UFieldGroup>
             </template>
         </div>
 

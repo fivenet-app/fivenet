@@ -104,7 +104,7 @@ const editing = ref(false);
             </template>
             <div v-else class="flex flex-col gap-2">
                 <div v-for="doc in data?.documents" :key="doc.id" class="flex flex-row gap-1 divide-x divide-default">
-                    <UButtonGroup
+                    <UFieldGroup
                         v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
                         class="inline-flex items-center gap-1"
                         orientation="vertical"
@@ -135,7 +135,7 @@ const editing = ref(false);
                                 />
                             </UTooltip>
                         </UTooltip>
-                    </UButtonGroup>
+                    </UFieldGroup>
 
                     <div class="flex-1 pr-1">
                         <DocumentInfoPopover

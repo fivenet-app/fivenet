@@ -101,7 +101,7 @@ watchOnce(opened, async () => {
 
         <template #content>
             <div class="flex flex-col gap-2 p-4">
-                <UButtonGroup class="inline-flex w-full">
+                <UFieldGroup class="inline-flex w-full">
                     <UButton
                         v-if="can('jobs.JobsService/GetColleague').value && activeChar?.job === user?.job"
                         variant="link"
@@ -126,7 +126,7 @@ watchOnce(opened, async () => {
                     </UButton>
 
                     <PhoneNumberBlock v-if="user?.phoneNumber" :number="user?.phoneNumber" hide-number show-label />
-                </UButtonGroup>
+                </UFieldGroup>
 
                 <div v-if="error">
                     <DataErrorBlock

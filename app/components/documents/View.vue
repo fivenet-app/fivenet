@@ -265,7 +265,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         @click="() => refresh()"
                     />
 
-                    <UButtonGroup class="inline-flex">
+                    <UFieldGroup class="inline-flex">
                         <IDCopyBadge
                             :id="doc?.document?.id ?? documentId"
                             prefix="DOC"
@@ -274,7 +274,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         />
 
                         <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-                    </UButtonGroup>
+                    </UFieldGroup>
                 </template>
             </UDashboardNavbar>
 

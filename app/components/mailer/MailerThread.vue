@@ -546,7 +546,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                         v-if="state.recipients.length > 0"
                                         class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto"
                                     >
-                                        <UButtonGroup
+                                        <UFieldGroup
                                             v-for="(recipient, idx) in state.recipients"
                                             :key="idx"
                                             size="sm"
@@ -560,7 +560,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                                 color="error"
                                                 @click="state.recipients.splice(idx, 1)"
                                             />
-                                        </UButtonGroup>
+                                        </UFieldGroup>
                                     </div>
                                 </UFormField>
 

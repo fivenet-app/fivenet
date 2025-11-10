@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
-import * as locales from '@nuxt/ui-pro/locale';
+import * as locales from '@nuxt/ui/locale';
 import NotificationProvider from '~/components/notifications/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
 import { useAuthStore } from '~/stores/auth';

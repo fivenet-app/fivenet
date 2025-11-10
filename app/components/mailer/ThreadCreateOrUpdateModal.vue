@@ -244,7 +244,7 @@ const formRef = useTemplateRef('formRef');
                                 </ClientOnly>
 
                                 <div class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
-                                    <UButtonGroup
+                                    <UFieldGroup
                                         v-for="(recipient, idx) in state.recipients"
                                         :key="idx"
                                         size="sm"
@@ -258,7 +258,7 @@ const formRef = useTemplateRef('formRef');
                                             color="error"
                                             @click="state.recipients.splice(idx, 1)"
                                         />
-                                    </UButtonGroup>
+                                    </UFieldGroup>
                                 </div>
                             </UFormField>
                         </div>
@@ -300,7 +300,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" block color="neutral" :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
@@ -311,7 +311,7 @@ const formRef = useTemplateRef('formRef');
                     icon="i-mdi-paper-airplane"
                     @click="() => formRef?.submit()"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

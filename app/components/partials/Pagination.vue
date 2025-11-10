@@ -168,7 +168,7 @@ function onClickNext() {
                     :show-edges="false"
                     :ui="{ first: 'hidden', last: 'hidden' }"
                 />
-                <UButtonGroup v-else>
+                <UFieldGroup v-else>
                     <UButton
                         color="neutral"
                         variant="outline"
@@ -184,7 +184,7 @@ function onClickNext() {
                         icon="i-mdi-chevron-right"
                         @click="onClickNext"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </template>
             <div v-else></div>
 

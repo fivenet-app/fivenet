@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton
                     class="flex-1"
                     color="green"
@@ -163,7 +163,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                 <UButton class="flex-1" @click="$emit('close', false)">
                     {{ $t('common.close') }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

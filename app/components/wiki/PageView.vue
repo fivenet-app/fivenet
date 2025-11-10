@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { AsyncDataRequestStatus } from '#app';
 import type { NavigationMenuItem } from '@nuxt/ui';
-import type { ContentSurroundLink } from '@nuxt/ui-pro/runtime/components/content/ContentSurround.vue.js';
+import type { ContentSurroundLink } from '@nuxt/ui/runtime/components/content/ContentSurround.vue.js';
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';

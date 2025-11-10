@@ -106,10 +106,10 @@ const formRef = useTemplateRef('formRef');
                                         <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
                                     </UTooltip>
 
-                                    <UButtonGroup>
+                                    <UFieldGroup>
                                         <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
                                         <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
-                                    </UButtonGroup>
+                                    </UFieldGroup>
                                 </div>
 
                                 <UFormField class="flex-1" :name="`labels.${idx}.name`">
@@ -142,7 +142,7 @@ const formRef = useTemplateRef('formRef');
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UButton
@@ -153,7 +153,7 @@ const formRef = useTemplateRef('formRef');
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

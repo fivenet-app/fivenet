@@ -114,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <UButtonGroup v-if="canUpdate && request.accepted === undefined" class="inline-flex w-full">
+                <UFieldGroup v-if="canUpdate && request.accepted === undefined" class="inline-flex w-full">
                     <UButton
                         class="flex-1"
                         block
@@ -134,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(false)"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
 
                 <UDropdownMenu
                     v-if="canDelete"

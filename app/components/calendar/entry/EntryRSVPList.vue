@@ -117,7 +117,7 @@ const confirmModal = overlay.create(ConfirmModal);
 <template>
     <div>
         <div class="flex gap-2">
-            <UButtonGroup v-if="rsvpOpen" class="inline-flex w-full">
+            <UFieldGroup v-if="rsvpOpen" class="inline-flex w-full">
                 <UButton
                     class="flex-1"
                     block
@@ -153,9 +153,9 @@ const confirmModal = overlay.create(ConfirmModal);
                 >
                     {{ $t('common.no') }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
 
-            <UButtonGroup class="inline-flex">
+            <UFieldGroup class="inline-flex">
                 <UButton
                     v-if="ownEntry && showRemove"
                     icon="i-mdi-calendar-remove"
@@ -168,7 +168,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 />
 
                 <UButton v-if="canShare" :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" @click="openShare = !openShare" />
-            </UButtonGroup>
+            </UFieldGroup>
         </div>
 
         <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />

@@ -114,7 +114,7 @@ const formRef = useTemplateRef('formRef');
         </p>
         <template v-else>
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
-                <UButtonGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
+                <UFieldGroup v-for="(attribute, idx) in state.labels" :key="attribute.name">
                     <UBadge
                         :class="isColorBright(hexToRgb(attribute.color, rgbBlack)!) ? 'text-black!' : 'text-white!'"
                         :style="{ backgroundColor: attribute.color }"
@@ -139,7 +139,7 @@ const formRef = useTemplateRef('formRef');
                             state.labels.splice(idx, 1);
                         "
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
 

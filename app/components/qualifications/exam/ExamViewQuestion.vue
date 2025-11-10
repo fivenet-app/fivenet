@@ -70,7 +70,7 @@ const response = useVModel(props, 'modelValue', emit);
                     </div>
                 </div>
 
-                <UButtonGroup>
+                <UFieldGroup>
                     <UButton
                         class="w-20"
                         :variant="response.response?.response.yesno.value ? 'solid' : 'outline'"
@@ -89,7 +89,7 @@ const response = useVModel(props, 'modelValue', emit);
                         :disabled="disabled"
                         @click="response.response.response.yesno.value = false"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
 
             <div

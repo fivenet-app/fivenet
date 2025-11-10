@@ -121,7 +121,7 @@ const formRef = useTemplateRef('formRef');
         </UForm>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.cancel', 1)" @click="$emit('close', false)" />
 
                 <UButton
@@ -132,7 +132,7 @@ const formRef = useTemplateRef('formRef');
                     :label="$t('common.save')"
                     @click="formRef?.submit()"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UCard>
 </template>

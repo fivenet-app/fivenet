@@ -7,7 +7,7 @@ const { zoom } = storeToRefs(livemapStore);
 
 <template>
     <LControl position="topleft">
-        <UButtonGroup class="inline-flex w-full flex-col" orientation="vertical">
+        <UFieldGroup class="inline-flex w-full flex-col" orientation="vertical">
             <UTooltip :text="$t('common.zoom_in')">
                 <UButton
                     class="inset-0 border border-black/20 bg-clip-padding p-1.5"
@@ -29,6 +29,6 @@ const { zoom } = storeToRefs(livemapStore);
                     @click="if (zoom - 1 >= 1) zoom--;"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
     </LControl>
 </template>

@@ -249,7 +249,7 @@ defineShortcuts({
                 >
                     <div class="flex flex-1 flex-row gap-2">
                         <UFormField class="flex-1" name="prefix" :label="$t('common.search')">
-                            <UButtonGroup class="w-full">
+                            <UFieldGroup class="w-full">
                                 <UInput
                                     ref="inputRef"
                                     v-model="query.prefix"
@@ -264,7 +264,7 @@ defineShortcuts({
                                     </template>
                                 </UInput>
                                 <UButton icon="i-mdi-subdirectory-arrow-left" variant="subtle" @click="goBackDirectory" />
-                            </UButtonGroup>
+                            </UFieldGroup>
                         </UFormField>
                     </div>
                 </UForm>

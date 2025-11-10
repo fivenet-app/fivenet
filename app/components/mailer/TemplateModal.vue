@@ -86,7 +86,7 @@ const editing = ref(false);
                         <template #content="{ index }">
                             <template v-if="templates?.templates[index]">
                                 <template v-if="!editing">
-                                    <UButtonGroup v-if="canManage" class="mx-4 mb-2 flex">
+                                    <UFieldGroup v-if="canManage" class="mx-4 mb-2 flex">
                                         <UTooltip :text="$t('common.edit')">
                                             <UButton
                                                 class="flex-1"
@@ -99,7 +99,7 @@ const editing = ref(false);
                                         <UTooltip :text="$t('common.delete')">
                                             <UButton icon="i-mdi-delete" color="error" :label="$t('common.delete')" />
                                         </UTooltip>
-                                    </UButtonGroup>
+                                    </UFieldGroup>
 
                                     <ClientOnly>
                                         <TiptapEditor
@@ -124,11 +124,11 @@ const editing = ref(false);
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" block color="neutral" @click="$emit('close', false)">
                     {{ $t('common.close', 1) }}
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

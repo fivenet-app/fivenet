@@ -476,7 +476,7 @@ defineShortcuts({
                             </span>
                         </UButton>
 
-                        <UButtonGroup class="w-full" orientation="vertical">
+                        <UFieldGroup class="w-full" orientation="vertical">
                             <UButton
                                 :class="getOwnUnit !== undefined ? 'rounded-t-none' : ''"
                                 variant="soft"
@@ -500,7 +500,7 @@ defineShortcuts({
                                 :label="$t('common.join_unit')"
                                 @click="joinUnitSlideover.open({})"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </div>
                 </template>
             </UDashboardToolbar>

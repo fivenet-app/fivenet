@@ -57,7 +57,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
             </template>
         </USelectMenu>
 
-        <UButtonGroup v-else v-bind="$attrs">
+        <UFieldGroup v-else v-bind="$attrs">
             <UButton
                 :label="$t('common.confirm')"
                 icon="i-mdi-check"
@@ -68,6 +68,6 @@ const selectedTemplate = ref<Template | undefined>(undefined);
             />
 
             <UButton :label="$t('common.cancel')" color="error" icon="i-mdi-cancel" @click="selectedTemplate = undefined" />
-        </UButtonGroup>
+        </UFieldGroup>
     </ClientOnly>
 </template>

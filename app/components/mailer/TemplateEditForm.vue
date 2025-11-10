@@ -86,11 +86,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         :schema="schema"
         @submit="onSubmitThrottle"
     >
-        <UButtonGroup class="mb-2 flex">
+        <UFieldGroup class="mb-2 flex">
             <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
 
             <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close', false)" />
-        </UButtonGroup>
+        </UFieldGroup>
 
         <UFormField name="title" :label="$t('common.name')">
             <UInput v-model="state.title" type="text" />

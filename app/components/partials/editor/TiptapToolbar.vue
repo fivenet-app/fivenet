@@ -200,7 +200,7 @@ const isLinkOpen = ref(false);
 
 <template>
     <div class="flex snap-x flex-wrap gap-1">
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.bold')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.bold }"
@@ -298,12 +298,12 @@ const isLinkOpen = ref(false);
                     @click="editorSettings.showInvisibleCharacters = !editorSettings.showInvisibleCharacters"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
         <!-- Text Align -->
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.align_left')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.textAlign === 'left' }"
@@ -347,7 +347,7 @@ const isLinkOpen = ref(false);
                     @click="ed?.chain().focus().setTextAlign('justify').run()"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
@@ -381,7 +381,7 @@ const isLinkOpen = ref(false);
             </USelectMenu>
         </UTooltip>
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UPopover>
                 <UTooltip :text="$t('components.partials.tiptap_editor.font_color')">
                     <UButton
@@ -504,11 +504,11 @@ const isLinkOpen = ref(false);
                     @click="ed?.chain().focus().toggleHeading({ level: 6 }).run()"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
     </div>
 
     <div class="flex snap-x flex-wrap gap-1">
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.highlight')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.highlight }"
@@ -563,11 +563,11 @@ const isLinkOpen = ref(false);
                     </div>
                 </template>
             </UPopover>
-        </UButtonGroup>
+        </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.bullet_list')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.bulletList }"
@@ -611,7 +611,7 @@ const isLinkOpen = ref(false);
                     @click="ed?.chain().focus().addCheckboxStandalone().run()"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
@@ -652,7 +652,7 @@ const isLinkOpen = ref(false);
 
                         <slot name="linkModal" :editor="editor" :state="linkState" />
 
-                        <UButtonGroup class="mt-2 w-full">
+                        <UFieldGroup class="mt-2 w-full">
                             <UButton
                                 class="flex-1"
                                 type="submit"
@@ -674,13 +674,13 @@ const isLinkOpen = ref(false);
                                     linkState.url = '';
                                 "
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </UForm>
                 </div>
             </template>
         </UPopover>
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.code_block')">
                 <UButton
                     :class="{ 'bg-neutral-300 dark:bg-neutral-900': ui.codeBlock }"
@@ -721,7 +721,7 @@ const isLinkOpen = ref(false);
                         @click="ed?.chain().focus().setHardBreak().run()"
                     />
                     -->
-        </UButtonGroup>
+        </UFieldGroup>
 
         <div class="flex-1"></div>
 
@@ -750,7 +750,7 @@ const isLinkOpen = ref(false);
                         </UFormField>
 
                         <UFormField class="flex flex-col lg:flex-row">
-                            <UButtonGroup class="w-full">
+                            <UFieldGroup class="w-full">
                                 <UButton
                                     color="error"
                                     variant="outline"
@@ -790,7 +790,7 @@ const isLinkOpen = ref(false);
                                         }
                                     "
                                 />
-                            </UButtonGroup>
+                            </UFieldGroup>
 
                             <div class="mt-1 block text-sm">
                                 <span class="font-semibold">{{ $t('common.result', 2) }}</span
@@ -809,7 +809,7 @@ const isLinkOpen = ref(false);
             </template>
         </UPopover>
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.undo')">
                 <UButton
                     :disabled="disabled || !ui.canUndo"
@@ -829,11 +829,11 @@ const isLinkOpen = ref(false);
                     @click="ed?.chain().focus().redo().run()"
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />
 
-        <UButtonGroup>
+        <UFieldGroup>
             <UTooltip :text="$t('components.partials.tiptap_editor.source_code')">
                 <UButton
                     color="neutral"
@@ -880,6 +880,6 @@ const isLinkOpen = ref(false);
                     "
                 />
             </UTooltip>
-        </UButtonGroup>
+        </UFieldGroup>
     </div>
 </template>

@@ -609,7 +609,7 @@ const { game } = useAppConfig();
                 <template #default>
                     <div>
                         <div v-if="showStats && data && data.stats" class="inline-flex min-w-0 items-center">
-                            <UButtonGroup class="truncate">
+                            <UFieldGroup class="truncate">
                                 <UButton
                                     color="neutral"
                                     variant="subtle"
@@ -640,7 +640,7 @@ const { game } = useAppConfig();
                                         </div>
                                     </template>
                                 </UDrawer>
-                            </UButtonGroup>
+                            </UFieldGroup>
                         </div>
 
                         <UTooltip

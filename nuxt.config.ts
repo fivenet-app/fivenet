@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     ssr: false,
 
     modules: [
-        '@nuxt/ui-pro',
+        '@nuxt/ui',
         '@pinia/nuxt',
         'pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
@@ -110,10 +110,6 @@ export default defineNuxtConfig({
             },
             './internal/postcss/postcss-cef-fixup': {},
         },
-    },
-
-    uiPro: {
-        content: true,
     },
 
     image: {

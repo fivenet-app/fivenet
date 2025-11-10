@@ -200,7 +200,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                         @click="() => refresh()"
                     />
 
-                    <UButtonGroup class="inline-flex">
+                    <UFieldGroup class="inline-flex">
                         <IDCopyBadge
                             :id="qualification?.id ?? qualificationId ?? 0"
                             prefix="QUAL"
@@ -211,7 +211,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                                 parameters: {},
                             }"
                         />
-                    </UButtonGroup>
+                    </UFieldGroup>
                 </template>
             </UDashboardNavbar>
 

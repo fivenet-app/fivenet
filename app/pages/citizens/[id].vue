@@ -212,7 +212,7 @@ const isOpen = ref(false);
                     </div>
 
                     <div>
-                        <UButtonGroup v-if="user">
+                        <UFieldGroup v-if="user">
                             <IDCopyBadge
                                 :id="user.userId"
                                 prefix="CIT"
@@ -221,7 +221,7 @@ const isOpen = ref(false);
                             />
 
                             <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </div>
                 </div>
             </UDashboardToolbar>

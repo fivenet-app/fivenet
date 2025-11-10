@@ -165,7 +165,7 @@ onBeforeMount(async () => listJobs());
                         class="flex-1"
                         :label="$t('components.documents.template_approval_editor.due_in')"
                     >
-                        <UButtonGroup>
+                        <UFieldGroup>
                             <UInputNumber v-model="task.dueInDays" class="w-full" :min="1" :max="30" :disabled="disabled" />
                             <UButton
                                 icon="i-mdi-clear"
@@ -173,7 +173,7 @@ onBeforeMount(async () => listJobs());
                                 variant="outline"
                                 @click="() => (task.dueInDays = undefined)"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </UFormField>
                 </div>
 

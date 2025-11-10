@@ -30,7 +30,7 @@ const docMeta = defineModel<DocumentMeta | undefined>('docMeta');
 
 const overlay = useOverlay();
 
-const { can, activeChar } = useAuth();
+const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
 
@@ -279,7 +279,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     "
                                     #footer
                                 >
-                                    <UButtonGroup class="flex w-full flex-1">
+                                    <UFieldGroup class="flex w-full flex-1">
                                         <UButton
                                             v-if="can('documents.ApprovalService/UpsertApprovalPolicy').value"
                                             block
@@ -300,7 +300,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                                             variant="outline"
                                             @click="() => recomputeApprovalPolicyCounters()"
                                         />
-                                    </UButtonGroup>
+                                    </UFieldGroup>
                                 </template>
                             </UCard>
                         </div>
@@ -337,7 +337,7 @@ const taskFormDrawer = overlay.create(TaskForm);
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
                 <!-- RevokeApproval / ReopenApprovalTask perms are indicators for being able to do ad-hoc approval, otherwise a policy and a matching task is required -->
-                <UButtonGroup class="w-full flex-1">
+                <UFieldGroup class="w-full flex-1">
                     <TaskDecideDrawer
                         v-model:policy="policy"
                         :document-id="documentId"
@@ -355,9 +355,9 @@ const taskFormDrawer = overlay.create(TaskForm);
                     >
                         <UButton color="red" icon="i-mdi-close-bold" block size="lg" :label="$t('common.decline')" />
                     </TaskDecideDrawer>
-                </UButtonGroup>
+                </UFieldGroup>
 
-                <UButtonGroup class="w-full flex-1">
+                <UFieldGroup class="w-full flex-1">
                     <UButton
                         class="flex-1"
                         color="neutral"
@@ -365,7 +365,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                         :label="$t('common.close', 1)"
                         @click="$emit('close', false)"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
     </UDrawer>

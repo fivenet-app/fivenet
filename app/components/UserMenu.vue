@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui';
-import { useDashboard } from '@nuxt/ui-pro/utils/dashboard';
+import { useDashboard } from '@nuxt/ui/utils/dashboard';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
 defineProps<{

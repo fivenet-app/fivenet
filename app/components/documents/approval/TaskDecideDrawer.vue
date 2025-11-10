@@ -115,9 +115,9 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
 
         <template #footer>
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col gap-4">
-                <UButtonGroup class="w-full flex-1">
+                <UFieldGroup class="w-full flex-1">
                     <UButton class="flex-1" color="neutral" block :label="$t('common.cancel')" @click="isOpen = false" />
-                </UButtonGroup>
+                </UFieldGroup>
             </div>
         </template>
     </UDrawer>

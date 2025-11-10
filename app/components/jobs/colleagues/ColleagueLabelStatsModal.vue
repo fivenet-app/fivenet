@@ -77,13 +77,13 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
 
                 <UTooltip :text="$t('common.refresh')">
                     <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="() => refresh()" />
                 </UTooltip>
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </UModal>
 </template>

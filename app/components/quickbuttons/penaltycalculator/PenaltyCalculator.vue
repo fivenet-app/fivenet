@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UButton, UIcon, USelect, UTooltip } from '#components';
+import { UButton, UIcon, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -281,12 +281,13 @@ const columns = computed(
                                     :sorting-options="{ manualSorting: true }"
                                 >
                                     <template #count-cell="{ row }">
-                                        <USelect
+                                        <UInputNumber
                                             :model-value="
                                                 state.selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0
                                             "
                                             name="count"
                                             :items="Array.from(Array(7).keys()).map((v) => ({ value: v, label: v.toString() }))"
+                                            class="max-w-22 min-w-20 grow-0"
                                             @update:model-value="($event) => calculate({ law: row.original, count: $event })"
                                         />
                                     </template>
@@ -327,15 +328,13 @@ const columns = computed(
             </div>
         </div>
 
-        <UButtonGroup class="mt-2 inline-flex w-full">
-            <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" icon="i-mdi-content-copy" @click="() => copySummary()">
-                    {{ $t('common.copy') }}
-                </UButton>
-                <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
-                    {{ $t('common.reset') }}
-                </UButton>
-            </UButtonGroup>
-        </UButtonGroup>
+        <UFieldGroup class="mt-2 inline-flex w-full">
+            <UButton class="flex-1" icon="i-mdi-content-copy" @click="() => copySummary()">
+                {{ $t('common.copy') }}
+            </UButton>
+            <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
+                {{ $t('common.reset') }}
+            </UButton>
+        </UFieldGroup>
     </div>
 </template>

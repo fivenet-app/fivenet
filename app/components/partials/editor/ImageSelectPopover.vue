@@ -119,7 +119,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #content>
             <div class="p-4">
-                <UButtonGroup class="w-full">
+                <UFieldGroup class="w-full">
                     <UButton
                         class="flex-1"
                         color="neutral"
@@ -130,7 +130,7 @@ const formRef = useTemplateRef('formRef');
                         :loading="disabled || !canSubmit"
                         @click="$emit('openFileList')"
                     />
-                </UButtonGroup>
+                </UFieldGroup>
 
                 <USeparator class="my-2" :label="$t('common.or')" orientation="horizontal" />
 

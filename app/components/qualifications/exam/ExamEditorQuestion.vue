@@ -363,10 +363,10 @@ watch(
                 <UIcon class="handle size-7 cursor-move" name="i-mdi-drag-horizontal" />
             </UTooltip>
 
-            <UButtonGroup>
+            <UFieldGroup>
                 <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
                 <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
-            </UButtonGroup>
+            </UFieldGroup>
         </div>
 
         <UFormField :name="`exam.questions.${index}.data.data.oneofKind`">
@@ -452,7 +452,7 @@ watch(
                     v-else-if="question.data!.data.oneofKind === 'yesno' && question.answer!.answer.oneofKind === 'yesno'"
                 >
                     <div class="flex flex-col gap-2">
-                        <UButtonGroup>
+                        <UFieldGroup>
                             <UButton
                                 :model-value="question.answer!.answer.yesno.value"
                                 color="green"
@@ -469,7 +469,7 @@ watch(
                                 :disabled="disabled"
                                 @click="question.answer!.answer.yesno.value = false"
                             />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </div>
                 </template>
 

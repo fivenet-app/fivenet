@@ -36,7 +36,7 @@ const { website } = useAppConfig();
             <div class="flex w-full flex-col gap-2">
                 <p>{{ $t('components.CookieControl.subtitle') }}</p>
 
-                <UButtonGroup class="inline-flex w-full flex-1">
+                <UFieldGroup class="inline-flex w-full flex-1">
                     <UButton
                         v-if="website.links?.privacyPolicy"
                         class="flex-1"
@@ -62,13 +62,13 @@ const { website } = useAppConfig();
                     <UButton class="flex-1" variant="link" block to="/api/clear-site-data">
                         {{ $t('components.CookieControl.clear_data') }}
                     </UButton>
-                </UButtonGroup>
+                </UFieldGroup>
 
                 <p class="text-xs">{{ $t('components.CookieControl.description') }}</p>
             </div>
 
             <template #footer>
-                <UButtonGroup class="inline-flex w-full">
+                <UFieldGroup class="inline-flex w-full">
                     <UButton class="flex-1" color="neutral" block @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
@@ -98,7 +98,7 @@ const { website } = useAppConfig();
                     >
                         {{ $t('common.accept', 1) }}
                     </UButton>
-                </UButtonGroup>
+                </UFieldGroup>
             </template>
         </UCard>
 

@@ -33,7 +33,7 @@ onBeforeMount(async () => {
         </UContainer>
 
         <div class="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
-            <UButtonGroup>
+            <UFieldGroup>
                 <UButton
                     icon="i-mdi-account-cog-outline"
                     :label="$t('components.auth.AccountInfo.title')"
@@ -41,7 +41,7 @@ onBeforeMount(async () => {
                     color="neutral"
                 />
                 <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="neutral" />
-            </UButtonGroup>
+            </UFieldGroup>
         </div>
     </div>
 </template>

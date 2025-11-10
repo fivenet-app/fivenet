@@ -52,10 +52,10 @@ const { moveUp, moveDown } = useListReorder(singleChoiceChoices);
                             <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
                         </UTooltip>
 
-                        <UButtonGroup>
+                        <UFieldGroup>
                             <UButton size="xs" variant="link" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
                             <UButton size="xs" variant="link" icon="i-mdi-arrow-down" @click="moveDown(idx)" />
-                        </UButtonGroup>
+                        </UFieldGroup>
                     </div>
 
                     <UFormField>

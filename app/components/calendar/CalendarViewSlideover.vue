@@ -146,9 +146,9 @@ const calendar = computed(() => data.value?.calendar);
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

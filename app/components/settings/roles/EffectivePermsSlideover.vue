@@ -137,7 +137,7 @@ const permCategoriesSorted = computed(() =>
                                 :description="$t(`perms.${perm.category}.${perm.name}.description`)"
                                 :ui="{ wrapper: 'flex-1' }"
                             >
-                                <UButtonGroup class="inline-flex flex-initial">
+                                <UFieldGroup class="inline-flex flex-initial">
                                     <UButton
                                         color="green"
                                         :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
@@ -162,7 +162,7 @@ const permCategoriesSorted = computed(() =>
                                         icon="i-mdi-close"
                                         disabled
                                     />
-                                </UButtonGroup>
+                                </UFieldGroup>
                             </UFormField>
 
                             <template v-for="(attr, idx) in attrList" :key="attr.attrId">
@@ -182,9 +182,9 @@ const permCategoriesSorted = computed(() =>
         </template>
 
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
+            <UFieldGroup class="inline-flex w-full">
                 <UButton class="flex-1" color="neutral" block :label="$t('common.close', 1)" @click="$emit('close', false)" />
-            </UButtonGroup>
+            </UFieldGroup>
         </template>
     </USlideover>
 </template>

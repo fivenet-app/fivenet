@@ -154,7 +154,7 @@ const version = APP_VERSION;
             :label="$t('components.debug_info.debug_functions')"
             :ui="{ container: '' }"
         >
-            <UButtonGroup class="flex w-full break-words" orientation="vertical">
+            <UFieldGroup class="flex w-full break-words" orientation="vertical">
                 <UButton
                     block
                     :label="$t('components.debug_info.reset_clipboard')"
@@ -195,7 +195,7 @@ const version = APP_VERSION;
                     :label="$t('components.debug_info.toggle_log_level')"
                     @click="() => toggleLogLevel()"
                 />
-            </UButtonGroup>
+            </UFieldGroup>
         </UFormField>
 
         <UFormField

@@ -596,7 +596,7 @@ const formRef = useTemplateRef('formRef');
                                     <IconSelectMenu
                                         v-model="state.icon"
                                         class="flex-1"
-                                        :color="state.color"
+                                        :hex-color="state.color"
                                         :fallback-icon="FileOutlineIcon"
                                     />
 

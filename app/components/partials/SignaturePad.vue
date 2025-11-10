@@ -75,7 +75,7 @@ defineExpose({
                 @end-stroke="handleSave"
             />
 
-            <UButtonGroup v-if="!disabled" class="absolute bottom-0 left-0 flex flex-row">
+            <UFieldGroup v-if="!disabled" class="absolute bottom-0 left-0 flex flex-row">
                 <UBadge icon="i-mdi-color" class="!cursor-default rounded-l-none" size="lg" />
 
                 <UButton
@@ -92,9 +92,9 @@ defineExpose({
                         name="i-mdi-check-bold"
                     />
                 </UButton>
-            </UButtonGroup>
+            </UFieldGroup>
 
-            <UButtonGroup v-if="!disabled" class="absolute right-0 bottom-0 flex flex-row">
+            <UFieldGroup v-if="!disabled" class="absolute right-0 bottom-0 flex flex-row">
                 <UTooltip :text="$t('common.undo')">
                     <UButton icon="i-mdi-undo" class="rounded-bl-none" @click="handleUndo" />
                 </UTooltip>
@@ -102,7 +102,7 @@ defineExpose({
                 <UTooltip :text="$t('common.clear')">
                     <UButton icon="i-mdi-clear" class="rounded-r-none" @click="handleClearCanvas" />
                 </UTooltip>
-            </UButtonGroup>
+            </UFieldGroup>
         </div>
 
         <template v-if="!disabled" #footer>

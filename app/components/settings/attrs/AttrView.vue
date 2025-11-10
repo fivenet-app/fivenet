@@ -467,7 +467,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                         :description="$t(`perms.${perm.category}.${perm.name}.description`)"
                                         :ui="{ wrapper: 'flex-1' }"
                                     >
-                                        <UButtonGroup class="inline-flex flex-initial">
+                                        <UFieldGroup class="inline-flex flex-initial">
                                             <UButton
                                                 color="green"
                                                 :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
@@ -484,7 +484,7 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 icon="i-mdi-close"
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
-                                        </UButtonGroup>
+                                        </UFieldGroup>
                                     </UFormField>
 
                                     <template v-for="(attr, idx) in attrList" :key="attr.attrId">

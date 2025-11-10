@@ -391,7 +391,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         {{ role?.jobLabel }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     </h2>
 
-                    <UButtonGroup>
+                    <UFieldGroup>
                         <UTooltip :text="$t('common.effective_permissions')">
                             <UButton
                                 variant="link"
@@ -422,7 +422,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 "
                             />
                         </UTooltip>
-                    </UButtonGroup>
+                    </UFieldGroup>
                 </div>
 
                 <USeparator class="mb-1" :label="$t('common.permission', 2)" />
@@ -479,7 +479,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         :description="$t(`perms.${perm.category}.${perm.name}.description`)"
                                         :ui="{ wrapper: 'flex-1' }"
                                     >
-                                        <UButtonGroup class="inline-flex flex-initial">
+                                        <UFieldGroup class="inline-flex flex-initial">
                                             <UButton
                                                 color="green"
                                                 :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
@@ -511,7 +511,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 :disabled="!canUpdate"
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
-                                        </UButtonGroup>
+                                        </UFieldGroup>
                                     </UFormField>
 
                                     <template v-for="(attr, idx) in attrList" :key="attr.attrId">

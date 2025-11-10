@@ -11,7 +11,7 @@ export const availableIcons: IconEntry[] = Object.entries(modules).map(([path, l
     const name = path.split('/').pop()!.replace(/\.js$/, '');
 
     return {
-        name,
+        name: name,
         component: defineAsyncComponent<DefineComponent>({
             loader: async () => {
                 const mod = (await loader()) as Record<string, DefineComponent>;
