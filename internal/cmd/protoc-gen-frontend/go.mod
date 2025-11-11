@@ -5,7 +5,7 @@ go 1.25.3
 require (
 	github.com/fivenet-app/fivenet/v2025 v2025.10.2
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
-	golang.org/x/text v0.30.0
+	golang.org/x/text v0.31.0
 	google.golang.org/protobuf v1.36.10
 )
 
