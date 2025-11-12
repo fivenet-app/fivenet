@@ -733,7 +733,8 @@
         "follow": "Folgen",
         "unfollow": "Nicht mehr folgen",
         "choose_one": "Wählen Sie eins aus",
-        "hidden_markers": "Versteckte Marker"
+        "hidden_markers": "Versteckte Marker",
+        "month": "Monat | Monate"
     },
     "components": {
         "partials": {

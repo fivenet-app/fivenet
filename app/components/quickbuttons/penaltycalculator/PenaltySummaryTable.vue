@@ -25,6 +25,7 @@ const leeway = computed(() => props.reduction / 100);
 const formatter = new Intl.NumberFormat(display.intlLocale, {
     style: 'currency',
     currency: display.currencyName,
+    trailingZeroDisplay: 'stripIfInteger',
 });
 
 const columns = computed(

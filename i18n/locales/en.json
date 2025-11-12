@@ -733,7 +733,8 @@
         "follow": "Follow",
         "unfollow": "Unfollow",
         "choose_one": "Choose one",
-        "hidden_markers": "Hidden Markers"
+        "hidden_markers": "Hidden Markers",
+        "month": "month | months"
     },
     "components": {
         "partials": {

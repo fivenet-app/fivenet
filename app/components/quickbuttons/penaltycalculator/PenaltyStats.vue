@@ -6,7 +6,15 @@ const props = defineProps<{
     reduction: number;
 }>();
 
+const { display } = useAppConfig();
+
 const leeway = computed(() => props.reduction / 100);
+
+const formatter = new Intl.NumberFormat(display.intlLocale, {
+    style: 'currency',
+    currency: display.currencyName,
+    trailingZeroDisplay: 'stripIfInteger',
+});
 </script>
 
 <template>
@@ -14,6 +22,7 @@ const leeway = computed(() => props.reduction / 100);
         <UPageGrid class="grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4">
             <UPageCard
                 :ui="{
+                    body: 'flex-1',
                     leadingIcon: 'mb-1',
                 }"
             >
@@ -31,12 +40,11 @@ const leeway = computed(() => props.reduction / 100);
                     <div class="flex flex-col gap-1">
                         <div class="flex gap-1">
                             <span class="text-4xl font-semibold tracking-tight">
-                                {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }}
+                                {{ formatter.format(summary.fine ?? 0) }}
                             </span>
-                            <span class="text-sm text-muted">$</span>
                         </div>
 
-                        <span v-if="leeway > 0 && summary.fine > 0"> ($-{{ (summary.fine * leeway).toFixed(0) }}) </span>
+                        <span v-if="leeway > 0 && summary.fine > 0"> ({{ formatter.format(-(summary.fine * leeway)) }}) </span>
                     </div>
                 </template>
             </UPageCard>
@@ -64,13 +72,13 @@ const leeway = computed(() => props.reduction / 100);
                                 {{ summary.detentionTime }}
                             </span>
                             <span class="text-sm text-muted">
-                                {{ $t('common.time_ago.month', summary.detentionTime) }}
+                                {{ $t('common.month', summary.detentionTime) }}
                             </span>
                         </div>
 
                         <span v-if="leeway > 0 && summary.detentionTime > 0">
                             (-{{ (summary.detentionTime * leeway).toFixed(0) }}
-                            {{ $t('common.time_ago.month', (summary.detentionTime * leeway).toFixed(0)) }})
+                            {{ $t('common.month', summary.detentionTime * leeway) }})
                         </span>
                     </div>
                 </template>

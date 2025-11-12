@@ -46,7 +46,7 @@ function doDelete() {
     }
 }
 
-function inputValue(val: string) {
+async function inputValue(val: string): Promise<string | undefined> {
     if (!powerOn.value) return;
 
     // Clear the error status when a new character is inputted
@@ -81,9 +81,7 @@ function inputValue(val: string) {
         }
     }
 
-    nextTick(() => {
-        scrollRight();
-    });
+    await nextTick(() => scrollRight());
 }
 
 function scrollRight() {
@@ -96,7 +94,7 @@ function scrollDown() {
     resultElement.value.scrollTop = resultElement.value.scrollHeight;
 }
 
-function calculate() {
+async function calculate() {
     if (!powerOn.value) return;
 
     if (lastIsOperand()) {
@@ -108,9 +106,7 @@ function calculate() {
 
     try {
         counted();
-        nextTick(() => {
-            scrollDown();
-        });
+        await nextTick(() => scrollDown());
     } catch (error) {
         console.error('Calculation error:', error);
         lastStatus.value = 'ERROR';
@@ -121,6 +117,7 @@ function counted() {
     try {
         const rep = currentCalculate.value
             .replace('x', '*')
+            .replace('.', '')
             .replace(',', '.')
             .replace(/([*+/-])0(?!\.)/, '$1');
         const lastCalculate = currentCalculate.value;
@@ -209,7 +206,7 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
     <div class="flex grow-0 flex-col gap-4 overflow-hidden">
         <div
             :class="[
-                'relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md text-right text-white transition-colors duration-300',
+                'relative flex h-64 max-h-64 flex-col items-end justify-end rounded-md text-right text-white transition-colors duration-300',
                 { 'bg-red-800': lastStatus === 'ERROR', 'bg-neutral-800': lastStatus !== 'ERROR' },
             ]"
         >
@@ -227,7 +224,7 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
                 <div ref="resultElement" class="space-y-3 overflow-y-auto p-1.5">
                     <div v-for="(history, idx) in histroryOperation" :key="idx" class="-space-y-1">
                         <p class="text-lg font-light">{{ history.operation }}</p>
-                        <p class="text-2xl font-medium">&#x3D; {{ $n(parseInt(history.result)) }}</p>
+                        <p class="text-2xl font-medium">&#x3D; {{ history.result }}</p>
                     </div>
                 </div>
 

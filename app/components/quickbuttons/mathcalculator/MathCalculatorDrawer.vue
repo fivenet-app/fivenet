@@ -20,7 +20,7 @@ defineEmits<{
 
         <template #body>
             <div class="flex justify-center">
-                <LazyQuickbuttonsMathcalculatorMathCalculator class="w-40 min-w-1/4" />
+                <LazyQuickbuttonsMathcalculatorMathCalculator class="w-48 min-w-3/4 sm:min-w-2/4" />
             </div>
         </template>
     </UDrawer>

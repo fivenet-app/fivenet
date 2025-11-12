@@ -25,7 +25,6 @@ export type SelectedPenalty = {
 };
 
 export type PenaltiesSummary = {
-    selectedPenalties: SelectedPenalty[];
     fine: number;
     detentionTime: number;
     stvoPoints: number;
@@ -35,17 +34,25 @@ export type PenaltiesSummary = {
 const formatter = new Intl.NumberFormat(display.intlLocale, {
     style: 'currency',
     currency: display.currencyName,
+    trailingZeroDisplay: 'stripIfInteger',
 });
 
 const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
 
-const state = useState<PenaltiesSummary>('quickButton:penaltyCalculator:summary', () => ({
-    selectedPenalties: [],
-    fine: 0,
-    detentionTime: 0,
-    stvoPoints: 0,
-    count: 0,
+const selectedPenalties = useState<SelectedPenalty[]>('quickButton:penaltyCalculator:selected', () => [] as SelectedPenalty[]);
+
+const summary = computed(() => ({
+    fine: selectedPenalties.value.reduce((acc, curr) => acc + (curr.law.fine ? curr.law.fine * curr.count : 0), 0),
+    detentionTime: selectedPenalties.value.reduce(
+        (acc, curr) => acc + (curr.law.detentionTime ? curr.law.detentionTime * curr.count : 0),
+        0,
+    ),
+    stvoPoints: selectedPenalties.value.reduce(
+        (acc, curr) => acc + (curr.law.stvoPoints ? curr.law.stvoPoints * curr.count : 0),
+        0,
+    ),
+    count: selectedPenalties.value.reduce((acc, curr) => acc + curr.count, 0),
 }));
 
 const filteredLawBooks = computed(() =>
@@ -85,40 +92,6 @@ function getNameForLawBookId(id: number): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
 }
 
-function calculate(e: SelectedPenalty): void {
-    const idx = state.value.selectedPenalties.findIndex(
-        (v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name,
-    );
-
-    let count = e.count;
-    if (idx > -1) {
-        const existing = state.value.selectedPenalties.at(idx)!;
-        state.value.selectedPenalties[idx] = e;
-
-        if (existing.count !== e.count) {
-            count = e.count - existing.count;
-        }
-
-        // If the selected penalty count is 0, remove it from the list
-        if (e.count === 0) {
-            state.value.selectedPenalties.splice(idx, 1);
-        }
-    } else if (e.count !== 0) {
-        state.value.selectedPenalties.push(e);
-    }
-
-    if (e.law.fine) {
-        state.value.fine += count * e.law.fine;
-    }
-    if (e.law.detentionTime) {
-        state.value.detentionTime += count * e.law.detentionTime;
-    }
-    if (e.law.stvoPoints) {
-        state.value.stvoPoints += count * e.law.stvoPoints;
-    }
-    state.value.count = state.value.count + count;
-}
-
 async function copySummary(): Promise<void> {
     let text =
         t('components.penaltycalculator.title') +
@@ -126,29 +99,31 @@ async function copySummary(): Promise<void> {
         d(new Date(), 'long') +
         `)
 
-${t('common.fine')}: ${n(state.value.fine, 'currency')}${
-            leeway.value > 0 && state.value.fine > 0 ? ` ${formatter.format(-Math.abs(state.value.fine * leeway.value))}` : ''
-        }
-${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime)}${
-            leeway.value > 0 && state.value.detentionTime > 0
-                ? ` (-${(state.value.detentionTime * leeway.value).toFixed(0)} ${t('common.time_ago.month', (state.value.detentionTime * leeway.value).toFixed(0))})`
+${t('common.fine')}: ${n(summary.value.fine, 'currency')}${
+            leeway.value > 0 && summary.value.fine > 0
+                ? ` ${formatter.format(-Math.abs(summary.value.fine * leeway.value))}`
                 : ''
         }
-${t('common.traffic_infraction_points', 2)}: ${state.value.stvoPoints}${
-            leeway.value > 0 && state.value.stvoPoints > 0
-                ? ` (-${(state.value.stvoPoints * leeway.value).toFixed(0)} ${t('common.points', (state.value.stvoPoints * leeway.value).toFixed(0))})`
+${t('common.detention_time')}: ${summary.value.detentionTime} ${t('common.month', summary.value.detentionTime)}${
+            leeway.value > 0 && summary.value.detentionTime > 0
+                ? ` (-${summary.value.detentionTime * leeway.value} ${t('common.month', summary.value.detentionTime * leeway.value)})`
+                : ''
+        }
+${t('common.traffic_infraction_points', 2)}: ${summary.value.stvoPoints}${
+            leeway.value > 0 && summary.value.stvoPoints > 0
+                ? ` (-${summary.value.stvoPoints * leeway.value} ${t('common.points', summary.value.stvoPoints * leeway.value)})`
                 : ''
         }
 ${t('common.reduction')}: ${reduction.value}%
-${t('common.total_count')}: ${state.value.count}
+${t('common.total_count')}: ${summary.value.count}
 `;
 
-    if (state.value.selectedPenalties.length > 0) {
+    if (selectedPenalties.value.length > 0) {
         text += `
-${t('common.crime', state.value.selectedPenalties.length)}:
+${t('common.crime', selectedPenalties.value.length)}:
 `;
 
-        state.value.selectedPenalties.forEach((v) => {
+        selectedPenalties.value.forEach((v) => {
             text += `* ${getNameForLawBookId(v.law.lawbookId)} - ${v.law.name} (${v.count}x)
 `;
         });
@@ -163,14 +138,24 @@ ${t('common.crime', state.value.selectedPenalties.length)}:
     await copyToClipboardWrapper(text);
 }
 
+function updateLaw(selected: SelectedPenalty): void {
+    const index = selectedPenalties.value.findIndex((p) => p.law.id === selected.law.id);
+    if (index !== -1) {
+        if (selected.count === 0) {
+            selectedPenalties.value.splice(index, 1);
+        } else {
+            selectedPenalties.value[index] = selected;
+        }
+    } else {
+        if (selected.count > 0) {
+            selectedPenalties.value.push(selected);
+        }
+    }
+}
+
 function reset(): void {
     querySearchRaw.value = '';
-    state.value.selectedPenalties = [];
-
-    state.value.count = 0;
-    state.value.detentionTime = 0;
-    state.value.fine = 0;
-    state.value.stvoPoints = 0;
+    selectedPenalties.value = [];
 }
 
 const columns = computed(
@@ -225,7 +210,7 @@ const columns = computed(
 </script>
 
 <template>
-    <div class="py-2">
+    <div>
         <div class="pb-2 sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <DataPendingBlock
@@ -270,7 +255,7 @@ const columns = computed(
                         </UInput>
                     </UFormField>
 
-                    <dl class="mt-4">
+                    <dl class="mt-2">
                         <UAccordion type="multiple" :items="filteredLawBooks">
                             <template #content="{ item: lawBook }">
                                 <UTable
@@ -283,12 +268,14 @@ const columns = computed(
                                     <template #count-cell="{ row }">
                                         <UInputNumber
                                             :model-value="
-                                                state.selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0
+                                                selectedPenalties.find((p) => p.law.id === row.original.id)?.count ?? 0
                                             "
                                             name="count"
-                                            :items="Array.from(Array(7).keys()).map((v) => ({ value: v, label: v.toString() }))"
+                                            :min="0"
+                                            :max="10"
+                                            :step="1"
                                             class="max-w-22 min-w-20 grow-0"
-                                            @update:model-value="($event) => calculate({ law: row.original, count: $event })"
+                                            @update:model-value="($event) => updateLaw({ law: row.original, count: $event })"
                                         />
                                     </template>
                                 </UTable>
@@ -299,33 +286,25 @@ const columns = computed(
             </div>
         </div>
 
-        <USeparator :label="$t('common.result')" />
+        <USeparator :label="$t('common.result')" class="mb-2" />
 
-        <div class="flow-root">
-            <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="text-xl">
-                        <PenaltyStats :summary="state" :reduction="reduction" />
+        <PenaltyStats :summary="summary" :reduction="reduction" />
 
-                        <div class="my-2 flex flex-row items-center gap-2 text-sm">
-                            <p class="font-semibold">
-                                {{ $t('common.reduction') }}
-                            </p>
-                            <USlider v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
-                            <p class="w-12">{{ reduction }}%</p>
-                        </div>
+        <div class="my-2 flex flex-row items-center gap-2 text-sm">
+            <p class="font-semibold">
+                {{ $t('common.reduction') }}
+            </p>
+            <USlider v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
+            <p class="w-12">{{ reduction }}%</p>
+        </div>
 
-                        <div>
-                            <PenaltySummaryTable
-                                v-if="lawBooks && lawBooks.length > 0"
-                                :law-books="lawBooks"
-                                :selected-laws="state.selectedPenalties"
-                                :reduction="reduction"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="overflow-x-auto">
+            <PenaltySummaryTable
+                v-if="lawBooks && lawBooks.length > 0"
+                :law-books="lawBooks"
+                :selected-laws="selectedPenalties"
+                :reduction="reduction"
+            />
         </div>
 
         <UFieldGroup class="mt-2 inline-flex w-full">
