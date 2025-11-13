@@ -42,11 +42,10 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		s.state.LastCheck = nil
 	}
 
-	sQuery := s.cfg.Tables.Vehicles
-	query := prepareStringQuery(sQuery, s.state, offset, limit)
+	q := s.cfg.Tables.Vehicles.GetQuery(s.state, offset, limit)
 
 	vehicles := []*vehicles.Vehicle{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &vehicles); err != nil {
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, &vehicles); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}

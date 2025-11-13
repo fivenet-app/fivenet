@@ -42,9 +42,9 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	s.resetLastCheckIfNotSynced()
 
 	sQuery := s.cfg.Tables.Users
-	query := prepareStringQuery(sQuery.DBSyncTable, s.state, offset, limit)
+	q := sQuery.GetQuery(s.state, offset, limit)
 
-	us, err := s.fetchUsers(ctx, query)
+	us, err := s.fetchUsers(ctx, q)
 	if err != nil {
 		return err
 	}
@@ -117,7 +117,7 @@ func (s *usersSync) updateSyncState(us []*users.User, offset, limit int64) (int6
 	return offset, nil
 }
 
-func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery UsersDBSyncTable) {
+func (s *usersSync) applyFiltersAndTransformations(us []*users.User, sQuery UsersTable) {
 	if s.cfg.Tables.Users.IgnoreEmptyName {
 		us = slices.DeleteFunc(us, func(in *users.User) bool {
 			return in == nil || (in.GetFirstname() == "" && in.GetLastname() == "")
@@ -149,7 +149,7 @@ func (s *usersSync) applyValueMapping(user *users.User) {
 	}
 }
 
-func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersDBSyncTable) bool {
+func (s *usersSync) applyFilters(us []*users.User, k int, sQuery UsersTable) bool {
 	for _, filter := range sQuery.Filters.Jobs {
 		if filter.compiledPattern.MatchString(us[k].GetJob()) {
 			switch filter.Action {
@@ -219,20 +219,19 @@ func (s *usersSync) retrieveLicenses(
 	userId int32,
 	identifier string,
 ) ([]*users.License, error) {
-	sQuery := s.cfg.Tables.CitizensLicenses
-	query := prepareStringQuery(sQuery, s.state, 0, 100)
+	q := s.cfg.Tables.CitizensLicenses.GetQuery(s.state, 0, 100)
 
 	args := []any{}
-	if strings.Contains(query, "$userId") {
-		query = strings.ReplaceAll(query, "$userId", strconv.FormatInt(int64(userId), 10))
+	if strings.Contains(q, "$userId") {
+		q = strings.ReplaceAll(q, "$userId", strconv.FormatInt(int64(userId), 10))
 		args = append(args, userId)
-	} else if strings.Contains(query, "$identifier") {
-		query = strings.ReplaceAll(query, "$identifier", identifier)
+	} else if strings.Contains(q, "$identifier") {
+		q = strings.ReplaceAll(q, "$identifier", identifier)
 		args = append(args, identifier)
 	}
 
 	licenses := []*users.License{}
-	if _, err := qrm.Query(ctx, s.db, query, args, &licenses); err != nil {
+	if _, err := qrm.Query(ctx, s.db, q, args, &licenses); err != nil {
 		return nil, err
 	}
 
@@ -241,12 +240,14 @@ func (s *usersSync) retrieveLicenses(
 
 // Sync an individual user's info.
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
-	sQuery := s.cfg.Tables.Users.DBSyncTable
-	// TODO implement adding the where condition for the user id
-	query := prepareStringQuery(sQuery, s.state, 0, 1)
+	wheres := []string{}
+	if userId != 0 {
+		wheres = append(wheres, fmt.Sprintf("`%s` = %d", s.cfg.Tables.Users.Columns.ID, userId))
+	}
+	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
 
 	user := &users.User{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &user); err != nil {
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {
 		return err
 	}
 

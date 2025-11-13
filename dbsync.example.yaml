@@ -42,77 +42,128 @@ source:
 tables:
   # The example queries here are for the ESX framework
   jobs:
-    # Must return `job.name`, `job.label` columns
     enabled: true
-    query: |
-      SELECT
-        `jobs`.`name` AS `job.name`,
-        `jobs`.`label` AS `job.label`
-      FROM
-        `jobs`
-      LIMIT $limit
-      OFFSET $offset;
-    filters:
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "jobs"
+    # Jobs table column names (only used when no custom `query` is specified)
+    columns:
+      name: "name"
+      label: "label"
+    # Custom query to retrieve the jobs (you must return the required columns)
+    #
+    # Must return result columns named: `job.name`, `job.label`
+    #query: |
+    #  SELECT
+    #    `name` AS `job.name`,
+    #    `label` AS `job.label`
+    #  FROM
+    #    `jobs`
+    #  OFFSET $offset;
+    filters: []
       # Example filter to drop jobs starting with "off_", to enable uncomment this section
       # This is useful in combination with the `users:` jobs filters below if you
       # have "off-duty" jobs that need to be rewritten to their "actual" job name
       #- pattern: '^off_'
       #  action: drop
   jobGrades:
-    # Must return `job_grade.job_name`, `job_grade.grade`, `job_grade.label` columns (with condition for the `job_name`)
     enabled: true
-    query:
-      SELECT
-        `job_grades`.`job_name` AS `job_grade.job_name`,
-        `job_grades`.`grade` AS `job_grade.grade`,
-        `job_grades`.`name` AS `job_grade.name`,
-        `job_grades`.`label` AS `job_grade.label`
-      FROM
-        `job_grades`
-      WHERE
-        `job_grades`.`job_name` = $jobName
-      LIMIT $limit
-      OFFSET $offset;
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "job_grades"
+    # Job grades table column names (only used when no custom `query` is specified)
+    columns:
+      jobName: "job_name"
+      grade: "grade"
+      name: "name"
+      label: "label"
+    # Custom query to retrieve the job grades data (you must return the required columns)
+    #
+    # Must return result columns named: `job_grade.job_name`, `job_grade.grade`, `job_grade.name`, `job_grade.label`
+    # (With a `WHERE`-condition for the `job_name` column using the `$jobName` parameter)
+    #query: |
+    #  SELECT
+    #    `job_name` AS `job_grade.job_name`,
+    #    `grade` AS `job_grade.grade`,
+    #    `name` AS `job_grade.name`,
+    #    `label` AS `job_grade.label`
+    #  FROM
+    #    `job_grades`
+    #  WHERE
+    #    `job_grades`.`job_name` = $jobName
+    #  OFFSET $offset;
   licenses:
-    # Must return `license.type`, `license.label` columns
     enabled: true
-    query: |
-      SELECT
-        `licenses`.`type` AS `license.type`,
-        `licenses`.`label` AS `license.label`
-      FROM
-        `licenses`
-      LIMIT $limit
-      OFFSET $offset;
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "licenses"
+    # Licenses table column names (only used when no custom `query` is specified)
+    columns:
+      type: "type"
+      label: "label"
+    # Custom query to retrieve the available licenses (not per user, see `userLicenses:` below)
+    #
+    # Must return result columns named: `license.type`, `license.label`
+    #query: |
+    #  SELECT
+    #    `licenses`.`type` AS `license.type`,
+    #    `licenses`.`label` AS `license.label`
+    #  FROM
+    #    `licenses`
+    #  LIMIT $limit
+    #  OFFSET $offset;
   users:
-    # Must return `user.user_id`, `user.identifier`, `user.group`, `user.firstname`, `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
-    # Optional columns: `user.height`, `user.visum`, `user.playtime`
     enabled: true
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "users"
     # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
     # configure it here so that after the initial sync only the changed data is synced again.
-    #updatedTimeColumn: "last_seen"
+    updatedTimeColumn: "last_seen"
+    # Users table column names (used to build the default query if no custom `query` is specified)
+    # **NOTE**: The `id` and `identifier` columns are required to be set, even when a custom query is used.
+    # They are used to build the where condition for incremental syncs.
+    columns:
+      id: "id"
+      identifier: "identifier"
+      group: "group"
+      firstname: "firstname"
+      lastname: "lastname"
+      dateOfBirth: "dateofbirth"
+      job: "job"
+      jobGrade: "job_grade"
+      sex: "sex"
+      phoneNumber: "phone_number"
+      height: "height"
+      visum: "visum"
+      playtime: "playtime"
+    # Custom query to retrieve users data.
     # The identifier column should be a smart combination of values when using a multichar system.
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
-    query: |
-      SELECT
-        `users`.`id` AS `user.id`,
-        `users`.`identifier` AS `user.identifier`,
-        `users`.`group` AS `user.group`,
-        `users`.`firstname` AS `user.firstname`,
-        `users`.`lastname` AS `user.lastname`,
-        `users`.`dateofbirth` AS `user.dateofbirth`,
-        `users`.`job` AS `user.job`,
-        `users`.`job_grade` AS `user.job_grade`,
-        `users`.`sex` AS `user.sex`,
-        `users`.`phone_number` AS `user.phone_number`,
-        `users`.`height` AS `user.height`,
-        `users`.`visum` AS `user.visum`,
-        `users`.`playtime` AS `user.playtime`
-      FROM
-        `users`
-      $whereCondition
-      LIMIT $limit
-      OFFSET $offset;
+    #
+    # Must return result columns named: `user.user_id`, `user.identifier`, `user.group`, `user.firstname`,
+    # `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
+    # Optional columns: `user.height`, `user.visum`, `user.playtime`
+    #query: |
+    #  SELECT
+    #    `id` AS `user.id`,
+    #    `identifier` AS `user.identifier`,
+    #    `group` AS `user.group`,
+    #    `firstname` AS `user.firstname`,
+    #    `lastname` AS `user.lastname`,
+    #    `dateofbirth` AS `user.dateofbirth`,
+    #    `job` AS `user.job`,
+    #    `job_grade` AS `user.job_grade`,
+    #    `sex` AS `user.sex`,
+    #    `phone_number` AS `user.phone_number`,
+    #    `height` AS `user.height`,
+    #    `visum` AS `user.visum`,
+    #    `playtime` AS `user.playtime`
+    #  FROM
+    #    `users`
+    #  $whereCondition
+    #  LIMIT $limit
+    #  OFFSET $offset;
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
     splitName: true
     # Normalize date of birth value to the output format if possible
@@ -144,28 +195,56 @@ tables:
         #  action: replace
         #  replacement: 'ems'
   userLicenses:
-    # Must return `user_license.type`, `user_license.owner` columns
     enabled: true
-    query: |
-      SELECT
-        `user_licenses`.`type` AS `user_license.type`,
-        `user_licenses`.`owner` AS `user_license.owner`
-      FROM
-        `user_licenses`
-      WHERE
-        `user_licenses`.`owner` = $identifier
-      LIMIT $limit
-      OFFSET $offset;
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "user_licenses"
+    # User licenses table column names (only used when no custom `query` is specified)
+    columns:
+      type: "type"
+      ownerIdentifier: "owner"
+    # Custom query to retrieve the licenses for a **specific** user, the `$identifier` parameter is the placeholder for the user's identifier
+    #
+    # Must return result columns named: `user_license.type`, `user_license.owner`
+    #query: |
+    #  SELECT
+    #    `type` AS `user_license.type`,
+    #    `owner` AS `user_license.owner`
+    #  FROM
+    #    `user_licenses`
+    #  WHERE
+    #    `user_licenses`.`owner` = $identifier
+    #  LIMIT $limit
+    #  OFFSET $offset;
   vehicles:
-    # Must return `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`, `vehicle.plate`, `vehicle.type`, `vehicle.model` and `vehicle.job` columns
     enabled: true
-    query: |
-      SELECT
-        `owned_vehicles`.`owner` AS `vehicle.owner_identifier`,
-        `owned_vehicles`.`plate` AS `vehicle.plate`,
-        `owned_vehicles`.`type` AS `vehicle.type`,
-        `owned_vehicles`.`model` AS `vehicle.model`
-      FROM
-        `owned_vehicles`
-      LIMIT $limit
-      OFFSET $offset;
+    # Name of the table for this data (in case you are using a custom query or are joining
+    # multiple tables this should be the primary one)
+    tableName: "owned_vehicles"
+    # By default the dbsync will attempt to add the column if it does not exist, but you can
+    # disable that by commenting this out. It is recommended to leave it enabled, for
+    # performance reasons.
+    updatedTimeColumn: "last_seen"
+    # Vehicles table column names (only used when no custom `query` is specified)
+    columns:
+      ownerIdentifier: "owner"
+      # Use this if vehicles are linked by user DB ID instead of identifier
+      #ownerId: "owner"
+      plate: "plate"
+      type: "type"
+      model: "model"
+    # Custom query to retrieve all vehicles
+    #
+    # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
+    # `vehicle.plate`, `vehicle.type`
+    # Optional columns: `vehicle.model`, `vehicle.job` (for job specific vehicles)
+    #query: |
+    #  SELECT
+    #    `owner` AS `vehicle.owner_identifier`,
+    #    `plate` AS `vehicle.plate`,
+    #    `type` AS `vehicle.type`,
+    #    `model` AS `vehicle.model`
+    #  FROM
+    #    `owned_vehicles`
+    #  LIMIT $limit
+    #  OFFSET $offset;

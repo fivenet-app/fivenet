@@ -74,8 +74,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 
 func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	limit := int64(200)
-	sQuery := s.cfg.Tables.Jobs
-	query := prepareStringQuery(sQuery.DBSyncTable, s.state, 0, limit)
+	query := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
 
 	jobs := []*jobs.Job{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
@@ -130,8 +129,7 @@ outer:
 }
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
-	sQuery := s.cfg.Tables.JobGrades
-	query := prepareStringQuery(sQuery, nil, 0, 200)
+	query := s.cfg.Tables.JobGrades.GetQuery(nil, 0, 200)
 	query = strings.ReplaceAll(query, "$jobName", "?")
 
 	grades := []*jobs.JobGrade{}

@@ -153,13 +153,38 @@ type DBSyncDestination struct {
 }
 
 type DBSyncSourceTables struct {
-	Jobs      JobsDBSyncTable `yaml:"jobs"`
-	JobGrades DBSyncTable     `yaml:"jobGrades"`
-	Licenses  DBSyncTable     `yaml:"licenses"`
+	Jobs      JobsTable      `yaml:"jobs"`
+	JobGrades JobGradesTable `yaml:"jobGrades"`
+	Licenses  LicensesTable  `yaml:"licenses"`
 
-	Users            UsersDBSyncTable `yaml:"users"`
-	CitizensLicenses DBSyncTable      `yaml:"userLicenses"`
-	Vehicles         DBSyncTable      `yaml:"vehicles"`
+	Users            UsersTable        `yaml:"users"`
+	CitizensLicenses UserLicensesTable `yaml:"userLicenses"`
+	Vehicles         VehiclesTable     `yaml:"vehicles"`
+}
+
+func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
+	tables := []DBSyncTable{}
+
+	if c.Jobs.Enabled {
+		tables = append(tables, c.Jobs.DBSyncTable)
+	}
+	if c.JobGrades.Enabled {
+		tables = append(tables, c.JobGrades.DBSyncTable)
+	}
+	if c.Licenses.Enabled {
+		tables = append(tables, c.Licenses.DBSyncTable)
+	}
+	if c.Users.Enabled {
+		tables = append(tables, c.Users.DBSyncTable)
+	}
+	if c.CitizensLicenses.Enabled {
+		tables = append(tables, c.CitizensLicenses.DBSyncTable)
+	}
+	if c.Vehicles.Enabled {
+		tables = append(tables, c.Vehicles.DBSyncTable)
+	}
+
+	return tables
 }
 
 type FilterAction string
@@ -181,8 +206,9 @@ type Filter struct {
 
 type DBSyncTable struct {
 	Enabled           bool           `yaml:"enabled"`
+	TableName         string         `yaml:"tableName"`
 	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn"`
-	Query             string         `yaml:"query"`
+	Query             *string        `yaml:"query"`
 	SyncInterval      *time.Duration `yaml:"syncInterval"`
 }
 
@@ -196,14 +222,99 @@ func (c *DBSyncTable) GetSyncInterval() *time.Duration {
 	return c.SyncInterval
 }
 
-type JobsDBSyncTable struct {
+type JobsTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns JobsColumns `yaml:"columns"`
 
 	Filters []Filter `yaml:"filters"`
 }
 
-type UsersDBSyncTable struct {
+func (c *JobsTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"job.name":  c.Columns.Name,
+		"job.label": c.Columns.Label,
+	}, where, offset, limit)
+}
+
+type JobsColumns struct {
+	Name  string `yaml:"name"  default:"name"`
+	Label string `yaml:"label" default:"label"`
+}
+
+type JobGradesTable struct {
 	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns JobGradesColumns `yaml:"columns"`
+}
+
+func (c *JobGradesTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"job_grade.job_name": c.Columns.JobName,
+		"job_grade.grade":    c.Columns.Grade,
+		"job_grade.name":     c.Columns.Name,
+		"job_grade.label":    c.Columns.Label,
+	}, where, offset, limit)
+}
+
+type JobGradesColumns struct {
+	JobName string `yaml:"jobName" default:"job_name"`
+	Grade   string `yaml:"grade"   default:"grade"`
+	Name    string `yaml:"name"    default:"name"`
+	Label   string `yaml:"label"   default:"label"`
+}
+
+type LicensesTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns LicensesColumns `yaml:"columns"`
+}
+
+func (c *LicensesTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"license.type":  c.Columns.Type,
+		"license.label": c.Columns.Label,
+	}, where, offset, limit)
+}
+
+type LicensesColumns struct {
+	Type  string `yaml:"type"  default:"type"`
+	Label string `yaml:"label" default:"label"`
+}
+
+type UsersTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns UsersColumns `yaml:"columns"`
 
 	SplitName    bool                  `default:"false" yaml:"splitName"`
 	DateOfBirth  DateOfBirthNormalizer `                yaml:"dateOfBirth"`
@@ -214,8 +325,48 @@ type UsersDBSyncTable struct {
 	Filters UsersFilters `yaml:"filters"`
 }
 
-type UsersFilters struct {
-	Jobs []Filter `yaml:"jobs"`
+func (c *UsersTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"user.id":           c.Columns.ID,
+		"user.identifier":   c.Columns.Identifier,
+		"user.group":        c.Columns.Group,
+		"user.firstname":    c.Columns.FirstName,
+		"user.lastname":     c.Columns.Lastname,
+		"user.dateofbirth":  c.Columns.DateOfBirth,
+		"user.job":          c.Columns.Job,
+		"user.job_grade":    c.Columns.JobGrade,
+		"user.sex":          c.Columns.Sex,
+		"user.phone_number": c.Columns.PhoneNumber,
+		"user.height":       c.Columns.Height,
+		"user.visum":        c.Columns.Visum,
+		"user.playtime":     c.Columns.Playtime,
+	}, where, offset, limit)
+}
+
+type UsersColumns struct {
+	ID          string `yaml:"id"          default:"id"`
+	Identifier  string `yaml:"identifier"  default:"identifier"`
+	Group       string `yaml:"group"       default:"group"`
+	FirstName   string `yaml:"firstName"   default:"firstname"`
+	Lastname    string `yaml:"lastname"    default:"lastname"`
+	DateOfBirth string `yaml:"dateOfBirth" default:"dateofbirth"`
+	Job         string `yaml:"job"         default:"job"`
+	JobGrade    string `yaml:"jobGrade"    default:"job_grade"`
+	Sex         string `yaml:"sex"         default:"sex"`
+	PhoneNumber string `yaml:"phoneNumber" default:"phone_number"`
+	Height      string `yaml:"height"      default:"height"`
+	Visum       string `yaml:"visum"       default:"visum"`
+	Playtime    string `yaml:"playtime"    default:"playtime"`
 }
 
 type DateOfBirthNormalizer struct {
@@ -253,6 +404,71 @@ func (c *ValueMapping) Process(input *string) {
 	} else {
 		*input = val
 	}
+}
+
+type UsersFilters struct {
+	Jobs []Filter `yaml:"jobs"`
+}
+
+type UserLicensesTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns UserLicensesColumns `yaml:"columns"`
+}
+
+func (c *UserLicensesTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"license.type":  c.Columns.Type,
+		"license.owner": c.Columns.OwnerIdentifier,
+	}, where, offset, limit)
+}
+
+type UserLicensesColumns struct {
+	Type            string `yaml:"type"            default:"type"`
+	OwnerIdentifier string `yaml:"ownerIdentifier" default:"owner"`
+}
+
+type VehiclesTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	Columns VehiclesColumns `yaml:"columns"`
+}
+
+func (c *VehiclesTable) GetQuery(
+	state *TableSyncState,
+	offset int64,
+	limit int64,
+	where ...string,
+) string {
+	if c.Query != nil {
+		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+	}
+
+	where = append(where, getWhereCondition(c.DBSyncTable, state))
+	return buildQueryFromColumns(c.TableName, map[string]string{
+		"vehicle.owner": c.Columns.OwnerIdentifier,
+		"vehicle.plate": c.Columns.Plate,
+		"vehicle.type":  c.Columns.Type,
+		"vehicle.model": c.Columns.Model,
+	}, where, offset, limit)
+}
+
+type VehiclesColumns struct {
+	OwnerIdentifier string  `yaml:"ownerIdentifier" default:"owner"`
+	OwnerID         *string `yaml:"ownerId"`
+	Plate           string  `yaml:"plate"           default:"plate"`
+	Type            string  `yaml:"type"            default:"type"`
+	Model           string  `yaml:"model"           default:"model"`
 }
 
 type DBSyncTableSyncInterval interface {

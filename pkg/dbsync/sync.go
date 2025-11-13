@@ -5,8 +5,6 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"fmt"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -320,33 +318,4 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	}
 
 	return errs
-}
-
-func prepareStringQuery(
-	query DBSyncTable,
-	state *TableSyncState,
-	offset int64,
-	limit int64,
-) string {
-	offsetStr := strconv.FormatInt(offset, 10)
-	limitStr := strconv.FormatInt(limit, 10)
-
-	q := strings.ReplaceAll(query.Query, "$offset", offsetStr)
-	q = strings.ReplaceAll(q, "$limit", limitStr)
-
-	where := ""
-	// Add "updatedAt" column condition if available
-	if state == nil ||
-		(query.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
-		q = strings.ReplaceAll(q, "$whereCondition", "")
-	} else {
-		where = fmt.Sprintf("WHERE `%s` >= '%s'\n",
-			*query.UpdatedTimeColumn,
-			state.LastCheck.Format("2006-01-02 15:04:05"),
-		)
-	}
-
-	q = strings.ReplaceAll(q, "$whereCondition", where)
-
-	return q
 }
