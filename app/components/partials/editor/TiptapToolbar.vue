@@ -396,7 +396,7 @@ const isLinkOpen = ref(false);
                     />
                 </UTooltip>
 
-                <template #panel="{ close }">
+                <template #content="{ close }">
                     <div class="inline-flex flex-col gap-1 p-4">
                         <UButton
                             class="rounded-md"
@@ -535,7 +535,7 @@ const isLinkOpen = ref(false);
                     />
                 </UTooltip>
 
-                <template #panel="{ close }">
+                <template #content="{ close }">
                     <div class="inline-flex flex-col gap-1 p-4">
                         <UButton
                             class="rounded-md"

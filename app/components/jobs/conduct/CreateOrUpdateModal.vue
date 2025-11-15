@@ -189,7 +189,7 @@ const formRef = useTemplateRef('formRef');
                                 >
                                     <template #default="{ items }">
                                         <ColleagueName
-                                            v-if="items.find((c) => c.userId === state.targetUser)"
+                                            v-if="items?.find((c) => c.userId === state.targetUser)"
                                             class="truncate"
                                             :colleague="items.find((c) => c.userId === state.targetUser)!"
                                             birthday

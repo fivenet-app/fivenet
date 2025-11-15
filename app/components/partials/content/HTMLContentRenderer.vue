@@ -19,7 +19,7 @@ export default defineComponent({
 
         // Optional tag remapping
         const tagRemapping: Record<string, Component> = {
-            img: NuxtImg,
+            img: NuxtImg as Component,
         };
 
         return (): VNode => {

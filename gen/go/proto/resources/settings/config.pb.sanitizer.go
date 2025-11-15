@@ -62,6 +62,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: QuickButtons
+	if m.QuickButtons != nil {
+		if v, ok := any(m.GetQuickButtons()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: System
 	if m.System != nil {
 		if v, ok := any(m.GetSystem()).(interface{ Sanitize() error }); ok {
@@ -248,6 +257,45 @@ func (m *Links) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *PenaltyCalculator) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: DetentionTimeUnit
+	if m.DetentionTimeUnit != nil {
+		*m.DetentionTimeUnit = htmlsanitizer.Sanitize(*m.DetentionTimeUnit)
+	}
+
+	// Field: WarnSettings
+	if m.WarnSettings != nil {
+		if v, ok := any(m.GetWarnSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PenaltyCalculatorWarn) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: WarnMessage
+	if m.WarnMessage != nil {
+		*m.WarnMessage = htmlsanitizer.Sanitize(*m.WarnMessage)
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *Perm) Sanitize() error {
 	if m == nil {
 		return nil
@@ -279,6 +327,25 @@ func (m *Perms) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *QuickButtons) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: PenaltyCalculator
+	if m.PenaltyCalculator != nil {
+		if v, ok := any(m.GetPenaltyCalculator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

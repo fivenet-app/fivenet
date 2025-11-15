@@ -7,8 +7,8 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { AccountsService } from "./accounts";
 import type { DeleteAccountResponse } from "./accounts";
 import type { DeleteAccountRequest } from "./accounts";
-import type { DisconnectOAuth2ConnectionResponse } from "./accounts";
-import type { DisconnectOAuth2ConnectionRequest } from "./accounts";
+import type { DisconnectSocialLoginResponse } from "./accounts";
+import type { DisconnectSocialLoginRequest } from "./accounts";
 import type { UpdateAccountResponse } from "./accounts";
 import type { UpdateAccountRequest } from "./accounts";
 import type { CreateAccountResponse } from "./accounts";
@@ -35,9 +35,9 @@ export interface IAccountsServiceClient {
      */
     updateAccount(input: UpdateAccountRequest, options?: RpcOptions): UnaryCall<UpdateAccountRequest, UpdateAccountResponse>;
     /**
-     * @generated from protobuf rpc: DisconnectOAuth2Connection
+     * @generated from protobuf rpc: DisconnectSocialLogin
      */
-    disconnectOAuth2Connection(input: DisconnectOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse>;
+    disconnectSocialLogin(input: DisconnectSocialLoginRequest, options?: RpcOptions): UnaryCall<DisconnectSocialLoginRequest, DisconnectSocialLoginResponse>;
     /**
      * @generated from protobuf rpc: DeleteAccount
      */
@@ -74,11 +74,11 @@ export class AccountsServiceClient implements IAccountsServiceClient, ServiceInf
         return stackIntercept<UpdateAccountRequest, UpdateAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: DisconnectOAuth2Connection
+     * @generated from protobuf rpc: DisconnectSocialLogin
      */
-    disconnectOAuth2Connection(input: DisconnectOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse> {
+    disconnectSocialLogin(input: DisconnectSocialLoginRequest, options?: RpcOptions): UnaryCall<DisconnectSocialLoginRequest, DisconnectSocialLoginResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DisconnectOAuth2ConnectionRequest, DisconnectOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DisconnectSocialLoginRequest, DisconnectSocialLoginResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteAccount

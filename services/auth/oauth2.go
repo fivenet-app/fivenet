@@ -14,10 +14,10 @@ import (
 
 var tOAuth2Accounts = table.FivenetAccountsOauth2
 
-func (s *Server) DeleteOAuth2Connection(
+func (s *Server) DeleteSocialLogin(
 	ctx context.Context,
-	req *pbauth.DeleteOAuth2ConnectionRequest,
-) (*pbauth.DeleteOAuth2ConnectionResponse, error) {
+	req *pbauth.DeleteSocialLoginRequest,
+) (*pbauth.DeleteSocialLoginResponse, error) {
 	logging.InjectFields(ctx, logging.Fields{"fivenet.auth.oauth2_provider", req.GetProvider()})
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)
@@ -42,7 +42,7 @@ func (s *Server) DeleteOAuth2Connection(
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
 
-	return &pbauth.DeleteOAuth2ConnectionResponse{
+	return &pbauth.DeleteSocialLoginResponse{
 		Success: true,
 	}, nil
 }

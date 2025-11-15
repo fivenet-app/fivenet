@@ -224,18 +224,18 @@ export interface ChooseCharacterResponse {
     attributes: RoleAttribute[];
 }
 /**
- * @generated from protobuf message services.auth.DeleteOAuth2ConnectionRequest
+ * @generated from protobuf message services.auth.DeleteSocialLoginRequest
  */
-export interface DeleteOAuth2ConnectionRequest {
+export interface DeleteSocialLoginRequest {
     /**
      * @generated from protobuf field: string provider = 1
      */
     provider: string;
 }
 /**
- * @generated from protobuf message services.auth.DeleteOAuth2ConnectionResponse
+ * @generated from protobuf message services.auth.DeleteSocialLoginResponse
  */
-export interface DeleteOAuth2ConnectionResponse {
+export interface DeleteSocialLoginResponse {
     /**
      * @generated from protobuf field: bool success = 1
      */
@@ -1194,20 +1194,20 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
  */
 export const ChooseCharacterResponse = new ChooseCharacterResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteOAuth2ConnectionRequest$Type extends MessageType<DeleteOAuth2ConnectionRequest> {
+class DeleteSocialLoginRequest$Type extends MessageType<DeleteSocialLoginRequest> {
     constructor() {
-        super("services.auth.DeleteOAuth2ConnectionRequest", [
+        super("services.auth.DeleteSocialLoginRequest", [
             { no: 1, name: "provider", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
         ]);
     }
-    create(value?: PartialMessage<DeleteOAuth2ConnectionRequest>): DeleteOAuth2ConnectionRequest {
+    create(value?: PartialMessage<DeleteSocialLoginRequest>): DeleteSocialLoginRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.provider = "";
         if (value !== undefined)
-            reflectionMergePartial<DeleteOAuth2ConnectionRequest>(this, message, value);
+            reflectionMergePartial<DeleteSocialLoginRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteOAuth2ConnectionRequest): DeleteOAuth2ConnectionRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSocialLoginRequest): DeleteSocialLoginRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1226,7 +1226,7 @@ class DeleteOAuth2ConnectionRequest$Type extends MessageType<DeleteOAuth2Connect
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteOAuth2ConnectionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSocialLoginRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string provider = 1; */
         if (message.provider !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.provider);
@@ -1237,24 +1237,24 @@ class DeleteOAuth2ConnectionRequest$Type extends MessageType<DeleteOAuth2Connect
     }
 }
 /**
- * @generated MessageType for protobuf message services.auth.DeleteOAuth2ConnectionRequest
+ * @generated MessageType for protobuf message services.auth.DeleteSocialLoginRequest
  */
-export const DeleteOAuth2ConnectionRequest = new DeleteOAuth2ConnectionRequest$Type();
+export const DeleteSocialLoginRequest = new DeleteSocialLoginRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteOAuth2ConnectionResponse$Type extends MessageType<DeleteOAuth2ConnectionResponse> {
+class DeleteSocialLoginResponse$Type extends MessageType<DeleteSocialLoginResponse> {
     constructor() {
-        super("services.auth.DeleteOAuth2ConnectionResponse", [
+        super("services.auth.DeleteSocialLoginResponse", [
             { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<DeleteOAuth2ConnectionResponse>): DeleteOAuth2ConnectionResponse {
+    create(value?: PartialMessage<DeleteSocialLoginResponse>): DeleteSocialLoginResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.success = false;
         if (value !== undefined)
-            reflectionMergePartial<DeleteOAuth2ConnectionResponse>(this, message, value);
+            reflectionMergePartial<DeleteSocialLoginResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteOAuth2ConnectionResponse): DeleteOAuth2ConnectionResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteSocialLoginResponse): DeleteSocialLoginResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1273,7 +1273,7 @@ class DeleteOAuth2ConnectionResponse$Type extends MessageType<DeleteOAuth2Connec
         }
         return message;
     }
-    internalBinaryWrite(message: DeleteOAuth2ConnectionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteSocialLoginResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool success = 1; */
         if (message.success !== false)
             writer.tag(1, WireType.Varint).bool(message.success);
@@ -1284,9 +1284,9 @@ class DeleteOAuth2ConnectionResponse$Type extends MessageType<DeleteOAuth2Connec
     }
 }
 /**
- * @generated MessageType for protobuf message services.auth.DeleteOAuth2ConnectionResponse
+ * @generated MessageType for protobuf message services.auth.DeleteSocialLoginResponse
  */
-export const DeleteOAuth2ConnectionResponse = new DeleteOAuth2ConnectionResponse$Type();
+export const DeleteSocialLoginResponse = new DeleteSocialLoginResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SetSuperuserModeRequest$Type extends MessageType<SetSuperuserModeRequest> {
     constructor() {
@@ -1430,6 +1430,6 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },
     { name: "ChooseCharacter", options: { "codegen.perms.perms": { enabled: true } }, I: ChooseCharacterRequest, O: ChooseCharacterResponse },
     { name: "GetAccountInfo", options: {}, I: GetAccountInfoRequest, O: GetAccountInfoResponse },
-    { name: "DeleteOAuth2Connection", options: {}, I: DeleteOAuth2ConnectionRequest, O: DeleteOAuth2ConnectionResponse },
+    { name: "DeleteSocialLogin", options: {}, I: DeleteSocialLoginRequest, O: DeleteSocialLoginResponse },
     { name: "SetSuperuserMode", options: {}, I: SetSuperuserModeRequest, O: SetSuperuserModeResponse }
 ], { "codegen.perms.perms_svc": { icon: "i-mdi-key-outline" } });

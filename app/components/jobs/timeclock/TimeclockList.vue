@@ -353,7 +353,7 @@ const { game } = useAppConfig();
                                     >
                                         <template #default="{ items }">
                                             <div
-                                                v-for="item in items.filter((i) => query.users.includes(i.userId))"
+                                                v-for="item in items?.filter((i) => query.users.includes(i.userId))"
                                                 :key="item.userId"
                                             >
                                                 <ColleagueName :colleague="item" birthday />

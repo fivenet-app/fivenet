@@ -23,11 +23,11 @@
         "test": "vitest"
     },
     "dependencies": {
-        "@galexrt/nuxt-update": "1.4.0",
+        "@galexrt/nuxt-update": "1.5.0",
         "@iconify-json/flagpack": "1.2.6",
         "@iconify-json/mdi": "1.2.3",
         "@iconify-json/simple-icons": "1.2.58",
-        "@nuxt/content": "3.8.0",
+        "@nuxt/content": "3.8.2",
         "@nuxt/fonts": "0.12.1",
         "@nuxt/image": "2.0.0",
         "@nuxt/ui": "4.1.0",
@@ -140,7 +140,7 @@
         "sass": "1.94.0",
         "tailwindcss": "4.1.17",
         "typescript": "5.9.3",
-        "vitest": "4.0.8",
+        "vitest": "4.0.9",
         "vue-router": "4.6.3",
         "vue-tsc": "3.1.3"
     },

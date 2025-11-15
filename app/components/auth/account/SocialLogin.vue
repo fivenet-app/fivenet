@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
-import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
+import SocialLoginConnectButton from '~/components/auth/account/SocialLoginConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
@@ -24,9 +24,9 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const authAuthClient = await getAuthAuthClient();
 
-async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
+async function disconnectSocialLogin(provider: OAuth2Provider): Promise<void> {
     try {
-        await authAuthClient.deleteOAuth2Connection({
+        await authAuthClient.deleteSocialLogin({
             provider: provider.name,
         });
 
@@ -85,7 +85,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         color="error"
                         @click="
                             confirmModal.open({
-                                confirm: async () => disconnectOAuth2Connection(provider),
+                                confirm: async () => disconnectSocialLogin(provider),
                             })
                         "
                     >
@@ -93,7 +93,7 @@ const confirmModal = overlay.create(ConfirmModal);
                     </UButton>
                 </div>
 
-                <OAuth2ConnectButton v-else-if="!nuiEnabled" :provider="provider" />
+                <SocialLoginConnectButton v-else-if="!nuiEnabled" :provider="provider" />
             </div>
         </template>
 
@@ -102,7 +102,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 <div v-if="account" class="inline-flex items-center gap-2">
                     <UAvatar size="xl" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
 
-                    <UTooltip :text="`${$t('components.auth.OAuth2Connections.external_id')}: ${account.externalId}`">
+                    <UTooltip :text="`${$t('components.auth.SocialLogins.external_id')}: ${account.externalId}`">
                         <span class="text-left">
                             {{ account.username }}
                         </span>
@@ -118,7 +118,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 size="xs"
                 variant="link"
                 color="neutral"
-                :label="$t('components.auth.OAuth2Connections.connection_website')"
+                :label="$t('components.auth.SocialLogins.connection_website')"
                 external
                 :to="provider.homepage"
                 target="_blank"

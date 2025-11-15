@@ -61,16 +61,17 @@ type Params struct {
 }
 
 func New(p Params) (*Sync, error) {
+	logger := p.Logger.Named("dbsync")
 	s := &Sync{
 		wg: &sync.WaitGroup{},
 
-		logger: p.Logger.Named("dbsync"),
+		logger: logger,
 		cfg:    p.Config,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
-	p.Config.setupWatch(p.Logger, s.restart)
+	p.Config.setupWatch(logger.Named("config"), s.restart)
 
 	// Load dbsync state from file if exists
 	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)

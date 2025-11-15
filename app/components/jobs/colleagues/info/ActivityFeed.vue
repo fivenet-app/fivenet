@@ -132,7 +132,7 @@ watch(props, async () => refresh());
                         >
                             <template #default="{ items }">
                                 <div
-                                    v-for="item in items.filter((i) => query.colleagues.includes(i.userId))"
+                                    v-for="item in items?.filter((i) => query.colleagues.includes(i.userId))"
                                     :key="item.userId"
                                 >
                                     <ColleagueName :colleague="item" birthday />

@@ -173,7 +173,7 @@ func (m *CreateAccountResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteOAuth2ConnectionRequest) Sanitize() error {
+func (m *DeleteSocialLoginRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -186,7 +186,7 @@ func (m *DeleteOAuth2ConnectionRequest) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DeleteOAuth2ConnectionResponse) Sanitize() error {
+func (m *DeleteSocialLoginResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

@@ -377,7 +377,7 @@ defineShortcuts({
                                     >
                                         <template #default="{ items }">
                                             <div
-                                                v-for="item in items.filter((i) => query.labels.includes(i.id))"
+                                                v-for="item in items?.filter((i) => query.labels.includes(i.id))"
                                                 :key="item.id"
                                             >
                                                 <UBadge

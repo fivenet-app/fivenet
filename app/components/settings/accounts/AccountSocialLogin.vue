@@ -17,9 +17,9 @@ const notifications = useNotificationsStore();
 
 const settingsAccountsClient = await getSettingsAccountsClient();
 
-async function disconnectOAuth2Connection(accountId: number, providerName: string): Promise<void> {
+async function disconnectSocialLogin(accountId: number, providerName: string): Promise<void> {
     try {
-        await settingsAccountsClient.disconnectOAuth2Connection({
+        await settingsAccountsClient.disconnectSocialLogin({
             id: accountId,
             providerName: providerName,
         });
@@ -70,7 +70,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
                     <UButton
                         icon="i-mdi-close-circle"
                         color="error"
-                        @click="disconnectOAuth2Connection(accountId, connection.providerName)"
+                        @click="disconnectSocialLogin(accountId, connection.providerName)"
                     >
                         {{ $t('common.disconnect') }}
                     </UButton>

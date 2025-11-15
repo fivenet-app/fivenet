@@ -1250,7 +1250,7 @@
                 "current_password": "Momentanes Passwort",
                 "new_password": "Neues Passwort"
             },
-            "OAuth2Connections": {
+            "SocialLogins": {
                 "title": "Social Login-Verbindungen",
                 "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen.",
                 "connection_website": "Website des Anbieters öffnen",
@@ -1541,12 +1541,19 @@
                     "title": "Authentifizierung",
                     "description": "Authentifizierung Einstellungen",
                     "sign_up": "Registrierung",
-                    "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren"
+                    "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren",
+                    "social_login_providers": {
+                        "title": "Social Login Anbieter",
+                        "description": "Liste der konfigurierten Social Login Anbieter."
+                    }
                 },
                 "perms": {
                     "title": "Berechtigungen",
                     "description": "Berechtigungssystem Optionen.",
-                    "default_perms": "Standardberechtigungen"
+                    "default_perms": {
+                        "title": "Standardberechtigungen",
+                        "description": "Standardberechtigungen für Nutzer."
+                    }
                 },
                 "website": {
                     "title": "Website",
@@ -1558,7 +1565,10 @@
                 "job_info": {
                     "title": "Berufs-Info",
                     "description": "Arbeitslosen-Beruf-Info für das System und Liste der öffentlichen und versteckten Berufe.",
-                    "unemployed_job": "Beruf der Arbeitslosen",
+                    "unemployed_job": {
+                        "title": "Beruf der Arbeitslosen",
+                        "description": "Der Beruf, der für arbeitslose Benutzer verwendet wird."
+                    },
                     "public_jobs": "Öffentliche Berufe",
                     "hidden_jobs": "Versteckte Berufe"
                 },
@@ -1589,7 +1599,7 @@
                 "system": {
                     "banner_message": {
                         "title": "Banner Nachricht",
-                        "subtitle": "Global angezeigte Bannermeldung (sollte nicht zulange vom Text her sein)."
+                        "subtitle": "Global angezeigte Bannermeldung (sollte kurz und prägnant sein)."
                     }
                 }
             },

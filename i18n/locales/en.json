@@ -1250,7 +1250,7 @@
                 "current_password": "Current Password",
                 "new_password": "New Password"
             },
-            "OAuth2Connections": {
+            "SocialLogins": {
                 "title": "Social Login Connections",
                 "subtitle": "Your Social Login connections, for faster login and cool additional features.",
                 "connection_website": "Open provider's website",
@@ -1541,12 +1541,19 @@
                     "title": "Auth",
                     "description": "Authentication settings",
                     "sign_up": "Sign-up",
-                    "last_char_lock": "Lock players into their last active character"
+                    "last_char_lock": "Lock players into their last active character",
+                    "social_login_providers": {
+                        "title": "Social Login Providers",
+                        "description": "List of configured social login providers."
+                    }
                 },
                 "perms": {
                     "title": "Permissions",
                     "description": "Permissions system options.",
-                    "default_perms": "Default Permissions"
+                    "default_perms": {
+                        "title": "Default Permissions",
+                        "description": "Default permissions for any user."
+                    }
                 },
                 "website": {
                     "title": "Website",
@@ -1558,7 +1565,10 @@
                 "job_info": {
                     "title": "Job Info",
                     "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
-                    "unemployed_job": "Unemployed Job",
+                    "unemployed_job": {
+                        "title": "Unemployed Job",
+                        "description": "The unemployed job info that users without a job have assigned."
+                    },
                     "public_jobs": "Public Jobs",
                     "hidden_jobs": "Hidden Jobs"
                 },

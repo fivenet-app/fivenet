@@ -9,16 +9,16 @@ import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
 import { toDuration } from '~/utils/duration';
 import { getSettingsConfigClient } from '~~/gen/ts/clients';
+import { GRPCServiceMethods, GRPCServices } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/settings/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/settings/config';
-import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const { t, locales } = useI18n();
 
-const { game } = useAppConfig();
+const { login, game } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
@@ -293,7 +293,6 @@ const items = [
         icon: 'i-mdi-account-key',
         value: 'perms',
     },
-    { slot: 'website' as const, label: t('components.settings.app_config.website.title'), icon: 'i-mdi-web', value: 'website' },
     {
         slot: 'jobInfo' as const,
         label: t('components.settings.app_config.job_info.title'),
@@ -307,6 +306,7 @@ const items = [
         value: 'userTracker',
     },
     { slot: 'discord' as const, label: t('common.discord'), icon: 'i-simple-icons-discord', value: 'discord' },
+    { slot: 'website' as const, label: t('components.settings.app_config.website.title'), icon: 'i-mdi-web', value: 'website' },
     { slot: 'system' as const, label: t('common.system'), icon: 'i-mdi-cog', value: 'system' },
 ];
 
@@ -410,29 +410,91 @@ const formRef = useTemplateRef('formRef');
                                 <USwitch v-model="state.auth.lastCharLock" />
                             </UFormField>
                         </UPageCard>
+
+                        <UPageCard
+                            :title="$t('components.settings.app_config.auth.social_login_providers.title')"
+                            :description="$t('components.settings.app_config.auth.social_login_providers.description')"
+                        >
+                            <UPageGrid class="lg:grid-cols-2">
+                                <UCard
+                                    v-for="provider in login.providers"
+                                    :key="provider.name"
+                                    :ui="{
+                                        header: 'flex flex-col',
+                                        body: 'flex-1 flex flex-col',
+                                    }"
+                                >
+                                    <template #header>
+                                        <div class="flex flex-1 gap-2">
+                                            <div class="inline-flex flex-1 gap-2">
+                                                <NuxtImg
+                                                    v-if="!provider.icon?.startsWith('i-')"
+                                                    class="size-10"
+                                                    :src="provider.icon"
+                                                    :alt="provider.name"
+                                                    placeholder-class="size-10"
+                                                    loading="lazy"
+                                                />
+                                                <UIcon
+                                                    v-else
+                                                    class="size-10"
+                                                    :name="provider.icon"
+                                                    :style="provider.name === 'discord' && { color: '#7289da' }"
+                                                />
+
+                                                <div
+                                                    class="flex items-center gap-1.5 truncate text-base font-semibold text-highlighted"
+                                                >
+                                                    {{ provider.label }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template #footer>
+                                        <UButton
+                                            size="xs"
+                                            variant="link"
+                                            color="neutral"
+                                            :label="$t('components.auth.SocialLogins.connection_website')"
+                                            external
+                                            :to="provider.homepage"
+                                            target="_blank"
+                                            trailing-icon="i-mdi-external-link"
+                                        />
+                                    </template>
+                                </UCard>
+                            </UPageGrid>
+                        </UPageCard>
                     </template>
 
                     <template #perms>
                         <UPageCard
-                            :title="$t('components.settings.app_config.perms.title')"
-                            :description="$t('components.settings.app_config.perms.description')"
+                            :title="$t('components.settings.app_config.perms.default_perms.title')"
+                            :description="$t('components.settings.app_config.perms.default_perms.description')"
                         >
-                            <UFormField
-                                class="grid grid-cols-3 items-center gap-2"
-                                name="perms.default"
-                                :label="$t('components.settings.app_config.perms.default_perms')"
-                                :ui="{ container: 'col-span-2' }"
-                            >
+                            <UFormField name="perms.default">
                                 <div class="flex flex-col gap-1">
-                                    <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
+                                    <div
+                                        v-for="(_, idx) in state.perms.default"
+                                        :key="idx"
+                                        class="flex flex-col gap-1 sm:flex-row"
+                                    >
                                         <UFormField class="flex-1" :name="`perms.default.${idx}.category`">
                                             <ClientOnly>
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.category"
                                                     :placeholder="$t('common.service')"
-                                                    :items="grpcServices"
+                                                    :items="GRPCServices"
                                                     class="w-full"
                                                 >
+                                                    <template v-if="state.perms.default[idx]!.category" #default>
+                                                        {{ $t(`perms.${state.perms.default[idx]!.category}.category`) }}
+                                                    </template>
+
+                                                    <template #item-label="{ item }">
+                                                        {{ $t(`perms.${item}.category`) }}
+                                                    </template>
+
                                                     <template #empty>
                                                         {{ $t('common.not_found', [$t('common.service')]) }}
                                                     </template>
@@ -445,19 +507,40 @@ const formRef = useTemplateRef('formRef');
                                                 v-model="state.perms.default[idx]!.name"
                                                 :placeholder="$t('common.method')"
                                                 :items="
-                                                    grpcMethods
-                                                        .filter((m) => m.startsWith(state.perms.default[idx]!.category + '/'))
-                                                        .map((m) => m.split('/').at(1) ?? m)
+                                                    GRPCServiceMethods.filter((m) =>
+                                                        m.startsWith(state.perms.default[idx]!.category + '/'),
+                                                    ).map((m) => m.split('/').at(1) ?? m)
                                                 "
                                                 class="w-full"
+                                                :disabled="!state.perms.default[idx]?.category"
                                             >
+                                                <template v-if="state.perms.default[idx]!.name" #default>
+                                                    {{
+                                                        $t(
+                                                            `perms.${state.perms.default[idx]!.category}.${state.perms.default[idx]!.name}.key`,
+                                                        )
+                                                    }}
+                                                </template>
+
+                                                <template #item-label="{ item }">
+                                                    {{ $t(`perms.${state.perms.default[idx]!.category}.${item}.key`) }}
+                                                </template>
+
                                                 <template #empty>
                                                     {{ $t('common.not_found', [$t('common.method')]) }}
                                                 </template>
                                             </USelectMenu>
                                         </UFormField>
 
-                                        <UButton icon="i-mdi-close" @click="state.perms.default.splice(idx, 1)" />
+                                        <div>
+                                            <UTooltip :text="$t('common.remove')">
+                                                <UButton
+                                                    color="red"
+                                                    icon="i-mdi-close"
+                                                    @click="state.perms.default.splice(idx, 1)"
+                                                />
+                                            </UTooltip>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -471,74 +554,10 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
                     </template>
 
-                    <template #website>
-                        <UPageCard
-                            :title="$t('components.settings.app_config.website.title')"
-                            :description="$t('components.settings.app_config.website.description')"
-                        >
-                            <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="defaultLocale"
-                                :label="$t('common.default_lang')"
-                                :ui="{ container: '' }"
-                            >
-                                <USelectMenu
-                                    v-model="state.defaultLocale"
-                                    :placeholder="$t('common.language', 1)"
-                                    :items="locales"
-                                    label-key="name"
-                                    :icon="state.defaultLocale?.icon"
-                                    class="w-full"
-                                />
-                            </UFormField>
-
-                            <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="website.links.privacyPolicy"
-                                :label="$t('common.privacy_policy')"
-                                :ui="{ container: '' }"
-                            >
-                                <UInput
-                                    v-model="state.website.links.privacyPolicy"
-                                    type="text"
-                                    :placeholder="$t('common.privacy_policy')"
-                                    maxlength="255"
-                                    class="w-full"
-                                />
-                            </UFormField>
-
-                            <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="website.links.imprint"
-                                :label="$t('common.imprint')"
-                                :ui="{ container: '' }"
-                            >
-                                <UInput
-                                    v-model="state.website.links.imprint"
-                                    type="text"
-                                    :placeholder="$t('common.imprint')"
-                                    maxlength="255"
-                                    class="w-full"
-                                />
-                            </UFormField>
-                        </UPageCard>
-
-                        <UPageCard :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
-                            <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="website.statsPage"
-                                :label="$t('common.stats')"
-                                :ui="{ container: '' }"
-                            >
-                                <USwitch v-model="state.website.statsPage" />
-                            </UFormField>
-                        </UPageCard>
-                    </template>
-
                     <template #jobInfo>
                         <UPageCard
-                            :title="$t('components.settings.app_config.job_info.title')"
-                            :description="$t('components.settings.app_config.job_info.description')"
+                            :title="$t('components.settings.app_config.job_info.unemployed_job.title')"
+                            :description="$t('components.settings.app_config.job_info.unemployed_job.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
@@ -546,11 +565,13 @@ const formRef = useTemplateRef('formRef');
                                 :label="`${$t('common.job')} ${$t('common.name')}`"
                                 :ui="{ container: '' }"
                             >
-                                <UInput
+                                <USelectMenu
                                     v-model="state.jobInfo.unemployedJob.name"
-                                    type="text"
                                     :placeholder="$t('common.job')"
-                                    maxlength="255"
+                                    :items="jobs ?? []"
+                                    value-key="name"
+                                    :search-input="{ placeholder: $t('common.search_field') }"
+                                    :filter-fields="['label', 'name']"
                                     class="w-full"
                                 />
                             </UFormField>
@@ -563,15 +584,25 @@ const formRef = useTemplateRef('formRef');
                             >
                                 <UInputNumber
                                     v-model="state.jobInfo.unemployedJob.grade"
-                                    :min="1"
-                                    :max="99"
+                                    :min="
+                                        jobs?.find((j) => j.name === state.jobInfo.unemployedJob.name)?.grades?.[0]?.grade ?? 0
+                                    "
+                                    :max="
+                                        jobs?.find((j) => j.name === state.jobInfo.unemployedJob.name)?.grades?.at(-1)?.grade ??
+                                        99
+                                    "
                                     name="jobInfoUnemployedGrade"
                                     :placeholder="$t('common.rank')"
                                     :label="$t('common.rank')"
                                     class="w-full"
                                 />
                             </UFormField>
+                        </UPageCard>
 
+                        <UPageCard
+                            :title="$t('components.settings.app_config.job_info.title')"
+                            :description="$t('components.settings.app_config.job_info.description')"
+                        >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.publicJobs"
@@ -837,6 +868,70 @@ const formRef = useTemplateRef('formRef');
                                     :placeholder="$t('components.settings.app_config.discord.bot_presence.url')"
                                     class="w-full"
                                 />
+                            </UFormField>
+                        </UPageCard>
+                    </template>
+
+                    <template #website>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.website.title')"
+                            :description="$t('components.settings.app_config.website.description')"
+                        >
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="defaultLocale"
+                                :label="$t('common.default_lang')"
+                                :ui="{ container: '' }"
+                            >
+                                <USelectMenu
+                                    v-model="state.defaultLocale"
+                                    :placeholder="$t('common.language', 1)"
+                                    :items="locales"
+                                    label-key="name"
+                                    :icon="state.defaultLocale?.icon"
+                                    class="w-full"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.links.privacyPolicy"
+                                :label="$t('common.privacy_policy')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.privacyPolicy"
+                                    type="text"
+                                    :placeholder="$t('common.privacy_policy')"
+                                    maxlength="255"
+                                    class="w-full"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.links.imprint"
+                                :label="$t('common.imprint')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.imprint"
+                                    type="text"
+                                    :placeholder="$t('common.imprint')"
+                                    maxlength="255"
+                                    class="w-full"
+                                />
+                            </UFormField>
+                        </UPageCard>
+
+                        <UPageCard :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
+                            <UFormField
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="website.statsPage"
+                                :label="$t('common.stats')"
+                                :ui="{ container: '' }"
+                            >
+                                <USwitch v-model="state.website.statsPage" />
                             </UFormField>
                         </UPageCard>
                     </template>

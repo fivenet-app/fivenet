@@ -7,8 +7,8 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { AuthService } from "./auth";
 import type { SetSuperuserModeResponse } from "./auth";
 import type { SetSuperuserModeRequest } from "./auth";
-import type { DeleteOAuth2ConnectionResponse } from "./auth";
-import type { DeleteOAuth2ConnectionRequest } from "./auth";
+import type { DeleteSocialLoginResponse } from "./auth";
+import type { DeleteSocialLoginRequest } from "./auth";
 import type { GetAccountInfoResponse } from "./auth";
 import type { GetAccountInfoRequest } from "./auth";
 import type { ChooseCharacterResponse } from "./auth";
@@ -74,9 +74,9 @@ export interface IAuthServiceClient {
      */
     getAccountInfo(input: GetAccountInfoRequest, options?: RpcOptions): UnaryCall<GetAccountInfoRequest, GetAccountInfoResponse>;
     /**
-     * @generated from protobuf rpc: DeleteOAuth2Connection
+     * @generated from protobuf rpc: DeleteSocialLogin
      */
-    deleteOAuth2Connection(input: DeleteOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse>;
+    deleteSocialLogin(input: DeleteSocialLoginRequest, options?: RpcOptions): UnaryCall<DeleteSocialLoginRequest, DeleteSocialLoginResponse>;
     /**
      * @generated from protobuf rpc: SetSuperuserMode
      */
@@ -158,11 +158,11 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<GetAccountInfoRequest, GetAccountInfoResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: DeleteOAuth2Connection
+     * @generated from protobuf rpc: DeleteSocialLogin
      */
-    deleteOAuth2Connection(input: DeleteOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse> {
+    deleteSocialLogin(input: DeleteSocialLoginRequest, options?: RpcOptions): UnaryCall<DeleteSocialLoginRequest, DeleteSocialLoginResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteSocialLoginRequest, DeleteSocialLoginResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetSuperuserMode

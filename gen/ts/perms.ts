@@ -28,10 +28,11 @@
 // source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
 
-export type Perms =
-    | 'Superuser/CanBeSuperuser'
-    | 'Superuser/Superuser'
-    | 'TODOService/TODOMethod'
+export type Perms = SystemPerms | GRPCServicePerms;
+
+export type SystemPerms = 'Superuser/CanBeSuperuser' | 'Superuser/Superuser' | 'TODOService/TODOMethod';
+
+export type GRPCServicePerms =
 	| 'auth.AuthService/ChooseCharacter'
 	| 'calendar.CalendarService/CreateCalendar'
 	| 'centrum.CentrumService/CreateDispatch'
@@ -117,3 +118,111 @@ export type Perms =
 	| 'wiki.WikiService/ListPages'
 	| 'wiki.WikiService/UpdatePage'
 	| 'wiki.WikiService/UploadFile';
+
+export const GRPCServices = [
+	'auth.AuthService',
+	'calendar.CalendarService',
+	'centrum.CentrumService',
+	'citizens.CitizensService',
+	'completor.CompletorService',
+	'documents.ApprovalService',
+	'documents.DocumentsService',
+	'documents.StampsService',
+	'jobs.ConductService',
+	'jobs.JobsService',
+	'jobs.TimeclockService',
+	'livemap.LivemapService',
+	'mailer.MailerService',
+	'qualifications.QualificationsService',
+	'settings.LawsService',
+	'settings.SettingsService',
+	'vehicles.VehiclesService',
+	'wiki.WikiService',
+];
+
+export const GRPCServiceMethods = [
+	'auth.AuthService/ChooseCharacter',
+	'calendar.CalendarService/CreateCalendar',
+	'centrum.CentrumService/CreateDispatch',
+	'centrum.CentrumService/CreateOrUpdateUnit',
+	'centrum.CentrumService/DeleteDispatch',
+	'centrum.CentrumService/DeleteUnit',
+	'centrum.CentrumService/Stream',
+	'centrum.CentrumService/TakeControl',
+	'centrum.CentrumService/TakeDispatch',
+	'centrum.CentrumService/UpdateDispatch',
+	'centrum.CentrumService/UpdateDispatchers',
+	'centrum.CentrumService/UpdateSettings',
+	'citizens.CitizensService/GetUser',
+	'citizens.CitizensService/ListCitizens',
+	'citizens.CitizensService/ListUserActivity',
+	'citizens.CitizensService/ManageLabels',
+	'citizens.CitizensService/SetUserProps',
+	'completor.CompletorService/CompleteCitizenLabels',
+	'completor.CompletorService/CompleteDocumentCategories',
+	'documents.ApprovalService/DeleteApprovalTasks',
+	'documents.ApprovalService/RevokeApproval',
+	'documents.ApprovalService/UpsertApprovalPolicy',
+	'documents.ApprovalService/UpsertApprovalTasks',
+	'documents.DocumentsService/AddDocumentReference',
+	'documents.DocumentsService/AddDocumentRelation',
+	'documents.DocumentsService/ChangeDocumentOwner',
+	'documents.DocumentsService/CreateDocumentReq',
+	'documents.DocumentsService/CreateOrUpdateCategory',
+	'documents.DocumentsService/CreateTemplate',
+	'documents.DocumentsService/DeleteCategory',
+	'documents.DocumentsService/DeleteComment',
+	'documents.DocumentsService/DeleteDocument',
+	'documents.DocumentsService/DeleteDocumentReq',
+	'documents.DocumentsService/DeleteTemplate',
+	'documents.DocumentsService/ListCategories',
+	'documents.DocumentsService/ListDocumentActivity',
+	'documents.DocumentsService/ListDocumentReqs',
+	'documents.DocumentsService/ListDocuments',
+	'documents.DocumentsService/ListTemplates',
+	'documents.DocumentsService/ListUserDocuments',
+	'documents.DocumentsService/SetDocumentReminder',
+	'documents.DocumentsService/ToggleDocument',
+	'documents.DocumentsService/ToggleDocumentPin',
+	'documents.DocumentsService/UpdateDocument',
+	'documents.StampsService/DeleteStamp',
+	'documents.StampsService/ListUsableStamps',
+	'documents.StampsService/UpsertStamp',
+	'jobs.ConductService/CreateConductEntry',
+	'jobs.ConductService/DeleteConductEntry',
+	'jobs.ConductService/ListConductEntries',
+	'jobs.ConductService/UpdateConductEntry',
+	'jobs.JobsService/GetColleague',
+	'jobs.JobsService/ListColleagueActivity',
+	'jobs.JobsService/ListColleagues',
+	'jobs.JobsService/ManageLabels',
+	'jobs.JobsService/SetColleagueProps',
+	'jobs.JobsService/SetMOTD',
+	'jobs.TimeclockService/ListInactiveEmployees',
+	'jobs.TimeclockService/ListTimeclock',
+	'livemap.LivemapService/CreateOrUpdateMarker',
+	'livemap.LivemapService/DeleteMarker',
+	'livemap.LivemapService/Stream',
+	'mailer.MailerService/CreateOrUpdateEmail',
+	'mailer.MailerService/DeleteEmail',
+	'mailer.MailerService/ListEmails',
+	'qualifications.QualificationsService/DeleteQualification',
+	'qualifications.QualificationsService/ListQualifications',
+	'qualifications.QualificationsService/UpdateQualification',
+	'settings.LawsService/CreateOrUpdateLawBook',
+	'settings.LawsService/DeleteLawBook',
+	'settings.SettingsService/CreateRole',
+	'settings.SettingsService/DeleteRole',
+	'settings.SettingsService/GetJobProps',
+	'settings.SettingsService/GetRoles',
+	'settings.SettingsService/SetJobProps',
+	'settings.SettingsService/UpdateRolePerms',
+	'settings.SettingsService/ViewAuditLog',
+	'vehicles.VehiclesService/ListVehicles',
+	'vehicles.VehiclesService/SetVehicleProps',
+	'wiki.WikiService/CreatePage',
+	'wiki.WikiService/DeletePage',
+	'wiki.WikiService/ListPageActivity',
+	'wiki.WikiService/ListPages',
+	'wiki.WikiService/UpdatePage',
+	'wiki.WikiService/UploadFile',];

@@ -120,9 +120,9 @@ export interface UpdateAccountResponse {
     account?: Account;
 }
 /**
- * @generated from protobuf message services.settings.DisconnectOAuth2ConnectionRequest
+ * @generated from protobuf message services.settings.DisconnectSocialLoginRequest
  */
-export interface DisconnectOAuth2ConnectionRequest {
+export interface DisconnectSocialLoginRequest {
     /**
      * @generated from protobuf field: int64 id = 1
      */
@@ -133,9 +133,9 @@ export interface DisconnectOAuth2ConnectionRequest {
     providerName: string;
 }
 /**
- * @generated from protobuf message services.settings.DisconnectOAuth2ConnectionResponse
+ * @generated from protobuf message services.settings.DisconnectSocialLoginResponse
  */
-export interface DisconnectOAuth2ConnectionResponse {
+export interface DisconnectSocialLoginResponse {
 }
 /**
  * @generated from protobuf message services.settings.DeleteAccountRequest
@@ -510,22 +510,22 @@ class UpdateAccountResponse$Type extends MessageType<UpdateAccountResponse> {
  */
 export const UpdateAccountResponse = new UpdateAccountResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth2ConnectionRequest> {
+class DisconnectSocialLoginRequest$Type extends MessageType<DisconnectSocialLoginRequest> {
     constructor() {
-        super("services.settings.DisconnectOAuth2ConnectionRequest", [
+        super("services.settings.DisconnectSocialLoginRequest", [
             { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
-    create(value?: PartialMessage<DisconnectOAuth2ConnectionRequest>): DisconnectOAuth2ConnectionRequest {
+    create(value?: PartialMessage<DisconnectSocialLoginRequest>): DisconnectSocialLoginRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.providerName = "";
         if (value !== undefined)
-            reflectionMergePartial<DisconnectOAuth2ConnectionRequest>(this, message, value);
+            reflectionMergePartial<DisconnectSocialLoginRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DisconnectOAuth2ConnectionRequest): DisconnectOAuth2ConnectionRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DisconnectSocialLoginRequest): DisconnectSocialLoginRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -547,7 +547,7 @@ class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth
         }
         return message;
     }
-    internalBinaryWrite(message: DisconnectOAuth2ConnectionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DisconnectSocialLoginRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).int64(message.id);
@@ -561,21 +561,21 @@ class DisconnectOAuth2ConnectionRequest$Type extends MessageType<DisconnectOAuth
     }
 }
 /**
- * @generated MessageType for protobuf message services.settings.DisconnectOAuth2ConnectionRequest
+ * @generated MessageType for protobuf message services.settings.DisconnectSocialLoginRequest
  */
-export const DisconnectOAuth2ConnectionRequest = new DisconnectOAuth2ConnectionRequest$Type();
+export const DisconnectSocialLoginRequest = new DisconnectSocialLoginRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DisconnectOAuth2ConnectionResponse$Type extends MessageType<DisconnectOAuth2ConnectionResponse> {
+class DisconnectSocialLoginResponse$Type extends MessageType<DisconnectSocialLoginResponse> {
     constructor() {
-        super("services.settings.DisconnectOAuth2ConnectionResponse", []);
+        super("services.settings.DisconnectSocialLoginResponse", []);
     }
-    create(value?: PartialMessage<DisconnectOAuth2ConnectionResponse>): DisconnectOAuth2ConnectionResponse {
+    create(value?: PartialMessage<DisconnectSocialLoginResponse>): DisconnectSocialLoginResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<DisconnectOAuth2ConnectionResponse>(this, message, value);
+            reflectionMergePartial<DisconnectSocialLoginResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DisconnectOAuth2ConnectionResponse): DisconnectOAuth2ConnectionResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DisconnectSocialLoginResponse): DisconnectSocialLoginResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -591,7 +591,7 @@ class DisconnectOAuth2ConnectionResponse$Type extends MessageType<DisconnectOAut
         }
         return message;
     }
-    internalBinaryWrite(message: DisconnectOAuth2ConnectionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DisconnectSocialLoginResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -599,9 +599,9 @@ class DisconnectOAuth2ConnectionResponse$Type extends MessageType<DisconnectOAut
     }
 }
 /**
- * @generated MessageType for protobuf message services.settings.DisconnectOAuth2ConnectionResponse
+ * @generated MessageType for protobuf message services.settings.DisconnectSocialLoginResponse
  */
-export const DisconnectOAuth2ConnectionResponse = new DisconnectOAuth2ConnectionResponse$Type();
+export const DisconnectSocialLoginResponse = new DisconnectSocialLoginResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteAccountRequest$Type extends MessageType<DeleteAccountRequest> {
     constructor() {
@@ -694,6 +694,6 @@ export const AccountsService = new ServiceType("services.settings.AccountsServic
     { name: "ListAccounts", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: ListAccountsRequest, O: ListAccountsResponse },
     { name: "CreateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: CreateAccountRequest, O: CreateAccountResponse },
     { name: "UpdateAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: UpdateAccountRequest, O: UpdateAccountResponse },
-    { name: "DisconnectOAuth2Connection", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DisconnectOAuth2ConnectionRequest, O: DisconnectOAuth2ConnectionResponse },
+    { name: "DisconnectSocialLogin", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DisconnectSocialLoginRequest, O: DisconnectSocialLoginResponse },
     { name: "DeleteAccount", options: { "codegen.perms.perms": { enabled: true, name: "Superuser" } }, I: DeleteAccountRequest, O: DeleteAccountResponse }
 ]);

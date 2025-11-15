@@ -5797,6 +5797,7 @@ User related events
 | `discord` | [Discord](#resourcessettingsDiscord) |  |  |
 | `system` | [System](#resourcessettingsSystem) |  |  |
 | `display` | [Display](#resourcessettingsDisplay) |  |  |
+| `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
 
 
 
@@ -5881,6 +5882,34 @@ User related events
 
 
 
+### resources.settings.PenaltyCalculator
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `detention_time_unit` | [string](#string) | optional |  |
+| `warn_settings` | [PenaltyCalculatorWarn](#resourcessettingsPenaltyCalculatorWarn) | optional |  |
+| `max_count` | [uint32](#uint32) | optional |  |
+
+
+
+
+
+### resources.settings.PenaltyCalculatorWarn
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `fine` | [uint32](#uint32) | optional |  |
+| `detention_time` | [uint32](#uint32) | optional |  |
+| `stvo_points` | [uint32](#uint32) | optional |  |
+| `warn_message` | [string](#string) | optional |  |
+
+
+
+
+
 ### resources.settings.Perm
 
 
@@ -5899,6 +5928,17 @@ User related events
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `default` | [Perm](#resourcessettingsPerm) | repeated |  |
+
+
+
+
+
+### resources.settings.QuickButtons
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `penalty_calculator` | [PenaltyCalculator](#resourcessettingsPenaltyCalculator) |  |  |
 
 
 
@@ -6979,7 +7019,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### services.auth.DeleteOAuth2ConnectionRequest
+### services.auth.DeleteSocialLoginRequest
 
 
 | Field | Type | Label | Description |
@@ -6990,7 +7030,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-### services.auth.DeleteOAuth2ConnectionResponse
+### services.auth.DeleteSocialLoginResponse
 
 
 | Field | Type | Label | Description |
@@ -7145,7 +7185,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetCharacters` | [GetCharactersRequest](#servicesauthGetCharactersRequest) | [GetCharactersResponse](#servicesauthGetCharactersResponse) | |
 | `ChooseCharacter` | [ChooseCharacterRequest](#servicesauthChooseCharacterRequest) | [ChooseCharacterResponse](#servicesauthChooseCharacterResponse) | |
 | `GetAccountInfo` | [GetAccountInfoRequest](#servicesauthGetAccountInfoRequest) | [GetAccountInfoResponse](#servicesauthGetAccountInfoResponse) | |
-| `DeleteOAuth2Connection` | [DeleteOAuth2ConnectionRequest](#servicesauthDeleteOAuth2ConnectionRequest) | [DeleteOAuth2ConnectionResponse](#servicesauthDeleteOAuth2ConnectionResponse) | |
+| `DeleteSocialLogin` | [DeleteSocialLoginRequest](#servicesauthDeleteSocialLoginRequest) | [DeleteSocialLoginResponse](#servicesauthDeleteSocialLoginResponse) | |
 | `SetSuperuserMode` | [SetSuperuserModeRequest](#servicesauthSetSuperuserModeRequest) | [SetSuperuserModeResponse](#servicesauthSetSuperuserModeResponse) | |
 
  <!-- end services -->
@@ -11423,7 +11463,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.settings.DisconnectOAuth2ConnectionRequest
+### services.settings.DisconnectSocialLoginRequest
 
 
 | Field | Type | Label | Description |
@@ -11435,7 +11475,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-### services.settings.DisconnectOAuth2ConnectionResponse
+### services.settings.DisconnectSocialLoginResponse
 
 
 
@@ -11506,7 +11546,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListAccounts` | [ListAccountsRequest](#servicessettingsListAccountsRequest) | [ListAccountsResponse](#servicessettingsListAccountsResponse) | |
 | `CreateAccount` | [CreateAccountRequest](#servicessettingsCreateAccountRequest) | [CreateAccountResponse](#servicessettingsCreateAccountResponse) | |
 | `UpdateAccount` | [UpdateAccountRequest](#servicessettingsUpdateAccountRequest) | [UpdateAccountResponse](#servicessettingsUpdateAccountResponse) | |
-| `DisconnectOAuth2Connection` | [DisconnectOAuth2ConnectionRequest](#servicessettingsDisconnectOAuth2ConnectionRequest) | [DisconnectOAuth2ConnectionResponse](#servicessettingsDisconnectOAuth2ConnectionResponse) | |
+| `DisconnectSocialLogin` | [DisconnectSocialLoginRequest](#servicessettingsDisconnectSocialLoginRequest) | [DisconnectSocialLoginResponse](#servicessettingsDisconnectSocialLoginResponse) | |
 | `DeleteAccount` | [DeleteAccountRequest](#servicessettingsDeleteAccountRequest) | [DeleteAccountResponse](#servicessettingsDeleteAccountResponse) | |
 
  <!-- end services -->

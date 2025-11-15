@@ -88,7 +88,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     }
 }
 
-watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), { debounce: 250, maxWait: 1250 });
+watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 250, maxWait: 1250 });
 
 const appConfig = useAppConfig();
 

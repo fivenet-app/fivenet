@@ -286,7 +286,7 @@ const columns = computed(
                                     value-key="userId"
                                 >
                                     <template #default="{ items }">
-                                        <div v-for="item in items.filter((i) => query.user === i.userId)" :key="item.userId">
+                                        <div v-for="item in items?.filter((i) => query.user === i.userId)" :key="item.userId">
                                             <ColleagueName :colleague="item" birthday />
                                         </div>
                                     </template>

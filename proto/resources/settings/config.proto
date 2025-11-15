@@ -27,8 +27,9 @@ message AppConfig {
   UserTracker user_tracker = 6;
   Discord discord = 7;
   System system = 9;
-
   Display display = 10;
+
+  QuickButtons quick_buttons = 11;
 }
 
 message Auth {
@@ -194,5 +195,33 @@ message Display {
       enabled: true
       method: "StripTags"
     }
+  ];
+}
+
+message QuickButtons {
+  PenaltyCalculator penalty_calculator = 1;
+}
+
+message PenaltyCalculator {
+  optional string detention_time_unit = 1 [
+    (buf.validate.field).string.max_len = 32,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional PenaltyCalculatorWarn warn_settings = 2;
+  optional uint32 max_count = 3;
+}
+
+message PenaltyCalculatorWarn {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool enabled = 1;
+
+  optional uint32 fine = 2;
+  optional uint32 detention_time = 3;
+  optional uint32 stvo_points = 4;
+
+  optional string warn_message = 5 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
 }

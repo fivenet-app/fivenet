@@ -137,7 +137,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
 
 const formRef = useTemplateRef('formRef');
 
-watchDebounced(query, async () => (await formRef.value?.validate()) && refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => (await formRef.value?.validate({})) && refresh(), { debounce: 200, maxWait: 1250 });
 
 const isPinnedDocumentsVisible = ref(false);
 
@@ -310,7 +310,7 @@ defineShortcuts({
                                             <CategoryBadge
                                                 v-for="category in query.categories"
                                                 :key="category"
-                                                :category="items.find((c) => c.id === category)"
+                                                :category="items?.find((c) => c.id === category)"
                                             />
                                         </template>
 

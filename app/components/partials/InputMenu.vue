@@ -3,7 +3,8 @@
     setup
     generic="T extends Array<InputMenuItem>, VK extends GetItemKeys<T> | undefined = undefined, M extends boolean = false"
 >
-import type { GetItemKeys, InputMenuEmits, InputMenuItem, InputMenuProps, InputMenuSlots } from '@nuxt/ui';
+import type { InputMenuEmits, InputMenuItem, InputMenuProps, InputMenuSlots } from '@nuxt/ui';
+import type { GetItemKeys } from '@nuxt/ui/runtime/types/utils.js';
 
 interface Props<T extends Array<InputMenuItem>, VK extends GetItemKeys<T> | undefined = undefined, M extends boolean = false>
     extends /* @vue-ignore */ InputMenuProps<T, VK, M> {

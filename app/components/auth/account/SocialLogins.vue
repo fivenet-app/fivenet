@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import OAuth2Connection from '~/components/auth/account/OAuth2Connection.vue';
+import SocialLogin from '~/components/auth/account/SocialLogin.vue';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 
 const props = defineProps<{
@@ -18,7 +18,7 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 
 <template>
     <UPageGrid class="lg:grid-cols-2">
-        <OAuth2Connection
+        <SocialLogin
             v-for="provider in providers"
             :key="provider.name"
             :provider="provider"

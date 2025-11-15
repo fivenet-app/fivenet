@@ -151,11 +151,11 @@ message ChooseCharacterResponse {
   repeated resources.permissions.RoleAttribute attributes = 6;
 }
 
-message DeleteOAuth2ConnectionRequest {
+message DeleteSocialLoginRequest {
   string provider = 1 [(buf.validate.field).string.max_len = 50];
 }
 
-message DeleteOAuth2ConnectionResponse {
+message DeleteSocialLoginResponse {
   bool success = 1;
 }
 
@@ -195,7 +195,7 @@ service AuthService {
 
   rpc GetAccountInfo(GetAccountInfoRequest) returns (GetAccountInfoResponse);
 
-  rpc DeleteOAuth2Connection(DeleteOAuth2ConnectionRequest) returns (DeleteOAuth2ConnectionResponse);
+  rpc DeleteSocialLogin(DeleteSocialLoginRequest) returns (DeleteSocialLoginResponse);
 
   rpc SetSuperuserMode(SetSuperuserModeRequest) returns (SetSuperuserModeResponse);
 }

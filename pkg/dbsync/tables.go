@@ -27,7 +27,7 @@ type TableManagerParams struct {
 
 func NewTableManager(p TableManagerParams) *TableManager {
 	t := &TableManager{
-		logger: p.Logger,
+		logger: p.Logger.Named("dbsync.table_manager"),
 		db:     p.DB,
 	}
 
@@ -105,12 +105,9 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 	tableName string,
 ) (bool, error) {
 	rows, err := t.db.QueryContext(ctx, `
-        SELECT
-            c.COLUMN_NAME
-        FROM
-	        information_schema.COLUMNS c
-        WHERE
-	        c.TABLE_SCHEMA = DATABASE() AND c.TABLE_NAME = ? AND LOWER(c.EXTRA) LIKE '%on update current_timestamp%'
+        SELECT c.COLUMN_NAME
+        FROM information_schema.COLUMNS c
+        WHERE c.TABLE_SCHEMA = DATABASE() AND c.TABLE_NAME = ? AND LOWER(c.EXTRA) LIKE '%on update current_timestamp%'
         LIMIT 1`, tableName)
 	if err != nil {
 		return false, fmt.Errorf(

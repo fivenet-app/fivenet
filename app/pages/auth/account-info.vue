@@ -52,7 +52,7 @@ const items = computed<NavigationMenuItem[]>(() =>
         },
         account.value?.oauth2Providers && account.value.oauth2Providers.length > 0
             ? {
-                  label: t('components.auth.OAuth2Connections.title'),
+                  label: t('components.auth.SocialLogins.title'),
                   icon: 'i-simple-icons-discord',
                   to: '/auth/account-info/oauth2',
               }

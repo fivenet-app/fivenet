@@ -7,6 +7,7 @@ import (
 	"database/sql/driver"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // Scan implements driver.Valuer for protobuf AppConfig.
@@ -22,6 +23,27 @@ func (x *AppConfig) Scan(value any) error {
 
 // Value marshals the AppConfig value into driver.Valuer.
 func (x *AppConfig) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.MarshalToJSON(x)
+	return string(out), err
+}
+
+// Scan implements driver.Valuer for protobuf PenaltyCalculatorWarn.
+func (x *PenaltyCalculatorWarn) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the PenaltyCalculatorWarn value into driver.Valuer.
+func (x *PenaltyCalculatorWarn) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

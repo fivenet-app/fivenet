@@ -48,12 +48,12 @@ message UpdateAccountResponse {
   resources.accounts.Account account = 1;
 }
 
-message DisconnectOAuth2ConnectionRequest {
+message DisconnectSocialLoginRequest {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];
   string provider_name = 2 [(buf.validate.field).string.max_len = 255];
 }
 
-message DisconnectOAuth2ConnectionResponse {}
+message DisconnectSocialLoginResponse {}
 
 message DeleteAccountRequest {
   int64 id = 1 [(buf.validate.field).int64.gt = 0];
@@ -80,7 +80,7 @@ service AccountsService {
       name: "Superuser"
     };
   }
-  rpc DisconnectOAuth2Connection(DisconnectOAuth2ConnectionRequest) returns (DisconnectOAuth2ConnectionResponse) {
+  rpc DisconnectSocialLogin(DisconnectSocialLoginRequest) returns (DisconnectSocialLoginResponse) {
     option (codegen.perms.perms) = {
       enabled: true
       name: "Superuser"

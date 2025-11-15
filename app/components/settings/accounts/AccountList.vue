@@ -300,13 +300,13 @@ const columns = computed(
                                 <UFormField
                                     class="flex-1"
                                     name="externalId"
-                                    :label="$t('components.auth.OAuth2Connections.external_id')"
+                                    :label="$t('components.auth.SocialLogins.external_id')"
                                 >
                                     <UInput
                                         v-model="query.externalId"
                                         type="text"
                                         name="externalId"
-                                        :placeholder="$t('components.auth.OAuth2Connections.external_id')"
+                                        :placeholder="$t('components.auth.SocialLogins.external_id')"
                                         block
                                     />
                                 </UFormField>

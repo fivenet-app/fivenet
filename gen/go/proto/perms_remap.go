@@ -367,7 +367,7 @@ var PermsRemap = map[string][]string{
 	"settings.AccountsService/DeleteAccount": []string{
 		"Superuser",
 	},
-	"settings.AccountsService/DisconnectOAuth2Connection": []string{
+	"settings.AccountsService/DisconnectSocialLogin": []string{
 		"Superuser",
 	},
 	"settings.AccountsService/ListAccounts": []string{

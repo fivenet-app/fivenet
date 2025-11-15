@@ -35,8 +35,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>): Promise<void> {
         })
         .run();
 }
-
-const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
@@ -53,7 +51,7 @@ const formRef = useTemplateRef('formRef');
 
         <template #content>
             <div class="p-4">
-                <UForm ref="formRef" :schema="schema" :state="{}" @submit="onSubmit">
+                <UForm :schema="schema" :state="{}" @submit="onSubmit">
                     <UFormField :label="$t('common.rows')" name="rows">
                         <UInput v-model="state.rows" type="text" :disabled="disabled" />
                     </UFormField>

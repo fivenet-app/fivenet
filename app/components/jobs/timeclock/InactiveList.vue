@@ -84,7 +84,7 @@ const formRef = ref<null | Form<Schema>>();
 watchDebounced(
     state,
     async () => {
-        const valid = await formRef.value?.validate();
+        const valid = await formRef.value?.validate({});
         if (valid) {
             refresh();
         }

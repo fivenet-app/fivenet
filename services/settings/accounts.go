@@ -232,10 +232,10 @@ func (s *Server) UpdateAccount(
 	}, nil
 }
 
-func (s *Server) DisconnectOAuth2Connection(
+func (s *Server) DisconnectSocialLogin(
 	ctx context.Context,
-	req *pbsettings.DisconnectOAuth2ConnectionRequest,
-) (*pbsettings.DisconnectOAuth2ConnectionResponse, error) {
+	req *pbsettings.DisconnectSocialLoginRequest,
+) (*pbsettings.DisconnectSocialLoginResponse, error) {
 	tOauth2 := table.FivenetAccountsOauth2
 
 	stmt := tOauth2.

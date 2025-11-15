@@ -901,27 +901,27 @@ func (x *ChooseCharacterResponse) GetAttributes() []*permissions.RoleAttribute {
 	return nil
 }
 
-type DeleteOAuth2ConnectionRequest struct {
+type DeleteSocialLoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Provider      string                 `protobuf:"bytes,1,opt,name=provider,proto3" json:"provider,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteOAuth2ConnectionRequest) Reset() {
-	*x = DeleteOAuth2ConnectionRequest{}
+func (x *DeleteSocialLoginRequest) Reset() {
+	*x = DeleteSocialLoginRequest{}
 	mi := &file_services_auth_auth_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteOAuth2ConnectionRequest) String() string {
+func (x *DeleteSocialLoginRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteOAuth2ConnectionRequest) ProtoMessage() {}
+func (*DeleteSocialLoginRequest) ProtoMessage() {}
 
-func (x *DeleteOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message {
+func (x *DeleteSocialLoginRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_auth_auth_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -933,39 +933,39 @@ func (x *DeleteOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteOAuth2ConnectionRequest.ProtoReflect.Descriptor instead.
-func (*DeleteOAuth2ConnectionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteSocialLoginRequest.ProtoReflect.Descriptor instead.
+func (*DeleteSocialLoginRequest) Descriptor() ([]byte, []int) {
 	return file_services_auth_auth_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DeleteOAuth2ConnectionRequest) GetProvider() string {
+func (x *DeleteSocialLoginRequest) GetProvider() string {
 	if x != nil {
 		return x.Provider
 	}
 	return ""
 }
 
-type DeleteOAuth2ConnectionResponse struct {
+type DeleteSocialLoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteOAuth2ConnectionResponse) Reset() {
-	*x = DeleteOAuth2ConnectionResponse{}
+func (x *DeleteSocialLoginResponse) Reset() {
+	*x = DeleteSocialLoginResponse{}
 	mi := &file_services_auth_auth_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteOAuth2ConnectionResponse) String() string {
+func (x *DeleteSocialLoginResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteOAuth2ConnectionResponse) ProtoMessage() {}
+func (*DeleteSocialLoginResponse) ProtoMessage() {}
 
-func (x *DeleteOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteSocialLoginResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_auth_auth_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -977,12 +977,12 @@ func (x *DeleteOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteOAuth2ConnectionResponse.ProtoReflect.Descriptor instead.
-func (*DeleteOAuth2ConnectionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteSocialLoginResponse.ProtoReflect.Descriptor instead.
+func (*DeleteSocialLoginResponse) Descriptor() ([]byte, []int) {
 	return file_services_auth_auth_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *DeleteOAuth2ConnectionResponse) GetSuccess() bool {
+func (x *DeleteSocialLoginResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
@@ -1174,10 +1174,10 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"D\n" +
-	"\x1dDeleteOAuth2ConnectionRequest\x12#\n" +
-	"\bprovider\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x182R\bprovider\":\n" +
-	"\x1eDeleteOAuth2ConnectionResponse\x12\x18\n" +
+	"attributes\"?\n" +
+	"\x18DeleteSocialLoginRequest\x12#\n" +
+	"\bprovider\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x182R\bprovider\"5\n" +
+	"\x19DeleteSocialLoginResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"_\n" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +
 	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x1e\n" +
@@ -1192,7 +1192,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
-	"_job_props2\xab\b\n" +
+	"_job_props2\x9c\b\n" +
 	"\vAuthService\x12B\n" +
 	"\x05Login\x12\x1b.services.auth.LoginRequest\x1a\x1c.services.auth.LoginResponse\x12E\n" +
 	"\x06Logout\x12\x1c.services.auth.LogoutRequest\x1a\x1d.services.auth.LogoutResponse\x12Z\n" +
@@ -1202,8 +1202,8 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0eForgotPassword\x12$.services.auth.ForgotPasswordRequest\x1a%.services.auth.ForgotPasswordResponse\x12Z\n" +
 	"\rGetCharacters\x12#.services.auth.GetCharactersRequest\x1a$.services.auth.GetCharactersResponse\x12h\n" +
 	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12]\n" +
-	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12u\n" +
-	"\x16DeleteOAuth2Connection\x12,.services.auth.DeleteOAuth2ConnectionRequest\x1a-.services.auth.DeleteOAuth2ConnectionResponse\x12c\n" +
+	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12f\n" +
+	"\x11DeleteSocialLogin\x12'.services.auth.DeleteSocialLoginRequest\x1a(.services.auth.DeleteSocialLoginResponse\x12c\n" +
 	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponse\x1a\x17\xea\xf3\x18\x13\x12\x11i-mdi-key-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
 
 var (
@@ -1220,37 +1220,37 @@ func file_services_auth_auth_proto_rawDescGZIP() []byte {
 
 var file_services_auth_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_services_auth_auth_proto_goTypes = []any{
-	(*CreateAccountRequest)(nil),           // 0: services.auth.CreateAccountRequest
-	(*CreateAccountResponse)(nil),          // 1: services.auth.CreateAccountResponse
-	(*LoginRequest)(nil),                   // 2: services.auth.LoginRequest
-	(*LoginResponse)(nil),                  // 3: services.auth.LoginResponse
-	(*LogoutRequest)(nil),                  // 4: services.auth.LogoutRequest
-	(*LogoutResponse)(nil),                 // 5: services.auth.LogoutResponse
-	(*ChangePasswordRequest)(nil),          // 6: services.auth.ChangePasswordRequest
-	(*ChangePasswordResponse)(nil),         // 7: services.auth.ChangePasswordResponse
-	(*ChangeUsernameRequest)(nil),          // 8: services.auth.ChangeUsernameRequest
-	(*ChangeUsernameResponse)(nil),         // 9: services.auth.ChangeUsernameResponse
-	(*ForgotPasswordRequest)(nil),          // 10: services.auth.ForgotPasswordRequest
-	(*ForgotPasswordResponse)(nil),         // 11: services.auth.ForgotPasswordResponse
-	(*GetAccountInfoRequest)(nil),          // 12: services.auth.GetAccountInfoRequest
-	(*GetAccountInfoResponse)(nil),         // 13: services.auth.GetAccountInfoResponse
-	(*GetCharactersRequest)(nil),           // 14: services.auth.GetCharactersRequest
-	(*GetCharactersResponse)(nil),          // 15: services.auth.GetCharactersResponse
-	(*ChooseCharacterRequest)(nil),         // 16: services.auth.ChooseCharacterRequest
-	(*ChooseCharacterResponse)(nil),        // 17: services.auth.ChooseCharacterResponse
-	(*DeleteOAuth2ConnectionRequest)(nil),  // 18: services.auth.DeleteOAuth2ConnectionRequest
-	(*DeleteOAuth2ConnectionResponse)(nil), // 19: services.auth.DeleteOAuth2ConnectionResponse
-	(*SetSuperuserModeRequest)(nil),        // 20: services.auth.SetSuperuserModeRequest
-	(*SetSuperuserModeResponse)(nil),       // 21: services.auth.SetSuperuserModeResponse
-	(*timestamp.Timestamp)(nil),            // 22: resources.timestamp.Timestamp
-	(*accounts.Account)(nil),               // 23: resources.accounts.Account
-	(*accounts.OAuth2Provider)(nil),        // 24: resources.accounts.OAuth2Provider
-	(*accounts.OAuth2Account)(nil),         // 25: resources.accounts.OAuth2Account
-	(*accounts.Character)(nil),             // 26: resources.accounts.Character
-	(*jobs.JobProps)(nil),                  // 27: resources.jobs.JobProps
-	(*users.User)(nil),                     // 28: resources.users.User
-	(*permissions.Permission)(nil),         // 29: resources.permissions.Permission
-	(*permissions.RoleAttribute)(nil),      // 30: resources.permissions.RoleAttribute
+	(*CreateAccountRequest)(nil),      // 0: services.auth.CreateAccountRequest
+	(*CreateAccountResponse)(nil),     // 1: services.auth.CreateAccountResponse
+	(*LoginRequest)(nil),              // 2: services.auth.LoginRequest
+	(*LoginResponse)(nil),             // 3: services.auth.LoginResponse
+	(*LogoutRequest)(nil),             // 4: services.auth.LogoutRequest
+	(*LogoutResponse)(nil),            // 5: services.auth.LogoutResponse
+	(*ChangePasswordRequest)(nil),     // 6: services.auth.ChangePasswordRequest
+	(*ChangePasswordResponse)(nil),    // 7: services.auth.ChangePasswordResponse
+	(*ChangeUsernameRequest)(nil),     // 8: services.auth.ChangeUsernameRequest
+	(*ChangeUsernameResponse)(nil),    // 9: services.auth.ChangeUsernameResponse
+	(*ForgotPasswordRequest)(nil),     // 10: services.auth.ForgotPasswordRequest
+	(*ForgotPasswordResponse)(nil),    // 11: services.auth.ForgotPasswordResponse
+	(*GetAccountInfoRequest)(nil),     // 12: services.auth.GetAccountInfoRequest
+	(*GetAccountInfoResponse)(nil),    // 13: services.auth.GetAccountInfoResponse
+	(*GetCharactersRequest)(nil),      // 14: services.auth.GetCharactersRequest
+	(*GetCharactersResponse)(nil),     // 15: services.auth.GetCharactersResponse
+	(*ChooseCharacterRequest)(nil),    // 16: services.auth.ChooseCharacterRequest
+	(*ChooseCharacterResponse)(nil),   // 17: services.auth.ChooseCharacterResponse
+	(*DeleteSocialLoginRequest)(nil),  // 18: services.auth.DeleteSocialLoginRequest
+	(*DeleteSocialLoginResponse)(nil), // 19: services.auth.DeleteSocialLoginResponse
+	(*SetSuperuserModeRequest)(nil),   // 20: services.auth.SetSuperuserModeRequest
+	(*SetSuperuserModeResponse)(nil),  // 21: services.auth.SetSuperuserModeResponse
+	(*timestamp.Timestamp)(nil),       // 22: resources.timestamp.Timestamp
+	(*accounts.Account)(nil),          // 23: resources.accounts.Account
+	(*accounts.OAuth2Provider)(nil),   // 24: resources.accounts.OAuth2Provider
+	(*accounts.OAuth2Account)(nil),    // 25: resources.accounts.OAuth2Account
+	(*accounts.Character)(nil),        // 26: resources.accounts.Character
+	(*jobs.JobProps)(nil),             // 27: resources.jobs.JobProps
+	(*users.User)(nil),                // 28: resources.users.User
+	(*permissions.Permission)(nil),    // 29: resources.permissions.Permission
+	(*permissions.RoleAttribute)(nil), // 30: resources.permissions.RoleAttribute
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
 	22, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
@@ -1279,7 +1279,7 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	14, // 23: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
 	16, // 24: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
 	12, // 25: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
-	18, // 26: services.auth.AuthService.DeleteOAuth2Connection:input_type -> services.auth.DeleteOAuth2ConnectionRequest
+	18, // 26: services.auth.AuthService.DeleteSocialLogin:input_type -> services.auth.DeleteSocialLoginRequest
 	20, // 27: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
 	3,  // 28: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
 	5,  // 29: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
@@ -1290,7 +1290,7 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	15, // 34: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
 	17, // 35: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
 	13, // 36: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
-	19, // 37: services.auth.AuthService.DeleteOAuth2Connection:output_type -> services.auth.DeleteOAuth2ConnectionResponse
+	19, // 37: services.auth.AuthService.DeleteSocialLogin:output_type -> services.auth.DeleteSocialLoginResponse
 	21, // 38: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
 	28, // [28:39] is the sub-list for method output_type
 	17, // [17:28] is the sub-list for method input_type

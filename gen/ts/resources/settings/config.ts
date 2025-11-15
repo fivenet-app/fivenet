@@ -57,6 +57,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.Display display = 10
      */
     display?: Display;
+    /**
+     * @generated from protobuf field: resources.settings.QuickButtons quick_buttons = 11
+     */
+    quickButtons?: QuickButtons;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -243,6 +247,57 @@ export interface Display {
     currencyName: string;
 }
 /**
+ * @generated from protobuf message resources.settings.QuickButtons
+ */
+export interface QuickButtons {
+    /**
+     * @generated from protobuf field: resources.settings.PenaltyCalculator penalty_calculator = 1
+     */
+    penaltyCalculator?: PenaltyCalculator;
+}
+/**
+ * @generated from protobuf message resources.settings.PenaltyCalculator
+ */
+export interface PenaltyCalculator {
+    /**
+     * @generated from protobuf field: optional string detention_time_unit = 1
+     */
+    detentionTimeUnit?: string;
+    /**
+     * @generated from protobuf field: optional resources.settings.PenaltyCalculatorWarn warn_settings = 2
+     */
+    warnSettings?: PenaltyCalculatorWarn;
+    /**
+     * @generated from protobuf field: optional uint32 max_count = 3
+     */
+    maxCount?: number;
+}
+/**
+ * @generated from protobuf message resources.settings.PenaltyCalculatorWarn
+ */
+export interface PenaltyCalculatorWarn {
+    /**
+     * @generated from protobuf field: bool enabled = 1
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: optional uint32 fine = 2
+     */
+    fine?: number;
+    /**
+     * @generated from protobuf field: optional uint32 detention_time = 3
+     */
+    detentionTime?: number;
+    /**
+     * @generated from protobuf field: optional uint32 stvo_points = 4
+     */
+    stvoPoints?: number;
+    /**
+     * @generated from protobuf field: optional string warn_message = 5
+     */
+    warnMessage?: string;
+}
+/**
  * @generated from protobuf enum resources.settings.DiscordBotPresenceType
  */
 export enum DiscordBotPresenceType {
@@ -280,7 +335,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 6, name: "user_tracker", kind: "message", T: () => UserTracker },
             { no: 7, name: "discord", kind: "message", T: () => Discord },
             { no: 9, name: "system", kind: "message", T: () => System },
-            { no: 10, name: "display", kind: "message", T: () => Display }
+            { no: 10, name: "display", kind: "message", T: () => Display },
+            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -325,6 +381,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.Display display */ 10:
                     message.display = Display.internalBinaryRead(reader, reader.uint32(), options, message.display);
                     break;
+                case /* resources.settings.QuickButtons quick_buttons */ 11:
+                    message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -367,6 +426,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.Display display = 10; */
         if (message.display)
             Display.internalBinaryWrite(message.display, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.QuickButtons quick_buttons = 11; */
+        if (message.quickButtons)
+            QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1071,3 +1133,184 @@ class Display$Type extends MessageType<Display> {
  * @generated MessageType for protobuf message resources.settings.Display
  */
 export const Display = new Display$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QuickButtons$Type extends MessageType<QuickButtons> {
+    constructor() {
+        super("resources.settings.QuickButtons", [
+            { no: 1, name: "penalty_calculator", kind: "message", T: () => PenaltyCalculator }
+        ]);
+    }
+    create(value?: PartialMessage<QuickButtons>): QuickButtons {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<QuickButtons>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QuickButtons): QuickButtons {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.settings.PenaltyCalculator penalty_calculator */ 1:
+                    message.penaltyCalculator = PenaltyCalculator.internalBinaryRead(reader, reader.uint32(), options, message.penaltyCalculator);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: QuickButtons, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.settings.PenaltyCalculator penalty_calculator = 1; */
+        if (message.penaltyCalculator)
+            PenaltyCalculator.internalBinaryWrite(message.penaltyCalculator, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.QuickButtons
+ */
+export const QuickButtons = new QuickButtons$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PenaltyCalculator$Type extends MessageType<PenaltyCalculator> {
+    constructor() {
+        super("resources.settings.PenaltyCalculator", [
+            { no: 1, name: "detention_time_unit", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 2, name: "warn_settings", kind: "message", T: () => PenaltyCalculatorWarn },
+            { no: 3, name: "max_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PenaltyCalculator>): PenaltyCalculator {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PenaltyCalculator>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PenaltyCalculator): PenaltyCalculator {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string detention_time_unit */ 1:
+                    message.detentionTimeUnit = reader.string();
+                    break;
+                case /* optional resources.settings.PenaltyCalculatorWarn warn_settings */ 2:
+                    message.warnSettings = PenaltyCalculatorWarn.internalBinaryRead(reader, reader.uint32(), options, message.warnSettings);
+                    break;
+                case /* optional uint32 max_count */ 3:
+                    message.maxCount = reader.uint32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PenaltyCalculator, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string detention_time_unit = 1; */
+        if (message.detentionTimeUnit !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.detentionTimeUnit);
+        /* optional resources.settings.PenaltyCalculatorWarn warn_settings = 2; */
+        if (message.warnSettings)
+            PenaltyCalculatorWarn.internalBinaryWrite(message.warnSettings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint32 max_count = 3; */
+        if (message.maxCount !== undefined)
+            writer.tag(3, WireType.Varint).uint32(message.maxCount);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.PenaltyCalculator
+ */
+export const PenaltyCalculator = new PenaltyCalculator$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PenaltyCalculatorWarn$Type extends MessageType<PenaltyCalculatorWarn> {
+    constructor() {
+        super("resources.settings.PenaltyCalculatorWarn", [
+            { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 4, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 5, name: "warn_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+    }
+    create(value?: PartialMessage<PenaltyCalculatorWarn>): PenaltyCalculatorWarn {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.enabled = false;
+        if (value !== undefined)
+            reflectionMergePartial<PenaltyCalculatorWarn>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PenaltyCalculatorWarn): PenaltyCalculatorWarn {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool enabled */ 1:
+                    message.enabled = reader.bool();
+                    break;
+                case /* optional uint32 fine */ 2:
+                    message.fine = reader.uint32();
+                    break;
+                case /* optional uint32 detention_time */ 3:
+                    message.detentionTime = reader.uint32();
+                    break;
+                case /* optional uint32 stvo_points */ 4:
+                    message.stvoPoints = reader.uint32();
+                    break;
+                case /* optional string warn_message */ 5:
+                    message.warnMessage = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PenaltyCalculatorWarn, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool enabled = 1; */
+        if (message.enabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.enabled);
+        /* optional uint32 fine = 2; */
+        if (message.fine !== undefined)
+            writer.tag(2, WireType.Varint).uint32(message.fine);
+        /* optional uint32 detention_time = 3; */
+        if (message.detentionTime !== undefined)
+            writer.tag(3, WireType.Varint).uint32(message.detentionTime);
+        /* optional uint32 stvo_points = 4; */
+        if (message.stvoPoints !== undefined)
+            writer.tag(4, WireType.Varint).uint32(message.stvoPoints);
+        /* optional string warn_message = 5; */
+        if (message.warnMessage !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.warnMessage);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.PenaltyCalculatorWarn
+ */
+export const PenaltyCalculatorWarn = new PenaltyCalculatorWarn$Type();

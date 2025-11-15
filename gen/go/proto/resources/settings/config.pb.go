@@ -91,6 +91,7 @@ type AppConfig struct {
 	Discord       *Discord               `protobuf:"bytes,7,opt,name=discord,proto3" json:"discord,omitempty"`
 	System        *System                `protobuf:"bytes,9,opt,name=system,proto3" json:"system,omitempty"`
 	Display       *Display               `protobuf:"bytes,10,opt,name=display,proto3" json:"display,omitempty"`
+	QuickButtons  *QuickButtons          `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -191,6 +192,13 @@ func (x *AppConfig) GetSystem() *System {
 func (x *AppConfig) GetDisplay() *Display {
 	if x != nil {
 		return x.Display
+	}
+	return nil
+}
+
+func (x *AppConfig) GetQuickButtons() *QuickButtons {
+	if x != nil {
+		return x.QuickButtons
 	}
 	return nil
 }
@@ -869,11 +877,191 @@ func (x *Display) GetCurrencyName() string {
 	return ""
 }
 
+type QuickButtons struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	PenaltyCalculator *PenaltyCalculator     `protobuf:"bytes,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *QuickButtons) Reset() {
+	*x = QuickButtons{}
+	mi := &file_resources_settings_config_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuickButtons) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuickButtons) ProtoMessage() {}
+
+func (x *QuickButtons) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuickButtons.ProtoReflect.Descriptor instead.
+func (*QuickButtons) Descriptor() ([]byte, []int) {
+	return file_resources_settings_config_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *QuickButtons) GetPenaltyCalculator() *PenaltyCalculator {
+	if x != nil {
+		return x.PenaltyCalculator
+	}
+	return nil
+}
+
+type PenaltyCalculator struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	DetentionTimeUnit *string                `protobuf:"bytes,1,opt,name=detention_time_unit,json=detentionTimeUnit,proto3,oneof" json:"detention_time_unit,omitempty"`
+	WarnSettings      *PenaltyCalculatorWarn `protobuf:"bytes,2,opt,name=warn_settings,json=warnSettings,proto3,oneof" json:"warn_settings,omitempty"`
+	MaxCount          *uint32                `protobuf:"varint,3,opt,name=max_count,json=maxCount,proto3,oneof" json:"max_count,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *PenaltyCalculator) Reset() {
+	*x = PenaltyCalculator{}
+	mi := &file_resources_settings_config_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PenaltyCalculator) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PenaltyCalculator) ProtoMessage() {}
+
+func (x *PenaltyCalculator) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PenaltyCalculator.ProtoReflect.Descriptor instead.
+func (*PenaltyCalculator) Descriptor() ([]byte, []int) {
+	return file_resources_settings_config_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PenaltyCalculator) GetDetentionTimeUnit() string {
+	if x != nil && x.DetentionTimeUnit != nil {
+		return *x.DetentionTimeUnit
+	}
+	return ""
+}
+
+func (x *PenaltyCalculator) GetWarnSettings() *PenaltyCalculatorWarn {
+	if x != nil {
+		return x.WarnSettings
+	}
+	return nil
+}
+
+func (x *PenaltyCalculator) GetMaxCount() uint32 {
+	if x != nil && x.MaxCount != nil {
+		return *x.MaxCount
+	}
+	return 0
+}
+
+type PenaltyCalculatorWarn struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Fine          *uint32                `protobuf:"varint,2,opt,name=fine,proto3,oneof" json:"fine,omitempty"`
+	DetentionTime *uint32                `protobuf:"varint,3,opt,name=detention_time,json=detentionTime,proto3,oneof" json:"detention_time,omitempty"`
+	StvoPoints    *uint32                `protobuf:"varint,4,opt,name=stvo_points,json=stvoPoints,proto3,oneof" json:"stvo_points,omitempty"`
+	WarnMessage   *string                `protobuf:"bytes,5,opt,name=warn_message,json=warnMessage,proto3,oneof" json:"warn_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PenaltyCalculatorWarn) Reset() {
+	*x = PenaltyCalculatorWarn{}
+	mi := &file_resources_settings_config_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PenaltyCalculatorWarn) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PenaltyCalculatorWarn) ProtoMessage() {}
+
+func (x *PenaltyCalculatorWarn) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_settings_config_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PenaltyCalculatorWarn.ProtoReflect.Descriptor instead.
+func (*PenaltyCalculatorWarn) Descriptor() ([]byte, []int) {
+	return file_resources_settings_config_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PenaltyCalculatorWarn) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *PenaltyCalculatorWarn) GetFine() uint32 {
+	if x != nil && x.Fine != nil {
+		return *x.Fine
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorWarn) GetDetentionTime() uint32 {
+	if x != nil && x.DetentionTime != nil {
+		return *x.DetentionTime
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorWarn) GetStvoPoints() uint32 {
+	if x != nil && x.StvoPoints != nil {
+		return *x.StvoPoints
+	}
+	return 0
+}
+
+func (x *PenaltyCalculatorWarn) GetWarnMessage() string {
+	if x != nil && x.WarnMessage != nil {
+		return *x.WarnMessage
+	}
+	return ""
+}
+
 var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\xa4\x04\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\"\xeb\x04\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12.\n" +
 	"\x0edefault_locale\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14R\rdefaultLocale\x12,\n" +
@@ -885,7 +1073,8 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\adiscord\x18\a \x01(\v2\x1b.resources.settings.DiscordR\adiscord\x122\n" +
 	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06system\x125\n" +
 	"\adisplay\x18\n" +
-	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
+	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay\x12E\n" +
+	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
@@ -943,7 +1132,28 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\vintl_locale\x18\x01 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18 H\x00R\n" +
 	"intlLocale\x88\x01\x01\x12>\n" +
 	"\rcurrency_name\x18\x02 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03\x98\x01\x03R\fcurrencyNameB\x0e\n" +
-	"\f_intl_locale*\xde\x01\n" +
+	"\f_intl_locale\"d\n" +
+	"\fQuickButtons\x12T\n" +
+	"\x12penalty_calculator\x18\x01 \x01(\v2%.resources.settings.PenaltyCalculatorR\x11penaltyCalculator\"\x86\x02\n" +
+	"\x11PenaltyCalculator\x12B\n" +
+	"\x13detention_time_unit\x18\x01 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 H\x00R\x11detentionTimeUnit\x88\x01\x01\x12S\n" +
+	"\rwarn_settings\x18\x02 \x01(\v2).resources.settings.PenaltyCalculatorWarnH\x01R\fwarnSettings\x88\x01\x01\x12 \n" +
+	"\tmax_count\x18\x03 \x01(\rH\x02R\bmaxCount\x88\x01\x01B\x16\n" +
+	"\x14_detention_time_unitB\x10\n" +
+	"\x0e_warn_settingsB\f\n" +
+	"\n" +
+	"_max_count\"\x99\x02\n" +
+	"\x15PenaltyCalculatorWarn\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x17\n" +
+	"\x04fine\x18\x02 \x01(\rH\x00R\x04fine\x88\x01\x01\x12*\n" +
+	"\x0edetention_time\x18\x03 \x01(\rH\x01R\rdetentionTime\x88\x01\x01\x12$\n" +
+	"\vstvo_points\x18\x04 \x01(\rH\x02R\n" +
+	"stvoPoints\x88\x01\x01\x126\n" +
+	"\fwarn_message\x18\x05 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\x04H\x03R\vwarnMessage\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\a\n" +
+	"\x05_fineB\x11\n" +
+	"\x0f_detention_timeB\x0e\n" +
+	"\f_stvo_pointsB\x0f\n" +
+	"\r_warn_message*\xde\x01\n" +
 	"\x16DiscordBotPresenceType\x12)\n" +
 	"%DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED\x10\x00\x12\"\n" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
@@ -964,24 +1174,27 @@ func file_resources_settings_config_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_settings_config_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_resources_settings_config_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_resources_settings_config_proto_goTypes = []any{
-	(DiscordBotPresenceType)(0), // 0: resources.settings.DiscordBotPresenceType
-	(*AppConfig)(nil),           // 1: resources.settings.AppConfig
-	(*Auth)(nil),                // 2: resources.settings.Auth
-	(*Perms)(nil),               // 3: resources.settings.Perms
-	(*Perm)(nil),                // 4: resources.settings.Perm
-	(*Website)(nil),             // 5: resources.settings.Website
-	(*Links)(nil),               // 6: resources.settings.Links
-	(*JobInfo)(nil),             // 7: resources.settings.JobInfo
-	(*UnemployedJob)(nil),       // 8: resources.settings.UnemployedJob
-	(*UserTracker)(nil),         // 9: resources.settings.UserTracker
-	(*Discord)(nil),             // 10: resources.settings.Discord
-	(*DiscordBotPresence)(nil),  // 11: resources.settings.DiscordBotPresence
-	(*System)(nil),              // 12: resources.settings.System
-	(*Display)(nil),             // 13: resources.settings.Display
-	(*durationpb.Duration)(nil), // 14: google.protobuf.Duration
-	(*BannerMessage)(nil),       // 15: resources.settings.BannerMessage
+	(DiscordBotPresenceType)(0),   // 0: resources.settings.DiscordBotPresenceType
+	(*AppConfig)(nil),             // 1: resources.settings.AppConfig
+	(*Auth)(nil),                  // 2: resources.settings.Auth
+	(*Perms)(nil),                 // 3: resources.settings.Perms
+	(*Perm)(nil),                  // 4: resources.settings.Perm
+	(*Website)(nil),               // 5: resources.settings.Website
+	(*Links)(nil),                 // 6: resources.settings.Links
+	(*JobInfo)(nil),               // 7: resources.settings.JobInfo
+	(*UnemployedJob)(nil),         // 8: resources.settings.UnemployedJob
+	(*UserTracker)(nil),           // 9: resources.settings.UserTracker
+	(*Discord)(nil),               // 10: resources.settings.Discord
+	(*DiscordBotPresence)(nil),    // 11: resources.settings.DiscordBotPresence
+	(*System)(nil),                // 12: resources.settings.System
+	(*Display)(nil),               // 13: resources.settings.Display
+	(*QuickButtons)(nil),          // 14: resources.settings.QuickButtons
+	(*PenaltyCalculator)(nil),     // 15: resources.settings.PenaltyCalculator
+	(*PenaltyCalculatorWarn)(nil), // 16: resources.settings.PenaltyCalculatorWarn
+	(*durationpb.Duration)(nil),   // 17: google.protobuf.Duration
+	(*BannerMessage)(nil),         // 18: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -992,20 +1205,23 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	10, // 5: resources.settings.AppConfig.discord:type_name -> resources.settings.Discord
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
 	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
-	4,  // 8: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 9: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 10: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	14, // 11: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	14, // 12: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	14, // 13: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 14: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 15: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	15, // 16: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	14, // 8: resources.settings.AppConfig.quick_buttons:type_name -> resources.settings.QuickButtons
+	4,  // 9: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 10: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 11: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	17, // 12: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	17, // 13: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	17, // 14: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 15: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 16: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	18, // 17: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	15, // 18: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
+	16, // 19: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -1019,13 +1235,15 @@ func file_resources_settings_config_proto_init() {
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[10].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[12].OneofWrappers = []any{}
+	file_resources_settings_config_proto_msgTypes[14].OneofWrappers = []any{}
+	file_resources_settings_config_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_settings_config_proto_rawDesc), len(file_resources_settings_config_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   13,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

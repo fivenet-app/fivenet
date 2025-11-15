@@ -19,17 +19,17 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName                  = "/services.auth.AuthService/Login"
-	AuthService_Logout_FullMethodName                 = "/services.auth.AuthService/Logout"
-	AuthService_CreateAccount_FullMethodName          = "/services.auth.AuthService/CreateAccount"
-	AuthService_ChangeUsername_FullMethodName         = "/services.auth.AuthService/ChangeUsername"
-	AuthService_ChangePassword_FullMethodName         = "/services.auth.AuthService/ChangePassword"
-	AuthService_ForgotPassword_FullMethodName         = "/services.auth.AuthService/ForgotPassword"
-	AuthService_GetCharacters_FullMethodName          = "/services.auth.AuthService/GetCharacters"
-	AuthService_ChooseCharacter_FullMethodName        = "/services.auth.AuthService/ChooseCharacter"
-	AuthService_GetAccountInfo_FullMethodName         = "/services.auth.AuthService/GetAccountInfo"
-	AuthService_DeleteOAuth2Connection_FullMethodName = "/services.auth.AuthService/DeleteOAuth2Connection"
-	AuthService_SetSuperuserMode_FullMethodName       = "/services.auth.AuthService/SetSuperuserMode"
+	AuthService_Login_FullMethodName             = "/services.auth.AuthService/Login"
+	AuthService_Logout_FullMethodName            = "/services.auth.AuthService/Logout"
+	AuthService_CreateAccount_FullMethodName     = "/services.auth.AuthService/CreateAccount"
+	AuthService_ChangeUsername_FullMethodName    = "/services.auth.AuthService/ChangeUsername"
+	AuthService_ChangePassword_FullMethodName    = "/services.auth.AuthService/ChangePassword"
+	AuthService_ForgotPassword_FullMethodName    = "/services.auth.AuthService/ForgotPassword"
+	AuthService_GetCharacters_FullMethodName     = "/services.auth.AuthService/GetCharacters"
+	AuthService_ChooseCharacter_FullMethodName   = "/services.auth.AuthService/ChooseCharacter"
+	AuthService_GetAccountInfo_FullMethodName    = "/services.auth.AuthService/GetAccountInfo"
+	AuthService_DeleteSocialLogin_FullMethodName = "/services.auth.AuthService/DeleteSocialLogin"
+	AuthService_SetSuperuserMode_FullMethodName  = "/services.auth.AuthService/SetSuperuserMode"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -48,7 +48,7 @@ type AuthServiceClient interface {
 	GetCharacters(ctx context.Context, in *GetCharactersRequest, opts ...grpc.CallOption) (*GetCharactersResponse, error)
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
-	DeleteOAuth2Connection(ctx context.Context, in *DeleteOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DeleteOAuth2ConnectionResponse, error)
+	DeleteSocialLogin(ctx context.Context, in *DeleteSocialLoginRequest, opts ...grpc.CallOption) (*DeleteSocialLoginResponse, error)
 	SetSuperuserMode(ctx context.Context, in *SetSuperuserModeRequest, opts ...grpc.CallOption) (*SetSuperuserModeResponse, error)
 }
 
@@ -150,10 +150,10 @@ func (c *authServiceClient) GetAccountInfo(ctx context.Context, in *GetAccountIn
 	return out, nil
 }
 
-func (c *authServiceClient) DeleteOAuth2Connection(ctx context.Context, in *DeleteOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DeleteOAuth2ConnectionResponse, error) {
+func (c *authServiceClient) DeleteSocialLogin(ctx context.Context, in *DeleteSocialLoginRequest, opts ...grpc.CallOption) (*DeleteSocialLoginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteOAuth2ConnectionResponse)
-	err := c.cc.Invoke(ctx, AuthService_DeleteOAuth2Connection_FullMethodName, in, out, cOpts...)
+	out := new(DeleteSocialLoginResponse)
+	err := c.cc.Invoke(ctx, AuthService_DeleteSocialLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ type AuthServiceServer interface {
 	GetCharacters(context.Context, *GetCharactersRequest) (*GetCharactersResponse, error)
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
-	DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error)
+	DeleteSocialLogin(context.Context, *DeleteSocialLoginRequest) (*DeleteSocialLoginResponse, error)
 	SetSuperuserMode(context.Context, *SetSuperuserModeRequest) (*SetSuperuserModeResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
@@ -225,8 +225,8 @@ func (UnimplementedAuthServiceServer) ChooseCharacter(context.Context, *ChooseCh
 func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountInfo not implemented")
 }
-func (UnimplementedAuthServiceServer) DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteOAuth2Connection not implemented")
+func (UnimplementedAuthServiceServer) DeleteSocialLogin(context.Context, *DeleteSocialLoginRequest) (*DeleteSocialLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSocialLogin not implemented")
 }
 func (UnimplementedAuthServiceServer) SetSuperuserMode(context.Context, *SetSuperuserModeRequest) (*SetSuperuserModeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetSuperuserMode not implemented")
@@ -414,20 +414,20 @@ func _AuthService_GetAccountInfo_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_DeleteOAuth2Connection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteOAuth2ConnectionRequest)
+func _AuthService_DeleteSocialLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSocialLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).DeleteOAuth2Connection(ctx, in)
+		return srv.(AuthServiceServer).DeleteSocialLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_DeleteOAuth2Connection_FullMethodName,
+		FullMethod: AuthService_DeleteSocialLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).DeleteOAuth2Connection(ctx, req.(*DeleteOAuth2ConnectionRequest))
+		return srv.(AuthServiceServer).DeleteSocialLogin(ctx, req.(*DeleteSocialLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -494,8 +494,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_GetAccountInfo_Handler,
 		},
 		{
-			MethodName: "DeleteOAuth2Connection",
-			Handler:    _AuthService_DeleteOAuth2Connection_Handler,
+			MethodName: "DeleteSocialLogin",
+			Handler:    _AuthService_DeleteSocialLogin_Handler,
 		},
 		{
 			MethodName: "SetSuperuserMode",

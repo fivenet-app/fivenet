@@ -7,16 +7,8 @@
         M extends boolean = false
     "
 >
-import type {
-    ArrayOrNested,
-    GetItemKeys,
-    GetModelValue,
-    NestedItem,
-    SelectMenuEmits,
-    SelectMenuItem,
-    SelectMenuProps,
-    SelectMenuSlots,
-} from '@nuxt/ui';
+import type { SelectMenuEmits, SelectMenuItem, SelectMenuProps, SelectMenuSlots } from '@nuxt/ui';
+import type { ArrayOrNested, GetItemKeys, GetModelValue, NestedItem } from '@nuxt/ui/runtime/types/utils.js';
 
 interface Props<
     T extends ArrayOrNested<SelectMenuItem>,
@@ -34,7 +26,7 @@ interface Slots<
     T extends NestedItem<A> = NestedItem<A>,
 > extends /* @vue-ignore */ SelectMenuSlots<A, VK, M> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    'default'(props: { modelValue?: GetModelValue<A, VK, M>; open: boolean; items: T[] }): any;
+    'default'(props: { modelValue?: GetModelValue<A, VK, M>; open: boolean; items?: T[] }): any;
 }
 
 const props = defineProps<Props<T, VK, M>>();

@@ -380,7 +380,7 @@ func (x *UpdateAccountResponse) GetAccount() *accounts.Account {
 	return nil
 }
 
-type DisconnectOAuth2ConnectionRequest struct {
+type DisconnectSocialLoginRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ProviderName  string                 `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
@@ -388,20 +388,20 @@ type DisconnectOAuth2ConnectionRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DisconnectOAuth2ConnectionRequest) Reset() {
-	*x = DisconnectOAuth2ConnectionRequest{}
+func (x *DisconnectSocialLoginRequest) Reset() {
+	*x = DisconnectSocialLoginRequest{}
 	mi := &file_services_settings_accounts_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DisconnectOAuth2ConnectionRequest) String() string {
+func (x *DisconnectSocialLoginRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DisconnectOAuth2ConnectionRequest) ProtoMessage() {}
+func (*DisconnectSocialLoginRequest) ProtoMessage() {}
 
-func (x *DisconnectOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message {
+func (x *DisconnectSocialLoginRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_settings_accounts_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -413,45 +413,45 @@ func (x *DisconnectOAuth2ConnectionRequest) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DisconnectOAuth2ConnectionRequest.ProtoReflect.Descriptor instead.
-func (*DisconnectOAuth2ConnectionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DisconnectSocialLoginRequest.ProtoReflect.Descriptor instead.
+func (*DisconnectSocialLoginRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_accounts_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *DisconnectOAuth2ConnectionRequest) GetId() int64 {
+func (x *DisconnectSocialLoginRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *DisconnectOAuth2ConnectionRequest) GetProviderName() string {
+func (x *DisconnectSocialLoginRequest) GetProviderName() string {
 	if x != nil {
 		return x.ProviderName
 	}
 	return ""
 }
 
-type DisconnectOAuth2ConnectionResponse struct {
+type DisconnectSocialLoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DisconnectOAuth2ConnectionResponse) Reset() {
-	*x = DisconnectOAuth2ConnectionResponse{}
+func (x *DisconnectSocialLoginResponse) Reset() {
+	*x = DisconnectSocialLoginResponse{}
 	mi := &file_services_settings_accounts_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DisconnectOAuth2ConnectionResponse) String() string {
+func (x *DisconnectSocialLoginResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DisconnectOAuth2ConnectionResponse) ProtoMessage() {}
+func (*DisconnectSocialLoginResponse) ProtoMessage() {}
 
-func (x *DisconnectOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message {
+func (x *DisconnectSocialLoginResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_settings_accounts_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -463,8 +463,8 @@ func (x *DisconnectOAuth2ConnectionResponse) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DisconnectOAuth2ConnectionResponse.ProtoReflect.Descriptor instead.
-func (*DisconnectOAuth2ConnectionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DisconnectSocialLoginResponse.ProtoReflect.Descriptor instead.
+func (*DisconnectSocialLoginResponse) Descriptor() ([]byte, []int) {
 	return file_services_settings_accounts_proto_rawDescGZIP(), []int{7}
 }
 
@@ -594,19 +594,19 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
 	"_last_char\"N\n" +
 	"\x15UpdateAccountResponse\x125\n" +
-	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\"k\n" +
-	"!DisconnectOAuth2ConnectionRequest\x12\x17\n" +
+	"\aaccount\x18\x01 \x01(\v2\x1b.resources.accounts.AccountR\aaccount\"f\n" +
+	"\x1cDisconnectSocialLoginRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\x12-\n" +
-	"\rprovider_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\fproviderName\"$\n" +
-	"\"DisconnectOAuth2ConnectionResponse\"/\n" +
+	"\rprovider_name\x18\x02 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01R\fproviderName\"\x1f\n" +
+	"\x1dDisconnectSocialLoginResponse\"/\n" +
 	"\x14DeleteAccountRequest\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x02id\"\x17\n" +
-	"\x15DeleteAccountResponse2\x89\x05\n" +
+	"\x15DeleteAccountResponse2\xfa\x04\n" +
 	"\x0fAccountsService\x12r\n" +
 	"\fListAccounts\x12&.services.settings.ListAccountsRequest\x1a'.services.settings.ListAccountsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x9c\x01\n" +
-	"\x1aDisconnectOAuth2Connection\x124.services.settings.DisconnectOAuth2ConnectionRequest\x1a5.services.settings.DisconnectOAuth2ConnectionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
+	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x8d\x01\n" +
+	"\x15DisconnectSocialLogin\x12/.services.settings.DisconnectSocialLoginRequest\x1a0.services.settings.DisconnectSocialLoginResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
@@ -623,21 +623,21 @@ func file_services_settings_accounts_proto_rawDescGZIP() []byte {
 
 var file_services_settings_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_settings_accounts_proto_goTypes = []any{
-	(*ListAccountsRequest)(nil),                // 0: services.settings.ListAccountsRequest
-	(*ListAccountsResponse)(nil),               // 1: services.settings.ListAccountsResponse
-	(*CreateAccountRequest)(nil),               // 2: services.settings.CreateAccountRequest
-	(*CreateAccountResponse)(nil),              // 3: services.settings.CreateAccountResponse
-	(*UpdateAccountRequest)(nil),               // 4: services.settings.UpdateAccountRequest
-	(*UpdateAccountResponse)(nil),              // 5: services.settings.UpdateAccountResponse
-	(*DisconnectOAuth2ConnectionRequest)(nil),  // 6: services.settings.DisconnectOAuth2ConnectionRequest
-	(*DisconnectOAuth2ConnectionResponse)(nil), // 7: services.settings.DisconnectOAuth2ConnectionResponse
-	(*DeleteAccountRequest)(nil),               // 8: services.settings.DeleteAccountRequest
-	(*DeleteAccountResponse)(nil),              // 9: services.settings.DeleteAccountResponse
-	(*database.PaginationRequest)(nil),         // 10: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                      // 11: resources.common.database.Sort
-	(*database.PaginationResponse)(nil),        // 12: resources.common.database.PaginationResponse
-	(*accounts.Account)(nil),                   // 13: resources.accounts.Account
-	(*users.UserShort)(nil),                    // 14: resources.users.UserShort
+	(*ListAccountsRequest)(nil),           // 0: services.settings.ListAccountsRequest
+	(*ListAccountsResponse)(nil),          // 1: services.settings.ListAccountsResponse
+	(*CreateAccountRequest)(nil),          // 2: services.settings.CreateAccountRequest
+	(*CreateAccountResponse)(nil),         // 3: services.settings.CreateAccountResponse
+	(*UpdateAccountRequest)(nil),          // 4: services.settings.UpdateAccountRequest
+	(*UpdateAccountResponse)(nil),         // 5: services.settings.UpdateAccountResponse
+	(*DisconnectSocialLoginRequest)(nil),  // 6: services.settings.DisconnectSocialLoginRequest
+	(*DisconnectSocialLoginResponse)(nil), // 7: services.settings.DisconnectSocialLoginResponse
+	(*DeleteAccountRequest)(nil),          // 8: services.settings.DeleteAccountRequest
+	(*DeleteAccountResponse)(nil),         // 9: services.settings.DeleteAccountResponse
+	(*database.PaginationRequest)(nil),    // 10: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                 // 11: resources.common.database.Sort
+	(*database.PaginationResponse)(nil),   // 12: resources.common.database.PaginationResponse
+	(*accounts.Account)(nil),              // 13: resources.accounts.Account
+	(*users.UserShort)(nil),               // 14: resources.users.UserShort
 }
 var file_services_settings_accounts_proto_depIdxs = []int32{
 	10, // 0: services.settings.ListAccountsRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -649,12 +649,12 @@ var file_services_settings_accounts_proto_depIdxs = []int32{
 	0,  // 6: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
 	2,  // 7: services.settings.AccountsService.CreateAccount:input_type -> services.settings.CreateAccountRequest
 	4,  // 8: services.settings.AccountsService.UpdateAccount:input_type -> services.settings.UpdateAccountRequest
-	6,  // 9: services.settings.AccountsService.DisconnectOAuth2Connection:input_type -> services.settings.DisconnectOAuth2ConnectionRequest
+	6,  // 9: services.settings.AccountsService.DisconnectSocialLogin:input_type -> services.settings.DisconnectSocialLoginRequest
 	8,  // 10: services.settings.AccountsService.DeleteAccount:input_type -> services.settings.DeleteAccountRequest
 	1,  // 11: services.settings.AccountsService.ListAccounts:output_type -> services.settings.ListAccountsResponse
 	3,  // 12: services.settings.AccountsService.CreateAccount:output_type -> services.settings.CreateAccountResponse
 	5,  // 13: services.settings.AccountsService.UpdateAccount:output_type -> services.settings.UpdateAccountResponse
-	7,  // 14: services.settings.AccountsService.DisconnectOAuth2Connection:output_type -> services.settings.DisconnectOAuth2ConnectionResponse
+	7,  // 14: services.settings.AccountsService.DisconnectSocialLogin:output_type -> services.settings.DisconnectSocialLoginResponse
 	9,  // 15: services.settings.AccountsService.DeleteAccount:output_type -> services.settings.DeleteAccountResponse
 	11, // [11:16] is the sub-list for method output_type
 	6,  // [6:11] is the sub-list for method input_type

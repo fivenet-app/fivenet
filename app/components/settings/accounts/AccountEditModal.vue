@@ -6,7 +6,7 @@ import { getSettingsAccountsClient } from '~~/gen/ts/clients';
 import type { Account } from '~~/gen/ts/resources/accounts/accounts';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateAccountResponse } from '~~/gen/ts/services/settings/accounts';
-import AccountOAuth2Connection from './AccountOAuth2Connection.vue';
+import AccountSocialLogin from './AccountSocialLogin.vue';
 
 const props = defineProps<{
     account: Account;
@@ -89,15 +89,15 @@ const formRef = useTemplateRef('formRef');
                 </div>
 
                 <div>
-                    <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.OAuth2Connections.title')">
+                    <UFormField class="flex-1" name="oauth2Accounts" :label="$t('components.auth.SocialLogins.title')">
                         <div class="flex flex-col gap-2">
                             <DataNoDataBlock
                                 v-if="account.oauth2Accounts.length === 0"
-                                :type="$t('components.auth.OAuth2Connections.title')"
+                                :type="$t('components.auth.SocialLogins.title')"
                             />
 
                             <template v-else>
-                                <AccountOAuth2Connection
+                                <AccountSocialLogin
                                     v-for="connection in account.oauth2Accounts"
                                     :key="connection.providerName"
                                     :account-id="account.id"

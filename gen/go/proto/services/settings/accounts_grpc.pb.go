@@ -19,11 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AccountsService_ListAccounts_FullMethodName               = "/services.settings.AccountsService/ListAccounts"
-	AccountsService_CreateAccount_FullMethodName              = "/services.settings.AccountsService/CreateAccount"
-	AccountsService_UpdateAccount_FullMethodName              = "/services.settings.AccountsService/UpdateAccount"
-	AccountsService_DisconnectOAuth2Connection_FullMethodName = "/services.settings.AccountsService/DisconnectOAuth2Connection"
-	AccountsService_DeleteAccount_FullMethodName              = "/services.settings.AccountsService/DeleteAccount"
+	AccountsService_ListAccounts_FullMethodName          = "/services.settings.AccountsService/ListAccounts"
+	AccountsService_CreateAccount_FullMethodName         = "/services.settings.AccountsService/CreateAccount"
+	AccountsService_UpdateAccount_FullMethodName         = "/services.settings.AccountsService/UpdateAccount"
+	AccountsService_DisconnectSocialLogin_FullMethodName = "/services.settings.AccountsService/DisconnectSocialLogin"
+	AccountsService_DeleteAccount_FullMethodName         = "/services.settings.AccountsService/DeleteAccount"
 )
 
 // AccountsServiceClient is the client API for AccountsService service.
@@ -33,7 +33,7 @@ type AccountsServiceClient interface {
 	ListAccounts(ctx context.Context, in *ListAccountsRequest, opts ...grpc.CallOption) (*ListAccountsResponse, error)
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*CreateAccountResponse, error)
 	UpdateAccount(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*UpdateAccountResponse, error)
-	DisconnectOAuth2Connection(ctx context.Context, in *DisconnectOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DisconnectOAuth2ConnectionResponse, error)
+	DisconnectSocialLogin(ctx context.Context, in *DisconnectSocialLoginRequest, opts ...grpc.CallOption) (*DisconnectSocialLoginResponse, error)
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*DeleteAccountResponse, error)
 }
 
@@ -75,10 +75,10 @@ func (c *accountsServiceClient) UpdateAccount(ctx context.Context, in *UpdateAcc
 	return out, nil
 }
 
-func (c *accountsServiceClient) DisconnectOAuth2Connection(ctx context.Context, in *DisconnectOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DisconnectOAuth2ConnectionResponse, error) {
+func (c *accountsServiceClient) DisconnectSocialLogin(ctx context.Context, in *DisconnectSocialLoginRequest, opts ...grpc.CallOption) (*DisconnectSocialLoginResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DisconnectOAuth2ConnectionResponse)
-	err := c.cc.Invoke(ctx, AccountsService_DisconnectOAuth2Connection_FullMethodName, in, out, cOpts...)
+	out := new(DisconnectSocialLoginResponse)
+	err := c.cc.Invoke(ctx, AccountsService_DisconnectSocialLogin_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ type AccountsServiceServer interface {
 	ListAccounts(context.Context, *ListAccountsRequest) (*ListAccountsResponse, error)
 	CreateAccount(context.Context, *CreateAccountRequest) (*CreateAccountResponse, error)
 	UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error)
-	DisconnectOAuth2Connection(context.Context, *DisconnectOAuth2ConnectionRequest) (*DisconnectOAuth2ConnectionResponse, error)
+	DisconnectSocialLogin(context.Context, *DisconnectSocialLoginRequest) (*DisconnectSocialLoginResponse, error)
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error)
 	mustEmbedUnimplementedAccountsServiceServer()
 }
@@ -123,8 +123,8 @@ func (UnimplementedAccountsServiceServer) CreateAccount(context.Context, *Create
 func (UnimplementedAccountsServiceServer) UpdateAccount(context.Context, *UpdateAccountRequest) (*UpdateAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccount not implemented")
 }
-func (UnimplementedAccountsServiceServer) DisconnectOAuth2Connection(context.Context, *DisconnectOAuth2ConnectionRequest) (*DisconnectOAuth2ConnectionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DisconnectOAuth2Connection not implemented")
+func (UnimplementedAccountsServiceServer) DisconnectSocialLogin(context.Context, *DisconnectSocialLoginRequest) (*DisconnectSocialLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisconnectSocialLogin not implemented")
 }
 func (UnimplementedAccountsServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*DeleteAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
@@ -204,20 +204,20 @@ func _AccountsService_UpdateAccount_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AccountsService_DisconnectOAuth2Connection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DisconnectOAuth2ConnectionRequest)
+func _AccountsService_DisconnectSocialLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DisconnectSocialLoginRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountsServiceServer).DisconnectOAuth2Connection(ctx, in)
+		return srv.(AccountsServiceServer).DisconnectSocialLogin(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AccountsService_DisconnectOAuth2Connection_FullMethodName,
+		FullMethod: AccountsService_DisconnectSocialLogin_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountsServiceServer).DisconnectOAuth2Connection(ctx, req.(*DisconnectOAuth2ConnectionRequest))
+		return srv.(AccountsServiceServer).DisconnectSocialLogin(ctx, req.(*DisconnectSocialLoginRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -260,8 +260,8 @@ var AccountsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AccountsService_UpdateAccount_Handler,
 		},
 		{
-			MethodName: "DisconnectOAuth2Connection",
-			Handler:    _AccountsService_DisconnectOAuth2Connection_Handler,
+			MethodName: "DisconnectSocialLogin",
+			Handler:    _AccountsService_DisconnectSocialLogin_Handler,
 		},
 		{
 			MethodName: "DeleteAccount",
