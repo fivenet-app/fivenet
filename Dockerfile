@@ -1,7 +1,7 @@
-# syntax=docker/dockerfile:1.19-labs
+# syntax=docker/dockerfile:1.20-labs
 
 # Frontend Build
-FROM docker.io/library/node:24.11.0-alpine3.22 AS nodebuilder
+FROM docker.io/library/node:24.11.1-alpine3.22 AS nodebuilder
 
 ARG NUXT_UI_PRO_LICENSE
 
@@ -48,7 +48,7 @@ RUN apk add --no-cache git && \
     find . -type f ! -name '*.json' -delete
 
 # Backend Build
-FROM docker.io/library/golang:1.25.3 AS gobuilder
+FROM docker.io/library/golang:1.25.4 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
 
