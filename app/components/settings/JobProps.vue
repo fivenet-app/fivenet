@@ -387,7 +387,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="logoFile"
                                     :label="$t('common.logo')"
-                                    :ui="{ container: '' }"
                                 >
                                     <div v-if="jobProps.logoFileId" class="flex w-full flex-1 items-center justify-center">
                                         <GenericImg
@@ -431,7 +430,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="livemapMarkerColor"
                                     :label="$t('components.settings.job_props.livemap_marker_color')"
-                                    :ui="{ container: '' }"
                                 >
                                     <ColorPicker
                                         v-model="state.livemapMarkerColor"
@@ -444,7 +442,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="radioFrequency"
                                     :label="$t('common.radio_frequency')"
-                                    :ui="{ container: '' }"
                                 >
                                     <UInput
                                         v-model="state.radioFrequency"
@@ -464,7 +461,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="quickButtons"
                                     :label="$t('components.settings.job_props.quick_buttons')"
-                                    :ui="{ container: '' }"
                                 >
                                     <div class="flex flex-col gap-2">
                                         <div class="space-y-4">
@@ -500,7 +496,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     name="settings.absencePastDays"
                                     :label="$t('components.settings.job_props.settings.absence.past_days')"
                                     :description="$t('common.day', 2)"
-                                    :ui="{ container: '' }"
                                 >
                                     <UInputNumber
                                         v-model="state.settings.absencePastDays"
@@ -516,7 +511,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     name="settings.absenceFutureDays"
                                     :label="$t('components.settings.job_props.settings.absence.future_days')"
                                     :description="$t('common.day', 2)"
-                                    :ui="{ container: '' }"
                                 >
                                     <UInputNumber
                                         v-model="state.settings.absenceFutureDays"
@@ -560,7 +554,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordGuildId"
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
-                                    :ui="{ container: '' }"
                                 >
                                     <template v-if="nuiEnabled || dcConnectRequired">
                                         <NotSupportedTabletBlock v-if="nuiEnabled" />
@@ -628,7 +621,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.dryRun"
                                     :label="$t('components.settings.job_props.discord_sync_settings.dry_run')"
-                                    :ui="{ container: '' }"
                                 >
                                     <USwitch v-model="state.discordSyncSettings.dryRun" :disabled="!canSubmit || !canEdit" />
                                 </UFormField>
@@ -637,7 +629,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.statusLog"
                                     :label="$t('components.settings.job_props.discord_sync_settings.status_log')"
-                                    :ui="{ container: '' }"
                                 >
                                     <USwitch v-model="state.discordSyncSettings.statusLog" :disabled="!canSubmit || !canEdit" />
                                 </UFormField>
@@ -648,7 +639,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     :label="
                                         $t('components.settings.job_props.discord_sync_settings.status_log_settings.channel_id')
                                     "
-                                    :ui="{ container: '' }"
                                 >
                                     <SelectMenu
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
@@ -710,7 +700,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.userInfoSync"
                                     :label="$t('components.settings.job_props.discord_sync_settings.user_info_sync')"
-                                    :ui="{ container: '' }"
                                 >
                                     <USwitch
                                         v-model="state.discordSyncSettings.userInfoSync"
@@ -727,7 +716,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.title',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <FormatBuilder
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
@@ -763,7 +751,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_enabled',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
@@ -779,7 +766,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <FormatBuilder
                                             v-model="state.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
@@ -801,7 +787,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_enabled',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
@@ -817,7 +802,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_mode',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <ClientOnly>
                                             <USelectMenu
@@ -874,7 +858,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <UInput
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
@@ -903,7 +886,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.sync_nicknames',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.syncNicknames"
@@ -924,7 +906,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.description',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <div class="flex flex-col gap-1">
                                             <div
@@ -1071,7 +1052,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_enabled',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <USwitch
                                             v-model="state.discordSyncSettings.jobsAbsence"
@@ -1088,7 +1068,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                     'components.settings.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
                                                 )
                                             "
-                                            :ui="{ container: '' }"
                                         >
                                             <UInput
                                                 v-model="state.discordSyncSettings.jobsAbsenceSettings.absenceRole"
@@ -1123,7 +1102,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
                                             )
                                         "
-                                        :ui="{ container: '' }"
                                     >
                                         <FormatBuilder
                                             v-model="state.discordSyncSettings.qualificationsRoleFormat"
@@ -1195,7 +1173,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                             'components.settings.job_props.discord_sync_settings.group_sync_settings.ignored_role_ids.description',
                                         )
                                     "
-                                    :ui="{ container: '' }"
                                 >
                                     <div class="flex flex-col gap-1">
                                         <div

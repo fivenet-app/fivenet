@@ -78,14 +78,11 @@ const version = APP_VERSION;
 
 <template>
     <UPageCard :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="version"
-            :label="$t('components.debug_info.version')"
-            :ui="{ container: '' }"
-        >
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="version" :label="$t('components.debug_info.version')">
             <div class="inline-flex w-full justify-between">
-                <span> {{ version }}/ {{ settingsStore.version }} </span>
+                <span>
+                    <code>{{ version }}</code> / <code>{{ settingsStore.version }}</code>
+                </span>
                 <CopyToClipboardButton :value="`${version}/ ${settingsStore.version}`" />
             </div>
         </UFormField>
@@ -95,7 +92,6 @@ const version = APP_VERSION;
             class="grid grid-cols-2 items-center gap-2"
             name="activeCharId"
             :label="$t('components.debug_info.active_char_id')"
-            :ui="{ container: '' }"
         >
             <div class="inline-flex w-full justify-between">
                 <span>
@@ -110,7 +106,6 @@ const version = APP_VERSION;
             class="grid grid-cols-2 items-center gap-2"
             name="activeCharJob"
             :label="$t('common.job')"
-            :ui="{ container: '' }"
         >
             <div class="inline-flex w-full justify-between">
                 <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
@@ -123,36 +118,24 @@ const version = APP_VERSION;
             class="grid grid-cols-2 items-center gap-2"
             name="sessionExpiration"
             :label="$t('components.debug_info.access_token_expiration')"
-            :ui="{ container: '' }"
         >
             <GenericTime :value="sessionExpiration" ago />
             (<GenericTime :value="sessionExpiration" type="long" />)
         </UFormField>
 
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="nuiInfo"
-            :label="$t('components.debug_info.nui_info')"
-            :ui="{ container: '' }"
-        >
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="status" :label="$t('common.status')">
+            {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
+        </UFormField>
+
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="nuiInfo" :label="$t('components.debug_info.nui_info')">
             {{ settingsStore.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
             {{ settingsStore.nuiResourceName ?? $t('common.na') }}
         </UFormField>
 
         <UFormField
             class="grid grid-cols-2 items-center gap-2"
-            name="status"
-            :label="$t('common.status')"
-            :ui="{ container: '' }"
-        >
-            {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
-        </UFormField>
-
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
             name="debugFunctions"
             :label="$t('components.debug_info.debug_functions')"
-            :ui="{ container: '' }"
         >
             <UFieldGroup class="flex w-full break-words" orientation="vertical">
                 <UButton
@@ -198,12 +181,7 @@ const version = APP_VERSION;
             </UFieldGroup>
         </UFormField>
 
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="permissions"
-            :label="$t('components.debug_info.perms')"
-            :ui="{ container: '' }"
-        >
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="permissions" :label="$t('components.debug_info.perms')">
             <p v-if="!activeChar">
                 {{ $t('components.debug_info.no_char_selected') }}
             </p>

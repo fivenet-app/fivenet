@@ -92,7 +92,7 @@ const formRef = useTemplateRef('formRef');
                 <DataPendingBlock v-if="isRequestPending(status)" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
-                <UFormField v-else class="grid items-center gap-2" name="labels" :ui="{ container: '' }">
+                <UFormField v-else class="grid items-center gap-2" name="labels">
                     <div class="flex flex-col gap-1">
                         <VueDraggable
                             v-model="state.labels"

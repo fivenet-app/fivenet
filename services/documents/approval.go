@@ -768,7 +768,7 @@ func (s *Server) createApprovalTasks(
 				FROM(tApprovalTasks).
 				WHERE(mysql.AND(
 					tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
-					tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
+					tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 					tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
 					tApprovalTasks.UserID.EQ(mysql.Int32(seed.GetUserId())),
 				)).
@@ -830,7 +830,7 @@ func (s *Server) createApprovalTasks(
 			FROM(tApprovalTasks).
 			WHERE(mysql.AND(
 				tApprovalTasks.DocumentID.EQ(mysql.Int64(documentId)),
-				tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
+				tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
 				tApprovalTasks.Job.EQ(mysql.String(seed.GetJob())),
 				tApprovalTasks.MinimumGrade.EQ(mysql.Int32(seed.GetMinimumGrade())),
@@ -951,7 +951,7 @@ func (s *Server) DeleteApprovalTasks(
 	tApprovalTasks := table.FivenetDocumentsApprovalTasks
 	condition := mysql.AND(
 		tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-		tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
+		tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 	)
 
 	// Delete all pending?
@@ -1047,7 +1047,7 @@ func (s *Server) ListApprovals(
 
 	if req.GetSnapshotDate() != nil {
 		condition = condition.AND(
-			tApprovals.SnapshotDate.EQ(mysql.DateTimeT(req.GetSnapshotDate().AsTime())),
+			tApprovals.SnapshotDate.EQ(mysql.TimestampT(req.GetSnapshotDate().AsTime())),
 		)
 	}
 	if req.GetStatus() > 0 {
@@ -1204,7 +1204,7 @@ func (s *Server) RevokeApproval(
 		FROM(tApprovalPolicy).
 		WHERE(mysql.AND(
 			tApprovalPolicy.DocumentID.EQ(mysql.Int64(apr.GetDocumentId())),
-			tApprovalPolicy.SnapshotDate.EQ(mysql.DateTimeT(apr.GetSnapshotDate().AsTime())),
+			tApprovalPolicy.SnapshotDate.EQ(mysql.TimestampT(apr.GetSnapshotDate().AsTime())),
 		)).
 		LIMIT(1).
 		QueryContext(ctx, s.db, &pol); err != nil {
@@ -1450,7 +1450,7 @@ func (s *Server) DecideApproval(
 			FROM(tApprovalTasks).
 			WHERE(mysql.AND(
 				tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-				tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snapTime)),
+				tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snapTime)),
 				tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_USER))),
 				tApprovalTasks.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 				tApprovalTasks.Status.IN(
@@ -1481,7 +1481,7 @@ func (s *Server) DecideApproval(
 				FROM(tApprovalTasks).
 				WHERE(mysql.AND(
 					tApprovalTasks.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-					tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snapTime)),
+					tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snapTime)),
 					tApprovalTasks.AssigneeKind.EQ(mysql.Int32(int32(documents.ApprovalAssigneeKind_APPROVAL_ASSIGNEE_KIND_JOB_GRADE))),
 					tApprovalTasks.Job.EQ(mysql.String(userInfo.GetJob())),
 					tApprovalTasks.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
@@ -1511,7 +1511,7 @@ func (s *Server) DecideApproval(
 				SET(
 					tApprovalTasks.Status.SET(mysql.Int32(int32(req.GetNewStatus()))),
 					tApprovalTasks.DecisionCount.SET(tApprovalTasks.DecisionCount.ADD(mysql.Int32(1))),
-					tApprovalTasks.CompletedAt.SET(mysql.DateTimeT(now)),
+					tApprovalTasks.CompletedAt.SET(mysql.TimestampT(now)),
 					tApprovalTasks.Comment.SET(mysql.String(req.GetComment())),
 				).
 				WHERE(tApprovalTasks.ID.EQ(mysql.Int64(candidate.GetId()))).
@@ -1539,7 +1539,7 @@ func (s *Server) DecideApproval(
 		FROM(tApprovals).
 		WHERE(mysql.AND(
 			tApprovals.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-			tApprovals.SnapshotDate.EQ(mysql.DateTimeT(snapTime)),
+			tApprovals.SnapshotDate.EQ(mysql.TimestampT(snapTime)),
 			tApprovals.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 		)).
 		LIMIT(1).
@@ -1649,7 +1649,7 @@ func (s *Server) DecideApproval(
 		FROM(tApprovals).
 		WHERE(mysql.AND(
 			tApprovals.DocumentID.EQ(mysql.Int64(pol.GetDocumentId())),
-			tApprovals.SnapshotDate.EQ(mysql.DateTimeT(snapTime)),
+			tApprovals.SnapshotDate.EQ(mysql.TimestampT(snapTime)),
 			tApprovals.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 		)).
 		LIMIT(1).
@@ -1942,7 +1942,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 		FROM(tApprovalTasks).
 		WHERE(mysql.AND(
 			tApprovalTasks.DocumentID.EQ(mysql.Int64(documentID)),
-			tApprovalTasks.SnapshotDate.EQ(mysql.DateTimeT(snap)),
+			tApprovalTasks.SnapshotDate.EQ(mysql.TimestampT(snap)),
 		)).
 		QueryContext(ctx, tx, &aggTasks); err != nil {
 		return err
@@ -1957,7 +1957,7 @@ func (s *Server) recomputeApprovalPolicyTx(
 	var docApproved bool
 	if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL {
 		// Ensure that there is at least one approval if all are required
-		docApproved = !anyDeclined && aggTasks.Total > 0 && (agg.Approved >= aggTasks.Total)
+		docApproved = !anyDeclined && agg.Approved > 0 && (agg.Approved >= aggTasks.Total)
 	} else if pol.GetRuleKind() == documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY {
 		// Quorum-any: enough approvals, regardless of declines
 		docApproved = (agg.Approved >= requiredTotal)
@@ -2096,7 +2096,7 @@ func (s *Server) expireApprovalTasks(ctx context.Context) (int64, error) {
 			tApprovalTasks.Status.SET(mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_EXPIRED))),
 		).
 		WHERE(mysql.AND(
-			tApprovalTasks.DueAt.LT_EQ(mysql.DateTimeT(now)),
+			tApprovalTasks.DueAt.LT_EQ(mysql.TimestampT(now)),
 			tApprovalTasks.Status.EQ(
 				mysql.Int32(int32(documents.ApprovalTaskStatus_APPROVAL_TASK_STATUS_PENDING)),
 			),
@@ -2110,7 +2110,7 @@ func (s *Server) expireApprovalTasks(ctx context.Context) (int64, error) {
 
 	affected, err := res.RowsAffected()
 	if err != nil {
-		return affected, err
+		return 0, err
 	}
 
 	return affected, nil

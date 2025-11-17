@@ -42,7 +42,6 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                     class="grid flex-1 grid-cols-1 items-center"
                     name="workflow.autoClose.autoCloseSettings.message"
                     :label="$t('common.message')"
-                    :ui="{ container: '' }"
                 >
                     <UInput
                         v-model="workflow.autoClose.autoCloseSettings.message"
@@ -93,7 +92,6 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                             class="grid grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.duration`"
                             :label="$t('common.time_ago.day', 2)"
-                            :ui="{ container: '' }"
                         >
                             <UInputNumber
                                 v-model="workflow.reminders.reminderSettings.reminders[idx]!.duration"
@@ -108,7 +106,6 @@ const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders
                             class="grid flex-1 grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.message`"
                             :label="$t('common.message')"
-                            :ui="{ container: '' }"
                         >
                             <UInput
                                 v-model="workflow.reminders.reminderSettings.reminders[idx]!.message"

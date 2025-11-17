@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '@nuxt/ui';
+import type { FormSubmitEvent, TabsItem } from '@nuxt/ui';
 import type { LocaleObject } from '@nuxtjs/i18n';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -285,30 +285,25 @@ function setSettingsValues(): void {
 
 watch(config, () => setSettingsValues());
 
-const items = [
-    { slot: 'auth' as const, label: t('components.settings.app_config.auth.title'), icon: 'i-mdi-login', value: 'auth' },
-    {
-        slot: 'perms' as const,
-        label: t('components.settings.app_config.perms.title'),
-        icon: 'i-mdi-account-key',
-        value: 'perms',
-    },
+const items = computed<TabsItem[]>(() => [
+    { slot: 'auth' as const, label: t('components.settings.app_config.auth.title'), icon: 'i-mdi-account-key', value: 'auth' },
     {
         slot: 'jobInfo' as const,
-        label: t('components.settings.app_config.job_info.title'),
-        icon: 'i-mdi-briefcase',
+        label: t('components.settings.app_config.jobs_users.tab'),
+        icon: 'i-mdi-briefcase-search',
         value: 'jobInfo',
     },
-    {
-        slot: 'userTracker' as const,
-        label: t('components.settings.app_config.user_tracker.title'),
-        icon: 'i-mdi-account-search',
-        value: 'userTracker',
-    },
     { slot: 'discord' as const, label: t('common.discord'), icon: 'i-simple-icons-discord', value: 'discord' },
+    {
+        slot: 'game' as const,
+        label: t('components.settings.app_config.game.tab'),
+        icon: 'i-mdi-details',
+        value: 'game',
+        disabled: true,
+    },
     { slot: 'website' as const, label: t('components.settings.app_config.website.title'), icon: 'i-mdi-web', value: 'website' },
     { slot: 'system' as const, label: t('common.system'), icon: 'i-mdi-cog', value: 'system' },
-];
+]);
 
 const route = useRoute();
 const router = useRouter();
@@ -396,7 +391,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="auth.signupEnabled"
                                 :label="$t('components.settings.app_config.auth.sign_up')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.auth.signupEnabled" />
                             </UFormField>
@@ -405,69 +399,11 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="auth.lastCharLock"
                                 :label="$t('components.settings.app_config.auth.last_char_lock')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.auth.lastCharLock" />
                             </UFormField>
                         </UPageCard>
 
-                        <UPageCard
-                            :title="$t('components.settings.app_config.auth.social_login_providers.title')"
-                            :description="$t('components.settings.app_config.auth.social_login_providers.description')"
-                        >
-                            <UPageGrid class="lg:grid-cols-2">
-                                <UCard
-                                    v-for="provider in login.providers"
-                                    :key="provider.name"
-                                    :ui="{
-                                        header: 'flex flex-col',
-                                        body: 'flex-1 flex flex-col',
-                                    }"
-                                >
-                                    <template #header>
-                                        <div class="flex flex-1 gap-2">
-                                            <div class="inline-flex flex-1 gap-2">
-                                                <NuxtImg
-                                                    v-if="!provider.icon?.startsWith('i-')"
-                                                    class="size-10"
-                                                    :src="provider.icon"
-                                                    :alt="provider.name"
-                                                    placeholder-class="size-10"
-                                                    loading="lazy"
-                                                />
-                                                <UIcon
-                                                    v-else
-                                                    class="size-10"
-                                                    :name="provider.icon"
-                                                    :style="provider.name === 'discord' && { color: '#7289da' }"
-                                                />
-
-                                                <div
-                                                    class="flex items-center gap-1.5 truncate text-base font-semibold text-highlighted"
-                                                >
-                                                    {{ provider.label }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <template #footer>
-                                        <UButton
-                                            size="xs"
-                                            variant="link"
-                                            color="neutral"
-                                            :label="$t('components.auth.SocialLogins.connection_website')"
-                                            external
-                                            :to="provider.homepage"
-                                            target="_blank"
-                                            trailing-icon="i-mdi-external-link"
-                                        />
-                                    </template>
-                                </UCard>
-                            </UPageGrid>
-                        </UPageCard>
-                    </template>
-
-                    <template #perms>
                         <UPageCard
                             :title="$t('components.settings.app_config.perms.default_perms.title')"
                             :description="$t('components.settings.app_config.perms.default_perms.description')"
@@ -552,18 +488,72 @@ const formRef = useTemplateRef('formRef');
                                 />
                             </UFormField>
                         </UPageCard>
+
+                        <UPageCard
+                            :title="$t('components.settings.app_config.auth.social_login_providers.title')"
+                            :description="$t('components.settings.app_config.auth.social_login_providers.description')"
+                        >
+                            <UPageGrid class="lg:grid-cols-2">
+                                <UCard
+                                    v-for="provider in login.providers"
+                                    :key="provider.name"
+                                    :ui="{
+                                        header: 'flex flex-col',
+                                        body: 'flex-1 flex flex-col',
+                                    }"
+                                >
+                                    <template #header>
+                                        <div class="flex flex-1 gap-2">
+                                            <div class="inline-flex flex-1 gap-2">
+                                                <NuxtImg
+                                                    v-if="!provider.icon?.startsWith('i-')"
+                                                    class="size-10"
+                                                    :src="provider.icon"
+                                                    :alt="provider.name"
+                                                    placeholder-class="size-10"
+                                                    loading="lazy"
+                                                />
+                                                <UIcon
+                                                    v-else
+                                                    class="size-10"
+                                                    :name="provider.icon"
+                                                    :style="provider.name === 'discord' && { color: '#7289da' }"
+                                                />
+
+                                                <div
+                                                    class="flex items-center gap-1.5 truncate text-base font-semibold text-highlighted"
+                                                >
+                                                    {{ provider.label }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template #footer>
+                                        <UButton
+                                            size="xs"
+                                            variant="link"
+                                            color="neutral"
+                                            :label="$t('components.auth.SocialLogins.connection_website')"
+                                            external
+                                            :to="provider.homepage"
+                                            target="_blank"
+                                            trailing-icon="i-mdi-external-link"
+                                        />
+                                    </template>
+                                </UCard>
+                            </UPageGrid>
+                        </UPageCard>
                     </template>
 
                     <template #jobInfo>
                         <UPageCard
-                            :title="$t('components.settings.app_config.job_info.unemployed_job.title')"
-                            :description="$t('components.settings.app_config.job_info.unemployed_job.description')"
+                            :title="$t('components.settings.app_config.jobs_users.unemployed_job.title')"
+                            :description="$t('components.settings.app_config.jobs_users.unemployed_job.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.unemployedJob.name"
                                 :label="`${$t('common.job')} ${$t('common.name')}`"
-                                :ui="{ container: '' }"
                             >
                                 <USelectMenu
                                     v-model="state.jobInfo.unemployedJob.name"
@@ -580,7 +570,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.unemployedJob.grade"
                                 :label="$t('common.rank')"
-                                :ui="{ container: '' }"
                             >
                                 <UInputNumber
                                     v-model="state.jobInfo.unemployedJob.grade"
@@ -600,14 +589,13 @@ const formRef = useTemplateRef('formRef');
                         </UPageCard>
 
                         <UPageCard
-                            :title="$t('components.settings.app_config.job_info.title')"
-                            :description="$t('components.settings.app_config.job_info.description')"
+                            :title="$t('components.settings.app_config.jobs_users.title')"
+                            :description="$t('components.settings.app_config.jobs_users.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.publicJobs"
-                                :label="$t('components.settings.app_config.job_info.public_jobs')"
-                                :ui="{ container: '' }"
+                                :label="$t('components.settings.app_config.jobs_users.public_jobs')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -636,8 +624,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="jobInfo.hiddenJobs"
-                                :label="$t('components.settings.app_config.job_info.hidden_jobs')"
-                                :ui="{ container: '' }"
+                                :label="$t('components.settings.app_config.jobs_users.hidden_jobs')"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -664,18 +651,15 @@ const formRef = useTemplateRef('formRef');
                                 </ClientOnly>
                             </UFormField>
                         </UPageCard>
-                    </template>
 
-                    <template #userTracker>
                         <UPageCard
-                            :title="$t('components.settings.app_config.user_tracker.title')"
-                            :description="$t('components.settings.app_config.user_tracker.description')"
+                            :title="$t('components.settings.app_config.jobs_users.user_tracker.title')"
+                            :description="$t('components.settings.app_config.jobs_users.user_tracker.description')"
                         >
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="userTracker.refreshTime"
-                                :label="$t('components.settings.app_config.user_tracker.refresh_time')"
-                                :ui="{ container: '' }"
+                                :label="$t('components.settings.app_config.jobs_users.user_tracker.refresh_time')"
                             >
                                 <UInput
                                     v-model="state.userTracker.refreshTime"
@@ -694,8 +678,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="userTracker.dbRefreshTime"
-                                :label="$t('components.settings.app_config.user_tracker.db_refresh_time')"
-                                :ui="{ container: '' }"
+                                :label="$t('components.settings.app_config.jobs_users.user_tracker.db_refresh_time')"
                             >
                                 <UInput
                                     v-model="state.userTracker.dbRefreshTime"
@@ -722,7 +705,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discordEnabled"
                                 :label="$t('common.enabled')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.discord.enabled" />
                             </UFormField>
@@ -731,7 +713,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.syncInterval"
                                 :label="$t('components.settings.app_config.discord.sync_interval')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.discord.syncInterval"
@@ -752,7 +733,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botId"
                                 :label="$t('components.settings.app_config.discord.bot_id')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.discord.botId"
@@ -765,7 +745,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPermissions"
                                 :label="$t('components.settings.app_config.discord.bot_permissions')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.discord.botPermissions"
@@ -779,7 +758,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.ignoredJobs"
                                 :label="$t('components.settings.app_config.discord.ignored_jobs')"
-                                :ui="{ container: '' }"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -815,7 +793,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.type"
                                 :label="$t('components.settings.app_config.discord.bot_presence.type')"
-                                :ui="{ container: '' }"
                             >
                                 <USelectMenu
                                     v-model="state.discord.botPresence.type"
@@ -846,7 +823,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.status"
                                 :label="$t('components.settings.app_config.discord.bot_presence.status')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.status"
@@ -860,7 +836,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="discord.botPresence.url"
                                 :label="$t('components.settings.app_config.discord.bot_presence.url')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.discord.botPresence.url"
@@ -869,6 +844,15 @@ const formRef = useTemplateRef('formRef');
                                     class="w-full"
                                 />
                             </UFormField>
+                        </UPageCard>
+                    </template>
+
+                    <template #game>
+                        <UPageCard
+                            :title="$t('components.settings.app_config.game.title')"
+                            :description="$t('components.settings.app_config.game.description')"
+                        >
+                            <UFormField> TEST </UFormField>
                         </UPageCard>
                     </template>
 
@@ -881,7 +865,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="defaultLocale"
                                 :label="$t('common.default_lang')"
-                                :ui="{ container: '' }"
                             >
                                 <USelectMenu
                                     v-model="state.defaultLocale"
@@ -897,7 +880,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.links.privacyPolicy"
                                 :label="$t('common.privacy_policy')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.website.links.privacyPolicy"
@@ -912,7 +894,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.links.imprint"
                                 :label="$t('common.imprint')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.website.links.imprint"
@@ -928,8 +909,7 @@ const formRef = useTemplateRef('formRef');
                             <UFormField
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="website.statsPage"
-                                :label="$t('common.stats')"
-                                :ui="{ container: '' }"
+                                :label="$t('common.enabled')"
                             >
                                 <USwitch v-model="state.website.statsPage" />
                             </UFormField>
@@ -945,7 +925,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessageEnabled"
                                 :label="$t('common.enabled')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.system.bannerMessageEnabled" />
                             </UFormField>
@@ -963,7 +942,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="system.bannerMessage.expiresAt"
                                 :label="$t('common.expires_at')"
-                                :ui="{ container: '' }"
                             >
                                 <InputDatePicker v-model="state.system.bannerMessage.expiresAt" clearable time />
                             </UFormField>

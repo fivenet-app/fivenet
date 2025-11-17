@@ -54,7 +54,6 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     class="grid grid-cols-2 items-center gap-2"
                     name="examMode"
                     :label="$t('components.qualifications.exam_mode')"
-                    :ui="{ container: '' }"
                 >
                     <ClientOnly>
                         <USelectMenu v-model="examMode" :items="examModes" value-key="mode" class="w-full">
@@ -77,7 +76,6 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     class="grid grid-cols-2 items-center gap-2"
                     name="examSettings.time"
                     :label="$t('components.qualifications.exam_editor.exam_duration')"
-                    :ui="{ container: '' }"
                 >
                     <UInputNumber
                         v-model="examSettings.time"
@@ -97,7 +95,6 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     name="examSettings.autoGrade"
                     :label="$t('components.qualifications.exam_editor.auto_grade.title')"
                     :description="$t('components.qualifications.exam_editor.auto_grade.description')"
-                    :ui="{ container: '' }"
                 >
                     <USwitch v-model="examSettings.autoGrade" />
                 </UFormField>
@@ -107,7 +104,6 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     name="mode"
                     :label="$t('components.qualifications.exam_editor.auto_grade_mode.title')"
                     :description="$t('components.qualifications.exam_editor.auto_grade_mode.description')"
-                    :ui="{ container: '' }"
                 >
                     <ClientOnly>
                         <USelectMenu
@@ -132,7 +128,6 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                     class="grid grid-cols-2 items-center gap-2"
                     name="examSettings.miniumPoints"
                     :label="$t('components.qualifications.exam_editor.minimum_points')"
-                    :ui="{ container: '' }"
                 >
                     <UInputNumber
                         v-model="examSettings.minimumPoints"

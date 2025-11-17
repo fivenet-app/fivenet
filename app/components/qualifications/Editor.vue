@@ -707,7 +707,6 @@ const formRef = useTemplateRef('formRef');
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="discordSettings.enabled"
                                             :label="$t('common.enabled')"
-                                            :ui="{ container: '' }"
                                         >
                                             <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormField>
@@ -752,7 +751,6 @@ const formRef = useTemplateRef('formRef');
                                             class="grid grid-cols-2 items-center gap-2"
                                             name="labelSyncEnabled"
                                             :label="$t('common.enabled')"
-                                            :ui="{ container: '' }"
                                         >
                                             <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormField>

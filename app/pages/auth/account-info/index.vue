@@ -16,12 +16,7 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
 
 <template>
     <UPageCard :title="$t('components.auth.AccountInfo.title')" :description="$t('components.auth.AccountInfo.subtitle')">
-        <UFormField
-            class="grid grid-cols-2 items-center gap-2"
-            name="username"
-            :label="$t('common.username')"
-            :ui="{ container: '' }"
-        >
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="username" :label="$t('common.username')">
             <div class="inline-flex w-full justify-between gap-2">
                 <span class="truncate">
                     {{ account.account?.username }}
@@ -34,7 +29,6 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
             class="grid grid-cols-2 items-center gap-2"
             name="license"
             :label="$t('components.auth.AccountInfo.license')"
-            :ui="{ container: '' }"
         >
             <div class="inline-flex w-full justify-between gap-2">
                 <span class="truncate">
@@ -49,7 +43,6 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
             class="grid grid-cols-2 items-center gap-2"
             name="change_username"
             :label="$t('components.auth.AccountInfo.change_username')"
-            :ui="{ container: '' }"
         >
             <UButton @click="changeUsernameModal.open()">
                 {{ $t('components.auth.AccountInfo.change_username_button') }}
@@ -60,7 +53,6 @@ const changePasswordModal = overlay.create(ChangePasswordModal);
             class="grid grid-cols-2 items-center gap-2"
             name="change_password"
             :label="$t('components.auth.AccountInfo.change_password')"
-            :ui="{ container: '' }"
         >
             <UButton @click="changePasswordModal.open()">
                 {{ $t('components.auth.AccountInfo.change_password_button') }}

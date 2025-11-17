@@ -1562,21 +1562,22 @@
                         "title": "Links"
                     }
                 },
-                "job_info": {
-                    "title": "Job Info",
+                "jobs_users": {
+                    "tab": "Jobs & Tracker",
+                    "title": "Jobs",
                     "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
                     "unemployed_job": {
                         "title": "Unemployed Job",
                         "description": "The unemployed job info that users without a job have assigned."
                     },
                     "public_jobs": "Public Jobs",
-                    "hidden_jobs": "Hidden Jobs"
-                },
-                "user_tracker": {
-                    "title": "User Tracker",
-                    "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
-                    "refresh_time": "Refresh Time",
-                    "db_refresh_time": "DB Refresh Time"
+                    "hidden_jobs": "Hidden Jobs",
+                    "user_tracker": {
+                        "title": "User Tracker",
+                        "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
+                        "refresh_time": "Refresh Time",
+                        "db_refresh_time": "DB Refresh Time"
+                    }
                 },
                 "discord": {
                     "description": "FiveNet Discord Bot settings.",
@@ -1601,6 +1602,10 @@
                         "title": "Banner Message",
                         "subtitle": "Globally displayed banner message (the message should be kept short)."
                     }
+                },
+                "game": {
+                    "tab": "Game",
+                    "description": "Game related settings, such as law calculation options."
                 }
             },
             "accounts": {

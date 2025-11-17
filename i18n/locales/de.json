@@ -1562,21 +1562,22 @@
                         "title": "Verlinkungen"
                     }
                 },
-                "job_info": {
-                    "title": "Berufs-Info",
-                    "description": "Arbeitslosen-Beruf-Info für das System und Liste der öffentlichen und versteckten Berufe.",
+                "jobs_users": {
+                    "tab": "Berufe & Tracker",
+                    "title": "Berufe",
+                    "description": "Liste der öffentlichen und versteckten Berufe.",
                     "unemployed_job": {
                         "title": "Beruf der Arbeitslosen",
                         "description": "Der Beruf, der für arbeitslose Benutzer verwendet wird."
                     },
                     "public_jobs": "Öffentliche Berufe",
-                    "hidden_jobs": "Versteckte Berufe"
-                },
-                "user_tracker": {
-                    "title": "Spieler-Tracker",
-                    "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
-                    "refresh_time": "Aktualisierungszeit",
-                    "db_refresh_time": "Datenbank-Aktualisierungszeit"
+                    "hidden_jobs": "Versteckte Berufe",
+                    "user_tracker": {
+                        "title": "Spieler-Tracker",
+                        "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
+                        "refresh_time": "Aktualisierungszeit",
+                        "db_refresh_time": "Datenbank-Aktualisierungszeit"
+                    }
                 },
                 "discord": {
                     "description": "FiveNet Discord-Bot-Einstellungen.",
@@ -1601,6 +1602,10 @@
                         "title": "Banner Nachricht",
                         "subtitle": "Global angezeigte Bannermeldung (sollte kurz und prägnant sein)."
                     }
+                },
+                "game": {
+                    "tab": "Spiel",
+                    "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen."
                 }
             },
             "accounts": {

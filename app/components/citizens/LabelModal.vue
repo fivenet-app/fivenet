@@ -72,7 +72,6 @@ const formRef = useTemplateRef('formRef');
                     v-if="state && can('citizens.CitizensService/ManageLabels').value"
                     class="grid items-center gap-2"
                     name="labels"
-                    :ui="{ container: '' }"
                 >
                     <div class="flex flex-col gap-1">
                         <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">

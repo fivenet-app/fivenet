@@ -289,7 +289,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="enabled"
                                 :label="$t('common.enabled')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.enabled" name="enabled" :disabled="!canSubmit" />
                             </UFormField>
@@ -299,7 +298,6 @@ const formRef = useTemplateRef('formRef');
                                 name="public"
                                 :label="$t('common.public')"
                                 :description="$t('components.centrum.settings.public.description')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch
                                     v-model="state.public"
@@ -309,12 +307,7 @@ const formRef = useTemplateRef('formRef');
                                 />
                             </UFormField>
 
-                            <UFormField
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="mode"
-                                :label="$t('common.mode')"
-                                :ui="{ container: '' }"
-                            >
+                            <UFormField class="grid grid-cols-2 items-center gap-2" name="mode" :label="$t('common.mode')">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.mode"
@@ -338,7 +331,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="fallbackMode"
                                 :label="$t('common.fallback_mode')"
-                                :ui="{ container: '' }"
                             >
                                 <ClientOnly>
                                     <USelectMenu
@@ -368,7 +360,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationEnabled"
                                 :label="$t('common.enabled')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.configuration.deduplicationEnabled" :disabled="!canSubmit" />
                             </UFormField>
@@ -377,7 +368,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="configuration.deduplicationDuration"
                                 :label="$t('components.centrum.settings.deduplication.deduplication_duration')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.configuration.deduplicationDuration"
@@ -394,7 +384,6 @@ const formRef = useTemplateRef('formRef');
                                 name="configuration.deduplicationRadius"
                                 :label="$t('components.centrum.settings.deduplication.deduplication_radius')"
                                 :description="$t('components.centrum.settings.deduplication.deduplication_radius_description')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.configuration.deduplicationRadius"
@@ -424,7 +413,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="unitStatus"
                                 :label="`${$t('common.unit')} ${$t('common.status')}`"
-                                :ui="{ container: '' }"
                             >
                                 <div class="flex flex-col gap-1">
                                     <div
@@ -432,7 +420,7 @@ const formRef = useTemplateRef('formRef');
                                         :key="idx"
                                         class="flex items-center gap-1"
                                     >
-                                        <UFormField class="flex-1" :name="`unitStatus.${idx}`" :ui="{ container: '' }">
+                                        <UFormField class="flex-1" :name="`unitStatus.${idx}`">
                                             <UInput
                                                 v-model="state.predefinedStatus.unitStatus[idx]"
                                                 class="w-full flex-1"
@@ -467,7 +455,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="dispatchStatus"
                                 :label="`${$t('common.dispatches')} ${$t('common.status')}`"
-                                :ui="{ container: '' }"
                             >
                                 <div class="flex flex-col gap-1">
                                     <div
@@ -475,7 +462,7 @@ const formRef = useTemplateRef('formRef');
                                         :key="idx"
                                         class="flex items-center gap-1"
                                     >
-                                        <UFormField class="flex-1" :name="`dispatchStatus.${idx}`" :ui="{ container: '' }">
+                                        <UFormField class="flex-1" :name="`dispatchStatus.${idx}`">
                                             <UInput
                                                 v-model="state.predefinedStatus.dispatchStatus[idx]"
                                                 class="w-full flex-1"
@@ -517,7 +504,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.dispatchMaxWait"
                                 :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.timings.dispatchMaxWait"
@@ -533,7 +519,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnit"
                                 :label="$t('components.centrum.settings.timings.require_unit')"
-                                :ui="{ container: '' }"
                             >
                                 <USwitch v-model="state.timings.requireUnit" :disabled="!canSubmit" />
                             </UFormField>
@@ -542,7 +527,6 @@ const formRef = useTemplateRef('formRef');
                                 class="grid grid-cols-2 items-center gap-2"
                                 name="timings.requireUnitReminderSeconds"
                                 :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
-                                :ui="{ container: '' }"
                             >
                                 <UInput
                                     v-model="state.timings.requireUnitReminderSeconds"
