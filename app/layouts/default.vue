@@ -290,7 +290,7 @@ defineShortcuts(extractShortcuts(links.value));
 </script>
 
 <template>
-    <UDashboardGroup unit="rem">
+    <UDashboardGroup unit="%">
         <UDashboardSidebar
             id="default"
             v-model:open="open"

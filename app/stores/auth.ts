@@ -79,6 +79,25 @@ export const useAuthStore = defineStore(
         });
 
         /**
+         * Set or unset the username.
+         * @param val - The username of the user.
+         */
+        const setUsername = (val: string | null) => {
+                // Connect to the WebSocket if the user is logged in
+                if (val) {
+                    username.value = val;
+                    if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                        logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
+                        webSocket.open();
+                    }
+                } else {
+                    username.value = null;
+                    logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
+                    webSocket.close();
+                }
+            };
+
+        /**
          * Starts the login process by setting the loggingIn state to true and clearing any previous errors.
          */
         const loginStart = (): void => {
@@ -145,7 +164,7 @@ export const useAuthStore = defineStore(
          */
         const clearAuthInfo = (): void => {
             logger.info('Clearing auth info');
-            username.value = null;
+            setUsername(null);
             setActiveChar(null);
             setAccessTokenExpiration(null);
             setPermissions([], []);
@@ -175,7 +194,7 @@ export const useAuthStore = defineStore(
 
                 loginStop(null);
 
-                username.value = user;
+                setUsername(user);
 
                 if (response.char === undefined) {
                     logger.info('Login response (not fast-tracked), redirecting to char selector');
@@ -271,7 +290,7 @@ export const useAuthStore = defineStore(
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
-                username.value = response.username;
+                setUsername(response.username);
                 setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char);
                 setPermissions(response.permissions, response.attributes);
@@ -360,28 +379,6 @@ export const useAuthStore = defineStore(
             return !!permissions.value.find((p) => p.guardName === 'superuser-superuser');
         });
 
-        // Watchers
-        watch(
-            username,
-            useThrottleFn(
-                (val) => {
-                    // Connect to the WebSocket if the user is logged in
-                    if (val) {
-                        if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
-                            logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
-                            webSocket.open();
-                        }
-                    } else {
-                        logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
-                        webSocket.close();
-                    }
-                },
-                500,
-                true,
-                false,
-            ),
-        );
-
         return {
             // State
             sessionExpiration,
@@ -395,6 +392,7 @@ export const useAuthStore = defineStore(
             jobProps,
 
             // Actions
+            setUsername,
             loginStart,
             loginStop,
             setAccessTokenExpiration,

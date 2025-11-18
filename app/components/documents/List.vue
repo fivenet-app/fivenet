@@ -471,15 +471,5 @@ defineShortcuts({
         </template>
     </UDashboardPanel>
 
-    <UDashboardPanel
-        v-if="isPinnedDocumentsVisible"
-        id="documents-pinnedlist"
-        class="overflow-x-hidden"
-        resizable
-        :width="15"
-        :min-size="15"
-        :max-size="40"
-    >
-        <PinnedList @close="isPinnedDocumentsVisible = false" />
-    </UDashboardPanel>
+    <PinnedList v-model:open="isPinnedDocumentsVisible" />
 </template>

@@ -121,7 +121,7 @@ const confirmModal = overlay.create(ConfirmModal);
 
     <UDashboardPanel
         v-else
-        id="maileremailslist"
+        id="mailer-emailslist"
         :width="28"
         :min-size="15"
         :max-size="40"

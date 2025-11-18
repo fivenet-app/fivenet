@@ -443,15 +443,16 @@ defineShortcuts({
     </UDashboardPanel>
 
     <UDashboardPanel
-        v-if="open"
+        v-if="!open"
         resizable
         :min-size="14.25"
         :max-size="25"
         :default-size="16.25"
+        class="max-w-[25rem]"
         :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0 border-b border-default' }"
     >
         <template #header>
-            <UDashboardToolbar :ui="{ root: 'px-1 sm:px-1' }">
+            <UDashboardNavbar :ui="{ root: 'px-1 sm:px-1', center: 'flex flex-1', toggle: 'hidden' }">
                 <template #default>
                     <div class="flex flex-1 flex-col items-center">
                         <UButton
@@ -503,7 +504,7 @@ defineShortcuts({
                         </UFieldGroup>
                     </div>
                 </template>
-            </UDashboardToolbar>
+            </UDashboardNavbar>
         </template>
 
         <template #body>

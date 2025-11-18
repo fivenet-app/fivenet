@@ -86,7 +86,7 @@ async function toggleStream(): Promise<void> {
     }
 }
 
-watch([username, activeChar, webSocket], async () => toggleStream());
+watch([username, activeChar, webSocket.status], async () => toggleStream());
 
 onMounted(async () => await toggleStream());
 
