@@ -224,7 +224,7 @@ tables:
     # By default the dbsync will attempt to add the column if it does not exist, but you can
     # disable that by commenting this out. It is recommended to leave it enabled, for
     # performance reasons.
-    updatedTimeColumn: "last_seen"
+    updatedTimeColumn: "updated_at"
     # Vehicles table column names (only used when no custom `query` is specified)
     columns:
       ownerIdentifier: "owner"
@@ -248,3 +248,6 @@ tables:
     #    `owned_vehicles`
     #  LIMIT $limit
     #  OFFSET $offset;
+tableManager:
+  # By default enabled, to create missing `updated_at` columns on tables that have it configured
+  enabled: true

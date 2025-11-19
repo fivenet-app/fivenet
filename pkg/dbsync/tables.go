@@ -26,6 +26,10 @@ type TableManagerParams struct {
 }
 
 func NewTableManager(p TableManagerParams) *TableManager {
+	if !p.Config.Load().TableManager.Enabled {
+		return nil
+	}
+
 	t := &TableManager{
 		logger: p.Logger.Named("dbsync.table_manager"),
 		db:     p.DB,
@@ -125,8 +129,8 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 	return true, nil
 }
 
-// TODO logic to add a `updated_at` (on update current_timestamp) column to tables if enabled and no such column exists (e.g., ESX's `owned_vehicles` is a prime candidate)
-
+// addUpdatedAtColumnToTable adds a new column to the specified table that automatically updates
+// its value to the current timestamp whenever the row is updated using MySQLs `ON UPDATE` system.
 func (t *TableManager) addUpdatedAtColumnToTable(
 	ctx context.Context,
 	tableName string,

@@ -86,6 +86,7 @@ func FxDiscordOpts() []fx.Option {
 
 func FxDBSyncOpts() []fx.Option {
 	return []fx.Option{
+		fx.Invoke(func(*dbsync.TableManager) {}),
 		fx.Invoke(func(*dbsync.Sync) {}),
 	}
 }

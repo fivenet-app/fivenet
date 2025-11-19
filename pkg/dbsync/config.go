@@ -138,6 +138,8 @@ type DBSyncConfig struct {
 	Tables DBSyncSourceTables `yaml:"tables"`
 
 	UpdateCheck config.UpdateCheck `yaml:"updateCheck"`
+
+	TableManager TableManagerConfig `yaml:"tableManager"`
 }
 
 type DBSyncSource struct {
@@ -505,4 +507,8 @@ func (c *DBSyncConfig) Init() error {
 	}
 
 	return nil
+}
+
+type TableManagerConfig struct {
+	Enabled bool `default:"true" yaml:"enabled"`
 }

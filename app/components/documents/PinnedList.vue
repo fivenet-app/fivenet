@@ -53,18 +53,18 @@ const editing = ref(false);
 
 <template>
     <UDashboardPanel
-        v-if="!isMobile"
+        v-if="!isMobile && open"
         id="documents-pinnedlist"
         class="overflow-x-hidden"
         breakpoint="2xl"
         resizable
-        :width="30"
-        :min-size="20"
-        :max-size="50"
+        :width="15"
+        :min-size="12"
+        :max-size="30"
         :ui="{ body: 'p-1 sm:p-1 gap-0 sm:gap-0' }"
     >
         <template #header>
-            <UDashboardNavbar :title="$t('common.pinned_document', 2)">
+            <UDashboardNavbar :title="$t('common.pinned_document', 2)" :ui="{ toggle: '!hidden ' }">
                 <template #toggle>
                     <UButton
                         class="lg:block 2xl:hidden"
