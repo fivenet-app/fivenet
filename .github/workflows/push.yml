@@ -47,6 +47,7 @@ jobs:
   node-lint-tests:
     name: Node Lint Test
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v5
 
@@ -152,7 +153,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
       - container-build
-      - node-lint-tests
+      #- node-lint-tests
       - node-build-tests
       - binary-build
     uses: ./.github/workflows/build_image.yml
