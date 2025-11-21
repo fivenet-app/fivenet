@@ -368,33 +368,35 @@ defineShortcuts({
         <template #body>
             <div class="relative z-0 size-full">
                 <LivemapBase>
-                    <template v-if="canStream" #default>
-                        <DispatchLayer
-                            :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
-                        />
+                    <template #default>
+                        <template v-if="canStream">
+                            <DispatchLayer
+                                :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
+                            />
 
-                        <LControl position="bottomright">
-                            <UChip
-                                v-if="settings?.enabled"
-                                :show="getSortedOwnDispatches.length > 0"
-                                :text="getSortedOwnDispatches.length"
-                                color="error"
-                                size="lg"
-                                position="top-left"
-                            >
-                                <UButton
-                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
-                                    size="xs"
-                                    :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
-                                    :color="!getOwnUnit ? 'primary' : 'neutral'"
-                                    @click="open = !open"
+                            <LControl position="bottomright">
+                                <UChip
+                                    v-if="settings?.enabled"
+                                    :show="getSortedOwnDispatches.length > 0"
+                                    :text="getSortedOwnDispatches.length"
+                                    color="error"
+                                    size="lg"
+                                    position="top-left"
                                 >
-                                    <span v-if="!open" class="inline-flex items-center justify-center">
-                                        {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
-                                    </span>
-                                </UButton>
-                            </UChip>
-                        </LControl>
+                                    <UButton
+                                        class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black"
+                                        size="xs"
+                                        :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
+                                        :color="!getOwnUnit ? 'primary' : 'neutral'"
+                                        @click="open = !open"
+                                    >
+                                        <span v-if="!open" class="inline-flex items-center justify-center">
+                                            {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
+                                        </span>
+                                    </UButton>
+                                </UChip>
+                            </LControl>
+                        </template>
 
                         <FollowMarker />
                     </template>
@@ -443,7 +445,7 @@ defineShortcuts({
     </UDashboardPanel>
 
     <UDashboardPanel
-        v-if="open"
+        v-if="canStream && open"
         resizable
         :min-size="14.0"
         :max-size="25"
