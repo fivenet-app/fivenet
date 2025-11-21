@@ -270,7 +270,7 @@ func (s *Server) DeleteStamp(
 		documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if !check {
 		return nil, errorsdocuments.ErrPermissionDenied
