@@ -28,7 +28,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout develop
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -51,7 +51,7 @@ jobs:
           branch: develop
 
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.GH_PAGES_BRANCH }}
           path: gh-pages
