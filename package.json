@@ -30,7 +30,7 @@
         "@nuxt/content": "3.8.2",
         "@nuxt/fonts": "0.12.1",
         "@nuxt/image": "2.0.0",
-        "@nuxt/ui": "4.2.0",
+        "@nuxt/ui": "4.2.1",
         "@nuxtjs/robots": "5.5.6",
         "@pinia/nuxt": "0.11.3",
         "@protobuf-ts/grpcweb-transport": "2.11.1",
@@ -67,7 +67,7 @@
         "@unovis/vue": "1.6.2",
         "@vueuse/sound": "2.1.3",
         "@zxcvbn-ts/core": "3.0.4",
-        "better-sqlite3": "12.4.1",
+        "better-sqlite3": "12.4.6",
         "big.js": "7.0.1",
         "browser-headers": "0.4.1",
         "consola": "3.4.2",
@@ -94,7 +94,7 @@
         "vue-countup-v3": "1.4.2",
         "vue-draggable-plus": "0.6.0",
         "vue-json-pretty": "2.6.0",
-        "vue-timeline-chart": "4.0.1",
+        "vue-timeline-chart": "4.1.2",
         "y-protocols": "1.0.6",
         "yjs": "13.6.27",
         "zod": "4.1.12"
@@ -140,18 +140,18 @@
         "sass": "1.94.2",
         "tailwindcss": "4.1.17",
         "typescript": "5.9.3",
-        "vitest": "4.0.10",
+        "vitest": "4.0.13",
         "vue-router": "4.6.3",
         "vue-tsc": "3.1.4"
     },
     "resolutions": {
-        "@intlify/shared": "11.1.12",
+        "@intlify/shared": "11.2.1",
         "@nuxt/kit": "4.2.1",
         "@tiptap/core": "3.11.0",
         "@tiptap/pm": "3.11.0",
         "@tiptap/vue-3": "3.11.0"
     },
-    "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
+    "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b",
     "pnpm": {
         "onlyBuiltDependencies": [
             "@parcel/watcher",
