@@ -83,19 +83,19 @@ export const useAuthStore = defineStore(
          * @param val - The username of the user.
          */
         const setUsername = (val: string | null) => {
-                // Connect to the WebSocket if the user is logged in
-                if (val) {
-                    username.value = val;
-                    if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
-                        logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
-                        webSocket.open();
-                    }
-                } else {
-                    username.value = null;
-                    logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
-                    webSocket.close();
+            // Connect to the WebSocket if the user is logged in
+            if (val) {
+                username.value = val;
+                if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                    logger.info('Username set, opening WebSocket connection, current status:', webSocket.status.value);
+                    webSocket.open();
                 }
-            };
+            } else {
+                username.value = null;
+                logger.info('Username cleared, closing WebSocket connection, current status:', webSocket.status.value);
+                webSocket.close();
+            }
+        };
 
         /**
          * Starts the login process by setting the loggingIn state to true and clearing any previous errors.

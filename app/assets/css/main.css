@@ -1,15 +1,15 @@
 @import 'tailwindcss';
-@import "@nuxt/ui";
+@import '@nuxt/ui';
 @plugin '@tailwindcss/typography';
 
 :root {
     --ui-radius: 0.25rem;
 
-    --ui-white: rgba(0, 0, 0, 1.0);
+    --ui-white: rgba(0, 0, 0, 1);
 }
 
 .dark {
-    --ui-white: rgba(255, 255, 255, 1.0);
+    --ui-white: rgba(255, 255, 255, 1);
 }
 
 @theme static {
@@ -21,7 +21,6 @@
     --animate-wiggle: wiggle 1s infinite;
 
     @keyframes wiggle {
-
         0%,
         80% {
             transform: rotate(0deg);
@@ -168,13 +167,13 @@ html {
             align-items: flex-start;
             display: flex;
 
-            >label {
+            > label {
                 flex: 0 0 auto;
                 margin-right: 0.5rem;
                 user-select: none;
             }
 
-            >div {
+            > div {
                 flex: 1 1 auto;
 
                 p {
@@ -194,10 +193,10 @@ html {
 
     /* Search And Replace */
     .search-result {
-        background-color: var(--color-warning-500)60;
+        background-color: var(--color-warning-500) 60;
 
         &-current {
-            background-color: var(--color-info-500)60;
+            background-color: var(--color-info-500) 60;
         }
     }
 
@@ -218,7 +217,7 @@ html {
             position: relative;
             vertical-align: top;
 
-            >* {
+            > * {
                 margin-bottom: 0;
             }
         }

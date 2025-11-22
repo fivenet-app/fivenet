@@ -20,7 +20,6 @@ import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import PinnedList from './PinnedList.vue';
 import TemplateModal from './templates/TemplateModal.vue';
-import { breakpointsTailwind } from '@vueuse/core';
 
 const { t } = useI18n();
 
