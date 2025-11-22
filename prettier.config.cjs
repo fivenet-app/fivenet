@@ -29,5 +29,5 @@ module.exports = {
         '^v-html$',
         '^v-text$',
     ],
-    tailwindStylesheet: './app/assets/css/main.css',
+    tailwindStylesheet: 'app/assets/css/main.css',
 };
