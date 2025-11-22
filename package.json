@@ -142,7 +142,7 @@
         "typescript": "5.9.3",
         "vitest": "4.0.13",
         "vue-router": "4.6.3",
-        "vue-tsc": "3.1.4"
+        "vue-tsc": "3.1.5"
     },
     "resolutions": {
         "@intlify/shared": "11.2.1",
