@@ -26,7 +26,7 @@
         "@galexrt/nuxt-update": "1.5.0",
         "@iconify-json/flagpack": "1.2.6",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.59",
+        "@iconify-json/simple-icons": "1.2.60",
         "@nuxt/content": "3.8.2",
         "@nuxt/fonts": "0.12.1",
         "@nuxt/image": "2.0.0",
@@ -97,7 +97,7 @@
         "vue-timeline-chart": "4.1.2",
         "y-protocols": "1.0.6",
         "yjs": "13.6.27",
-        "zod": "4.1.12"
+        "zod": "4.1.13"
     },
     "devDependencies": {
         "@csmith/release-it-calver-plugin": "2023.12.0",
