@@ -23,6 +23,7 @@ export default defineNuxtConfig({
         '@vueuse/nuxt',
         '@vueuse/sound/nuxt',
         '@nuxtjs/leaflet',
+        '@nuxt/test-utils/module',
     ],
 
     future: {

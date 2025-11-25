@@ -8,7 +8,7 @@ export function toDuration(input: string | number): googleProtobufDuration.Durat
     const split = input.split('.');
     return {
         seconds: split[0] !== undefined ? parseInt(split[0].replace(/\D/g, ''), 10) : 1,
-        nanos: split[1] !== undefined && split[1] !== '00' ? parseInt(split[1].replace(/\D/g, ''), 10) * 1_000_000 : 0,
+        nanos: split[1] !== undefined ? Math.floor(parseFloat('0.' + split[1]) * 1_000_000_000) : 0,
     };
 }
 

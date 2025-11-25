@@ -1,9 +1,9 @@
-export function generateDerefURL(target: string): string {
+export function generateDerefURL(target: string, source = window.location.href): string {
     return (
         '/dereferer?' +
         new URLSearchParams({
             target: target,
-            source: window.location.href,
+            source: source,
         })
     );
 }

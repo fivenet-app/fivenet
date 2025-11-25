@@ -4,6 +4,9 @@ import type { ClientConfig } from '~~/gen/ts/resources/clientconfig/clientconfig
 const appConfigPromise = loadConfig();
 
 async function loadConfig(): Promise<ClientConfig> {
+    // If running in Vitest, return empty config
+    if (import.meta.env.VITEST) return {} as ClientConfig;
+
     const abort = new AbortController();
     const tId = setTimeout(() => abort.abort(), 7_500);
 
