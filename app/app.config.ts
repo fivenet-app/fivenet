@@ -7,6 +7,7 @@ import type {
     System,
     Website,
 } from '~~/gen/ts/resources/clientconfig/clientconfig';
+import type { QuickButtons } from '~~/gen/ts/resources/settings/config';
 
 export default defineAppConfig({
     // Server provided App Config
@@ -43,6 +44,9 @@ export default defineAppConfig({
         intlLocale: 'en-US',
         currencyName: 'USD',
     } as Display,
+    quickButtons: {
+        penaltyCalculator: {},
+    } as QuickButtons,
 
     // File upload related config
     fileUpload: {

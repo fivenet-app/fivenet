@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.clientconfig;
 
 import "resources/settings/banner.proto";
+import "resources/settings/config.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfig";
@@ -19,6 +20,8 @@ message ClientConfig {
   Game game = 7;
   System system = 8;
   Display display = 9 [(tagger.tags) = "json:\"display\""];
+
+  resources.settings.QuickButtons quick_buttons = 11 [(tagger.tags) = "json:\"quickButtons\""];
 }
 
 message LoginConfig {

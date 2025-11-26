@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "../settings/banner";
+import { QuickButtons } from "../settings/config";
 /**
  * @generated from protobuf message resources.clientconfig.ClientConfig
  */
@@ -52,6 +53,10 @@ export interface ClientConfig {
      * @generated from protobuf field: resources.clientconfig.Display display = 9
      */
     display?: Display;
+    /**
+     * @generated from protobuf field: resources.settings.QuickButtons quick_buttons = 11
+     */
+    quickButtons?: QuickButtons;
 }
 /**
  * @generated from protobuf message resources.clientconfig.LoginConfig
@@ -213,7 +218,8 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
             { no: 6, name: "feature_gates", kind: "message", T: () => FeatureGates, options: { "tagger.tags": "json:\"featureGates\"" } },
             { no: 7, name: "game", kind: "message", T: () => Game },
             { no: 8, name: "system", kind: "message", T: () => System },
-            { no: 9, name: "display", kind: "message", T: () => Display, options: { "tagger.tags": "json:\"display\"" } }
+            { no: 9, name: "display", kind: "message", T: () => Display, options: { "tagger.tags": "json:\"display\"" } },
+            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons, options: { "tagger.tags": "json:\"quickButtons\"" } }
         ]);
     }
     create(value?: PartialMessage<ClientConfig>): ClientConfig {
@@ -256,6 +262,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
                 case /* resources.clientconfig.Display display */ 9:
                     message.display = Display.internalBinaryRead(reader, reader.uint32(), options, message.display);
                     break;
+                case /* resources.settings.QuickButtons quick_buttons */ 11:
+                    message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -295,6 +304,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* resources.clientconfig.Display display = 9; */
         if (message.display)
             Display.internalBinaryWrite(message.display, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.QuickButtons quick_buttons = 11; */
+        if (message.quickButtons)
+            QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

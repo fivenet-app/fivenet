@@ -6,9 +6,29 @@ const props = defineProps<{
     reduction: number;
 }>();
 
-const { display } = useAppConfig();
+const { display, quickButtons } = useAppConfig();
 
 const leeway = computed(() => props.reduction / 100);
+
+const highlight = computed(() => {
+    if (!quickButtons.penaltyCalculator?.warnSettings?.enabled) return;
+
+    const result = {
+        fine:
+            quickButtons.penaltyCalculator?.warnSettings.fine &&
+            props.summary.fine >= quickButtons.penaltyCalculator?.warnSettings.fine,
+        detentionTime:
+            quickButtons.penaltyCalculator?.warnSettings.detentionTime &&
+            props.summary.detentionTime >= quickButtons.penaltyCalculator?.warnSettings.detentionTime,
+        stvoPoints:
+            quickButtons.penaltyCalculator?.warnSettings.stvoPoints &&
+            props.summary.stvoPoints >= quickButtons.penaltyCalculator?.warnSettings.stvoPoints,
+    };
+
+    if (!result.fine && !result.detentionTime && !result.stvoPoints) return;
+
+    return result;
+});
 
 const formatter = new Intl.NumberFormat(display.intlLocale, {
     style: 'currency',
@@ -21,6 +41,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
     <div class="mx-auto max-w-7xl">
         <UPageGrid class="grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4">
             <UPageCard
+                :highlight="!!highlight?.fine"
+                :highlight-color="highlight?.fine ? 'warning' : undefined"
                 :ui="{
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
@@ -50,6 +72,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
             </UPageCard>
 
             <UPageCard
+                :highlight="!!highlight?.detentionTime"
+                :highlight-color="highlight?.detentionTime ? 'warning' : undefined"
                 :ui="{
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
@@ -85,6 +109,8 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
             </UPageCard>
 
             <UPageCard
+                :highlight="!!highlight?.stvoPoints"
+                :highlight-color="highlight?.stvoPoints ? 'warning' : undefined"
                 :ui="{
                     body: 'flex-1',
                     leadingIcon: 'mb-1',
@@ -144,5 +170,13 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
                 </template>
             </UPageCard>
         </UPageGrid>
+
+        <UAlert
+            v-if="!!highlight && quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
+            class="mt-3"
+            color="warning"
+            icon="i-mdi-warning-circle"
+            :description="quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
+        />
     </div>
 </template>

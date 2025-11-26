@@ -17,6 +17,9 @@ const (
 	DefaultDiscordBotPermissions = -42471713
 
 	DefaultDisplayIntlLocale = "en-US"
+
+	DefaultPenaltyCalculatorMaxCount  = uint32(10)
+	DefaultPenaltyCalculatorMaxLeeway = uint32(25)
 )
 
 func (x *AppConfig) Default() {
@@ -126,5 +129,20 @@ func (x *AppConfig) Default() {
 	}
 	if x.GetDisplay().GetCurrencyName() == "" {
 		x.Display.CurrencyName = "USD"
+	}
+
+	if x.GetQuickButtons() == nil {
+		x.QuickButtons = &QuickButtons{}
+	}
+	if x.GetQuickButtons().GetPenaltyCalculator() == nil {
+		x.QuickButtons.PenaltyCalculator = &PenaltyCalculator{}
+	}
+	if x.GetQuickButtons().GetPenaltyCalculator().GetMaxCount() == 0 {
+		maxCount := DefaultPenaltyCalculatorMaxCount
+		x.QuickButtons.PenaltyCalculator.MaxCount = &maxCount
+	}
+	if x.GetQuickButtons().GetPenaltyCalculator().GetMaxLeeway() == 0 {
+		maxLeeway := DefaultPenaltyCalculatorMaxLeeway
+		x.QuickButtons.PenaltyCalculator.MaxLeeway = &maxLeeway
 	}
 }

@@ -7,6 +7,7 @@ import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/duration.proto";
 import "resources/settings/banner.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
 
@@ -199,16 +200,28 @@ message Display {
 }
 
 message QuickButtons {
-  PenaltyCalculator penalty_calculator = 1;
+  PenaltyCalculator penalty_calculator = 1 [(tagger.tags) = "json:\"penaltyCalculator\""];
 }
 
 message PenaltyCalculator {
-  optional string detention_time_unit = 1 [
+  optional uint32 max_count = 1 [(tagger.tags) = "json:\"maxCount\""];
+  optional PenaltyCalculatorDetentionTimeUnit detention_time_unit = 2 [(tagger.tags) = "json:\"detentionTimeUnit\""];
+  optional PenaltyCalculatorWarn warn_settings = 3 [(tagger.tags) = "json:\"warnSettings\""];
+  optional uint32 max_leeway = 4 [
+    (buf.validate.field).uint32 = {lte: 99},
+    (tagger.tags) = "json:\"maxLeeway\""
+  ];
+}
+
+message PenaltyCalculatorDetentionTimeUnit {
+  optional string singular = 1 [
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {enabled: true}
   ];
-  optional PenaltyCalculatorWarn warn_settings = 2;
-  optional uint32 max_count = 3;
+  optional string plural = 2 [
+    (buf.validate.field).string.max_len = 32,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
 }
 
 message PenaltyCalculatorWarn {
@@ -217,11 +230,12 @@ message PenaltyCalculatorWarn {
   bool enabled = 1;
 
   optional uint32 fine = 2;
-  optional uint32 detention_time = 3;
-  optional uint32 stvo_points = 4;
+  optional uint32 detention_time = 3 [(tagger.tags) = "json:\"detentionTime\""];
+  optional uint32 stvo_points = 4 [(tagger.tags) = "json:\"stvoPoints\""];
 
   optional string warn_message = 5 [
     (buf.validate.field).string.max_len = 512,
-    (codegen.sanitizer.sanitizer) = {enabled: true}
+    (codegen.sanitizer.sanitizer) = {enabled: true},
+    (tagger.tags) = "json:\"warnMessage\""
   ];
 }

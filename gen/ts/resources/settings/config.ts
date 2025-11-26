@@ -260,17 +260,34 @@ export interface QuickButtons {
  */
 export interface PenaltyCalculator {
     /**
-     * @generated from protobuf field: optional string detention_time_unit = 1
+     * @generated from protobuf field: optional uint32 max_count = 1
      */
-    detentionTimeUnit?: string;
+    maxCount?: number;
     /**
-     * @generated from protobuf field: optional resources.settings.PenaltyCalculatorWarn warn_settings = 2
+     * @generated from protobuf field: optional resources.settings.PenaltyCalculatorDetentionTimeUnit detention_time_unit = 2
+     */
+    detentionTimeUnit?: PenaltyCalculatorDetentionTimeUnit;
+    /**
+     * @generated from protobuf field: optional resources.settings.PenaltyCalculatorWarn warn_settings = 3
      */
     warnSettings?: PenaltyCalculatorWarn;
     /**
-     * @generated from protobuf field: optional uint32 max_count = 3
+     * @generated from protobuf field: optional uint32 max_leeway = 4
      */
-    maxCount?: number;
+    maxLeeway?: number;
+}
+/**
+ * @generated from protobuf message resources.settings.PenaltyCalculatorDetentionTimeUnit
+ */
+export interface PenaltyCalculatorDetentionTimeUnit {
+    /**
+     * @generated from protobuf field: optional string singular = 1
+     */
+    singular?: string;
+    /**
+     * @generated from protobuf field: optional string plural = 2
+     */
+    plural?: string;
 }
 /**
  * @generated from protobuf message resources.settings.PenaltyCalculatorWarn
@@ -1137,7 +1154,7 @@ export const Display = new Display$Type();
 class QuickButtons$Type extends MessageType<QuickButtons> {
     constructor() {
         super("resources.settings.QuickButtons", [
-            { no: 1, name: "penalty_calculator", kind: "message", T: () => PenaltyCalculator }
+            { no: 1, name: "penalty_calculator", kind: "message", T: () => PenaltyCalculator, options: { "tagger.tags": "json:\"penaltyCalculator\"" } }
         ]);
     }
     create(value?: PartialMessage<QuickButtons>): QuickButtons {
@@ -1183,9 +1200,10 @@ export const QuickButtons = new QuickButtons$Type();
 class PenaltyCalculator$Type extends MessageType<PenaltyCalculator> {
     constructor() {
         super("resources.settings.PenaltyCalculator", [
-            { no: 1, name: "detention_time_unit", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 2, name: "warn_settings", kind: "message", T: () => PenaltyCalculatorWarn },
-            { no: 3, name: "max_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
+            { no: 1, name: "max_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "tagger.tags": "json:\"maxCount\"" } },
+            { no: 2, name: "detention_time_unit", kind: "message", T: () => PenaltyCalculatorDetentionTimeUnit, options: { "tagger.tags": "json:\"detentionTimeUnit\"" } },
+            { no: 3, name: "warn_settings", kind: "message", T: () => PenaltyCalculatorWarn, options: { "tagger.tags": "json:\"warnSettings\"" } },
+            { no: 4, name: "max_leeway", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "buf.validate.field": { uint32: { lte: 99 } }, "tagger.tags": "json:\"maxLeeway\"" } }
         ]);
     }
     create(value?: PartialMessage<PenaltyCalculator>): PenaltyCalculator {
@@ -1199,14 +1217,17 @@ class PenaltyCalculator$Type extends MessageType<PenaltyCalculator> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string detention_time_unit */ 1:
-                    message.detentionTimeUnit = reader.string();
+                case /* optional uint32 max_count */ 1:
+                    message.maxCount = reader.uint32();
                     break;
-                case /* optional resources.settings.PenaltyCalculatorWarn warn_settings */ 2:
+                case /* optional resources.settings.PenaltyCalculatorDetentionTimeUnit detention_time_unit */ 2:
+                    message.detentionTimeUnit = PenaltyCalculatorDetentionTimeUnit.internalBinaryRead(reader, reader.uint32(), options, message.detentionTimeUnit);
+                    break;
+                case /* optional resources.settings.PenaltyCalculatorWarn warn_settings */ 3:
                     message.warnSettings = PenaltyCalculatorWarn.internalBinaryRead(reader, reader.uint32(), options, message.warnSettings);
                     break;
-                case /* optional uint32 max_count */ 3:
-                    message.maxCount = reader.uint32();
+                case /* optional uint32 max_leeway */ 4:
+                    message.maxLeeway = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1220,15 +1241,18 @@ class PenaltyCalculator$Type extends MessageType<PenaltyCalculator> {
         return message;
     }
     internalBinaryWrite(message: PenaltyCalculator, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string detention_time_unit = 1; */
-        if (message.detentionTimeUnit !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.detentionTimeUnit);
-        /* optional resources.settings.PenaltyCalculatorWarn warn_settings = 2; */
-        if (message.warnSettings)
-            PenaltyCalculatorWarn.internalBinaryWrite(message.warnSettings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint32 max_count = 3; */
+        /* optional uint32 max_count = 1; */
         if (message.maxCount !== undefined)
-            writer.tag(3, WireType.Varint).uint32(message.maxCount);
+            writer.tag(1, WireType.Varint).uint32(message.maxCount);
+        /* optional resources.settings.PenaltyCalculatorDetentionTimeUnit detention_time_unit = 2; */
+        if (message.detentionTimeUnit)
+            PenaltyCalculatorDetentionTimeUnit.internalBinaryWrite(message.detentionTimeUnit, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.settings.PenaltyCalculatorWarn warn_settings = 3; */
+        if (message.warnSettings)
+            PenaltyCalculatorWarn.internalBinaryWrite(message.warnSettings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint32 max_leeway = 4; */
+        if (message.maxLeeway !== undefined)
+            writer.tag(4, WireType.Varint).uint32(message.maxLeeway);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1240,14 +1264,67 @@ class PenaltyCalculator$Type extends MessageType<PenaltyCalculator> {
  */
 export const PenaltyCalculator = new PenaltyCalculator$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class PenaltyCalculatorDetentionTimeUnit$Type extends MessageType<PenaltyCalculatorDetentionTimeUnit> {
+    constructor() {
+        super("resources.settings.PenaltyCalculatorDetentionTimeUnit", [
+            { no: 1, name: "singular", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 2, name: "plural", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<PenaltyCalculatorDetentionTimeUnit>): PenaltyCalculatorDetentionTimeUnit {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PenaltyCalculatorDetentionTimeUnit>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PenaltyCalculatorDetentionTimeUnit): PenaltyCalculatorDetentionTimeUnit {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string singular */ 1:
+                    message.singular = reader.string();
+                    break;
+                case /* optional string plural */ 2:
+                    message.plural = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PenaltyCalculatorDetentionTimeUnit, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string singular = 1; */
+        if (message.singular !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.singular);
+        /* optional string plural = 2; */
+        if (message.plural !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.plural);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.settings.PenaltyCalculatorDetentionTimeUnit
+ */
+export const PenaltyCalculatorDetentionTimeUnit = new PenaltyCalculatorDetentionTimeUnit$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class PenaltyCalculatorWarn$Type extends MessageType<PenaltyCalculatorWarn> {
     constructor() {
         super("resources.settings.PenaltyCalculatorWarn", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 3, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 4, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 5, name: "warn_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 3, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "tagger.tags": "json:\"detentionTime\"" } },
+            { no: 4, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "tagger.tags": "json:\"stvoPoints\"" } },
+            { no: 5, name: "warn_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "json:\"warnMessage\"" } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<PenaltyCalculatorWarn>): PenaltyCalculatorWarn {

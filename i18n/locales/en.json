@@ -734,7 +734,9 @@
         "unfollow": "Unfollow",
         "choose_one": "Choose one",
         "hidden_markers": "Hidden Markers",
-        "month": "month | months"
+        "month": "month | months",
+        "singular": "Singular",
+        "plural": "Plural"
     },
     "components": {
         "partials": {
@@ -1606,6 +1608,30 @@
                 "game": {
                     "tab": "Game",
                     "description": "Game related settings, such as law calculation options."
+                },
+                "quick_buttons": {
+                    "penalty_calculator": {
+                        "title": "Penalty Calculator",
+                        "description": "Configure the penalty calculator quick access button.",
+                        "max_count": "Maximum Count of Violations",
+                        "max_leeway": "Maximum Leeway Percentage",
+                        "detention_time_unit": {
+                            "title": "Detention Time Unit",
+                            "description": "The unit of the detention time (e.g., month / months, day / days)."
+                        },
+                        "warn_settings": {
+                            "title": "Warn Settings",
+                            "description": "Settings for warn message if one of the thresholds is reached.",
+                            "thresholds": {
+                                "title": "Threshold Amounts",
+                                "description": "The amounts at which the warn message is shown."
+                            },
+                            "warn_message": {
+                                "title": "Warn Message",
+                                "description": "The message to show when one of the threshold amounts is reached."
+                            }
+                        }
+                    }
                 }
             },
             "accounts": {

@@ -62,6 +62,15 @@ func (m *ClientConfig) Sanitize() error {
 		}
 	}
 
+	// Field: QuickButtons
+	if m.QuickButtons != nil {
+		if v, ok := any(m.GetQuickButtons()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: System
 	if m.System != nil {
 		if v, ok := any(m.GetSystem()).(interface{ Sanitize() error }); ok {

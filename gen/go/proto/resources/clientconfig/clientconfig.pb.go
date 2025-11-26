@@ -34,6 +34,7 @@ type ClientConfig struct {
 	Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3" json:"game,omitempty"`
 	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system,omitempty"`
 	Display       *Display               `protobuf:"bytes,9,opt,name=display,proto3" json:"display"`
+	QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quickButtons"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -127,6 +128,13 @@ func (x *ClientConfig) GetSystem() *System {
 func (x *ClientConfig) GetDisplay() *Display {
 	if x != nil {
 		return x.Display
+	}
+	return nil
+}
+
+func (x *ClientConfig) GetQuickButtons() *settings.QuickButtons {
+	if x != nil {
+		return x.QuickButtons
 	}
 	return nil
 }
@@ -681,7 +689,7 @@ var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x13tagger/tagger.proto\"\xba\x04\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x13tagger/tagger.proto\"\x9b\x05\n" +
 	"\fClientConfig\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
 	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x129\n" +
@@ -691,7 +699,8 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x120\n" +
 	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameR\x04game\x126\n" +
 	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\x12N\n" +
-	"\adisplay\x18\t \x01(\v2\x1f.resources.clientconfig.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\"\xec\x01\n" +
+	"\adisplay\x18\t \x01(\v2\x1f.resources.clientconfig.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\x12_\n" +
+	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsB\x18\x9a\x84\x9e\x03\x13json:\"quickButtons\"R\fquickButtons\"\xec\x01\n" +
 	"\vLoginConfig\x12@\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
@@ -765,7 +774,8 @@ var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*OTLPFrontend)(nil),           // 9: resources.clientconfig.OTLPFrontend
 	(*Display)(nil),                // 10: resources.clientconfig.Display
 	nil,                            // 11: resources.clientconfig.OTLPFrontend.HeadersEntry
-	(*settings.BannerMessage)(nil), // 12: resources.settings.BannerMessage
+	(*settings.QuickButtons)(nil),  // 12: resources.settings.QuickButtons
+	(*settings.BannerMessage)(nil), // 13: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	1,  // 0: resources.clientconfig.ClientConfig.login:type_name -> resources.clientconfig.LoginConfig
@@ -775,16 +785,17 @@ var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	7,  // 4: resources.clientconfig.ClientConfig.game:type_name -> resources.clientconfig.Game
 	8,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
 	10, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
-	2,  // 7: resources.clientconfig.LoginConfig.providers:type_name -> resources.clientconfig.ProviderConfig
-	5,  // 8: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
-	12, // 9: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	9,  // 10: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	11, // 11: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	12, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
+	2,  // 8: resources.clientconfig.LoginConfig.providers:type_name -> resources.clientconfig.ProviderConfig
+	5,  // 9: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
+	13, // 10: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	9,  // 11: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	11, // 12: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }

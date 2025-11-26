@@ -264,7 +264,11 @@ func (m *PenaltyCalculator) Sanitize() error {
 
 	// Field: DetentionTimeUnit
 	if m.DetentionTimeUnit != nil {
-		*m.DetentionTimeUnit = htmlsanitizer.Sanitize(*m.DetentionTimeUnit)
+		if v, ok := any(m.GetDetentionTimeUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: WarnSettings
@@ -274,6 +278,26 @@ func (m *PenaltyCalculator) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *PenaltyCalculatorDetentionTimeUnit) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Plural
+	if m.Plural != nil {
+		*m.Plural = htmlsanitizer.Sanitize(*m.Plural)
+	}
+
+	// Field: Singular
+	if m.Singular != nil {
+		*m.Singular = htmlsanitizer.Sanitize(*m.Singular)
 	}
 
 	return nil

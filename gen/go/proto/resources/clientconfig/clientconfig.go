@@ -5,6 +5,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	"google.golang.org/protobuf/proto"
 )
 
 func BuildClientConfig(
@@ -12,6 +13,11 @@ func BuildClientConfig(
 	providers []*ProviderConfig,
 	appCfg *appconfig.Cfg,
 ) *ClientConfig {
+	var quickButtons *settings.QuickButtons
+	if appCfg.GetQuickButtons() != nil {
+		quickButtons = proto.Clone(appCfg.GetQuickButtons()).(*settings.QuickButtons)
+	}
+
 	clientCfg := &ClientConfig{
 		Version: version.Version,
 
@@ -51,6 +57,7 @@ func BuildClientConfig(
 			IntlLocale:   appCfg.Display.IntlLocale,
 			CurrencyName: appCfg.Display.CurrencyName,
 		},
+		QuickButtons: quickButtons,
 	}
 
 	if appCfg.System.GetBannerMessage() != nil {

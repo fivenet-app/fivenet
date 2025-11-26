@@ -734,7 +734,9 @@
         "unfollow": "Nicht mehr folgen",
         "choose_one": "Wählen Sie eins aus",
         "hidden_markers": "Versteckte Marker",
-        "month": "Monat | Monate"
+        "month": "Monat | Monate",
+        "singular": "Singular",
+        "plural": "Plural"
     },
     "components": {
         "partials": {
@@ -1606,6 +1608,30 @@
                 "game": {
                     "tab": "Spiel",
                     "description": "Einstellungen, die rollenspielrelevantes Verhalten beeinflussen."
+                },
+                "quick_buttons": {
+                    "penalty_calculator": {
+                        "title": "Strafenrechner",
+                        "description": "Konfigurieren Sie Optionen für den Strafenrechner.",
+                        "max_count": "Maximale Anzahl von Verstößen",
+                        "max_leeway": "Maximale Toleranz Prozent",
+                        "detention_time_unit": {
+                            "title": "Einheit der Haftzeit",
+                            "description": "Die Einheit der Haftzeit (e.g., Monat / Monate, Tag / Tage)."
+                        },
+                        "warn_settings": {
+                            "title": "Warnungseinstellungen",
+                            "description": "Einstellungen für die Warnmeldung, wenn einer der Schwellenwerte erreicht wird.",
+                            "thresholds": {
+                                "title": "Schwellenwerte",
+                                "description": "Die Gesamtbeträge, bei denen die Warnmeldung angezeigt wird."
+                            },
+                            "warn_message": {
+                                "title": "Warnmeldung",
+                                "description": "Die Nachricht, die angezeigt wird, wenn einer der Schwellenwerte erreicht wird."
+                            }
+                        }
+                    }
                 }
             },
             "accounts": {

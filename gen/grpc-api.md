@@ -2378,6 +2378,253 @@ Dummy - DO NOT USE!
 
 
 
+## resources/settings/config.proto
+
+
+### resources.settings.AppConfig
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) | optional |  |
+| `default_locale` | [string](#string) |  |  |
+| `auth` | [Auth](#resourcessettingsAuth) |  |  |
+| `perms` | [Perms](#resourcessettingsPerms) |  |  |
+| `website` | [Website](#resourcessettingsWebsite) |  |  |
+| `job_info` | [JobInfo](#resourcessettingsJobInfo) |  |  |
+| `user_tracker` | [UserTracker](#resourcessettingsUserTracker) |  |  |
+| `discord` | [Discord](#resourcessettingsDiscord) |  |  |
+| `system` | [System](#resourcessettingsSystem) |  |  |
+| `display` | [Display](#resourcessettingsDisplay) |  |  |
+| `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
+
+
+
+
+
+### resources.settings.Auth
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+
+
+
+
+
+### resources.settings.Discord
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `sync_interval` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+| `invite_url` | [string](#string) | optional |  |
+| `ignored_jobs` | [string](#string) | repeated |  |
+| `bot_presence` | [DiscordBotPresence](#resourcessettingsDiscordBotPresence) | optional |  |
+| `bot_id` | [string](#string) | optional |  |
+| `bot_permissions` | [int64](#int64) |  |  |
+
+
+
+
+
+### resources.settings.DiscordBotPresence
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [DiscordBotPresenceType](#resourcessettingsDiscordBotPresenceType) |  |  |
+| `status` | [string](#string) | optional |  |
+| `url` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.Display
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
+| `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
+
+
+
+
+
+### resources.settings.JobInfo
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unemployed_job` | [UnemployedJob](#resourcessettingsUnemployedJob) |  |  |
+| `public_jobs` | [string](#string) | repeated |  |
+| `hidden_jobs` | [string](#string) | repeated |  |
+
+
+
+
+
+### resources.settings.Links
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `privacy_policy` | [string](#string) | optional |  |
+| `imprint` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.PenaltyCalculator
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `max_count` | [uint32](#uint32) | optional |  |
+| `detention_time_unit` | [PenaltyCalculatorDetentionTimeUnit](#resourcessettingsPenaltyCalculatorDetentionTimeUnit) | optional |  |
+| `warn_settings` | [PenaltyCalculatorWarn](#resourcessettingsPenaltyCalculatorWarn) | optional |  |
+| `max_leeway` | [uint32](#uint32) | optional |  |
+
+
+
+
+
+### resources.settings.PenaltyCalculatorDetentionTimeUnit
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `singular` | [string](#string) | optional |  |
+| `plural` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.PenaltyCalculatorWarn
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `fine` | [uint32](#uint32) | optional |  |
+| `detention_time` | [uint32](#uint32) | optional |  |
+| `stvo_points` | [uint32](#uint32) | optional |  |
+| `warn_message` | [string](#string) | optional |  |
+
+
+
+
+
+### resources.settings.Perm
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+
+
+
+
+
+### resources.settings.Perms
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `default` | [Perm](#resourcessettingsPerm) | repeated |  |
+
+
+
+
+
+### resources.settings.QuickButtons
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `penalty_calculator` | [PenaltyCalculator](#resourcessettingsPenaltyCalculator) |  |  |
+
+
+
+
+
+### resources.settings.System
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
+| `banner_message` | [BannerMessage](#resourcessettingsBannerMessage) |  |  |
+
+
+
+
+
+### resources.settings.UnemployedJob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `grade` | [int32](#int32) |  |  |
+
+
+
+
+
+### resources.settings.UserTracker
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `refresh_time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+| `db_refresh_time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
+
+
+
+
+
+### resources.settings.Website
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `links` | [Links](#resourcessettingsLinks) |  |  |
+| `stats_page` | [bool](#bool) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.settings.DiscordBotPresenceType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED` | 0 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_GAME` | 1 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_LISTENING` | 2 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_STREAMING` | 3 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_WATCH` | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/clientconfig/clientconfig.proto
 
 
@@ -2395,6 +2642,7 @@ Dummy - DO NOT USE!
 | `game` | [Game](#resourcesclientconfigGame) |  |  |
 | `system` | [System](#resourcesclientconfigSystem) |  |  |
 | `display` | [Display](#resourcesclientconfigDisplay) |  |  |
+| `quick_buttons` | [resources.settings.QuickButtons](#resourcessettingsQuickButtons) |  |  |
 
 
 
@@ -5770,240 +6018,6 @@ User related events
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-## resources/settings/config.proto
-
-
-### resources.settings.AppConfig
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
-| `default_locale` | [string](#string) |  |  |
-| `auth` | [Auth](#resourcessettingsAuth) |  |  |
-| `perms` | [Perms](#resourcessettingsPerms) |  |  |
-| `website` | [Website](#resourcessettingsWebsite) |  |  |
-| `job_info` | [JobInfo](#resourcessettingsJobInfo) |  |  |
-| `user_tracker` | [UserTracker](#resourcessettingsUserTracker) |  |  |
-| `discord` | [Discord](#resourcessettingsDiscord) |  |  |
-| `system` | [System](#resourcessettingsSystem) |  |  |
-| `display` | [Display](#resourcessettingsDisplay) |  |  |
-| `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
-
-
-
-
-
-### resources.settings.Auth
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signup_enabled` | [bool](#bool) |  |  |
-| `last_char_lock` | [bool](#bool) |  |  |
-
-
-
-
-
-### resources.settings.Discord
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `sync_interval` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-| `invite_url` | [string](#string) | optional |  |
-| `ignored_jobs` | [string](#string) | repeated |  |
-| `bot_presence` | [DiscordBotPresence](#resourcessettingsDiscordBotPresence) | optional |  |
-| `bot_id` | [string](#string) | optional |  |
-| `bot_permissions` | [int64](#int64) |  |  |
-
-
-
-
-
-### resources.settings.DiscordBotPresence
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [DiscordBotPresenceType](#resourcessettingsDiscordBotPresenceType) |  |  |
-| `status` | [string](#string) | optional |  |
-| `url` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.settings.Display
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `intl_locale` | [string](#string) | optional | IETF BCP 47 language tag (e.g. "en-US", "de-DE") |
-| `currency_name` | [string](#string) |  | ISO 4217 currency code (e.g. "USD", "EUR") |
-
-
-
-
-
-### resources.settings.JobInfo
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unemployed_job` | [UnemployedJob](#resourcessettingsUnemployedJob) |  |  |
-| `public_jobs` | [string](#string) | repeated |  |
-| `hidden_jobs` | [string](#string) | repeated |  |
-
-
-
-
-
-### resources.settings.Links
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `privacy_policy` | [string](#string) | optional |  |
-| `imprint` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.settings.PenaltyCalculator
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `detention_time_unit` | [string](#string) | optional |  |
-| `warn_settings` | [PenaltyCalculatorWarn](#resourcessettingsPenaltyCalculatorWarn) | optional |  |
-| `max_count` | [uint32](#uint32) | optional |  |
-
-
-
-
-
-### resources.settings.PenaltyCalculatorWarn
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `fine` | [uint32](#uint32) | optional |  |
-| `detention_time` | [uint32](#uint32) | optional |  |
-| `stvo_points` | [uint32](#uint32) | optional |  |
-| `warn_message` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.settings.Perm
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-
-
-
-
-
-### resources.settings.Perms
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `default` | [Perm](#resourcessettingsPerm) | repeated |  |
-
-
-
-
-
-### resources.settings.QuickButtons
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `penalty_calculator` | [PenaltyCalculator](#resourcessettingsPenaltyCalculator) |  |  |
-
-
-
-
-
-### resources.settings.System
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `banner_message_enabled` | [bool](#bool) |  |  |
-| `banner_message` | [BannerMessage](#resourcessettingsBannerMessage) |  |  |
-
-
-
-
-
-### resources.settings.UnemployedJob
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `grade` | [int32](#int32) |  |  |
-
-
-
-
-
-### resources.settings.UserTracker
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `refresh_time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-| `db_refresh_time` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  |  |
-
-
-
-
-
-### resources.settings.Website
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `links` | [Links](#resourcessettingsLinks) |  |  |
-| `stats_page` | [bool](#bool) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.settings.DiscordBotPresenceType
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED` | 0 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_GAME` | 1 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_LISTENING` | 2 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_STREAMING` | 3 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_WATCH` | 4 |  |
-
 
  <!-- end enums -->
 

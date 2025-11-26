@@ -110,6 +110,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         currency: display.currencyName,
                         currencyDisplay: 'code',
                         currencySign: 'accounting',
+                        maximumFractionDigits: 0,
                     }"
                     :placeholder="$t('common.fine')"
                 />

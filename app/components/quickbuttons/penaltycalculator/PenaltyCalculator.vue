@@ -10,7 +10,7 @@ import { useCompletorStore } from '~/stores/completor';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { display } = useAppConfig();
+const { display, quickButtons } = useAppConfig();
 
 const completorStore = useCompletorStore();
 const notifications = useNotificationsStore();
@@ -87,6 +87,7 @@ const filteredLawBooks = computed(() =>
 
 const reduction = ref<number>(0);
 const leeway = computed(() => reduction.value / 100);
+const maxLeeway = computed(() => quickButtons.penaltyCalculator?.maxLeeway ?? 25);
 
 function getNameForLawBookId(id: number): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
@@ -272,10 +273,13 @@ const columns = computed(
                                             "
                                             name="count"
                                             :min="0"
-                                            :max="10"
+                                            :max="quickButtons.penaltyCalculator?.maxCount ?? 10"
                                             :step="1"
                                             class="max-w-22 min-w-20 grow-0"
-                                            @update:model-value="($event) => updateLaw({ law: row.original, count: $event })"
+                                            @update:model-value="
+                                                ($event) =>
+                                                    updateLaw({ law: row.original, count: $event === null ? 0 : $event })
+                                            "
                                         />
                                     </template>
                                 </UTable>
@@ -294,7 +298,7 @@ const columns = computed(
             <p class="font-semibold">
                 {{ $t('common.reduction') }}
             </p>
-            <USlider v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
+            <USlider v-model="reduction" size="sm" :min="0" :max="maxLeeway" :step="1" />
             <p class="w-12">{{ reduction }}%</p>
         </div>
 

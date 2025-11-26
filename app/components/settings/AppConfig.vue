@@ -18,7 +18,7 @@ import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const { t, locales } = useI18n();
 
-const { login, game } = useAppConfig();
+const { display, login, game } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
@@ -104,7 +104,7 @@ const schema = z.object({
             .object({
                 type: z.enum(DiscordBotPresenceType),
                 status: z.coerce.string().max(255).optional(),
-                url: z.union([z.string().max(255).url(), z.coerce.string().length(0).optional()]),
+                url: z.union([z.url({ protocol: /^https$/ }).max(255), z.coerce.string().length(0).optional()]),
             })
             .optional(),
     }),
@@ -124,6 +124,34 @@ const schema = z.object({
             }),
         }),
     ]),
+    quickButtons: z.object({
+        penaltyCalculator: z
+            .object({
+                detentionTimeUnit: z
+                    .object({
+                        singular: z.coerce.string().max(32).optional(),
+                        plural: z.coerce.string().max(32).optional(),
+                    })
+                    .optional(),
+                maxCount: z.coerce.number().int().min(1).max(100).nonnegative().optional(),
+                maxLeeway: z.coerce.number().int().min(0).max(99).nonnegative().optional(),
+                warnSettings: z
+                    .object({
+                        enabled: z.coerce.boolean(),
+                        fine: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
+                        detentionTime: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
+                        stvoPoints: z.coerce.number().int().min(0).max(999_999_999_999).optional(),
+                        warnMessage: z.coerce.string().max(512).optional(),
+                    })
+                    .optional(),
+            })
+            .default({
+                detentionTimeUnit: {},
+                maxCount: 10,
+                maxLeeway: 25,
+                warnSettings: { enabled: false },
+            }),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -171,6 +199,16 @@ const state = reactive<Schema>({
             title: '',
         },
     },
+    quickButtons: {
+        penaltyCalculator: {
+            detentionTimeUnit: {
+                singular: t('common.month', 1),
+                plural: t('common.month', 2),
+            },
+            maxCount: 10,
+            warnSettings: { enabled: false },
+        },
+    },
 });
 
 async function updateAppConfig(values: Schema): Promise<void> {
@@ -203,6 +241,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
             expiresAt: values.system.bannerMessage.expiresAt ? toTimestamp(values.system.bannerMessage.expiresAt) : undefined,
         },
     };
+    config.value.config.quickButtons = values.quickButtons;
 
     try {
         const { response } = await settingsConfigClient.updateAppConfig({
@@ -281,6 +320,20 @@ function setSettingsValues(): void {
                 : undefined,
         };
     }
+    if (config.value.config.quickButtons) {
+        if (config.value.config.quickButtons.penaltyCalculator) {
+            if (!config.value.config.quickButtons.penaltyCalculator.detentionTimeUnit)
+                config.value.config.quickButtons.penaltyCalculator.detentionTimeUnit = {
+                    singular: t('common.month', 1),
+                    plural: t('common.month', 2),
+                };
+
+            if (!config.value.config.quickButtons.penaltyCalculator.warnSettings)
+                config.value.config.quickButtons.penaltyCalculator.warnSettings = { enabled: false };
+
+            state.quickButtons.penaltyCalculator = config.value.config.quickButtons.penaltyCalculator;
+        }
+    }
 }
 
 watch(config, () => setSettingsValues());
@@ -299,7 +352,6 @@ const items = computed<TabsItem[]>(() => [
         label: t('components.settings.app_config.game.tab'),
         icon: 'i-mdi-details',
         value: 'game',
-        disabled: true,
     },
     { slot: 'website' as const, label: t('components.settings.app_config.website.title'), icon: 'i-mdi-web', value: 'website' },
     { slot: 'system' as const, label: t('common.system'), icon: 'i-mdi-cog', value: 'system' },
@@ -849,10 +901,169 @@ const formRef = useTemplateRef('formRef');
 
                     <template #game>
                         <UPageCard
-                            :title="$t('components.settings.app_config.game.title')"
-                            :description="$t('components.settings.app_config.game.description')"
+                            :title="$t('components.settings.app_config.quick_buttons.penalty_calculator.title')"
+                            :description="$t('components.settings.app_config.quick_buttons.penalty_calculator.description')"
                         >
-                            <UFormField> TEST </UFormField>
+                            <UFormField
+                                :label="$t('components.settings.app_config.quick_buttons.penalty_calculator.max_count')"
+                                name="quickButtons.penaltyCalculator.maxCount"
+                            >
+                                <UInputNumber
+                                    v-model="state.quickButtons.penaltyCalculator.maxCount"
+                                    :min="1"
+                                    :max="100"
+                                    :placeholder="
+                                        $t('components.settings.app_config.quick_buttons.penalty_calculator.max_count')
+                                    "
+                                    class="w-full"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                :label="$t('components.settings.app_config.quick_buttons.penalty_calculator.max_leeway')"
+                                name="quickButtons.penaltyCalculator.maxLeeway"
+                            >
+                                <UInputNumber
+                                    v-model="state.quickButtons.penaltyCalculator.maxLeeway"
+                                    :min="1"
+                                    :max="99"
+                                    :placeholder="
+                                        $t('components.settings.app_config.quick_buttons.penalty_calculator.max_leeway')
+                                    "
+                                    class="w-full"
+                                />
+                            </UFormField>
+
+                            <UFormField
+                                :label="
+                                    $t(
+                                        'components.settings.app_config.quick_buttons.penalty_calculator.detention_time_unit.title',
+                                    )
+                                "
+                                :ui="{ container: 'flex w-full flex-row gap-2' }"
+                            >
+                                <UFormField
+                                    :label="$t('common.singular')"
+                                    name="quickButtons.penaltyCalculator.detentionTimeUnit.singular"
+                                    class="flex-1"
+                                >
+                                    <UInput
+                                        v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.singular"
+                                        type="text"
+                                        class="w-full"
+                                    />
+                                </UFormField>
+
+                                <UFormField
+                                    :label="$t('common.plural')"
+                                    name="quickButtons.penaltyCalculator.detentionTimeUnit.plural"
+                                    class="flex-1"
+                                >
+                                    <UInput
+                                        v-model="state.quickButtons.penaltyCalculator.detentionTimeUnit!.plural"
+                                        type="text"
+                                        class="w-full"
+                                    />
+                                </UFormField>
+                            </UFormField>
+
+                            <UFormField
+                                :label="
+                                    $t('components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.title')
+                                "
+                                :description="
+                                    $t(
+                                        'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.description',
+                                    )
+                                "
+                                class="flex-1"
+                            >
+                                <UFormField name="quickButtons.penaltyCalculator.warnSettings.enabled">
+                                    <USwitch v-model="state.quickButtons.penaltyCalculator.warnSettings!.enabled" />
+                                </UFormField>
+
+                                <UFormField
+                                    :label="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.thresholds.title',
+                                        )
+                                    "
+                                    :description="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.thresholds.description',
+                                        )
+                                    "
+                                >
+                                    <div class="flex gap-2 sm:flex-row">
+                                        <UFormField
+                                            :label="$t('common.fine', 2)"
+                                            name="quickButtons.penaltyCalculator.warnSettings.fine"
+                                            class="flex-1"
+                                        >
+                                            <UInputNumber
+                                                v-model="state.quickButtons.penaltyCalculator.warnSettings!.fine"
+                                                :min="0"
+                                                :step="1000"
+                                                :format-options="{
+                                                    style: 'currency',
+                                                    currency: display.currencyName,
+                                                    currencyDisplay: 'code',
+                                                    currencySign: 'accounting',
+                                                    maximumFractionDigits: 0,
+                                                }"
+                                                class="w-full"
+                                            />
+                                        </UFormField>
+
+                                        <UFormField
+                                            :label="$t('common.detention_time', 2)"
+                                            name="quickButtons.penaltyCalculator.warnSettings.detentionTime"
+                                            class="flex-1"
+                                        >
+                                            <UInputNumber
+                                                v-model="state.quickButtons.penaltyCalculator.warnSettings!.detentionTime"
+                                                :min="0"
+                                                :step="1"
+                                                class="w-full"
+                                            />
+                                        </UFormField>
+
+                                        <UFormField
+                                            :label="$t('common.traffic_infraction_points', 2)"
+                                            name="quickButtons.penaltyCalculator.warnSettings.stvoPoints"
+                                            class="flex-1"
+                                        >
+                                            <UInputNumber
+                                                v-model="state.quickButtons.penaltyCalculator.warnSettings!.stvoPoints"
+                                                :min="0"
+                                                :step="1"
+                                                class="w-full"
+                                            />
+                                        </UFormField>
+                                    </div>
+                                </UFormField>
+
+                                <UFormField
+                                    :label="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.warn_message.title',
+                                        )
+                                    "
+                                    :description="
+                                        $t(
+                                            'components.settings.app_config.quick_buttons.penalty_calculator.warn_settings.warn_message.description',
+                                        )
+                                    "
+                                    name="quickButtons.penaltyCalculator.warnSettings.warnMessage"
+                                >
+                                    <UTextarea
+                                        v-model="state.quickButtons.penaltyCalculator.warnSettings!.warnMessage"
+                                        class="w-full"
+                                        autoresize
+                                        :rows="5"
+                                    />
+                                </UFormField>
+                            </UFormField>
                         </UPageCard>
                     </template>
 
