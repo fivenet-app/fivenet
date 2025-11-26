@@ -940,6 +940,11 @@ const formRef = useTemplateRef('formRef');
                                         'components.settings.app_config.quick_buttons.penalty_calculator.detention_time_unit.title',
                                     )
                                 "
+                                :description="
+                                    $t(
+                                        'components.settings.app_config.quick_buttons.penalty_calculator.detention_time_unit.description',
+                                    )
+                                "
                                 :ui="{ container: 'flex w-full flex-row gap-2' }"
                             >
                                 <UFormField
