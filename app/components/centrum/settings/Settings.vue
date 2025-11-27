@@ -373,7 +373,6 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.configuration.deduplicationDuration"
                                     :min="30"
                                     :placeholder="$t('common.time_ago.second', 2)"
-                                    trailing-icon="i-mdi-access-time"
                                     :disabled="!canSubmit"
                                     :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
                                 />

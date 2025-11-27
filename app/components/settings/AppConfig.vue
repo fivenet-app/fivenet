@@ -780,6 +780,7 @@ const formRef = useTemplateRef('formRef');
                                     v-model="state.discord.botId"
                                     type="text"
                                     :placeholder="$t('components.settings.app_config.discord.bot_id')"
+                                    class="w-full"
                                 />
                             </UFormField>
 
