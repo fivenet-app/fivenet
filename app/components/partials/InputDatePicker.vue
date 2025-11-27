@@ -6,8 +6,10 @@ import { format } from 'date-fns';
 
 export type TimeSplit = { hours: number; minutes: number };
 
-export interface Props<R extends boolean = false, M extends boolean = false>
-    extends /* @vue-ignore */ Omit<CalendarProps<R, M>, 'modelValue' | 'range'> {
+export interface Props<R extends boolean = false, M extends boolean = false> extends /* @vue-ignore */ Omit<
+    CalendarProps<R, M>,
+    'modelValue' | 'range'
+> {
     modelValue: Date | undefined;
     clearable?: boolean;
     time?: boolean;
@@ -133,7 +135,7 @@ const smallerThanSm = breakpoints.smaller('sm');
                                     :min="0"
                                     :max="23"
                                     @update:model-value="
-                                        ($event) => (timeState = { hours: $event, minutes: timeState.minutes })
+                                        ($event) => (timeState = { hours: $event ?? 0, minutes: timeState.minutes })
                                     "
                                 />
                                 <span class="font-bold">:</span>
@@ -142,7 +144,9 @@ const smallerThanSm = breakpoints.smaller('sm');
                                     class="max-w-24"
                                     :min="0"
                                     :max="59"
-                                    @update:model-value="($event) => (timeState = { hours: timeState.hours, minutes: $event })"
+                                    @update:model-value="
+                                        ($event) => (timeState = { hours: timeState.hours, minutes: $event ?? 0 })
+                                    "
                                 />
                             </div>
                         </UFormField>

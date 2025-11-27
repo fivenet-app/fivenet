@@ -720,11 +720,8 @@ const formRef = useTemplateRef('formRef');
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
                                     class="w-full"
-                                >
-                                    <template #trailing>
-                                        <span class="text-xs text-muted">s</span>
-                                    </template>
-                                </UInput>
+                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
+                                />
                             </UFormField>
 
                             <UFormField
@@ -739,11 +736,8 @@ const formRef = useTemplateRef('formRef');
                                     :step="0.01"
                                     :placeholder="$t('common.duration')"
                                     class="w-full"
-                                >
-                                    <template #trailing>
-                                        <span class="text-xs text-muted">s</span>
-                                    </template>
-                                </UInput>
+                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
+                                />
                             </UFormField>
                         </UPageCard>
                     </template>
@@ -766,19 +760,15 @@ const formRef = useTemplateRef('formRef');
                                 name="discord.syncInterval"
                                 :label="$t('components.settings.app_config.discord.sync_interval')"
                             >
-                                <UInput
+                                <UInputNumber
                                     v-model="state.discord.syncInterval"
-                                    type="number"
                                     :min="1"
-                                    :step="0.01"
+                                    :step="1"
                                     name="discord.syncInterval"
                                     :placeholder="$t('common.duration')"
                                     class="w-full"
-                                >
-                                    <template #trailing>
-                                        <span class="text-xs text-muted">s</span>
-                                    </template>
-                                </UInput>
+                                    :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
+                                />
                             </UFormField>
 
                             <UFormField

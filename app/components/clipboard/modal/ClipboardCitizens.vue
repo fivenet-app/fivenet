@@ -143,7 +143,7 @@ watch(props, async (newVal) => {
                     :items="[row.original.userId!]"
                     value-key="userId"
                     :ui="{ label: 'hidden' }"
-                    @update:model-value="(v) => (selected = [parseInt(v)])"
+                    @update:model-value="(v) => (selected = [v])"
                 />
                 <UCheckboxGroup
                     v-else

@@ -83,11 +83,8 @@ export type ExamSettingsSchema = z.output<typeof examSettings>;
                         :step="1"
                         :placeholder="$t('common.duration')"
                         class="w-full"
-                    >
-                        <template #trailing>
-                            <span class="text-xs text-muted">s</span>
-                        </template>
-                    </UInputNumber>
+                        :format-options="{ style: 'unit', unit: 'second', unitDisplay: 'short' }"
+                    />
                 </UFormField>
 
                 <UFormField

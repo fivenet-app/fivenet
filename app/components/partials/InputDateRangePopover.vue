@@ -7,8 +7,10 @@ export type DateRange = { start: Date; end: Date };
 
 export type TimeSplit = { hours: number; minutes: number };
 
-export interface Props<R extends boolean = false, M extends boolean = false>
-    extends /* @vue-ignore */ Omit<CalendarProps<R, M>, 'modelValue' | 'range'> {
+export interface Props<R extends boolean = false, M extends boolean = false> extends /* @vue-ignore */ Omit<
+    CalendarProps<R, M>,
+    'modelValue' | 'range'
+> {
     modelValue: DateRange | undefined;
     clearable?: boolean;
     time?: boolean;
