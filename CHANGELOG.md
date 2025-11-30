@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.11.0] - 2025-11-30
+
+### 🚀 Features
+
+- Add follow user location to livemap user marker
+- Add livemap "smart select" for when a lot of markers are at the
+- Replace nanoid with crypto.randomUUID in format builder
+- Add document self approve option for approval policies
+- Add self approve allowed to approval ui elements
+- Hide markers of invisible layers in multi select picker
+- Update to nuxt 4.2.1 and nuxt ui 4.1.0
+- Improve math and penalty calculator logic
+- Query builder using columns + table name for dbsync
+- Cleanup app config structure and approval calculation logic
+- Add more tests to utils functions
+- Add penalty calculator settings and warn message with thresholds
+
+### 🐛 Bug Fixes
+
+- Remove approval service todo comment
+- Generic img disabled style when popover is disabled
+- Calendar access check
+- Approval policy creation issue from template data
+- User marker self follow and unmarshal in userinfo retriever
+- Notification stream not being started anymore
+- Change livemap multi hit group order
+- Livemap single marker not showing popup anymore
+- Allow log level toggle in debug info for anyone
+- Remove unused vars from debug info
+- Jsdoc comments in stores and fine grained livemap subject filters
+- Go format issues
+- Missing wiki page activity translation and traffic points modal
+- Citizens actions double sidebar issue
+- Notification list html ui structure
+- Don't compile i18n vars replacement regex every call
+- Qualification tutor view user search
+- Add missing filters logic for users job
+- Change self approve default value of table column
+- Improve config structs to avoid duplication in dbsync
+- Timestamp/datetime mixup
+- Approval time/timestamp insert
+- Add renamed components
+- Cleanup type issues and add basic penaltycalculator config
+- Remove leftover generated file
+- Livemap centrum sidebar issue on small screens
+- Pinned list sizing and showing when it should be closed
+- Livemap centrum sidebar showing when it shouldn't
+- Check can stream to centrum sidebar
+- Update css path for prettier plugin
+- Format app files
+- Bump helm chart version
+- Add additional indexes for user locations table
+- Import issue caused by utils import usage
+- Add missing description text to penalty calculator app config
+- Use intl format options for more number inputs
+- Unused trailing-icon attribute
+
 ## [2025.10.2] - 2025-10-24
 
 ### 🐛 Bug Fixes
