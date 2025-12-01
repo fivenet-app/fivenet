@@ -25,8 +25,8 @@ importers:
         specifier: 1.2.3
         version: 1.2.3
       '@iconify-json/simple-icons':
-        specifier: 1.2.60
-        version: 1.2.60
+        specifier: 1.2.61
+        version: 1.2.61
       '@nuxt/content':
         specifier: 3.8.2
         version: 3.8.2(better-sqlite3@12.5.0)(magicast@0.5.1)
@@ -324,7 +324,7 @@ importers:
         version: 10.1.8(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-prettier:
         specifier: 5.5.4
-        version: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))(prettier@3.7.2)
+        version: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))(prettier@3.7.3)
       happy-dom:
         specifier: ^20.0.11
         version: 20.0.11
@@ -336,7 +336,7 @@ importers:
         version: 3.0.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.11.1(@tiptap/pm@3.11.1))(@tiptap/extension-code-block@3.11.0(@tiptap/core@3.11.1(@tiptap/pm@3.11.1))(@tiptap/pm@3.11.1))(highlight.js@11.11.1)(vue@3.5.24(typescript@5.9.3))
       nuxt-typed-router:
         specifier: 4.0.2
-        version: 4.0.2(magicast@0.5.1)(prettier@3.7.2)
+        version: 4.0.2(magicast@0.5.1)(prettier@3.7.3)
       pinia-plugin-persistedstate:
         specifier: 4.7.1
         version: 4.7.1(@nuxt/kit@4.2.1(magicast@0.5.1))(@pinia/nuxt@0.11.3(magicast@0.5.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3))))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.24(typescript@5.9.3)))
@@ -350,17 +350,17 @@ importers:
         specifier: 10.4.0
         version: 10.4.0(postcss@8.5.6)
       prettier:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       prettier-plugin-organize-attributes:
         specifier: 1.0.0
-        version: 1.0.0(prettier@3.7.2)
+        version: 1.0.0(prettier@3.7.3)
       prettier-plugin-organize-imports:
         specifier: 4.3.0
-        version: 4.3.0(prettier@3.7.2)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3))
+        version: 4.3.0(prettier@3.7.3)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3))
       prettier-plugin-tailwindcss:
         specifier: 0.7.1
-        version: 0.7.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.7.2))(prettier-plugin-organize-imports@4.3.0(prettier@3.7.2)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)))(prettier@3.7.2)
+        version: 0.7.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.7.3))(prettier-plugin-organize-imports@4.3.0(prettier@3.7.3)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)))(prettier@3.7.3)
       release-it:
         specifier: 19.0.6
         version: 19.0.6(@types/node@24.10.1)(magicast@0.5.1)
@@ -1295,8 +1295,8 @@ packages:
   '@iconify-json/mdi@1.2.3':
     resolution: {integrity: sha512-O3cLwbDOK7NNDf2ihaQOH5F9JglnulNDFV7WprU2dSoZu3h3cWH//h74uQAB87brHmvFVxIOkuBX2sZSzYhScg==}
 
-  '@iconify-json/simple-icons@1.2.60':
-    resolution: {integrity: sha512-KlwLBKCdMCqfySdkAA+jehdUx6VSjnj6lvzQKus7HjkPSQ6QP58d6xiptkIp0jd/Hw3PW2++nRuGvCvSYaF0Mg==}
+  '@iconify-json/simple-icons@1.2.61':
+    resolution: {integrity: sha512-DG6z3VEAxtDEw/SuZssZ/E8EvhjBhFQqxpEo3uckRKiia3LfZHmM4cx4RsaO2qX1Bqo9uadR5c/hYavvUQVuHw==}
 
   '@iconify/collections@1.0.619':
     resolution: {integrity: sha512-F39tuS46A7IyupfRysxPA1QaFq1AIDK3NLl6mdXqDUtVcdpW9z65n9dc8/4Ze/ap/bL2NE+nyWxxHgvuLmYdnw==}
@@ -7384,8 +7384,8 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
-  prettier@3.7.2:
-    resolution: {integrity: sha512-n3HV2J6QhItCXndGa3oMWvWFAgN1ibnS7R9mt6iokScBOC0Ul9/iZORmU2IWUMcyAQaMPjTlY3uT34TqocUxMA==}
+  prettier@3.7.3:
+    resolution: {integrity: sha512-QgODejq9K3OzoBbuyobZlUhznP5SKwPqp+6Q6xw6o8gnhr4O85L2U915iM2IDcfF2NPXVaM9zlo9tdwipnYwzg==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -9821,7 +9821,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/simple-icons@1.2.60':
+  '@iconify-json/simple-icons@1.2.61':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -14167,10 +14167,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))(prettier@3.7.2):
+  eslint-plugin-prettier@5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.1(jiti@2.6.1)))(eslint@9.39.1(jiti@2.6.1))(prettier@3.7.3):
     dependencies:
       eslint: 9.39.1(jiti@2.6.1)
-      prettier: 3.7.2
+      prettier: 3.7.3
       prettier-linter-helpers: 1.0.0
       synckit: 0.11.11
     optionalDependencies:
@@ -15120,7 +15120,7 @@ snapshots:
       js-yaml: 4.1.1
       lodash: 4.17.21
       minimist: 1.2.8
-      prettier: 3.7.2
+      prettier: 3.7.3
       tinyglobby: 0.2.15
 
   json-schema-to-zod@2.7.0: {}
@@ -16071,7 +16071,7 @@ snapshots:
       - highlight.js
       - vue
 
-  nuxt-typed-router@4.0.2(magicast@0.5.1)(prettier@3.7.2):
+  nuxt-typed-router@4.0.2(magicast@0.5.1)(prettier@3.7.3):
     dependencies:
       '@nuxt/kit': 4.2.1(magicast@0.5.1)
       chalk: 5.4.1
@@ -16081,7 +16081,7 @@ snapshots:
       mkdirp: 3.0.1
       nanoid: 5.1.5
       pathe: 2.0.3
-      prettier: 3.7.2
+      prettier: 3.7.3
     transitivePeerDependencies:
       - magicast
 
@@ -16982,28 +16982,28 @@ snapshots:
     dependencies:
       fast-diff: 1.3.0
 
-  prettier-plugin-organize-attributes@1.0.0(prettier@3.7.2):
+  prettier-plugin-organize-attributes@1.0.0(prettier@3.7.3):
     dependencies:
-      prettier: 3.7.2
+      prettier: 3.7.3
 
-  prettier-plugin-organize-imports@4.3.0(prettier@3.7.2)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)):
+  prettier-plugin-organize-imports@4.3.0(prettier@3.7.3)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)):
     dependencies:
-      prettier: 3.7.2
+      prettier: 3.7.3
       typescript: 5.9.3
     optionalDependencies:
       vue-tsc: 3.1.5(typescript@5.9.3)
 
-  prettier-plugin-tailwindcss@0.7.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.7.2))(prettier-plugin-organize-imports@4.3.0(prettier@3.7.2)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)))(prettier@3.7.2):
+  prettier-plugin-tailwindcss@0.7.1(prettier-plugin-organize-attributes@1.0.0(prettier@3.7.3))(prettier-plugin-organize-imports@4.3.0(prettier@3.7.3)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3)))(prettier@3.7.3):
     dependencies:
-      prettier: 3.7.2
+      prettier: 3.7.3
     optionalDependencies:
-      prettier-plugin-organize-attributes: 1.0.0(prettier@3.7.2)
-      prettier-plugin-organize-imports: 4.3.0(prettier@3.7.2)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3))
+      prettier-plugin-organize-attributes: 1.0.0(prettier@3.7.3)
+      prettier-plugin-organize-imports: 4.3.0(prettier@3.7.3)(typescript@5.9.3)(vue-tsc@3.1.5(typescript@5.9.3))
 
   prettier@2.8.8:
     optional: true
 
-  prettier@3.7.2: {}
+  prettier@3.7.3: {}
 
   pretty-bytes@7.1.0: {}
 
