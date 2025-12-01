@@ -25,12 +25,12 @@ require (
 	github.com/gin-contrib/pprof v1.5.3
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-contrib/static v1.1.5
-	github.com/gin-contrib/zap v1.1.5
+	github.com/gin-contrib/zap v1.1.6
 	github.com/gin-gonic/gin v1.11.1-0.20251011112041-c3d1092b3b48
 	github.com/go-jet/jet/v2 v2.14.0
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.0
-	github.com/golang-migrate/migrate/v4 v4.19.0
+	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.0
@@ -166,8 +166,6 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2 // indirect
 	github.com/hablullah/go-hijri v1.0.2 // indirect
 	github.com/hablullah/go-juliandays v1.0.0 // indirect
-	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgtype v1.14.4 // indirect
