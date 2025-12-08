@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2025
 
-go 1.25.4
+go 1.25.5
 
 require (
 	buf.build/go/protovalidate v1.0.1
