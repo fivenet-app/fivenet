@@ -12,7 +12,7 @@ require (
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.13.0
 	github.com/aymanbagabas/go-udiff v0.3.1
-	github.com/blevesearch/bleve/v2 v2.5.5
+	github.com/blevesearch/bleve/v2 v2.5.6
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.14
 	github.com/creasty/defaults v1.8.0
@@ -78,8 +78,8 @@ require (
 	golang.org/x/crypto v0.45.0
 	golang.org/x/image v0.33.0
 	golang.org/x/net v0.47.0
-	golang.org/x/oauth2 v0.33.0
-	golang.org/x/sync v0.18.0
+	golang.org/x/oauth2 v0.34.0
+	golang.org/x/sync v0.19.0
 	google.golang.org/grpc v1.77.0
 	google.golang.org/protobuf v1.36.10
 	gopkg.in/yaml.v3 v3.0.1
