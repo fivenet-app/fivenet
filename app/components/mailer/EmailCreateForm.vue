@@ -5,7 +5,6 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { jobAccessEntry, qualificationAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
@@ -94,9 +93,9 @@ const schema = z.object({
     label: z.coerce.string().max(128).optional(),
     deactivated: z.coerce.boolean(),
     access: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-        users: userAccessEntry.array().max(maxAccessEntries).default([]),
-        qualifications: qualificationAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: userAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(maxAccessEntries).default([]),
     }),
 });
 

@@ -15,7 +15,6 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
-import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { ApprovalAssigneeKind, ApprovalRuleKind, OnEditBehavior } from '~~/gen/ts/resources/documents/approval';
@@ -58,10 +57,10 @@ const schema = z.object({
     content: z.coerce.string().min(3).max(1500000),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
-    jobAccess: jobAccessEntry.array().max(maxAccessEntries).default([]),
+    jobAccess: jobsAccessEntries(t).max(maxAccessEntries).default([]),
     contentAccess: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-        users: userAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: userAccessEntries(t).max(maxAccessEntries).default([]),
     }),
     workflow: zWorkflow,
     approval: z

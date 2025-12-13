@@ -8,7 +8,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
@@ -20,6 +19,8 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
+
+const { t } = useI18n();
 
 const { attr, activeChar } = useAuth();
 
@@ -43,8 +44,8 @@ const schema = z.object({
     closed: z.coerce.boolean(),
     color: z.coerce.string().max(12),
     access: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-        users: userAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: userAccessEntries(t).max(maxAccessEntries).default([]),
     }),
 });
 

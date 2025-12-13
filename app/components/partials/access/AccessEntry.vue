@@ -63,7 +63,6 @@ async function findUser(userId?: number): Promise<UserShort[]> {
 }
 
 async function setFromProps(): Promise<void> {
-    console.log('setFromProps called', entry.value.minimumGrade);
     if (entry.value.type === 'user' && entry.value.userId !== undefined) {
         if (selectedUser.value?.userId === entry.value.userId) return;
 

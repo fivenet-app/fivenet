@@ -3521,7 +3521,6 @@
         "invalid_key": "Ungültiger Schlüssel in {origin}",
         "invalid_union": "Ungültige Eingabe",
         "invalid_element": "Ungültiger Wert in {origin}",
-        "custom": "{message}",
         "origins": {
             "string": "Zeichenkette",
             "file": "Datei",
@@ -3581,6 +3580,14 @@
             "e164": "E.164-Nummer",
             "jwt": "JWT",
             "template_literal": "Eingabe"
+        },
+        "custom": {
+            "default": "{message}",
+            "access_entry": {
+                "duplicate_job_grade": "Doppelte Beruf- und Rang-Kombination gefunden. Es kann nur ein Eintrag für Beruf und einen Rang existieren.",
+                "duplicate_user": "Doppelter Nutzer gefunden. Jeder Nutzer kann nur einen Eintrag haben.",
+                "duplicate_qualification": "Doppelte Qualifikation gefunden. Jede Qualifikation kann nur einen Eintrag haben."
+            }
         }
     }
 }

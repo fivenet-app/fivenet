@@ -9,7 +9,6 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import type { Content } from '~/types/history';
-import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { type DocumentJobAccess, type DocumentUserAccess, AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -130,8 +129,8 @@ const schema = z.object({
     category: z.custom<Category>().default({ ...emptyCategory }),
     access: z
         .object({
-            jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-            users: userAccessEntry.array().max(maxAccessEntries).default([]),
+            jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+            users: userAccessEntries(t).max(maxAccessEntries).default([]),
         })
         .default({ jobs: [], users: [] }),
     files: z.custom<File>().array().max(5).default([]),

@@ -602,7 +602,7 @@ onBeforeRouteLeave(() => {
         <template v-if="editor" #footer>
             <div class="flex w-full flex-1 flex-col gap-1">
                 <div v-if="error" class="mb-2 flex items-start">
-                    <div v-if="typeof error === 'string'" :id="`${name}-error`" class="text-error">{{ error }}</div>
+                    <div v-if="typeof error === 'string'" :id="`${$props.name}-error`" class="text-error">{{ error }}</div>
                 </div>
 
                 <div class="flex flex-1 flex-row flex-wrap justify-between gap-2">

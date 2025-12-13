@@ -235,7 +235,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             v-bind="$attrs"
             :hide-grade="hideGrade"
             :hide-jobs="hideJobs"
-            :name="`${name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
+            :name="`${$props.name}${fullName ? '' : `.${entry.type}s`}.${idx}`"
             @delete="access?.splice(idx, 1)"
         />
 

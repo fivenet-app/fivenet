@@ -50,6 +50,26 @@ export const userAccessEntry = z.object({
     required: z.coerce.boolean().optional(),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function userAccessEntries(t: (key: string, params?: any) => string) {
+    return z.array(userAccessEntry).superRefine((entries, ctx) => {
+        const seen = new Set();
+        entries.forEach((entry, index) => {
+            const key = `${entry.userId}`;
+
+            if (seen.has(key)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: t('zod.custom.access_entry.duplicate_user'),
+                    path: [index, 'userId'],
+                });
+            } else {
+                seen.add(key);
+            }
+        });
+    });
+}
+
 export const jobAccessEntry = z.object({
     id: z.coerce.number(),
     targetId: z.coerce.number(),
@@ -59,6 +79,28 @@ export const jobAccessEntry = z.object({
     required: z.coerce.boolean().optional(),
 });
 
+// Extend the jobsAccessEntries schema to validate duplicates
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function jobsAccessEntries(t: (key: string, params?: any) => string) {
+    return z.array(jobAccessEntry).superRefine((entries, ctx) => {
+        const seen = new Set();
+        entries.forEach((entry, index) => {
+            const key = `${entry.job}-${entry.minimumGrade}`;
+
+            if (seen.has(key)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: t('zod.custom.access_entry.duplicate_job_grade'),
+                    path: [index, 'minimumGrade'],
+                });
+            } else {
+                seen.add(key);
+            }
+            return entries;
+        });
+    });
+}
+
 export const qualificationAccessEntry = z.object({
     id: z.coerce.number(),
     targetId: z.coerce.number(),
@@ -66,3 +108,23 @@ export const qualificationAccessEntry = z.object({
     access: z.coerce.number().nonnegative(),
     required: z.coerce.boolean().optional(),
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function qualificationAccessEntries(t: (key: string, params?: any) => string) {
+    return z.array(qualificationAccessEntry).superRefine((entries, ctx) => {
+        const seen = new Set();
+        entries.forEach((entry, index) => {
+            const key = `${entry.qualificationId}`;
+
+            if (seen.has(key)) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: t('zod.custom.access_entry.duplicate_qualification'),
+                    path: [index, 'qualificationId'],
+                });
+            } else {
+                seen.add(key);
+            }
+        });
+    });
+}

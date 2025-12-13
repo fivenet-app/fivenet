@@ -3521,7 +3521,6 @@
         "invalid_key": "Invalid key in {origin}",
         "invalid_union": "Invalid input",
         "invalid_element": "Invalid value in {origin}",
-        "custom": "{message}",
         "origins": {
             "string": "string",
             "file": "file",
@@ -3581,6 +3580,14 @@
             "e164": "E.164 number",
             "jwt": "JWT",
             "template_literal": "input"
+        },
+        "custom": {
+            "default": "{message}",
+            "access_entry": {
+                "duplicate_job_grade": "Duplicate job and grade combination found. Only one entry for a job and one for a grade can exist.",
+                "duplicate_user": "Duplicate user found. Each user can only have one entry.",
+                "duplicate_qualification": "Duplicate qualification found. Each qualification can only have one entry."
+            }
         }
     }
 }

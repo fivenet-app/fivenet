@@ -5,7 +5,7 @@ import { z } from 'zod/v4';
 export default defineNuxtPlugin(() => {
     const nuxtApp = useNuxtApp();
 
-    // --- utils ---
+    // UnknownFieldHandlertils
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const t = (key: string, params?: Record<string, any>) => (nuxtApp.$i18n?.t(key, params ?? {}) as unknown as string) ?? '';
 
@@ -65,7 +65,7 @@ export default defineNuxtPlugin(() => {
         return hasKey(key) ? t(key) : fallback;
     };
 
-    // --- Zod v4 mapper that uses i18n nouns + sizable ---
+    // Zod v4 mapper that uses i18n nouns + sizable
     const customError: z.core.$ZodErrorMap = (issue): string => {
         switch (issue.code) {
             case 'invalid_type': {
@@ -174,8 +174,10 @@ export default defineNuxtPlugin(() => {
             case 'invalid_element':
                 return t('zod.invalid_element', { origin: issue.origin }) || 'Invalid element';
 
-            case 'custom':
-                return t('zod.custom', { message: (issue as z.core.$ZodIssueCustom).message ?? '' }) || 'Invalid input';
+            case 'custom': {
+                const msg = (issue as z.core.$ZodIssueCustom).message ?? '';
+                return t('zod.custom.default', { message: $te(msg) ? t(msg) : msg }) || 'Invalid input';
+            }
 
             default:
                 return t('zod.invalid_input') || 'Invalid input';

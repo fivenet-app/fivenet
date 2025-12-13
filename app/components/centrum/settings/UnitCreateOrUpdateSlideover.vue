@@ -5,7 +5,6 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import { jobAccessEntry, qualificationAccessEntry } from '~/utils/validation';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -48,8 +47,8 @@ const schema = z.object({
     homePostal: z.union([z.coerce.string().trim().min(1).max(48), z.coerce.string().trim().length(0).optional()]),
     attributes: z.enum(UnitAttribute).array().max(5).default([]),
     access: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-        qualifications: qualificationAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        qualifications: qualificationAccessEntries(t).max(maxAccessEntries).default([]),
     }),
 });
 

@@ -6,7 +6,6 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { Content } from '~/types/history';
-import { jobAccessEntry, userAccessEntry } from '~/utils/validation';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -96,8 +95,8 @@ const schema = z.object({
     }),
     content: z.coerce.string().min(3).max(1750000),
     access: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
-        users: userAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
+        users: userAccessEntries(t).max(maxAccessEntries).default([]),
     }),
     files: z.custom<File>().array().max(5).default([]),
 });

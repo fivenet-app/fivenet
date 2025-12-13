@@ -7,7 +7,6 @@ import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
 import type { Content } from '~/types/history';
-import { jobAccessEntry } from '~/utils/validation';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -161,7 +160,7 @@ const schema = z.object({
             .default([]),
     }),
     access: z.object({
-        jobs: jobAccessEntry.array().max(maxAccessEntries).default([]),
+        jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
     }),
     labelSyncEnabled: z.coerce.boolean(),
     labelSyncFormat: z.coerce.string().max(128).optional(),
