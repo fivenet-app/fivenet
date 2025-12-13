@@ -58,15 +58,11 @@ const { data: stats, status } = useLazyAsyncData('stats', () => getStats(), {
         fetchedAt: new Date().getTime(),
     }),
     getCachedData() {
-        if (!state.value.fetchedAt) {
-            return undefined;
-        }
+        if (!state.value.fetchedAt) return undefined;
 
         const expireDate = new Date(state.value.fetchedAt);
         expireDate.setTime(expireDate.getTime() + 60 * 1000);
-        if (expireDate.getTime() < Date.now()) {
-            return undefined;
-        }
+        if (expireDate.getTime() < Date.now()) return undefined;
 
         return state.value;
     },

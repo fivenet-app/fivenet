@@ -50,7 +50,7 @@ const props = withDefaults(
     },
 );
 
-const { maxAccessEntries } = useAppConfig();
+const { maxAccessEntries, game } = useAppConfig();
 
 const maxEntries = computed(() => props.totalLimit || maxAccessEntries);
 
@@ -132,9 +132,7 @@ function syncAccessFromProps() {
         id: entry.id,
     }));
 
-    if (!isEqualArray(access.value, newAccess)) {
-        access.value = newAccess;
-    }
+    if (!isEqualArray(access.value, newAccess)) access.value = newAccess;
 }
 
 // Helper to update a reactive array in-place (add, update, remove)
@@ -168,7 +166,7 @@ function syncPropsFromAccess() {
             id: e.id,
             targetId: props.targetId,
             job: e.job,
-            minimumGrade: e.minimumGrade,
+            minimumGrade: e.minimumGrade ?? game.startJobGrade,
             access: e.access,
             required: e.required,
         })) as JobsT[];

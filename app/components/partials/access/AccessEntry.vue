@@ -21,7 +21,7 @@ const props = withDefaults(
     {
         disabled: false,
         showRequired: false,
-        accessRoles: undefined,
+        accessRoles: () => [],
         jobs: () => [],
         hideGrade: false,
         hideJobs: () => [],
@@ -63,6 +63,7 @@ async function findUser(userId?: number): Promise<UserShort[]> {
 }
 
 async function setFromProps(): Promise<void> {
+    console.log('setFromProps called', entry.value.minimumGrade);
     if (entry.value.type === 'user' && entry.value.userId !== undefined) {
         if (selectedUser.value?.userId === entry.value.userId) return;
 
@@ -105,22 +106,21 @@ async function setFromProps(): Promise<void> {
 
 setFromProps();
 watch(props, () => setFromProps());
-if (props.hideGrade) {
-    watch(
-        () => entry.value.job,
-        () => {
-            if (!props.hideGrade) return;
 
-            // If hide grade is true, we must set the minimumGrade to a sane default value
-            if (entry.value.job && entry.value.minimumGrade === undefined) {
-                const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
-                if (grades) {
-                    entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
-                }
+watch(
+    () => entry.value.job,
+    () => {
+        if (!props.hideGrade) return;
+
+        // If hide grade is true, we must set the minimumGrade to a sane default value
+        if (entry.value.job && entry.value.minimumGrade === undefined) {
+            const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
+            if (grades) {
+                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
             }
-        },
-    );
-}
+        }
+    },
+);
 </script>
 
 <template>
@@ -134,7 +134,7 @@ if (props.hideGrade) {
                 </UFormField>
 
                 <UFormField
-                    :name="`${name}.type`"
+                    :name="`${$props.name}.type`"
                     class="min-w-40 flex-initial"
                     :label="$t('common.type')"
                     :ui="{ label: 'md:hidden' }"
@@ -161,7 +161,7 @@ if (props.hideGrade) {
             <UFormField
                 v-if="entry.type === 'user'"
                 class="flex-1"
-                :name="`${name}.userId`"
+                :name="`${$props.name}.userId`"
                 :label="$t('common.user')"
                 :ui="{ label: 'md:hidden' }"
             >
@@ -195,7 +195,7 @@ if (props.hideGrade) {
             <UFormField
                 v-else-if="entry.type === 'qualification'"
                 class="flex-1"
-                :name="`${name}.qualificationId`"
+                :name="`${$props.name}.qualificationId`"
                 :label="$t('common.qualification')"
                 :ui="{ label: 'md:hidden' }"
             >
@@ -231,7 +231,7 @@ if (props.hideGrade) {
             </UFormField>
 
             <template v-else>
-                <UFormField class="flex-1" :name="`${name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
+                <UFormField class="flex-1" :name="`${$props.name}.job`" :label="$t('common.job')" :ui="{ label: 'md:hidden' }">
                     <ClientOnly>
                         <USelectMenu
                             v-model="entry.job"
@@ -251,7 +251,7 @@ if (props.hideGrade) {
                 <UFormField
                     v-if="!hideGrade"
                     class="flex-1"
-                    :name="`${name}.minimumGrade`"
+                    :name="`${$props.name}.minimumGrade`"
                     :label="$t('common.rank')"
                     :ui="{ label: 'md:hidden' }"
                 >
@@ -276,7 +276,7 @@ if (props.hideGrade) {
 
             <UFormField
                 class="min-w-60 flex-initial"
-                :name="`${name}.access`"
+                :name="`${$props.name}.access`"
                 :label="$t('common.access')"
                 :ui="{ label: 'md:hidden' }"
             >
@@ -292,7 +292,7 @@ if (props.hideGrade) {
                         :search-input="{ placeholder: $t('common.search_field') }"
                     >
                         <template #default>
-                            {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
+                            {{ accessRoles?.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>

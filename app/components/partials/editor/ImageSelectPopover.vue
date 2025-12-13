@@ -34,7 +34,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const imageState = reactive({
+const imageState = reactive<Schema>({
     url: '',
 });
 
