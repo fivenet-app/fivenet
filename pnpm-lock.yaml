@@ -248,7 +248,7 @@ importers:
         specifier: 1.12.1
         version: 1.12.1(@typescript-eslint/utils@8.49.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(@vue/compiler-sfc@3.5.25)(eslint@9.39.2(jiti@2.6.1))(magicast@0.5.1)(typescript@5.9.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.96.0)(terser@5.44.1)(yaml@2.8.2))
       '@nuxt/test-utils':
-        specifier: ^3.21.0
+        specifier: 3.21.0
         version: 3.21.0(@vue/test-utils@2.4.6)(happy-dom@20.0.11)(magicast@0.5.1)(playwright-core@1.57.0)(typescript@5.9.3)(vitest@4.0.15(@types/node@24.10.4)(happy-dom@20.0.11)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.96.0)(terser@5.44.1)(yaml@2.8.2))
       '@nuxtjs/i18n':
         specifier: 10.2.1
@@ -296,7 +296,7 @@ importers:
         specifier: 4.4.5
         version: 4.4.5
       '@vue/test-utils':
-        specifier: ^2.4.6
+        specifier: 2.4.6
         version: 2.4.6
       '@vueuse/core':
         specifier: 14.1.0
@@ -326,7 +326,7 @@ importers:
         specifier: 5.5.4
         version: 5.5.4(eslint-config-prettier@10.1.8(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))(prettier@3.7.4)
       happy-dom:
-        specifier: ^20.0.11
+        specifier: 20.0.11
         version: 20.0.11
       nuxt:
         specifier: 4.2.2
@@ -341,7 +341,7 @@ importers:
         specifier: 4.7.1
         version: 4.7.1(@nuxt/kit@4.2.2(magicast@0.5.1))(@pinia/nuxt@0.11.3(magicast@0.5.1)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3)))
       playwright-core:
-        specifier: ^1.57.0
+        specifier: 1.57.0
         version: 1.57.0
       postcss:
         specifier: 8.5.6
