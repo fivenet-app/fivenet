@@ -3584,9 +3584,9 @@
         "custom": {
             "default": "{message}",
             "access_entry": {
-                "duplicate_job_grade": "Doppelte Beruf- und Rang-Kombination gefunden. Es kann nur ein Eintrag für Beruf und einen Rang existieren.",
-                "duplicate_user": "Doppelter Nutzer gefunden. Jeder Nutzer kann nur einen Eintrag haben.",
-                "duplicate_qualification": "Doppelte Qualifikation gefunden. Jede Qualifikation kann nur einen Eintrag haben."
+                "duplicate_job_grade": "Ein Beruf und Rang wurden mehrfach ausgewählt. Bitte wählen Sie jeden Beruf und Rang nur einmal aus.",
+                "duplicate_user": "Ein Bürger wurde mehrfach ausgewählt. Bitte wählen Sie jeden Bürger nur einmal aus.",
+                "duplicate_qualification": "Eine Qualifikation wurde mehrfach ausgewählt. Bitte wählen Sie jede Qualifikation nur einmal aus."
             }
         }
     }

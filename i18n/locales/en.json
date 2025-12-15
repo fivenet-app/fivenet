@@ -3584,9 +3584,9 @@
         "custom": {
             "default": "{message}",
             "access_entry": {
-                "duplicate_job_grade": "Duplicate job and grade combination found. Only one entry for a job and one for a grade can exist.",
-                "duplicate_user": "Duplicate user found. Each user can only have one entry.",
-                "duplicate_qualification": "Duplicate qualification found. Each qualification can only have one entry."
+                "duplicate_job_grade": "A job and grade were selected multiple times. Please select each job and grade only once.",
+                "duplicate_user": "A citizen was selected multiple times. Please select each citizen only once.",
+                "duplicate_qualification": "A qualification was selected multiple times. Please select each qualification only once."
             }
         }
     }

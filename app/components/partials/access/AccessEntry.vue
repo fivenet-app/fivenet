@@ -134,7 +134,7 @@ watch(
 
                 <UFormField
                     :name="`${$props.name}.type`"
-                    class="min-w-40 flex-initial"
+                    class="h-full min-w-40 flex-initial"
                     :label="$t('common.type')"
                     :ui="{ label: 'md:hidden' }"
                 >
@@ -236,7 +236,7 @@ watch(
                             v-model="entry.job"
                             class="w-full"
                             :disabled="disabled"
-                            :filter-fields="['name', 'label']"
+                            :filter-fields="['label', 'name']"
                             value-key="name"
                             :items="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                             :placeholder="$t('common.job')"
