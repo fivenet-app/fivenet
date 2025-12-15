@@ -39,7 +39,7 @@ jobs:
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_OUTPUT
 
       - name: Release Binaries
-        uses: wangyoucao577/go-release-action@v1.54
+        uses: wangyoucao577/go-release-action@v1.55
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
