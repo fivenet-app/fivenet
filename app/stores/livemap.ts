@@ -217,8 +217,10 @@ export const useLivemapStore = defineStore(
             }
 
             if (!userOnDuty.value) {
-                if (markersUsers.value.size > 0) markersUsers.value.clear();
-                logger.info('User is not on duty, clearing user markers');
+                if (markersUsers.value.size > 0) {
+                    markersUsers.value.clear();
+                    logger.info('User is not on duty (anymore), clearing user markers');
+                }
             }
         };
 
@@ -228,7 +230,7 @@ export const useLivemapStore = defineStore(
          * @param {JobsList} jobs - The jobs list containing updated job data.
          */
         const handleJobsUpdate = (jobs: JobsList): void => {
-            logger.info('Jobs received. Users:', jobs.users.length, 'markers:', jobs.markers.length);
+            logger.info('Jobs received. Users:', jobs.users.length, 'Markers:', jobs.markers.length);
             jobsMarkers.value = jobs.markers;
             jobsUsers.value = jobs.users;
         };

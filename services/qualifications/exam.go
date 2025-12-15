@@ -292,7 +292,7 @@ func (s *Server) SubmitExam(
 		VALUES(
 			req.GetQualificationId(),
 			userInfo.GetUserId(),
-			mysql.TimestampT(endedAt),
+			mysql.DateTimeT(endedAt),
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tExamUser.EndedAt.SET(mysql.TimestampT(endedAt)),

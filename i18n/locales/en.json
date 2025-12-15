@@ -47,7 +47,9 @@
                 "title": "Approval Tasks"
             },
             "stamps": {
-                "title": "Stamps"
+                "title": "Stamps",
+                "create": "Create Stamp",
+                "update": "Update Stamp"
             }
         },
         "notfound": {

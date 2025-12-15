@@ -89,6 +89,7 @@ async function onSubmit(values: FormSubmitEvent<Schema>) {
                         v-if="approve"
                         name="signature"
                         :label="$t('common.signature')"
+                        :description="policy?.signatureRequired ? undefined : $t('common.optional')"
                         :required="policy?.signatureRequired"
                         class="mx-auto"
                     >

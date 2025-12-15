@@ -5,6 +5,16 @@ import EditorToolbar from '~/components/fabriceditor/EditorToolbar.vue';
 import EditorWrapper from '~/components/fabriceditor/EditorWrapper.vue';
 import { getDocumentsStampsClient } from '~~/gen/ts/clients';
 
+useHead({
+    title: 'pages.documents.stamps.create',
+});
+
+definePageMeta({
+    title: 'pages.documents.stamps.create',
+    requiresAuth: true,
+    permission: 'documents.StampsService/UpsertStampPerm',
+});
+
 const { can } = useAuth();
 
 const schema = z.object({

@@ -15,6 +15,16 @@ func TimestampToMySQL(ts *timestamp.Timestamp) mysql.Expression {
 	return mysql.DateTimeT(ts.AsTime())
 }
 
+// DateTimeToMySQL converts a google.protobuf.Timestamp (wrapped in our resources.timestamp.Timestamp type)
+// to a Jet mysql expression that can be NULL.
+func DateTimeToMySQL(ts *timestamp.Timestamp) mysql.Expression {
+	if ts == nil {
+		return mysql.NULL
+	}
+
+	return mysql.DateTimeT(ts.AsTime())
+}
+
 // Int64P helper for nullable int64 (IDs), assumes that 0 is null.
 func Int64P(v int64) mysql.IntegerExpression {
 	if v == 0 {

@@ -70,7 +70,7 @@ function triggerErrorPage(): void {
 
 function toggleLogLevel(): void {
     setDefaultLogLevel(getDefaultLogLevel() !== LogLevels.debug ? LogLevels.debug : LogLevels.warn);
-    console.warn('Log Level set to', getDefaultLogLevel() === 4 ? 'DEBUG' : 'WARN');
+    console.warn('Setting log level to', getDefaultLogLevel() === 4 ? 'DEBUG' : 'WARN');
 }
 
 const version = APP_VERSION;

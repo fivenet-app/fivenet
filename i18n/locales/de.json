@@ -47,7 +47,9 @@
                 "title": "Genehmigungsaufgaben"
             },
             "stamps": {
-                "title": "Stempel"
+                "title": "Stempel",
+                "create": "Stempel erstellen",
+                "update": "Stempel aktualisieren"
             }
         },
         "notfound": {
