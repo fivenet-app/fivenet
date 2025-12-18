@@ -12,7 +12,7 @@ const calendarReminderTimes = [
     ...reminderTimes.map((n) => ({
         label:
             n === 0
-                ? t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.start')
+                ? t('components.auth.user_settings_panel.calendar_notifications.reminder_times.start')
                 : `${n / 60} ${t('common.time_ago.minute', n / 60)}`,
         value: n,
     })),
@@ -22,8 +22,8 @@ const calendarReminderTimes = [
 <template>
     <div class="space-y-4">
         <UPageCard
-            :title="$t('components.auth.UserSettingsPanel.volumes.title')"
-            :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
+            :title="$t('components.auth.user_settings_panel.volumes.title')"
+            :description="$t('components.auth.user_settings_panel.volumes.subtitle')"
         >
             <template #links>
                 <UButton icon="i-mdi-play" @click="notificationSound.play()" />
@@ -32,7 +32,7 @@ const calendarReminderTimes = [
             <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="notificationsVolume"
-                :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
+                :label="$t('components.auth.user_settings_panel.volumes.notifications_volume')"
             >
                 <USlider v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
                 {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
@@ -40,13 +40,13 @@ const calendarReminderTimes = [
         </UPageCard>
 
         <UPageCard
-            :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
-            :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
+            :title="$t('components.auth.user_settings_panel.calendar_notifications.title')"
+            :description="$t('components.auth.user_settings_panel.calendar_notifications.subtitle')"
         >
             <UFormField
                 class="grid grid-cols-2 items-center gap-2"
                 name="calendarNotifications"
-                :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
+                :label="$t('components.auth.user_settings_panel.calendar_notifications.reminder_times.name')"
             >
                 <ClientOnly>
                     <USelectMenu v-model="calendar.reminderTimes" multiple :items="calendarReminderTimes" value-key="value">

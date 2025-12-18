@@ -1279,7 +1279,7 @@
                 "subtitle": "To create an account join the FiveM server and run {command} command.",
                 "open_server_account_management": "Click below to retrieve your registration token (you can also use {command})."
             },
-            "UserSettingsPanel": {
+            "user_settings_panel": {
                 "title": "User Settings",
                 "subtitle": "Customize your user experience and manage your settings.",
                 "set_startpage": {
@@ -1312,6 +1312,10 @@
                         "name": "Reminders to send before the event",
                         "start": "Start of Event"
                     }
+                },
+                "events_disabled": {
+                    "label": "Disable event effects",
+                    "description": "Like snow flakes during Christmas time. Can improve performance on lower-end devices."
                 }
             },
             "ChangeUsernameModal": {

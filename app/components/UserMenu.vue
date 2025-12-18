@@ -32,7 +32,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             to: '/auth/account-info',
         },
         {
-            label: t('components.auth.UserSettingsPanel.title'),
+            label: t('components.auth.user_settings_panel.title'),
             icon: 'i-mdi-account-cog-outline',
             to: '/user-settings',
         },

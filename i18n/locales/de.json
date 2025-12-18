@@ -1279,7 +1279,7 @@
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein.",
                 "open_server_account_management": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auch den Befehl {command} nutzen)."
             },
-            "UserSettingsPanel": {
+            "user_settings_panel": {
                 "title": "Benutzer-Einstellungen",
                 "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",
                 "set_startpage": {
@@ -1312,6 +1312,10 @@
                         "name": "Vor dem Termin zu versendende Erinnerungen",
                         "start": "Beginn des Termines"
                     }
+                },
+                "events_disabled": {
+                    "label": "Event-Effekte deaktivieren",
+                    "description": "Wie z.B. Schneeflocken zur Weihnachtszeit. Kann die Leistung auf schwächeren Geräten verbessern."
                 }
             },
             "ChangeUsernameModal": {

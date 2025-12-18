@@ -53,6 +53,8 @@ export const useSettingsStore = defineStore(
         const nuiEnabled = ref<boolean>(false);
         const nuiResourceName = ref<string | undefined>(undefined);
 
+        const eventsDisabled = ref<boolean>(false);
+
         const livemap = ref<LivemapSettings>({
             markerSize: 22,
             centerSelectedMarker: false,
@@ -217,8 +219,12 @@ export const useSettingsStore = defineStore(
             version,
             updateAvailable,
             locale,
+
             nuiEnabled,
             nuiResourceName,
+
+            eventsDisabled,
+
             livemap,
             livemapLayerCategories,
             livemapLayers,
