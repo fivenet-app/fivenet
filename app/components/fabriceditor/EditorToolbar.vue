@@ -76,7 +76,7 @@ const exportMenuItems = computed<DropdownMenuItem[]>(() => [
         <UFormField>
             <div class="inline-flex gap-2">
                 <UInputNumber
-                    v-model.number="zoom"
+                    v-model="zoom"
                     class="w-30"
                     :step="0.1"
                     :min="0.1"

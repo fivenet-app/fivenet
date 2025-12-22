@@ -11,11 +11,13 @@ const { documentSize, snapThreshold } = useFabricEditor();
 
         <div class="flex items-center gap-2">
             <UFormField help="Width">
-                <UInput
-                    v-model.number="documentSize.width"
-                    type="number"
+                <UInputNumber
+                    v-model="documentSize.width"
                     size="xs"
                     class="w-20"
+                    :step="1"
+                    :min="128"
+                    :max="1280"
                     placeholder="Width"
                     :disabled="documentSize.disabled"
                 />
@@ -27,11 +29,13 @@ const { documentSize, snapThreshold } = useFabricEditor();
             </UFormField>
 
             <UFormField help="Height">
-                <UInput
-                    v-model.number="documentSize.height"
-                    type="number"
+                <UInputNumber
+                    v-model="documentSize.height"
                     size="xs"
                     class="w-20"
+                    :step="1"
+                    :min="128"
+                    :max="1280"
                     placeholder="Height"
                     :disabled="documentSize.disabled"
                 />

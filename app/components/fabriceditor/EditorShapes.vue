@@ -34,9 +34,21 @@ const text = ref<string>('Curved Text');
                             <UInput v-model="text" type="text" class="w-full" />
                         </UFormField>
 
-                        <UButton size="xs" :label="$t('components.fabric_editor.curved_text.half_circle_up')" @click="addCurvedText(text, 100, { arcAngleDeg: 180, clockwise: true })" />
-                        <UButton size="xs" :label="$t('components.fabric_editor.curved_text.half_circle_down')" @click="addCurvedText(text, 100, { arcAngleDeg: 180, clockwise: false })" />
-                        <UButton size="xs" :label="$t('components.fabric_editor.curved_text.full_circle')" @click="addCurvedText(text, 100, { arcAngleDeg: 360, clockwise: true })" />
+                        <UButton
+                            size="xs"
+                            :label="$t('components.fabric_editor.curved_text.half_circle_up')"
+                            @click="addCurvedText(text, 100, { arcAngleDeg: 180, clockwise: true })"
+                        />
+                        <UButton
+                            size="xs"
+                            :label="$t('components.fabric_editor.curved_text.half_circle_down')"
+                            @click="addCurvedText(text, 100, { arcAngleDeg: 180, clockwise: false })"
+                        />
+                        <UButton
+                            size="xs"
+                            :label="$t('components.fabric_editor.curved_text.full_circle')"
+                            @click="addCurvedText(text, 100, { arcAngleDeg: 360, clockwise: true })"
+                        />
                     </div>
                 </template>
             </UPopover>
@@ -46,7 +58,13 @@ const text = ref<string>('Curved Text');
             <UButton size="xs" icon="i-mdi-plus" :label="$t('components.fabric_editor.circle')" @click="addCircle" />
             <UButton size="xs" icon="i-mdi-plus" :label="$t('components.fabric_editor.input')" @click="addInput" />
 
-            <UButton v-if="jobProps?.logoFile" size="xs" icon="i-mdi-plus" :label="$t('common.logo')" @click="addImage('/' + jobProps.logoFile.filePath)" />
+            <UButton
+                v-if="jobProps?.logoFile"
+                size="xs"
+                icon="i-mdi-plus"
+                :label="$t('common.logo')"
+                @click="addImage('/' + jobProps.logoFile.filePath)"
+            />
         </div>
     </UCard>
 </template>
