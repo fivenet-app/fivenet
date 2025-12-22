@@ -1171,6 +1171,9 @@
             },
             "settings_roles_superuser": {
                 "content": "Sollten Sie bestimmte Berechtigungen vermissen oder eine leere Berechtigungsliste haben, kontaktieren Sie einen FiveNet Administrator damit dieser die Berechtigungen für ihre Fraktion einstellt."
+            },
+            "toggle_event_effect": {
+                "content": "Sie können \"Holiday\"-Effekte wie Schnee über Ihre Benutzereinstellungen ein- oder ausschalten."
             }
         },
         "notifications": {

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 const settingsStore = useSettingsStore();
-const { eventsShowSnowflakes } = storeToRefs(settingsStore);
+const { eventsDisabled, eventsShowSnowflakes } = storeToRefs(settingsStore);
 </script>
 
 <template>
-    <LazyPartialsEventsSnowflakesContainer v-if="eventsShowSnowflakes" />
+    <LazyPartialsEventsSnowflakesContainer v-if="!eventsDisabled && eventsShowSnowflakes" />
 </template>

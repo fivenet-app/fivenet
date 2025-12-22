@@ -56,9 +56,7 @@ export const useSettingsStore = defineStore(
         const eventsDisabled = ref<boolean>(false);
         // Use client date to show any event overlays
         const now = new Date();
-        const eventsShowSnowflakes = computed(
-            () => !eventsDisabled.value && now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.getDate() <= 26,
-        );
+        const eventsShowSnowflakes = computed(() => now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.getDate() <= 26);
 
         const livemap = ref<LivemapSettings>({
             markerSize: 22,

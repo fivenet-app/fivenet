@@ -1,26 +1,41 @@
 <script lang="ts" setup>
 import type { RoutesNamedLocations } from '@typed-router';
 
-type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations };
+const { discord } = useAppConfig();
 
-const hints = shuffleArray([
-    {
-        key: 'commandpalette',
-        keyboard: true,
-    },
-    {
-        key: 'startpage',
-        to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
-    },
-    {
-        key: 'documenteditor',
-        to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
-    },
-    {
-        key: 'sociallogin_discord',
-        to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
-    },
-] as Hint[]);
+const settingsStore = useSettingsStore();
+const { eventsShowSnowflakes } = storeToRefs(settingsStore);
+
+type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations; hide?: boolean };
+
+const hints = computed(() =>
+    shuffleArray(
+        [
+            {
+                key: 'commandpalette',
+                keyboard: true,
+            },
+            {
+                key: 'startpage',
+                to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
+            },
+            {
+                key: 'documenteditor',
+                to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
+            },
+            {
+                key: 'sociallogin_discord',
+                to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
+                hide: discord.botEnabled,
+            },
+            {
+                key: 'toggle_event_effect',
+                to: { name: 'user-settings' },
+                hide: !eventsShowSnowflakes.value,
+            },
+        ].flatMap((h) => (!h.hide ? [h] : [])) as Hint[],
+    ),
+);
 </script>
 
 <template>
@@ -41,8 +56,8 @@ const hints = shuffleArray([
             dots
             loop
             :autoplay="{ delay: 7500 }"
-            :ui="{ dots: '-bottom-4' }"
-            class="mb-2"
+            :ui="{ dots: '-bottom-6' }"
+            class="mb-4"
         >
             <div class="box-border w-full min-w-0">
                 <div class="flex min-w-0 flex-wrap items-center gap-3 overflow-hidden">

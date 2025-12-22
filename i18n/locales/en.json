@@ -1171,6 +1171,9 @@
             },
             "settings_roles_superuser": {
                 "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
+            },
+            "toggle_event_effect": {
+                "content": "You can toggle holiday effects like snow via your user settings."
             }
         },
         "notifications": {
