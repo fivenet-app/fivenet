@@ -102,11 +102,13 @@ func SetupDB(p Params) (Result, error) {
 	}
 
 	// Register DB stats metrics for Prometheus monitoring.
-	if err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+	reg, err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
 		semconv.DBSystemMySQL,
-	)); err != nil {
+	))
+	if err != nil {
 		return res, err
 	}
+	defer reg.Unregister()
 
 	// Setup tables "helper" vars to work with ESX directly if enabled in config.
 	if p.Config.Database.ESXCompat {

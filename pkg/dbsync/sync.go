@@ -98,11 +98,13 @@ func New(p Params) (*Sync, error) {
 	}
 	s.db = db
 
-	if err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+	reg, err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
 		semconv.DBSystemMySQL,
-	)); err != nil {
+	))
+	if err != nil {
 		return nil, fmt.Errorf("failed to register db stats metrics. %w", err)
 	}
+	defer reg.Unregister()
 
 	// Setup SQL Prometheus metrics collector
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
