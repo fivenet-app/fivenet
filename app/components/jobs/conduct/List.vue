@@ -14,6 +14,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 import { conductTypesToBadgeColor } from './helpers';
@@ -31,6 +32,8 @@ const { can } = useAuth();
 const overlay = useOverlay();
 
 const completorStore = useCompletorStore();
+
+const notifications = useNotificationsStore();
 
 const jobsConductClient = await getJobsConductClient();
 
@@ -104,6 +107,12 @@ async function deleteConductEntry(id: number): Promise<void> {
     try {
         const call = jobsConductClient.deleteConductEntry({ id });
         await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         refresh();
     } catch (e) {
@@ -242,11 +251,11 @@ const columns = computed(
                                 }),
                             ),
                         can('jobs.ConductService/DeleteConductEntry').value &&
-                            h(UTooltip, { text: t('common.delete') }, () =>
+                            h(UTooltip, { text: !row.original.deletedAt ? t('common.delete') : t('common.restore') }, () =>
                                 h(UButton, {
+                                    color: !row.original.deletedAt ? 'error' : 'success',
+                                    icon: !row.original.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore',
                                     variant: 'link',
-                                    icon: 'i-mdi-delete',
-                                    color: 'error',
                                     onClick: () => {
                                         confirmModal.open({
                                             confirm: async () => deleteConductEntry(row.original.id),

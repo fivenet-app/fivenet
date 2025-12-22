@@ -30,6 +30,12 @@ func (s *Server) ListConductEntries(
 
 	condition := tConduct.Job.EQ(mysql.String(userInfo.GetJob()))
 
+	if !userInfo.GetSuperuser() {
+		condition = condition.AND(
+			tConduct.DeletedAt.IS_NULL(),
+		)
+	}
+
 	// Field Permission Check
 	fields, err := s.ps.AttrStringList(
 		userInfo,
@@ -135,41 +141,49 @@ func (s *Server) ListConductEntries(
 	tCreatorUserProps := tUserProps.AS("creator_props")
 	tCreatorAvatar := tAvatar.AS("creator_profile_picture")
 
+	columns := mysql.ProjectionList{
+		tConduct.CreatedAt,
+		tConduct.UpdatedAt,
+		tConduct.Job,
+		tConduct.Type,
+		tConduct.Message,
+		tConduct.ExpiresAt,
+		tConduct.TargetUserID,
+		tColleague.ID,
+		tColleague.Job,
+		tColleague.JobGrade,
+		tColleague.Firstname,
+		tColleague.Lastname,
+		tColleague.Dateofbirth,
+		tColleague.PhoneNumber,
+		tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
+		tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
+		tColleagueProps.UserID,
+		tColleagueProps.Job,
+		tColleagueProps.AbsenceBegin,
+		tColleagueProps.AbsenceEnd,
+		tColleagueProps.NamePrefix,
+		tColleagueProps.NameSuffix,
+		tConduct.CreatorID,
+		tCreator.ID,
+		tCreator.Job,
+		tCreator.JobGrade,
+		tCreator.Firstname,
+		tCreator.Lastname,
+		tCreator.Dateofbirth,
+		tCreator.PhoneNumber,
+		tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
+		tCreatorAvatar.FilePath.AS("creator.profile_picture"),
+	}
+
+	if userInfo.GetSuperuser() {
+		columns = append(columns, tConduct.DeletedAt)
+	}
+
 	stmt := tConduct.
 		SELECT(
 			tConduct.ID,
-			tConduct.CreatedAt,
-			tConduct.UpdatedAt,
-			tConduct.Job,
-			tConduct.Type,
-			tConduct.Message,
-			tConduct.ExpiresAt,
-			tConduct.TargetUserID,
-			tColleague.ID,
-			tColleague.Job,
-			tColleague.JobGrade,
-			tColleague.Firstname,
-			tColleague.Lastname,
-			tColleague.Dateofbirth,
-			tColleague.PhoneNumber,
-			tUserUserProps.AvatarFileID.AS("target_user.profile_picture_file_id"),
-			tColleagueAvatar.FilePath.AS("target_user.profile_picture"),
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.AbsenceBegin,
-			tColleagueProps.AbsenceEnd,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tConduct.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tCreatorUserProps.AvatarFileID.AS("creator.profile_picture_file_id"),
-			tCreatorAvatar.FilePath.AS("creator.profile_picture"),
+			columns...,
 		).
 		FROM(
 			tConduct.

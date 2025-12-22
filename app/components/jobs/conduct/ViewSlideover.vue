@@ -64,6 +64,14 @@ if (props.entry.id > 0) {
                         <GenericTime :value="entry.updatedAt" />
                     </dd>
                 </div>
+                <div v-if="entry.deletedAt" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                    <dt class="text-sm leading-6 font-medium">
+                        {{ $t('common.deleted') }}
+                    </dt>
+                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                        <GenericTime :value="entry.deletedAt" />
+                    </dd>
+                </div>
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.expires_at') }}
