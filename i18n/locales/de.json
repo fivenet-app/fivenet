@@ -845,6 +845,9 @@
                 "pen_color": "Stiftfarbe",
                 "min_stroke_width": "Minimale Strichstärke",
                 "max_stroke_width": "Maximale Strichstärke"
+            },
+            "footer": {
+                "toggle_event_effect": "\"Holiday\"-Effekte umschalten"
             }
         },
         "clipboard": {

@@ -352,7 +352,6 @@ defineShortcuts(extractShortcuts(links.value));
 
             <LazyPartialsWebSocketStatusOverlay />
 
-            <!-- Events -->
             <LazyPartialsEventsLayer />
         </ClientOnly>
     </UDashboardGroup>

@@ -13,6 +13,10 @@ import PageFooter from '~/components/partials/PageFooter.vue';
             <slot />
         </div>
 
+        <ClientOnly>
+            <LazyPartialsEventsLayer />
+        </ClientOnly>
+
         <PageFooter />
     </div>
 </template>

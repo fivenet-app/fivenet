@@ -845,6 +845,9 @@
                 "pen_color": "Pen Color",
                 "min_stroke_width": "Min Stroke Width",
                 "max_stroke_width": "Max Stroke Width"
+            },
+            "footer": {
+                "toggle_event_effect": "Toggle Holiday Effects"
             }
         },
         "clipboard": {

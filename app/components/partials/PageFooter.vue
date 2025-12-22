@@ -5,6 +5,9 @@ const { t } = useI18n();
 
 const { website } = useAppConfig();
 
+const settingsStore = useSettingsStore();
+const { eventsDisabled } = storeToRefs(settingsStore);
+
 const items = computed(() =>
     [
         {
@@ -16,10 +19,14 @@ const items = computed(() =>
             to: website.links?.imprint,
         },
         {
+            label: t('components.partials.footer.toggle_event_effect'),
+            onClick: () => (eventsDisabled.value = !eventsDisabled.value),
+        },
+        {
             label: t('pages.about.title'),
             to: '/about',
         },
-    ].filter((l) => l.to !== undefined),
+    ].filter((l) => l.to !== undefined || l.onClick !== undefined),
 );
 
 const year = new Date().getFullYear();
