@@ -18,7 +18,7 @@ RUN apk add --no-cache git && \
         pnpm generate
 
 # Livemap Tiles Layer for improved caching
-FROM docker.io/library/alpine:3.23.0 AS livemaptiles
+FROM docker.io/library/alpine:3.23.2 AS livemaptiles
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN find ./public/images/livemap/ \
         -exec rm -rf {} +
 
 # Iconify icon sets for backend server
-FROM docker.io/library/alpine:3.23.0 AS iconsets
+FROM docker.io/library/alpine:3.23.2 AS iconsets
 
 WORKDIR /app
 
@@ -59,7 +59,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.23.0
+FROM docker.io/library/alpine:3.23.2
 
 WORKDIR /app
 
