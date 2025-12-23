@@ -129,7 +129,10 @@ func SetupDB(p Params) (Result, error) {
 	// Setup SQL Prometheus metrics collector for DB stats.
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
-	if req == nil {
+	if req != nil {
+		// Replace db connection with the one we just created
+		req.ReplaceDB(db)
+	} else {
 		req = reqs.NewDBReqs(db)
 
 		ctx, cancel := context.WithCancel(context.Background())
@@ -160,9 +163,6 @@ func SetupDB(p Params) (Result, error) {
 		if !p.Config.IgnoreRequirements && errs != nil {
 			return res, errs
 		}
-	} else {
-		// Replace db connection with the one we just created
-		req.ReplaceDB(db)
 	}
 
 	res.DB = db
