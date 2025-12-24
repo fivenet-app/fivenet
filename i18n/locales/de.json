@@ -1685,6 +1685,9 @@
             "rectangle": "Rechteck",
             "circle": "Kreis",
             "input": "Eingabe"
+        },
+        "notepad": {
+            "title": "Notizblock"
         }
     },
     "notifications": {

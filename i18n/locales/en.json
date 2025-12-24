@@ -1685,6 +1685,9 @@
             "rectangle": "Rectangle",
             "circle": "Circle",
             "input": "Input"
+        },
+        "notepad": {
+            "title": "Notepad"
         }
     },
     "notifications": {

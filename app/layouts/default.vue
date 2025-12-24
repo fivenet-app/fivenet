@@ -3,6 +3,7 @@ import type { NavigationMenuItem } from '@nuxt/ui';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import SuperuserJobToggle from '~/components/partials/SuperuserJobToggle.vue';
 import MathCalculatorDrawer from '~/components/quickbuttons/mathcalculator/MathCalculatorDrawer.vue';
+import NotepadDrawer from '~/components/quickbuttons/notepad/NotepadDrawer.vue';
 import PenaltyCalculatorDrawer from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorDrawer.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserMenu from '~/components/UserMenu.vue';
@@ -260,8 +261,9 @@ const clipboardLink = computed(() =>
 
 const penaltyCalculatorDrawer = overlay.create(PenaltyCalculatorDrawer);
 const mathCalculatorDrawer = overlay.create(MathCalculatorDrawer);
+const notepadDrawer = overlay.create(NotepadDrawer);
 
-const quickAccessButtons = computed(() =>
+const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
     [
         jobProps.value?.quickButtons?.penaltyCalculator || isSuperuser.value
             ? {
@@ -283,10 +285,24 @@ const quickAccessButtons = computed(() =>
                   },
               }
             : undefined,
+        {
+            label: t('components.notepad.title'),
+            icon: 'i-mdi-notebook',
+            tooltip: {
+                text: t('components.notepad.title'),
+                kbds: ['Q', 'N'],
+            },
+            disabled: true,
+            onClick: () => {
+                isDashboardSidebarSlideoverOpen.value = false;
+                notepadDrawer.open();
+            },
+        },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
 defineShortcuts(extractShortcuts(links.value));
+defineShortcuts(extractShortcuts(quickAccessButtons.value));
 </script>
 
 <template>

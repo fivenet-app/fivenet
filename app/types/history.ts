@@ -9,6 +9,7 @@ export interface Version<TContent> {
 }
 
 export interface Content {
+    title?: string;
     content: string;
     files: File[]; // Associated files, if any
 }
