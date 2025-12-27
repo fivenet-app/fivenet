@@ -2,6 +2,7 @@
 import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
+import { logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';

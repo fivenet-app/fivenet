@@ -292,7 +292,6 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
                 text: t('components.notepad.title'),
                 kbds: ['Q', 'N'],
             },
-            disabled: true,
             onClick: () => {
                 isDashboardSidebarSlideoverOpen.value = false;
                 notepadDrawer.open();

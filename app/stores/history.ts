@@ -21,10 +21,20 @@ export const useHistoryStore = defineStore(
          * @param {string} type - The type of history to filter by.
          * @returns {ComputedRef<Version<TContent>[]>} - A computed reference to the filtered history.
          */
-        const listHistory = <TContent>(type: string): ComputedRef<Version<TContent>[]> => {
-            return computed(() => {
-                return history.value.filter((v) => v.type === type) as Version<TContent>[];
-            });
+        const listHistory = <TContent>(type: string): ComputedRef<Version<TContent>[]> =>
+            computed(() => history.value.filter((v) => v.type === type) as Version<TContent>[]);
+
+        /**
+         * Return the last version for a specific type.
+         * @template TContent - The type of the content stored in the version.
+         * @param {string} type
+         * @returns {Version<TContent> | undefined}
+         */
+        const getLastVersion = <TContent>(type: string): Version<TContent> | undefined => {
+            const versions = history.value
+                .filter((v) => v.type === type)
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) as Version<TContent>[];
+            return versions.length > 0 ? versions[0] : undefined;
         };
 
         /**
@@ -55,9 +65,8 @@ export const useHistoryStore = defineStore(
          * @param {string} versionDate - The date of the version to revert to.
          * @returns {Version<TContent> | undefined} - The version to revert to, or undefined if not found.
          */
-        const revertToVersion = <TContent>(versionDate: string): Version<TContent> | undefined => {
-            return history.value.find((v) => v.date === versionDate) as Version<TContent> | undefined;
-        };
+        const revertToVersion = <TContent>(versionDate: string): Version<TContent> | undefined =>
+            history.value.find((v) => v.date === versionDate) as Version<TContent> | undefined;
 
         /**
          * Deletes a version by its unique identifier.
@@ -100,12 +109,8 @@ export const useHistoryStore = defineStore(
          */
         const handleRefresh = (handleAutoSave: () => void) => {
             // For refresh/close/tab close
-            onBeforeMount(() => {
-                window.addEventListener('beforeunload', handleAutoSave);
-            });
-            onBeforeUnmount(() => {
-                window.removeEventListener('beforeunload', handleAutoSave);
-            });
+            onBeforeMount(() => window.addEventListener('beforeunload', handleAutoSave));
+            onBeforeUnmount(() => window.removeEventListener('beforeunload', handleAutoSave));
 
             // For SPA navigation
             onBeforeRouteLeave((_to, _from, next) => {
@@ -119,6 +124,7 @@ export const useHistoryStore = defineStore(
             history,
 
             // Actions
+            getLastVersion,
             listHistory,
             addVersion,
             revertToVersion,

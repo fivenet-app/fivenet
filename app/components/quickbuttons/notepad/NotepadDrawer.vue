@@ -19,7 +19,7 @@ defineEmits<{
         </template>
 
         <template #body>
-            <div class="flex justify-center">
+            <div class="flex justify-center overflow-y-hidden">
                 <LazyQuickbuttonsNotepad class="min-h-[60lvh] w-full max-w-[80%] min-w-1/2" />
             </div>
         </template>

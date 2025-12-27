@@ -17,7 +17,7 @@ const state = reactive<Schema>({
     content: '',
 });
 
-const content = ref('');
+const logger = useLogger('🗒️ Notepad');
 
 const changed = ref(false);
 const saving = ref(false);
@@ -40,13 +40,24 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
         files: [],
     });
 
-    useTimeoutFn(() => {
-        saving.value = false;
-    }, 1750);
+    useTimeoutFn(() => (saving.value = false), 1750);
 
     lastSavedString = state.content;
     lastSaveTimestamp = now;
 }
+
+onMounted(() => {
+    logger.info('Notepad mounted, loading last version...', historyStore.listHistory<Content>('quickbutton-notepad').value);
+    const lastVersion = historyStore.getLastVersion<Content>('quickbutton-notepad');
+    if (lastVersion && lastVersion.content) {
+        state.content = lastVersion.content.content;
+    }
+});
+
+onBeforeUnmount(() => {
+    logger.info('Notepad unmounting, force saving history...');
+    saveHistory(state);
+});
 
 historyStore.handleRefresh(() => saveHistory(state));
 
@@ -75,7 +86,7 @@ watchDebounced(
     >
         <ClientOnly>
             <TiptapEditor
-                v-model="content"
+                v-model="state.content"
                 name="content"
                 class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                 history-type="quickbutton-notepad"
