@@ -136,7 +136,7 @@
         "pinia-plugin-persistedstate": "4.7.1",
         "playwright-core": "1.57.0",
         "postcss": "8.5.6",
-        "postcss-preset-env": "10.5.0",
+        "postcss-preset-env": "10.6.0",
         "prettier": "3.7.4",
         "prettier-plugin-organize-attributes": "1.0.0",
         "prettier-plugin-organize-imports": "4.3.0",
