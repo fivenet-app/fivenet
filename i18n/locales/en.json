@@ -744,7 +744,9 @@
         "experimental_feature": {
             "title": "This feature is experimental",
             "description": "This feature is still in an experimental stage and may contain bugs or incomplete functionality. Use at your own risk."
-        }
+        },
+        "fullscreen_enter": "Enter Fullscreen",
+        "fullscreen_exit": "Exit Fullscreen"
     },
     "components": {
         "partials": {

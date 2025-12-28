@@ -744,7 +744,9 @@
         "experimental_feature": {
             "title": "Diese Funktion ist experimentell",
             "description": "Diese Funktion befindet sich noch in einem experimentellen Stadium und kann Fehler oder unvollständige Funktionalität enthalten. Nutzung auf eigene Gefahr."
-        }
+        },
+        "fullscreen_enter": "Vollbildmodus betreten",
+        "fullscreen_exit": "Vollbildmodus verlassen"
     },
     "components": {
         "partials": {

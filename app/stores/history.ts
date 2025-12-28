@@ -53,7 +53,7 @@ export const useHistoryStore = defineStore(
                 content: content,
                 name: name,
             };
-            history.value.push(version as Version<unknown>);
+            history.value.unshift(version as Version<unknown>);
 
             // Enforce history length limit
             clearOldVersions(MAX_HISTORY_LENGTH);

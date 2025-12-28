@@ -47,7 +47,7 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
 }
 
 onMounted(() => {
-    logger.info('Notepad mounted, loading last version...', historyStore.listHistory<Content>('quickbutton-notepad').value);
+    logger.info('Notepad mounted, loading last version...');
     const lastVersion = historyStore.getLastVersion<Content>('quickbutton-notepad');
     if (lastVersion && lastVersion.content) {
         state.content = lastVersion.content.content;

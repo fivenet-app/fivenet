@@ -112,6 +112,9 @@ export const useSettingsStore = defineStore(
             maxStrokeWidth: 6,
         });
 
+        // Quick button Notepad fullscreen state
+        const notepadFullscreen = ref<boolean>(false);
+
         // Actions
         /**
          * Set the application version.
@@ -242,6 +245,7 @@ export const useSettingsStore = defineStore(
             jobsService,
             editor,
             signature,
+            notepadFullscreen,
 
             // Actions
             getLogger,
