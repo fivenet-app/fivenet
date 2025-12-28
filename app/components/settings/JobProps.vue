@@ -42,7 +42,6 @@ const schema = z.object({
     livemapMarkerColor: z.coerce.string().length(7),
     quickButtons: z.object({
         penaltyCalculator: z.coerce.boolean(),
-        mathCalculator: z.coerce.boolean(),
     }),
     radioFrequency: z.coerce.string().max(24),
     discordGuildId: z.coerce.string().max(48),
@@ -471,18 +470,6 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 />
                                                 <span class="text-sm font-medium">{{
                                                     $t('components.penaltycalculator.title')
-                                                }}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="space-y-4">
-                                            <div class="flex items-center gap-2">
-                                                <USwitch
-                                                    v-model="state.quickButtons.mathCalculator"
-                                                    :disabled="!canSubmit || !canEdit"
-                                                />
-                                                <span class="text-sm font-medium">{{
-                                                    $t('components.mathcalculator.title')
                                                 }}</span>
                                             </div>
                                         </div>

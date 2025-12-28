@@ -76,7 +76,6 @@ func (x *JobProps) Default(job string) {
 	if x.GetQuickButtons() == nil {
 		x.QuickButtons = &QuickButtons{
 			PenaltyCalculator: false,
-			MathCalculator:    false,
 		}
 	}
 
