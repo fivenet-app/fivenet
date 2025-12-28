@@ -37,6 +37,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.overview'),
                 kbds: ['G', 'H'],
             },
+            kbds: ['G', 'H'],
         },
         {
             label: t('common.mail'),
@@ -47,6 +48,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.mail'),
                 kbds: ['G', 'E'],
             },
+            kbds: ['G', 'E'],
             permission: 'mailer.MailerService/ListEmails' as Perms,
             active: route.name.startsWith('mail'),
         },
@@ -58,6 +60,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.citizen', 1),
                 kbds: ['G', 'C'],
             },
+            kbds: ['G', 'C'],
             permission: 'citizens.CitizensService/ListCitizens' as Perms,
             active: route.name.startsWith('citizens'),
         },
@@ -69,6 +72,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.vehicle', 2),
                 kbds: ['G', 'V'],
             },
+            kbds: ['G', 'V'],
             permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
         },
         {
@@ -79,6 +83,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.document', 2),
                 kbds: ['G', 'D'],
             },
+            kbds: ['G', 'D'],
             defaultOpen: false,
             children: [
                 {
@@ -98,6 +103,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.job'),
                 kbds: ['G', 'J'],
             },
+            kbds: ['G', 'J'],
             defaultOpen: false,
             children: [
                 {
@@ -141,6 +147,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.calendar'),
                 kbds: ['G', 'K'],
             },
+            kbds: ['G', 'K'],
             active: route.name.startsWith('calendar'),
         },
         {
@@ -151,6 +158,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.qualification', 2),
                 kbds: ['G', 'Q'],
             },
+            kbds: ['G', 'Q'],
             permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
             active: route.name.startsWith('qualifications'),
         },
@@ -162,6 +170,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.livemap'),
                 kbds: ['G', 'M'],
             },
+            kbds: ['G', 'M'],
             permission: 'livemap.LivemapService/Stream' as Perms,
         },
         {
@@ -172,6 +181,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.dispatch_center'),
                 kbds: ['G', 'W'],
             },
+            kbds: ['G', 'W'],
             permission: 'centrum.CentrumService/TakeControl' as Perms,
             active: route.name.startsWith('centrum'),
         },
@@ -183,6 +193,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.wiki'),
                 kbds: ['G', 'L'],
             },
+            kbds: ['G', 'L'],
             permission: 'wiki.WikiService/ListPages' as Perms,
             active: route.name.startsWith('wiki'),
         },
@@ -194,6 +205,7 @@ const links = computed<NavigationMenuItem[]>(() =>
                 text: t('common.control_panel'),
                 kbds: ['G', 'P'],
             },
+            kbds: ['G', 'P'],
             defaultOpen: false,
             children: [
                 {
@@ -269,6 +281,11 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
+                  tooltip: {
+                      text: t('components.penaltycalculator.title'),
+                      kbds: ['Q', 'P'],
+                  },
+                  kbds: ['Q', 'P'],
                   onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       penaltyCalculatorDrawer.open();
@@ -279,6 +296,11 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
+                  tooltip: {
+                      text: t('components.mathcalculator.title'),
+                      kbds: ['Q', 'C'],
+                  },
+                  kbds: ['Q', 'C'],
                   onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       mathCalculatorDrawer.open();
@@ -292,6 +314,7 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
                 text: t('components.notepad.title'),
                 kbds: ['Q', 'N'],
             },
+            kbds: ['Q', 'N'],
             onClick: () => {
                 isDashboardSidebarSlideoverOpen.value = false;
                 notepadDrawer.open();
@@ -300,8 +323,8 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-defineShortcuts(extractShortcuts(links.value));
-defineShortcuts(extractShortcuts(quickAccessButtons.value));
+defineShortcuts(extractShortcutsFromNavItems(links.value, '-'));
+defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 </script>
 
 <template>

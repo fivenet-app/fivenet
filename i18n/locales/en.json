@@ -740,7 +740,11 @@
         "singular": "Singular",
         "plural": "Plural",
         "shape": "Shape | Shapes",
-        "form": "Form | Forms"
+        "form": "Form | Forms",
+        "experimental_feature": {
+            "title": "This feature is experimental",
+            "description": "This feature is still in an experimental stage and may contain bugs or incomplete functionality. Use at your own risk."
+        }
     },
     "components": {
         "partials": {
@@ -1687,7 +1691,11 @@
             "input": "Input"
         },
         "notepad": {
-            "title": "Notepad"
+            "title": "Notepad",
+            "tooltip": {
+                "title": "Info about Notepad",
+                "description": "Your notepad contents are only stored locally in your browser/tablet. Clearing your browser's cache/data or using the /tabletfix command will cause your notes to be deleted."
+            }
         }
     },
     "notifications": {
