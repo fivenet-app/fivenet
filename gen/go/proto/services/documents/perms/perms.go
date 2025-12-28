@@ -2,6 +2,7 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 
 package permsdocuments
@@ -14,6 +15,7 @@ const (
 	ApprovalServicePerm  perms.Category = "documents.ApprovalService"
 	CollabServicePerm    perms.Category = "documents.CollabService"
 	DocumentsServicePerm perms.Category = "documents.DocumentsService"
+	FormsServicePerm     perms.Category = "documents.FormsService"
 	StampsServicePerm    perms.Category = "documents.StampsService"
 
 	ApprovalServiceDeleteApprovalTasksPerm             perms.Name = "DeleteApprovalTasks"

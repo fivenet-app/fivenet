@@ -50,6 +50,12 @@ export async function getDocumentsDocumentsClient() {
     return new DocumentsServiceClient(useGRPCTransport());
 }
 
+// Factory for documents.forms client.
+export async function getDocumentsFormsClient() {
+    const { FormsServiceClient } = await import('~~/gen/ts/services/documents/forms.client');
+    return new FormsServiceClient(useGRPCTransport());
+}
+
 // Factory for documents.stamps client.
 export async function getDocumentsStampsClient() {
     const { StampsServiceClient } = await import('~~/gen/ts/services/documents/stamps.client');

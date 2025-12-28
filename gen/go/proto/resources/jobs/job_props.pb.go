@@ -176,7 +176,6 @@ func (x *JobProps) GetSettings() *JobSettings {
 type QuickButtons struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	PenaltyCalculator bool                   `protobuf:"varint,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
-	MathCalculator    bool                   `protobuf:"varint,3,opt,name=math_calculator,json=mathCalculator,proto3" json:"math_calculator,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -218,13 +217,6 @@ func (x *QuickButtons) GetPenaltyCalculator() bool {
 	return false
 }
 
-func (x *QuickButtons) GetMathCalculator() bool {
-	if x != nil {
-		return x.MathCalculator
-	}
-	return false
-}
-
 var File_resources_jobs_job_props_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_job_props_proto_rawDesc = "" +
@@ -258,10 +250,9 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x05_motdB\x0f\n" +
 	"\r_logo_file_idB\f\n" +
 	"\n" +
-	"_logo_file\"t\n" +
+	"_logo_file\"Q\n" +
 	"\fQuickButtons\x12-\n" +
-	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12'\n" +
-	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculator:\x06\xe2\xf3\x18\x02\b\x01J\x04\b\x02\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator:\x06\xe2\xf3\x18\x02\b\x01J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_job_props_proto_rawDescOnce sync.Once

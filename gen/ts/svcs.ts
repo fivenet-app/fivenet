@@ -7,18 +7,27 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
+// source: services/documents/stamps.proto
+// source: services/documents/approval.proto
+// source: services/documents/collab.proto
+// source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto
@@ -87,6 +96,7 @@ export const grpcServices = [
     'documents.ApprovalService',
     'documents.CollabService',
     'documents.DocumentsService',
+    'documents.FormsService',
     'documents.StampsService',
     'filestore.FilestoreService',
     'jobs.ConductService',
@@ -222,6 +232,8 @@ export const grpcMethods = [
 	'documents.DocumentsService/ToggleDocumentPin',
 	'documents.DocumentsService/SetDocumentReminder',
 	'documents.DocumentsService/UploadFile',
+	'documents.FormsService/GetForm',
+	'documents.FormsService/ListForms',
 	'documents.StampsService/ListUsableStamps',
 	'documents.StampsService/UpsertStamp',
 	'documents.StampsService/DeleteStamp',

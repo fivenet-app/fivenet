@@ -4266,6 +4266,29 @@ Policy snapshot applied to a specific version
 
 
 
+## resources/documents/forms.proto
+
+
+### resources.documents.Form
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/documents/requests.proto
 
 
@@ -4969,7 +4992,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `penalty_calculator` | [bool](#bool) |  |  |
-| `math_calculator` | [bool](#bool) |  |  |
 
 
 
@@ -9600,6 +9622,65 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) | |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) | |
 | `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
+
+ <!-- end services -->
+
+
+
+## services/documents/forms.proto
+
+
+### services.documents.GetFormRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `form_id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.documents.GetFormResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `form` | [resources.documents.Form](#resourcesdocumentsForm) |  |  |
+
+
+
+
+
+### services.documents.ListFormsRequest
+
+
+
+
+
+### services.documents.ListFormsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `forms` | [resources.documents.Form](#resourcesdocumentsForm) | repeated |  |
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+### services.documents.FormsService
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetForm` | [GetFormRequest](#servicesdocumentsGetFormRequest) | [GetFormResponse](#servicesdocumentsGetFormResponse) | |
+| `ListForms` | [ListFormsRequest](#servicesdocumentsListFormsRequest) | [ListFormsResponse](#servicesdocumentsListFormsResponse) | |
 
  <!-- end services -->
 

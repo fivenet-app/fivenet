@@ -7,6 +7,7 @@
 // source: services/documents/approval.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/documents/forms.proto
 // source: services/documents/stamps.proto
 // source: services/filestore/filestore.proto
 // source: services/jobs/conduct.proto

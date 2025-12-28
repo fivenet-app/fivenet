@@ -297,21 +297,19 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
                   },
               }
             : undefined,
-        jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
-            ? {
-                  label: t('components.mathcalculator.title'),
-                  icon: 'i-mdi-calculator',
-                  tooltip: {
-                      text: t('components.mathcalculator.title'),
-                      kbds: ['Q', 'M'],
-                  },
-                  kbds: ['Q', 'M'],
-                  onClick: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      mathCalculatorDrawer.open();
-                  },
-              }
-            : undefined,
+        {
+            label: t('components.mathcalculator.title'),
+            icon: 'i-mdi-calculator',
+            tooltip: {
+                text: t('components.mathcalculator.title'),
+                kbds: ['Q', 'M'],
+            },
+            kbds: ['Q', 'M'],
+            onClick: () => {
+                isDashboardSidebarSlideoverOpen.value = false;
+                mathCalculatorDrawer.open();
+            },
+        },
         {
             label: t('components.notepad.title'),
             icon: 'i-mdi-notebook',
