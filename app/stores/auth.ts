@@ -72,7 +72,6 @@ export const useAuthStore = defineStore(
             radioFrequency: undefined,
             quickButtons: {
                 penaltyCalculator: false,
-                mathCalculator: false,
             },
             logoFileId: undefined,
             logoFile: undefined,

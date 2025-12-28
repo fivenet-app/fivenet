@@ -91,7 +91,6 @@ const state = reactive<Schema>({
     livemapMarkerColor: '',
     quickButtons: {
         penaltyCalculator: false,
-        mathCalculator: false,
     },
     radioFrequency: '',
     discordGuildId: '',
