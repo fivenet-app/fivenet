@@ -265,6 +265,11 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
+                  tooltip: {
+                      text: t('common.clipboard'),
+                      kbds: ['Q', 'C'],
+                  },
+                  kbds: ['Q', 'C'],
                   onClick: () => clipboardModal.open(),
               }
             : undefined,
@@ -298,9 +303,9 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
                   icon: 'i-mdi-calculator',
                   tooltip: {
                       text: t('components.mathcalculator.title'),
-                      kbds: ['Q', 'C'],
+                      kbds: ['Q', 'M'],
                   },
-                  kbds: ['Q', 'C'],
+                  kbds: ['Q', 'M'],
                   onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       mathCalculatorDrawer.open();
@@ -324,6 +329,7 @@ const quickAccessButtons = computed<NavigationMenuItem[]>(() =>
 );
 
 defineShortcuts(extractShortcutsFromNavItems(links.value, '-'));
+defineShortcuts(extractShortcutsFromNavItems(clipboardLink.value, '-'));
 defineShortcuts(extractShortcuts(quickAccessButtons.value, '-'));
 </script>
 
