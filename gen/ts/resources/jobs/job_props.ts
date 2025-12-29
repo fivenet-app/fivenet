@@ -230,7 +230,7 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
     constructor() {
         super("resources.jobs.QuickButtons", [
             { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ], { "codegen.dbscanner.dbscanner": { enabled: true } });
+        ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<QuickButtons>): QuickButtons {
         const message = globalThis.Object.create((this.messagePrototype!));

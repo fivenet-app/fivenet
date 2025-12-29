@@ -99,12 +99,15 @@ const name = computed(() =>
         </template>
 
         <template #account>
-            <div class="truncate text-left">
+            <div class="min-w-0 truncate text-left">
                 <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
                 <p class="truncate font-medium text-highlighted">{{ username }}</p>
-                <p v-if="activeChar" class="truncate font-medium text-highlighted">
-                    {{ activeChar.jobLabel
-                    }}<template v-if="activeChar.job !== game.unemployedJobName"> - {{ activeChar.jobGradeLabel }}</template>
+                <p v-if="activeChar" class="inline-flex items-center gap-1 font-medium text-highlighted">
+                    <span>{{ activeChar.jobLabel }}</span>
+                    <template v-if="activeChar.job !== game.unemployedJobName">
+                        <span>-</span>
+                        <span>{{ activeChar.jobGradeLabel }}</span>
+                    </template>
                 </p>
             </div>
         </template>

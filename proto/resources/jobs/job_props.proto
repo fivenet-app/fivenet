@@ -32,7 +32,10 @@ message JobProps {
 }
 
 message QuickButtons {
-  option (codegen.dbscanner.dbscanner) = {enabled: true};
+  option (codegen.dbscanner.dbscanner) = {
+    enabled: true
+    partial: true
+  };
 
   reserved 2;
 

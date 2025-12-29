@@ -266,6 +266,9 @@ func (s *Server) ChangePassword(
 	if claims.CharID > 0 {
 		char, _, _, err = s.getCharacter(ctx, claims.CharID)
 		if err != nil {
+			if errors.Is(err, qrm.ErrNoRows) {
+				return nil, errorsauth.ErrNoCharFound
+			}
 			return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 		}
 	}
@@ -586,9 +589,6 @@ func (s *Server) getCharacter(
 		JobProps *jobs.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, nil, "", errorsauth.ErrNoCharFound
-		}
 		return nil, nil, "", err
 	}
 

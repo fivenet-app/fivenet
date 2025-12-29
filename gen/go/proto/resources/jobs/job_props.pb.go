@@ -250,9 +250,9 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x05_motdB\x0f\n" +
 	"\r_logo_file_idB\f\n" +
 	"\n" +
-	"_logo_file\"Q\n" +
+	"_logo_file\"S\n" +
 	"\fQuickButtons\x12-\n" +
-	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator:\x06\xe2\xf3\x18\x02\b\x01J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator:\b\xe2\xf3\x18\x04\b\x01\x18\x01J\x04\b\x02\x10\x03J\x04\b\x03\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_job_props_proto_rawDescOnce sync.Once

@@ -25,7 +25,7 @@ const filestoreFilestoreClient = await getFilestoreFilestoreClient();
 const schema = z.object({
     category: z.coerce.string().min(3).max(255),
     name: z.coerce.string().min(3).max(255),
-    file: z.file().mime(fileUpload.types.images).max(fileUpload.fileSizes.fileStore),
+    file: z.file().mime(fileUpload.types.images).max(fileUpload.fileSizes.fileStore).min(1).optional(),
 });
 
 type Schema = z.output<typeof schema>;

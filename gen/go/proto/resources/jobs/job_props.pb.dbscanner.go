@@ -7,16 +7,15 @@ import (
 	"database/sql/driver"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // Scan implements driver.Valuer for protobuf QuickButtons.
 func (x *QuickButtons) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return protojson.Unmarshal([]byte(t), x)
+		return protoutils.UnmarshalPartialJSON([]byte(t), x)
 	case []byte:
-		return protojson.Unmarshal(t, x)
+		return protoutils.UnmarshalPartialJSON(t, x)
 	}
 	return nil
 }
