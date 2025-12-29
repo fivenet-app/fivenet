@@ -142,8 +142,9 @@ const updateCurvedTextFillColor = (val: string) => {
                             :model-value="(activeObject as Textbox).fontSize"
                             :min="8"
                             :max="100"
+                            :step="1"
                             class="w-full"
-                            @update:model-value="updateFontSize($event)"
+                            @update:model-value="($event) => updateFontSize($event ?? 0)"
                         />
                     </UFormField>
 
@@ -196,7 +197,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :min="8"
                             :max="100"
                             class="w-full"
-                            @update:model-value="updateCurvedTextFontSize($event)"
+                            @update:model-value="($event) => updateCurvedTextFontSize($event ?? 0)"
                         />
                     </UFormField>
 
@@ -388,7 +389,7 @@ const updateCurvedTextFillColor = (val: string) => {
                             :min="8"
                             :max="100"
                             class="w-full"
-                            @update:model-value="updateFontSize($event)"
+                            @update:model-value="($event) => updateFontSize($event ?? 0)"
                         />
                     </UFormField>
 
