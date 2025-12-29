@@ -27,7 +27,11 @@ const { can } = useAuth();
             :to="module.to"
             :title="module.title"
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
-            @click="$emit('selected', index)"
+            @click="
+                () => {
+                    !module.to && $emit('selected', index);
+                }
+            "
         >
             <template v-if="showIcon && module.icon" #leading>
                 <template v-if="!module.icon.startsWith('i-')">

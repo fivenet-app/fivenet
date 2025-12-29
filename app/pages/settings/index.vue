@@ -110,7 +110,12 @@ const superuserItems = [
                     <CardsList :items="items" />
                 </div>
 
-                <UCard v-if="isSuperuser" :title="$t('components.settings.system_status.title')" icon="i-mdi-server">
+                <UCard
+                    v-if="isSuperuser"
+                    :title="$t('components.settings.system_status.title')"
+                    icon="i-mdi-server"
+                    :ui="{ body: 'p-2 sm:p-2' }"
+                >
                     <template #header>
                         <div class="flex items-center gap-2">
                             <UIcon name="i-mdi-server" class="size-5 text-primary" />
@@ -123,16 +128,18 @@ const superuserItems = [
                     </template>
                 </UCard>
 
-                <UCard v-if="isSuperuser" :title="$t('components.settings.system_settings')" icon="i-mdi-administrator">
-                    <template #header>
-                        <div class="flex items-center gap-2">
-                            <UIcon name="i-mdi-administrator" class="size-5 text-primary" />
-                            <h3 class="text-md font-semibold">{{ $t('components.settings.system_settings') }}</h3>
-                        </div>
-                    </template>
-                </UCard>
+                <template v-if="isSuperuser">
+                    <UCard :title="$t('components.settings.system_settings')" icon="i-mdi-administrator">
+                        <template #header>
+                            <div class="flex items-center gap-2">
+                                <UIcon name="i-mdi-administrator" class="size-5 text-primary" />
+                                <h3 class="text-md font-semibold">{{ $t('components.settings.system_settings') }}</h3>
+                            </div>
+                        </template>
+                    </UCard>
 
-                <CardsList :items="superuserItems" />
+                    <CardsList :items="superuserItems" />
+                </template>
             </div>
         </template>
     </UDashboardPanel>

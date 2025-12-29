@@ -58,7 +58,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
         </template>
 
         <template #body>
-            <List ref="templatesListRef" @selected="selected($event)" />
+            <List ref="templatesListRef" link @selected="selected($event)" />
         </template>
 
         <template #footer>

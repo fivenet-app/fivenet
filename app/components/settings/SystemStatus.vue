@@ -30,7 +30,8 @@ async function getStatus() {
             :error="error"
             :retry="refresh"
         />
-        <div v-if="data" class="flex flex-wrap gap-4">
+
+        <div v-else-if="data" class="flex flex-wrap gap-2">
             <UPopover class="flex-1">
                 <UButton
                     variant="link"

@@ -6,6 +6,10 @@ import type { CardElements } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
+const props = defineProps<{
+    link?: boolean;
+}>();
+
 defineEmits<{
     (e: 'selected', t: TemplateShort | undefined): void;
 }>();
@@ -42,6 +46,7 @@ const items = computed<CardElements>(
             description: v?.description,
             icon: v.icon ?? 'i-mdi-file-outline',
             color: v.color ?? 'primary',
+            to: props.link ? { name: 'documents-templates-id', params: { id: v?.id } } : undefined,
         })) ?? [],
 );
 
