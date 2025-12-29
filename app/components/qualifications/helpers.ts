@@ -24,7 +24,7 @@ export function checkQualificationAccess(
         return false;
     }
 
-    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.value.job) {
+    if (perm !== undefined && creator !== undefined && (creatorJob ?? creator?.job) === activeChar.value.job) {
         return checkIfCanAccessOwnJobQualification(activeChar.value, creator, perm);
     }
 

@@ -121,14 +121,14 @@ const canDo = computed(() => ({
         qualification.value?.access,
         qualification.value?.creator,
         AccessLevel.EDIT,
-        undefined,
+        'qualifications.QualificationsService/UpdateQualification',
         qualification.value?.creatorJob,
     ),
     delete: checkQualificationAccess(
         qualification.value?.access,
         qualification.value?.creator,
         AccessLevel.EDIT,
-        undefined,
+        'qualifications.QualificationsService/DeleteQualification',
         qualification.value?.creatorJob,
     ),
 }));

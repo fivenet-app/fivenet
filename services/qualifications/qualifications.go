@@ -376,7 +376,7 @@ func (s *Server) UpdateQualification(
 		oldQuali.GetCreatorJob(),
 		oldQuali.GetCreator(),
 	) {
-		return nil, errorsqualifications.ErrFailedQuery
+		return nil, errorsqualifications.ErrQualiUpdateDenied
 	}
 
 	fields, err := s.perms.AttrStringList(

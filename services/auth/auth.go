@@ -762,7 +762,8 @@ func (s *Server) SetSuperuserMode(
 
 	// Set user's job as requested job when superuser mode is turned on
 	if req.Job == nil {
-		req.Job = &userInfo.Job
+		job := userInfo.GetJob()
+		req.Job = &job
 	}
 
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)

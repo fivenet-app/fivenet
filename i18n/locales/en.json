@@ -2246,7 +2246,8 @@
             "ErrQualificationClosed": "Can't request or take a closed qualification!",
             "ErrExamDisabled": "The qualification's exam is disabled!",
             "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
-            "ErrQualiAccessDenied": "You can't access this qualifcation!"
+            "ErrQualiAccessDenied": "You can't access this qualifcation!",
+            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Failed to load calendar data!",
