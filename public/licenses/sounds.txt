@@ -1,14 +1,14 @@
 The sounds used in the FiveNet project are primarily from  Pixabay (https://pixabay.com/),
 they are licensed under their Content License (https://pixabay.com/service/terms/).
 
-You can read their license summary here: https://pixabay.com/service/license-summary/
+You can read Pixabay.com license summary here: https://pixabay.com/service/license-summary/
 
 Attributions per File (please note that these links might contain tracking params as we include the attributions as they are provided by Pixabay):
 
-* `centrum/message-incoming.mp3` - UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=132126) from UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/)
-* `centrum/morse-sos.mp3` - Pixabay (https://pixabay.com/users/pixabay-1/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=93449) from Pixabay (https://pixabay.com/)
-* `centrum/attention.mp3` - Pixabay (https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=92089) from Pixabay (https://pixabay.com/)
-* `notification.mp3` - "System Notification" (https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=199277) from UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/)
+- `centrum/message-incoming.mp3` - UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=132126) from UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/)
+- `centrum/morse-sos.mp3` - Pixabay (https://pixabay.com/users/pixabay-1/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=93449) from Pixabay (https://pixabay.com/)
+- `centrum/attention.mp3` - Pixabay (https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=92089) from Pixabay (https://pixabay.com/)
+- `notification.mp3` - "System Notification" (https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=199277) from UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/)
 
 Note from @galexrt (not legal advice): As far as I understand, including the sound
     files in the GitHub project might not be allowed, but as I interpret

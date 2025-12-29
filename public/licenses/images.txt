@@ -1,0 +1,22 @@
+The images and icons sourced from Flaticon are used under the Flaticon Premium
+License. Under this license, attribution is not required.
+https://www.flaticon.com/legal
+
+The images and icons included in this repository are used as part of the
+FiveNet project and are not intended for standalone redistribution.
+
+Some images and icons included in this repository may have been modified
+(e.g. color adjustments or inversions) to better fit the FiveNet visual style.
+
+Note: Flaticon icon page URLs may contain terms such as "free-icon" even when
+the icons were downloaded under a Flaticon Premium license.
+
+Attributions per File:
+
+- `public/images/broken_image.png` - Flaticon (https://www.flaticon.com/free-icon/image_17798162)
+
+Note: Reuse of these images or icons outside of the FiveNet project may require
+a separate Flaticon license.
+
+If additional image or icon assets are added in the future, their respective
+sources and licenses should be documented in this file.

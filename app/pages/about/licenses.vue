@@ -15,19 +15,27 @@ definePageMeta({
 
 const licenses = [
     {
-        label: `FiveNet Project`,
+        label: 'FiveNet Project',
         path: '/licenses/LICENSE.txt',
     },
     {
-        label: `Frontend`,
+        label: 'Frontend',
         path: '/licenses/frontend.txt',
     },
     {
-        label: `Backend`,
+        label: 'Backend',
         path: '/licenses/backend.txt',
     },
     {
-        label: `Sounds`,
+        label: 'Images & Icons',
+        path: '/licenses/images.txt',
+    },
+    {
+        label: 'Fonts',
+        path: '/licenses/fonts.txt',
+    },
+    {
+        label: 'Sounds',
         path: '/licenses/sounds.txt',
     },
 ];

@@ -1,0 +1,17 @@
+The FiveNet project includes font files that are downloaded during the build
+process and bundled into the distributed release artifacts of the FiveNet
+project (e.g. container images).
+
+These fonts are used as part of the FiveNet user interface and are not intended
+for standalone redistribution outside of the FiveNet project context.
+
+Fonts used by FiveNet:
+
+- Public Sans - licensed under the SIL Open Font License (OFL; https://openfontlicense.org/)
+
+The SIL Open Font License permits use, modification, embedding, and
+redistribution of the font, including as part of software products and
+release artifacts, without requiring attribution.
+
+If additional fonts are added in the future, their respective sources and
+licenses should be documented in this file.

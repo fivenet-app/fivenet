@@ -41,15 +41,7 @@ function toggleBlur(): void {
     }
 }
 
-const src = computed(() => {
-    if (!props.src) return props.src;
-
-    if (!props.src.startsWith('http') && !props.src.startsWith('/images') && !props.src.startsWith('/api/filestore')) {
-        return `/api/filestore/${props.src.replace(/^\//, '')}`;
-    }
-
-    return props.src;
-});
+const src = useGenerateImageURL(props.src);
 </script>
 
 <template>

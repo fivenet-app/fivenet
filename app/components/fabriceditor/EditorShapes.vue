@@ -63,7 +63,7 @@ const text = ref<string>('Curved Text');
                 size="xs"
                 icon="i-mdi-plus"
                 :label="$t('common.logo')"
-                @click="addImage('/' + jobProps.logoFile.filePath)"
+                @click="addImage('/api/filestore/' + jobProps.logoFile.filePath)"
             />
         </div>
     </UCard>
