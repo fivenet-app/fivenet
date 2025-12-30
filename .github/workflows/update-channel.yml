@@ -28,7 +28,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout develop
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           fetch-depth: 0
 
@@ -43,7 +43,7 @@ jobs:
             "${{ inputs.chart_version }}"
 
       - name: Commit changes on develop
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           commit_message: "ci: bump dev channel to ${{ inputs.image_tag }}"
           file_pattern: |
@@ -51,7 +51,7 @@ jobs:
           branch: develop
 
       - name: Checkout gh-pages branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
         with:
           ref: ${{ env.GH_PAGES_BRANCH }}
           path: gh-pages
