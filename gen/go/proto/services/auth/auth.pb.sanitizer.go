@@ -53,7 +53,7 @@ func (m *ChangeUsernameRequest) Sanitize() error {
 	m.Current = htmlsanitizer.Sanitize(m.Current)
 
 	// Field: New
-	m.New = htmlsanitizer.Sanitize(m.New)
+	m.New = htmlsanitizer.StripTags(m.New)
 
 	return nil
 }
@@ -156,7 +156,7 @@ func (m *CreateAccountRequest) Sanitize() error {
 	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
 
 	// Field: Username
-	m.Username = htmlsanitizer.Sanitize(m.Username)
+	m.Username = htmlsanitizer.StripTags(m.Username)
 
 	return nil
 }
@@ -179,7 +179,7 @@ func (m *DeleteSocialLoginRequest) Sanitize() error {
 	}
 
 	// Field: Provider
-	m.Provider = htmlsanitizer.Sanitize(m.Provider)
+	m.Provider = htmlsanitizer.StripTags(m.Provider)
 
 	return nil
 }

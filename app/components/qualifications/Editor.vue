@@ -434,7 +434,7 @@ const canDo = computed(() => ({
     public: attr('qualifications.QualificationsService/UpdateQualification', 'Fields', 'Public').value,
 }));
 
-const items = [
+const items = computed(() => [
     {
         slot: 'content' as const,
         label: t('common.edit'),
@@ -459,7 +459,7 @@ const items = [
         icon: 'i-mdi-school',
         value: 'exam',
     },
-];
+]);
 
 const route = useRoute();
 const router = useRouter();

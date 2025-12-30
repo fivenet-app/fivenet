@@ -17,81 +17,81 @@ definePageMeta({
 
 const { isSuperuser } = useAuth();
 
-const items = [
+const items = computed<CardElements>(() => [
     {
         title: t('components.settings.job_props.job_properties'),
         description: t('pages.settings.features.properties'),
-        to: { name: 'settings-props' },
+        to: '/settings/props',
         permission: 'settings.SettingsService/GetJobProps',
         icon: 'i-mdi-tune',
     },
     {
         title: t('common.role', 2),
         description: t('components.settings.role_view.add_permission'),
-        to: { name: 'settings-roles' },
+        to: '/settings/roles',
         permission: 'settings.SettingsService/GetRoles',
         icon: 'i-mdi-account-group',
     },
     {
         title: t('common.audit_log', 1),
         description: t('pages.settings.features.audit_log'),
-        to: { name: 'settings-audit' },
+        to: '/settings/audit',
         permission: 'settings.SettingsService/ViewAuditLog',
         icon: 'i-mdi-math-log',
     },
     {
         title: t('common.dispatch_center_settings'),
         description: t('pages.settings.features.dispatch_center'),
-        to: { name: 'centrum-settings' },
+        to: '/centrum/settings',
         permission: 'centrum.CentrumService/UpdateSettings',
         icon: 'i-mdi-car-emergency',
     },
     {
         title: t('pages.settings.laws.title'),
         description: t('pages.settings.features.laws'),
-        to: { name: 'settings-laws' },
+        to: '/settings/laws',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-scale-balance',
     },
-] as CardElements;
+]);
 
-const superuserItems = [
+const superuserItems = computed<CardElements>(() => [
     {
         title: t('pages.settings.limiter.title'),
         description: t('pages.settings.features.limiter'),
-        to: { name: 'settings-limiter' },
+        to: '/settings/limiter',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-car-speed-limiter',
     },
     {
         title: t('pages.settings.filestore.title'),
         description: t('pages.settings.features.filestore'),
-        to: { name: 'settings-filestore' },
+        to: '/settings/filestore',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-file-multiple',
     },
     {
         title: t('pages.settings.accounts.title'),
         description: t('pages.settings.features.accounts'),
-        to: { name: 'settings-accounts' },
+        to: '/settings/accounts',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-account-multiple',
     },
     {
         title: t('pages.settings.settings.title'),
         description: t('pages.settings.features.settings'),
-        to: { name: 'settings-settings' },
+        to: '/settings/settings',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-office-building-cog',
     },
     {
         title: t('pages.settings.cron.title'),
         description: t('pages.settings.features.cron'),
-        to: { name: 'settings-cron' },
+        to: '/settings/cron',
         permission: 'Superuser/Superuser',
         icon: 'i-mdi-calendar-task',
     },
-] as CardElements;
+]);
 </script>
 
 <template>

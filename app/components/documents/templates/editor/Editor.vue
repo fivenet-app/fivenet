@@ -438,7 +438,7 @@ onBeforeMount(async () => {
     findCategories();
 });
 
-const items = [
+const items = computed(() => [
     {
         slot: 'details' as const,
         label: t('common.detail', 2),
@@ -463,7 +463,7 @@ const items = [
         icon: 'i-mdi-file-edit',
         value: 'content',
     },
-];
+]);
 
 const route = useRoute();
 const router = useRouter();

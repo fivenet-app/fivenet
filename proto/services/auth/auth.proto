@@ -5,6 +5,7 @@ package services.auth;
 import "buf/validate/validate.proto";
 import "codegen/audit/redacted.proto";
 import "codegen/perms/perms.proto";
+import "codegen/sanitizer/sanitizer.proto";
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/jobs/job_props.proto";
@@ -24,11 +25,17 @@ message CreateAccountRequest {
     },
     (codegen.audit.redacted) = true
   ];
-  string username = 2 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 24
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
-  }];
+  string username = 2 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 24
+      pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
   string password = 3 [
     (buf.validate.field).string = {
       min_len: 6
@@ -96,11 +103,17 @@ message ChangeUsernameRequest {
     max_len: 24
     pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
-  string new = 2 [(buf.validate.field).string = {
-    min_len: 3
-    max_len: 24
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
-  }];
+  string new = 2 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 24
+      pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message ChangeUsernameResponse {}
@@ -152,7 +165,13 @@ message ChooseCharacterResponse {
 }
 
 message DeleteSocialLoginRequest {
-  string provider = 1 [(buf.validate.field).string.max_len = 50];
+  string provider = 1 [
+    (buf.validate.field).string.max_len = 50,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "StripTags"
+    }
+  ];
 }
 
 message DeleteSocialLoginResponse {

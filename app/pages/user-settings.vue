@@ -12,7 +12,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = [
+const items = computed(() => [
     {
         label: t('common.settings'),
         icon: 'i-mdi-cog',
@@ -24,7 +24,7 @@ const items = [
         icon: 'i-mdi-notification-settings',
         to: '/user-settings/notifications',
     },
-];
+]);
 </script>
 
 <template>

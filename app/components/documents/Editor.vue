@@ -314,7 +314,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     }
 }
 
-const items = [
+const items = computed(() => [
     {
         slot: 'content' as const,
         label: t('common.content'),
@@ -339,7 +339,7 @@ const items = [
         icon: 'i-mdi-account-multiple',
         value: 'relations',
     },
-];
+]);
 
 const router = useRouter();
 

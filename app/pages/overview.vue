@@ -14,7 +14,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const items = [
+const items = computed<CardElements>(() => [
     {
         title: t('common.mail'),
         description: t('pages.overview.features.mailer'),
@@ -84,7 +84,7 @@ const items = [
         permission: 'wiki.WikiService/ListPages',
         icon: 'i-mdi-brain',
     },
-] as CardElements;
+]);
 </script>
 
 <template>

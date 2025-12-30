@@ -32,7 +32,7 @@ const overlay = useOverlay();
 const mailerStore = useMailerStore();
 const { draft, emails, selectedEmail, selectedThread, threads, unreadThreadIds } = storeToRefs(mailerStore);
 
-const items = [
+const items = computed(() => [
     {
         label: t('common.all'),
         slot: 'all' as const,
@@ -51,7 +51,7 @@ const items = [
         value: 'archive',
         icon: 'i-mdi-archive',
     },
-];
+]);
 
 const route = useRoute();
 const router = useRouter();

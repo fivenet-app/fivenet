@@ -31,7 +31,7 @@ async function resetLocalStorage(): Promise<void> {
         window.localStorage.clear();
     }
 
-    await navigateTo({ name: 'index' });
+    await navigateTo('/');
 }
 
 async function sendTestNotifications(): Promise<void> {

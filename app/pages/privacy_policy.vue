@@ -14,7 +14,7 @@ definePageMeta({
 const { website } = useAppConfig();
 
 if (website.links?.privacyPolicy === undefined) {
-    navigateTo({ name: 'index' });
+    navigateTo('/');
 } else {
     useTimeoutFn(() => navigateTo(website.links!.privacyPolicy!, { external: true }), 1750);
 }

@@ -21,7 +21,8 @@ var LoggerModule = fx.Module("logger",
 type LoggerResults struct {
 	fx.Out
 
-	Logger *zap.Logger
+	Logger         *zap.Logger
+	SuggaredLogger *zap.SugaredLogger
 }
 
 type LoggerParams struct {
@@ -76,6 +77,7 @@ func NewLogger(p LoggerParams) (LoggerResults, error) {
 	}))
 
 	return LoggerResults{
-		Logger: logger,
+		Logger:         logger,
+		SuggaredLogger: logger.Sugar(),
 	}, nil
 }

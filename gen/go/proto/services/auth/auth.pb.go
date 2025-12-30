@@ -9,6 +9,7 @@ package auth
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
@@ -1121,11 +1122,11 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xbf\x01\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a\x1ccodegen/audit/redacted.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xd0\x01\n" +
 	"\x14CreateAccountRequest\x125\n" +
 	"\treg_token\x18\x01 \x01(\tB\x18\xf0\xf3\x18\x01\xbaH\x11r\x0f2\n" +
-	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12E\n" +
-	"\busername\x18\x02 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\busername\x12)\n" +
+	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12V\n" +
+	"\busername\x18\x02 \x01(\tB:\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\busername\x12)\n" +
 	"\bpassword\x18\x03 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\bpassword\"6\n" +
 	"\x15CreateAccountResponse\x12\x1d\n" +
 	"\n" +
@@ -1146,10 +1147,10 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\acurrent\x18\x01 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\acurrent\x12\x1f\n" +
 	"\x03new\x18\x02 \x01(\tB\r\xf0\xf3\x18\x01\xbaH\x06r\x04\x10\x06(FR\x03new\"R\n" +
 	"\x16ChangePasswordResponse\x128\n" +
-	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\"\x99\x01\n" +
+	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\"\xaa\x01\n" +
 	"\x15ChangeUsernameRequest\x12C\n" +
-	"\acurrent\x18\x01 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\acurrent\x12;\n" +
-	"\x03new\x18\x02 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\x03new\"\x18\n" +
+	"\acurrent\x18\x01 \x01(\tB)\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\acurrent\x12L\n" +
+	"\x03new\x18\x02 \x01(\tB:\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH&r$\x10\x03\x18\x182\x1e(?i)^[0-9A-ZÄÖÜß_-]{3,24}$R\x03new\"\x18\n" +
 	"\x16ChangeUsernameResponse\"o\n" +
 	"\x15ForgotPasswordRequest\x125\n" +
 	"\treg_token\x18\x01 \x01(\tB\x18\xf0\xf3\x18\x01\xbaH\x11r\x0f2\n" +
@@ -1174,9 +1175,9 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"?\n" +
-	"\x18DeleteSocialLoginRequest\x12#\n" +
-	"\bprovider\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x182R\bprovider\"5\n" +
+	"attributes\"P\n" +
+	"\x18DeleteSocialLoginRequest\x124\n" +
+	"\bprovider\x18\x01 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x182R\bprovider\"5\n" +
 	"\x19DeleteSocialLoginResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"_\n" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +

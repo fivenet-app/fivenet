@@ -33,7 +33,7 @@ onMounted(async () => {
                     }
                 }
 
-                await navigateTo({ name: 'index' });
+                await navigateTo('/');
             }
         }, 1500);
     }

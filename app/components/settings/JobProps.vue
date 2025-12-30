@@ -278,7 +278,7 @@ async function searchChannels() {
     }
 }
 
-const items = [
+const items = computed(() => [
     {
         slot: 'jobprops' as const,
         label: t('components.settings.job_props.job_properties'),
@@ -292,7 +292,7 @@ const items = [
         value: 'discord',
         disabled: !appConfig.discord.botEnabled,
     },
-];
+]);
 
 const route = useRoute();
 const router = useRouter();

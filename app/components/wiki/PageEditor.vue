@@ -326,7 +326,7 @@ const parentPages = computedAsync(() => {
     return pagesList;
 });
 
-const items = [
+const items = computed(() => [
     {
         slot: 'content' as const,
         label: t('common.content'),
@@ -339,7 +339,7 @@ const items = [
         icon: 'i-mdi-key',
         value: 'access',
     },
-];
+]);
 
 const router = useRouter();
 

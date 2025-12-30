@@ -14,7 +14,7 @@ definePageMeta({
 const { website } = useAppConfig();
 
 if (website.links?.imprint === undefined) {
-    navigateTo({ name: 'index' });
+    navigateTo('/');
 } else {
     useTimeoutFn(() => navigateTo(website.links!.imprint!, { external: true }), 1750);
 }

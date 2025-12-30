@@ -6,6 +6,11 @@ import (
 )
 
 var (
+	ErrGenericAccount = common.NewI18nErr(
+		codes.Internal,
+		&common.I18NItem{Key: "errors.AuthService.ErrGenericAccount"},
+		nil,
+	)
 	ErrAccountCreateFailed = common.NewI18nErr(
 		codes.InvalidArgument,
 		&common.I18NItem{Key: "errors.AuthService.ErrAccountCreateFailed"},

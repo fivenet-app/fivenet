@@ -284,7 +284,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
     constructor() {
         super("services.auth.CreateAccountRequest", [
             { no: 1, name: "reg_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
-            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
             { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.audit.redacted": true, "buf.validate.field": { string: { minLen: "6", maxBytes: "70" } } } }
         ]);
     }
@@ -696,7 +696,7 @@ class ChangeUsernameRequest$Type extends MessageType<ChangeUsernameRequest> {
     constructor() {
         super("services.auth.ChangeUsernameRequest", [
             { no: 1, name: "current", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
-            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } }
+            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<ChangeUsernameRequest>): ChangeUsernameRequest {
@@ -1197,7 +1197,7 @@ export const ChooseCharacterResponse = new ChooseCharacterResponse$Type();
 class DeleteSocialLoginRequest$Type extends MessageType<DeleteSocialLoginRequest> {
     constructor() {
         super("services.auth.DeleteSocialLoginRequest", [
-            { no: 1, name: "provider", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } } } }
+            { no: 1, name: "provider", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "50" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
         ]);
     }
     create(value?: PartialMessage<DeleteSocialLoginRequest>): DeleteSocialLoginRequest {

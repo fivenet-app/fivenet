@@ -158,21 +158,6 @@ func containsDotDot(path string) bool {
 	return len(path) >= 2 && (path[:2] == ".." || path[len(path)-2:] == "..")
 }
 
-// GetProvider retrieves the OAuth2 provider from the request context.
-func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
-	param, ok := c.Params.Get("provider")
-	if !ok {
-		return nil, errors.New("no provider found")
-	}
-
-	provider, ok := o.oauthConfigs[param]
-	if !ok {
-		return nil, errors.New("no provider found")
-	}
-
-	return provider, nil
-}
-
 // handleRedirect redirects the user to the appropriate URL based on the outcome of the OAuth2 flow.
 func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, reason string) {
 	var redirURL string
@@ -216,7 +201,6 @@ func (o *OAuth2) Login(c *gin.Context) {
 		if err != nil || !isValidRedirectPath(u.Path) {
 			o.logger.Error(
 				"failed to parse or validate redirect url",
-				zap.String("redirect", customRedirectVal),
 				zap.Error(err),
 			)
 			o.handleRedirect(c, false, false, "invalid_request_redirect")
@@ -258,11 +242,10 @@ func (o *OAuth2) Login(c *gin.Context) {
 		return
 	}
 
-	provider, err := o.GetProviderImproved(c)
+	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error(
 			"failed to get provider",
-			zap.String("provider", c.Param("provider")),
 			zap.Error(err),
 		)
 		o.handleRedirect(c, connectOnly, false, "invalid_provider")
@@ -273,12 +256,13 @@ func (o *OAuth2) Login(c *gin.Context) {
 	c.Redirect(http.StatusTemporaryRedirect, provider.GetRedirect(state))
 }
 
-// GetProviderImproved retrieves the OAuth2 provider from the request context, case-insensitive and with better error messages.
-func (o *OAuth2) GetProviderImproved(c *gin.Context) (providers.IProvider, error) {
+// GetProvider retrieves the OAuth2 provider from the request context and name is case-insensitive.
+func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
 	param := c.Param("provider")
 	if param == "" {
 		return nil, errors.New("no provider found in path")
 	}
+
 	for name, provider := range o.oauthConfigs {
 		if name == param {
 			return provider, nil
@@ -287,7 +271,8 @@ func (o *OAuth2) GetProviderImproved(c *gin.Context) (providers.IProvider, error
 			return provider, nil
 		}
 	}
-	return nil, fmt.Errorf("provider '%s' not configured", param)
+
+	return nil, fmt.Errorf("provider %q not configured", param)
 }
 
 // Callback handles the OAuth2 callback, processes user info, and issues tokens or connects accounts.
@@ -331,10 +316,10 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	sess.Delete(SessionKeyRedirect)
 	if err := sess.Save(); err != nil {
 		o.logger.Error("failed to save session in Callback", zap.Error(err))
-		// Continue, but log
+		// Log error, but continue
 	}
 
-	provider, err := o.GetProviderImproved(c)
+	provider, err := o.GetProvider(c)
 	if err != nil {
 		o.logger.Error(
 			"failed to get provider in callback",
@@ -464,7 +449,7 @@ func (o *OAuth2) handleLoginCallback(
 		return
 	}
 
-	c.SetCookie(auth.TokenCookieName, newToken, 6*24*60*60, "/", o.domain, false, true)
+	c.SetCookie(auth.TokenCookieName, newToken, 6*24*60*60, "/", o.domain, true, true)
 
 	c.Redirect(
 		http.StatusTemporaryRedirect,
