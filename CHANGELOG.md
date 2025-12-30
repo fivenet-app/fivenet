@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.12.0] - 2025-12-30
+
+### 🏗️ Breaking changes
+
+- Add otelsql breaking changes
+
+### 🚀 Features
+
+- Add duplicate validation for access entries
+- Continue document layouts work
+- Use fabricjs to create a svg editor
+- Rename layouts pages to forms
+- Add basic page structure for forms
+- Add wip curved text to fabric editor
+- Add toggle to disable event effects in user settings
+- Add snow (event) effect to all layouts
+- Implement notepad saving and auto save
+- Add kbd shortcut to clipboard modal
+- Add licenses for images/icons, fonts and update sounds
+
+### 🐛 Bug Fixes
+
+- Access entry issues and centrum sidebar unit header
+- Adjust duplicate access entry warning texts
+- Some ui logic issues
+- Add hint for snow/holiday effect user settings toggle
+- Jobs conduct deletion and restore not working as expected
+- Disable notepad feature (still WIP)
+- Remove .env.example
+- Dashboard shortcuts not working and finalize notepad
+- History store not correctly storing entries
+- Editor source code textarea height not fitting to modal
+- Re-gen proto gen files and show mathcalculator for all users
+- Remove mathcalculator quickbutton
+- Quickbuttons type issue caused by changes
+- Job props proto unmarshal issue
+- Fabric editor sidebar type issues
+- Use links for templates in templates list page
+- Ui job access check not using creatorJob override as expected
+- Cleanup some log calls
+
 ## [2025.11.0] - 2025-11-30
 
 ### 🚀 Features

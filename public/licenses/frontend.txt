@@ -42116,7 +42116,7 @@ END OF TERMS AND CONDITIONS
 
 ---
 
-The following software may be included in this product: @iconify-json/simple-icons (1.2.63)
+The following software may be included in this product: @iconify-json/simple-icons (1.2.64)
 This software contains the following license and notice below:
 
 Creative Commons Legal Code
