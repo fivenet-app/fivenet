@@ -13,6 +13,7 @@ import {
     Textbox,
     util,
 } from 'fabric';
+import { AligningGuidelines } from 'fabric/extensions';
 import { ref, shallowRef } from 'vue';
 import '~/composables/fabric/FabricHtmlInput';
 import { FabricCurvedText, type FabricCurvedTextOptions } from './fabric/FabricCurvedText';
@@ -149,6 +150,12 @@ function createFabricEditor() {
         canvas.value = fabricCanvas;
         canvasEl.value = canvasContainerElement;
         canvasContainer.value = canvasContainerElement.parentElement?.parentElement || null;
+
+        const aligningGuidelines = new AligningGuidelines(fabricCanvas, {
+            margin: 4,
+            width: 1,
+            color: 'rgba(0,0,0,0.85)',
+        });
 
         const { width: containerWidth, height: containerHeight } = useElementSize(canvasContainer.value);
 
@@ -293,6 +300,7 @@ function createFabricEditor() {
             // Cleanup event listeners and canvas instance on destroy
             window.removeEventListener('keydown', handleKeydown);
 
+            aligningGuidelines.dispose();
             canvas.value.dispose();
             canvas.value = null;
         });
