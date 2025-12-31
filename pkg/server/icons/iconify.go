@@ -52,6 +52,7 @@ func New(p Params) (*IconifyAPI, error) {
 		apiURL: p.Config.Icons.APIURL,
 	}
 
+	// Set up default HTTP client for proxying requests (if enabled)
 	if ip.proxy {
 		ip.client = http.DefaultClient
 	}
@@ -73,7 +74,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 	} else {
 		// Proxy requests to iconify API if enabled (make sure the request is a valid json icon request)
 		e.GET("/api/icons/:path", func(c *gin.Context) {
-			// Validate the request and extract the target URL
+			// Validate the request and build the target URL
 			path := c.Param("path")
 			query := c.Request.URL.Query()
 			if !validateIconRequest(path, query) {
@@ -92,7 +93,7 @@ func (i *IconifyAPI) RegisterHTTP(e *gin.Engine) {
 				return
 			}
 
-			req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, c.Request.Body)
+			req, err := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, targetURL, nil)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create proxy request"})
 				return
@@ -135,8 +136,13 @@ func buildTargetURL(apiURL string, path string, query url.Values) (string, error
 	if err != nil {
 		return "", err
 	}
-	if q := query.Encode(); q != "" {
-		targetURL += "?" + q
+
+	q := query.Get("icons")
+	if q == "" {
+		return "", fmt.Errorf("missing icons query parameter")
 	}
+
+	targetURL += "?icons=" + q
+
 	return targetURL, nil
 }

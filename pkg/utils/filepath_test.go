@@ -14,16 +14,28 @@ func TestCleanFilePath(t *testing.T) {
 		valid    bool
 	}{
 		{
-			name:     "Valid local path",
-			input:    "./test/file.txt",
-			expected: "test/file.txt",
-			valid:    true,
-		},
-		{
 			name:     "Absolute path",
 			input:    "/absolute/path/file.txt",
 			expected: "/absolute/path/file.txt",
 			valid:    true,
+		},
+		{
+			name:     "Absolute path to a directory",
+			input:    "/absolute/path/to/directory/",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Absolute path with trailing slash",
+			input:    "/absolute/path/file.txt/",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Invalid local path",
+			input:    "./test/file.txt",
+			expected: "",
+			valid:    false,
 		},
 		{
 			name:     "Empty path",
@@ -32,10 +44,16 @@ func TestCleanFilePath(t *testing.T) {
 			valid:    false,
 		},
 		{
+			name:     "Current directory",
+			input:    ".",
+			expected: "",
+			valid:    false,
+		},
+		{
 			name:     "Path with redundant elements 1",
 			input:    "./test/../file.txt",
-			expected: "file.txt",
-			valid:    true,
+			expected: "",
+			valid:    false,
 		},
 		{
 			name:     "Path with redundant elements 2",
@@ -46,8 +64,38 @@ func TestCleanFilePath(t *testing.T) {
 		{
 			name:     "Path with redundant elements 3",
 			input:    "./test/dir/..//../file.txt",
-			expected: "file.txt",
-			valid:    true,
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path beginning with traversal",
+			input:    "../outside/file.txt",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path beginning with traversal (Windows style)",
+			input:    "c:/../outside/file.txt",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path with redundant elements 2",
+			input:    "../../../test/../../../../../file.txt",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path with multi slashes and traversal",
+			input:    "//////../../../test//../..////../../../file.txt",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path with invalid utf-8 rune",
+			input:    "/absolute/path/with/invalid/\xff/file.txt",
+			expected: "",
+			valid:    false,
 		},
 	}
 

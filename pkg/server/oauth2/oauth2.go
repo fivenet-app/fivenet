@@ -242,7 +242,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 		return
 	}
 
-	provider, err := o.GetProvider(c)
+	provider, err := o.GetProvider(c.Param("provider"))
 	if err != nil {
 		o.logger.Error(
 			"failed to get provider",
@@ -257,22 +257,21 @@ func (o *OAuth2) Login(c *gin.Context) {
 }
 
 // GetProvider retrieves the OAuth2 provider from the request context and name is case-insensitive.
-func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
-	param := c.Param("provider")
-	if param == "" {
+func (o *OAuth2) GetProvider(providerName string) (providers.IProvider, error) {
+	if providerName == "" {
 		return nil, errors.New("no provider found in path")
 	}
 
 	for name, provider := range o.oauthConfigs {
-		if name == param {
+		if name == providerName {
 			return provider, nil
 		}
-		if name != "" && param != "" && name == param {
+		if name != "" && providerName != "" && name == providerName {
 			return provider, nil
 		}
 	}
 
-	return nil, fmt.Errorf("provider %q not configured", param)
+	return nil, fmt.Errorf("provider %q not configured", providerName)
 }
 
 // Callback handles the OAuth2 callback, processes user info, and issues tokens or connects accounts.
@@ -319,7 +318,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		// Log error, but continue
 	}
 
-	provider, err := o.GetProvider(c)
+	provider, err := o.GetProvider(c.Param("provider"))
 	if err != nil {
 		o.logger.Error(
 			"failed to get provider in callback",

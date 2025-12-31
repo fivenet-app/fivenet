@@ -70,7 +70,14 @@ func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInf
 	key = filepath.Join(s.basePath, s.prefix, key)
 
 	stat, err := os.Stat(key)
-	if os.IsNotExist(err) {
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil, ErrNotFound
+		}
+
+		return nil, nil, ErrNotFound
+	}
+	if stat.IsDir() {
 		return nil, nil, ErrNotFound
 	}
 
@@ -98,7 +105,14 @@ func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error
 	key = filepath.Join(s.basePath, s.prefix, key)
 
 	stat, err := os.Stat(key)
-	if os.IsNotExist(err) {
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, ErrNotFound
+		}
+
+		return nil, ErrNotFound
+	}
+	if stat.IsDir() {
 		return nil, ErrNotFound
 	}
 
