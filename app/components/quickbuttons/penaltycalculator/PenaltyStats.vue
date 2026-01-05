@@ -173,7 +173,7 @@ const formatter = new Intl.NumberFormat(display.intlLocale, {
 
         <UAlert
             v-if="!!highlight && quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
-            class="mt-3"
+            class="mt-3 whitespace-pre-line"
             color="warning"
             icon="i-mdi-warning-circle"
             :description="quickButtons.penaltyCalculator?.warnSettings?.warnMessage"
