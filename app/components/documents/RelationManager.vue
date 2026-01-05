@@ -101,7 +101,8 @@ async function removeRelation(id: number): Promise<void> {
     if (idx > -1) {
         modelValue.value.splice(idx, 1);
     }
-    refresh();
+
+    await refresh();
 }
 
 const columnsCurrent = computed(

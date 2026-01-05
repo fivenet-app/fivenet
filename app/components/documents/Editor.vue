@@ -106,9 +106,16 @@ watch(document, async () => {
             documentId: props.documentId,
         }),
     ]);
+
     state.references = refs.response.references;
+    docReferences.value = refs.response.references.map((ref) => ref.id!);
+
     state.relations = rels.response.relations;
+    docRelations.value = rels.response.relations.map((rel) => rel.id!);
 });
+
+const docReferences = ref<number[]>([]);
+const docRelations = ref<number[]>([]);
 
 const route = useRoute();
 
@@ -248,24 +255,20 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
         if (canDo.value.references) {
             // Remove references that are no longer present
-            const referencesToRemove: number[] = [];
-            state.references
-                .filter((r) => r.id !== undefined && r.id > 0)
-                .forEach((ref) => {
-                    if (!state.references.some((r) => r.id === ref.id)) {
-                        referencesToRemove.push(ref.id!);
-                    }
-                });
-            referencesToRemove.forEach((id) => {
+            const currentReferenceIds = state.references.filter((r) => r.id !== undefined && r.id > 0).map((ref) => ref.id!);
+            const referencesToRemove = docReferences.value.filter((id) => !currentReferenceIds.includes(id));
+            referencesToRemove.forEach((id) =>
                 documentsDocumentsClient.removeDocumentReference({
                     id: id,
-                });
-            });
+                }),
+            );
+
             // Add new references
             state.references
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((ref) => {
-                    if (state.references.some((r) => r.id === ref.id)) return;
+                    if (docReferences.value.find((r) => r === ref.id)) return;
+
                     ref.sourceDocumentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentReference({
                         reference: ref,
@@ -275,21 +278,18 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
         if (canDo.value.relations) {
             // Remove relations that are no longer present
-            const relationsToRemove: number[] = [];
-            state.relations
-                .filter((r) => r.id !== undefined && r.id > 0)
-                .forEach((rel) => {
-                    if (!state.relations.some((r) => r.id === rel.id)) {
-                        relationsToRemove.push(rel.id!);
-                    }
-                });
+            const currentRelationIds = state.relations.filter((r) => r.id !== undefined && r.id > 0).map((rel) => rel.id!);
+            const relationsToRemove = docRelations.value.filter((id) => !currentRelationIds.includes(id));
             relationsToRemove.forEach((id) => {
                 documentsDocumentsClient.removeDocumentRelation({ id });
             });
+
             // Add new relations
             state.relations
                 .filter((r) => r.id === undefined || r.id <= 0)
                 .forEach((rel) => {
+                    if (docRelations.value.find((r) => r === rel.id)) return;
+
                     rel.documentId = response.document!.id!;
                     documentsDocumentsClient.addDocumentRelation({
                         relation: rel,

@@ -100,13 +100,13 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
     addReference(getDocument(doc), reference);
 }
 
-function removeReference(id: number): void {
+async function removeReference(id: number): Promise<void> {
     const idx = modelValue.value.findIndex((r) => r.id === id);
     if (idx > -1) {
         modelValue.value.splice(idx, 1);
     }
 
-    refresh();
+    await refresh();
 }
 
 const columnsCurrent = computed(
