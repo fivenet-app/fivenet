@@ -47,7 +47,7 @@ func TestSanitize(t *testing.T) {
 	}
 }
 
-func TestStripTags(t *testing.T) {
+func TestStripHTMLTags(t *testing.T) {
 	for _, run := range []struct {
 		input  string
 		result string
@@ -74,6 +74,6 @@ func TestStripTags(t *testing.T) {
 			msg:    "Make sure bad tag is removed, even with broken tags",
 		},
 	} {
-		assert.Equal(t, StripTags(run.input), run.result, run.msg)
+		assert.Equal(t, StripHTMLTags(run.input), run.result, run.msg)
 	}
 }

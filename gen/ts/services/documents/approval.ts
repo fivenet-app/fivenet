@@ -819,7 +819,7 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 5, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 7, name: "due_at", kind: "message", T: () => Timestamp },

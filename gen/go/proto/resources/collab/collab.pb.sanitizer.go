@@ -4,7 +4,7 @@
 package collab
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls

@@ -19,7 +19,7 @@ message Page {
     (buf.validate.field).string.max_len = 50,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string job_label = 3 [(buf.validate.field).string.max_len = 50];
@@ -38,7 +38,7 @@ message PageMeta {
     (buf.validate.field).string.max_len = 100,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string title = 5 [
@@ -52,7 +52,7 @@ message PageMeta {
     (buf.validate.field).string.max_len = 128,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional int32 creator_id = 7 [(buf.validate.field).int32.gt = 0];
@@ -60,7 +60,7 @@ message PageMeta {
   resources.common.content.ContentType content_type = 9 [(buf.validate.field).enum.defined_only = true];
   repeated string tags = 10 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   optional bool toc = 11;
   bool public = 12;
@@ -78,7 +78,7 @@ message PageShort {
     (buf.validate.field).string.max_len = 100,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string title = 7;

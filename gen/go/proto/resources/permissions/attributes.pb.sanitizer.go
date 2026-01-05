@@ -4,7 +4,7 @@
 package permissions
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -152,7 +152,7 @@ func (m *StringList) Sanitize() error {
 	for idx, item := range m.Strings {
 		_, _ = idx, item
 
-		m.Strings[idx] = htmlsanitizer.StripTags(m.Strings[idx])
+		m.Strings[idx] = htmlsanitizer.StripHTMLTags(m.Strings[idx])
 
 	}
 

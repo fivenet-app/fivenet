@@ -11,7 +11,7 @@ import (
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"

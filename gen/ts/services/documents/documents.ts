@@ -2623,7 +2623,7 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.documents.DeleteDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
-            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { ignore: "IGNORE_IF_ZERO_VALUE", string: { minLen: "0", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDocumentRequest>): DeleteDocumentRequest {
@@ -3009,7 +3009,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         super("services.documents.UpdateDocumentRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "tagger.tags": "alias:\"id\"" } },
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" }, "tagger.tags": "alias:\"title\"" } },
+            { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "alias:\"title\"" } },
             { no: 4, name: "content", kind: "message", T: () => Content },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } } } },
@@ -4470,7 +4470,7 @@ class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderReq
         super("services.documents.SetDocumentReminderRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "reminder_time", kind: "message", T: () => Timestamp },
-            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 4, name: "max_reminder_count", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 1 } } } }
         ]);
     }

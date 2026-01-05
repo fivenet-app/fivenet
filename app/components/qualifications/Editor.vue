@@ -6,7 +6,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -219,7 +219,7 @@ async function saveHistory(values: Schema, type = 'qualification'): Promise<void
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.qualificationId,
         {
@@ -298,7 +298,7 @@ function setFromProps(): void {
     state.abbreviation = qualification.value.abbreviation;
     state.title = qualification.value.title;
     state.description = qualification.value.description;
-    state.content = qualification.value.content?.rawContent ?? '';
+    state.content = qualification.value.content?.rawHtml ?? '';
     state.closed = qualification.value.closed;
     state.public = qualification.value.public;
     state.abbreviation = qualification.value.abbreviation;
@@ -362,7 +362,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             title: values.title,
             description: values.description,
             content: {
-                rawContent: values.content,
+                rawHtml: values.content,
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,

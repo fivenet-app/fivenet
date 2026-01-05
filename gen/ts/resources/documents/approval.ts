@@ -569,7 +569,7 @@ class ApprovalTask$Type extends MessageType<ApprovalTask> {
             { no: 9, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 10, name: "minimum_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
-            { no: 12, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 12, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 13, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "slot_no", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 15, name: "status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },

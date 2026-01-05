@@ -4,7 +4,7 @@
 package mailer
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -103,7 +103,7 @@ func (m *CreateThreadRequest) Sanitize() error {
 	for idx, item := range m.Recipients {
 		_, _ = idx, item
 
-		m.Recipients[idx] = htmlsanitizer.StripTags(m.Recipients[idx])
+		m.Recipients[idx] = htmlsanitizer.StripHTMLTags(m.Recipients[idx])
 
 	}
 
@@ -613,7 +613,7 @@ func (m *PostMessageRequest) Sanitize() error {
 	for idx, item := range m.Recipients {
 		_, _ = idx, item
 
-		m.Recipients[idx] = htmlsanitizer.StripTags(m.Recipients[idx])
+		m.Recipients[idx] = htmlsanitizer.StripHTMLTags(m.Recipients[idx])
 
 	}
 

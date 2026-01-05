@@ -17,7 +17,7 @@ message EmailSettings {
     (buf.validate.field).repeated.max_items = 25,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

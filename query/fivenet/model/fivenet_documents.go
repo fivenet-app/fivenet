@@ -12,21 +12,24 @@ import (
 )
 
 type FivenetDocuments struct {
-	ID          int64      `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at"`
-	CategoryID  *int64     `json:"category_id"`
-	Title       string     `json:"title"`
-	Summary     string     `json:"summary"`
-	ContentType int16      `json:"content_type"`
-	Content     string     `json:"content"`
-	Data        *string    `json:"data"`
-	CreatorID   *int32     `json:"creator_id"`
-	CreatorJob  string     `json:"creator_job"`
-	State       string     `json:"state"`
-	Closed      *bool      `json:"closed"`
-	Draft       *bool      `json:"draft"`
-	Public      bool       `json:"public"`
-	TemplateID  *int64     `json:"template_id"`
+	ID           int64      `sql:"primary_key" json:"id"`
+	CreatedAt    *time.Time `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at"`
+	CategoryID   *int64     `json:"category_id"`
+	Title        string     `json:"title"`
+	Summary      string     `json:"summary"`
+	WordCount    uint32     `json:"word_count"`
+	FirstHeading string     `json:"first_heading"`
+	ContentType  int16      `json:"content_type"`
+	ContentJSON  string     `json:"content_json"`
+	ContentText  string     `json:"content_text"`
+	Data         *string    `json:"data"`
+	CreatorID    *int32     `json:"creator_id"`
+	CreatorJob   string     `json:"creator_job"`
+	State        string     `json:"state"`
+	Closed       *bool      `json:"closed"`
+	Draft        *bool      `json:"draft"`
+	Public       bool       `json:"public"`
+	TemplateID   *int64     `json:"template_id"`
 }

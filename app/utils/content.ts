@@ -1,7 +1,7 @@
 import type { TocLink } from '@nuxt/content';
-import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
+import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 
-export function jsonNodeToTocLinks(n: JSONNode): TocLink[] {
+export function jsonNodeToTocLinks(n: RichTextHtmlNode): TocLink[] {
     const headers: TocLink[] = [];
     if (/h[1-6]/i.test(n.tag)) {
         const text = getTextFromContent(n);
@@ -17,7 +17,7 @@ export function jsonNodeToTocLinks(n: JSONNode): TocLink[] {
     return headers;
 }
 
-export function getTextFromContent(n: JSONNode): string {
+export function getTextFromContent(n: RichTextHtmlNode): string {
     if (n.text && n.text !== '') {
         return n.text;
     }
@@ -32,7 +32,7 @@ export function getTextFromContent(n: JSONNode): string {
     return n.id ?? '';
 }
 
-function walkContentForText(ns: JSONNode[]): string {
+function walkContentForText(ns: RichTextHtmlNode[]): string {
     let text = '';
     for (let i = 0; i < ns.length; i++) {
         const element = ns[i]!;

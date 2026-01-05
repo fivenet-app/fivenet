@@ -101,7 +101,7 @@ func (s *Server) GetComments(
 		tDComments.DocumentID,
 		tDComments.CreatedAt,
 		tDComments.UpdatedAt,
-		tDComments.Comment.AS("comment.content"),
+		tDComments.Content,
 		tDComments.CreatorID,
 		tCreator.ID,
 		tCreator.Job,
@@ -179,9 +179,12 @@ func (s *Server) PostComment(
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
-	if len(req.GetComment().GetContent().GetRawContent()) > CommentsMaxLength {
-		return nil, errorsdocuments.ErrCommentPostDenied
-	}
+	/*
+		TODO find another way to limit length
+		if len(req.GetComment().GetContent().GetRawHtml()) > CommentsMaxLength {
+			return nil, errorsdocuments.ErrCommentPostDenied
+		}
+	*/
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -194,7 +197,7 @@ func (s *Server) PostComment(
 	stmt := tDComments.
 		INSERT(
 			tDComments.DocumentID,
-			tDComments.Comment,
+			tDComments.Content,
 			tDComments.CreatorID,
 			tDComments.CreatorJob,
 		).
@@ -281,16 +284,19 @@ func (s *Server) EditComment(
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
-	if len(req.GetComment().GetContent().GetRawContent()) > CommentsMaxLength {
-		return nil, errorsdocuments.ErrCommentPostDenied
-	}
+	/*
+		TODO find another way to limit length
+		if len(req.GetComment().GetContent().GetRawHtml()) > CommentsMaxLength {
+			return nil, errorsdocuments.ErrCommentPostDenied
+		}
+	*/
 
 	stmt := tDComments.
 		UPDATE(
-			tDComments.Comment,
+			tDComments.Content,
 		).
 		SET(
-			tDComments.Comment.SET(mysql.String(req.GetComment().GetContent().GetRawContent())),
+			req.GetComment().GetContent(),
 		).
 		WHERE(mysql.AND(
 			tDComments.ID.EQ(mysql.Int64(req.GetComment().GetId())),
@@ -334,7 +340,7 @@ func (s *Server) getComment(
 			tDComments.CreatedAt,
 			tDComments.UpdatedAt,
 			tDComments.DocumentID,
-			tDComments.Comment.AS("comment.content"),
+			tDComments.Content,
 			tDComments.CreatorID,
 			tDComments.CreatorJob,
 			tCreator.ID,

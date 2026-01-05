@@ -8,7 +8,7 @@ package settings
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	cron "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	cron "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -107,10 +107,10 @@ var File_services_settings_cron_proto protoreflect.FileDescriptor
 
 const file_services_settings_cron_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/settings/cron.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a resources/common/cron/cron.proto\"\x15\n" +
-	"\x13ListCronjobsRequest\"J\n" +
-	"\x14ListCronjobsResponse\x122\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x1e.resources.common.cron.CronjobR\x04jobs2\x81\x01\n" +
+	"\x1cservices/settings/cron.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a\x19resources/cron/cron.proto\"\x15\n" +
+	"\x13ListCronjobsRequest\"C\n" +
+	"\x14ListCronjobsResponse\x12+\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x17.resources.cron.CronjobR\x04jobs2\x81\x01\n" +
 	"\vCronService\x12r\n" +
 	"\fListCronjobs\x12&.services.settings.ListCronjobsRequest\x1a'.services.settings.ListCronjobsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
@@ -130,10 +130,10 @@ var file_services_settings_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 2
 var file_services_settings_cron_proto_goTypes = []any{
 	(*ListCronjobsRequest)(nil),  // 0: services.settings.ListCronjobsRequest
 	(*ListCronjobsResponse)(nil), // 1: services.settings.ListCronjobsResponse
-	(*cron.Cronjob)(nil),         // 2: resources.common.cron.Cronjob
+	(*cron.Cronjob)(nil),         // 2: resources.cron.Cronjob
 }
 var file_services_settings_cron_proto_depIdxs = []int32{
-	2, // 0: services.settings.ListCronjobsResponse.jobs:type_name -> resources.common.cron.Cronjob
+	2, // 0: services.settings.ListCronjobsResponse.jobs:type_name -> resources.cron.Cronjob
 	0, // 1: services.settings.CronService.ListCronjobs:input_type -> services.settings.ListCronjobsRequest
 	1, // 2: services.settings.CronService.ListCronjobs:output_type -> services.settings.ListCronjobsResponse
 	2, // [2:3] is the sub-list for method output_type

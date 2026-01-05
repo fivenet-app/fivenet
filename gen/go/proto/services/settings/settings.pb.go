@@ -1300,7 +1300,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\vpermissions\x18\x02 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
 	"attributes\x18\x03 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
-	"attributes\"\x82\x05\n" +
+	"attributes\"\xf0\x04\n" +
 	"\x13ViewAuditLogRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
@@ -1308,10 +1308,10 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
 	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x127\n" +
 	"\x04from\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x04from\x88\x01\x01\x123\n" +
-	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x12;\n" +
-	"\bservices\x18\x06 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
-	"\"\x04r\x02\x18@R\bservices\x129\n" +
-	"\amethods\x18\a \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\n" +
+	"\x02to\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x02to\x88\x01\x01\x122\n" +
+	"\bservices\x18\x06 \x03(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\v\x92\x01\b\x10\n" +
+	"\"\x04r\x02\x18@R\bservices\x120\n" +
+	"\amethods\x18\a \x03(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\v\x92\x01\b\x10\n" +
 	"\"\x04r\x02\x18@R\amethods\x12$\n" +
 	"\x06search\x18\b \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\x06search\x88\x01\x01\x12G\n" +
 	"\aactions\x18\t \x03(\x0e2\x1c.resources.audit.EventActionB\x0f\xbaH\f\x92\x01\t\x10\x06\"\x05\x82\x01\x02\x10\x01R\aactions\x12G\n" +

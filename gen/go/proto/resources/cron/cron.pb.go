@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: resources/common/cron/cron.proto
+// source: resources/cron/cron.proto
 
 package cron
 
@@ -62,11 +62,11 @@ func (x CronjobState) String() string {
 }
 
 func (CronjobState) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_common_cron_cron_proto_enumTypes[0].Descriptor()
+	return file_resources_cron_cron_proto_enumTypes[0].Descriptor()
 }
 
 func (CronjobState) Type() protoreflect.EnumType {
-	return &file_resources_common_cron_cron_proto_enumTypes[0]
+	return &file_resources_cron_cron_proto_enumTypes[0]
 }
 
 func (x CronjobState) Number() protoreflect.EnumNumber {
@@ -75,7 +75,7 @@ func (x CronjobState) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CronjobState.Descriptor instead.
 func (CronjobState) EnumDescriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{0}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{0}
 }
 
 type Cronjob struct {
@@ -88,7 +88,7 @@ type Cronjob struct {
 	// To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/.
 	Schedule string `protobuf:"bytes,2,opt,name=schedule,proto3" json:"schedule,omitempty"`
 	// Cronjob state
-	State CronjobState `protobuf:"varint,3,opt,name=state,proto3,enum=resources.common.cron.CronjobState" json:"state,omitempty"`
+	State CronjobState `protobuf:"varint,3,opt,name=state,proto3,enum=resources.cron.CronjobState" json:"state,omitempty"`
 	// Next time the cronjob should be run
 	NextScheduleTime *timestamp.Timestamp `protobuf:"bytes,4,opt,name=next_schedule_time,json=nextScheduleTime,proto3" json:"next_schedule_time,omitempty"`
 	// Last attempted start time of Cronjob
@@ -107,7 +107,7 @@ type Cronjob struct {
 
 func (x *Cronjob) Reset() {
 	*x = Cronjob{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[0]
+	mi := &file_resources_cron_cron_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -119,7 +119,7 @@ func (x *Cronjob) String() string {
 func (*Cronjob) ProtoMessage() {}
 
 func (x *Cronjob) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[0]
+	mi := &file_resources_cron_cron_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -132,7 +132,7 @@ func (x *Cronjob) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Cronjob.ProtoReflect.Descriptor instead.
 func (*Cronjob) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{0}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Cronjob) GetName() string {
@@ -208,7 +208,7 @@ type CronjobData struct {
 
 func (x *CronjobData) Reset() {
 	*x = CronjobData{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[1]
+	mi := &file_resources_cron_cron_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -220,7 +220,7 @@ func (x *CronjobData) String() string {
 func (*CronjobData) ProtoMessage() {}
 
 func (x *CronjobData) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[1]
+	mi := &file_resources_cron_cron_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -233,7 +233,7 @@ func (x *CronjobData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CronjobData.ProtoReflect.Descriptor instead.
 func (*CronjobData) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{1}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CronjobData) GetUpdatedAt() *timestamp.Timestamp {
@@ -261,7 +261,7 @@ type CronjobLockOwnerState struct {
 
 func (x *CronjobLockOwnerState) Reset() {
 	*x = CronjobLockOwnerState{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[2]
+	mi := &file_resources_cron_cron_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +273,7 @@ func (x *CronjobLockOwnerState) String() string {
 func (*CronjobLockOwnerState) ProtoMessage() {}
 
 func (x *CronjobLockOwnerState) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[2]
+	mi := &file_resources_cron_cron_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,7 +286,7 @@ func (x *CronjobLockOwnerState) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CronjobLockOwnerState.ProtoReflect.Descriptor instead.
 func (*CronjobLockOwnerState) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{2}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CronjobLockOwnerState) GetHostname() string {
@@ -313,7 +313,7 @@ type CronjobSchedulerEvent struct {
 
 func (x *CronjobSchedulerEvent) Reset() {
 	*x = CronjobSchedulerEvent{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[3]
+	mi := &file_resources_cron_cron_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -325,7 +325,7 @@ func (x *CronjobSchedulerEvent) String() string {
 func (*CronjobSchedulerEvent) ProtoMessage() {}
 
 func (x *CronjobSchedulerEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[3]
+	mi := &file_resources_cron_cron_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -338,7 +338,7 @@ func (x *CronjobSchedulerEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CronjobSchedulerEvent.ProtoReflect.Descriptor instead.
 func (*CronjobSchedulerEvent) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{3}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CronjobSchedulerEvent) GetCronjob() *Cronjob {
@@ -372,7 +372,7 @@ type CronjobCompletedEvent struct {
 
 func (x *CronjobCompletedEvent) Reset() {
 	*x = CronjobCompletedEvent{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[4]
+	mi := &file_resources_cron_cron_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +384,7 @@ func (x *CronjobCompletedEvent) String() string {
 func (*CronjobCompletedEvent) ProtoMessage() {}
 
 func (x *CronjobCompletedEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[4]
+	mi := &file_resources_cron_cron_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +397,7 @@ func (x *CronjobCompletedEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CronjobCompletedEvent.ProtoReflect.Descriptor instead.
 func (*CronjobCompletedEvent) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{4}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CronjobCompletedEvent) GetName() string {
@@ -465,7 +465,7 @@ type GenericCronData struct {
 
 func (x *GenericCronData) Reset() {
 	*x = GenericCronData{}
-	mi := &file_resources_common_cron_cron_proto_msgTypes[5]
+	mi := &file_resources_cron_cron_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -477,7 +477,7 @@ func (x *GenericCronData) String() string {
 func (*GenericCronData) ProtoMessage() {}
 
 func (x *GenericCronData) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_common_cron_cron_proto_msgTypes[5]
+	mi := &file_resources_cron_cron_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -490,7 +490,7 @@ func (x *GenericCronData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenericCronData.ProtoReflect.Descriptor instead.
 func (*GenericCronData) Descriptor() ([]byte, []int) {
-	return file_resources_common_cron_cron_proto_rawDescGZIP(), []int{5}
+	return file_resources_cron_cron_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GenericCronData) GetAttributes() map[string]string {
@@ -500,21 +500,21 @@ func (x *GenericCronData) GetAttributes() map[string]string {
 	return nil
 }
 
-var File_resources_common_cron_cron_proto protoreflect.FileDescriptor
+var File_resources_cron_cron_proto protoreflect.FileDescriptor
 
-const file_resources_common_cron_cron_proto_rawDesc = "" +
+const file_resources_cron_cron_proto_rawDesc = "" +
 	"\n" +
-	" resources/common/cron/cron.proto\x12\x15resources.common.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xfe\x04\n" +
+	"\x19resources/cron/cron.proto\x12\x0eresources.cron\x1a!codegen/sanitizer/sanitizer.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xe9\x04\n" +
 	"\aCronjob\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
-	"\bschedule\x18\x02 \x01(\tR\bschedule\x129\n" +
-	"\x05state\x18\x03 \x01(\x0e2#.resources.common.cron.CronjobStateR\x05state\x12L\n" +
+	"\bschedule\x18\x02 \x01(\tR\bschedule\x122\n" +
+	"\x05state\x18\x03 \x01(\x0e2\x1c.resources.cron.CronjobStateR\x05state\x12L\n" +
 	"\x12next_schedule_time\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\x10nextScheduleTime\x12O\n" +
 	"\x11last_attempt_time\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0flastAttemptTime\x88\x01\x01\x12F\n" +
 	"\fstarted_time\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\vstartedTime\x88\x01\x01\x128\n" +
-	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationH\x02R\atimeout\x88\x01\x01\x126\n" +
-	"\x04data\x18\b \x01(\v2\".resources.common.cron.CronjobDataR\x04data\x12c\n" +
-	"\x14last_completed_event\x18\t \x01(\v2,.resources.common.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01B\x14\n" +
+	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationH\x02R\atimeout\x88\x01\x01\x12/\n" +
+	"\x04data\x18\b \x01(\v2\x1b.resources.cron.CronjobDataR\x04data\x12\\\n" +
+	"\x14last_completed_event\x18\t \x01(\v2%.resources.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01B\x14\n" +
 	"\x12_last_attempt_timeB\x0f\n" +
 	"\r_started_timeB\n" +
 	"\n" +
@@ -528,23 +528,23 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\x15CronjobLockOwnerState\x12\x1a\n" +
 	"\bhostname\x18\x01 \x01(\tR\bhostname\x12=\n" +
 	"\n" +
-	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"Q\n" +
-	"\x15CronjobSchedulerEvent\x128\n" +
-	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xf2\x02\n" +
+	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"J\n" +
+	"\x15CronjobSchedulerEvent\x121\n" +
+	"\acronjob\x18\x01 \x01(\v2\x17.resources.cron.CronjobR\acronjob\"\xeb\x02\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1c\n" +
 	"\tcancelled\x18\a \x01(\bR\tcancelled\x129\n" +
 	"\bend_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
-	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x12;\n" +
-	"\x04data\x18\x05 \x01(\v2\".resources.common.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
+	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x124\n" +
+	"\x04data\x18\x05 \x01(\v2\x1b.resources.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
 	"\tnode_name\x18\x06 \x01(\tR\bnodeName\x12(\n" +
 	"\rerror_message\x18\b \x01(\tH\x01R\ferrorMessage\x88\x01\x01B\a\n" +
 	"\x05_dataB\x10\n" +
-	"\x0e_error_message\"\xbb\x01\n" +
-	"\x0fGenericCronData\x12i\n" +
+	"\x0e_error_message\"\xab\x01\n" +
+	"\x0fGenericCronData\x12Y\n" +
 	"\n" +
-	"attributes\x18\x01 \x03(\v26.resources.common.cron.GenericCronData.AttributesEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\n" +
+	"attributes\x18\x01 \x03(\v2/.resources.cron.GenericCronData.AttributesEntryB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
 	"attributes\x1a=\n" +
 	"\x0fAttributesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
@@ -553,51 +553,51 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\x19CRONJOB_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CRONJOB_STATE_WAITING\x10\x01\x12\x19\n" +
 	"\x15CRONJOB_STATE_PENDING\x10\x02\x12\x19\n" +
-	"\x15CRONJOB_STATE_RUNNING\x10\x03BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron;cronb\x06proto3"
+	"\x15CRONJOB_STATE_RUNNING\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron;cronb\x06proto3"
 
 var (
-	file_resources_common_cron_cron_proto_rawDescOnce sync.Once
-	file_resources_common_cron_cron_proto_rawDescData []byte
+	file_resources_cron_cron_proto_rawDescOnce sync.Once
+	file_resources_cron_cron_proto_rawDescData []byte
 )
 
-func file_resources_common_cron_cron_proto_rawDescGZIP() []byte {
-	file_resources_common_cron_cron_proto_rawDescOnce.Do(func() {
-		file_resources_common_cron_cron_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_common_cron_cron_proto_rawDesc), len(file_resources_common_cron_cron_proto_rawDesc)))
+func file_resources_cron_cron_proto_rawDescGZIP() []byte {
+	file_resources_cron_cron_proto_rawDescOnce.Do(func() {
+		file_resources_cron_cron_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_cron_cron_proto_rawDesc), len(file_resources_cron_cron_proto_rawDesc)))
 	})
-	return file_resources_common_cron_cron_proto_rawDescData
+	return file_resources_cron_cron_proto_rawDescData
 }
 
-var file_resources_common_cron_cron_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_common_cron_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
-var file_resources_common_cron_cron_proto_goTypes = []any{
-	(CronjobState)(0),             // 0: resources.common.cron.CronjobState
-	(*Cronjob)(nil),               // 1: resources.common.cron.Cronjob
-	(*CronjobData)(nil),           // 2: resources.common.cron.CronjobData
-	(*CronjobLockOwnerState)(nil), // 3: resources.common.cron.CronjobLockOwnerState
-	(*CronjobSchedulerEvent)(nil), // 4: resources.common.cron.CronjobSchedulerEvent
-	(*CronjobCompletedEvent)(nil), // 5: resources.common.cron.CronjobCompletedEvent
-	(*GenericCronData)(nil),       // 6: resources.common.cron.GenericCronData
-	nil,                           // 7: resources.common.cron.GenericCronData.AttributesEntry
+var file_resources_cron_cron_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_resources_cron_cron_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_resources_cron_cron_proto_goTypes = []any{
+	(CronjobState)(0),             // 0: resources.cron.CronjobState
+	(*Cronjob)(nil),               // 1: resources.cron.Cronjob
+	(*CronjobData)(nil),           // 2: resources.cron.CronjobData
+	(*CronjobLockOwnerState)(nil), // 3: resources.cron.CronjobLockOwnerState
+	(*CronjobSchedulerEvent)(nil), // 4: resources.cron.CronjobSchedulerEvent
+	(*CronjobCompletedEvent)(nil), // 5: resources.cron.CronjobCompletedEvent
+	(*GenericCronData)(nil),       // 6: resources.cron.GenericCronData
+	nil,                           // 7: resources.cron.GenericCronData.AttributesEntry
 	(*timestamp.Timestamp)(nil),   // 8: resources.timestamp.Timestamp
 	(*durationpb.Duration)(nil),   // 9: google.protobuf.Duration
 	(*anypb.Any)(nil),             // 10: google.protobuf.Any
 }
-var file_resources_common_cron_cron_proto_depIdxs = []int32{
-	0,  // 0: resources.common.cron.Cronjob.state:type_name -> resources.common.cron.CronjobState
-	8,  // 1: resources.common.cron.Cronjob.next_schedule_time:type_name -> resources.timestamp.Timestamp
-	8,  // 2: resources.common.cron.Cronjob.last_attempt_time:type_name -> resources.timestamp.Timestamp
-	8,  // 3: resources.common.cron.Cronjob.started_time:type_name -> resources.timestamp.Timestamp
-	9,  // 4: resources.common.cron.Cronjob.timeout:type_name -> google.protobuf.Duration
-	2,  // 5: resources.common.cron.Cronjob.data:type_name -> resources.common.cron.CronjobData
-	5,  // 6: resources.common.cron.Cronjob.last_completed_event:type_name -> resources.common.cron.CronjobCompletedEvent
-	8,  // 7: resources.common.cron.CronjobData.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 8: resources.common.cron.CronjobData.data:type_name -> google.protobuf.Any
-	8,  // 9: resources.common.cron.CronjobLockOwnerState.updated_at:type_name -> resources.timestamp.Timestamp
-	1,  // 10: resources.common.cron.CronjobSchedulerEvent.cronjob:type_name -> resources.common.cron.Cronjob
-	8,  // 11: resources.common.cron.CronjobCompletedEvent.end_date:type_name -> resources.timestamp.Timestamp
-	9,  // 12: resources.common.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
-	2,  // 13: resources.common.cron.CronjobCompletedEvent.data:type_name -> resources.common.cron.CronjobData
-	7,  // 14: resources.common.cron.GenericCronData.attributes:type_name -> resources.common.cron.GenericCronData.AttributesEntry
+var file_resources_cron_cron_proto_depIdxs = []int32{
+	0,  // 0: resources.cron.Cronjob.state:type_name -> resources.cron.CronjobState
+	8,  // 1: resources.cron.Cronjob.next_schedule_time:type_name -> resources.timestamp.Timestamp
+	8,  // 2: resources.cron.Cronjob.last_attempt_time:type_name -> resources.timestamp.Timestamp
+	8,  // 3: resources.cron.Cronjob.started_time:type_name -> resources.timestamp.Timestamp
+	9,  // 4: resources.cron.Cronjob.timeout:type_name -> google.protobuf.Duration
+	2,  // 5: resources.cron.Cronjob.data:type_name -> resources.cron.CronjobData
+	5,  // 6: resources.cron.Cronjob.last_completed_event:type_name -> resources.cron.CronjobCompletedEvent
+	8,  // 7: resources.cron.CronjobData.updated_at:type_name -> resources.timestamp.Timestamp
+	10, // 8: resources.cron.CronjobData.data:type_name -> google.protobuf.Any
+	8,  // 9: resources.cron.CronjobLockOwnerState.updated_at:type_name -> resources.timestamp.Timestamp
+	1,  // 10: resources.cron.CronjobSchedulerEvent.cronjob:type_name -> resources.cron.Cronjob
+	8,  // 11: resources.cron.CronjobCompletedEvent.end_date:type_name -> resources.timestamp.Timestamp
+	9,  // 12: resources.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
+	2,  // 13: resources.cron.CronjobCompletedEvent.data:type_name -> resources.cron.CronjobData
+	7,  // 14: resources.cron.GenericCronData.attributes:type_name -> resources.cron.GenericCronData.AttributesEntry
 	15, // [15:15] is the sub-list for method output_type
 	15, // [15:15] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
@@ -605,30 +605,30 @@ var file_resources_common_cron_cron_proto_depIdxs = []int32{
 	0,  // [0:15] is the sub-list for field type_name
 }
 
-func init() { file_resources_common_cron_cron_proto_init() }
-func file_resources_common_cron_cron_proto_init() {
-	if File_resources_common_cron_cron_proto != nil {
+func init() { file_resources_cron_cron_proto_init() }
+func file_resources_cron_cron_proto_init() {
+	if File_resources_cron_cron_proto != nil {
 		return
 	}
-	file_resources_common_cron_cron_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_common_cron_cron_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_common_cron_cron_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_cron_cron_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_cron_cron_proto_msgTypes[1].OneofWrappers = []any{}
+	file_resources_cron_cron_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_common_cron_cron_proto_rawDesc), len(file_resources_common_cron_cron_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_cron_cron_proto_rawDesc), len(file_resources_cron_cron_proto_rawDesc)),
 			NumEnums:      1,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_resources_common_cron_cron_proto_goTypes,
-		DependencyIndexes: file_resources_common_cron_cron_proto_depIdxs,
-		EnumInfos:         file_resources_common_cron_cron_proto_enumTypes,
-		MessageInfos:      file_resources_common_cron_cron_proto_msgTypes,
+		GoTypes:           file_resources_cron_cron_proto_goTypes,
+		DependencyIndexes: file_resources_cron_cron_proto_depIdxs,
+		EnumInfos:         file_resources_cron_cron_proto_enumTypes,
+		MessageInfos:      file_resources_cron_cron_proto_msgTypes,
 	}.Build()
-	File_resources_common_cron_cron_proto = out.File
-	file_resources_common_cron_cron_proto_goTypes = nil
-	file_resources_common_cron_cron_proto_depIdxs = nil
+	File_resources_cron_cron_proto = out.File
+	file_resources_cron_cron_proto_goTypes = nil
+	file_resources_cron_cron_proto_depIdxs = nil
 }

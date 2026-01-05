@@ -1,45 +1,18 @@
 <script lang="ts" setup>
-import type { FormError } from '@nuxt/ui';
+import type { EditorEmojiMenuItem, FormError } from '@nuxt/ui';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
-import { generateJSON, getSchema, type Extensions } from '@tiptap/core';
-import { Blockquote } from '@tiptap/extension-blockquote';
-import { Bold } from '@tiptap/extension-bold';
-import { Code } from '@tiptap/extension-code';
-import { CodeBlock } from '@tiptap/extension-code-block';
-import Collaboration, { isChangeOrigin } from '@tiptap/extension-collaboration';
+import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
+import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
-import Document from '@tiptap/extension-document';
 import { DragHandle } from '@tiptap/extension-drag-handle-vue-3';
-import { HardBreak } from '@tiptap/extension-hard-break';
-import { Heading } from '@tiptap/extension-heading';
-import Highlight from '@tiptap/extension-highlight';
-import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
-import InvisibleCharacters from '@tiptap/extension-invisible-characters';
-import Italic from '@tiptap/extension-italic';
-import Link from '@tiptap/extension-link';
-import { BulletList, ListItem, ListKeymap, OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
-import NodeRange from '@tiptap/extension-node-range';
-import { Paragraph } from '@tiptap/extension-paragraph';
-import { Strike } from '@tiptap/extension-strike';
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
-import Text from '@tiptap/extension-text';
-import TextAlign from '@tiptap/extension-text-align';
-import { TextStyleKit } from '@tiptap/extension-text-style';
-import Underline from '@tiptap/extension-underline';
-import UniqueID from '@tiptap/extension-unique-id';
-import { CharacterCount, Dropcursor, Gapcursor, Placeholder, UndoRedo } from '@tiptap/extensions';
+import { gitHubEmojis } from '@tiptap/extension-emoji';
+import { UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
-import AutoJoiner from 'tiptap-extension-auto-joiner';
-import { v4 as uuidv4 } from 'uuid';
 import * as Y from 'yjs';
-import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
 import { EnhancedImage } from '~/composables/tiptap/extensions/EnhancedImage';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
-import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
@@ -72,10 +45,10 @@ const props = withDefaults(
     {
         name: undefined,
         wrapperClass: '',
-        limit: undefined,
+        limit: 0,
         fileLimit: 10,
         disabled: false,
-        placeholder: undefined,
+        placeholder: '',
         hideToolbar: false,
         disableImages: false,
         historyType: undefined,
@@ -99,7 +72,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const modelValue = defineModel<string>({ required: true });
+const modelValue = defineModel<EditorDocument | string | undefined>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 const logger = useLogger('📄 Editor' + (props.name ? ` ${props.name}` : ''));
@@ -111,106 +84,7 @@ const { editor: editorSettings } = storeToRefs(settingsStore);
 
 const notifications = useNotificationsStore();
 
-const extensions: Extensions = [
-    UniqueID.configure({
-        attributeName: 'id',
-        types: ['heading'],
-        generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
-        filterTransaction: (transaction) => !isChangeOrigin(transaction),
-    }),
-    NodeRange.configure({
-        depth: 0,
-        key: null,
-    }),
-    // Basics
-    Blockquote,
-    Bold,
-    BulletList,
-    Code,
-    CodeBlock,
-    Document,
-    Dropcursor,
-    Gapcursor,
-    HardBreak,
-    Heading,
-    Highlight.configure({
-        multicolor: true,
-    }),
-    HorizontalRule,
-    Italic,
-    Link.configure({
-        openOnClick: false,
-        defaultProtocol: 'https',
-        HTMLAttributes: {
-            target: null,
-        },
-    }),
-    ListItem,
-    ListKeymap,
-    OrderedList,
-    Paragraph,
-    Strike,
-    Subscript,
-    Superscript,
-    Text,
-    TextAlign.configure({
-        types: ['heading', 'paragraph', 'image'],
-    }),
-    TextStyleKit.configure({
-        backgroundColor: {
-            types: ['textStyle'],
-        },
-        color: {
-            types: ['textStyle'],
-        },
-        fontFamily: {
-            types: ['textStyle'],
-        },
-        fontSize: {
-            types: ['textStyle'],
-        },
-        lineHeight: {
-            types: ['textStyle'],
-        },
-    }),
-    Underline,
-    InvisibleCharacters.configure({
-        visible: editorSettings.value.showInvisibleCharacters,
-    }),
-    // Table
-    Table.configure({
-        resizable: true,
-        allowTableNodeSelection: true,
-        HTMLAttributes: {
-            class: 'border border-collapse border-solid border-neutral-500',
-        },
-    }),
-    TableRow,
-    TableHeader.configure({
-        HTMLAttributes: {
-            class: 'border border-solid border-neutral-600 bg-neutral-100 dark:bg-neutral-800',
-        },
-    }),
-    TableCell.configure({
-        HTMLAttributes: {
-            class: 'border border-solid border-neutral-500',
-        },
-    }),
-    // Misc
-    SearchAndReplace,
-    TaskList,
-    TaskItem.configure({
-        nested: true,
-    }),
-    CheckboxStandalone,
-    CharacterCount.configure({
-        limit: props.limit,
-    }),
-    Placeholder.configure({
-        placeholder: () => props.placeholder ?? '',
-    }),
-    AutoJoiner,
-];
+const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placeholder'));
 
 if (!props.disableImages) {
     extensions.push(
@@ -235,13 +109,23 @@ const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
 
 const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined);
 
-function seedDocument(schema: Schema, value: string): void {
-    if (value === '') return;
+function seedDocument(schema: Schema, value: EditorDocument | string): void {
+    let seedDoc: Y.Doc;
+    if (typeof value === 'string') {
+        if (value === '') return;
 
-    // HTML → ProseMirror JSON
-    const json = generateJSON(value, extensions);
-    // ProseMirror JSON → Yjs update in-place
-    const seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
+        // HTML → ProseMirror JSON
+        const json = generateJSON(value, extensions);
+        // ProseMirror JSON → Yjs update in-place
+        seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
+    } else {
+        if (!value.content || value.content.length === 0) return;
+
+        logger.info('Seeding document content into Yjs document');
+
+        // ProseMirror JSON → Yjs update in-place
+        seedDoc = prosemirrorJSONToYDoc(schema, value, 'content');
+    }
 
     // Merge that doc's state into the live document
     Y.applyUpdate(ydoc!, Y.encodeStateAsUpdate(seedDoc));
@@ -313,7 +197,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
         }
 
         // Only set initial content if authoritative and Yjs doc is empty
-        if (yjsProvider.isAuthoritative) {
+        if (yjsProvider.isAuthoritative && modelValue.value) {
             seedDocument(yjsSchema!, modelValue.value);
         }
 
@@ -360,10 +244,7 @@ const editor = useEditor({
         logger.info('Editor created');
     },
     onUpdate: ({ editor }) => {
-        modelValue.value = editor.getHTML() ?? '';
-        /* TODO switch to JSON output
-        console.log('Editor JSON: ', unref(editor)?.getJSON());
-        */
+        modelValue.value = unref(editor)?.getJSON();
     },
 });
 
@@ -407,25 +288,30 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
 // If collaboration is enabled, we don't set the content directly
 // as it will be handled by the Yjs provider.
 const stopWatch = watch(modelValue, (value) => {
-    const isSame = unref(editor)?.getHTML() === value;
-    // JSON
-    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value);
+    const editorJSON = unref(editor)?.getJSON();
+    if (!editorJSON || !value) return;
 
+    if (typeof value === 'string') {
+        value = generateJSON(value, extensions) as JSONContent;
+    }
+    const isSame = isSameDoc(editorJSON, value, extensions);
     if (isSame) return;
 
     // If not authoritative, don't set the content
     if (props.enableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
-    if (props.enableCollab && ydoc && yjsProvider) {
-        seedDocument && seedDocument(yjsSchema!, value);
-    } else {
-        unref(editor)?.commands.setContent(value, { emitUpdate: true });
+    if (value) {
+        if (props.enableCollab && ydoc && yjsProvider) {
+            seedDocument(yjsSchema!, value);
+        } else {
+            unref(editor)?.commands.setContent(value, { emitUpdate: true });
+        }
     }
 
-    if (props.enableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) {
-        stopWatch();
-    }
+    if (props.enableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) stopWatch();
 });
+
+const emojiItems: EditorEmojiMenuItem[] = gitHubEmojis.filter((emoji) => !emoji.name.startsWith('regional_indicator_'));
 
 const contentRef = useTemplateRef('contentRef');
 
@@ -496,7 +382,7 @@ onMounted(() => {
     if (props.enableCollab) return;
 
     logger.info('Setting initial content for Tiptap editor (collab is disabled)');
-    unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
+    if (modelValue.value) unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
 });
 
 onBeforeUnmount(() => {
@@ -541,6 +427,8 @@ onBeforeRouteLeave(() => {
                 <UIcon class="h-5 w-4" name="i-mdi-drag-horizontal" />
             </div>
         </DragHandle>
+
+        <UEditorEmojiMenu :editor="editor" :items="emojiItems" />
 
         <UPopover
             :open="openLinkPopover"

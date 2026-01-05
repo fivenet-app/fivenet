@@ -31,7 +31,7 @@ message Category {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string icon = 8 [
@@ -41,7 +41,7 @@ message Category {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

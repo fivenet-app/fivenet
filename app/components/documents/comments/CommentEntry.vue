@@ -6,7 +6,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -67,7 +67,7 @@ async function saveHistory(values: Schema, type = 'document_comments'): Promise<
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.documentId,
         {
@@ -109,7 +109,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
                 id: commentId,
                 documentId,
                 content: {
-                    rawContent: values.content,
+                    rawHtml: values.content,
                 },
                 creatorJob: '',
             },
@@ -155,7 +155,7 @@ async function deleteComment(id: number): Promise<void> {
 function resetForm(): void {
     if (!comment.value) return;
 
-    state.content = comment.value.content?.rawContent ?? '';
+    state.content = comment.value.content?.rawHtml ?? '';
 }
 
 onBeforeMount(() => resetForm());

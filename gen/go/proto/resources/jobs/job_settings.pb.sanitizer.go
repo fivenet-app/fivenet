@@ -4,7 +4,7 @@
 package jobs
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -124,7 +124,7 @@ func (m *GroupSyncSettings) Sanitize() error {
 	for idx, item := range m.IgnoredRoleIds {
 		_, _ = idx, item
 
-		m.IgnoredRoleIds[idx] = htmlsanitizer.StripTags(m.IgnoredRoleIds[idx])
+		m.IgnoredRoleIds[idx] = htmlsanitizer.StripHTMLTags(m.IgnoredRoleIds[idx])
 
 	}
 

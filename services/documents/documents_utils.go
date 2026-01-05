@@ -294,7 +294,7 @@ func (s *Server) getDocumentQuery(
 		if withContent {
 			columns = append(columns,
 				tDocument.Data,
-				tDocument.Content,
+				tDocument.ContentJSON,
 			)
 		}
 

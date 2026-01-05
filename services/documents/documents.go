@@ -380,6 +380,8 @@ func (s *Server) CreateDocument(
 		})
 	}
 
+	// extracted := req.GetContent().Extract()
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -391,10 +393,11 @@ func (s *Server) CreateDocument(
 	tDocument := table.FivenetDocuments
 	stmt := tDocument.
 		INSERT(
+			tDocument.CategoryID,
 			tDocument.Title,
 			tDocument.Summary,
-			tDocument.CategoryID,
-			tDocument.Content,
+			tDocument.ContentJSON,
+			tDocument.ContentText,
 			tDocument.ContentType,
 			tDocument.State,
 			tDocument.Data,
@@ -406,10 +409,11 @@ func (s *Server) CreateDocument(
 			tDocument.CreatorJob,
 		).
 		VALUES(
-			docTitle,
-			content.GetSummary(docContent, DocSummaryLength),
 			categoryId,
+			docTitle,
+			"", // DocSummaryLength
 			docContent,
+			"",
 			req.GetContentType(),
 			docState,
 			mysql.NULL,
@@ -568,13 +572,19 @@ func (s *Server) UpdateDocument(
 	}
 
 	if !onlyUpdateAccess {
+		extracted := req.GetContent().Extract()
+
 		tDocument := table.FivenetDocuments
 		stmt := tDocument.
 			UPDATE(
 				tDocument.CategoryID,
 				tDocument.Title,
 				tDocument.Summary,
-				tDocument.Content,
+				tDocument.WordCount,
+				tDocument.FirstHeading,
+				tDocument.ContentType,
+				tDocument.ContentJSON,
+				tDocument.ContentText,
 				tDocument.Data,
 				tDocument.State,
 				tDocument.Closed,
@@ -584,8 +594,12 @@ func (s *Server) UpdateDocument(
 			SET(
 				req.CategoryId,
 				req.GetTitle(),
-				req.GetContent().GetSummary(DocSummaryLength),
+				extracted.GetSummary(DocSummaryLength),
+				extracted.WordCount,
+				extracted.FirstHeading,
+				content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
 				req.GetContent(),
+				extracted.Text,
 				mysql.NULL,
 				req.GetMeta().GetState(),
 				req.GetMeta().GetClosed(),

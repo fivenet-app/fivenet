@@ -1,0 +1,141 @@
+import type { Extensions } from '@tiptap/core';
+import { Blockquote } from '@tiptap/extension-blockquote';
+import { Bold } from '@tiptap/extension-bold';
+import { Code } from '@tiptap/extension-code';
+import { CodeBlock } from '@tiptap/extension-code-block';
+import { isChangeOrigin } from '@tiptap/extension-collaboration';
+import Document from '@tiptap/extension-document';
+import Emoji from '@tiptap/extension-emoji';
+import { HardBreak } from '@tiptap/extension-hard-break';
+import { Heading } from '@tiptap/extension-heading';
+import Highlight from '@tiptap/extension-highlight';
+import { HorizontalRule } from '@tiptap/extension-horizontal-rule';
+import InvisibleCharacters from '@tiptap/extension-invisible-characters';
+import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
+import { BulletList, ListItem, ListKeymap, OrderedList, TaskItem, TaskList } from '@tiptap/extension-list';
+import NodeRange from '@tiptap/extension-node-range';
+import { Paragraph } from '@tiptap/extension-paragraph';
+import { Strike } from '@tiptap/extension-strike';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table';
+import Text from '@tiptap/extension-text';
+import TextAlign from '@tiptap/extension-text-align';
+import { TextStyleKit } from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import UniqueID from '@tiptap/extension-unique-id';
+import { CharacterCount, Dropcursor, Gapcursor, Placeholder } from '@tiptap/extensions';
+import AutoJoiner from 'tiptap-extension-auto-joiner';
+import { v4 as uuidv4 } from 'uuid';
+import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
+import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
+
+export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<string>): Extensions {
+    const settingsStore = useSettingsStore();
+    const { editor: editorSettings } = storeToRefs(settingsStore);
+
+    const extensions: Extensions = [
+        UniqueID.configure({
+            attributeName: 'id',
+            types: ['heading'],
+            generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
+            filterTransaction: (transaction) => !isChangeOrigin(transaction),
+        }),
+        NodeRange.configure({
+            depth: 0,
+            key: null,
+        }),
+        // Basics
+        Blockquote,
+        Bold,
+        BulletList,
+        Code,
+        CodeBlock,
+        Document,
+        Dropcursor,
+        Emoji,
+        Gapcursor,
+        HardBreak,
+        Heading,
+        Highlight.configure({
+            multicolor: true,
+        }),
+        HorizontalRule,
+        Italic,
+        Link.configure({
+            openOnClick: false,
+            defaultProtocol: 'https',
+            HTMLAttributes: {
+                target: null,
+            },
+        }),
+        ListItem,
+        ListKeymap,
+        OrderedList,
+        Paragraph,
+        Strike,
+        Subscript,
+        Superscript,
+        Text,
+        TextAlign.configure({
+            types: ['heading', 'paragraph', 'image'],
+        }),
+        TextStyleKit.configure({
+            backgroundColor: {
+                types: ['textStyle'],
+            },
+            color: {
+                types: ['textStyle'],
+            },
+            fontFamily: {
+                types: ['textStyle'],
+            },
+            fontSize: {
+                types: ['textStyle'],
+            },
+            lineHeight: {
+                types: ['textStyle'],
+            },
+        }),
+        Underline,
+        InvisibleCharacters.configure({
+            visible: editorSettings.value.showInvisibleCharacters,
+        }),
+        // Table
+        Table.configure({
+            resizable: true,
+            allowTableNodeSelection: true,
+            HTMLAttributes: {
+                class: 'border border-collapse border-solid border-neutral-500',
+            },
+        }),
+        TableRow,
+        TableHeader.configure({
+            HTMLAttributes: {
+                class: 'border border-solid border-neutral-600 bg-neutral-100 dark:bg-neutral-800',
+            },
+        }),
+        TableCell.configure({
+            HTMLAttributes: {
+                class: 'border border-solid border-neutral-500',
+            },
+        }),
+        // Misc
+        SearchAndReplace,
+        TaskList,
+        TaskItem.configure({
+            nested: true,
+        }),
+        CheckboxStandalone,
+        CharacterCount.configure({
+            limit: charLimit?.value ?? 0,
+        }),
+        Placeholder.configure({
+            placeholder: () => placeholder?.value ?? '',
+        }),
+        AutoJoiner,
+    ];
+
+    return extensions;
+}

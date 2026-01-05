@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { LazyPartialsCodeDiff } from '#components';
 import { computed } from 'vue';
-import type { Content, Version } from '~/types/history';
+import type { HistoryContent, Version } from '~/types/history';
 
 const props = defineProps<{
-    currentContent: string; // String for diffing
-    selectedVersion: Version<Content> | null;
+    // Current content for diff against selected version
+    currentContent: EditorDocument | undefined;
+    selectedVersion: Version<HistoryContent> | null;
 }>();
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'apply', version: Version<Content>): void;
+    (e: 'apply', version: Version<HistoryContent>): void;
     (e: 'update:modelValue', value: boolean): void;
 }>();
 

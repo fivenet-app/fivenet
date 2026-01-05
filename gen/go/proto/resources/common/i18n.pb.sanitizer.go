@@ -4,7 +4,7 @@
 package common
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -15,13 +15,13 @@ func (m *I18NItem) Sanitize() error {
 	}
 
 	// Field: Key
-	m.Key = htmlsanitizer.StripTags(m.Key)
+	m.Key = htmlsanitizer.StripHTMLTags(m.Key)
 
 	// Field: Parameters
 	for idx, item := range m.Parameters {
 		_, _ = idx, item
 
-		m.Parameters[idx] = htmlsanitizer.StripTags(m.Parameters[idx])
+		m.Parameters[idx] = htmlsanitizer.StripHTMLTags(m.Parameters[idx])
 
 	}
 

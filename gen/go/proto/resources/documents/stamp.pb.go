@@ -317,14 +317,14 @@ var File_resources_documents_stamp_proto protoreflect.FileDescriptor
 
 const file_resources_documents_stamp_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/documents/stamp.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xc1\x02\n" +
+	"\x1fresources/documents/stamp.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb8\x02\n" +
 	"\x05Stamp\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12 \n" +
 	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12=\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12,\n" +
-	"\x04name\x18\x05 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x18xR\x04name\x126\n" +
+	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12#\n" +
+	"\x04name\x18\x05 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18xR\x04name\x126\n" +
 	"\fsvg_template\x18\x06 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGR\vsvgTemplate\x128\n" +
 	"\x06access\x18\a \x01(\v2 .resources.documents.StampAccessR\x06accessB\f\n" +
 	"\n" +

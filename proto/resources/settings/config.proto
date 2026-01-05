@@ -47,14 +47,14 @@ message Perm {
     (buf.validate.field).string.max_len = 128,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string name = 2 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -69,14 +69,14 @@ message Links {
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string imprint = 2 [
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -87,14 +87,14 @@ message JobInfo {
     (buf.validate.field).repeated.max_items = 100,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   repeated string hidden_jobs = 3 [
     (buf.validate.field).repeated.max_items = 100,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -134,14 +134,14 @@ message Discord {
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   repeated string ignored_jobs = 4 [
     (buf.validate.field).repeated.max_items = 100,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional DiscordBotPresence bot_presence = 5;
@@ -149,7 +149,7 @@ message Discord {
     (buf.validate.field).string.max_len = 255,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   int64 bot_permissions = 7;
@@ -167,11 +167,11 @@ message DiscordBotPresence {
   DiscordBotPresenceType type = 1;
   optional string status = 2 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   optional string url = 3 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
 }
 
@@ -186,7 +186,7 @@ message Display {
     (buf.validate.field).string.max_len = 32,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   // ISO 4217 currency code (e.g. "USD", "EUR")
@@ -194,7 +194,7 @@ message Display {
     (buf.validate.field).string.len = 3,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

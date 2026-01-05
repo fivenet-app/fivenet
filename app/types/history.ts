@@ -8,8 +8,8 @@ export interface Version<TContent> {
     content: TContent;
 }
 
-export interface Content {
+export interface HistoryContent {
     title?: string;
-    content: string;
+    content: EditorDocument | string | undefined;
     files: File[]; // Associated files, if any
 }

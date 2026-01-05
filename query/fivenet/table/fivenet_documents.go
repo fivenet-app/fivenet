@@ -17,23 +17,26 @@ type fivenetDocumentsTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
-	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
-	DeletedAt   mysql.ColumnTimestamp
-	CategoryID  mysql.ColumnInteger
-	Title       mysql.ColumnString
-	Summary     mysql.ColumnString
-	ContentType mysql.ColumnInteger
-	Content     mysql.ColumnString
-	Data        mysql.ColumnString
-	CreatorID   mysql.ColumnInteger
-	CreatorJob  mysql.ColumnString
-	State       mysql.ColumnString
-	Closed      mysql.ColumnBool
-	Draft       mysql.ColumnBool
-	Public      mysql.ColumnBool
-	TemplateID  mysql.ColumnInteger
+	ID           mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
+	CategoryID   mysql.ColumnInteger
+	Title        mysql.ColumnString
+	Summary      mysql.ColumnString
+	WordCount    mysql.ColumnInteger
+	FirstHeading mysql.ColumnString
+	ContentType  mysql.ColumnInteger
+	ContentJSON  mysql.ColumnString
+	ContentText  mysql.ColumnString
+	Data         mysql.ColumnString
+	CreatorID    mysql.ColumnInteger
+	CreatorJob   mysql.ColumnString
+	State        mysql.ColumnString
+	Closed       mysql.ColumnBool
+	Draft        mysql.ColumnBool
+	Public       mysql.ColumnBool
+	TemplateID   mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -75,49 +78,55 @@ func newFivenetDocumentsTable(schemaName, tableName, alias string) *FivenetDocum
 
 func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDocumentsTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
-		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
-		CategoryIDColumn  = mysql.IntegerColumn("category_id")
-		TitleColumn       = mysql.StringColumn("title")
-		SummaryColumn     = mysql.StringColumn("summary")
-		ContentTypeColumn = mysql.IntegerColumn("content_type")
-		ContentColumn     = mysql.StringColumn("content")
-		DataColumn        = mysql.StringColumn("data")
-		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn  = mysql.StringColumn("creator_job")
-		StateColumn       = mysql.StringColumn("state")
-		ClosedColumn      = mysql.BoolColumn("closed")
-		DraftColumn       = mysql.BoolColumn("draft")
-		PublicColumn      = mysql.BoolColumn("public")
-		TemplateIDColumn  = mysql.IntegerColumn("template_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ClosedColumn, DraftColumn, PublicColumn}
+		IDColumn           = mysql.IntegerColumn("id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
+		CategoryIDColumn   = mysql.IntegerColumn("category_id")
+		TitleColumn        = mysql.StringColumn("title")
+		SummaryColumn      = mysql.StringColumn("summary")
+		WordCountColumn    = mysql.IntegerColumn("word_count")
+		FirstHeadingColumn = mysql.StringColumn("first_heading")
+		ContentTypeColumn  = mysql.IntegerColumn("content_type")
+		ContentJSONColumn  = mysql.StringColumn("content_json")
+		ContentTextColumn  = mysql.StringColumn("content_text")
+		DataColumn         = mysql.StringColumn("data")
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn   = mysql.StringColumn("creator_job")
+		StateColumn        = mysql.StringColumn("state")
+		ClosedColumn       = mysql.BoolColumn("closed")
+		DraftColumn        = mysql.BoolColumn("draft")
+		PublicColumn       = mysql.BoolColumn("public")
+		TemplateIDColumn   = mysql.IntegerColumn("template_id")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, WordCountColumn, FirstHeadingColumn, ContentTypeColumn, ContentJSONColumn, ContentTextColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, WordCountColumn, FirstHeadingColumn, ContentTypeColumn, ContentJSONColumn, ContentTextColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WordCountColumn, FirstHeadingColumn, ClosedColumn, DraftColumn, PublicColumn}
 	)
 
 	return fivenetDocumentsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
-		DeletedAt:   DeletedAtColumn,
-		CategoryID:  CategoryIDColumn,
-		Title:       TitleColumn,
-		Summary:     SummaryColumn,
-		ContentType: ContentTypeColumn,
-		Content:     ContentColumn,
-		Data:        DataColumn,
-		CreatorID:   CreatorIDColumn,
-		CreatorJob:  CreatorJobColumn,
-		State:       StateColumn,
-		Closed:      ClosedColumn,
-		Draft:       DraftColumn,
-		Public:      PublicColumn,
-		TemplateID:  TemplateIDColumn,
+		ID:           IDColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
+		CategoryID:   CategoryIDColumn,
+		Title:        TitleColumn,
+		Summary:      SummaryColumn,
+		WordCount:    WordCountColumn,
+		FirstHeading: FirstHeadingColumn,
+		ContentType:  ContentTypeColumn,
+		ContentJSON:  ContentJSONColumn,
+		ContentText:  ContentTextColumn,
+		Data:         DataColumn,
+		CreatorID:    CreatorIDColumn,
+		CreatorJob:   CreatorJobColumn,
+		State:        StateColumn,
+		Closed:       ClosedColumn,
+		Draft:        DraftColumn,
+		Public:       PublicColumn,
+		TemplateID:   TemplateIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

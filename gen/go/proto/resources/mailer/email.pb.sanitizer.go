@@ -4,7 +4,7 @@
 package mailer
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -42,7 +42,7 @@ func (m *Email) Sanitize() error {
 	}
 
 	// Field: Email
-	m.Email = htmlsanitizer.StripTags(m.Email)
+	m.Email = htmlsanitizer.StripHTMLTags(m.Email)
 
 	// Field: EmailChanged
 	if m.EmailChanged != nil {
@@ -60,7 +60,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.StripTags(*m.Label)
+		*m.Label = htmlsanitizer.StripHTMLTags(*m.Label)
 	}
 
 	// Field: Settings

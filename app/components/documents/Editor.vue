@@ -8,8 +8,9 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { type DocumentJobAccess, type DocumentUserAccess, AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
@@ -75,7 +76,9 @@ function setFromProps(): void {
     state.closed = document.value.document.meta?.closed ?? false;
     state.draft = document.value.document.meta?.draft ?? false;
     state.public = document.value.document.meta?.public ?? false;
-    state.content = document.value.document.content?.rawContent ?? '';
+    state.content = document.value.document.content?.tiptapJson
+        ? (Struct.toJson(document.value.document.content.tiptapJson) as EditorDocument)
+        : (document.value.document.content?.rawHtml ?? '');
     state.category = document.value.document.category ?? emptyCategory;
     if (document.value.access) {
         state.access.jobs = document.value.access.jobs;
@@ -86,7 +89,7 @@ function setFromProps(): void {
 
 const onSync = (s: boolean) => {
     if (!s) return;
-    logger.debug('DocumentEditor - Sync received, setting state from props', s);
+    logger.debug('DocumentEditor - Sync received, setting state from props. Synced?', s);
 
     if (ydoc.getXmlFragment('content').length === 0) {
         logger.info('DocumentEditor - Content is empty, setting from props');
@@ -126,13 +129,11 @@ const emptyCategory: Category = {
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
-    content: z.coerce.string().min(3).max(1750000),
-    // Meta
+    content: z.custom<EditorDocument | string>().optional(),
     closed: z.coerce.boolean().default(false),
     draft: z.coerce.boolean().default(true),
     public: z.coerce.boolean().default(false),
     state: z.union([z.coerce.string().length(0), z.coerce.string().min(3).max(32)]).default(''),
-
     category: z.custom<Category>().default({ ...emptyCategory }),
     access: z
         .object({
@@ -149,7 +150,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     title: '',
-    content: '',
+    content: undefined,
     closed: false,
     draft: true,
     public: false,
@@ -168,7 +169,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedDocument: EditorDocument | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'document'): Promise<void> {
@@ -176,11 +177,11 @@ async function saveHistory(values: Schema, type = 'document'): Promise<void> {
 
     const now = Date.now();
     // Skip if identical to last saved or if within MIN_GAP
-    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) return;
+    if (state.content === lastSavedDocument || now - lastSaveTimestamp < 5000) return;
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.documentId,
         {
@@ -194,7 +195,7 @@ async function saveHistory(values: Schema, type = 'document'): Promise<void> {
         saving.value = false;
     }, 1750);
 
-    lastSavedString = state.content;
+    lastSavedDocument = state.content;
     lastSaveTimestamp = now;
 }
 
@@ -233,7 +234,9 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         documentId: id,
         title: values.title,
         content: {
-            rawContent: values.content,
+            contentType: ContentType.TIPTAP_JSON,
+            version: '',
+            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
         },
         contentType: ContentType.HTML,
         meta: {

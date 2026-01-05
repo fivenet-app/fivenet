@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -33,7 +33,7 @@ func (m *ApprovalTaskSeed) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.StripTags(*m.Label)
+		*m.Label = htmlsanitizer.StripHTMLTags(*m.Label)
 	}
 
 	return nil

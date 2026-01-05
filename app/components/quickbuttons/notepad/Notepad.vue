@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 
 const historyStore = useHistoryStore();
 
@@ -35,7 +35,7 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(type, state.index, {
+    historyStore.addVersion<HistoryContent>(type, state.index, {
         content: values.content,
         files: [],
     });
@@ -48,7 +48,7 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
 
 onMounted(() => {
     logger.info('Notepad mounted, loading last version...');
-    const lastVersion = historyStore.getLastVersion<Content>('quickbutton-notepad');
+    const lastVersion = historyStore.getLastVersion<HistoryContent>('quickbutton-notepad');
     if (lastVersion && lastVersion.content) {
         state.content = lastVersion.content.content;
     }

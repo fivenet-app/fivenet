@@ -239,16 +239,16 @@ var File_resources_livemap_user_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\n" +
-	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb1\x05\n" +
+	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x9f\x05\n" +
 	"\n" +
 	"UserMarker\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
 	"\x01y\x18\x03 \x01(\x01R\x01y\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x125\n" +
-	"\x06postal\x18\x05 \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x12G\n" +
-	"\x05color\x18\x06 \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12,\n" +
+	"\x06postal\x18\x05 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x12>\n" +
+	"\x05color\x18\x06 \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\a \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
 	"\tjob_label\x18\b \x01(\tR\bjobLabel\x12 \n" +
 	"\tjob_grade\x18\r \x01(\x05H\x03R\bjobGrade\x88\x01\x01\x12@\n" +

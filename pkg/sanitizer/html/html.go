@@ -184,8 +184,8 @@ func Sanitize(in string) string {
 	return strings.TrimSuffix(out, "<p><br></p>")
 }
 
-// StripTags removes all HTML tags from the input string using a strict bluemonday policy and returns the unescaped result.
-func StripTags(in string) string {
+// StripHTMLTags removes all HTML tags from the input string using a strict bluemonday policy and returns the unescaped result.
+func StripHTMLTags(in string) string {
 	stripTagsOnce.Do(func() {
 		stripTags = bluemonday.StrictPolicy()
 	})
@@ -193,6 +193,6 @@ func StripTags(in string) string {
 	return html.UnescapeString(stripTags.Sanitize(in))
 }
 
-func SanitizeNoEntities(in string) string {
+func SanitizeAndUnescape(in string) string {
 	return html.UnescapeString(Sanitize(in))
 }

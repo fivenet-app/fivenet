@@ -4,7 +4,7 @@
 package users
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -21,7 +21,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: Email
 	if m.Email != nil {
-		*m.Email = htmlsanitizer.StripTags(*m.Email)
+		*m.Email = htmlsanitizer.StripHTMLTags(*m.Email)
 	}
 
 	// Field: Job

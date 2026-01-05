@@ -27,7 +27,7 @@ message Message {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   resources.common.content.Content content = 9 [(codegen.sanitizer.sanitizer) = {enabled: true}];

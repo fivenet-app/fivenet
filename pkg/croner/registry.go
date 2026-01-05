@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/adhocore/gronx"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"

@@ -347,7 +347,7 @@ export const AttributeValues = new AttributeValues$Type();
 class StringList$Type extends MessageType<StringList> {
     constructor() {
         super("resources.permissions.StringList", [
-            { no: 1, name: "strings", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "strings", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<StringList>): StringList {

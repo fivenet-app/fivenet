@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var testsJSONNodeFromHTMLNode = []struct {
+var testsRichTextHtmlNodeFromHTMLNode = []struct {
 	HTMLIn   string
 	Expected string
 }{
@@ -25,19 +25,19 @@ var testsJSONNodeFromHTMLNode = []struct {
 	},
 }
 
-func TestJSONNodeFromHTMLNode(t *testing.T) {
-	for _, v := range testsJSONNodeFromHTMLNode {
+func TestRichTextHtmlNodeFromHTMLNode(t *testing.T) {
+	for _, v := range testsRichTextHtmlNodeFromHTMLNode {
 		// Parse test input
 		h, err := ParseHTML(v.HTMLIn)
 		require.NoError(t, err)
 
-		// Parsed HTML to JSONNode
+		// Parsed HTML to RichTextHtmlNode
 		n, err := FromHTMLNode(h)
 		require.NoError(t, err)
 		require.NotNil(t, n)
 
-		// JSONNode to pretty formatted HTML
-		hout, err := n.ToHTMLP()
+		// RichTextHtmlNode to pretty formatted HTML
+		hout, err := n.ToHTML()
 		require.NoError(t, err)
 		assert.Equal(t, v.Expected, hout)
 	}

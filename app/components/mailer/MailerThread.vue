@@ -124,7 +124,7 @@ async function postMessage(values: Schema): Promise<void> {
             threadId: props.threadId,
             title: values.title,
             content: {
-                rawContent: values.content,
+                rawHtml: values.content,
             },
             data: {
                 attachments: values.attachments.filter((a) => {

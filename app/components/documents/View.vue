@@ -24,6 +24,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
+import TiptapContent from '../partials/content/TiptapContent.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderModal from './ReminderModal.vue';
@@ -689,6 +690,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
                         <HTMLContent v-if="doc.document?.content?.content" :value="doc.document.content.content" />
+                        <TiptapContent v-else-if="doc.document?.content?.tiptapJson" :value="doc.document.content.tiptapJson" />
                     </div>
                 </div>
 

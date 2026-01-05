@@ -660,9 +660,9 @@ const file_resources_jobs_job_settings_proto_rawDesc = "" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\tR\tchannelId\"A\n" +
 	"\x13JobsAbsenceSettings\x12*\n" +
-	"\fabsence_role\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\vabsenceRole\"^\n" +
-	"\x11GroupSyncSettings\x12I\n" +
-	"\x10ignored_role_ids\x18\x01 \x03(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\v\x92\x01\b\x10\x19\"\x04r\x02\x18\x18R\x0eignoredRoleIds\"\x88\x01\n" +
+	"\fabsence_role\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\vabsenceRole\"U\n" +
+	"\x11GroupSyncSettings\x12@\n" +
+	"\x10ignored_role_ids\x18\x01 \x03(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\v\x92\x01\b\x10\x19\"\x04r\x02\x18\x18R\x0eignoredRoleIds\"\x88\x01\n" +
 	"\vJobSettings\x125\n" +
 	"\x11absence_past_days\x18\x01 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\x1f(\x00R\x0fabsencePastDays\x12:\n" +
 	"\x13absence_future_days\x18\x02 \x01(\x05B\n" +

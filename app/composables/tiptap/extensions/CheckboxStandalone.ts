@@ -91,6 +91,7 @@ export const CheckboxStandalone = Node.create<CheckboxStandaloneOptions>({
                     {
                         type: 'checkbox',
                         checked: node.attrs.checked ? 'checked' : null,
+                        disabled: 'disabled',
                     },
                 ],
                 ' ',

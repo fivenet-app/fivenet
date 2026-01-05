@@ -67,7 +67,7 @@ message ApprovalTaskSeed {
     (buf.validate.field).string.max_len = 120,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   bool signature_required = 5;

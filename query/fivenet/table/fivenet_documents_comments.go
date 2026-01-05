@@ -22,7 +22,7 @@ type fivenetDocumentsCommentsTable struct {
 	UpdatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp
 	DocumentID mysql.ColumnInteger
-	Comment    mysql.ColumnString
+	Content    mysql.ColumnString
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
 
@@ -71,11 +71,11 @@ func newFivenetDocumentsCommentsTableImpl(schemaName, tableName, alias string) f
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
-		CommentColumn    = mysql.StringColumn("comment")
+		ContentColumn    = mysql.StringColumn("content")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, CommentColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DocumentIDColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn}
 		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -88,7 +88,7 @@ func newFivenetDocumentsCommentsTableImpl(schemaName, tableName, alias string) f
 		UpdatedAt:  UpdatedAtColumn,
 		DeletedAt:  DeletedAtColumn,
 		DocumentID: DocumentIDColumn,
-		Comment:    CommentColumn,
+		Content:    ContentColumn,
 		CreatorID:  CreatorIDColumn,
 		CreatorJob: CreatorJobColumn,
 

@@ -19,8 +19,14 @@ enum AccessLevel {
 }
 
 message CalendarAccess {
-  repeated CalendarJobAccess jobs = 1 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"job_access\""];
-  repeated CalendarUserAccess users = 2 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"user_access\""];
+  repeated CalendarJobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+  repeated CalendarUserAccess users = 2 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"user_access\""
+  ];
 }
 
 message CalendarJobAccess {

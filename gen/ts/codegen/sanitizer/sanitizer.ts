@@ -23,13 +23,18 @@ export interface FieldOptions {
      * @generated from protobuf field: optional string method = 2
      */
     method?: string;
+    /**
+     * @generated from protobuf field: optional bool strip_html_tags = 3
+     */
+    stripHtmlTags?: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldOptions$Type extends MessageType<FieldOptions> {
     constructor() {
         super("codegen.sanitizer.FieldOptions", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "strip_html_tags", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<FieldOptions>): FieldOptions {
@@ -50,6 +55,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
                 case /* optional string method */ 2:
                     message.method = reader.string();
                     break;
+                case /* optional bool strip_html_tags */ 3:
+                    message.stripHtmlTags = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -68,6 +76,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         /* optional string method = 2; */
         if (message.method !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.method);
+        /* optional bool strip_html_tags = 3; */
+        if (message.stripHtmlTags !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.stripHtmlTags);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

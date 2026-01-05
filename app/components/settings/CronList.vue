@@ -4,7 +4,7 @@ import type { TableColumn } from '@nuxt/ui';
 import { h } from 'vue';
 import { getSettingsCronClient } from '~~/gen/ts/clients';
 import { Any } from '~~/gen/ts/google/protobuf/any';
-import { type Cronjob, CronjobState, GenericCronData } from '~~/gen/ts/resources/common/cron/cron';
+import { type Cronjob, CronjobState, GenericCronData } from '~~/gen/ts/resources/cron/cron';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/settings/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -187,7 +187,7 @@ const columns = computed(
                                             copyLinkToClipboard(
                                                 JSON.stringify(
                                                     row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                                        '/resources.common.cron.GenericCronData',
+                                                        '/resources.cron.GenericCronData',
                                                     )
                                                         ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
                                                         : row.original.lastCompletedEvent.data,
@@ -202,7 +202,7 @@ const columns = computed(
                                 class="line-clamp-9 hover:line-clamp-none"
                                 v-text="
                                     row.original.lastCompletedEvent.data?.data?.typeUrl.includes(
-                                        '/resources.common.cron.GenericCronData',
+                                        '/resources.cron.GenericCronData',
                                     )
                                         ? Any.unpack(row.original.lastCompletedEvent.data.data, GenericCronData)
                                         : row.original.lastCompletedEvent.data

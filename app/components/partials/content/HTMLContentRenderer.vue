@@ -1,14 +1,14 @@
 <script lang="ts">
 import { NuxtImg, UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
-import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
+import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 
 export default defineComponent({
     name: 'HTMLContentRenderer',
 
     props: {
         value: {
-            type: Object as () => JSONNode,
+            type: Object as () => RichTextHtmlNode,
             required: true,
         },
     },
@@ -56,7 +56,7 @@ export default defineComponent({
             const tag = value.tag === 'body' ? 'div' : value.tag;
 
             // 5. Recursively render children
-            const children = (value.content || []).map((child: JSONNode, idx: number) =>
+            const children = (value.content || []).map((child: RichTextHtmlNode, idx: number) =>
                 h(self, {
                     key: idx,
                     value: child,

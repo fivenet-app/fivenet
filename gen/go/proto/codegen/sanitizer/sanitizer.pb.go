@@ -26,6 +26,7 @@ type FieldOptions struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Enabled       bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	Method        *string                `protobuf:"bytes,2,opt,name=method,proto3,oneof" json:"method,omitempty"`
+	StripHtmlTags *bool                  `protobuf:"varint,3,opt,name=strip_html_tags,json=stripHtmlTags,proto3,oneof" json:"strip_html_tags,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -74,6 +75,13 @@ func (x *FieldOptions) GetMethod() string {
 	return ""
 }
 
+func (x *FieldOptions) GetStripHtmlTags() bool {
+	if x != nil && x.StripHtmlTags != nil {
+		return *x.StripHtmlTags
+	}
+	return false
+}
+
 var file_codegen_sanitizer_sanitizer_proto_extTypes = []protoimpl.ExtensionInfo{
 	{
 		ExtendedType:  (*descriptorpb.FieldOptions)(nil),
@@ -95,11 +103,13 @@ var File_codegen_sanitizer_sanitizer_proto protoreflect.FileDescriptor
 
 const file_codegen_sanitizer_sanitizer_proto_rawDesc = "" +
 	"\n" +
-	"!codegen/sanitizer/sanitizer.proto\x12\x11codegen.sanitizer\x1a google/protobuf/descriptor.proto\"P\n" +
+	"!codegen/sanitizer/sanitizer.proto\x12\x11codegen.sanitizer\x1a google/protobuf/descriptor.proto\"\x91\x01\n" +
 	"\fFieldOptions\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1b\n" +
-	"\x06method\x18\x02 \x01(\tH\x00R\x06method\x88\x01\x01B\t\n" +
-	"\a_method:^\n" +
+	"\x06method\x18\x02 \x01(\tH\x00R\x06method\x88\x01\x01\x12+\n" +
+	"\x0fstrip_html_tags\x18\x03 \x01(\bH\x01R\rstripHtmlTags\x88\x01\x01B\t\n" +
+	"\a_methodB\x12\n" +
+	"\x10_strip_html_tags:^\n" +
 	"\tsanitizer\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\v2\x1f.codegen.sanitizer.FieldOptionsR\tsanitizerBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer;sanitizerb\x06proto3"
 
 var (

@@ -17,22 +17,36 @@ import { Struct } from "../../../google/protobuf/struct";
  */
 export interface Content {
     /**
-     * @generated from protobuf field: optional string version = 1
+     * @generated from protobuf field: string version = 1
      */
-    version?: string;
+    version: string;
     /**
-     * @generated from protobuf field: optional resources.common.content.JSONNode content = 2
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 2
      */
-    content?: JSONNode;
+    contentType: ContentType;
     /**
-     * @generated from protobuf field: optional string raw_content = 3
+     * Deprecated: Legacy HTML (only for viewing old content)
+     *
+     * @generated from protobuf field: optional string raw_html = 3
      */
-    rawContent?: string;
+    rawHtml?: string;
+    /**
+     * Deprecated: Legacy custom HTML to JSON AST (only for viewing old content)
+     *
+     * @generated from protobuf field: optional resources.common.content.RichTextHtmlNode content = 4
+     */
+    content?: RichTextHtmlNode;
+    /**
+     * Tiptap JSON Document
+     *
+     * @generated from protobuf field: google.protobuf.Struct tiptap_json = 5
+     */
+    tiptapJson?: Struct;
 }
 /**
- * @generated from protobuf message resources.common.content.JSONNode
+ * @generated from protobuf message resources.common.content.RichTextHtmlNode
  */
-export interface JSONNode {
+export interface RichTextHtmlNode {
     /**
      * @generated from protobuf field: resources.common.content.NodeType type = 1
      */
@@ -56,28 +70,24 @@ export interface JSONNode {
      */
     text?: string;
     /**
-     * @generated from protobuf field: repeated resources.common.content.JSONNode content = 6
+     * @generated from protobuf field: repeated resources.common.content.RichTextHtmlNode content = 6
      */
-    content: JSONNode[];
+    content: RichTextHtmlNode[];
 }
 /**
- * @generated from protobuf message resources.common.content.TiptapJSONDocument
+ * @generated from protobuf message resources.common.content.ExtractedContent
  */
-export interface TiptapJSONDocument {
+export interface ExtractedContent {
     /**
-     * @generated from protobuf field: google.protobuf.Struct json = 1
+     * @generated from protobuf field: string text = 1
      */
-    json?: Struct;
+    text: string;
     /**
-     * @generated from protobuf field: string summary = 2
-     */
-    summary: string;
-    /**
-     * @generated from protobuf field: uint32 word_count = 3
+     * @generated from protobuf field: uint32 word_count = 2
      */
     wordCount: number;
     /**
-     * @generated from protobuf field: string first_heading = 4
+     * @generated from protobuf field: string first_heading = 3
      */
     firstHeading: string;
 }
@@ -90,10 +100,14 @@ export enum ContentType {
      */
     UNSPECIFIED = 0,
     /**
+     * Used for legacy HTML content
+     *
      * @generated from protobuf enum value: CONTENT_TYPE_HTML = 1;
      */
     HTML = 1,
     /**
+     * Used for Tiptap JSON content
+     *
      * @generated from protobuf enum value: CONTENT_TYPE_TIPTAP_JSON = 2;
      */
     TIPTAP_JSON = 2
@@ -127,13 +141,17 @@ export enum NodeType {
 class Content$Type extends MessageType<Content> {
     constructor() {
         super("resources.common.content.Content", [
-            { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
-            { no: 2, name: "content", kind: "message", T: () => JSONNode },
-            { no: 3, name: "raw_content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "2000000" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
+            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } } } },
+            { no: 2, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "raw_html", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "content", kind: "message", T: () => RichTextHtmlNode },
+            { no: 5, name: "tiptap_json", kind: "message", T: () => Struct }
         ]);
     }
     create(value?: PartialMessage<Content>): Content {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.version = "";
+        message.contentType = 0;
         if (value !== undefined)
             reflectionMergePartial<Content>(this, message, value);
         return message;
@@ -143,14 +161,20 @@ class Content$Type extends MessageType<Content> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string version */ 1:
+                case /* string version */ 1:
                     message.version = reader.string();
                     break;
-                case /* optional resources.common.content.JSONNode content */ 2:
-                    message.content = JSONNode.internalBinaryRead(reader, reader.uint32(), options, message.content);
+                case /* resources.common.content.ContentType content_type */ 2:
+                    message.contentType = reader.int32();
                     break;
-                case /* optional string raw_content */ 3:
-                    message.rawContent = reader.string();
+                case /* optional string raw_html */ 3:
+                    message.rawHtml = reader.string();
+                    break;
+                case /* optional resources.common.content.RichTextHtmlNode content */ 4:
+                    message.content = RichTextHtmlNode.internalBinaryRead(reader, reader.uint32(), options, message.content);
+                    break;
+                case /* google.protobuf.Struct tiptap_json */ 5:
+                    message.tiptapJson = Struct.internalBinaryRead(reader, reader.uint32(), options, message.tiptapJson);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -164,15 +188,21 @@ class Content$Type extends MessageType<Content> {
         return message;
     }
     internalBinaryWrite(message: Content, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string version = 1; */
-        if (message.version !== undefined)
+        /* string version = 1; */
+        if (message.version !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.version);
-        /* optional resources.common.content.JSONNode content = 2; */
+        /* resources.common.content.ContentType content_type = 2; */
+        if (message.contentType !== 0)
+            writer.tag(2, WireType.Varint).int32(message.contentType);
+        /* optional string raw_html = 3; */
+        if (message.rawHtml !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.rawHtml);
+        /* optional resources.common.content.RichTextHtmlNode content = 4; */
         if (message.content)
-            JSONNode.internalBinaryWrite(message.content, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional string raw_content = 3; */
-        if (message.rawContent !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.rawContent);
+            RichTextHtmlNode.internalBinaryWrite(message.content, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Struct tiptap_json = 5; */
+        if (message.tiptapJson)
+            Struct.internalBinaryWrite(message.tiptapJson, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -184,28 +214,28 @@ class Content$Type extends MessageType<Content> {
  */
 export const Content = new Content$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JSONNode$Type extends MessageType<JSONNode> {
+class RichTextHtmlNode$Type extends MessageType<RichTextHtmlNode> {
     constructor() {
-        super("resources.common.content.JSONNode", [
+        super("resources.common.content.RichTextHtmlNode", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.common.content.NodeType", NodeType, "NODE_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 5, name: "text", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 6, name: "content", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JSONNode }
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 5, name: "text", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 6, name: "content", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RichTextHtmlNode }
         ]);
     }
-    create(value?: PartialMessage<JSONNode>): JSONNode {
+    create(value?: PartialMessage<RichTextHtmlNode>): RichTextHtmlNode {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.type = 0;
         message.tag = "";
         message.attrs = {};
         message.content = [];
         if (value !== undefined)
-            reflectionMergePartial<JSONNode>(this, message, value);
+            reflectionMergePartial<RichTextHtmlNode>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JSONNode): JSONNode {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RichTextHtmlNode): RichTextHtmlNode {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -225,8 +255,8 @@ class JSONNode$Type extends MessageType<JSONNode> {
                 case /* optional string text */ 5:
                     message.text = reader.string();
                     break;
-                case /* repeated resources.common.content.JSONNode content */ 6:
-                    message.content.push(JSONNode.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.common.content.RichTextHtmlNode content */ 6:
+                    message.content.push(RichTextHtmlNode.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -239,8 +269,8 @@ class JSONNode$Type extends MessageType<JSONNode> {
         }
         return message;
     }
-    private binaryReadMap4(map: JSONNode["attrs"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof JSONNode["attrs"] | undefined, val: JSONNode["attrs"][any] | undefined;
+    private binaryReadMap4(map: RichTextHtmlNode["attrs"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof RichTextHtmlNode["attrs"] | undefined, val: RichTextHtmlNode["attrs"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -250,12 +280,12 @@ class JSONNode$Type extends MessageType<JSONNode> {
                 case 2:
                     val = reader.string();
                     break;
-                default: throw new globalThis.Error("unknown map entry field for resources.common.content.JSONNode.attrs");
+                default: throw new globalThis.Error("unknown map entry field for resources.common.content.RichTextHtmlNode.attrs");
             }
         }
         map[key ?? ""] = val ?? "";
     }
-    internalBinaryWrite(message: JSONNode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: RichTextHtmlNode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.content.NodeType type = 1; */
         if (message.type !== 0)
             writer.tag(1, WireType.Varint).int32(message.type);
@@ -271,9 +301,9 @@ class JSONNode$Type extends MessageType<JSONNode> {
         /* optional string text = 5; */
         if (message.text !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.text);
-        /* repeated resources.common.content.JSONNode content = 6; */
+        /* repeated resources.common.content.RichTextHtmlNode content = 6; */
         for (let i = 0; i < message.content.length; i++)
-            JSONNode.internalBinaryWrite(message.content[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            RichTextHtmlNode.internalBinaryWrite(message.content[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -281,43 +311,39 @@ class JSONNode$Type extends MessageType<JSONNode> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.common.content.JSONNode
+ * @generated MessageType for protobuf message resources.common.content.RichTextHtmlNode
  */
-export const JSONNode = new JSONNode$Type();
+export const RichTextHtmlNode = new RichTextHtmlNode$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class TiptapJSONDocument$Type extends MessageType<TiptapJSONDocument> {
+class ExtractedContent$Type extends MessageType<ExtractedContent> {
     constructor() {
-        super("resources.common.content.TiptapJSONDocument", [
-            { no: 1, name: "json", kind: "message", T: () => Struct },
-            { no: 2, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 3, name: "word_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 4, name: "first_heading", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+        super("resources.common.content.ExtractedContent", [
+            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "word_count", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 3, name: "first_heading", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<TiptapJSONDocument>): TiptapJSONDocument {
+    create(value?: PartialMessage<ExtractedContent>): ExtractedContent {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.summary = "";
+        message.text = "";
         message.wordCount = 0;
         message.firstHeading = "";
         if (value !== undefined)
-            reflectionMergePartial<TiptapJSONDocument>(this, message, value);
+            reflectionMergePartial<ExtractedContent>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TiptapJSONDocument): TiptapJSONDocument {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExtractedContent): ExtractedContent {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* google.protobuf.Struct json */ 1:
-                    message.json = Struct.internalBinaryRead(reader, reader.uint32(), options, message.json);
+                case /* string text */ 1:
+                    message.text = reader.string();
                     break;
-                case /* string summary */ 2:
-                    message.summary = reader.string();
-                    break;
-                case /* uint32 word_count */ 3:
+                case /* uint32 word_count */ 2:
                     message.wordCount = reader.uint32();
                     break;
-                case /* string first_heading */ 4:
+                case /* string first_heading */ 3:
                     message.firstHeading = reader.string();
                     break;
                 default:
@@ -331,19 +357,16 @@ class TiptapJSONDocument$Type extends MessageType<TiptapJSONDocument> {
         }
         return message;
     }
-    internalBinaryWrite(message: TiptapJSONDocument, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* google.protobuf.Struct json = 1; */
-        if (message.json)
-            Struct.internalBinaryWrite(message.json, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string summary = 2; */
-        if (message.summary !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.summary);
-        /* uint32 word_count = 3; */
+    internalBinaryWrite(message: ExtractedContent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string text = 1; */
+        if (message.text !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.text);
+        /* uint32 word_count = 2; */
         if (message.wordCount !== 0)
-            writer.tag(3, WireType.Varint).uint32(message.wordCount);
-        /* string first_heading = 4; */
+            writer.tag(2, WireType.Varint).uint32(message.wordCount);
+        /* string first_heading = 3; */
         if (message.firstHeading !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.firstHeading);
+            writer.tag(3, WireType.LengthDelimited).string(message.firstHeading);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -351,6 +374,6 @@ class TiptapJSONDocument$Type extends MessageType<TiptapJSONDocument> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.common.content.TiptapJSONDocument
+ * @generated MessageType for protobuf message resources.common.content.ExtractedContent
  */
-export const TiptapJSONDocument = new TiptapJSONDocument$Type();
+export const ExtractedContent = new ExtractedContent$Type();

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
@@ -185,13 +184,16 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 		}
 	}
 
-	newRawContent, err := content.PrettyHTML(new.GetContent().GetRawContent())
-	if err != nil {
-		return nil, err
-	}
-	if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawContent(), newRawContent); d != "" {
-		diff.ContentDiff = &d
-	}
+	/*
+		    TODO use new diff logic
+			newRawContent, err := content.PrettyHTML(new.GetContent().GetRawHtml())
+			if err != nil {
+				return nil, err
+			}
+			if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawHtml(), newRawContent); d != "" {
+				diff.ContentDiff = &d
+			}
+	*/
 
 	return diff, nil
 }

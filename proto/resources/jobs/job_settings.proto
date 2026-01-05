@@ -83,7 +83,7 @@ message GroupSyncSettings {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

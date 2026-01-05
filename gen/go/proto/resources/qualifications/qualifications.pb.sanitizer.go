@@ -4,7 +4,7 @@
 package qualifications
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -15,7 +15,7 @@ func (m *Qualification) Sanitize() error {
 	}
 
 	// Field: Abbreviation
-	m.Abbreviation = htmlsanitizer.StripTags(m.Abbreviation)
+	m.Abbreviation = htmlsanitizer.StripHTMLTags(m.Abbreviation)
 
 	// Field: Access
 	if m.Access != nil {
@@ -67,7 +67,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripTags(*m.Description)
+		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
 	}
 
 	// Field: DiscordSettings
@@ -114,7 +114,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: LabelSyncFormat
 	if m.LabelSyncFormat != nil {
-		*m.LabelSyncFormat = htmlsanitizer.StripTags(*m.LabelSyncFormat)
+		*m.LabelSyncFormat = htmlsanitizer.StripHTMLTags(*m.LabelSyncFormat)
 	}
 
 	// Field: Request
@@ -228,7 +228,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: ApproverComment
 	if m.ApproverComment != nil {
-		*m.ApproverComment = htmlsanitizer.StripTags(*m.ApproverComment)
+		*m.ApproverComment = htmlsanitizer.StripHTMLTags(*m.ApproverComment)
 	}
 
 	// Field: ApproverJob
@@ -274,7 +274,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: UserComment
 	if m.UserComment != nil {
-		*m.UserComment = htmlsanitizer.StripTags(*m.UserComment)
+		*m.UserComment = htmlsanitizer.StripHTMLTags(*m.UserComment)
 	}
 
 	return nil
@@ -355,7 +355,7 @@ func (m *QualificationResult) Sanitize() error {
 	}
 
 	// Field: Summary
-	m.Summary = htmlsanitizer.StripTags(m.Summary)
+	m.Summary = htmlsanitizer.StripHTMLTags(m.Summary)
 
 	// Field: User
 	if m.User != nil {
@@ -377,7 +377,7 @@ func (m *QualificationShort) Sanitize() error {
 	}
 
 	// Field: Abbreviation
-	m.Abbreviation = htmlsanitizer.StripTags(m.Abbreviation)
+	m.Abbreviation = htmlsanitizer.StripHTMLTags(m.Abbreviation)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -411,7 +411,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripTags(*m.Description)
+		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
 	}
 
 	// Field: ExamSettings

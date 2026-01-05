@@ -85,6 +85,7 @@ description: Documentation for GRPC Protobuf files.
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
 | `method` | [string](#string) | optional |  |
+| `strip_html_tags` | [bool](#bool) | optional |  |
 
 
 
@@ -832,15 +833,30 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
-| `content` | [JSONNode](#resourcescommoncontentJSONNode) | optional |  |
-| `raw_content` | [string](#string) | optional |  |
+| `version` | [string](#string) |  |  |
+| `content_type` | [ContentType](#resourcescommoncontentContentType) |  |  |
+| `raw_html` | [string](#string) | optional | Deprecated: Legacy HTML (only for viewing old content) |
+| `content` | [RichTextHtmlNode](#resourcescommoncontentRichTextHtmlNode) | optional | Deprecated: Legacy custom HTML to JSON AST (only for viewing old content) |
+| `tiptap_json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  | Tiptap JSON Document |
 
 
 
 
 
-### resources.common.content.JSONNode
+### resources.common.content.ExtractedContent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) |  |  |
+| `first_heading` | [string](#string) |  |  |
+
+
+
+
+
+### resources.common.content.RichTextHtmlNode
 
 
 | Field | Type | Label | Description |
@@ -848,35 +864,21 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `type` | [NodeType](#resourcescommoncontentNodeType) |  |  |
 | `id` | [string](#string) | optional |  |
 | `tag` | [string](#string) |  |  |
-| `attrs` | [JSONNode.AttrsEntry](#resourcescommoncontentJSONNodeAttrsEntry) | repeated |  |
+| `attrs` | [RichTextHtmlNode.AttrsEntry](#resourcescommoncontentRichTextHtmlNodeAttrsEntry) | repeated |  |
 | `text` | [string](#string) | optional |  |
-| `content` | [JSONNode](#resourcescommoncontentJSONNode) | repeated |  |
+| `content` | [RichTextHtmlNode](#resourcescommoncontentRichTextHtmlNode) | repeated |  |
 
 
 
 
 
-### resources.common.content.JSONNode.AttrsEntry
+### resources.common.content.RichTextHtmlNode.AttrsEntry
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  |  |
 | `value` | [string](#string) |  |  |
-
-
-
-
-
-### resources.common.content.TiptapJSONDocument
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  |  |
-| `summary` | [string](#string) |  |  |
-| `word_count` | [uint32](#uint32) |  |  |
-| `first_heading` | [string](#string) |  |  |
 
 
 
@@ -889,8 +891,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `CONTENT_TYPE_UNSPECIFIED` | 0 |  |
-| `CONTENT_TYPE_HTML` | 1 |  |
-| `CONTENT_TYPE_TIPTAP_JSON` | 2 |  |
+| `CONTENT_TYPE_HTML` | 1 | Used for legacy HTML content |
+| `CONTENT_TYPE_TIPTAP_JSON` | 2 | Used for Tiptap JSON content |
 
 
 
@@ -2933,126 +2935,6 @@ Dummy - DO NOT USE!
 
 
 
-## resources/common/cron/cron.proto
-
-
-### resources.common.cron.Cronjob
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | Cronjob name |
-| `schedule` | [string](#string) |  | Cron schedule expression For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).<br/><br/>To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/. |
-| `state` | [CronjobState](#resourcescommoncronCronjobState) |  | Cronjob state |
-| `next_schedule_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Next time the cronjob should be run |
-| `last_attempt_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Last attempted start time of Cronjob |
-| `started_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Time current cronjob was started |
-| `timeout` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional | Optional timeout for cronjob execution |
-| `data` | [CronjobData](#resourcescommoncronCronjobData) |  | Cronjob data |
-| `last_completed_event` | [CronjobCompletedEvent](#resourcescommoncronCronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
-
-
-
-
-
-### resources.common.cron.CronjobCompletedEvent
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | Cronjob name |
-| `success` | [bool](#bool) |  | Cronjob execution success status |
-| `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
-| `end_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Cronjob end time |
-| `elapsed` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  | Cronjob execution time/elapsed time |
-| `data` | [CronjobData](#resourcescommoncronCronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
-| `node_name` | [string](#string) |  | Name of the node where the cronjob was executed |
-| `error_message` | [string](#string) | optional | Error message (if success = false) |
-
-
-
-
-
-### resources.common.cron.CronjobData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `data` | [google.protobuf.Any](https://protobuf.dev/reference/protobuf/google.protobuf/#any) | optional |  |
-
-
-
-
-
-### resources.common.cron.CronjobLockOwnerState
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `hostname` | [string](#string) |  | Hostname of the agent the cronjob is running on |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-
-
-
-
-
-### resources.common.cron.CronjobSchedulerEvent
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `cronjob` | [Cronjob](#resourcescommoncronCronjob) |  | Full Cronjob spec |
-
-
-
-
-
-### resources.common.cron.GenericCronData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `attributes` | [GenericCronData.AttributesEntry](#resourcescommoncronGenericCronDataAttributesEntry) | repeated |  |
-
-
-
-
-
-### resources.common.cron.GenericCronData.AttributesEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [string](#string) |  |  |
-
-
-
-
- <!-- end messages -->
-
-
-### resources.common.cron.CronjobState
-States of Cronjbo
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CRONJOB_STATE_UNSPECIFIED` | 0 |  |
-| `CRONJOB_STATE_WAITING` | 1 |  |
-| `CRONJOB_STATE_PENDING` | 2 |  |
-| `CRONJOB_STATE_RUNNING` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 ## resources/common/database/database.proto
 
 
@@ -3384,6 +3266,126 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/cron/cron.proto
+
+
+### resources.cron.Cronjob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | Cronjob name |
+| `schedule` | [string](#string) |  | Cron schedule expression For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).<br/><br/>To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/. |
+| `state` | [CronjobState](#resourcescronCronjobState) |  | Cronjob state |
+| `next_schedule_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Next time the cronjob should be run |
+| `last_attempt_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Last attempted start time of Cronjob |
+| `started_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Time current cronjob was started |
+| `timeout` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional | Optional timeout for cronjob execution |
+| `data` | [CronjobData](#resourcescronCronjobData) |  | Cronjob data |
+| `last_completed_event` | [CronjobCompletedEvent](#resourcescronCronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
+
+
+
+
+
+### resources.cron.CronjobCompletedEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | Cronjob name |
+| `success` | [bool](#bool) |  | Cronjob execution success status |
+| `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
+| `end_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Cronjob end time |
+| `elapsed` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  | Cronjob execution time/elapsed time |
+| `data` | [CronjobData](#resourcescronCronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
+| `node_name` | [string](#string) |  | Name of the node where the cronjob was executed |
+| `error_message` | [string](#string) | optional | Error message (if success = false) |
+
+
+
+
+
+### resources.cron.CronjobData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `data` | [google.protobuf.Any](https://protobuf.dev/reference/protobuf/google.protobuf/#any) | optional |  |
+
+
+
+
+
+### resources.cron.CronjobLockOwnerState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `hostname` | [string](#string) |  | Hostname of the agent the cronjob is running on |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.cron.CronjobSchedulerEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `cronjob` | [Cronjob](#resourcescronCronjob) |  | Full Cronjob spec |
+
+
+
+
+
+### resources.cron.GenericCronData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `attributes` | [GenericCronData.AttributesEntry](#resourcescronGenericCronDataAttributesEntry) | repeated |  |
+
+
+
+
+
+### resources.cron.GenericCronData.AttributesEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.cron.CronjobState
+States of Cronjbo
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CRONJOB_STATE_UNSPECIFIED` | 0 |  |
+| `CRONJOB_STATE_WAITING` | 1 |  |
+| `CRONJOB_STATE_PENDING` | 2 |  |
+| `CRONJOB_STATE_RUNNING` | 3 |  |
+
 
  <!-- end enums -->
 
@@ -3834,6 +3836,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) | optional | Derived field (server authored) |
+| `first_heading` | [string](#string) | optional | Derived field (server authored) |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `data` | [string](#string) | optional |  |
@@ -3926,6 +3930,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) | optional | Derived field (server authored) |
+| `first_heading` | [string](#string) | optional | Derived field (server authored) |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
@@ -11721,7 +11727,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.common.cron.Cronjob](#resourcescommoncronCronjob) | repeated |  |
+| `jobs` | [resources.cron.Cronjob](#resourcescronCronjob) | repeated |  |
 
 
 

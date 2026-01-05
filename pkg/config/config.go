@@ -2,6 +2,10 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
@@ -200,6 +204,32 @@ type Storage struct {
 
 	MetricsEnabled  bool          `default:"true" yaml:"metricsEnabled"`
 	MetricsInterval time.Duration `default:"15m"  yaml:"metricsInterval"`
+}
+
+func (c *Storage) Validate() error {
+	var prefix string
+
+	switch c.Type {
+	case StorageTypeFilesystem:
+		prefix = c.Filesystem.Prefix
+	case StorageTypeS3:
+		prefix = c.S3.Prefix
+	case StorageTypeNoop:
+		return nil
+
+	default:
+		return fmt.Errorf("unknown storage type: %s", c.Type)
+	}
+
+	p := filepath.Clean(filepath.FromSlash(prefix))
+	if p == "." || p == ".." || strings.HasPrefix(p, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("invalid storage prefix: %q", prefix)
+	}
+	if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
+		return fmt.Errorf("invalid storage prefix: %q", prefix)
+	}
+
+	return nil
 }
 
 type FilesystemStorage struct {

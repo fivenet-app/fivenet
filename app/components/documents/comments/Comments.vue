@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -96,7 +96,7 @@ async function saveHistory(values: Schema, type = 'document_comments'): Promise<
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.documentId,
         {
@@ -138,7 +138,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
         id: 0,
         documentId,
         content: {
-            rawContent: values.content,
+            rawHtml: values.content,
         },
         creatorJob: '',
     };

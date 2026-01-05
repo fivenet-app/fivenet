@@ -78,7 +78,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 startTime: toTimestamp(values.startTime),
                 endTime: toTimestamp(values.endTime),
                 content: {
-                    rawContent: values.content,
+                    rawHtml: values.content,
                 },
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
@@ -113,7 +113,7 @@ function setFromProps(): void {
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
-    state.content = entry.content?.rawContent ?? '';
+    state.content = entry.content?.rawHtml ?? '';
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
 }

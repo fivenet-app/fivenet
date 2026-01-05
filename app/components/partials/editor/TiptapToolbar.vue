@@ -3,7 +3,7 @@ import type { Range } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
-import type { Content, Version } from '~/types/history';
+import type { HistoryContent, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'update:content', val: string): void;
+    (e: 'update:content', val: EditorDocument | undefined): void;
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
@@ -182,7 +182,7 @@ const clear = () => {
 const replaceAll = () => ed.value?.commands.replaceAll();
 
 function applyVersion(version: Version<unknown>): void {
-    const v = version as Version<Content>;
+    const v = version as Version<HistoryContent>;
     emits('update:content', v.content.content);
     files.value = v.content.files;
 
@@ -874,7 +874,7 @@ const isLinkOpen = ref(false);
                     @click="
                         versionHistoryModal.open({
                             historyType: historyType,
-                            currentContent: { content: ed?.getHTML() || '', files: files },
+                            currentContent: { content: ed?.getJSON(), files: files },
                             onApply: applyVersion,
                         })
                     "

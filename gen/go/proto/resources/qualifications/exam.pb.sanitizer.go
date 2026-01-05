@@ -4,7 +4,7 @@
 package qualifications
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -75,11 +75,11 @@ func (m *ExamQuestion) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripTags(*m.Description)
+		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
+	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -239,7 +239,7 @@ func (m *ExamQuestionMultipleChoice) Sanitize() error {
 	for idx, item := range m.Choices {
 		_, _ = idx, item
 
-		m.Choices[idx] = htmlsanitizer.StripTags(m.Choices[idx])
+		m.Choices[idx] = htmlsanitizer.StripHTMLTags(m.Choices[idx])
 
 	}
 
@@ -267,7 +267,7 @@ func (m *ExamQuestionSingleChoice) Sanitize() error {
 	for idx, item := range m.Choices {
 		_, _ = idx, item
 
-		m.Choices[idx] = htmlsanitizer.StripTags(m.Choices[idx])
+		m.Choices[idx] = htmlsanitizer.StripHTMLTags(m.Choices[idx])
 
 	}
 
@@ -409,7 +409,7 @@ func (m *ExamResponseMultipleChoice) Sanitize() error {
 	for idx, item := range m.Choices {
 		_, _ = idx, item
 
-		m.Choices[idx] = htmlsanitizer.StripTags(m.Choices[idx])
+		m.Choices[idx] = htmlsanitizer.StripHTMLTags(m.Choices[idx])
 
 	}
 
@@ -434,7 +434,7 @@ func (m *ExamResponseSingleChoice) Sanitize() error {
 	}
 
 	// Field: Choice
-	m.Choice = htmlsanitizer.StripTags(m.Choice)
+	m.Choice = htmlsanitizer.StripHTMLTags(m.Choice)
 
 	return nil
 }
@@ -447,7 +447,7 @@ func (m *ExamResponseText) Sanitize() error {
 	}
 
 	// Field: Text
-	m.Text = htmlsanitizer.StripTags(m.Text)
+	m.Text = htmlsanitizer.StripHTMLTags(m.Text)
 
 	return nil
 }

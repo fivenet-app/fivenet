@@ -10,17 +10,23 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 enum ContentType {
   CONTENT_TYPE_UNSPECIFIED = 0;
+  // Used for legacy HTML content
   CONTENT_TYPE_HTML = 1;
+  // Used for Tiptap JSON content
   CONTENT_TYPE_TIPTAP_JSON = 2;
 }
 
 message Content {
-  optional string version = 1 [(buf.validate.field).string.max_len = 24];
-  optional JSONNode content = 2;
-  optional string raw_content = 3 [
-    (buf.validate.field).string = {max_bytes: 2000000},
-    (codegen.sanitizer.sanitizer) = {enabled: true}
-  ];
+  string version = 1 [(buf.validate.field).string.max_len = 24];
+  ContentType content_type = 2 [(buf.validate.field).enum.defined_only = true];
+
+  // Deprecated: Legacy HTML (only for viewing old content)
+  optional string raw_html = 3;
+  // Deprecated: Legacy custom HTML to JSON AST (only for viewing old content)
+  optional RichTextHtmlNode content = 4;
+
+  // Tiptap JSON Document
+  google.protobuf.Struct tiptap_json = 5;
 }
 
 enum NodeType {
@@ -33,37 +39,29 @@ enum NodeType {
   NODE_TYPE_COMMENT = 4;
 }
 
-message JSONNode {
+message RichTextHtmlNode {
   NodeType type = 1 [(buf.validate.field).enum.defined_only = true];
   optional string id = 2 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   string tag = 3 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   map<string, string> attrs = 4 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   optional string text = 5 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
-  repeated JSONNode content = 6;
+  repeated RichTextHtmlNode content = 6;
 }
 
-message TiptapJSONDocument {
-  google.protobuf.Struct json = 1;
-
-  string summary = 2 [(codegen.sanitizer.sanitizer) = {
-    enabled: true
-    method: "StripTags"
-  }];
-  uint32 word_count = 3;
-  string first_heading = 4 [(codegen.sanitizer.sanitizer) = {
-    enabled: true
-    method: "StripTags"
-  }];
+message ExtractedContent {
+  string text = 1;
+  uint32 word_count = 2;
+  string first_heading = 3;
 }

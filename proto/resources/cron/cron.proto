@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package resources.common.cron;
+package resources.cron;
 
 import "codegen/sanitizer/sanitizer.proto";
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron;cron";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron;cron";
 
 message Cronjob {
   // Cronjob name
@@ -87,6 +87,6 @@ message CronjobCompletedEvent {
 message GenericCronData {
   map<string, string> attributes = 1 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
 }

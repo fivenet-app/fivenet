@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Content, Version } from '~/types/history';
+import type { HistoryContent, Version } from '~/types/history';
 import VersionDiffModal from './VersionDiffModal.vue';
 
 const props = defineProps<{
     historyType: string;
-    currentContent: Content;
+    currentContent: HistoryContent;
 }>();
 
 const emit = defineEmits<{
@@ -16,11 +16,11 @@ const overlay = useOverlay();
 
 const historyStore = useHistoryStore();
 
-const history = historyStore.listHistory<Content>(props.historyType);
+const history = historyStore.listHistory<HistoryContent>(props.historyType);
 
 const sortedHistory = computed(() => (history.value ?? []).slice().sort((a, b) => b.date.localeCompare(a.date)));
 
-const selectedVersion = ref<Version<Content> | undefined>(undefined);
+const selectedVersion = ref<Version<HistoryContent> | undefined>(undefined);
 
 function date(val: string) {
     return new Date(val).toLocaleString();
@@ -28,17 +28,17 @@ function date(val: string) {
 
 const versionDiffModal = overlay.create(VersionDiffModal);
 
-function emitApply(version: Version<Content>) {
+function emitApply(version: Version<HistoryContent>) {
     selectedVersion.value = version;
 
     versionDiffModal.open({
         currentContent: props.currentContent.content,
         selectedVersion: version,
-        onApply: (version: Version<Content>) => onConfirmDiff(version),
+        onApply: (version: Version<HistoryContent>) => onConfirmDiff(version),
     });
 }
 
-function onConfirmDiff(version: Version<Content>) {
+function onConfirmDiff(version: Version<HistoryContent>) {
     emit('apply', version);
     selectedVersion.value = undefined;
     emit('close', false);
@@ -75,7 +75,7 @@ watch(
                                     color="primary"
                                     variant="soft"
                                     :label="$t('common.compare')"
-                                    @click="emitApply(version as Version<Content>)"
+                                    @click="emitApply(version as Version<HistoryContent>)"
                                 />
                                 <UButton icon="i-mdi-trash" color="error" @click="historyStore.deleteVersion(version.date)" />
                             </UFieldGroup>

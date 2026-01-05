@@ -1607,7 +1607,7 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         super("services.mailer.CreateThreadRequest", [
             { no: 1, name: "thread", kind: "message", T: () => Thread, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "message", kind: "message", T: () => Message, options: { "buf.validate.field": { required: true } } },
-            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "15", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { minItems: "1", maxItems: "15", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<CreateThreadRequest>): CreateThreadRequest {
@@ -2415,7 +2415,7 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
     constructor() {
         super("services.mailer.PostMessageRequest", [
             { no: 1, name: "message", kind: "message", T: () => Message, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10", items: { string: { minLen: "6", maxLen: "80" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<PostMessageRequest>): PostMessageRequest {

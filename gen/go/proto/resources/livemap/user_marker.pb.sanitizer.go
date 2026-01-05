@@ -4,7 +4,7 @@
 package livemap
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -16,7 +16,7 @@ func (m *UserMarker) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.StripTags(*m.Color)
+		*m.Color = htmlsanitizer.StripHTMLTags(*m.Color)
 	}
 
 	// Field: Data
@@ -36,7 +36,7 @@ func (m *UserMarker) Sanitize() error {
 
 	// Field: Postal
 	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.StripTags(*m.Postal)
+		*m.Postal = htmlsanitizer.StripHTMLTags(*m.Postal)
 	}
 
 	// Field: Unit

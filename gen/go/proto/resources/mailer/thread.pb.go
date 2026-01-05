@@ -329,7 +329,7 @@ var File_resources_mailer_thread_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/mailer/thread.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xf9\x05\n" +
+	"\x1dresources/mailer/thread.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xf0\x05\n" +
 	"\x06Thread\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -342,8 +342,8 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"\rcreator_email\x18\x06 \x01(\v2\x17.resources.mailer.EmailH\x02R\fcreatorEmail\x88\x01\x01\x12+\n" +
 	"\n" +
 	"creator_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x121\n" +
-	"\x05title\x18\t \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12P\n" +
+	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12(\n" +
+	"\x05title\x18\t \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12P\n" +
 	"\n" +
 	"recipients\x18\n" +
 	" \x03(\v2&.resources.mailer.ThreadRecipientEmailB\b\xbaH\x05\x92\x01\x02\x10\x14R\n" +

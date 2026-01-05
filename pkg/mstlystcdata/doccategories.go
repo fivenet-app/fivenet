@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/cache"

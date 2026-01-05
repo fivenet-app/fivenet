@@ -34,7 +34,7 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         super("resources.mailer.EmailSettings", [
             { no: 1, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<EmailSettings>): EmailSettings {

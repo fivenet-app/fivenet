@@ -6,7 +6,7 @@ import { logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -161,7 +161,7 @@ async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.pageId,
         {
@@ -202,7 +202,7 @@ function setFromProps(): void {
     state.parentId = page.value?.parentId ?? 0;
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
-    state.content = page.value.content?.rawContent ?? '';
+    state.content = page.value.content?.rawHtml ?? '';
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
     state.meta.public = page.value.meta?.public ?? false;
@@ -247,7 +247,7 @@ async function updatePage(values: Schema): Promise<void> {
             tags: [],
         },
         content: {
-            rawContent: values.content,
+            rawHtml: values.content,
         },
         parentId: values.parentId,
         access: values.access,

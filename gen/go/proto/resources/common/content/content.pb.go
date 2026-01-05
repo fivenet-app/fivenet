@@ -27,7 +27,9 @@ type ContentType int32
 
 const (
 	ContentType_CONTENT_TYPE_UNSPECIFIED ContentType = 0
-	ContentType_CONTENT_TYPE_HTML        ContentType = 1
+	// Used for legacy HTML content
+	ContentType_CONTENT_TYPE_HTML ContentType = 1
+	// Used for Tiptap JSON content
 	ContentType_CONTENT_TYPE_TIPTAP_JSON ContentType = 2
 )
 
@@ -128,10 +130,15 @@ func (NodeType) EnumDescriptor() ([]byte, []int) {
 }
 
 type Content struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`
-	Content       *JSONNode              `protobuf:"bytes,2,opt,name=content,proto3,oneof" json:"content,omitempty"`
-	RawContent    *string                `protobuf:"bytes,3,opt,name=raw_content,json=rawContent,proto3,oneof" json:"raw_content,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Version     string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
+	ContentType ContentType            `protobuf:"varint,2,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	// Deprecated: Legacy HTML (only for viewing old content)
+	RawHtml *string `protobuf:"bytes,3,opt,name=raw_html,json=rawHtml,proto3,oneof" json:"raw_html,omitempty"`
+	// Deprecated: Legacy custom HTML to JSON AST (only for viewing old content)
+	Content *RichTextHtmlNode `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`
+	// Tiptap JSON Document
+	TiptapJson    *structpb.Struct `protobuf:"bytes,5,opt,name=tiptap_json,json=tiptapJson,proto3" json:"tiptap_json,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,52 +174,66 @@ func (*Content) Descriptor() ([]byte, []int) {
 }
 
 func (x *Content) GetVersion() string {
-	if x != nil && x.Version != nil {
-		return *x.Version
+	if x != nil {
+		return x.Version
 	}
 	return ""
 }
 
-func (x *Content) GetContent() *JSONNode {
+func (x *Content) GetContentType() ContentType {
+	if x != nil {
+		return x.ContentType
+	}
+	return ContentType_CONTENT_TYPE_UNSPECIFIED
+}
+
+func (x *Content) GetRawHtml() string {
+	if x != nil && x.RawHtml != nil {
+		return *x.RawHtml
+	}
+	return ""
+}
+
+func (x *Content) GetContent() *RichTextHtmlNode {
 	if x != nil {
 		return x.Content
 	}
 	return nil
 }
 
-func (x *Content) GetRawContent() string {
-	if x != nil && x.RawContent != nil {
-		return *x.RawContent
+func (x *Content) GetTiptapJson() *structpb.Struct {
+	if x != nil {
+		return x.TiptapJson
 	}
-	return ""
+	return nil
 }
 
-type JSONNode struct {
+type RichTextHtmlNode struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Type          NodeType               `protobuf:"varint,1,opt,name=type,proto3,enum=resources.common.content.NodeType" json:"type,omitempty"`
 	Id            *string                `protobuf:"bytes,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Tag           string                 `protobuf:"bytes,3,opt,name=tag,proto3" json:"tag,omitempty"`
 	Attrs         map[string]string      `protobuf:"bytes,4,rep,name=attrs,proto3" json:"attrs,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	Text          *string                `protobuf:"bytes,5,opt,name=text,proto3,oneof" json:"text,omitempty"`
-	Content       []*JSONNode            `protobuf:"bytes,6,rep,name=content,proto3" json:"content,omitempty"`
+	Content       []*RichTextHtmlNode    `protobuf:"bytes,6,rep,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JSONNode) Reset() {
-	*x = JSONNode{}
+func (x *RichTextHtmlNode) Reset() {
+	*x = RichTextHtmlNode{}
 	mi := &file_resources_common_content_content_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JSONNode) String() string {
+func (x *RichTextHtmlNode) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JSONNode) ProtoMessage() {}
+func (*RichTextHtmlNode) ProtoMessage() {}
 
-func (x *JSONNode) ProtoReflect() protoreflect.Message {
+func (x *RichTextHtmlNode) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_common_content_content_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -224,77 +245,76 @@ func (x *JSONNode) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JSONNode.ProtoReflect.Descriptor instead.
-func (*JSONNode) Descriptor() ([]byte, []int) {
+// Deprecated: Use RichTextHtmlNode.ProtoReflect.Descriptor instead.
+func (*RichTextHtmlNode) Descriptor() ([]byte, []int) {
 	return file_resources_common_content_content_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *JSONNode) GetType() NodeType {
+func (x *RichTextHtmlNode) GetType() NodeType {
 	if x != nil {
 		return x.Type
 	}
 	return NodeType_NODE_TYPE_UNSPECIFIED
 }
 
-func (x *JSONNode) GetId() string {
+func (x *RichTextHtmlNode) GetId() string {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return ""
 }
 
-func (x *JSONNode) GetTag() string {
+func (x *RichTextHtmlNode) GetTag() string {
 	if x != nil {
 		return x.Tag
 	}
 	return ""
 }
 
-func (x *JSONNode) GetAttrs() map[string]string {
+func (x *RichTextHtmlNode) GetAttrs() map[string]string {
 	if x != nil {
 		return x.Attrs
 	}
 	return nil
 }
 
-func (x *JSONNode) GetText() string {
+func (x *RichTextHtmlNode) GetText() string {
 	if x != nil && x.Text != nil {
 		return *x.Text
 	}
 	return ""
 }
 
-func (x *JSONNode) GetContent() []*JSONNode {
+func (x *RichTextHtmlNode) GetContent() []*RichTextHtmlNode {
 	if x != nil {
 		return x.Content
 	}
 	return nil
 }
 
-type TiptapJSONDocument struct {
+type ExtractedContent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Json          *structpb.Struct       `protobuf:"bytes,1,opt,name=json,proto3" json:"json,omitempty"`
-	Summary       string                 `protobuf:"bytes,2,opt,name=summary,proto3" json:"summary,omitempty"`
-	WordCount     uint32                 `protobuf:"varint,3,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
-	FirstHeading  string                 `protobuf:"bytes,4,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	WordCount     uint32                 `protobuf:"varint,2,opt,name=word_count,json=wordCount,proto3" json:"word_count,omitempty"`
+	FirstHeading  string                 `protobuf:"bytes,3,opt,name=first_heading,json=firstHeading,proto3" json:"first_heading,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TiptapJSONDocument) Reset() {
-	*x = TiptapJSONDocument{}
+func (x *ExtractedContent) Reset() {
+	*x = ExtractedContent{}
 	mi := &file_resources_common_content_content_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TiptapJSONDocument) String() string {
+func (x *ExtractedContent) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TiptapJSONDocument) ProtoMessage() {}
+func (*ExtractedContent) ProtoMessage() {}
 
-func (x *TiptapJSONDocument) ProtoReflect() protoreflect.Message {
+func (x *ExtractedContent) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_common_content_content_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -306,33 +326,26 @@ func (x *TiptapJSONDocument) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TiptapJSONDocument.ProtoReflect.Descriptor instead.
-func (*TiptapJSONDocument) Descriptor() ([]byte, []int) {
+// Deprecated: Use ExtractedContent.ProtoReflect.Descriptor instead.
+func (*ExtractedContent) Descriptor() ([]byte, []int) {
 	return file_resources_common_content_content_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *TiptapJSONDocument) GetJson() *structpb.Struct {
+func (x *ExtractedContent) GetText() string {
 	if x != nil {
-		return x.Json
-	}
-	return nil
-}
-
-func (x *TiptapJSONDocument) GetSummary() string {
-	if x != nil {
-		return x.Summary
+		return x.Text
 	}
 	return ""
 }
 
-func (x *TiptapJSONDocument) GetWordCount() uint32 {
+func (x *ExtractedContent) GetWordCount() uint32 {
 	if x != nil {
 		return x.WordCount
 	}
 	return 0
 }
 
-func (x *TiptapJSONDocument) GetFirstHeading() string {
+func (x *ExtractedContent) GetFirstHeading() string {
 	if x != nil {
 		return x.FirstHeading
 	}
@@ -343,36 +356,35 @@ var File_resources_common_content_content_proto protoreflect.FileDescriptor
 
 const file_resources_common_content_content_proto_rawDesc = "" +
 	"\n" +
-	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xd3\x01\n" +
-	"\aContent\x12&\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18H\x00R\aversion\x88\x01\x01\x12A\n" +
-	"\acontent\x18\x02 \x01(\v2\".resources.common.content.JSONNodeH\x01R\acontent\x88\x01\x01\x125\n" +
-	"\vraw_content\x18\x03 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04(\x80\x89zH\x02R\n" +
-	"rawContent\x88\x01\x01B\n" +
+	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xbe\x02\n" +
+	"\aContent\x12!\n" +
+	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18R\aversion\x12R\n" +
+	"\fcontent_type\x18\x02 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\x1e\n" +
+	"\braw_html\x18\x03 \x01(\tH\x00R\arawHtml\x88\x01\x01\x12I\n" +
+	"\acontent\x18\x04 \x01(\v2*.resources.common.content.RichTextHtmlNodeH\x01R\acontent\x88\x01\x01\x128\n" +
+	"\vtiptap_json\x18\x05 \x01(\v2\x17.google.protobuf.StructR\n" +
+	"tiptapJsonB\v\n" +
+	"\t_raw_htmlB\n" +
 	"\n" +
-	"\b_versionB\n" +
-	"\n" +
-	"\b_contentB\x0e\n" +
-	"\f_raw_content\"\xa5\x03\n" +
-	"\bJSONNode\x12@\n" +
-	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12&\n" +
-	"\x02id\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x00R\x02id\x88\x01\x01\x12#\n" +
-	"\x03tag\x18\x03 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x03tag\x12V\n" +
-	"\x05attrs\x18\x04 \x03(\v2-.resources.common.content.JSONNode.AttrsEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x05attrs\x12*\n" +
-	"\x04text\x18\x05 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x01R\x04text\x88\x01\x01\x12<\n" +
-	"\acontent\x18\x06 \x03(\v2\".resources.common.content.JSONNodeR\acontent\x1a8\n" +
+	"\b_content\"\x99\x03\n" +
+	"\x10RichTextHtmlNode\x12@\n" +
+	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x1d\n" +
+	"\x02id\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\x02id\x88\x01\x01\x12\x1a\n" +
+	"\x03tag\x18\x03 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03tag\x12U\n" +
+	"\x05attrs\x18\x04 \x03(\v25.resources.common.content.RichTextHtmlNode.AttrsEntryB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05attrs\x12!\n" +
+	"\x04text\x18\x05 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x01R\x04text\x88\x01\x01\x12D\n" +
+	"\acontent\x18\x06 \x03(\v2*.resources.common.content.RichTextHtmlNodeR\acontent\x1a8\n" +
 	"\n" +
 	"AttrsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x05\n" +
 	"\x03_idB\a\n" +
-	"\x05_text\"\xc5\x01\n" +
-	"\x12TiptapJSONDocument\x12+\n" +
-	"\x04json\x18\x01 \x01(\v2\x17.google.protobuf.StructR\x04json\x12+\n" +
-	"\asummary\x18\x02 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\asummary\x12\x1d\n" +
+	"\x05_text\"j\n" +
+	"\x10ExtractedContent\x12\x12\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1d\n" +
 	"\n" +
-	"word_count\x18\x03 \x01(\rR\twordCount\x126\n" +
-	"\rfirst_heading\x18\x04 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\ffirstHeading*`\n" +
+	"word_count\x18\x02 \x01(\rR\twordCount\x12#\n" +
+	"\rfirst_heading\x18\x03 \x01(\tR\ffirstHeading*`\n" +
 	"\vContentType\x12\x1c\n" +
 	"\x18CONTENT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11CONTENT_TYPE_HTML\x10\x01\x12\x1c\n" +
@@ -399,25 +411,26 @@ func file_resources_common_content_content_proto_rawDescGZIP() []byte {
 var file_resources_common_content_content_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_common_content_content_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_common_content_content_proto_goTypes = []any{
-	(ContentType)(0),           // 0: resources.common.content.ContentType
-	(NodeType)(0),              // 1: resources.common.content.NodeType
-	(*Content)(nil),            // 2: resources.common.content.Content
-	(*JSONNode)(nil),           // 3: resources.common.content.JSONNode
-	(*TiptapJSONDocument)(nil), // 4: resources.common.content.TiptapJSONDocument
-	nil,                        // 5: resources.common.content.JSONNode.AttrsEntry
-	(*structpb.Struct)(nil),    // 6: google.protobuf.Struct
+	(ContentType)(0),         // 0: resources.common.content.ContentType
+	(NodeType)(0),            // 1: resources.common.content.NodeType
+	(*Content)(nil),          // 2: resources.common.content.Content
+	(*RichTextHtmlNode)(nil), // 3: resources.common.content.RichTextHtmlNode
+	(*ExtractedContent)(nil), // 4: resources.common.content.ExtractedContent
+	nil,                      // 5: resources.common.content.RichTextHtmlNode.AttrsEntry
+	(*structpb.Struct)(nil),  // 6: google.protobuf.Struct
 }
 var file_resources_common_content_content_proto_depIdxs = []int32{
-	3, // 0: resources.common.content.Content.content:type_name -> resources.common.content.JSONNode
-	1, // 1: resources.common.content.JSONNode.type:type_name -> resources.common.content.NodeType
-	5, // 2: resources.common.content.JSONNode.attrs:type_name -> resources.common.content.JSONNode.AttrsEntry
-	3, // 3: resources.common.content.JSONNode.content:type_name -> resources.common.content.JSONNode
-	6, // 4: resources.common.content.TiptapJSONDocument.json:type_name -> google.protobuf.Struct
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0, // 0: resources.common.content.Content.content_type:type_name -> resources.common.content.ContentType
+	3, // 1: resources.common.content.Content.content:type_name -> resources.common.content.RichTextHtmlNode
+	6, // 2: resources.common.content.Content.tiptap_json:type_name -> google.protobuf.Struct
+	1, // 3: resources.common.content.RichTextHtmlNode.type:type_name -> resources.common.content.NodeType
+	5, // 4: resources.common.content.RichTextHtmlNode.attrs:type_name -> resources.common.content.RichTextHtmlNode.AttrsEntry
+	3, // 5: resources.common.content.RichTextHtmlNode.content:type_name -> resources.common.content.RichTextHtmlNode
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_common_content_content_proto_init() }

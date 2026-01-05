@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"

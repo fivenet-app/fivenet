@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -84,6 +84,11 @@ func (m *Document) Sanitize() error {
 
 	}
 
+	// Field: FirstHeading
+	if m.FirstHeading != nil {
+		*m.FirstHeading = htmlsanitizer.Sanitize(*m.FirstHeading)
+	}
+
 	// Field: Meta
 	if m.Meta != nil {
 		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
@@ -103,7 +108,7 @@ func (m *Document) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
+	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -309,6 +314,11 @@ func (m *DocumentShort) Sanitize() error {
 		}
 	}
 
+	// Field: FirstHeading
+	if m.FirstHeading != nil {
+		*m.FirstHeading = htmlsanitizer.Sanitize(*m.FirstHeading)
+	}
+
 	// Field: Meta
 	if m.Meta != nil {
 		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
@@ -328,7 +338,7 @@ func (m *DocumentShort) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
+	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {

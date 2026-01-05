@@ -52,7 +52,7 @@ async function createThread(values: Schema): Promise<void> {
             senderId: selectedEmail.value?.id,
             title: values.title,
             content: {
-                rawContent: values.content,
+                rawHtml: values.content,
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
