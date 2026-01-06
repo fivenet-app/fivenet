@@ -36,20 +36,13 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
     const { editor: editorSettings } = storeToRefs(settingsStore);
 
     const extensions: Extensions = [
-        UniqueID.configure({
-            attributeName: 'id',
-            types: ['heading'],
-            generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
-            filterTransaction: (transaction) => !isChangeOrigin(transaction),
-        }),
-        NodeRange.configure({
-            depth: 0,
-            key: null,
-        }),
-        // Basics
         Blockquote,
         Bold,
         BulletList,
+        CharacterCount.configure({
+            limit: charLimit?.value ?? 0,
+        }),
+        CheckboxStandalone,
         Code,
         CodeBlock,
         Details.configure({
@@ -74,6 +67,9 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             multicolor: true,
         }),
         HorizontalRule,
+        InvisibleCharacters.configure({
+            visible: editorSettings.value.showInvisibleCharacters,
+        }),
         Italic,
         Link.configure({
             openOnClick: false,
@@ -84,11 +80,41 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
         }),
         ListItem,
         ListKeymap,
+        NodeRange.configure({
+            depth: 0,
+            key: null,
+        }),
         OrderedList,
         Paragraph,
+        Placeholder.configure({
+            placeholder: () => placeholder?.value ?? '',
+        }),
+        SearchAndReplace,
         Strike,
         Subscript,
         Superscript,
+        Table.configure({
+            resizable: true,
+            allowTableNodeSelection: true,
+            HTMLAttributes: {
+                class: 'border border-collapse border-solid border-neutral-500',
+            },
+        }),
+        TableRow,
+        TableHeader.configure({
+            HTMLAttributes: {
+                class: 'border border-solid border-neutral-600 bg-neutral-100 dark:bg-neutral-800',
+            },
+        }),
+        TableCell.configure({
+            HTMLAttributes: {
+                class: 'border border-solid border-neutral-500',
+            },
+        }),
+        TaskList,
+        TaskItem.configure({
+            nested: true,
+        }),
         Text,
         TextAlign.configure({
             types: ['heading', 'paragraph', 'image'],
@@ -111,40 +137,11 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             },
         }),
         Underline,
-        InvisibleCharacters.configure({
-            visible: editorSettings.value.showInvisibleCharacters,
-        }),
-        // Table
-        Table.configure({
-            resizable: true,
-            allowTableNodeSelection: true,
-            HTMLAttributes: {
-                class: 'border border-collapse border-solid border-neutral-500',
-            },
-        }),
-        TableRow,
-        TableHeader.configure({
-            HTMLAttributes: {
-                class: 'border border-solid border-neutral-600 bg-neutral-100 dark:bg-neutral-800',
-            },
-        }),
-        TableCell.configure({
-            HTMLAttributes: {
-                class: 'border border-solid border-neutral-500',
-            },
-        }),
-        // Misc
-        SearchAndReplace,
-        TaskList,
-        TaskItem.configure({
-            nested: true,
-        }),
-        CheckboxStandalone,
-        CharacterCount.configure({
-            limit: charLimit?.value ?? 0,
-        }),
-        Placeholder.configure({
-            placeholder: () => placeholder?.value ?? '',
+        UniqueID.configure({
+            attributeName: 'id',
+            types: ['heading'],
+            generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
+            filterTransaction: (transaction) => !isChangeOrigin(transaction),
         }),
     ];
 

@@ -10,7 +10,6 @@ const showAlignmentBar = ref(false);
 const isResizing = ref(false);
 const startX = ref(0);
 const startWidth = ref(0);
-const nodeViewRoot = ref<HTMLElement | null>(null);
 
 const currentAlignment = computed<'left' | 'center' | 'right'>(() => {
     const style = (props.node.attrs.style as string) || '';
@@ -126,9 +125,11 @@ watch(
                     v-bind="node.attrs"
                     style="border-radius: 4px"
                     class="h-auto max-w-full cursor-pointer select-none"
+                    :class="[selected || isResizing ? 'border border-primary-500' : '']"
                     draggable="true"
                     @click="onImageClick"
                 />
+
                 <div
                     v-if="(showAlignmentBar || isResizing) && (selected || isResizing)"
                     class="pointer-events-none absolute -top-4 left-1/2 z-20 w-full -translate-x-1/2 transform"
@@ -137,6 +138,7 @@ watch(
                         <AlignmentBar :model-value="currentAlignment" @update:model-value="setAlignment" />
                     </div>
                 </div>
+
                 <template v-if="(showAlignmentBar || isResizing) && props.editor.isEditable && (selected || isResizing)">
                     <div
                         v-for="(pos, i) in dotPositions"
@@ -144,7 +146,7 @@ watch(
                         class="resize-dot absolute z-10 h-4 w-4 rounded-full border border-neutral-500 bg-white"
                         :style="{
                             ...pos,
-                            borderWidth: '1.5px', // closest to Tailwind border-2
+                            borderWidth: '1.5px', // Closest to Tailwind border-2
                         }"
                         @mousedown="(e) => onResizeMouseDown(e, i)"
                         @touchstart="(e) => onResizeTouchStart(e, i)"
@@ -166,6 +168,6 @@ watch(
     transition: background 0.2s;
 }
 .resize-dot:hover {
-    background: #e5e7eb;
+    background: var(--color-neutral-200);
 }
 </style>

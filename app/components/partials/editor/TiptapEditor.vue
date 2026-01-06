@@ -416,9 +416,7 @@ onBeforeUnmount(() => {
     }
 });
 
-onBeforeRouteLeave(() => {
-    yjsProvider?.destroy();
-});
+onBeforeRouteLeave(() => yjsProvider?.destroy());
 </script>
 
 <template>

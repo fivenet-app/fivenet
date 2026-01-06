@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'update:content', val: EditorDocument | undefined): void;
+    (e: 'update:content', val: EditorDocument | string | undefined): void;
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });

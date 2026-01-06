@@ -113,6 +113,12 @@ func TestCleanStorageKey(t *testing.T) {
 			input:     `\\server\share\file.txt`,
 			expectErr: true,
 		},
+		{
+			name:      "Real World #1",
+			input:     "fivenet/fivenet/documents/20260106/3b56a375-fce0-40c9-b481-d60455233282-you-guys-are-getting-blueprints-v0-9ijtqacktz9g1.webp",
+			expected:  "fivenet/fivenet/documents/20260106/3b56a375-fce0-40c9-b481-d60455233282-you-guys-are-getting-blueprints-v0-9ijtqacktz9g1.webp",
+			expectErr: false,
+		},
 	}
 
 	for _, tt := range tests {

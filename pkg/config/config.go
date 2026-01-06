@@ -221,12 +221,14 @@ func (c *Storage) Validate() error {
 		return fmt.Errorf("unknown storage type: %s", c.Type)
 	}
 
-	p := filepath.Clean(filepath.FromSlash(prefix))
-	if p == "." || p == ".." || strings.HasPrefix(p, ".."+string(os.PathSeparator)) {
-		return fmt.Errorf("invalid storage prefix: %q", prefix)
-	}
-	if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
-		return fmt.Errorf("invalid storage prefix: %q", prefix)
+	if prefix != "" {
+		p := filepath.Clean(filepath.FromSlash(prefix))
+		if p == "." || p == ".." || strings.HasPrefix(p, ".."+string(os.PathSeparator)) {
+			return fmt.Errorf("invalid storage prefix: %q", prefix)
+		}
+		if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
+			return fmt.Errorf("invalid storage prefix: %q", prefix)
+		}
 	}
 
 	return nil

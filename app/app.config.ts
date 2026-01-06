@@ -139,6 +139,7 @@ export default defineAppConfig({
             chevronRight: 'mdi-chevron-right',
             chevronUp: 'mdi-chevron-up',
             close: 'mdi-close',
+            drag: 'i-mdi-drag-vertical',
             ellipsis: 'mdi-dots-horizontal',
             external: 'mdi-arrow-top-right',
             file: 'mdi-file-document',

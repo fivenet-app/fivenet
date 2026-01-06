@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
 import { safeImagePaths } from '~/types/editor';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { remoteImageURLToBase64Data } from './helpers';
 
 const props = withDefaults(
@@ -27,6 +28,8 @@ const emit = defineEmits<{
 }>();
 
 const { featureGates, fileUpload } = useAppConfig();
+
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     url: z.url().max(512),
@@ -64,7 +67,26 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
 
         return setImage(dataUrl);
     } else if (props.uploadHandler) {
-        await props.uploadHandler([urlOrBlob]);
+        try {
+            await props.uploadHandler([urlOrBlob]);
+
+            notifications.add({
+                title: { key: 'notifications.editor.file_upload.success.title', parameters: {} },
+                description: { key: 'notifications.editor.file_upload.success.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        } catch (e) {
+            console.error('Editor - Image upload failed', e);
+
+            notifications.add({
+                title: { key: 'notifications.editor.file_upload.failed.title', parameters: {} },
+                description: {
+                    key: 'notifications.editor.file_upload.failed.content',
+                    parameters: { error: (e as Error)?.message?.toString() ?? 'N/A' },
+                },
+                type: NotificationType.ERROR,
+            });
+        }
     } else {
         setImage(await blobToBase64(urlOrBlob));
     }

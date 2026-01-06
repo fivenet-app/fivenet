@@ -847,7 +847,8 @@
                     }
                 },
                 "invisible_characters": "Show/Hide Invisible Characters",
-                "font_size": "Font Size"
+                "font_size": "Font Size",
+                "focus_mode": "Focus Mode"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",
@@ -2160,6 +2161,18 @@
                 "client_view_update": {
                     "title": "Conduct entry updated",
                     "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
+                }
+            }
+        },
+        "editor": {
+            "file_upload": {
+                "failed": {
+                    "title": "File upload failed",
+                    "content": "Failed to upload the file. Please try again. Error: {err}"
+                },
+                "success": {
+                    "title": "File uploaded",
+                    "content": "File has been successfully uploaded."
                 }
             }
         }

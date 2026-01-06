@@ -847,7 +847,8 @@
                     }
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen",
-                "font_size": "Schriftgröße"
+                "font_size": "Schriftgröße",
+                "focus_mode": "Fokus-Modus"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",
@@ -2160,6 +2161,18 @@
                 "client_view_update": {
                     "title": "Führungsregister-Eintrag wurde aktualisiert",
                     "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
+                }
+            }
+        },
+        "editor": {
+            "file_upload": {
+                "failed": {
+                    "title": "Datei-Upload fehlgeschlagen",
+                    "content": "Datei konnte nicht hochgeladen werden, bitte erneut versuchen. Fehler: {err}"
+                },
+                "success": {
+                    "title": "Datei-Upload erfolgreich",
+                    "content": "Datei wurde erfolgreich hochgeladen."
                 }
             }
         }

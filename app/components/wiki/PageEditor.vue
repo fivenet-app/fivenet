@@ -247,7 +247,9 @@ async function updatePage(values: Schema): Promise<void> {
             tags: [],
         },
         content: {
-            rawHtml: values.content,
+            contentType: ContentType.TIPTAP_JSON,
+            version: '',
+            tiptapJson: values.content,
         },
         parentId: values.parentId,
         access: values.access,
