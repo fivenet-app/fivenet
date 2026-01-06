@@ -298,6 +298,17 @@ const isLinkOpen = ref(false);
                     @click="editorSettings.showInvisibleCharacters = !editorSettings.showInvisibleCharacters"
                 />
             </UTooltip>
+
+            <UTooltip :text="$t('components.partials.tiptap_editor.focus_mode')">
+                <UButton
+                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.focusMode }"
+                    :disabled="disabled"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-border-radius"
+                    @click="editorSettings.focusMode = !editorSettings.focusMode"
+                />
+            </UTooltip>
         </UFieldGroup>
 
         <USeparator orientation="vertical" :ui="{ border: 'border-neutral-200 dark:border-neutral-700' }" />

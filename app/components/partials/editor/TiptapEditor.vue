@@ -374,6 +374,30 @@ watch(
         } else {
             unref(editor)?.chain().focus().hideInvisibleCharacters().run();
         }
+
+        if (
+            editor.value &&
+            typeof editor.value.options.editorProps.attributes === 'object' &&
+            'class' in editor.value.options.editorProps.attributes
+        ) {
+            let c = editor.value.options.editorProps.attributes['class'] || '';
+            if (editorSettings.value.focusMode) {
+                if (c.includes('editor-focus')) return;
+
+                c += ' editor-focus';
+            } else {
+                c = c.replace('editor-focus', '').trim();
+            }
+
+            unref(editor)!.setOptions({
+                editorProps: {
+                    attributes: {
+                        ...unref(editor)!.options.editorProps.attributes,
+                        class: c,
+                    },
+                },
+            });
+        }
     },
     { deep: true },
 );

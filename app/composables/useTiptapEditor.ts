@@ -4,6 +4,7 @@ import { Bold } from '@tiptap/extension-bold';
 import { Code } from '@tiptap/extension-code';
 import { CodeBlock } from '@tiptap/extension-code-block';
 import { isChangeOrigin } from '@tiptap/extension-collaboration';
+import { Details, DetailsContent, DetailsSummary } from '@tiptap/extension-details';
 import Document from '@tiptap/extension-document';
 import Emoji from '@tiptap/extension-emoji';
 import { HardBreak } from '@tiptap/extension-hard-break';
@@ -25,8 +26,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import { TextStyleKit } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import UniqueID from '@tiptap/extension-unique-id';
-import { CharacterCount, Dropcursor, Gapcursor, Placeholder } from '@tiptap/extensions';
-import AutoJoiner from 'tiptap-extension-auto-joiner';
+import { CharacterCount, Dropcursor, Focus, Gapcursor, Placeholder } from '@tiptap/extensions';
 import { v4 as uuidv4 } from 'uuid';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
@@ -52,9 +52,21 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
         BulletList,
         Code,
         CodeBlock,
+        Details.configure({
+            persist: true,
+            HTMLAttributes: {
+                class: 'details',
+            },
+        }),
+        DetailsSummary,
+        DetailsContent,
         Document,
         Dropcursor,
         Emoji,
+        Focus.configure({
+            className: 'has-focus',
+            mode: 'all',
+        }),
         Gapcursor,
         HardBreak,
         Heading,
@@ -134,7 +146,6 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
         Placeholder.configure({
             placeholder: () => placeholder?.value ?? '',
         }),
-        AutoJoiner,
     ];
 
     return extensions;
