@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -56,7 +55,6 @@ type Server struct {
 
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
-	htmlDiff *htmldiffer.Differ
 	notifi   notifi.INotifi
 
 	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
@@ -70,14 +68,13 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger     *zap.Logger
-	DB         *sql.DB
-	Perms      perms.Permissions
-	Enricher   *mstlystcdata.UserAwareEnricher
-	HTMLDiffer *htmldiffer.Differ
-	JS         *events.JSWrapper
-	Storage    storage.IStorage
-	Notifi     notifi.INotifi
+	Logger   *zap.Logger
+	DB       *sql.DB
+	Perms    perms.Permissions
+	Enricher *mstlystcdata.UserAwareEnricher
+	JS       *events.JSWrapper
+	Storage  storage.IStorage
+	Notifi   notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -166,7 +163,6 @@ func NewServer(p Params) *Server {
 
 		perms:    p.Perms,
 		enricher: p.Enricher,
-		htmlDiff: p.HTMLDiffer,
 		notifi:   p.Notifi,
 
 		access:       objAccess,

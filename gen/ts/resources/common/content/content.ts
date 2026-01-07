@@ -145,7 +145,7 @@ class Content$Type extends MessageType<Content> {
             { no: 2, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "raw_html", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "content", kind: "message", T: () => RichTextHtmlNode },
-            { no: 5, name: "tiptap_json", kind: "message", T: () => Struct }
+            { no: 5, name: "tiptap_json", kind: "message", T: () => Struct, options: { "codegen.sanitizer.sanitizer": { enabled: true, tiptapJson: true } } }
         ]);
     }
     create(value?: PartialMessage<Content>): Content {

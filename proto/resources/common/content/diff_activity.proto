@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package resources.common.content;
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;content";
+
+enum Kind {
+  KIND_UNSPECIFIED = 0;
+  KIND_EQUAL = 1;
+  KIND_INSERT = 2;
+  KIND_DELETE = 3;
+}
+
+// One diff operation, designed for inline client rendering.
+message ContentDiffOp {
+  Kind kind = 1;
+
+  // Plain text segment. Can contain whitespace and newlines.
+  // Client renders:
+  // - EQUAL: normal text
+  // - INSERT: highlighted
+  // - DELETE: strikethrough or hidden behind a toggle
+  string text = 2;
+}
+
+// Optional stats to quickly show "what changed" without parsing ops.
+message ContentDiffStats {
+  // Counts are measured in runes/codepoints on the server side.
+  uint32 inserted_runes = 1;
+  uint32 deleted_runes = 2;
+
+  // Optional: number of diff ops (after cleanup/coalescing).
+  uint32 op_count = 3;
+}
+
+message ContentDiff {
+  // Quick summary for badge like "+12 / -3"
+  ContentDiffStats stats = 1;
+
+  // The diff itself for inline rendering
+  repeated ContentDiffOp ops = 2;
+}

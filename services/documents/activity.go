@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/textdiff"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -177,35 +178,23 @@ func (s *Server) generateDocumentDiff(
 	diff := &documents.DocUpdated{}
 
 	if !strings.EqualFold(old.GetTitle(), new.GetTitle()) {
-		titleDiff, err := s.htmlDiff.FancyDiff(old.GetTitle(), new.GetTitle())
-		if err != nil {
-			return nil, err
-		}
-		if titleDiff != "" {
-			diff.TitleDiff = &titleDiff
+		if titleDiff := textdiff.DiffText(old.GetTitle(), new.GetTitle()); titleDiff.HasChanges() {
+			diff.TitleCdiff = titleDiff
 		}
 	}
 
 	if !strings.EqualFold(old.GetMeta().GetState(), new.GetMeta().GetState()) {
-		stateDiff, err := s.htmlDiff.FancyDiff(old.GetMeta().GetState(), new.GetMeta().GetState())
-		if err != nil {
-			return nil, err
-		}
-		if stateDiff != "" {
-			diff.StateDiff = &stateDiff
+		if stateDiff := textdiff.DiffText(old.GetMeta().GetState(), new.GetMeta().GetState()); stateDiff.HasChanges() {
+			diff.StateCdiff = stateDiff
 		}
 	}
 
-	/*
-		    TODO use new diff logic
-			newRawContent, err := content.PrettyHTML(new.GetContent().GetRawHtml())
-			if err != nil {
-				return nil, err
-			}
-			if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawHtml(), newRawContent); d != "" {
-				diff.ContentDiff = &d
-			}
-	*/
+	if d := textdiff.DiffText(
+		old.GetContent().Extract().GetText(),
+		new.GetContent().Extract().GetText(),
+	); d.HasChanges() {
+		diff.ContentCdiff = d
+	}
 
 	return diff, nil
 }

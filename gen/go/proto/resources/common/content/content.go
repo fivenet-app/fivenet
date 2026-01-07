@@ -33,11 +33,11 @@ func (x *Content) Scan(value any) error {
 		if err != nil {
 			return err
 		}
-
 		x.Content = out
 
 		return nil
 	}
+
 	if err := protoutils.UnmarshalPartialJSON([]byte(data), x); err != nil {
 		return err
 	}
@@ -61,6 +61,20 @@ func (x *Content) Scan(value any) error {
 func (x *Content) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
+	}
+
+	if s := x.GetRawHtml(); s != "" {
+		h, err := ParseHTML(s)
+		if err != nil {
+			return nil, err
+		}
+
+		out, err := FromHTMLNode(h)
+		if err != nil {
+			return nil, err
+		}
+		x.Content = out
+		x.RawHtml = nil
 	}
 
 	if x.GetTiptapJson() != nil {

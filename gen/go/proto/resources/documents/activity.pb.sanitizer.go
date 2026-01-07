@@ -308,6 +308,15 @@ func (m *DocUpdated) Sanitize() error {
 		return nil
 	}
 
+	// Field: ContentCdiff
+	if m.ContentCdiff != nil {
+		if v, ok := any(m.GetContentCdiff()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: ContentDiff
 	if m.ContentDiff != nil {
 		*m.ContentDiff = htmlsanitizer.Sanitize(*m.ContentDiff)
@@ -322,9 +331,27 @@ func (m *DocUpdated) Sanitize() error {
 		}
 	}
 
+	// Field: StateCdiff
+	if m.StateCdiff != nil {
+		if v, ok := any(m.GetStateCdiff()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: StateDiff
 	if m.StateDiff != nil {
 		*m.StateDiff = htmlsanitizer.Sanitize(*m.StateDiff)
+	}
+
+	// Field: TitleCdiff
+	if m.TitleCdiff != nil {
+		if v, ok := any(m.GetTitleCdiff()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: TitleDiff

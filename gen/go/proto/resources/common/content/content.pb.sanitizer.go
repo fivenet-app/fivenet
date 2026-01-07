@@ -5,6 +5,7 @@ package content
 
 import (
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -30,10 +31,9 @@ func (m *Content) Sanitize() error {
 
 	// Field: TiptapJson
 	if m.TiptapJson != nil {
-		if v, ok := any(m.GetTiptapJson()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
+		err := tiptapsanitizer.SanitizeStruct(m.GetTiptapJson(), 100000, 20)
+		if err != nil {
+			return err
 		}
 	}
 

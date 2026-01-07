@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { LazyPartialsCodeDiff } from '#components';
+import { renderToHTMLString } from '@tiptap/static-renderer';
 import { computed } from 'vue';
 import type { HistoryContent, Version } from '~/types/history';
 
@@ -59,12 +60,23 @@ function prettyPrintHtml(html: string): string {
         .join('\n');
 }
 
+const extensions = useTiptapEditor();
+
 const colorMode = useColorMode();
+
+const prettyCurrent = computed(() =>
+    props.currentContent ? prettyPrintHtml(renderToHTMLString({ content: props.currentContent, extensions: extensions })) : '',
+);
 
 const selectedContent = computed(() => props.selectedVersion?.content.content ?? '');
 
-const prettyCurrent = computed(() => prettyPrintHtml(props.currentContent));
-const prettySelected = computed(() => prettyPrintHtml(selectedContent.value));
+const prettySelected = computed(() =>
+    prettyPrintHtml(
+        typeof selectedContent.value === 'string'
+            ? selectedContent.value
+            : renderToHTMLString({ content: selectedContent.value, extensions: extensions }),
+    ),
+);
 
 function applySelected() {
     if (props.selectedVersion) {
@@ -90,8 +102,8 @@ function applySelected() {
                         :theme="colorMode.value === 'dark' ? 'dark' : 'light'"
                     >
                         <template #stat="{ stat }">
-                            <span class="diff-stat-added">+{{ stat.additionsNum }} additions</span>
-                            <span class="diff-stat-deleted">-{{ stat.deletionsNum }} deletions</span>
+                            <span class="diff-stat-added">+{{ stat.additionsNum }} {{ $t('common.additions') }}</span>
+                            <span class="diff-stat-deleted">-{{ stat.deletionsNum }} {{ $t('common.deletions') }}</span>
                         </template>
                     </LazyPartialsCodeDiff>
                 </div>
@@ -100,8 +112,8 @@ function applySelected() {
 
         <template #footer>
             <UFieldGroup class="inline-flex w-full">
-                <UButton class="flex-1" color="primary" @click="applySelected">{{ $t('common.apply') }}</UButton>
-                <UButton class="flex-1" color="neutral" @click="$emit('close', false)">{{ $t('common.cancel') }}</UButton>
+                <UButton :label="$t('common.apply')" class="flex-1" color="primary" @click="applySelected" />
+                <UButton :label="$t('common.cancel')" class="flex-1" color="neutral" @click="$emit('close', false)" />
             </UFieldGroup>
         </template>
     </UModal>

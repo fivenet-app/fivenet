@@ -179,12 +179,11 @@ func (s *Server) PostComment(
 		return nil, errorsdocuments.ErrCommentPostDenied
 	}
 
-	/*
-		TODO find another way to limit length
-		if len(req.GetComment().GetContent().GetRawHtml()) > CommentsMaxLength {
-			return nil, errorsdocuments.ErrCommentPostDenied
-		}
-	*/
+	// Check comment length
+	extracted := req.GetComment().GetContent().Extract()
+	if len(extracted.GetText()) > CommentsMaxLength {
+		return nil, errorsdocuments.ErrCommentPostDenied
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -284,12 +283,11 @@ func (s *Server) EditComment(
 		return nil, errorsdocuments.ErrCommentEditDenied
 	}
 
-	/*
-		TODO find another way to limit length
-		if len(req.GetComment().GetContent().GetRawHtml()) > CommentsMaxLength {
-			return nil, errorsdocuments.ErrCommentPostDenied
-		}
-	*/
+	// Check comment length
+	extracted := req.GetComment().GetContent().Extract()
+	if len(extracted.GetText()) > CommentsMaxLength {
+		return nil, errorsdocuments.ErrCommentPostDenied
+	}
 
 	stmt := tDComments.
 		UPDATE(

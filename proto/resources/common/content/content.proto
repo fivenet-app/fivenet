@@ -26,7 +26,10 @@ message Content {
   optional RichTextHtmlNode content = 4;
 
   // Tiptap JSON Document
-  google.protobuf.Struct tiptap_json = 5;
+  google.protobuf.Struct tiptap_json = 5 [(codegen.sanitizer.sanitizer) = {
+    enabled: true
+    tiptap_json: true
+  }];
 }
 
 enum NodeType {

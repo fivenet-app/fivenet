@@ -1,4 +1,4 @@
-package tiptap
+package tiptapsanitizer
 
 import (
 	"crypto/sha256"
@@ -8,7 +8,11 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+
+	"google.golang.org/protobuf/types/known/structpb"
 )
+
+var allowed = BuildAllowed()
 
 type Allowed struct {
 	Nodes map[string]AttrPolicy
@@ -168,6 +172,7 @@ func BuildAllowed() Allowed {
 			}
 			return true, out
 		}},
+		// Custom
 		"checkboxStandalone": {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 			if ck, ok := a["checked"].(bool); ok {
@@ -249,26 +254,42 @@ func BuildAllowed() Allowed {
 
 type Stats struct {
 	Words        int
-	Files        int // (0 for now, no image node in your set)
 	FirstHeading string
+}
+
+func SanitizeStruct(
+	doc *structpb.Struct,
+	maxBytes int,
+	maxDepth int,
+) error {
+	// Convert proto struct to map[string]any
+	docMap := doc.AsMap()
+
+	// Run through the Sanitize function
+	_, _, err := Sanitize(docMap, maxBytes, maxDepth)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func Sanitize(
 	doc map[string]any,
-	allow Allowed,
 	maxBytes int,
 	maxDepth int,
 ) (map[string]any, Stats, error) {
 	b, _ := json.Marshal(doc)
-	if len(b) > maxBytes {
+	if maxBytes > 0 && len(b) > maxBytes {
 		return nil, Stats{}, errors.New("document too large")
 	}
 
 	var stats Stats
-	out, ok := sanitizeNode(doc, allow, 0, maxDepth, &stats)
+	out, ok := sanitizeNode(doc, allowed, 0, maxDepth, &stats)
 	if !ok {
 		return nil, Stats{}, errors.New("invalid root")
 	}
+
 	return out, stats, nil
 }
 
@@ -352,12 +373,14 @@ func sanitizeMarks(in []any, allow Allowed) []any {
 		if mm == nil {
 			continue
 		}
+
 		typ, _ := mm["type"].(string)
 		attrs, _ := mm["attrs"].(map[string]any)
 		pol, ok := allow.Marks[typ]
 		if !ok {
 			continue
 		}
+
 		if okv, aout := pol.Validate(attrs); okv {
 			mOut := map[string]any{"type": typ}
 			if len(aout) > 0 {
@@ -376,10 +399,12 @@ func plainText(children []any) string {
 		if m == nil {
 			continue
 		}
+
 		if t, _ := m["text"].(string); t != "" {
 			sb.WriteString(t)
 			sb.WriteString(" ")
 		}
+
 		if arr, _ := m["content"].([]any); len(arr) > 0 {
 			sb.WriteString(plainText(arr))
 		}

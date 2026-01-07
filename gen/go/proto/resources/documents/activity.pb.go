@@ -9,6 +9,7 @@ package documents
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -400,8 +401,11 @@ func (*DocActivityData_SigningRequested) isDocActivityData_Data() {}
 type DocUpdated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TitleDiff     *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
+	TitleCdiff    *content.ContentDiff   `protobuf:"bytes,5,opt,name=title_cdiff,json=titleCdiff,proto3,oneof" json:"title_cdiff,omitempty"`
 	ContentDiff   *string                `protobuf:"bytes,2,opt,name=content_diff,json=contentDiff,proto3,oneof" json:"content_diff,omitempty"`
+	ContentCdiff  *content.ContentDiff   `protobuf:"bytes,6,opt,name=content_cdiff,json=contentCdiff,proto3,oneof" json:"content_cdiff,omitempty"`
 	StateDiff     *string                `protobuf:"bytes,3,opt,name=state_diff,json=stateDiff,proto3,oneof" json:"state_diff,omitempty"`
+	StateCdiff    *content.ContentDiff   `protobuf:"bytes,7,opt,name=state_cdiff,json=stateCdiff,proto3,oneof" json:"state_cdiff,omitempty"`
 	FilesChange   *DocFilesChange        `protobuf:"bytes,4,opt,name=files_change,json=filesChange,proto3,oneof" json:"files_change,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -444,6 +448,13 @@ func (x *DocUpdated) GetTitleDiff() string {
 	return ""
 }
 
+func (x *DocUpdated) GetTitleCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.TitleCdiff
+	}
+	return nil
+}
+
 func (x *DocUpdated) GetContentDiff() string {
 	if x != nil && x.ContentDiff != nil {
 		return *x.ContentDiff
@@ -451,11 +462,25 @@ func (x *DocUpdated) GetContentDiff() string {
 	return ""
 }
 
+func (x *DocUpdated) GetContentCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.ContentCdiff
+	}
+	return nil
+}
+
 func (x *DocUpdated) GetStateDiff() string {
 	if x != nil && x.StateDiff != nil {
 		return *x.StateDiff
 	}
 	return ""
+}
+
+func (x *DocUpdated) GetStateCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.StateCdiff
+	}
+	return nil
 }
 
 func (x *DocUpdated) GetFilesChange() *DocFilesChange {
@@ -841,7 +866,7 @@ var File_resources_documents_activity_proto protoreflect.FileDescriptor
 
 const file_resources_documents_activity_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcd\x04\n" +
+	"\"resources/documents/activity.proto\x12\x13resources.documents\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a,resources/common/content/diff_activity.proto\x1a resources/documents/access.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcd\x04\n" +
 	"\vDocActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -869,18 +894,26 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"\x0eaccess_updated\x18\x04 \x01(\v2%.resources.documents.DocAccessUpdatedH\x00R\raccessUpdated\x12T\n" +
 	"\x10access_requested\x18\x05 \x01(\v2'.resources.documents.DocAccessRequestedH\x00R\x0faccessRequested\x12W\n" +
 	"\x11signing_requested\x18\x06 \x01(\v2(.resources.documents.DocSigningRequestedH\x00R\x10signingRequested:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"\x89\x02\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xa6\x04\n" +
 	"\n" +
 	"DocUpdated\x12\"\n" +
 	"\n" +
-	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12&\n" +
-	"\fcontent_diff\x18\x02 \x01(\tH\x01R\vcontentDiff\x88\x01\x01\x12\"\n" +
+	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12K\n" +
+	"\vtitle_cdiff\x18\x05 \x01(\v2%.resources.common.content.ContentDiffH\x01R\n" +
+	"titleCdiff\x88\x01\x01\x12&\n" +
+	"\fcontent_diff\x18\x02 \x01(\tH\x02R\vcontentDiff\x88\x01\x01\x12O\n" +
+	"\rcontent_cdiff\x18\x06 \x01(\v2%.resources.common.content.ContentDiffH\x03R\fcontentCdiff\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"state_diff\x18\x03 \x01(\tH\x02R\tstateDiff\x88\x01\x01\x12K\n" +
-	"\ffiles_change\x18\x04 \x01(\v2#.resources.documents.DocFilesChangeH\x03R\vfilesChange\x88\x01\x01B\r\n" +
-	"\v_title_diffB\x0f\n" +
-	"\r_content_diffB\r\n" +
-	"\v_state_diffB\x0f\n" +
+	"state_diff\x18\x03 \x01(\tH\x04R\tstateDiff\x88\x01\x01\x12K\n" +
+	"\vstate_cdiff\x18\a \x01(\v2%.resources.common.content.ContentDiffH\x05R\n" +
+	"stateCdiff\x88\x01\x01\x12K\n" +
+	"\ffiles_change\x18\x04 \x01(\v2#.resources.documents.DocFilesChangeH\x06R\vfilesChange\x88\x01\x01B\r\n" +
+	"\v_title_diffB\x0e\n" +
+	"\f_title_cdiffB\x0f\n" +
+	"\r_content_diffB\x10\n" +
+	"\x0e_content_cdiffB\r\n" +
+	"\v_state_diffB\x0e\n" +
+	"\f_state_cdiffB\x0f\n" +
 	"\r_files_change\"@\n" +
 	"\x0eDocFilesChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\x03R\x05added\x12\x18\n" +
@@ -964,9 +997,10 @@ var file_resources_documents_activity_proto_goTypes = []any{
 	(*DocSigningRequested)(nil), // 10: resources.documents.DocSigningRequested
 	(*timestamp.Timestamp)(nil), // 11: resources.timestamp.Timestamp
 	(*users.UserShort)(nil),     // 12: resources.users.UserShort
-	(AccessLevel)(0),            // 13: resources.documents.AccessLevel
-	(*DocumentJobAccess)(nil),   // 14: resources.documents.DocumentJobAccess
-	(*DocumentUserAccess)(nil),  // 15: resources.documents.DocumentUserAccess
+	(*content.ContentDiff)(nil), // 13: resources.common.content.ContentDiff
+	(AccessLevel)(0),            // 14: resources.documents.AccessLevel
+	(*DocumentJobAccess)(nil),   // 15: resources.documents.DocumentJobAccess
+	(*DocumentUserAccess)(nil),  // 16: resources.documents.DocumentUserAccess
 }
 var file_resources_documents_activity_proto_depIdxs = []int32{
 	11, // 0: resources.documents.DocActivity.created_at:type_name -> resources.timestamp.Timestamp
@@ -978,24 +1012,27 @@ var file_resources_documents_activity_proto_depIdxs = []int32{
 	7,  // 6: resources.documents.DocActivityData.access_updated:type_name -> resources.documents.DocAccessUpdated
 	6,  // 7: resources.documents.DocActivityData.access_requested:type_name -> resources.documents.DocAccessRequested
 	10, // 8: resources.documents.DocActivityData.signing_requested:type_name -> resources.documents.DocSigningRequested
-	4,  // 9: resources.documents.DocUpdated.files_change:type_name -> resources.documents.DocFilesChange
-	12, // 10: resources.documents.DocOwnerChanged.new_owner:type_name -> resources.users.UserShort
-	13, // 11: resources.documents.DocAccessRequested.level:type_name -> resources.documents.AccessLevel
-	8,  // 12: resources.documents.DocAccessUpdated.jobs:type_name -> resources.documents.DocAccessJobsDiff
-	9,  // 13: resources.documents.DocAccessUpdated.users:type_name -> resources.documents.DocAccessUsersDiff
-	14, // 14: resources.documents.DocAccessJobsDiff.to_create:type_name -> resources.documents.DocumentJobAccess
-	14, // 15: resources.documents.DocAccessJobsDiff.to_update:type_name -> resources.documents.DocumentJobAccess
-	14, // 16: resources.documents.DocAccessJobsDiff.to_delete:type_name -> resources.documents.DocumentJobAccess
-	15, // 17: resources.documents.DocAccessUsersDiff.to_create:type_name -> resources.documents.DocumentUserAccess
-	15, // 18: resources.documents.DocAccessUsersDiff.to_update:type_name -> resources.documents.DocumentUserAccess
-	15, // 19: resources.documents.DocAccessUsersDiff.to_delete:type_name -> resources.documents.DocumentUserAccess
-	11, // 20: resources.documents.DocSigningRequested.deadline:type_name -> resources.timestamp.Timestamp
-	12, // 21: resources.documents.DocSigningRequested.approvers:type_name -> resources.users.UserShort
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	13, // 9: resources.documents.DocUpdated.title_cdiff:type_name -> resources.common.content.ContentDiff
+	13, // 10: resources.documents.DocUpdated.content_cdiff:type_name -> resources.common.content.ContentDiff
+	13, // 11: resources.documents.DocUpdated.state_cdiff:type_name -> resources.common.content.ContentDiff
+	4,  // 12: resources.documents.DocUpdated.files_change:type_name -> resources.documents.DocFilesChange
+	12, // 13: resources.documents.DocOwnerChanged.new_owner:type_name -> resources.users.UserShort
+	14, // 14: resources.documents.DocAccessRequested.level:type_name -> resources.documents.AccessLevel
+	8,  // 15: resources.documents.DocAccessUpdated.jobs:type_name -> resources.documents.DocAccessJobsDiff
+	9,  // 16: resources.documents.DocAccessUpdated.users:type_name -> resources.documents.DocAccessUsersDiff
+	15, // 17: resources.documents.DocAccessJobsDiff.to_create:type_name -> resources.documents.DocumentJobAccess
+	15, // 18: resources.documents.DocAccessJobsDiff.to_update:type_name -> resources.documents.DocumentJobAccess
+	15, // 19: resources.documents.DocAccessJobsDiff.to_delete:type_name -> resources.documents.DocumentJobAccess
+	16, // 20: resources.documents.DocAccessUsersDiff.to_create:type_name -> resources.documents.DocumentUserAccess
+	16, // 21: resources.documents.DocAccessUsersDiff.to_update:type_name -> resources.documents.DocumentUserAccess
+	16, // 22: resources.documents.DocAccessUsersDiff.to_delete:type_name -> resources.documents.DocumentUserAccess
+	11, // 23: resources.documents.DocSigningRequested.deadline:type_name -> resources.timestamp.Timestamp
+	12, // 24: resources.documents.DocSigningRequested.approvers:type_name -> resources.users.UserShort
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_activity_proto_init() }

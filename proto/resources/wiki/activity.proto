@@ -4,6 +4,7 @@ package resources.wiki;
 
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
+import "resources/common/content/diff_activity.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "resources/wiki/access.proto";
@@ -48,8 +49,14 @@ message PageActivityData {
 
 message PageUpdated {
   optional string title_diff = 1;
+  optional resources.common.content.ContentDiff title_cdiff = 5;
+
   optional string description_diff = 2;
+  optional resources.common.content.ContentDiff description_cdiff = 6;
+
   optional string content_diff = 3;
+  optional resources.common.content.ContentDiff content_cdiff = 7;
+
   optional PageFilesChange files_change = 4;
 }
 

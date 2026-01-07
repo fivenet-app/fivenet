@@ -86,6 +86,8 @@ description: Documentation for GRPC Protobuf files.
 | `enabled` | [bool](#bool) |  |  |
 | `method` | [string](#string) | optional |  |
 | `strip_html_tags` | [bool](#bool) | optional |  |
+| `tiptap_json` | [bool](#bool) | optional |  |
+| `max_bytes` | [uint32](#uint32) | optional |  |
 
 
 
@@ -2935,6 +2937,70 @@ Dummy - DO NOT USE!
 
 
 
+## resources/common/content/diff_activity.proto
+
+
+### resources.common.content.ContentDiff
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `stats` | [ContentDiffStats](#resourcescommoncontentContentDiffStats) |  | Quick summary for badge like "+12 / -3" |
+| `ops` | [ContentDiffOp](#resourcescommoncontentContentDiffOp) | repeated | The diff itself for inline rendering |
+
+
+
+
+
+### resources.common.content.ContentDiffOp
+One diff operation, designed for inline client rendering.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `kind` | [Kind](#resourcescommoncontentKind) |  |  |
+| `text` | [string](#string) |  | Plain text segment. Can contain whitespace and newlines. Client renders: - EQUAL: normal text - INSERT: highlighted - DELETE: strikethrough or hidden behind a toggle |
+
+
+
+
+
+### resources.common.content.ContentDiffStats
+Optional stats to quickly show "what changed" without parsing ops.
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `inserted_runes` | [uint32](#uint32) |  | Counts are measured in runes/codepoints on the server side. |
+| `deleted_runes` | [uint32](#uint32) |  |  |
+| `op_count` | [uint32](#uint32) |  | Optional: number of diff ops (after cleanup/coalescing). |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.common.content.Kind
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `KIND_UNSPECIFIED` | 0 |  |
+| `KIND_EQUAL` | 1 |  |
+| `KIND_INSERT` | 2 |  |
+| `KIND_DELETE` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/common/database/database.proto
 
 
@@ -3639,8 +3705,11 @@ States of Cronjbo
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `title_diff` | [string](#string) | optional |  |
+| `title_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
+| `content_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `state_diff` | [string](#string) | optional |  |
+| `state_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `files_change` | [DocFilesChange](#resourcesdocumentsDocFilesChange) | optional |  |
 
 
@@ -6846,8 +6915,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `title_diff` | [string](#string) | optional |  |
+| `title_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `description_diff` | [string](#string) | optional |  |
+| `description_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
+| `content_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `files_change` | [PageFilesChange](#resourceswikiPageFilesChange) | optional |  |
 
 

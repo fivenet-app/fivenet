@@ -27,6 +27,14 @@ export interface FieldOptions {
      * @generated from protobuf field: optional bool strip_html_tags = 3
      */
     stripHtmlTags?: boolean;
+    /**
+     * @generated from protobuf field: optional bool tiptap_json = 4
+     */
+    tiptapJson?: boolean;
+    /**
+     * @generated from protobuf field: optional uint32 max_bytes = 5
+     */
+    maxBytes?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class FieldOptions$Type extends MessageType<FieldOptions> {
@@ -34,7 +42,9 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         super("codegen.sanitizer.FieldOptions", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "strip_html_tags", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "strip_html_tags", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "tiptap_json", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "max_bytes", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<FieldOptions>): FieldOptions {
@@ -58,6 +68,12 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
                 case /* optional bool strip_html_tags */ 3:
                     message.stripHtmlTags = reader.bool();
                     break;
+                case /* optional bool tiptap_json */ 4:
+                    message.tiptapJson = reader.bool();
+                    break;
+                case /* optional uint32 max_bytes */ 5:
+                    message.maxBytes = reader.uint32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -79,6 +95,12 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         /* optional bool strip_html_tags = 3; */
         if (message.stripHtmlTags !== undefined)
             writer.tag(3, WireType.Varint).bool(message.stripHtmlTags);
+        /* optional bool tiptap_json = 4; */
+        if (message.tiptapJson !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.tiptapJson);
+        /* optional uint32 max_bytes = 5; */
+        if (message.maxBytes !== undefined)
+            writer.tag(5, WireType.Varint).uint32(message.maxBytes);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

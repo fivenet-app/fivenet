@@ -11,14 +11,12 @@ require (
 	github.com/XSAM/otelsql v0.41.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.13.0
-	github.com/aymanbagabas/go-udiff v0.3.1
 	github.com/blevesearch/bleve/v2 v2.5.7
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.14
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.6.0
-	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/galexrt/iconify-go v0.2.0
 	github.com/gin-contrib/cors v1.7.6
@@ -52,6 +50,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/puzpuzpuz/xsync/v4 v4.2.0
 	github.com/rs/cors v1.11.1
+	github.com/sergi/go-diff v1.4.0
 	github.com/sethvargo/go-retry v0.3.0
 	github.com/spf13/viper v1.21.0
 	github.com/srikrsna/protoc-gen-gotag v1.0.2
@@ -177,7 +176,6 @@ require (
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
 	github.com/minio/crc64nvme v1.1.0 // indirect
 	github.com/minio/highwayhash v1.0.4-0.20251030100505-070ab1a87a76 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect

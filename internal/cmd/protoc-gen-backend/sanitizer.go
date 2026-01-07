@@ -102,6 +102,9 @@ func (p *SanitizerModule) generate(f pgs.File) {
 				if !slices.Contains(validMethods, s.Method) {
 					p.Failf("Invalid sanitizer method given %q", s.Method)
 				}
+			} else if val.TiptapJson != nil && *val.TiptapJson {
+				s.Method = "tiptapsanitizer.SanitizeStruct"
+				s.Tiptap = true
 			}
 
 			data.FMap[string(m.Name())][string(f.Name().UpperCamelCase())] = s
@@ -121,6 +124,7 @@ package {{ package .F }}
 
 import (
     htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+    tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
 )
 
 {{ range $key, $fields := .FMap }}
@@ -184,6 +188,13 @@ func (m *{{ $key }}) Sanitize() error {
                     }
 
             {{- $lastOneOf = $f.F.OneOf.Message.Name }}
+        {{ else if $f.Tiptap }}
+        if m.{{ $f.Name }} != nil {
+            err := tiptapsanitizer.SanitizeStruct(m.Get{{ $f.Name }}(), 100000, 20)
+            if err != nil {
+                return err
+            }
+        }
         {{ else if $f.F.Type.IsEmbed }}
         if m.{{ $f.Name }} != nil {
             if v, ok := any(m.Get{{ $f.Name }}()).(interface{ Sanitize() error }); ok {
@@ -221,6 +232,8 @@ func (m *{{ $key }}) Sanitize() error {
 type Sanitize struct {
 	Name   string
 	Method string
+
+	Tiptap bool
 
 	F pgs.Field
 }

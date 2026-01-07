@@ -4,7 +4,6 @@ import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
 import { safeImagePaths } from '~/types/editor';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { remoteImageURLToBase64Data } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -58,8 +57,6 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
                 dataUrl = urlOrBlob;
             } else if (props.uploadHandler) {
                 dataUrl = `/api/image_proxy/${urlOrBlob}`;
-            } else {
-                dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
             }
         } else {
             dataUrl = urlOrBlob;
@@ -88,7 +85,7 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
             });
         }
     } else {
-        setImage(await blobToBase64(urlOrBlob));
+        console.warn('Editor - No upload handler provided for image upload');
     }
 }
 

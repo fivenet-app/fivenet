@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PageUserAccess } from "./access";
 import { PageJobAccess } from "./access";
+import { ContentDiff } from "../common/content/diff_activity";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -92,13 +93,25 @@ export interface PageUpdated {
      */
     titleDiff?: string;
     /**
+     * @generated from protobuf field: optional resources.common.content.ContentDiff title_cdiff = 5
+     */
+    titleCdiff?: ContentDiff;
+    /**
      * @generated from protobuf field: optional string description_diff = 2
      */
     descriptionDiff?: string;
     /**
+     * @generated from protobuf field: optional resources.common.content.ContentDiff description_cdiff = 6
+     */
+    descriptionCdiff?: ContentDiff;
+    /**
      * @generated from protobuf field: optional string content_diff = 3
      */
     contentDiff?: string;
+    /**
+     * @generated from protobuf field: optional resources.common.content.ContentDiff content_cdiff = 7
+     */
+    contentCdiff?: ContentDiff;
     /**
      * @generated from protobuf field: optional resources.wiki.PageFilesChange files_change = 4
      */
@@ -377,8 +390,11 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
     constructor() {
         super("resources.wiki.PageUpdated", [
             { no: 1, name: "title_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "title_cdiff", kind: "message", T: () => ContentDiff },
             { no: 2, name: "description_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "description_cdiff", kind: "message", T: () => ContentDiff },
             { no: 3, name: "content_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "content_cdiff", kind: "message", T: () => ContentDiff },
             { no: 4, name: "files_change", kind: "message", T: () => PageFilesChange }
         ]);
     }
@@ -396,11 +412,20 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
                 case /* optional string title_diff */ 1:
                     message.titleDiff = reader.string();
                     break;
+                case /* optional resources.common.content.ContentDiff title_cdiff */ 5:
+                    message.titleCdiff = ContentDiff.internalBinaryRead(reader, reader.uint32(), options, message.titleCdiff);
+                    break;
                 case /* optional string description_diff */ 2:
                     message.descriptionDiff = reader.string();
                     break;
+                case /* optional resources.common.content.ContentDiff description_cdiff */ 6:
+                    message.descriptionCdiff = ContentDiff.internalBinaryRead(reader, reader.uint32(), options, message.descriptionCdiff);
+                    break;
                 case /* optional string content_diff */ 3:
                     message.contentDiff = reader.string();
+                    break;
+                case /* optional resources.common.content.ContentDiff content_cdiff */ 7:
+                    message.contentCdiff = ContentDiff.internalBinaryRead(reader, reader.uint32(), options, message.contentCdiff);
                     break;
                 case /* optional resources.wiki.PageFilesChange files_change */ 4:
                     message.filesChange = PageFilesChange.internalBinaryRead(reader, reader.uint32(), options, message.filesChange);
@@ -429,6 +454,15 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
         /* optional resources.wiki.PageFilesChange files_change = 4; */
         if (message.filesChange)
             PageFilesChange.internalBinaryWrite(message.filesChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.content.ContentDiff title_cdiff = 5; */
+        if (message.titleCdiff)
+            ContentDiff.internalBinaryWrite(message.titleCdiff, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.content.ContentDiff description_cdiff = 6; */
+        if (message.descriptionCdiff)
+            ContentDiff.internalBinaryWrite(message.descriptionCdiff, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.content.ContentDiff content_cdiff = 7; */
+        if (message.contentCdiff)
+            ContentDiff.internalBinaryWrite(message.contentCdiff, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

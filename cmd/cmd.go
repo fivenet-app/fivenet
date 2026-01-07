@@ -22,7 +22,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -116,7 +115,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
-		htmldiffer.Module,
 		i18n.Module,
 		fx.Provide(
 			converter.New,

@@ -356,13 +356,13 @@ var File_resources_common_content_content_proto protoreflect.FileDescriptor
 
 const file_resources_common_content_content_proto_rawDesc = "" +
 	"\n" +
-	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xbe\x02\n" +
+	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xc8\x02\n" +
 	"\aContent\x12!\n" +
 	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18R\aversion\x12R\n" +
 	"\fcontent_type\x18\x02 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\x1e\n" +
 	"\braw_html\x18\x03 \x01(\tH\x00R\arawHtml\x88\x01\x01\x12I\n" +
-	"\acontent\x18\x04 \x01(\v2*.resources.common.content.RichTextHtmlNodeH\x01R\acontent\x88\x01\x01\x128\n" +
-	"\vtiptap_json\x18\x05 \x01(\v2\x17.google.protobuf.StructR\n" +
+	"\acontent\x18\x04 \x01(\v2*.resources.common.content.RichTextHtmlNodeH\x01R\acontent\x88\x01\x01\x12B\n" +
+	"\vtiptap_json\x18\x05 \x01(\v2\x17.google.protobuf.StructB\b\xda\xf3\x18\x04\b\x01 \x01R\n" +
 	"tiptapJsonB\v\n" +
 	"\t_raw_htmlB\n" +
 	"\n" +
