@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const props = defineProps<{
-    value: string | number;
-}>();
+const props = withDefaults(
+    defineProps<{
+        value: string | number;
+        showText?: boolean;
+    }>(),
+    {
+        showText: false,
+    },
+);
 
 const notifications = useNotificationsStore();
 
@@ -17,16 +23,21 @@ function addToClipboard(): void {
         type: NotificationType.INFO,
     });
 }
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <template>
     <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
         <UButton
             class="px-1 py-1"
-            icon="i-mdi-clipboard-plus"
+            trailing-icon="i-mdi-clipboard-plus"
             variant="outline"
             color="neutral"
             size="xs"
+            :label="props.showText ? $t('common.copy') : undefined"
             @click="addToClipboard()"
         />
     </UTooltip>
