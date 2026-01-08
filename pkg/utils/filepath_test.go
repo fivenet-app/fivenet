@@ -188,6 +188,7 @@ func TestFSRootPath(t *testing.T) {
 		// Prefix misconfig defense-in-depth
 		{name: "Absolute prefix rejected", prefix: "/images", key: "file.txt", expectErr: true},
 		{name: "Traversal prefix rejected", prefix: "../images", key: "file.txt", expectErr: true},
+		{name: "Traversal key rejected", prefix: "../images", key: "../file.txt", expectErr: true},
 	}
 
 	for _, tt := range tests {

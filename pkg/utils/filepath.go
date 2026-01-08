@@ -84,6 +84,17 @@ func FSRootPath(prefix string, key string) (string, error) {
 		return "", errors.New("backslash not allowed")
 	}
 
+	// Disallow any empty and ".." path segments
+	parts := strings.SplitSeq(key, "/")
+	for p := range parts {
+		if p == "" {
+			return "", errors.New("empty path segment not allowed")
+		}
+		if p == ".." {
+			return "", errors.New("dotdot segment not allowed")
+		}
+	}
+
 	// key is canonical slash-based; convert to OS separators and join with prefix
 	rel := filepath.Join(prefix, filepath.FromSlash(key))
 
