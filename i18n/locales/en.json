@@ -746,7 +746,9 @@
             "description": "This feature is still in an experimental stage and may contain bugs or incomplete functionality. Use at your own risk."
         },
         "fullscreen_enter": "Enter Fullscreen",
-        "fullscreen_exit": "Exit Fullscreen"
+        "fullscreen_exit": "Exit Fullscreen",
+        "browser": "Browser",
+        "registered_since": "Registered since"
     },
     "components": {
         "partials": {
@@ -1253,7 +1255,9 @@
                 "change_password": "Change Password",
                 "change_password_button": "Change Account Password",
                 "change_username": "Change Username",
-                "change_username_button": "Change Account Username"
+                "change_username_button": "Change Account Username",
+                "actions_title": "Actions",
+                "actions_subtitle": "Manage your account settings."
             },
             "LoginForm": {
                 "register_account": "Register Account with Token",

@@ -746,7 +746,9 @@
             "description": "Diese Funktion befindet sich noch in einem experimentellen Stadium und kann Fehler oder unvollständige Funktionalität enthalten. Nutzung auf eigene Gefahr."
         },
         "fullscreen_enter": "Vollbildmodus betreten",
-        "fullscreen_exit": "Vollbildmodus verlassen"
+        "fullscreen_exit": "Vollbildmodus verlassen",
+        "browser": "Browser",
+        "registered_since": "Registriert seit"
     },
     "components": {
         "partials": {
@@ -1253,7 +1255,9 @@
                 "change_password": "Passwort ändern",
                 "change_password_button": "Konto-Passwort ändern",
                 "change_username": "Benutzername ändern",
-                "change_username_button": "Konto-Benutzername ändern"
+                "change_username_button": "Konto-Benutzername ändern",
+                "actions_title": "Aktionen",
+                "actions_subtitle": "Verwalte deine Kontoeinstellungen."
             },
             "LoginForm": {
                 "register_account": "Konto mit Token erstellen",
