@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"path"
 	"path/filepath"
 	"time"
 )
@@ -21,10 +22,8 @@ var (
 // IStorage defines the interface for a storage backend.
 // Storage defines the interface for a storage backend.
 type IStorage interface {
-	// WithPrefix returns a storage instance with the given prefix transparently added to all calls.
-	WithPrefix(prefix string) (IStorage, error)
-
 	// Get returns the object contents and info for the given key.
+	// A key must be a relative slash-separated path without leading `/`, no `.` or `..` segements.
 	Get(ctx context.Context, key string) (IObject, IObjectInfo, error)
 	// Stat returns object info for the given key.
 	Stat(ctx context.Context, key string) (IObjectInfo, error)
@@ -141,7 +140,7 @@ func GetFilename(uid string, fileName string, fileExtension string) string {
 
 	directory := fileHash[0:2]
 
-	return fmt.Sprintf("%s/%s-%s.%s", directory, uid, fileHash, fileExtension)
+	return path.Join(directory, fmt.Sprintf("%s-%s.%s", uid, fileHash, fileExtension))
 }
 
 // FileNameSplitter splits a file name for sharding/storage purposes.

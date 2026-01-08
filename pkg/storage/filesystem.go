@@ -3,7 +3,9 @@ package storage
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,8 +25,8 @@ func init() {
 type Filesystem struct {
 	IStorage
 
-	// basePath is the root directory for all stored files.
-	basePath string
+	// root is the "root" directory of the storage.
+	root *os.Root
 	// prefix is an optional subdirectory prefix for namespacing.
 	prefix string
 }
@@ -33,14 +35,20 @@ type Filesystem struct {
 // It ensures the base path exists and registers a start hook for lifecycle management.
 func NewFilesystem(p Params) (IStorage, error) {
 	f := &Filesystem{
-		basePath: p.Cfg.Storage.Filesystem.Path,
-		prefix:   p.Cfg.Storage.Filesystem.Prefix,
+		prefix: filepath.Clean(p.Cfg.Storage.Filesystem.Prefix),
 	}
 
+	basePath := p.Cfg.Storage.Filesystem.Path
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := os.MkdirAll(f.basePath, 0o770); err != nil {
+		if err := os.MkdirAll(basePath, 0o770); err != nil {
 			return err
 		}
+
+		root, err := os.OpenRoot(basePath)
+		if err != nil {
+			return fmt.Errorf("failed to open filesystem storage path. %w", err)
+		}
+		f.root = root
 
 		return nil
 	}))
@@ -48,28 +56,15 @@ func NewFilesystem(p Params) (IStorage, error) {
 	return f, nil
 }
 
-// WithPrefix returns a new Filesystem instance with the given prefix, ensuring the directory exists.
-func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
-	if err := os.MkdirAll(filepath.Join(s.basePath, prefix), 0o770); err != nil {
-		return nil, err
-	}
-
-	return &Filesystem{
-		basePath: s.basePath,
-		prefix:   prefix,
-	}, nil
-}
-
 // Get retrieves a file and its metadata from the filesystem.
 // Returns an open file and ObjectInfo, or an error if not found or invalid.
-func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
+func (s *Filesystem) Get(ctx context.Context, key string) (IObject, IObjectInfo, error) {
+	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	if err != nil {
 		return nil, nil, ErrInvalidPath
 	}
-	key = filepath.Join(s.basePath, s.prefix, key)
 
-	stat, err := os.Stat(key)
+	stat, err := s.root.Stat(key)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, nil, ErrNotFound
@@ -81,7 +76,7 @@ func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInf
 		return nil, nil, ErrNotFound
 	}
 
-	f, err := os.OpenFile(key, os.O_RDONLY, 0o600)
+	f, err := s.root.OpenFile(key, os.O_RDONLY, 0o600)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -97,14 +92,13 @@ func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInf
 }
 
 // Stat returns metadata for a file in the filesystem, or an error if not found or invalid.
-func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
+func (s *Filesystem) Stat(ctx context.Context, key string) (IObjectInfo, error) {
+	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	if err != nil {
 		return nil, ErrInvalidPath
 	}
-	key = filepath.Join(s.basePath, s.prefix, key)
 
-	stat, err := os.Stat(key)
+	stat, err := s.root.Stat(key)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrNotFound
@@ -126,23 +120,22 @@ func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error
 // Returns the relative path or an error.
 func (s *Filesystem) Put(
 	ctx context.Context,
-	keyIn string,
+	key string,
 	reader io.Reader,
 	size int64,
 	contentType string,
 ) (string, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
+	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	if err != nil {
 		return "", ErrInvalidPath
 	}
-	key = filepath.Join(s.basePath, s.prefix, key)
 
 	dir := filepath.Dir(key)
-	if err := os.MkdirAll(dir, 0o770); err != nil {
+	if err := s.root.MkdirAll(dir, 0o770); err != nil {
 		return "", err
 	}
 
-	f, err := os.OpenFile(key, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o600)
+	f, err := s.root.OpenFile(key, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o600)
 	if err != nil {
 		return "", err
 	}
@@ -152,18 +145,17 @@ func (s *Filesystem) Put(
 		return "", err
 	}
 
-	return filepath.Join(s.prefix, keyIn), nil
+	return filepath.Join(s.prefix, key), nil
 }
 
 // Delete removes a file from the filesystem. Returns nil if the file does not exist.
-func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
+func (s *Filesystem) Delete(ctx context.Context, key string) error {
+	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	if err != nil {
 		return ErrInvalidPath
 	}
-	keyIn = filepath.Join(s.basePath, s.prefix, key)
 
-	if err := os.Remove(keyIn); err != nil {
+	if err := s.root.Remove(key); err != nil {
 		if !errors.Is(err, syscall.ENOENT) {
 			return err
 		}
@@ -176,17 +168,22 @@ func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
 // Returns an error if the directory is invalid or cannot be read.
 func (s *Filesystem) List(
 	ctx context.Context,
-	keyIn string,
+	key string,
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	cKey, ok := utils.CleanFilePath(keyIn)
-	if !ok {
+	key, err := utils.FSRootPath(filepath.Join(s.prefix), key)
+	if err != nil {
 		return nil, ErrInvalidPath
 	}
-	key := filepath.Join(s.basePath, s.prefix, cKey)
 
-	entries, err := os.ReadDir(key)
+	// os.Root doesn't have a `ReadDir` method, so open the directory and read from it
+	f, err := s.root.Open(key)
+	if err != nil {
+		return nil, err
+	}
+	// combine offset + pageSize to improve performance
+	entries, err := f.ReadDir(offset + pageSize)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, ErrNotFound
@@ -201,7 +198,7 @@ func (s *Filesystem) List(
 			return nil, err
 		}
 
-		name := filepath.Join(cKey, e.Name())
+		name := filepath.Join(key, e.Name())
 		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(name), "."))
 
 		files = append(files, &FileInfo{
@@ -222,9 +219,9 @@ func (s *Filesystem) List(
 func (s *Filesystem) GetSpaceUsage(ctx context.Context) (int64, error) {
 	var totalSize int64
 
-	err := filepath.Walk(
-		filepath.Join(s.basePath, s.prefix),
-		func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(
+		filepath.Join(s.root.Name(), s.prefix),
+		func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -232,9 +229,16 @@ func (s *Filesystem) GetSpaceUsage(ctx context.Context) (int64, error) {
 				return ctx.Err()
 			}
 
-			if !info.IsDir() {
-				totalSize += info.Size()
+			if d.IsDir() {
+				return nil
 			}
+
+			info, err := d.Info()
+			if err != nil {
+				return err
+			}
+			totalSize += info.Size()
+
 			return nil
 		},
 	)

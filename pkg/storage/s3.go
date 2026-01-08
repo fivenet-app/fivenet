@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/h2non/filetype"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -89,22 +88,9 @@ func NewS3(p Params) (IStorage, error) {
 	return s, nil
 }
 
-// WithPrefix returns a new S3 instance with the given prefix, sharing the same client and bucket.
-func (s *S3) WithPrefix(prefix string) (IStorage, error) {
-	return &S3{
-		s3:         s.s3,
-		bucketName: s.bucketName,
-		prefix:     path.Join(s.prefix, prefix),
-	}, nil
-}
-
 // Get retrieves an object and its metadata from S3 storage.
 // Returns an open object and ObjectInfo, or an error if not found or invalid.
-func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
-		return nil, nil, ErrInvalidPath
-	}
+func (s *S3) Get(ctx context.Context, key string) (IObject, IObjectInfo, error) {
 	key = path.Join(s.prefix, key)
 
 	object, err := s.s3.GetObject(ctx, s.bucketName, key, minio.GetObjectOptions{})
@@ -136,11 +122,7 @@ func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error
 }
 
 // Stat returns metadata for an object in S3 storage, or an error if not found or invalid.
-func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
-		return nil, ErrInvalidPath
-	}
+func (s *S3) Stat(ctx context.Context, key string) (IObjectInfo, error) {
 	key = path.Join(s.prefix, key)
 
 	info, err := s.s3.StatObject(ctx, s.bucketName, key, minio.GetObjectOptions{})
@@ -164,27 +146,23 @@ func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 // Put uploads an object to S3 storage. The file path must end with a file extension (e.g., `jpg`, `png`).
 func (s *S3) Put(
 	ctx context.Context,
-	keyIn string,
+	key string,
 	reader io.Reader,
 	size int64,
 	contentType string,
 ) (string, error) {
-	return s.PutWithTTL(ctx, keyIn, reader, size, contentType, time.Time{})
+	return s.PutWithTTL(ctx, key, reader, size, contentType, time.Time{})
 }
 
 // PutWithTTL uploads an object to S3 storage with an optional expiration time (TTL).
 func (s *S3) PutWithTTL(
 	ctx context.Context,
-	keyIn string,
+	key string,
 	reader io.Reader,
 	size int64,
 	contentType string,
 	ttl time.Time,
 ) (string, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
-		return "", ErrInvalidPath
-	}
 	key = path.Join(s.prefix, key)
 
 	putOpts := minio.PutObjectOptions{
@@ -204,11 +182,7 @@ func (s *S3) PutWithTTL(
 }
 
 // Delete removes an object from S3 storage. Returns nil if the object does not exist.
-func (s *S3) Delete(ctx context.Context, keyIn string) error {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
-		return ErrInvalidPath
-	}
+func (s *S3) Delete(ctx context.Context, key string) error {
 	key = path.Join(s.prefix, key)
 
 	if err := s.s3.RemoveObject(ctx, s.bucketName, key, minio.RemoveObjectOptions{}); err != nil {
@@ -222,14 +196,10 @@ func (s *S3) Delete(ctx context.Context, keyIn string) error {
 // Returns an error if the prefix is invalid or listing fails.
 func (s *S3) List(
 	ctx context.Context,
-	keyIn string,
+	key string,
 	offset int,
 	pageSize int,
 ) ([]*FileInfo, error) {
-	key, ok := utils.CleanFilePath(keyIn)
-	if !ok {
-		return nil, ErrInvalidPath
-	}
 	key = path.Join(s.prefix, key)
 	if key == "." {
 		key = ""

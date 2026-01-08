@@ -42,5 +42,7 @@ func New(p Params) (IStorage, error) {
 		return nil, err
 	}
 
-	return st, nil
+	return &Wrapper{
+		backend: st,
+	}, nil
 }

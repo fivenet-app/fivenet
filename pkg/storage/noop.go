@@ -21,11 +21,6 @@ func NewNoop(p Params) (IStorage, error) {
 	return &Noop{}, nil
 }
 
-// WithPrefix returns the same Noop instance, ignoring the prefix.
-func (s *Noop) WithPrefix(prefix string) (IStorage, error) {
-	return s, nil
-}
-
 // Get always returns nils, simulating a missing object.
 func (s *Noop) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
 	return nil, nil, nil
