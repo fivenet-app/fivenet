@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { JSONContent } from '@tiptap/core';
 import type { HistoryContent, Version } from '~/types/history';
 import VersionDiffModal from './VersionDiffModal.vue';
 
@@ -32,7 +33,8 @@ function emitApply(version: Version<HistoryContent>) {
     selectedVersion.value = version;
 
     versionDiffModal.open({
-        currentContent: props.currentContent.content,
+        currentContent:
+            typeof props.currentContent.content === 'object' ? (props.currentContent.content as JSONContent) : undefined,
         selectedVersion: version,
         onApply: (version: Version<HistoryContent>) => onConfirmDiff(version),
     });

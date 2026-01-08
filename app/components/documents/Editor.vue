@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -12,7 +13,7 @@ import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { type DocumentJobAccess, type DocumentUserAccess, AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -77,7 +78,7 @@ function setFromProps(): void {
     state.draft = document.value.document.meta?.draft ?? false;
     state.public = document.value.document.meta?.public ?? false;
     state.content = document.value.document.content?.tiptapJson
-        ? (Struct.toJson(document.value.document.content.tiptapJson) as EditorDocument)
+        ? (Struct.toJson(document.value.document.content.tiptapJson) as JSONContent)
         : (document.value.document.content?.rawHtml ?? '');
     state.category = document.value.document.category ?? emptyCategory;
     if (document.value.access) {
@@ -129,7 +130,7 @@ const emptyCategory: Category = {
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
-    content: z.custom<EditorDocument | string>().optional(),
+    content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean().default(false),
     draft: z.coerce.boolean().default(true),
     public: z.coerce.boolean().default(false),
@@ -169,7 +170,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedDocument: EditorDocument | string | undefined = undefined;
+let lastSavedDocument: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'document'): Promise<void> {

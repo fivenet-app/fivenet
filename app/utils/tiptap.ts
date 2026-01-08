@@ -2,8 +2,6 @@ import { getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import type { DOMOutputSpec, Mark as PMMark, Node as PMNode } from 'prosemirror-model';
 import { Fragment, h, type VNodeChild } from 'vue';
 
-export type EditorDocument = JSONContent;
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export function isSameDoc(a: any, b: any, extensions: Extensions) {
     const schema = getSchema(extensions);

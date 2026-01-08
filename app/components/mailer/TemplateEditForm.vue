@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
@@ -26,7 +27,7 @@ const mailerMailerClient = await getMailerMailerClient();
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
-    content: z.coerce.string().min(3).max(1024),
+    content: z.custom<JSONContent | string>().optional(),
 });
 
 type Schema = z.output<typeof schema>;

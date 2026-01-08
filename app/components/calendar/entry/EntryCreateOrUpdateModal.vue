@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { ChipProps, FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
@@ -12,8 +13,10 @@ import InputDatePicker from '~/components/partials/InputDatePicker.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
@@ -37,7 +40,7 @@ const schema = z.object({
     title: z.coerce.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
-    content: z.coerce.string().min(3).max(1000000),
+    content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean(),
     rsvpOpen: z.coerce.boolean(),
     users: z.custom<UserShort>().array().max(20).default([]),
@@ -78,7 +81,9 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 startTime: toTimestamp(values.startTime),
                 endTime: toTimestamp(values.endTime),
                 content: {
-                    rawHtml: values.content,
+                    contentType: ContentType.TIPTAP_JSON,
+                    version: '',
+                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
                 },
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,

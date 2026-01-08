@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { LazyPartialsCodeDiff } from '#components';
+import type { JSONContent } from '@tiptap/core';
 import { renderToHTMLString } from '@tiptap/static-renderer';
-import { computed } from 'vue';
 import type { HistoryContent, Version } from '~/types/history';
 
 const props = defineProps<{
     // Current content for diff against selected version
-    currentContent: EditorDocument | undefined;
+    currentContent: JSONContent | undefined;
     selectedVersion: Version<HistoryContent> | null;
 }>();
 

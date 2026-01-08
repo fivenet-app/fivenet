@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Range } from '@tiptap/core';
+import type { JSONContent, Range } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'update:content', val: EditorDocument | string | undefined): void;
+    (e: 'update:content', val: JSONContent | string | undefined): void;
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });

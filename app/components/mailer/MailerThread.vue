@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -8,6 +9,8 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -43,7 +46,7 @@ const { draft: state, addressBook, messages, selectedEmail, selectedThread } = s
 
 const schema = z.object({
     title: z.coerce.string().min(1).max(255),
-    content: z.coerce.string().min(1).max(2048),
+    content: z.custom<JSONContent | string>().optional(),
     recipients: z
         .object({ label: z.coerce.string().min(6).max(80) })
         .array()
@@ -124,7 +127,9 @@ async function postMessage(values: Schema): Promise<void> {
             threadId: props.threadId,
             title: values.title,
             content: {
-                rawHtml: values.content,
+                contentType: ContentType.TIPTAP_JSON,
+                version: '',
+                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
             },
             data: {
                 attachments: values.attachments.filter((a) => {

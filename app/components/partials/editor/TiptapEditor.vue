@@ -72,7 +72,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const modelValue = defineModel<EditorDocument | string | undefined>({ required: true });
+const modelValue = defineModel<JSONContent | string | undefined>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 const logger = useLogger('📄 Editor' + (props.name ? ` ${props.name}` : ''));
@@ -109,7 +109,7 @@ const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
 
 const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined);
 
-function seedDocument(schema: Schema, value: EditorDocument | string): void {
+function seedDocument(schema: Schema, value: JSONContent | string): void {
     let seedDoc: Y.Doc;
     if (typeof value === 'string') {
         if (value === '') return;

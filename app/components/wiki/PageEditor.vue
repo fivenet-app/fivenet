@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import { logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -8,6 +9,7 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { HistoryContent } from '~/types/history';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
@@ -94,7 +96,7 @@ const schema = z.object({
         public: z.coerce.boolean(),
         startpage: z.coerce.boolean(),
     }),
-    content: z.coerce.string().min(3).max(1750000),
+    content: z.custom<JSONContent | string>().optional(),
     access: z.object({
         jobs: jobsAccessEntries(t).max(maxAccessEntries).default([]),
         users: userAccessEntries(t).max(maxAccessEntries).default([]),
@@ -149,7 +151,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
@@ -249,7 +251,7 @@ async function updatePage(values: Schema): Promise<void> {
         content: {
             contentType: ContentType.TIPTAP_JSON,
             version: '',
-            tiptapJson: values.content,
+            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
         },
         parentId: values.parentId,
         access: values.access,

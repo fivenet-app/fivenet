@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -8,6 +9,8 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
@@ -71,7 +74,7 @@ async function getComments(): Promise<GetCommentsResponse> {
 }
 
 const schema = z.object({
-    content: z.coerce.string().min(3).max(1536),
+    content: z.custom<JSONContent | string>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -138,7 +141,9 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
         id: 0,
         documentId,
         content: {
-            rawHtml: values.content,
+            contentType: ContentType.TIPTAP_JSON,
+            version: '',
+            tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
         },
         creatorJob: '',
     };

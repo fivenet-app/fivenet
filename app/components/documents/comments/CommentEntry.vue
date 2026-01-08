@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -8,6 +9,8 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -42,7 +45,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const editing = ref(false);
 
 const schema = z.object({
-    content: z.coerce.string().min(3).max(1536),
+    content: z.custom<JSONContent | string>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -109,7 +112,9 @@ async function editComment(documentId: number, commentId: number, values: Schema
                 id: commentId,
                 documentId,
                 content: {
-                    rawHtml: values.content,
+                    contentType: ContentType.TIPTAP_JSON,
+                    version: '',
+                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
                 },
                 creatorJob: '',
             },

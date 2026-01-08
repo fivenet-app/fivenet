@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { HistoryContent } from '~/types/history';
@@ -7,7 +8,7 @@ const historyStore = useHistoryStore();
 
 const schema = z.object({
     index: z.coerce.number().min(0),
-    content: z.coerce.string().min(0).max(1750000),
+    content: z.custom<JSONContent | string>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -23,7 +24,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promise<void> {
