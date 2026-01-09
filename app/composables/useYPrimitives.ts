@@ -32,8 +32,8 @@ export interface YjsSyncOptions {
  *
  * The initial value is chosen as follows:
  *   1. Wait for the provider's `synced` event (if a provider is given).
- *   If the remote text already contains data → remote wins.
- *   3. Otherwise, if `authoritative === true` → seed the remote document with
+ *   If the remote text already contains data -> remote wins.
+ *   3. Otherwise, if `authoritative === true` -> seed the remote document with
  *      the local ref's current value.
  *
  * @param yText    The `Y.Text` instance to sync with.
@@ -50,7 +50,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
     const text = (textRef ?? ref('')) as Ref<string>;
     let remoteApplying = false;
 
-    // REMOTE → LOCAL
+    // REMOTE -> LOCAL
     const handleUpdate = (evt: Y.YTextEvent): void => {
         if (evt.transaction.origin === LOCAL_ORIGIN) return; // ignore our own writes
         remoteApplying = true;
@@ -68,7 +68,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         remoteApplying = true;
 
         if (provider && provider.isAuthoritative) {
-            // remote empty → seed with local value
+            // remote empty -> seed with local value
             yText.doc?.transact(() => {
                 yText.delete(0, yText.length);
                 yText.insert(0, text.value);
@@ -88,7 +88,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
                 yText.unobserve(handleUpdate);
             });
 
-        // LOCAL → REMOTE
+        // LOCAL -> REMOTE
         watch(
             text,
             (val, oldVal) => {

@@ -141,7 +141,7 @@ onBeforeMount(async () => listJobs());
                                             color="red"
                                             class="flex-initial"
                                             :class="idx === 0 ? 'pointer-events-none opacity-0' : ''"
-                                            icon="i-mdi-close"
+                                            icon="i-mdi-remove"
                                             :label="$t('components.access.remove_entry')"
                                             :ui="{ label: 'md:hidden' }"
                                             @click="() => removeTask(idx)"

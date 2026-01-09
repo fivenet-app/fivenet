@@ -50,11 +50,29 @@ func (m *ConductEntry) Sanitize() error {
 		}
 	}
 
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Job
 	m.Job = htmlsanitizer.Sanitize(m.Job)
 
 	// Field: Message
-	m.Message = htmlsanitizer.Sanitize(m.Message)
+	if m.Message != nil {
+		if v, ok := any(m.GetMessage()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	// Field: TargetUser
 	if m.TargetUser != nil {

@@ -220,7 +220,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             color: values.color,
             icon: values.icon,
             contentTitle: values.contentTitle,
-            content: values.content,
+            content: values.content, // TODO
             state: values.contentState,
             schema: {
                 requirements: tRequirements,

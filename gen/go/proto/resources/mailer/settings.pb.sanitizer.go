@@ -24,7 +24,11 @@ func (m *EmailSettings) Sanitize() error {
 
 	// Field: Signature
 	if m.Signature != nil {
-		*m.Signature = htmlsanitizer.Sanitize(*m.Signature)
+		if v, ok := any(m.GetSignature()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

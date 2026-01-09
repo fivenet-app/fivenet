@@ -246,9 +246,9 @@ const columns = computed(
                             <template #trailing>
                                 <UButton
                                     v-if="querySearchRaw !== ''"
-                                    color="neutral"
+                                    color="red"
                                     variant="link"
-                                    icon="i-mdi-close"
+                                    icon="i-mdi-clear"
                                     aria-controls="search"
                                     @click="querySearchRaw = ''"
                                 />

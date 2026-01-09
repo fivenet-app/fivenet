@@ -119,6 +119,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
 
+const editorRef = useTemplateRef('editorRef');
+
 const formRef = useTemplateRef('formRef');
 </script>
 
@@ -280,11 +282,12 @@ const formRef = useTemplateRef('formRef');
                             <div class="flex flex-1 flex-col items-center sm:flex-row">
                                 <span class="flex-1">{{ $t('common.template', 1) }}</span>
 
-                                <TemplateSelector v-model="state.content" class="ml-auto" />
+                                <TemplateSelector v-if="editorRef" :editor="unref(editorRef).editor" class="ml-auto" />
                             </div>
 
                             <ClientOnly>
                                 <TiptapEditor
+                                    ref="editorRef"
                                     v-model="state.content"
                                     name="content"
                                     class="flex-1 overflow-y-hidden"

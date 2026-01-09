@@ -6,11 +6,14 @@ import (
 
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -76,6 +79,8 @@ type Server struct {
 	notifi   notifi.INotifi
 
 	customDB config.CustomDB
+
+	fHandler *filestore.Handler[int64]
 }
 
 type Params struct {
@@ -85,13 +90,28 @@ type Params struct {
 
 	Logger            *zap.Logger
 	DB                *sql.DB
+	Config            *config.Config
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Notifi            notifi.INotifi
-	Config            *config.Config
+	Storage           storage.IStorage
 }
 
 func NewServer(p Params) *Server {
+	conductFileHandler := filestore.NewHandler(
+		p.Storage,
+		p.DB,
+		tConductFiles,
+		tConductFiles.ConductID,
+		tConductFiles.FileID,
+		3<<20, // 3 MiB limit
+		func(parentId int64) mysql.BoolExpression {
+			return tConductFiles.ConductID.EQ(mysql.Int64(parentId))
+		},
+		filestore.InsertJoinRow,
+		false,
+	)
+
 	s := &Server{
 		logger: p.Logger.Named("jobs"),
 		wg:     sync.WaitGroup{},
@@ -102,6 +122,8 @@ func NewServer(p Params) *Server {
 		notifi:   p.Notifi,
 
 		customDB: p.Config.Database.Custom,
+
+		fHandler: conductFileHandler,
 	}
 
 	return s

@@ -1000,7 +1000,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 <UButton
                                                     v-if="canEdit"
                                                     :disabled="!canSubmit"
-                                                    icon="i-mdi-close"
+                                                    color="red"
+                                                    icon="i-mdi-remove"
                                                     @click="
                                                         state.discordSyncSettings?.userInfoSyncSettings.groupMapping.splice(
                                                             idx,
@@ -1187,7 +1188,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                             <UButton
                                                 v-if="canEdit"
                                                 :disabled="!canSubmit"
-                                                icon="i-mdi-close"
+                                                icon="i-mdi-remove"
+                                                color="red"
                                                 @click="
                                                     state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(idx, 1)
                                                 "

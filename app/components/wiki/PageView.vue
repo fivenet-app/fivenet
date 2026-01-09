@@ -5,7 +5,6 @@ import type { ContentSurroundLink } from '@nuxt/ui/runtime/components/content/Co
 import { emojiBlast } from 'emoji-blast';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -15,6 +14,8 @@ import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
+import DraftBadge from '../partials/DraftBadge.vue';
 import GenericImg from '../partials/elements/GenericImg.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import List from './activity/List.vue';
@@ -117,7 +118,7 @@ async function deletePage(id: number): Promise<void> {
 
 const wikiService = await useWikiWiki();
 
-const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
+const tocLinks = computedAsync(async () => props.page?.content && jsonNodeToTocLinks(props.page?.content));
 
 const canAccessActivity = computed(
     () =>
@@ -367,14 +368,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                         <GenericTime :value="page.meta.deletedAt" type="long" />
                                     </UBadge>
 
-                                    <UBadge
-                                        v-if="page.meta.draft"
-                                        class="inline-flex gap-1"
-                                        color="info"
-                                        icon="i-mdi-pencil"
-                                        size="md"
-                                        :label="$t('common.draft')"
-                                    />
+                                    <DraftBadge v-if="page.meta.draft" />
 
                                     <UBadge
                                         v-if="page.meta.public"
@@ -399,11 +393,11 @@ const scrollRef = useTemplateRef('scrollRef');
                             </template>
                         </UPageHeader>
 
-                        <UPageBody v-if="page.content?.content">
+                        <UPageBody v-if="page.content">
                             <div
                                 class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                             >
-                                <HTMLContent :value="page.content.content" />
+                                <CustomContentRenderer :value="page.content" />
                             </div>
 
                             <template v-if="surround.filter((s) => s !== undefined).length > 0">

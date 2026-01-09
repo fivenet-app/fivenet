@@ -6,6 +6,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DraftBadge from '../partials/DraftBadge.vue';
 
 const props = defineProps<{
     document: DocumentShort;
@@ -130,14 +131,7 @@ const links = computed(() =>
                                 </span>
                             </h2>
 
-                            <UBadge
-                                v-if="document.meta?.draft"
-                                class="inline-flex grow-0 gap-1 self-start"
-                                color="info"
-                                size="md"
-                                icon="i-mdi-pencil"
-                                :label="$t('common.draft')"
-                            />
+                            <DraftBadge v-if="document.meta?.draft" class="self-start" />
                         </div>
                     </div>
 

@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
@@ -36,10 +36,10 @@ func (s *Server) UploadFile(
 		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
+		return errswrap.NewError(err, errorsqualifications.ErrQualiViewDenied)
 	}
 	if !check && !userInfo.GetSuperuser() {
-		return errorsdocuments.ErrDocViewDenied
+		return errorsqualifications.ErrQualiViewDenied
 	}
 
 	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.GetParentId(), srv)

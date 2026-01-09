@@ -63,6 +63,35 @@ func (m *DeleteConductEntryResponse) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *GetConductEntryRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *GetConductEntryResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Entry
+	if m.Entry != nil {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ListConductEntriesRequest) Sanitize() error {
 	if m == nil {
 		return nil

@@ -17,14 +17,15 @@ const categories: Category[] = [
 ];
 
 const templateVars: Record<string, { label: string; value: string }[]> = {
+    date: [
+        { label: `${t('common.date')} "02.01.2006 15:04"`, value: 'now | date "02.01.2006 15:04"' },
+        { label: `${t('common.date')} "02.01.2006"`, value: 'now | date "02.01.2006"' },
+        { label: `${t('common.time')} "15:04"`, value: 'now | date "15:04"' },
+    ],
     user: [
         { label: t('common.firstname'), value: '.Firstname' },
         { label: t('common.lastname'), value: '.Lastname' },
         { label: t('common.date_of_birth'), value: '.Dateofbirth' },
-    ],
-    date: [
-        { label: `${t('common.date')} "02.01.2006 15:04"`, value: 'now | date "02.01.2006 15:04"' },
-        { label: `${t('common.time')} "15:04"`, value: 'now | date "15:04"' },
     ],
 };
 
@@ -47,6 +48,7 @@ const insert = () => {
 
 const insertCustom = () => {
     if (!customInput.value) return;
+
     props.editor?.commands.insertTemplateVar({
         value: customInput.value,
         leftTrim: leftTrim.value,

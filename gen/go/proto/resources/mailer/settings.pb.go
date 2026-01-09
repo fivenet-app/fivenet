@@ -8,6 +8,7 @@ package mailer
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -25,7 +26,7 @@ const (
 type EmailSettings struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EmailId       int64                  `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	Signature     *string                `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
+	Signature     *content.Content       `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
 	BlockedEmails []string               `protobuf:"bytes,3,rep,name=blocked_emails,json=blockedEmails,proto3" json:"blocked_emails,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -68,11 +69,11 @@ func (x *EmailSettings) GetEmailId() int64 {
 	return 0
 }
 
-func (x *EmailSettings) GetSignature() string {
-	if x != nil && x.Signature != nil {
-		return *x.Signature
+func (x *EmailSettings) GetSignature() *content.Content {
+	if x != nil {
+		return x.Signature
 	}
-	return ""
+	return nil
 }
 
 func (x *EmailSettings) GetBlockedEmails() []string {
@@ -86,10 +87,10 @@ var File_resources_mailer_settings_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/mailer/settings.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\"\xa4\x01\n" +
+	"\x1fresources/mailer/settings.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\"\xb7\x01\n" +
 	"\rEmailSettings\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x121\n" +
-	"\tsignature\x18\x02 \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x00R\tsignature\x88\x01\x01\x127\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12D\n" +
+	"\tsignature\x18\x02 \x01(\v2!.resources.common.content.ContentH\x00R\tsignature\x88\x01\x01\x127\n" +
 	"\x0eblocked_emails\x18\x03 \x03(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05\x92\x01\x02\x10\x19R\rblockedEmailsB\f\n" +
 	"\n" +
 	"_signatureBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
@@ -108,14 +109,16 @@ func file_resources_mailer_settings_proto_rawDescGZIP() []byte {
 
 var file_resources_mailer_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_mailer_settings_proto_goTypes = []any{
-	(*EmailSettings)(nil), // 0: resources.mailer.EmailSettings
+	(*EmailSettings)(nil),   // 0: resources.mailer.EmailSettings
+	(*content.Content)(nil), // 1: resources.common.content.Content
 }
 var file_resources_mailer_settings_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: resources.mailer.EmailSettings.signature:type_name -> resources.common.content.Content
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_resources_mailer_settings_proto_init() }

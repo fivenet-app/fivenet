@@ -15,7 +15,13 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: Content
-	m.Content = htmlsanitizer.Sanitize(m.Content)
+	if m.Content != nil {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {

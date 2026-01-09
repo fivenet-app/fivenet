@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
@@ -56,6 +57,7 @@ if (props.entry.id > 0) {
                         <GenericTime :value="entry.createdAt" />
                     </dd>
                 </div>
+
                 <div v-if="entry.updatedAt" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.updated_at') }}
@@ -64,6 +66,7 @@ if (props.entry.id > 0) {
                         <GenericTime :value="entry.updatedAt" />
                     </dd>
                 </div>
+
                 <div v-if="entry.deletedAt" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.deleted') }}
@@ -72,6 +75,7 @@ if (props.entry.id > 0) {
                         <GenericTime :value="entry.deletedAt" />
                     </dd>
                 </div>
+
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.expires_at') }}
@@ -80,6 +84,7 @@ if (props.entry.id > 0) {
                         <GenericTime :value="entry.expiresAt" />
                     </dd>
                 </div>
+
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.type') }}
@@ -90,15 +95,7 @@ if (props.entry.id > 0) {
                         </UBadge>
                     </dd>
                 </div>
-                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt class="text-sm leading-6 font-medium">
-                        {{ $t('common.message') }}
-                    </dt>
-                    <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <p class="overflow-y-scroll break-words" v-html="entry.message" />
-                    </dd>
-                </div>
+
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.target') }}
@@ -107,12 +104,24 @@ if (props.entry.id > 0) {
                         <CitizenInfoPopover :user="entry.targetUser" />
                     </dd>
                 </div>
+
                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt class="text-sm leading-6 font-medium">
                         {{ $t('common.creator') }}
                     </dt>
                     <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
                         <CitizenInfoPopover :user="entry.creator" />
+                    </dd>
+                </div>
+
+                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                    <dt class="text-sm leading-6 font-medium">
+                        {{ $t('common.content') }}
+                    </dt>
+                    <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
+                        <div>
+                            <CustomContentRenderer v-if="entry.message" :value="entry.message" />
+                        </div>
                     </dd>
                 </div>
             </dl>

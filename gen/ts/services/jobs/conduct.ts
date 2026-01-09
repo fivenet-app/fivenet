@@ -2,6 +2,8 @@
 // @generated from protobuf file "services/jobs/conduct.proto" (package "services.jobs", syntax proto3)
 // tslint:disable
 // @ts-nocheck
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -42,11 +44,15 @@ export interface ListConductEntriesRequest {
      */
     showExpired?: boolean;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 5
+     * @generated from protobuf field: optional bool show_drafts = 5
+     */
+    showDrafts?: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 6
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated int64 ids = 6
+     * @generated from protobuf field: repeated int64 ids = 7
      */
     ids: number[];
 }
@@ -62,6 +68,24 @@ export interface ListConductEntriesResponse {
      * @generated from protobuf field: repeated resources.jobs.ConductEntry entries = 2
      */
     entries: ConductEntry[];
+}
+/**
+ * @generated from protobuf message services.jobs.GetConductEntryRequest
+ */
+export interface GetConductEntryRequest {
+    /**
+     * @generated from protobuf field: int64 id = 1
+     */
+    id: number;
+}
+/**
+ * @generated from protobuf message services.jobs.GetConductEntryResponse
+ */
+export interface GetConductEntryResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     */
+    entry?: ConductEntry;
 }
 /**
  * @generated from protobuf message services.jobs.CreateConductEntryRequest
@@ -121,8 +145,9 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
@@ -155,14 +180,17 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 case /* optional bool show_expired */ 4:
                     message.showExpired = reader.bool();
                     break;
-                case /* repeated int32 user_ids */ 5:
+                case /* optional bool show_drafts */ 5:
+                    message.showDrafts = reader.bool();
+                    break;
+                case /* repeated int32 user_ids */ 6:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated int64 ids */ 6:
+                case /* repeated int64 ids */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.ids.push(reader.int64().toNumber());
@@ -197,16 +225,19 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         /* optional bool show_expired = 4; */
         if (message.showExpired !== undefined)
             writer.tag(4, WireType.Varint).bool(message.showExpired);
-        /* repeated int32 user_ids = 5; */
+        /* optional bool show_drafts = 5; */
+        if (message.showDrafts !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.showDrafts);
+        /* repeated int32 user_ids = 6; */
         if (message.userIds.length) {
-            writer.tag(5, WireType.LengthDelimited).fork();
+            writer.tag(6, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated int64 ids = 6; */
+        /* repeated int64 ids = 7; */
         if (message.ids.length) {
-            writer.tag(6, WireType.LengthDelimited).fork();
+            writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
                 writer.int64(message.ids[i]);
             writer.join();
@@ -275,6 +306,99 @@ class ListConductEntriesResponse$Type extends MessageType<ListConductEntriesResp
  * @generated MessageType for protobuf message services.jobs.ListConductEntriesResponse
  */
 export const ListConductEntriesResponse = new ListConductEntriesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetConductEntryRequest$Type extends MessageType<GetConductEntryRequest> {
+    constructor() {
+        super("services.jobs.GetConductEntryRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetConductEntryRequest>): GetConductEntryRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GetConductEntryRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetConductEntryRequest): GetConductEntryRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 id */ 1:
+                    message.id = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetConductEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetConductEntryRequest
+ */
+export const GetConductEntryRequest = new GetConductEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetConductEntryResponse$Type extends MessageType<GetConductEntryResponse> {
+    constructor() {
+        super("services.jobs.GetConductEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => ConductEntry, options: { "buf.validate.field": { required: true } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetConductEntryResponse>): GetConductEntryResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetConductEntryResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetConductEntryResponse): GetConductEntryResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.ConductEntry entry */ 1:
+                    message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetConductEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.ConductEntry entry = 1; */
+        if (message.entry)
+            ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetConductEntryResponse
+ */
+export const GetConductEntryResponse = new GetConductEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateConductEntryRequest$Type extends MessageType<CreateConductEntryRequest> {
     constructor() {
@@ -549,7 +673,9 @@ export const DeleteConductEntryResponse = new DeleteConductEntryResponse$Type();
  */
 export const ConductService = new ServiceType("services.jobs.ConductService", [
     { name: "ListConductEntries", options: { "codegen.perms.perms": { enabled: true, attrs: [{ key: "Access", type: "ATTRIBUTE_TYPE_STRING_LIST", validStringList: ["Own", "All"] }] } }, I: ListConductEntriesRequest, O: ListConductEntriesResponse },
+    { name: "GetConductEntry", options: { "codegen.perms.perms": { enabled: true, name: "ListConductEntries" } }, I: GetConductEntryRequest, O: GetConductEntryResponse },
     { name: "CreateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
     { name: "UpdateConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },
-    { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse }
+    { name: "DeleteConductEntry", options: { "codegen.perms.perms": { enabled: true } }, I: DeleteConductEntryRequest, O: DeleteConductEntryResponse },
+    { name: "UploadFile", clientStreaming: true, options: { "codegen.perms.perms": { enabled: true, names: ["CreateConductEntry", "UpdateConductEntry"] } }, I: UploadFileRequest, O: UploadFileResponse }
 ], { "codegen.perms.perms_svc": { order: 67, icon: "i-mdi-list-status" } });

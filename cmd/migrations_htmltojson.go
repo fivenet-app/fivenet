@@ -100,6 +100,11 @@ func (c *MigrationsHTMLToJSONCmd) run(ctx context.Context) error {
 			idCol:            table.FivenetCalendar.ID,
 			legacyContentCol: table.FivenetCalendar.Description,
 		},
+		{
+			table:            table.FivenetJobConduct,
+			idCol:            table.FivenetJobConduct.ID,
+			legacyContentCol: table.FivenetJobConduct.Message,
+		},
 	}
 
 	if c.DryRun {

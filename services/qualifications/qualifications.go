@@ -414,6 +414,8 @@ func (s *Server) UpdateQualification(
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	if req.Qualification.Description != nil {
 		*req.Qualification.Description = strings.TrimSuffix(
@@ -472,13 +474,13 @@ func (s *Server) UpdateQualification(
 		}
 	}
 
+	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetRequirements()); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	files := []*file.File{}
 	if req.Qualification.Files != nil {
 		files = append(files, req.GetQualification().GetFiles()...)
-	}
-
-	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.GetQualification().GetId(), req.GetQualification().GetRequirements()); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if req.GetQualification().GetExam() != nil {

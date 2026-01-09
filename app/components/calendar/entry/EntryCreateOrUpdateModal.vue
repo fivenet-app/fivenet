@@ -118,7 +118,9 @@ function setFromProps(): void {
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
-    state.content = entry.content?.rawHtml ?? '';
+    state.content = entry.content?.tiptapJson
+        ? (Struct.toJson(entry.content.tiptapJson) as JSONContent)
+        : (entry.content?.rawHtml ?? '');
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
 }

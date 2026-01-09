@@ -131,9 +131,9 @@ const formRef = useTemplateRef('formRef');
                                 : 'bg-black/20! text-white!'
                         "
                         variant="subtle"
-                        color="neutral"
+                        color="red"
                         size="md"
-                        icon="i-mdi-close"
+                        icon="i-mdi-remove"
                         @click="
                             changed = true;
                             state.labels.splice(idx, 1);

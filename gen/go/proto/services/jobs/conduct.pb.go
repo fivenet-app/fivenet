@@ -10,6 +10,7 @@ import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -32,8 +33,9 @@ type ListConductEntriesRequest struct {
 	// Search params
 	Types         []jobs.ConductType `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.ConductType" json:"types,omitempty"`
 	ShowExpired   *bool              `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof" json:"show_expired,omitempty"`
-	UserIds       []int32            `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	Ids           []int64            `protobuf:"varint,6,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	ShowDrafts    *bool              `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof" json:"show_drafts,omitempty"`
+	UserIds       []int32            `protobuf:"varint,6,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	Ids           []int64            `protobuf:"varint,7,rep,packed,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -92,6 +94,13 @@ func (x *ListConductEntriesRequest) GetTypes() []jobs.ConductType {
 func (x *ListConductEntriesRequest) GetShowExpired() bool {
 	if x != nil && x.ShowExpired != nil {
 		return *x.ShowExpired
+	}
+	return false
+}
+
+func (x *ListConductEntriesRequest) GetShowDrafts() bool {
+	if x != nil && x.ShowDrafts != nil {
+		return *x.ShowDrafts
 	}
 	return false
 }
@@ -162,6 +171,94 @@ func (x *ListConductEntriesResponse) GetEntries() []*jobs.ConductEntry {
 	return nil
 }
 
+type GetConductEntryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConductEntryRequest) Reset() {
+	*x = GetConductEntryRequest{}
+	mi := &file_services_jobs_conduct_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConductEntryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConductEntryRequest) ProtoMessage() {}
+
+func (x *GetConductEntryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_conduct_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConductEntryRequest.ProtoReflect.Descriptor instead.
+func (*GetConductEntryRequest) Descriptor() ([]byte, []int) {
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetConductEntryRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetConductEntryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetConductEntryResponse) Reset() {
+	*x = GetConductEntryResponse{}
+	mi := &file_services_jobs_conduct_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetConductEntryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetConductEntryResponse) ProtoMessage() {}
+
+func (x *GetConductEntryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_jobs_conduct_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetConductEntryResponse.ProtoReflect.Descriptor instead.
+func (*GetConductEntryResponse) Descriptor() ([]byte, []int) {
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetConductEntryResponse) GetEntry() *jobs.ConductEntry {
+	if x != nil {
+		return x.Entry
+	}
+	return nil
+}
+
 type CreateConductEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
@@ -171,7 +268,7 @@ type CreateConductEntryRequest struct {
 
 func (x *CreateConductEntryRequest) Reset() {
 	*x = CreateConductEntryRequest{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[2]
+	mi := &file_services_jobs_conduct_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -183,7 +280,7 @@ func (x *CreateConductEntryRequest) String() string {
 func (*CreateConductEntryRequest) ProtoMessage() {}
 
 func (x *CreateConductEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[2]
+	mi := &file_services_jobs_conduct_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -196,7 +293,7 @@ func (x *CreateConductEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConductEntryRequest.ProtoReflect.Descriptor instead.
 func (*CreateConductEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{2}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateConductEntryRequest) GetEntry() *jobs.ConductEntry {
@@ -215,7 +312,7 @@ type CreateConductEntryResponse struct {
 
 func (x *CreateConductEntryResponse) Reset() {
 	*x = CreateConductEntryResponse{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[3]
+	mi := &file_services_jobs_conduct_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -227,7 +324,7 @@ func (x *CreateConductEntryResponse) String() string {
 func (*CreateConductEntryResponse) ProtoMessage() {}
 
 func (x *CreateConductEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[3]
+	mi := &file_services_jobs_conduct_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -240,7 +337,7 @@ func (x *CreateConductEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateConductEntryResponse.ProtoReflect.Descriptor instead.
 func (*CreateConductEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{3}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateConductEntryResponse) GetEntry() *jobs.ConductEntry {
@@ -259,7 +356,7 @@ type UpdateConductEntryRequest struct {
 
 func (x *UpdateConductEntryRequest) Reset() {
 	*x = UpdateConductEntryRequest{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[4]
+	mi := &file_services_jobs_conduct_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -271,7 +368,7 @@ func (x *UpdateConductEntryRequest) String() string {
 func (*UpdateConductEntryRequest) ProtoMessage() {}
 
 func (x *UpdateConductEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[4]
+	mi := &file_services_jobs_conduct_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +381,7 @@ func (x *UpdateConductEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConductEntryRequest.ProtoReflect.Descriptor instead.
 func (*UpdateConductEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{4}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *UpdateConductEntryRequest) GetEntry() *jobs.ConductEntry {
@@ -303,7 +400,7 @@ type UpdateConductEntryResponse struct {
 
 func (x *UpdateConductEntryResponse) Reset() {
 	*x = UpdateConductEntryResponse{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[5]
+	mi := &file_services_jobs_conduct_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -315,7 +412,7 @@ func (x *UpdateConductEntryResponse) String() string {
 func (*UpdateConductEntryResponse) ProtoMessage() {}
 
 func (x *UpdateConductEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[5]
+	mi := &file_services_jobs_conduct_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -328,7 +425,7 @@ func (x *UpdateConductEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateConductEntryResponse.ProtoReflect.Descriptor instead.
 func (*UpdateConductEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{5}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateConductEntryResponse) GetEntry() *jobs.ConductEntry {
@@ -347,7 +444,7 @@ type DeleteConductEntryRequest struct {
 
 func (x *DeleteConductEntryRequest) Reset() {
 	*x = DeleteConductEntryRequest{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[6]
+	mi := &file_services_jobs_conduct_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -359,7 +456,7 @@ func (x *DeleteConductEntryRequest) String() string {
 func (*DeleteConductEntryRequest) ProtoMessage() {}
 
 func (x *DeleteConductEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[6]
+	mi := &file_services_jobs_conduct_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +469,7 @@ func (x *DeleteConductEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConductEntryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteConductEntryRequest) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{6}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteConductEntryRequest) GetId() int64 {
@@ -390,7 +487,7 @@ type DeleteConductEntryResponse struct {
 
 func (x *DeleteConductEntryResponse) Reset() {
 	*x = DeleteConductEntryResponse{}
-	mi := &file_services_jobs_conduct_proto_msgTypes[7]
+	mi := &file_services_jobs_conduct_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -402,7 +499,7 @@ func (x *DeleteConductEntryResponse) String() string {
 func (*DeleteConductEntryResponse) ProtoMessage() {}
 
 func (x *DeleteConductEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_jobs_conduct_proto_msgTypes[7]
+	mi := &file_services_jobs_conduct_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -415,30 +512,37 @@ func (x *DeleteConductEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteConductEntryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteConductEntryResponse) Descriptor() ([]byte, []int) {
-	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{7}
+	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{9}
 }
 
 var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/jobs/conduct.proto\"\xcd\x02\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1cresources/jobs/conduct.proto\"\x83\x03\n" +
 	"\x19ListConductEntriesRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x121\n" +
 	"\x05types\x18\x03 \x03(\x0e2\x1b.resources.jobs.ConductTypeR\x05types\x12&\n" +
-	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x05 \x03(\x05R\auserIds\x12\x10\n" +
-	"\x03ids\x18\x06 \x03(\x03R\x03idsB\a\n" +
+	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12$\n" +
+	"\vshow_drafts\x18\x05 \x01(\bH\x02R\n" +
+	"showDrafts\x88\x01\x01\x12\x19\n" +
+	"\buser_ids\x18\x06 \x03(\x05R\auserIds\x12\x10\n" +
+	"\x03ids\x18\a \x03(\x03R\x03idsB\a\n" +
 	"\x05_sortB\x0f\n" +
-	"\r_show_expired\"\xb1\x01\n" +
+	"\r_show_expiredB\x0e\n" +
+	"\f_show_drafts\"\xb1\x01\n" +
 	"\x1aListConductEntriesResponse\x12U\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12<\n" +
-	"\aentries\x18\x02 \x03(\v2\x1c.resources.jobs.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"W\n" +
+	"\aentries\x18\x02 \x03(\v2\x1c.resources.jobs.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"0\n" +
+	"\x16GetConductEntryRequest\x12\x16\n" +
+	"\x02id\x18\x01 \x01(\x03B\x06\xbaH\x03\xc8\x01\x01R\x02id\"U\n" +
+	"\x17GetConductEntryResponse\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"W\n" +
 	"\x19CreateConductEntryRequest\x12:\n" +
 	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"P\n" +
 	"\x1aCreateConductEntryResponse\x122\n" +
@@ -449,13 +553,16 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\x06\xbaH\x03\xc8\x01\x01R\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
-	"\x1aDeleteConductEntryResponse2\x8e\x04\n" +
+	"\x1aDeleteConductEntryResponse2\x94\x06\n" +
 	"\x0eConductService\x12\x87\x01\n" +
 	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\"\x1c\xd2\xf3\x18\x18\b\x01*\x14\n" +
-	"\x06Access\x18\x01\"\x03Own\"\x03All\x12q\n" +
+	"\x06Access\x18\x01\"\x03Own\"\x03All\x12|\n" +
+	"\x0fGetConductEntry\x12%.services.jobs.GetConductEntryRequest\x1a&.services.jobs.GetConductEntryResponse\"\x1a\xd2\xf3\x18\x16\b\x01\x1a\x12ListConductEntries\x12q\n" +
 	"\x12CreateConductEntry\x12(.services.jobs.CreateConductEntryRequest\x1a).services.jobs.CreateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
 	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
-	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
+	"\n" +
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x012\x12CreateConductEntry2\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_conduct_proto_rawDescOnce sync.Once
@@ -469,45 +576,54 @@ func file_services_jobs_conduct_proto_rawDescGZIP() []byte {
 	return file_services_jobs_conduct_proto_rawDescData
 }
 
-var file_services_jobs_conduct_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_services_jobs_conduct_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_jobs_conduct_proto_goTypes = []any{
 	(*ListConductEntriesRequest)(nil),   // 0: services.jobs.ListConductEntriesRequest
 	(*ListConductEntriesResponse)(nil),  // 1: services.jobs.ListConductEntriesResponse
-	(*CreateConductEntryRequest)(nil),   // 2: services.jobs.CreateConductEntryRequest
-	(*CreateConductEntryResponse)(nil),  // 3: services.jobs.CreateConductEntryResponse
-	(*UpdateConductEntryRequest)(nil),   // 4: services.jobs.UpdateConductEntryRequest
-	(*UpdateConductEntryResponse)(nil),  // 5: services.jobs.UpdateConductEntryResponse
-	(*DeleteConductEntryRequest)(nil),   // 6: services.jobs.DeleteConductEntryRequest
-	(*DeleteConductEntryResponse)(nil),  // 7: services.jobs.DeleteConductEntryResponse
-	(*database.PaginationRequest)(nil),  // 8: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 9: resources.common.database.Sort
-	(jobs.ConductType)(0),               // 10: resources.jobs.ConductType
-	(*database.PaginationResponse)(nil), // 11: resources.common.database.PaginationResponse
-	(*jobs.ConductEntry)(nil),           // 12: resources.jobs.ConductEntry
+	(*GetConductEntryRequest)(nil),      // 2: services.jobs.GetConductEntryRequest
+	(*GetConductEntryResponse)(nil),     // 3: services.jobs.GetConductEntryResponse
+	(*CreateConductEntryRequest)(nil),   // 4: services.jobs.CreateConductEntryRequest
+	(*CreateConductEntryResponse)(nil),  // 5: services.jobs.CreateConductEntryResponse
+	(*UpdateConductEntryRequest)(nil),   // 6: services.jobs.UpdateConductEntryRequest
+	(*UpdateConductEntryResponse)(nil),  // 7: services.jobs.UpdateConductEntryResponse
+	(*DeleteConductEntryRequest)(nil),   // 8: services.jobs.DeleteConductEntryRequest
+	(*DeleteConductEntryResponse)(nil),  // 9: services.jobs.DeleteConductEntryResponse
+	(*database.PaginationRequest)(nil),  // 10: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 11: resources.common.database.Sort
+	(jobs.ConductType)(0),               // 12: resources.jobs.ConductType
+	(*database.PaginationResponse)(nil), // 13: resources.common.database.PaginationResponse
+	(*jobs.ConductEntry)(nil),           // 14: resources.jobs.ConductEntry
+	(*file.UploadFileRequest)(nil),      // 15: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 16: resources.file.UploadFileResponse
 }
 var file_services_jobs_conduct_proto_depIdxs = []int32{
-	8,  // 0: services.jobs.ListConductEntriesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	9,  // 1: services.jobs.ListConductEntriesRequest.sort:type_name -> resources.common.database.Sort
-	10, // 2: services.jobs.ListConductEntriesRequest.types:type_name -> resources.jobs.ConductType
-	11, // 3: services.jobs.ListConductEntriesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	12, // 4: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.ConductEntry
-	12, // 5: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
-	12, // 6: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
-	12, // 7: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
-	12, // 8: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
-	0,  // 9: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
-	2,  // 10: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
-	4,  // 11: services.jobs.ConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
-	6,  // 12: services.jobs.ConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
-	1,  // 13: services.jobs.ConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
-	3,  // 14: services.jobs.ConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
-	5,  // 15: services.jobs.ConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
-	7,  // 16: services.jobs.ConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	10, // 0: services.jobs.ListConductEntriesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	11, // 1: services.jobs.ListConductEntriesRequest.sort:type_name -> resources.common.database.Sort
+	12, // 2: services.jobs.ListConductEntriesRequest.types:type_name -> resources.jobs.ConductType
+	13, // 3: services.jobs.ListConductEntriesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	14, // 4: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.ConductEntry
+	14, // 5: services.jobs.GetConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
+	14, // 6: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
+	14, // 7: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
+	14, // 8: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
+	14, // 9: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
+	0,  // 10: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
+	2,  // 11: services.jobs.ConductService.GetConductEntry:input_type -> services.jobs.GetConductEntryRequest
+	4,  // 12: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
+	6,  // 13: services.jobs.ConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
+	8,  // 14: services.jobs.ConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
+	15, // 15: services.jobs.ConductService.UploadFile:input_type -> resources.file.UploadFileRequest
+	1,  // 16: services.jobs.ConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
+	3,  // 17: services.jobs.ConductService.GetConductEntry:output_type -> services.jobs.GetConductEntryResponse
+	5,  // 18: services.jobs.ConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
+	7,  // 19: services.jobs.ConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
+	9,  // 20: services.jobs.ConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
+	16, // 21: services.jobs.ConductService.UploadFile:output_type -> resources.file.UploadFileResponse
+	16, // [16:22] is the sub-list for method output_type
+	10, // [10:16] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_services_jobs_conduct_proto_init() }
@@ -522,7 +638,7 @@ func file_services_jobs_conduct_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_jobs_conduct_proto_rawDesc), len(file_services_jobs_conduct_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

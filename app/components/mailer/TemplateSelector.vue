@@ -1,20 +1,16 @@
 <script lang="ts" setup>
+import type { Editor, JSONContent } from '@tiptap/core';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 
 const props = defineProps<{
-    modelValue: string;
-}>();
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void;
+    editor: Editor | undefined;
 }>();
 
 const mailerMailerClient = await getMailerMailerClient();
-
-const content = useVModel(props, 'modelValue', emit);
 
 defineOptions({
     inheritAttrs: false,
@@ -40,16 +36,31 @@ async function listTemplates(): Promise<ListTemplatesResponse> {
 }
 
 const selectedTemplate = ref<Template | undefined>(undefined);
+
+function selectTemplate(template: Template | undefined): void {
+    if (!props.editor || !template) return;
+
+    if (template.content?.tiptapJson) {
+        const content = Struct.toJson(template.content.tiptapJson) as JSONContent;
+        props.editor.commands.insertContent(content);
+    } else if (template.content?.rawHtml) {
+        props.editor.commands.insertContent(template.content.rawHtml);
+    }
+
+    selectedTemplate.value = undefined;
+}
 </script>
 
 <template>
-    <ClientOnly v-if="templates?.templates && templates?.templates.length > 0">
+    <ClientOnly v-if="editor && templates?.templates && templates?.templates.length > 0">
         <USelectMenu
             v-if="!selectedTemplate"
             v-model="selectedTemplate"
-            class="min-w-48"
+            class="mb-1 min-w-48"
             :items="templates?.templates"
+            label-key="title"
             :placeholder="$t('common.template')"
+            size="sm"
             v-bind="$attrs"
         >
             <template #empty>
@@ -58,14 +69,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
         </USelectMenu>
 
         <UFieldGroup v-else v-bind="$attrs">
-            <UButton
-                :label="$t('common.confirm')"
-                icon="i-mdi-check"
-                @click="
-                    selectedTemplate && (content = selectedTemplate.content + (selectedEmail?.settings?.signature ?? ''));
-                    selectedTemplate = undefined;
-                "
-            />
+            <UButton :label="$t('common.insert')" icon="i-mdi-plus" @click="() => selectTemplate(selectedTemplate)" />
 
             <UButton :label="$t('common.cancel')" color="error" icon="i-mdi-cancel" @click="selectedTemplate = undefined" />
         </UFieldGroup>

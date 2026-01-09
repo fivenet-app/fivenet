@@ -257,7 +257,7 @@ func (p *PermifyModule) generate(fs []pgs.File) map[string]map[string][]*Perm {
 						if perm.Service != nil {
 							svc = *pm.Service
 						}
-						p.Debugf("Permission Remap added: %q → %q/%q\n", mName, svc, pm.Name)
+						p.Debugf("Permission Remap added: %q -> %q/%q\n", mName, svc, pm.Name)
 					}
 				}
 

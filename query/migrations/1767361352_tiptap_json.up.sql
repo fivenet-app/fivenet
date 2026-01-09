@@ -16,4 +16,6 @@ ALTER TABLE `fivenet_documents` ADD FULLTEXT KEY `idx_fivenet_documents_content_
 
 ALTER TABLE `fivenet_documents_comments` CHANGE `comment` `content` LONGTEXT NULL;
 
+DELETE FROM `fivenet_documents_activity` WHERE `activity_type` = 4 AND `data` = '{"updated":{}}';
+
 COMMIT;

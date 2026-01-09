@@ -180,7 +180,7 @@ type Perms struct {
 	attrsMap *xsync.Map[int64, *cacheAttr]
 	// Role ID to map of role attributes
 	attrsRoleMap *xsync.Map[int64, *xsync.Map[int64, *cacheRoleAttr]]
-	// Perm ID to map `Key` → cached attribute (key is name of attribute)
+	// Perm ID to map `Key` -> cached attribute (key is name of attribute)
 	attrsPermsMap *xsync.Map[int64, *xsync.Map[string, int64]]
 
 	userCanCacheTTL time.Duration

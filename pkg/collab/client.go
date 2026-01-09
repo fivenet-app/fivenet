@@ -153,7 +153,7 @@ func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 						zap.Error(err),
 					)
 				}
-				// Either not found or error → skip update this round
+				// Either not found or error -> skip update this round
 				continue
 			}
 			if string(entry.Value()) != cid {

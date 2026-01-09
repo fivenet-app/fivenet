@@ -30,6 +30,7 @@ import { CharacterCount, Dropcursor, Focus, Gapcursor, Placeholder } from '@tipt
 import { v4 as uuidv4 } from 'uuid';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
+import { EnhancedImage } from './tiptap/extensions/EnhancedImage';
 
 export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<string>): Extensions {
     const settingsStore = useSettingsStore();
@@ -142,6 +143,12 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             types: ['heading'],
             generateID: ({ node }) => `${node.type.name}-${uuidv4()}`,
             filterTransaction: (transaction) => !isChangeOrigin(transaction),
+            updateDocument: true,
+        }),
+        // Custom
+        EnhancedImage.configure({
+            inline: false,
+            allowBase64: true,
         }),
     ];
 

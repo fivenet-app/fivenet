@@ -26,6 +26,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/api"
@@ -115,6 +116,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
+		tiptapsanitizer.Module,
 		i18n.Module,
 		fx.Provide(
 			converter.New,
@@ -199,7 +201,9 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			grpc.AsService(pbfilestore.NewServer),
 		),
 
+		// Ensure sanitizer instances are created
 		fx.Invoke(func(*bluemonday.Policy) {}),
+		fx.Invoke(func(*tiptapsanitizer.Sanitizer) {}),
 	}
 
 	if withServer {

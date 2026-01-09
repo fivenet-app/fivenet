@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -18,6 +19,8 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
+
+const SignatureMaxLength = 1024
 
 var (
 	tSettings       = table.FivenetMailerSettings
@@ -112,9 +115,17 @@ func (s *Server) SetEmailSettings(
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	signature := mysql.StringExp(mysql.NULL)
-	if req.Settings.Signature != nil && *req.Settings.Signature != "" {
-		signature = mysql.String(req.GetSettings().GetSignature())
+	var signature *content.Content
+	if req.GetSettings().GetSignature() != nil {
+		// Check comment length
+		extracted := req.GetSettings().GetSignature().Extract()
+		if len(extracted.GetText()) > SignatureMaxLength {
+			return nil, errorsmailer.ErrSignatureTooLong
+		}
+
+		signature = req.GetSettings().GetSignature()
+	} else if email.GetSettings() != nil {
+		signature = email.GetSettings().GetSignature()
 	}
 
 	// Make all emails lowercase, remove own email, and remove duplicates
@@ -147,7 +158,7 @@ func (s *Server) SetEmailSettings(
 			signature,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tSettings.Signature.SET(signature),
+			tSettings.Signature.SET(mysql.String("VALUES(`signature`)")),
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

@@ -1,17 +1,20 @@
 <script lang="ts" setup>
 import { UBadge, UButton, UTooltip } from '#components';
 import type { TableColumn } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { h } from 'vue';
 import { z } from 'zod';
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
-import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
+import EditorModal from '~/components/jobs/conduct/EditorModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DraftBadge from '~/components/partials/DraftBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsConductClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -50,6 +53,7 @@ const schema = z.object({
     id: z.union([z.coerce.string().optional(), z.coerce.number().min(1).optional()]),
     types: z.enum(ConductType).array().max(10).default([]),
     showExpired: z.coerce.boolean().default(false),
+    showDrafts: z.coerce.boolean().default(true),
     user: z.coerce.number().min(1).optional(),
     sorting: z
         .object({
@@ -90,8 +94,9 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             },
             sort: query.sorting,
             types: query.types,
-            userIds: userIds,
             showExpired: query.showExpired,
+            showDrafts: query.showDrafts,
+            userIds: userIds,
             ids: entryIds,
         });
         const { response } = await call;
@@ -137,7 +142,7 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
 }
 
 const conductViewSlideover = overlay.create(ViewSlideover);
-const conductCreateOrUpdateModal = overlay.create(CreateOrUpdateModal);
+const conductEditorModal = overlay.create(EditorModal);
 const confirmModal = overlay.create(ConfirmModal);
 
 const appConfig = useAppConfig();
@@ -163,6 +168,11 @@ const columns = computed(
                         onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
                     });
                 },
+                cell: ({ row }) =>
+                    h('p', { class: 'inline-flex items-center gap-2' }, [
+                        `#${row.original.id}`,
+                        row.original.draft ? h(DraftBadge, { label: undefined }) : null,
+                    ]),
                 sortable: true,
             },
             {
@@ -195,12 +205,14 @@ const columns = computed(
             },
             {
                 accessorKey: 'message',
-                header: t('common.message'),
+                header: t('common.content'),
                 cell: ({ row }) =>
                     h(
                         'p',
                         { class: 'line-clamp-2 w-full max-w-sm break-all whitespace-normal hover:line-clamp-4' },
-                        htmlPreviewSafe(row.original.message, 200),
+                        row.original.message?.tiptapJson
+                            ? tiptapTextPreview(Struct.toJson(row.original.message.tiptapJson) as JSONContent, 200)
+                            : htmlPreviewSafe(row.original.message?.rawHtml ?? '', 200),
                     ),
             },
             {
@@ -241,8 +253,8 @@ const columns = computed(
                                     variant: 'link',
                                     icon: 'i-mdi-pencil',
                                     onClick: () => {
-                                        conductCreateOrUpdateModal.open({
-                                            entry: row.original,
+                                        conductEditorModal.open({
+                                            entryId: row.original.id,
                                             userId: props.userId,
                                             onCreated: ($event) => data.value?.entries.unshift($event),
                                             onUpdated: ($event) => updateEntryInPlace($event),
@@ -349,6 +361,17 @@ const columns = computed(
 
                             <UFormField
                                 class="flex flex-initial flex-col"
+                                name="showDrafts"
+                                :label="$t('common.drafts', 2)"
+                                :ui="{ container: 'flex-1 flex' }"
+                            >
+                                <div class="flex flex-1 items-center">
+                                    <USwitch v-model="query.showDrafts" />
+                                </div>
+                            </UFormField>
+
+                            <UFormField
+                                class="flex flex-initial flex-col"
                                 name="showExpired"
                                 :label="$t('components.jobs.conduct.List.show_expired')"
                                 :ui="{ container: 'flex-1 flex' }"
@@ -367,15 +390,14 @@ const columns = computed(
                                     trailing-icon="i-mdi-plus"
                                     color="neutral"
                                     truncate
+                                    :label="$t('common.create')"
                                     @click="
-                                        conductCreateOrUpdateModal.open({
+                                        conductEditorModal.open({
                                             onCreated: ($event) => data?.entries.unshift($event),
                                             onUpdated: ($event) => updateEntryInPlace($event),
                                         })
                                     "
-                                >
-                                    {{ $t('common.create') }}
-                                </UButton>
+                                />
                             </UFormField>
                         </div>
                     </UForm>

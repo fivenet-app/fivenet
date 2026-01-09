@@ -10,7 +10,6 @@ import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -24,7 +23,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
-import TiptapContent from '../partials/content/TiptapContent.vue';
+import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
+import DraftBadge from '../partials/DraftBadge.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
 import ReminderModal from './ReminderModal.vue';
@@ -622,14 +622,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                     <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
                                 </UBadge>
 
-                                <UBadge
-                                    v-if="doc.document?.meta?.draft"
-                                    class="inline-flex gap-1"
-                                    color="info"
-                                    size="md"
-                                    icon="i-mdi-pencil"
-                                    :label="$t('common.draft')"
-                                />
+                                <DraftBadge v-if="doc.document?.meta?.draft" />
 
                                 <UBadge
                                     v-if="doc.document?.deletedAt"
@@ -689,8 +682,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <HTMLContent v-if="doc.document?.content?.content" :value="doc.document.content.content" />
-                        <TiptapContent v-else-if="doc.document?.content?.tiptapJson" :value="doc.document.content.tiptapJson" />
+                        <CustomContentRenderer v-if="doc.document?.content" :value="doc.document.content" />
                     </div>
                 </div>
 

@@ -3,7 +3,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = withDefaults(
     defineProps<{
-        value: string | number;
+        value: string | number | (() => string | number);
         showText?: boolean;
     }>(),
     {
@@ -14,7 +14,7 @@ const props = withDefaults(
 const notifications = useNotificationsStore();
 
 function addToClipboard(): void {
-    copyToClipboardWrapper(props.value.toString());
+    copyToClipboardWrapper(typeof props.value === 'function' ? props.value().toString() : props.value.toString());
 
     notifications.add({
         title: { key: 'notifications.clipboard.copied.title', parameters: {} },

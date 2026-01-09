@@ -221,6 +221,20 @@ func ParseHTML(in string) (*html.Node, error) {
 	return d, nil
 }
 
+func FromHTML(in string) (*RichTextHtmlNode, error) {
+	h, err := ParseHTML(in)
+	if err != nil {
+		return nil, err
+	}
+
+	out, err := FromHTMLNode(h)
+	if err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
 // FromHTMLNode converts html.Node to RichTextHtmlNode.
 func FromHTMLNode(node *html.Node) (*RichTextHtmlNode, error) {
 	jNode := &RichTextHtmlNode{}

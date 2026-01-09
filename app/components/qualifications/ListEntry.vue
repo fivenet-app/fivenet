@@ -2,6 +2,7 @@
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { type Qualification, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import DraftBadge from '../partials/DraftBadge.vue';
 import { resultStatusToBadgeColor } from './helpers';
 
 defineProps<{
@@ -26,14 +27,7 @@ defineProps<{
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}</span
                         >
 
-                        <UBadge
-                            v-if="qualification.draft"
-                            class="inline-flex gap-1"
-                            color="info"
-                            size="xs"
-                            icon="i-mdi-pencil"
-                            :label="$t('common.draft')"
-                        />
+                        <DraftBadge v-if="qualification.draft" />
 
                         <UBadge
                             v-if="qualification.public"

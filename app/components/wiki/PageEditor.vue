@@ -204,7 +204,9 @@ function setFromProps(): void {
     state.parentId = page.value?.parentId ?? 0;
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
-    state.content = page.value.content?.rawHtml ?? '';
+    state.content = page.value.content?.tiptapJson
+        ? (Struct.toJson(page.value.content.tiptapJson) as JSONContent)
+        : (page.value.content?.rawHtml ?? '');
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
     state.meta.public = page.value.meta?.public ?? false;

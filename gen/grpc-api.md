@@ -4860,7 +4860,9 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `type` | [ConductType](#resourcesjobsConductType) |  |  |
-| `message` | [string](#string) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `message` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
+| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_user_id` | [int32](#int32) |  |  |
 | `target_user` | [Colleague](#resourcesjobsColleague) | optional |  |
@@ -5488,7 +5490,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `email_id` | [int64](#int64) |  |  |
-| `signature` | [string](#string) | optional |  |
+| `signature` | [resources.common.content.Content](#resourcescommoncontentContent) | optional |  |
 | `blocked_emails` | [string](#string) | repeated |  |
 
 
@@ -5717,7 +5719,7 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `email_id` | [int64](#int64) |  |  |
 | `title` | [string](#string) |  |  |
-| `content` | [string](#string) |  |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_job` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 
@@ -9953,6 +9955,28 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+### services.jobs.GetConductEntryRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.jobs.GetConductEntryResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `entry` | [resources.jobs.ConductEntry](#resourcesjobsConductEntry) |  |  |
+
+
+
+
+
 ### services.jobs.ListConductEntriesRequest
 
 
@@ -9962,6 +9986,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `types` | [resources.jobs.ConductType](#resourcesjobsConductType) | repeated | Search params |
 | `show_expired` | [bool](#bool) | optional |  |
+| `show_drafts` | [bool](#bool) | optional |  |
 | `user_ids` | [int32](#int32) | repeated |  |
 | `ids` | [int64](#int64) | repeated |  |
 
@@ -10014,9 +10039,11 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListConductEntries` | [ListConductEntriesRequest](#servicesjobsListConductEntriesRequest) | [ListConductEntriesResponse](#servicesjobsListConductEntriesResponse) | |
+| `GetConductEntry` | [GetConductEntryRequest](#servicesjobsGetConductEntryRequest) | [GetConductEntryResponse](#servicesjobsGetConductEntryResponse) | |
 | `CreateConductEntry` | [CreateConductEntryRequest](#servicesjobsCreateConductEntryRequest) | [CreateConductEntryResponse](#servicesjobsCreateConductEntryResponse) | |
 | `UpdateConductEntry` | [UpdateConductEntryRequest](#servicesjobsUpdateConductEntryRequest) | [UpdateConductEntryResponse](#servicesjobsUpdateConductEntryResponse) | |
 | `DeleteConductEntry` | [DeleteConductEntryRequest](#servicesjobsDeleteConductEntryRequest) | [DeleteConductEntryResponse](#servicesjobsDeleteConductEntryResponse) | |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->
 

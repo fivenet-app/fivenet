@@ -5,6 +5,8 @@ import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
@@ -37,13 +39,20 @@ const state = reactive<Schema>({
     content: '',
 });
 
-watch(props, () => {
-    state.title = props.template?.title ?? '';
-    state.content = props.template?.content ?? '';
-});
+function setFromProps(): void {
+    if (!props.template) {
+        state.title = '';
+        state.content = '';
+        return;
+    }
 
-state.title = props.template?.title ?? '';
-state.content = props.template?.content ?? '';
+    state.title = props.template?.title ?? '';
+    state.content = props.template?.content?.tiptapJson
+        ? (Struct.toJson(props.template.content.tiptapJson) as JSONContent)
+        : (props.template.content?.rawHtml ?? '');
+}
+
+watch(props, () => setFromProps());
 
 async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTemplateRequest> {
     try {
@@ -52,7 +61,11 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
                 id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,
                 title: values.title,
-                content: values.content,
+                content: {
+                    contentType: ContentType.TIPTAP_JSON,
+                    version: '',
+                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
+                },
             },
         });
         const { response } = await call;
@@ -78,6 +91,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdateTemplate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+onBeforeMount(() => setFromProps());
 </script>
 
 <template>
@@ -93,8 +108,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close', false)" />
         </UFieldGroup>
 
-        <UFormField name="title" :label="$t('common.name')">
-            <UInput v-model="state.title" type="text" />
+        <UFormField name="title" :label="$t('common.name')" class="w-full">
+            <UInput v-model="state.title" type="text" class="w-full" size="xl" />
         </UFormField>
 
         <UFormField
@@ -108,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     v-model="state.content"
                     name="content"
                     class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
-                    wrapper-class="min-h-80"
+                    wrapper-class="min-h-100"
                 />
             </ClientOnly>
         </UFormField>

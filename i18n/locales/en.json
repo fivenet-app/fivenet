@@ -123,8 +123,9 @@
         "dereferer": {
             "title": "You are being redirected",
             "subtitle": "You are about to leave FiveNet.",
-            "description": "Please note that you will be redirected to a website for whose content we are not responsible and to which our privacy policy does not apply.",
-            "goto": "If the automatic redirection does not work, please click here!"
+            "description": "Please note that you will be redirected to another website for whose content we are not responsible and to which our privacy policy does not apply.",
+            "goto": "If the automatic redirection does not work, please click here!",
+            "countdown": "You will be redirected in {0} seconds..."
         },
         "stats": {
             "title": "Statistics",
@@ -1680,7 +1681,8 @@
                     "last_activity_received": "Last Activity Received",
                     "last_dbsync_version": "Last seen DB Sync Version"
                 },
-                "title": "System Status"
+                "title": "System Status",
+                "new_version_available": "New version available"
             },
             "system_settings": "System Settings"
         },
@@ -2264,7 +2266,8 @@
             "ErrExamDisabled": "The qualification's exam is disabled!",
             "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
             "ErrQualiAccessDenied": "You can't access this qualifcation!",
-            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!"
+            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!",
+            "ErrQualiViewDenied": "You don't have permission to view this qualification!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Failed to load calendar data!",
@@ -2320,7 +2323,8 @@
             "ErrEmailDisabled": {
                 "title": "This e-mail address has been disabled!",
                 "content": "Please contact the FiveNet administration for help on this."
-            }
+            },
+            "ErrSignatureTooLong": "Your e-mail signature is too long!"
         },
         "CitizensService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",

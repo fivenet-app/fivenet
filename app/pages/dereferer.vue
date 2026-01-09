@@ -20,21 +20,24 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 const route = useRoute();
 const router = useRouter();
 
+const { remaining, start } = useCountdown(6, {
+    onComplete: async () => {
+        if (nuiEnabled.value) {
+            openURLInWindow(route.query.target as string);
+            router.back();
+        } else {
+            await navigateTo(route.query.target as string, { external: true });
+        }
+    },
+});
+
 onMounted(async () => {
     if (!route.query || !route.query.target) {
         await navigateTo('/');
-    } else {
-        const url = route.query.target as string;
-        useTimeoutFn(async () => {
-            if (nuiEnabled.value) {
-                await openURLInWindow(url);
-                router.back();
-                return;
-            }
-
-            await navigateTo(url, { external: true });
-        }, 5000);
+        return;
     }
+
+    start();
 });
 
 const target = route.query.target as string;
@@ -48,14 +51,20 @@ const target = route.query.target as string;
             <UCard class="w-full max-w-xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <template #header>
                     <h3 class="inline-flex gap-2 text-2xl leading-6 font-semibold">
-                        <span>{{ $t('pages.dereferer.title') }}</span> - <span>{{ $t('pages.dereferer.subtitle') }}</span>
+                        <span>{{ $t('pages.dereferer.title') }}</span>
+                        <span>-</span>
+                        <span>{{ $t('pages.dereferer.subtitle') }}</span>
                     </h3>
                 </template>
 
-                <p>{{ $t('pages.dereferer.description') }}</p>
+                <div class="space-y-4">
+                    <p>{{ $t('pages.dereferer.description') }}</p>
 
-                <div class="mt-4">
-                    <pre>{{ target }}</pre>
+                    <p>{{ $t('pages.dereferer.countdown', [remaining]) }}</p>
+
+                    <div class="min-w-0 text-sm">
+                        <pre class="line-clamp-4">{{ target }}</pre>
+                    </div>
                 </div>
 
                 <template #footer>

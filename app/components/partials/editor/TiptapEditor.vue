@@ -11,7 +11,6 @@ import type { Schema } from '@tiptap/pm/model';
 import { initProseMirrorDoc, prosemirrorJSONToYDoc } from '@tiptap/y-tiptap';
 import * as Y from 'yjs';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
-import { EnhancedImage } from '~/composables/tiptap/extensions/EnhancedImage';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
@@ -88,10 +87,6 @@ const extensions = useTiptapEditor(toRef(props, 'limit'), toRef(props, 'placehol
 
 if (!props.disableImages) {
     extensions.push(
-        EnhancedImage.configure({
-            inline: false,
-            allowBase64: true,
-        }),
         DeleteImageTracker.configure({
             onRemoved: (ids) =>
                 ids.forEach((id) => {
@@ -99,6 +94,7 @@ if (!props.disableImages) {
                         const idx = files.value.findIndex((f) => f.id === id);
                         if (idx > -1) files.value.splice(idx, 1);
                     }
+                    logger.info('Removed file:', id);
                 }),
         }),
     );
@@ -114,16 +110,16 @@ function seedDocument(schema: Schema, value: JSONContent | string): void {
     if (typeof value === 'string') {
         if (value === '') return;
 
-        // HTML → ProseMirror JSON
+        // HTML -> ProseMirror JSON
         const json = generateJSON(value, extensions);
-        // ProseMirror JSON → Yjs update in-place
+        // ProseMirror JSON -> Yjs update in-place
         seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
     } else {
         if (!value.content || value.content.length === 0) return;
 
         logger.info('Seeding document content into Yjs document');
 
-        // ProseMirror JSON → Yjs update in-place
+        // ProseMirror JSON -> Yjs update in-place
         seedDoc = prosemirrorJSONToYDoc(schema, value, 'content');
     }
 
@@ -158,7 +154,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
             // Skip rendering if it's your own cursor
             render: (user): HTMLElement => {
                 if (user.id === yjsProvider.ydoc.clientID) {
-                    // returns nothing → no widget for your own cursor
+                    // returns nothing -> no widget for your own cursor
                     return new HTMLElement();
                 }
                 // Otherwise build the "remote" cursor as normal:
@@ -417,6 +413,12 @@ onBeforeUnmount(() => {
 });
 
 onBeforeRouteLeave(() => yjsProvider?.destroy());
+
+defineExpose<{
+    editor: typeof editor;
+}>({
+    editor,
+});
 </script>
 
 <template>
@@ -427,6 +429,7 @@ onBeforeRouteLeave(() => yjsProvider?.destroy());
             body: 'p-0 sm:p-0 overflow-y-auto flex-1 border-x border-neutral-100/75 dark:border-neutral-800/75',
             footer: 'p-0 sm:px-2 sticky inset-x-0 bottom-0 z-[1] flex w-full flex-none justify-between bg-neutral-100 px-1 text-center dark:bg-neutral-800',
         }"
+        v-bind="$attrs"
     >
         <template v-if="editor && !hideToolbar" #header>
             <TiptapToolbar

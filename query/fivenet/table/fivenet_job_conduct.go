@@ -23,6 +23,7 @@ type fivenetJobConductTable struct {
 	DeletedAt    mysql.ColumnTimestamp
 	Job          mysql.ColumnString
 	Type         mysql.ColumnInteger
+	Draft        mysql.ColumnBool
 	Message      mysql.ColumnString
 	ExpiresAt    mysql.ColumnDate
 	TargetUserID mysql.ColumnInteger
@@ -74,13 +75,14 @@ func newFivenetJobConductTableImpl(schemaName, tableName, alias string) fivenetJ
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		JobColumn          = mysql.StringColumn("job")
 		TypeColumn         = mysql.IntegerColumn("type")
+		DraftColumn        = mysql.BoolColumn("draft")
 		MessageColumn      = mysql.StringColumn("message")
 		ExpiresAtColumn    = mysql.DateColumn("expires_at")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
-		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeColumn, DraftColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeColumn, DraftColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, DraftColumn}
 	)
 
 	return fivenetJobConductTable{
@@ -93,6 +95,7 @@ func newFivenetJobConductTableImpl(schemaName, tableName, alias string) fivenetJ
 		DeletedAt:    DeletedAtColumn,
 		Job:          JobColumn,
 		Type:         TypeColumn,
+		Draft:        DraftColumn,
 		Message:      MessageColumn,
 		ExpiresAt:    ExpiresAtColumn,
 		TargetUserID: TargetUserIDColumn,

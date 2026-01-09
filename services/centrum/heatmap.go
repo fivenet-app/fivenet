@@ -103,7 +103,7 @@ GROUP BY b.job;
 `
 
 func (s *Server) generateDispatchHeatmaps(ctx context.Context) error {
-	// Four placeholders → Four copies of the grid value
+	// Four placeholders -> Four copies of the grid value
 	args := []any{binSize, binSize, binSize, binSize}
 
 	if _, err := s.db.ExecContext(ctx, heatmapQuery, args...); err != nil {

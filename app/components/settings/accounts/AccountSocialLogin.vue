@@ -68,7 +68,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
 
                 <div class="flex items-center justify-between">
                     <UButton
-                        icon="i-mdi-close-circle"
+                        icon="i-mdi-remove"
                         color="error"
                         @click="disconnectSocialLogin(accountId, connection.providerName)"
                     >

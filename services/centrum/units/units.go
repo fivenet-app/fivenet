@@ -35,7 +35,7 @@ import (
 
 const (
 	PingTTL  = 8 * time.Second  // OFFLINE
-	EmptyTTL = 30 * time.Second // No crew → delete
+	EmptyTTL = 30 * time.Second // No crew -> delete
 )
 
 type UnitDB struct {

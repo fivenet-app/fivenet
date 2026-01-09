@@ -1,20 +1,35 @@
 package tiptapsanitizer
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
+	"sync"
 
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/google/uuid"
+	"go.uber.org/fx"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
-var allowed = BuildAllowed()
+// Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
+var Module = fx.Module("tiptapsanitizer",
+	fx.Provide(
+		New,
+	),
+)
 
-type Allowed struct {
+var (
+	// sanitizerOnce ensures the sanitizer is initialized only once.
+	sanitizerOnce sync.Once
+	// sanitizer is the main for TipTap sanitization.
+	sanitizer *Sanitizer
+)
+
+type Sanitizer struct {
 	Nodes map[string]AttrPolicy
 	Marks map[string]AttrPolicy
 }
@@ -36,17 +51,18 @@ func normalizeLinkHref(raw string) (string, bool) {
 
 	// Allow relative
 	if !u.IsAbs() {
-		// disallow javascript:, data:, etc. (relative is fine)
+		// Disallow javascript:, data:, etc. (relative is fine)
 		return u.String(), true
 	}
+
 	// Absolute: https only
 	if strings.EqualFold(u.Scheme, "https") {
-		// strip fragments? (optional)
 		return (&url.URL{
 			Scheme:   "https",
 			Host:     u.Host,
 			Path:     u.Path,
-			RawQuery: u.RawQuery, // or "" if you want to strip
+			RawQuery: u.RawQuery,
+			Fragment: u.Fragment,
 		}).String(), true
 	}
 	return "", false
@@ -69,9 +85,17 @@ func normalizeColor(v any) (string, bool) {
 	return "", false
 }
 
+func New(cfg *config.Config) *Sanitizer {
+	sanitizerOnce.Do(func() {
+		sanitizer = buildAllowed(cfg)
+	})
+
+	return buildAllowed(cfg)
+}
+
 // Build allowlist tailored to your manifest
 
-func BuildAllowed() Allowed {
+func buildAllowed(cfg *config.Config) *Sanitizer {
 	textAlignOK := func(v any) (string, bool) {
 		s, _ := v.(string)
 		switch s {
@@ -119,21 +143,28 @@ func BuildAllowed() Allowed {
 		},
 		"heading": {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
-			if lv, ok := a["level"].(float64); ok && lv >= 1 && lv <= 6 {
+			lv, ok := a["level"].(float64)
+			if ok && lv >= 1 && lv <= 6 {
 				out["level"] = int(lv)
 			} else {
 				out["level"] = 1
-			} // default
+				lv = 1
+			}
+
 			if v, ok := a["textAlign"]; ok {
 				if vv, ok := textAlignOK(v); ok && vv != "" {
 					out["textAlign"] = vv
 				}
 			}
-			// ignore custom 'id' unless you trust 'uniqueID' to produce safe anchors.
+
+			// Allow custom ID or generate one
 			if id, ok := a["id"].(string); ok && id != "" {
-				// optionally whitelist pattern: ^[a-z0-9\-]{1,64}$
+				// Optionally whitelist pattern: ^[a-z0-9\-]{1,64}$
 				out["id"] = id
+			} else {
+				out["id"] = fmt.Sprintf("h%d-%s", int(lv), uuid.New().String())
 			}
+
 			return true, out
 		}},
 		"codeBlock": {Validate: func(a map[string]any) (bool, map[string]any) {
@@ -181,6 +212,65 @@ func BuildAllowed() Allowed {
 			if lbl, ok := a["label"].(string); ok && len(lbl) <= 200 {
 				out["label"] = lbl
 			}
+			return true, out
+		}},
+		"image": {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{}
+			if src, ok := a["src"].(string); ok && src != "" {
+				out["src"] = src
+			} else {
+				return false, nil
+			}
+			if alt, ok := a["alt"].(string); ok {
+				out["alt"] = alt
+			}
+			if title, ok := a["title"].(string); ok {
+				out["title"] = title
+			}
+			if fileId, ok := a["fileId"].(uint64); ok {
+				out["fileId"] = fileId
+			}
+
+			if style, ok := a["style"].(string); ok {
+				split := strings.Split(style, ";")
+				if len(split) > 6 {
+					return false, nil
+				}
+
+				for _, part := range split {
+					keyValue := strings.SplitN(part, ":", 2)
+					if len(keyValue) != 2 {
+						return false, nil
+					}
+					if keyValue[0] != "width" {
+						continue
+					}
+
+					// Set width from style attribute
+					a["width"] = strings.TrimSpace(keyValue[1])
+				}
+			}
+
+			if width, ok := a["width"].(float64); ok && width > 0 && width <= 5000 {
+				out["width"] = int(width)
+			}
+			if height, ok := a["height"].(float64); ok && height > 0 && height <= 5000 {
+				out["height"] = int(height)
+			}
+			return true, out
+		}},
+		"templateVar": {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{}
+
+			// TODO
+
+			return true, out
+		}},
+		"templateBlock": {Validate: func(a map[string]any) (bool, map[string]any) {
+			out := map[string]any{}
+
+			// TODO
+
 			return true, out
 		}},
 	}
@@ -244,7 +334,7 @@ func BuildAllowed() Allowed {
 		}},
 	}
 
-	return Allowed{
+	return &Sanitizer{
 		Nodes: node,
 		Marks: mark,
 	}
@@ -279,13 +369,17 @@ func Sanitize(
 	maxBytes int,
 	maxDepth int,
 ) (map[string]any, Stats, error) {
+	sanitizerOnce.Do(func() {
+		panic("tiptap sanitizer not initialized before first use")
+	})
+
 	b, _ := json.Marshal(doc)
 	if maxBytes > 0 && len(b) > maxBytes {
 		return nil, Stats{}, errors.New("document too large")
 	}
 
 	var stats Stats
-	out, ok := sanitizeNode(doc, allowed, 0, maxDepth, &stats)
+	out, ok := sanitizeNode(doc, sanitizer, 0, maxDepth, &stats)
 	if !ok {
 		return nil, Stats{}, errors.New("invalid root")
 	}
@@ -295,7 +389,7 @@ func Sanitize(
 
 func sanitizeNode(
 	n map[string]any,
-	allow Allowed,
+	allow *Sanitizer,
 	depth, maxDepth int,
 	stats *Stats,
 ) (map[string]any, bool) {
@@ -366,7 +460,7 @@ func sanitizeNode(
 	return out, true
 }
 
-func sanitizeMarks(in []any, allow Allowed) []any {
+func sanitizeMarks(in []any, allow *Sanitizer) []any {
 	var out []any
 	for _, m := range in {
 		mm, _ := m.(map[string]any)
@@ -415,9 +509,4 @@ func plainText(children []any) string {
 func countWords(s string) int {
 	fields := strings.Fields(s)
 	return len(fields)
-}
-
-func SHA256Hex(s string) string {
-	sum := sha256.Sum256([]byte(s))
-	return hex.EncodeToString(sum[:])
 }

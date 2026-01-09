@@ -226,10 +226,13 @@ func (s *Server) CreateOrUpdateTemplate(
 		}
 
 		stmt := tTemplates.
-			UPDATE().
+			UPDATE(
+				tTemplates.Title,
+				tTemplates.Content,
+			).
 			SET(
-				tTemplates.Title.SET(mysql.String(req.GetTemplate().GetTitle())),
-				tTemplates.Content.SET(mysql.String(req.GetTemplate().GetContent())),
+				req.GetTemplate().GetTitle(),
+				req.GetTemplate().GetContent(),
 			).
 			WHERE(mysql.AND(
 				tTemplates.ID.EQ(mysql.Int64(req.GetTemplate().GetId())),

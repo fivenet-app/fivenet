@@ -87,7 +87,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
@@ -162,7 +162,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
             data.value?.comments.unshift(response.comment);
         }
 
-        state.content = '';
+        state.content = undefined;
 
         emit('newComment');
     } catch (e) {

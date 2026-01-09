@@ -9,6 +9,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 )
 
+const (
+	ContentVersionLegacyJSONV1 = "legacy_json/v1"
+	ContentVersionTiptapV1     = "tiptap/v1"
+)
+
 // Scan implements driver.Valuer for protobuf Content.
 func (x *Content) Scan(value any) error {
 	var data string

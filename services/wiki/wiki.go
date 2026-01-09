@@ -715,18 +715,21 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
-		PageId:       req.GetPage().GetId(),
-		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-		Data: &wiki.PageActivityData{
-			Data: &wiki.PageActivityData_Updated{
-				Updated: diff,
+	// Only store activity if there are actual changes
+	if diff.HasChanges() {
+		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+			PageId:       req.GetPage().GetId(),
+			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.GetJob(),
+			Data: &wiki.PageActivityData{
+				Data: &wiki.PageActivityData_Updated{
+					Updated: diff,
+				},
 			},
-		},
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
 	}
 
 	if err := s.handlePageAccessChange(ctx, tx, req.GetPage().GetId(), userInfo, req.GetPage().GetAccess(), true); err != nil {

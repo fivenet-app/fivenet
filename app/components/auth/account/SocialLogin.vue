@@ -81,8 +81,9 @@ const confirmModal = overlay.create(ConfirmModal);
 
                 <div v-if="account" class="flex items-center justify-between">
                     <UButton
-                        icon="i-mdi-close-circle"
+                        icon="i-mdi-remove"
                         color="error"
+                        variant="soft"
                         @click="
                             confirmModal.open({
                                 confirm: async () => disconnectSocialLogin(provider),

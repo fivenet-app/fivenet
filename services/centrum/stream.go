@@ -146,7 +146,7 @@ type feedCfg struct {
 	StreamName string
 	Bucket     string
 	NoWildcard bool                                                                  // if true, the subjects are not a wildcard bucket (e.g., centrum_dispatchers.JOB)
-	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket → concrete proto
+	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket -> concrete proto
 	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
 	WrapDelete func(key string) *pbcentrum.StreamResponse
 }

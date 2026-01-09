@@ -17,10 +17,11 @@ import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/re
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
-import HTMLContent from '../partials/content/HTMLContent.vue';
+import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import DraftBadge from '../partials/DraftBadge.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
@@ -348,14 +349,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                     <div class="mb-2 flex gap-2">
                         <OpenClosedBadge :closed="qualification.closed" />
 
-                        <UBadge
-                            v-if="qualification.draft"
-                            class="inline-flex gap-1"
-                            icon="i-mdi-pencil"
-                            color="info"
-                            size="md"
-                            :label="$t('common.draft')"
-                        />
+                        <DraftBadge v-if="qualification.draft" />
 
                         <UBadge
                             v-if="qualification.public"
@@ -486,7 +480,7 @@ const requestUserModal = overlay.create(RequestUserModal);
             />
 
             <div v-else class="flex min-h-full w-full max-w-full flex-1 flex-col overflow-y-hidden">
-                <div v-if="!canDo.grade && qualification.content?.content === undefined" class="p-4 sm:p-4">
+                <div v-if="!canDo.grade && qualification.content === undefined" class="p-4 sm:p-4">
                     <UAlert
                         icon="i-mdi-information"
                         color="info"
@@ -511,10 +505,10 @@ const requestUserModal = overlay.create(RequestUserModal);
                             <template #body>
                                 <div class="mx-auto w-full max-w-(--breakpoint-xl)">
                                     <div
-                                        v-if="qualification.content?.content"
+                                        v-if="qualification.content"
                                         class="w-full rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                                     >
-                                        <HTMLContent :value="qualification.content.content" />
+                                        <CustomContentRenderer :value="qualification.content" />
                                     </div>
                                     <UAlert
                                         v-else

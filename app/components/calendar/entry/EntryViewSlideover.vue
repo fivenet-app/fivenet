@@ -5,7 +5,7 @@ import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrU
 import { checkCalendarAccess } from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
+import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -171,7 +171,7 @@ const entryCreateOrUpdateModal = overlay.create(EntryCreateOrUpdateModal);
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-900"
                     >
-                        <HTMLContent v-if="entry.content?.content" :value="entry.content.content" />
+                        <CustomContentRenderer v-if="entry.content" :value="entry.content" />
                     </div>
                 </template>
             </div>

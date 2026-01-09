@@ -1,3 +1,4 @@
+import type { JSONContent } from '@tiptap/core';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
@@ -54,11 +55,16 @@ export const useMailerStore = defineStore(
          * @property {Array<{label: string}>} recipients - The list of recipients for the email draft.
          * @property {Array<MessageAttachment>} attachments - The list of attachments for the email draft.
          */
-        const draft = ref({
+        const draft = ref<{
+            title: string;
+            content: JSONContent | string | undefined;
+            recipients: { label: string }[];
+            attachments: MessageAttachment[];
+        }>({
             title: '',
-            content: '',
-            recipients: [] as { label: string }[],
-            attachments: [] as MessageAttachment[],
+            content: undefined,
+            recipients: [],
+            attachments: [],
         });
 
         /**

@@ -123,8 +123,10 @@
         "dereferer": {
             "title": "Weiterleitung",
             "subtitle": "Sie verlassen nun FiveNet.",
-            "description": "Bitte beachten Sie, dass Sie auf eine Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
-            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!"
+            "description": "Bitte beachten Sie, dass Sie auf eine andere Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
+
+            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!",
+            "countdown": "Sie werden in {0} Sekunden weitergeleitet..."
         },
         "stats": {
             "title": "Statistik",
@@ -2264,7 +2266,8 @@
             "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
             "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifizierungsanforderungen, die sich auf die Qualifizierung beziehen, die Sie bearbeiten!",
             "ErrQualiAccessDenied": "Sie haben keinen Zugriff auf diese Qualifizierung!",
-            "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!"
+            "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!",
+            "ErrQualiViewDenied": "Sie haben keine Berechtigung, diese Qualifizierung anzusehen!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
@@ -2320,7 +2323,8 @@
             "ErrEmailDisabled": {
                 "title": "Die E-Mail Adresse wurde deaktiviert!",
                 "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
-            }
+            },
+            "ErrSignatureTooLong": "Ihre E-Mail Signatur ist zu lang!"
         },
         "CitizensService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",

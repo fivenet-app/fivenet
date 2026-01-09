@@ -139,3 +139,176 @@ function domSpecToVNode(spec: DOMOutputSpec, children: VNodeChild | VNodeChild[]
 
     return h(tag as any, attrs, renderedChildren);
 }
+
+type ExtractTextOptions = {
+    /**
+     * When true, inserts newlines between block-ish nodes.
+     * Good for previews and diffs.
+     */
+    blockSeparators?: boolean;
+
+    /**
+     * Replace repeated whitespace/newlines with single spaces in the final output.
+     */
+    collapseWhitespace?: boolean;
+
+    /**
+     * Suffix appended when output is truncated.
+     */
+    ellipsis?: string;
+};
+
+const ExtractTextOptionsDEFAULTS: Required<ExtractTextOptions> = {
+    blockSeparators: true,
+    collapseWhitespace: true,
+    ellipsis: '…',
+};
+
+export function tiptapTextPreview(
+    doc: JSONContent | null | undefined,
+    maxChars: number,
+    options: ExtractTextOptions = {},
+): string {
+    const opt = { ...ExtractTextOptionsDEFAULTS, ...options };
+    if (!doc || maxChars <= 0) return '';
+
+    let out = '';
+    let remaining = maxChars;
+    let truncated = false;
+
+    const push = (s: string) => {
+        if (!s || remaining <= 0) return;
+        // Avoid expensive rune splitting. JS strings are UTF-16, so "chars" here are code units.
+        // For UI previews this is usually fine.
+        if (s.length <= remaining) {
+            out += s;
+            remaining -= s.length;
+        } else {
+            out += s.slice(0, remaining);
+            remaining = 0;
+            truncated = true;
+        }
+    };
+
+    const blockBefore = (type?: string) => {
+        if (!opt.blockSeparators) return;
+        if (!type) return;
+
+        // Separate blocks so words don't fuse
+        switch (type) {
+            case 'paragraph':
+            case 'heading':
+            case 'image':
+            case 'blockquote':
+            case 'codeBlock':
+            case 'bulletList':
+            case 'orderedList':
+            case 'listItem':
+            case 'taskList':
+            case 'taskItem':
+            case 'table':
+            case 'tableRow':
+                // If there's already content and we don't end with whitespace, add a newline
+                if (out && !/\s$/.test(out)) push('\n');
+                return;
+        }
+    };
+
+    const blockAfter = (type?: string) => {
+        if (!opt.blockSeparators) return;
+        if (!type) return;
+
+        switch (type) {
+            case 'paragraph':
+            case 'heading':
+            case 'image':
+            case 'blockquote':
+            case 'codeBlock':
+            case 'listItem':
+            case 'taskItem':
+            case 'tableRow':
+                if (out && !/\s$/.test(out)) push('\n');
+                return;
+        }
+    };
+
+    const walk = (node: any) => {
+        if (!node || remaining <= 0) return;
+
+        if (Array.isArray(node)) {
+            for (const n of node) {
+                if (remaining <= 0) break;
+                walk(n);
+            }
+            return;
+        }
+
+        if (typeof node !== 'object') return;
+
+        const type: string | undefined = node.type;
+
+        // Ignore tables for text preview
+        if (type === 'table' || type === 'tableRow' || type === 'tableCell' || type === 'tableHeader') {
+            return;
+        }
+
+        // Text
+        if (type === 'text') {
+            push(String(node.text ?? ''));
+            return;
+        }
+
+        if (type === 'hardBreak') {
+            push(opt.blockSeparators ? '\n' : ' ');
+            return;
+        }
+
+        if (type === 'mention') {
+            const label = node.attrs?.label ?? node.attrs?.name ?? node.attrs?.id;
+            push(label ? String(label) : '@mention');
+            return;
+        }
+
+        if (type === 'image') {
+            const alt = node.attrs?.alt;
+            push(alt ? `[Image: ${String(alt)}]` : '[Image]');
+            return;
+        }
+
+        if (type === 'taskItem') {
+            const checked = !!node.attrs?.checked;
+            push(checked ? '[x] ' : '[ ] ');
+        }
+
+        blockBefore(type);
+
+        if (node.content) {
+            walk(node.content);
+        }
+
+        blockAfter(type);
+    };
+
+    walk(doc);
+
+    let result = out;
+
+    if (opt.collapseWhitespace) {
+        // collapse internal whitespace but keep it readable
+        result = result.replace(/\s+/g, ' ').trim();
+    } else {
+        result = result.trimEnd();
+    }
+
+    if (truncated && opt.ellipsis) {
+        // Ensure we don't exceed maxChars by much (ellipsis might add 1 char)
+        if (result.length >= maxChars) {
+            result = result.slice(0, Math.max(0, maxChars - opt.ellipsis.length)).trimEnd();
+        }
+        result += opt.ellipsis;
+    }
+
+    console.log('result', result);
+
+    return result;
+}
