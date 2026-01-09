@@ -4,7 +4,6 @@ import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
-import { DragHandle } from '@tiptap/extension-drag-handle-vue-3';
 import { gitHubEmojis } from '@tiptap/extension-emoji';
 import { UndoRedo } from '@tiptap/extensions';
 import type { Schema } from '@tiptap/pm/model';
@@ -439,7 +438,7 @@ defineExpose<{
                 :history-type="historyType"
                 :file-limit="fileLimit"
                 :file-upload-handler="fileUploadHandler"
-                @update:content="modelValue = $event"
+                @update:content="($event) => editor?.commands.setContent($event ?? '', { emitUpdate: true })"
             >
                 <template #toolbar>
                     <slot name="toolbar" :editor="editor" :disabled="disabled" />
@@ -447,13 +446,10 @@ defineExpose<{
             </TiptapToolbar>
         </template>
 
-        <DragHandle v-if="editor !== undefined" :editor="editor">
-            <div class="tiptap-drag-handle h-5 w-6 after:flex after:cursor-grab after:items-center after:justify-center">
-                <UIcon class="h-5 w-4" name="i-mdi-drag-horizontal" />
-            </div>
-        </DragHandle>
-
+        <!-- Nuxt UI Editor parts  that work with our wonderful "TiptapEditor" component -->
         <UEditorEmojiMenu :editor="editor" :items="emojiItems" />
+
+        <UEditorDragHandle v-if="editor" :editor="editor" />
 
         <UPopover
             :open="openLinkPopover"
@@ -462,7 +458,7 @@ defineExpose<{
         >
             <TiptapEditorContent
                 ref="contentRef"
-                class="min-h-0 w-full max-w-full min-w-0 flex-1 flex-auto overflow-y-auto py-2"
+                class="min-h-0 w-full max-w-full min-w-0 flex-1 flex-auto overflow-y-auto px-6 py-2 sm:px-10"
                 :class="[
                     wrapperClass,
                     'hover:prose-a:text-blue-500',

@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close', v: boolean): void;
-    (e: 'apply', version: Version<unknown>): void;
+    (e: 'apply', version: Version<HistoryContent>): void;
 }>();
 
 const overlay = useOverlay();

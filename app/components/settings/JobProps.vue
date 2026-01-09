@@ -1133,9 +1133,17 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :filename="$d(toDate(jobProps.discordSyncChanges.changes[0]?.time), 'short')"
                                             :new-filename="$d(toDate(selectedChange?.time), 'short')"
                                             output-format="side-by-side"
-                                            hide-stat
                                             trim
-                                        />
+                                        >
+                                            <template #stat="{ stat }">
+                                                <span class="diff-stat-added"
+                                                    >+{{ stat.additionsNum }} {{ $t('common.additions') }}</span
+                                                >
+                                                <span class="diff-stat-deleted"
+                                                    >-{{ stat.deletionsNum }} {{ $t('common.deletions') }}</span
+                                                >
+                                            </template>
+                                        </LazyPartialsCodeDiff>
                                     </template>
                                 </UAccordion>
                             </UPageCard>

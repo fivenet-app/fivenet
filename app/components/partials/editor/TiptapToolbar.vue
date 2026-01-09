@@ -181,10 +181,9 @@ const clear = () => {
 
 const replaceAll = () => ed.value?.commands.replaceAll();
 
-function applyVersion(version: Version<unknown>): void {
-    const v = version as Version<HistoryContent>;
-    emits('update:content', v.content.content);
-    files.value = v.content.files;
+function applyVersion(version: Version<HistoryContent>): void {
+    emits('update:content', version.content.content);
+    files.value = version.content.files;
 
     notifications.add({
         title: { key: 'notifications.action_successful.title', parameters: {} },
