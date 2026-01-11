@@ -8,13 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/XSAM/otelsql"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
-	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -53,27 +48,27 @@ type Sync struct {
 type Params struct {
 	fx.In
 
-	LC         fx.Lifecycle
-	Shutdowner fx.Shutdowner
+	LC fx.Lifecycle
 
 	Logger *zap.Logger
 	Config *Config
+	DB     *sql.DB
 }
 
 type Result struct {
 	fx.Out
 
 	Sync *Sync
-	DB   *sql.DB
 }
 
-func New(p Params) (Result, error) {
+func New(p Params) (*Sync, error) {
 	logger := p.Logger.Named("dbsync")
 	s := &Sync{
 		wg: &sync.WaitGroup{},
 
 		logger: logger,
 		cfg:    p.Config,
+		db:     p.DB,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
@@ -83,41 +78,8 @@ func New(p Params) (Result, error) {
 	// Load dbsync state from file if exists
 	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
-		return Result{}, fmt.Errorf("failed to load dbsync state. %w", err)
+		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
-
-	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN, false)
-	if err != nil {
-		return Result{}, fmt.Errorf(
-			"failed to prepare source database connection (bad DSN). %w",
-			err,
-		)
-	}
-
-	// Connect to source database
-	db, err := otelsql.Open("mysql", dsn,
-		otelsql.WithAttributes(
-			semconv.DBSystemMySQL,
-		),
-		otelsql.WithSpanOptions(otelsql.SpanOptions{
-			DisableErrSkip: true,
-		}),
-	)
-	if err != nil {
-		return Result{}, fmt.Errorf("failed to connect to source database. %w", err)
-	}
-	s.db = db
-
-	reg, err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
-		semconv.DBSystemMySQL,
-	))
-	if err != nil {
-		return Result{}, fmt.Errorf("failed to register db stats metrics. %w", err)
-	}
-	defer reg.Unregister()
-
-	// Setup SQL Prometheus metrics collector
-	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
@@ -127,17 +89,10 @@ func New(p Params) (Result, error) {
 			return err
 		}
 
-		if err := s.db.Close(); err != nil {
-			return err
-		}
-
 		return nil
 	}))
 
-	return Result{
-		Sync: s,
-		DB:   db,
-	}, nil
+	return s, nil
 }
 
 func (s *Sync) createGRPCClient() error {

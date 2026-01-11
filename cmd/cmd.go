@@ -221,7 +221,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		)
 	} else {
 		// Don't include query module, provide only the dbsync config
-		opts = append(opts, fx.Provide(dbsync.NewConfig))
+		opts = append(opts,
+			fx.Provide(dbsync.NewConfig),
+			fx.Provide(dbsync.NewDB),
+		)
 	}
 
 	return opts

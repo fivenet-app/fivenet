@@ -108,7 +108,6 @@ func SetupDB(p Params) (Result, error) {
 	if err != nil {
 		return res, err
 	}
-	defer reg.Unregister()
 
 	// Setup tables "helper" vars to work with ESX directly if enabled in config.
 	if p.Config.Database.ESXCompat {
@@ -123,6 +122,8 @@ func SetupDB(p Params) (Result, error) {
 
 	// Register a stop hook to close the DB connection on application shutdown.
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		_ = reg.Unregister()
+
 		return db.Close()
 	}))
 
