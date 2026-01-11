@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sync"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -13,7 +12,7 @@ import (
 type TableManager struct {
 	logger *zap.Logger
 
-	mu sync.Mutex
+	dryRun bool
 }
 
 type TableManagerParams struct {
@@ -28,12 +27,9 @@ type TableManagerParams struct {
 }
 
 func NewTableManager(p TableManagerParams) *TableManager {
-	if !p.Config.Load().TableManager.Enabled {
-		return nil
-	}
-
 	t := &TableManager{
 		logger: p.Logger.Named("dbsync.table_manager"),
+		dryRun: !p.Config.Load().TableManager.Enabled,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -72,6 +68,17 @@ func (t *TableManager) CheckTables(
 		}
 
 		if !hasUpdatedAt {
+			if t.dryRun {
+				t.logger.Info(
+					"dry run enabled, skipping adding non-existent updated_at column to table",
+					zap.String("table", table.TableName),
+					zap.String("column", *table.UpdatedTimeColumn),
+				)
+
+				table.UpdatedTimeColumn = nil
+				continue
+			}
+
 			columnName := *table.UpdatedTimeColumn
 			if err := t.addUpdatedAtColumnToTable(ctx, db, table.TableName, columnName); err != nil {
 				return fmt.Errorf(

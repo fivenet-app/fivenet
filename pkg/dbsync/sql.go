@@ -14,7 +14,8 @@ func getWhereCondition(
 ) string {
 	// Add "updatedAt" column condition if available
 	if state == nil ||
-		(table.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
+		(table.UpdatedTimeColumn == nil || *table.UpdatedTimeColumn == "" ||
+			(state.LastCheck == nil || state.LastCheck.IsZero())) {
 		return ""
 	}
 
