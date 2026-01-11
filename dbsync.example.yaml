@@ -142,8 +142,8 @@ tables:
       sex: "sex"
       phoneNumber: "phone_number"
       height: "height"
-      visum: "visum"
-      playtime: "playtime"
+      visum: "-" # Indicates that this column is not available
+      playtime: "-" # Indicates that this column is not available
     # Custom query to retrieve users data.
     # The identifier column should be a smart combination of values when using a multichar system.
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`

@@ -62,7 +62,7 @@ func buildQueryFromColumns(
 	sort.Strings(keys)
 	for _, alias := range keys {
 		column := columns[alias]
-		if column == "" {
+		if column == "" || column == "-" {
 			continue
 		}
 
