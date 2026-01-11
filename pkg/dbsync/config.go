@@ -55,6 +55,10 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 		s.v.AddConfigPath("/config")
 	}
 
+	if err := s.LoadConfig(); err != nil {
+		return ResultConfig{}, err
+	}
+
 	cc := s.cfg.Load()
 	r := ResultConfig{
 		Config: s,

@@ -16,7 +16,14 @@ stateFile: "dbsync.state.yaml"
 
 # The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
 destination:
-  # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs, unless insecure is set to `true`)
+  # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
+  # requires the FiveNet instance to **use HTTPS**.
+  # ! Make sure to not include the protocol (http:// or https://) here!
+  # ! Don't include a trailing slash!
+  #
+  # Example:
+  # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
+  # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
   url: "fivenet.example.com"
   token: "YOUR_SYNC_API_TOKEN"
   # Disable TLS verification (not recommended)
