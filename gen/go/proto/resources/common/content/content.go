@@ -28,7 +28,8 @@ func (x *Content) Scan(value any) error {
 		return errors.New("invalid format for content")
 	}
 
-	if strings.HasPrefix(data, "<") {
+	// Treat data starting with '<' (HTML or not starting with '{' (JSON) as "raw HTML"
+	if strings.HasPrefix(data, "<") || !strings.HasPrefix(data, "{") {
 		h, err := ParseHTML(data)
 		if err != nil {
 			return err

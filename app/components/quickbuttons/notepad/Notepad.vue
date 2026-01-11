@@ -23,11 +23,12 @@ const logger = useLogger('🗒️ Notepad');
 const changed = ref(false);
 const saving = ref(false);
 
+const historyType = 'quickbutton-notepad' as const;
 // Track last saved string and timestamp
 let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promise<void> {
+async function saveHistory(values: Schema): Promise<void> {
     if (saving.value) return;
 
     const now = Date.now();
@@ -36,7 +37,7 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
 
     saving.value = true;
 
-    historyStore.addVersion<HistoryContent>(type, state.index, {
+    historyStore.addVersion<HistoryContent>(historyType, state.index, {
         content: values.content,
         files: [],
     });
@@ -49,7 +50,7 @@ async function saveHistory(values: Schema, type = 'quickbutton-notepad'): Promis
 
 onMounted(() => {
     logger.info('Notepad mounted, loading last version...');
-    const lastVersion = historyStore.getLastVersion<HistoryContent>('quickbutton-notepad');
+    const lastVersion = historyStore.getLastVersion<HistoryContent>(historyType);
     if (lastVersion && lastVersion.content) {
         state.content = lastVersion.content.content;
     }
@@ -90,7 +91,7 @@ watchDebounced(
                 v-model="state.content"
                 name="content"
                 class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
-                history-type="quickbutton-notepad"
+                :history-type="historyType"
                 :saving="saving"
                 disable-images
             />
