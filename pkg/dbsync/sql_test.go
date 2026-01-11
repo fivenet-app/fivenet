@@ -24,7 +24,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			conditions:    []string{"`updated_at` >= '2023-01-01 00:00:00'"},
 			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT `user_email` AS `email`, `user_id` AS `id`, `user_name` AS `username`\nFROM `users`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10",
+			expectedQuery: "SELECT `user_email` AS `email`, `user_id` AS `id`, `user_name` AS `username`\nFROM `users`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
 		},
 		{
 			tableName: "products",
@@ -36,7 +36,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			conditions:    []string{"`price` > 100"},
 			offset:        0,
 			limit:         20,
-			expectedQuery: "SELECT `product_id` AS `id`, `product_name` AS `name`, `product_price` AS `price`\nFROM `products`\nWHERE `price` > 100\nLIMIT 20 OFFSET 0",
+			expectedQuery: "SELECT `product_id` AS `id`, `product_name` AS `name`, `product_price` AS `price`\nFROM `products`\nWHERE `price` > 100\nLIMIT 20 OFFSET 0;",
 		},
 		{
 			tableName: "user_licenses",
@@ -47,7 +47,18 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			conditions:    []string{},
 			offset:        10,
 			limit:         25,
-			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nLIMIT 25 OFFSET 10",
+			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nLIMIT 25 OFFSET 10;",
+		},
+		{
+			tableName: "vehicles",
+			columns: map[string]string{
+				"plate": "plate",
+				"model": "-",
+			},
+			conditions:    []string{"`updated_at` >= '2023-01-01 00:00:00'"},
+			offset:        10,
+			limit:         50,
+			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
 		},
 	}
 
