@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
@@ -89,44 +88,57 @@ func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 
 func (s *jobsSync) applyFiltersAndRetrieveGrades(
 	ctx context.Context,
-	jobs []*jobs.Job,
+	js []*jobs.Job,
 	hasFilters bool,
 ) ([]*jobs.Job, error) {
 	sQuery := s.cfg.Tables.Jobs
 
-outer:
-	for k := range jobs {
+	filtered := make([]*jobs.Job, 0, len(js))
+
+	for _, job := range js {
 		if hasFilters {
 			// Apply filters
+			filtered := false
 			for _, filter := range sQuery.Filters {
-				if filter.compiledPattern.MatchString(jobs[k].Name) {
+				if filter.compiledPattern.MatchString(job.Name) {
 					switch filter.Action {
 					case FilterActionDrop:
-						jobs = slices.Delete(jobs, k, 1)
-						continue outer
+						filtered = true
 
 					case FilterActionReplace:
-						jobs[k].Name = filter.compiledPattern.ReplaceAllString(
-							jobs[k].Name,
+						job.Name = filter.compiledPattern.ReplaceAllString(
+							job.Name,
 							filter.Replacement,
 						)
 
 					default:
-						s.logger.Warn("unknown filter action", zap.String("action", string(filter.Action)))
+						s.logger.Warn(
+							"unknown filter action",
+							zap.String("action", string(filter.Action)),
+						)
 					}
-					continue
+
+					if filtered {
+						break
+					}
 				}
+			}
+			if filtered {
+				continue
 			}
 		}
 
-		grades, err := s.getGrades(ctx, jobs[k].GetName())
+		grades, err := s.getGrades(ctx, job.GetName())
 		if err != nil {
 			return nil, err
 		}
-		jobs[k].Grades = grades
+		job.Grades = grades
+		filtered = append(filtered, job)
 	}
 
-	return jobs, nil
+	js = filtered
+
+	return js, nil
 }
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
