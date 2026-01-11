@@ -13,13 +13,15 @@ var svcConfig = &service.Config{
 	Name:        "FiveNetDBSync",
 	DisplayName: "FiveNet DBSync",
 	Description: "The DBSync for FiveNet, used to synchronize your gameservers data with your FiveNet instance.",
+	Arguments:   []string{"dbsync", "run"},
 }
 
 type DBSyncCmd struct {
 	RunCmd RunCmd `cmd:"" default:"1" help:"Run the DBSync service (default if not subcommand is specified)" name:"run"`
 
-	Start StartCmd `cmd:"" help:"Start the DBSync service via your OS's service manager"`
-	Stop  StopCmd  `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
+	Start  StartCmd  `cmd:"" help:"Start the DBSync service via your OS's service manager"`
+	Status StatusCmd `cmd:"" help:"Get the status of the DBSync service via your OS's service manager"`
+	Stop   StopCmd   `cmd:"" help:"Stop the DBSync service via your OS's service manager"`
 
 	Install   InstallCmd   `cmd:"" help:"Install the DBSync service to your OS's service manager"`
 	Uninstall UninstallCmd `cmd:"" help:"Uninstall the DBSync service from your OS's service manager"`
@@ -82,6 +84,29 @@ func (c *StopCmd) Run(_ *Context) error {
 
 	log.Println("Stopped FiveNet DBSync service")
 
+	return nil
+}
+
+type StatusCmd struct{}
+
+func (c *StatusCmd) Run(_ *Context) error {
+	s := getService()
+	status, err := s.Status()
+	if err != nil {
+		return err
+	}
+
+	statusMap := map[service.Status]string{
+		service.StatusRunning: "Running",
+		service.StatusStopped: "Stopped",
+	}
+
+	statusStr, exists := statusMap[status]
+	if !exists {
+		statusStr = "Unknown"
+	}
+
+	log.Println("FiveNet DBSync service status:", statusStr)
 	return nil
 }
 
