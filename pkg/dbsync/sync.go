@@ -60,7 +60,14 @@ type Params struct {
 	Config *Config
 }
 
-func New(p Params) (*Sync, error) {
+type Result struct {
+	fx.Out
+
+	Sync *Sync
+	DB   *sql.DB
+}
+
+func New(p Params) (Result, error) {
 	logger := p.Logger.Named("dbsync")
 	s := &Sync{
 		wg: &sync.WaitGroup{},
@@ -76,12 +83,15 @@ func New(p Params) (*Sync, error) {
 	// Load dbsync state from file if exists
 	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
-		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
+		return Result{}, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
 
 	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN, false)
 	if err != nil {
-		return nil, fmt.Errorf("failed to prepare source database connection (bad DSN). %w", err)
+		return Result{}, fmt.Errorf(
+			"failed to prepare source database connection (bad DSN). %w",
+			err,
+		)
 	}
 
 	// Connect to source database
@@ -94,7 +104,7 @@ func New(p Params) (*Sync, error) {
 		}),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to source database. %w", err)
+		return Result{}, fmt.Errorf("failed to connect to source database. %w", err)
 	}
 	s.db = db
 
@@ -102,7 +112,7 @@ func New(p Params) (*Sync, error) {
 		semconv.DBSystemMySQL,
 	))
 	if err != nil {
-		return nil, fmt.Errorf("failed to register db stats metrics. %w", err)
+		return Result{}, fmt.Errorf("failed to register db stats metrics. %w", err)
 	}
 	defer reg.Unregister()
 
@@ -124,7 +134,10 @@ func New(p Params) (*Sync, error) {
 		return nil
 	}))
 
-	return s, nil
+	return Result{
+		Sync: s,
+		DB:   db,
+	}, nil
 }
 
 func (s *Sync) createGRPCClient() error {
@@ -247,10 +260,7 @@ func (s *Sync) run(ctx context.Context) error {
 		return err
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			s.syncBaseData(ctx)
 
@@ -261,13 +271,10 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(5 * time.Minute):
 			}
 		}
-	}()
+	})
 
 	// User data sync loop
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			if err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
@@ -280,13 +287,10 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
 			}
 		}
-	}()
+	})
 
 	// Vehicles data sync loop
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
@@ -299,7 +303,7 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 

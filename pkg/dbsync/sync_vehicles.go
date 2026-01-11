@@ -43,6 +43,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	}
 
 	q := s.cfg.Tables.Vehicles.GetQuery(s.state, offset, limit)
+	s.logger.Debug("vehicles sync query", zap.String("query", q))
 
 	vehicles := []*vehicles.Vehicle{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &vehicles); err != nil {

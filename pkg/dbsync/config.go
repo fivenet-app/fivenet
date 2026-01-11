@@ -66,6 +66,7 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 			Mode:     cc.Mode,
 			LogLevel: cc.LogLevel,
 			Log:      cc.Log,
+
 			// Ignore db requirements, dbsync doesn't need them
 			IgnoreRequirements: true,
 			UpdateCheck:        cc.UpdateCheck,
@@ -75,6 +76,8 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 			},
 		},
 	}
+	// Do not run DB migrations for dbsync
+	r.Cfg.Database.SkipMigrations = true
 
 	if err := s.LoadConfig(); err != nil {
 		return r, err

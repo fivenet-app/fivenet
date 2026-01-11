@@ -74,10 +74,11 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 
 func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	limit := int64(200)
-	query := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
+	q := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
+	s.logger.Debug("jobs sync query", zap.String("query", q))
 
 	jobs := []*jobs.Job{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, &jobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}

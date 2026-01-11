@@ -32,6 +32,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	limit := int64(200)
 
 	q := s.cfg.Tables.Licenses.GetQuery(s.state, 0, limit)
+	s.logger.Debug("licenses sync query", zap.String("query", q))
 
 	licenses := []*users.License{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &licenses); err != nil {

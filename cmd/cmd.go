@@ -130,7 +130,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		modules.LoggerModule,
 		modules.TracerProviderModule,
 		perms.Module,
-		query.Module,
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
 		storage.Module,
@@ -216,8 +215,12 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 	}
 
 	if withConfig {
-		opts = append(opts, config.Module)
+		opts = append(opts,
+			config.Module,
+			query.Module,
+		)
 	} else {
+		// Don't include query module, provide only the dbsync config
 		opts = append(opts, fx.Provide(dbsync.NewConfig))
 	}
 

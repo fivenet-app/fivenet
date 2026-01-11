@@ -136,9 +136,15 @@ func (t *TableManager) addUpdatedAtColumnToTable(
 	tableName string,
 	columnName string,
 ) error {
-	if _, err := t.db.ExecContext(ctx, `
-        ALTER TABLE `+`"`+tableName+"`"+`
-            ADD `+"`"+columnName+"`"+` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`); err != nil {
+	query := `ALTER TABLE ` + `"` + tableName + "`" + `
+            ADD ` + "`" + columnName + "`" + ` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`
+	if _, err := t.db.ExecContext(ctx, query); err != nil {
+		t.logger.Debug(
+			"alter table on updated time column to table",
+			zap.String("column_name", columnName),
+			zap.String("table_name", tableName),
+			zap.String("query", query),
+		)
 		return fmt.Errorf(
 			"failed to add on update timestamp column (%q) to table %q. %w",
 			columnName,

@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -72,12 +73,19 @@ func buildQueryFromColumns(
 		strings.Join(columnsList, ", "),
 		tableName,
 	)
+	whereCondition = slices.DeleteFunc(whereCondition, func(c string) bool {
+		return strings.TrimSpace(c) == ""
+	})
 	if len(whereCondition) > 0 {
 		q += "WHERE " + strings.Join(whereCondition, " AND ")
 		q += "\n"
 	}
 
-	q += fmt.Sprintf("LIMIT %d OFFSET %d", limit, offset)
+	if limit > 0 {
+		q += fmt.Sprintf("LIMIT %d OFFSET %d;", limit, offset)
+	} else {
+		q += ";"
+	}
 
 	return q
 }
