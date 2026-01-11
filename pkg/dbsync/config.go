@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -278,9 +279,12 @@ func (c *JobGradesTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		q := prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		q = strings.ReplaceAll(q, "$jobName", "?")
+		return q
 	}
 
+	where = append(where, fmt.Sprintf("`%s` = ?", c.Columns.JobName))
 	where = append(where, getWhereCondition(c.DBSyncTable, state))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job_grade.job_name": c.Columns.JobName,

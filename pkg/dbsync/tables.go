@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"sync"
 
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -11,7 +12,8 @@ import (
 
 type TableManager struct {
 	logger *zap.Logger
-	db     *sql.DB
+
+	mu sync.Mutex
 }
 
 type TableManagerParams struct {
@@ -32,62 +34,69 @@ func NewTableManager(p TableManagerParams) *TableManager {
 
 	t := &TableManager{
 		logger: p.Logger.Named("dbsync.table_manager"),
-		db:     p.DB,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		cfg := p.Config.cfg.Load()
-		tables := cfg.Tables.GetAllTables()
-		if len(tables) == 0 {
-			return nil
-		}
-
-		for _, table := range tables {
-			if table.TableName == "" || table.UpdatedTimeColumn == nil {
-				continue
-			}
-
-			if err := t.checkIfTableExists(ctxStartup, table.TableName); err != nil {
-				return fmt.Errorf("table %q check failed: %w", table.TableName, err)
-			}
-
-			hasUpdatedAt, err := t.checkIfTableHasUpdatedAtColumn(ctxStartup, table.TableName)
-			if err != nil {
-				return fmt.Errorf(
-					"table %q updated_at column check failed: %w",
-					table.TableName,
-					err,
-				)
-			}
-
-			if !hasUpdatedAt {
-				columnName := *table.UpdatedTimeColumn
-				if err := t.addUpdatedAtColumnToTable(ctxStartup, table.TableName, columnName); err != nil {
-					return fmt.Errorf(
-						"adding updated_at column to table %q failed: %w",
-						table.TableName,
-						err,
-					)
-				}
-				t.logger.Info(
-					"added updated_at column to table",
-					zap.String("table", table.TableName),
-					zap.String("column", columnName),
-				)
-			}
-		}
-
-		return nil
+		return t.CheckTables(ctxStartup, p.DB, p.Config.Load().Tables)
 	}))
 
 	return t
 }
 
+func (t *TableManager) CheckTables(
+	ctx context.Context,
+	db *sql.DB,
+	tablesCfg DBSyncSourceTables,
+) error {
+	tables := tablesCfg.GetAllTables()
+	if len(tables) == 0 {
+		return nil
+	}
+
+	for _, table := range tables {
+		if table.TableName == "" || table.UpdatedTimeColumn == nil {
+			continue
+		}
+
+		if err := t.checkIfTableExists(ctx, db, table.TableName); err != nil {
+			return fmt.Errorf("table %q check failed: %w", table.TableName, err)
+		}
+
+		hasUpdatedAt, err := t.checkIfTableHasUpdatedAtColumn(ctx, db, table.TableName)
+		if err != nil {
+			return fmt.Errorf(
+				"table %q updated_at column check failed: %w",
+				table.TableName,
+				err,
+			)
+		}
+
+		if !hasUpdatedAt {
+			columnName := *table.UpdatedTimeColumn
+			if err := t.addUpdatedAtColumnToTable(ctx, db, table.TableName, columnName); err != nil {
+				return fmt.Errorf(
+					"adding updated_at column to table %q failed: %w",
+					table.TableName,
+					err,
+				)
+			}
+			t.logger.Info(
+				"added updated_at column to table",
+				zap.String("table", table.TableName),
+				zap.String("column", columnName),
+			)
+		}
+	}
+
+	return nil
+}
+
 func (t *TableManager) checkIfTableExists(
 	ctx context.Context,
+	db *sql.DB,
 	tableName string,
 ) error {
-	rows, err := t.db.QueryContext(ctx, `
+	rows, err := db.QueryContext(ctx, `
         SELECT TABLE_NAME
         FROM information_schema.tables
         WHERE table_schema = DATABASE() AND table_name = ?
@@ -106,9 +115,10 @@ func (t *TableManager) checkIfTableExists(
 
 func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 	ctx context.Context,
+	db *sql.DB,
 	tableName string,
 ) (bool, error) {
-	rows, err := t.db.QueryContext(ctx, `
+	rows, err := db.QueryContext(ctx, `
         SELECT c.COLUMN_NAME
         FROM information_schema.COLUMNS c
         WHERE c.TABLE_SCHEMA = DATABASE() AND c.TABLE_NAME = ? AND LOWER(c.EXTRA) LIKE '%on update current_timestamp%'
@@ -133,12 +143,13 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 // its value to the current timestamp whenever the row is updated using MySQLs `ON UPDATE` system.
 func (t *TableManager) addUpdatedAtColumnToTable(
 	ctx context.Context,
+	db *sql.DB,
 	tableName string,
 	columnName string,
 ) error {
 	query := `ALTER TABLE ` + `"` + tableName + "`" + `
             ADD ` + "`" + columnName + "`" + ` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`
-	if _, err := t.db.ExecContext(ctx, query); err != nil {
+	if _, err := db.ExecContext(ctx, query); err != nil {
 		t.logger.Debug(
 			"alter table on updated time column to table",
 			zap.String("column_name", columnName),

@@ -256,7 +256,7 @@ func (s *Sync) run(ctx context.Context) error {
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {
-		s.logger.Error("error during jobs sync", zap.Error(err))
+		s.logger.Error("error during base data sync", zap.Error(err))
 		return err
 	}
 

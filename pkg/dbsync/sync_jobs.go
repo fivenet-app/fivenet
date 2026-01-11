@@ -3,8 +3,8 @@ package dbsync
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
@@ -77,14 +77,14 @@ func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	q := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
 	s.logger.Debug("jobs sync query", zap.String("query", q))
 
-	jobs := []*jobs.Job{}
-	if _, err := qrm.Query(ctx, s.db, q, []any{}, &jobs); err != nil {
+	jobsResults := []*jobs.Job{}
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, &jobsResults); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to query jobs. %w", err)
 		}
 	}
 
-	return jobs, nil
+	return jobsResults, nil
 }
 
 func (s *jobsSync) applyFiltersAndRetrieveGrades(
@@ -131,14 +131,13 @@ outer:
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
 	query := s.cfg.Tables.JobGrades.GetQuery(nil, 0, 200)
-	query = strings.ReplaceAll(query, "$jobName", "?")
 
 	grades := []*jobs.JobGrade{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{
 		job,
 	}, &grades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to query job grades for job %q. %w", job, err)
 		}
 	}
 
