@@ -69,6 +69,10 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 			// Ignore db requirements, dbsync doesn't need them
 			IgnoreRequirements: true,
 			UpdateCheck:        cc.UpdateCheck,
+
+			Database: config.Database{
+				DatabaseConnection: cc.Source.DatabaseConnection,
+			},
 		},
 	}
 
