@@ -75,7 +75,7 @@ import (
 type Context struct{}
 
 var Cli struct {
-	Version kong.VersionFlag `help:"Print version information and quit"`
+	Version kong.VersionFlag `short:"v" aliases:"V" help:"Print version information and quit"`
 
 	Config             string        `               help:"Config file path"                                  env:"FIVENET_CONFIG_FILE"`
 	StartTimeout       time.Duration `default:"180s" help:"App start timeout duration"                        env:"FIVENET_START_TIMEOUT"`
