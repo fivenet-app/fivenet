@@ -238,6 +238,8 @@ func (s *Sync) restart() error {
 func (s *Sync) Run(ctx context.Context) {
 	defer s.wg.Done()
 
+	s.logger.Info("started dbsync loop")
+
 	for {
 		if err := s.run(ctx); err != nil {
 			s.logger.Error("error during sync run", zap.Error(err))
