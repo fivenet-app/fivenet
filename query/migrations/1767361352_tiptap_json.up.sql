@@ -4,7 +4,7 @@ ALTER TABLE `fivenet_documents` MODIFY `summary` VARCHAR(256) NOT NULL;
 
 ALTER TABLE `fivenet_documents` DROP INDEX `idx_fivenet_documents_content`;
 
-ALTER TABLE `fivenet_documents` CHANGE `content` `content_json` LONGTEXT JSON NOT NULL;
+ALTER TABLE `fivenet_documents` CHANGE `content` `content_json` LONGTEXT NOT NULL;
 
 ALTER TABLE `fivenet_documents` ADD COLUMN `content_text` LONGTEXT NOT NULL AFTER `content_json`;
 

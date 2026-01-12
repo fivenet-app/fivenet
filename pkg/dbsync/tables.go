@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -38,7 +39,7 @@ func NewTableManager(p TableManagerParams) *TableManager {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		return t.CheckTables(ctxStartup, p.DB, p.Config.Load().Tables)
+		return t.CheckTables(ctxStartup, p.DB, p.Config.Load().Tables.GetAllTables())
 	}))
 
 	return t
@@ -46,10 +47,9 @@ func NewTableManager(p TableManagerParams) *TableManager {
 
 func (t *TableManager) CheckTables(
 	ctx context.Context,
-	db *sql.DB,
-	tablesCfg DBSyncSourceTables,
+	db qrm.DB,
+	tables []DBSyncTable,
 ) error {
-	tables := tablesCfg.GetAllTables()
 	if len(tables) == 0 {
 		return nil
 	}
@@ -105,7 +105,7 @@ func (t *TableManager) CheckTables(
 
 func (t *TableManager) checkIfTableExists(
 	ctx context.Context,
-	db *sql.DB,
+	db qrm.Queryable,
 	tableName string,
 ) error {
 	rows, err := db.QueryContext(ctx, `
@@ -127,7 +127,7 @@ func (t *TableManager) checkIfTableExists(
 
 func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 	ctx context.Context,
-	db *sql.DB,
+	db qrm.Queryable,
 	tableName string,
 ) (bool, error) {
 	rows, err := db.QueryContext(ctx, `
@@ -155,12 +155,12 @@ func (t *TableManager) checkIfTableHasUpdatedAtColumn(
 // its value to the current timestamp whenever the row is updated using MySQLs `ON UPDATE` system.
 func (t *TableManager) addUpdatedAtColumnToTable(
 	ctx context.Context,
-	db *sql.DB,
+	db qrm.Executable,
 	tableName string,
 	columnName string,
 ) error {
-	query := `ALTER TABLE ` + `"` + tableName + "`" + `
-            ADD ` + "`" + columnName + "`" + ` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`
+	query := `ALTER TABLE ` + "`" + tableName + "` " +
+		`ADD ` + "`" + columnName + "`" + ` datetime(3) on update CURRENT_TIMESTAMP(3) NULL`
 	if _, err := db.ExecContext(ctx, query); err != nil {
 		t.logger.Debug(
 			"alter table on updated time column to table",

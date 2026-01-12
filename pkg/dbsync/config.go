@@ -175,6 +175,10 @@ type DBSyncSourceTables struct {
 func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
 	tables := []DBSyncTable{}
 
+	if c == nil {
+		return tables
+	}
+
 	if c.Jobs.Enabled {
 		tables = append(tables, c.Jobs.DBSyncTable)
 	}

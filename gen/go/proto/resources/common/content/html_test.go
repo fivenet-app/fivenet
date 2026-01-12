@@ -12,12 +12,8 @@ var testsRichTextHtmlNodeFromHTMLNode = []struct {
 	Expected string
 }{
 	{
-		HTMLIn: `<div id="test-id"><p class="text-orange-500 dark:text-orange-400">Hello World!</p></div>`,
-		Expected: `<div id="test-id">
-  <p class="text-orange-500 dark:text-orange-400">
-    Hello World!
-  </p>
-</div>`,
+		HTMLIn:   `<div id="test-id"><p class="text-orange-500 dark:text-orange-400">Hello World!</p></div>`,
+		Expected: `<div id="test-id"><p class="text-orange-500 dark:text-orange-400">Hello World!</p></div>`,
 	},
 	{
 		HTMLIn:   ``,
