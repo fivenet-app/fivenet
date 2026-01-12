@@ -26,6 +26,13 @@ import (
 
 var tLocs = table.FivenetCentrumUserLocations
 
+var Module = fx.Module(
+	"demo",
+	fx.Provide(
+		New,
+	),
+)
+
 var (
 	// Define clamp bounds outside the loop for configurability.
 	xBounds = []float64{-2750, 2500}

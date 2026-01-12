@@ -23,6 +23,13 @@ import (
 	"go.uber.org/zap"
 )
 
+var PollerModule = fx.Module(
+	"userinfo.poller",
+	fx.Provide(
+		NewPoller,
+	),
+)
+
 type userSnapshot struct {
 	Job       string
 	JobGrade  int32

@@ -102,6 +102,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		}),
 		fx.StartTimeout(startTimeout),
 
+		// Base
 		admin.Module,
 		appconfig.Module,
 		audit.Module,
@@ -135,12 +136,14 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		storage.Module,
 		storage.MetricsCollectorModule,
 		housekeeper.Module,
-		dbsync.Module,
-		fx.Provide(dbsync.NewTableManager),
-		fx.Provide(pkgfilestore.NewHousekeeper),
-		fx.Provide(crypt.New),
-		fx.Provide(demo.New),
+		crypt.Module,
+		demo.Module,
 		updatecheck.Module,
+		dbsync.Module,
+		dbsync.TableManagerModule,
+
+		userinfo.PollerModule,
+		userinfo.RetrieverModule,
 
 		// Discord Bot
 		discord.StateModule,
@@ -154,30 +157,29 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		),
 
 		fx.Provide(
+			manager.New,
 			mstlystcdata.NewDocumentCategories,
+			mstlystcdata.NewEnricher,
 			mstlystcdata.NewJobs,
 			mstlystcdata.NewJobsSearch,
 			mstlystcdata.NewLaws,
-			mstlystcdata.NewEnricher,
 			mstlystcdata.NewUserAwareEnricher,
+			notifi.New,
 			postals.New,
 			tracker.New,
-			manager.New,
-			notifi.New,
-			userinfo.NewRetriever,
-			userinfo.NewPoller,
 
 			// GRPC Service Helpers, Housekeepers and Co.
 			pbjobs.NewHousekeeper,
 			pbdocuments.NewWorkflow,
+			pkgfilestore.NewHousekeeper,
 
 			// HTTP Services
 			server.AsService(api.New),
 			server.AsService(filestore.New),
+			server.AsService(icons.New),
 			server.AsService(images.New),
 			server.AsService(oauth2.New),
 			server.AsService(wk.New),
-			server.AsService(icons.New),
 		),
 
 		// GRPC Services
@@ -187,8 +189,8 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			pbcentrum.NewServer,
 			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),
-			grpc.AsService(pbvehicles.NewServer),
 			pbdocuments.NewServer,
+			grpc.AsService(pbfilestore.NewServer),
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
@@ -196,12 +198,12 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),
-			grpc.AsService(pbwiki.NewServer),
 			pbsync.NewServer,
-			grpc.AsService(pbfilestore.NewServer),
+			grpc.AsService(pbvehicles.NewServer),
+			grpc.AsService(pbwiki.NewServer),
 		),
 
-		// Ensure sanitizer instances are created
+		// Ensure sanitizer instances are created and initialized
 		fx.Invoke(func(*bluemonday.Policy) {}),
 		fx.Invoke(func(*tiptapsanitizer.Sanitizer) {}),
 	}

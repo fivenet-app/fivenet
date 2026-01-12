@@ -9,6 +9,11 @@ import (
 	"go.uber.org/zap"
 )
 
+var TableManagerModule = fx.Module(
+	"dbsync.table_manager",
+	fx.Provide(NewTableManager),
+)
+
 type TableManager struct {
 	logger *zap.Logger
 
