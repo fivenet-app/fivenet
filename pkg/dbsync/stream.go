@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"strings"
 	"time"
 
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
@@ -23,7 +24,7 @@ func (s *Sync) RunStream(ctx context.Context) {
 
 	for {
 		if err := s.runStream(ctx); err != nil {
-			s.logger.Error("error during sync stream, restarting in a second", zap.Error(err))
+			s.logger.Warn("error during sync stream, restarting in a second", zap.Error(err))
 		}
 
 		select {
@@ -49,9 +50,28 @@ func (s *Sync) runStream(ctx context.Context) error {
 			return nil
 		}
 		if err != nil {
-			st := status.Convert(err)
-			if st.Code() == codes.Unavailable {
+			st, ok := status.FromError(err)
+			if !ok {
+				s.logger.Error("stream ended with a non-grpc error", zap.Error(err))
+				return err
+			}
+
+			switch st.Code() {
+			case codes.Unavailable:
 				s.logger.Debug("stream ended with unavailable code", zap.Error(err))
+				return nil
+
+			case codes.Unknown:
+				if strings.Contains(
+					st.Message(),
+					"unexpected HTTP status code received from server: 524",
+				) {
+					// TODO find a better way to detect Cloudflare timeouts
+					s.logger.Debug("stream ended with Cloudflare timeout", zap.Error(err))
+					return nil
+				}
+
+				s.logger.Debug("stream ended with unknown code", zap.Error(err))
 				return nil
 			}
 
