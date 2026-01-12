@@ -145,6 +145,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		userinfo.PollerModule,
 		userinfo.RetrieverModule,
 
+		pbjobs.HousekeeperModule,
+		pbdocuments.WorkflowModule,
+		pkgfilestore.Module,
+
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,
@@ -167,11 +171,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			notifi.New,
 			postals.New,
 			tracker.New,
-
-			// GRPC Service Helpers, Housekeepers and Co.
-			pbjobs.NewHousekeeper,
-			pbdocuments.NewWorkflow,
-			pkgfilestore.NewHousekeeper,
 
 			// HTTP Services
 			server.AsService(api.New),

@@ -13,6 +13,13 @@ import (
 	"go.uber.org/zap"
 )
 
+var HousekeeperModule = fx.Module(
+	"jobs.housekeeper",
+	fx.Provide(
+		NewHousekeeper,
+	),
+)
+
 type Housekeeper struct {
 	logger *zap.Logger
 	tracer trace.Tracer

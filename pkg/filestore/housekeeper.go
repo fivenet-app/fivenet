@@ -20,6 +20,13 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
+var Module = fx.Module(
+	"filestore.housekeeper",
+	fx.Provide(
+		NewHousekeeper,
+	),
+)
+
 // Housekeeper is responsible for cleaning up orphaned and expired files from the filestore.
 type Housekeeper struct {
 	// logger is used for logging housekeeping operations.

@@ -29,6 +29,13 @@ import (
 
 var tDWorkflow = table.FivenetDocumentsWorkflowState.AS("workflow_state")
 
+var WorkflowModule = fx.Module(
+	"documents.workflow",
+	fx.Provide(
+		NewWorkflow,
+	),
+)
+
 type Workflow struct {
 	logger *zap.Logger
 	tracer trace.Tracer
