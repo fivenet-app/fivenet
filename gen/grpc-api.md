@@ -2382,6 +2382,40 @@ Dummy - DO NOT USE!
 
 
 
+## resources/settings/data.proto
+
+
+### resources.settings.Data
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `mode` | [DataMode](#resourcessettingsDataMode) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.settings.DataMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DATA_MODE_UNSPECIFIED` | 0 |  |
+| `DATA_MODE_UNAVAILABLE` | 1 |  |
+| `DATA_MODE_READONLY` | 2 |  |
+| `DATA_MODE_READWRITE` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/settings/config.proto
 
 
@@ -2401,6 +2435,7 @@ Dummy - DO NOT USE!
 | `system` | [System](#resourcessettingsSystem) |  |  |
 | `display` | [Display](#resourcessettingsDisplay) |  |  |
 | `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
+| `data` | [Data](#resourcessettingsData) |  |  |
 
 
 
@@ -2632,6 +2667,19 @@ Dummy - DO NOT USE!
 ## resources/clientconfig/clientconfig.proto
 
 
+### resources.clientconfig.Auth
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+| `providers` | [ProviderConfig](#resourcesclientconfigProviderConfig) | repeated |  |
+
+
+
+
+
 ### resources.clientconfig.ClientConfig
 
 
@@ -2639,7 +2687,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
 | `default_locale` | [string](#string) |  |  |
-| `login` | [LoginConfig](#resourcesclientconfigLoginConfig) |  |  |
+| `auth` | [Auth](#resourcesclientconfigAuth) |  |  |
 | `discord` | [Discord](#resourcesclientconfigDiscord) |  |  |
 | `website` | [Website](#resourcesclientconfigWebsite) |  |  |
 | `feature_gates` | [FeatureGates](#resourcesclientconfigFeatureGates) |  |  |
@@ -2647,6 +2695,7 @@ Dummy - DO NOT USE!
 | `system` | [System](#resourcesclientconfigSystem) |  |  |
 | `display` | [Display](#resourcesclientconfigDisplay) |  |  |
 | `quick_buttons` | [resources.settings.QuickButtons](#resourcessettingsQuickButtons) |  |  |
+| `data` | [resources.settings.Data](#resourcessettingsData) |  |  |
 
 
 
@@ -2705,19 +2754,6 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `imprint` | [string](#string) | optional |  |
 | `privacy_policy` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.clientconfig.LoginConfig
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signup_enabled` | [bool](#bool) |  |  |
-| `last_char_lock` | [bool](#bool) |  |  |
-| `providers` | [ProviderConfig](#resourcesclientconfigProviderConfig) | repeated |  |
 
 
 

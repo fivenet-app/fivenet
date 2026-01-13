@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { EditorEmojiMenuItem, FormError } from '@nuxt/ui';
+import type { EditorContentType, EditorEmojiMenuItem, FormError } from '@nuxt/ui';
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import { generateJSON, getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
@@ -21,6 +21,7 @@ import YJSUserPopover from './YJSUserPopover.vue';
 
 const props = withDefaults(
     defineProps<{
+        contentType?: EditorContentType;
         name?: string;
         wrapperClass?: string;
         limit?: number;
@@ -41,6 +42,7 @@ const props = withDefaults(
         filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     }>(),
     {
+        contentType: 'json',
         name: undefined,
         wrapperClass: '',
         limit: 0,
@@ -239,6 +241,11 @@ const editor = useEditor({
         logger.info('Editor created');
     },
     onUpdate: ({ editor }) => {
+        if (props.contentType === 'html') {
+            modelValue.value = editor.getHTML();
+            return;
+        }
+
         modelValue.value = unref(editor)?.getJSON();
     },
 });
@@ -299,7 +306,7 @@ const stopWatch = watch(modelValue, (value) => {
         if (props.enableCollab && ydoc && yjsProvider) {
             seedDocument(yjsSchema!, value);
         } else {
-            unref(editor)?.commands.setContent(value, { emitUpdate: true });
+            unref(editor)?.commands.setContent(value, { emitUpdate: true, contentType: props.contentType });
         }
     }
 
@@ -401,7 +408,8 @@ onMounted(() => {
     if (props.enableCollab) return;
 
     logger.info('Setting initial content for Tiptap editor (collab is disabled)');
-    if (modelValue.value) unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false });
+    if (modelValue.value)
+        unref(editor)?.commands.setContent(modelValue.value, { emitUpdate: false, contentType: props.contentType });
 });
 
 onBeforeUnmount(() => {

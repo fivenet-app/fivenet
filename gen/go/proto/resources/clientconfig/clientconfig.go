@@ -23,7 +23,7 @@ func BuildClientConfig(
 
 		DefaultLocale: appCfg.DefaultLocale,
 
-		Login: &LoginConfig{
+		Auth: &Auth{
 			SignupEnabled: appCfg.Auth.GetSignupEnabled(),
 			LastCharLock:  appCfg.Auth.GetLastCharLock(),
 			Providers:     providers,
@@ -58,6 +58,9 @@ func BuildClientConfig(
 			CurrencyName: appCfg.Display.CurrencyName,
 		},
 		QuickButtons: quickButtons,
+		Data: &settings.Data{
+			Mode: appCfg.Data.GetMode(),
+		},
 	}
 
 	if appCfg.System.GetBannerMessage() != nil {

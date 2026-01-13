@@ -1,13 +1,14 @@
 import type {
+    Auth,
     Discord,
     Display,
     FeatureGates,
     Game,
-    LoginConfig,
     System,
     Website,
 } from '~~/gen/ts/resources/clientconfig/clientconfig';
 import type { QuickButtons } from '~~/gen/ts/resources/settings/config';
+import { DataMode, type Data } from '~~/gen/ts/resources/settings/data';
 
 export default defineAppConfig({
     // Server provided App Config
@@ -15,11 +16,11 @@ export default defineAppConfig({
 
     defaultLocale: 'en',
 
-    login: {
+    auth: {
         signupEnabled: true,
         lastCharLock: false,
         providers: [],
-    } as LoginConfig,
+    } as Auth,
     discord: {
         botEnabled: false,
     } as Discord,
@@ -47,6 +48,9 @@ export default defineAppConfig({
     quickButtons: {
         penaltyCalculator: {},
     } as QuickButtons,
+    data: {
+        mode: DataMode.UNAVAILABLE,
+    } as Data,
 
     // File upload related config
     fileUpload: {

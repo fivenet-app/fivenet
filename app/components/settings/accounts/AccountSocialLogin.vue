@@ -37,8 +37,8 @@ async function disconnectSocialLogin(accountId: number, providerName: string): P
     }
 }
 
-const { login } = useAppConfig();
-const provider = computed(() => login.providers.find((p) => p.name === props.connection.providerName));
+const { auth } = useAppConfig();
+const provider = computed(() => auth.providers.find((p) => p.name === props.connection.providerName));
 </script>
 
 <template>

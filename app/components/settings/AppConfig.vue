@@ -18,7 +18,7 @@ import InputDatePicker from '../partials/InputDatePicker.vue';
 
 const { t, locales } = useI18n();
 
-const { display, login, game } = useAppConfig();
+const { auth, display, game } = useAppConfig();
 
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
@@ -547,7 +547,7 @@ const formRef = useTemplateRef('formRef');
                         >
                             <UPageGrid class="lg:grid-cols-2">
                                 <UCard
-                                    v-for="provider in login.providers"
+                                    v-for="provider in auth.providers"
                                     :key="provider.name"
                                     :ui="{
                                         header: 'flex flex-col',

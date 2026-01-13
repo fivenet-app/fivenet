@@ -93,6 +93,7 @@ type AppConfig struct {
 	System        *System                `protobuf:"bytes,9,opt,name=system,proto3" json:"system,omitempty"`
 	Display       *Display               `protobuf:"bytes,10,opt,name=display,proto3" json:"display,omitempty"`
 	QuickButtons  *QuickButtons          `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty"`
+	Data          *Data                  `protobuf:"bytes,12,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -200,6 +201,13 @@ func (x *AppConfig) GetDisplay() *Display {
 func (x *AppConfig) GetQuickButtons() *QuickButtons {
 	if x != nil {
 		return x.QuickButtons
+	}
+	return nil
+}
+
+func (x *AppConfig) GetData() *Data {
+	if x != nil {
+		return x.Data
 	}
 	return nil
 }
@@ -827,9 +835,9 @@ func (x *System) GetBannerMessage() *BannerMessage {
 type Display struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// IETF BCP 47 language tag (e.g. "en-US", "de-DE")
-	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intl_locale,omitempty"`
+	IntlLocale *string `protobuf:"bytes,1,opt,name=intl_locale,json=intlLocale,proto3,oneof" json:"intlLocale"`
 	// ISO 4217 currency code (e.g. "USD", "EUR")
-	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currency_name,omitempty"`
+	CurrencyName  string `protobuf:"bytes,2,opt,name=currency_name,json=currencyName,proto3" json:"currencyName"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1122,7 +1130,7 @@ var File_resources_settings_config_proto protoreflect.FileDescriptor
 
 const file_resources_settings_config_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x13tagger/tagger.proto\"\xeb\x04\n" +
+	"\x1fresources/settings/config.proto\x12\x12resources.settings\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fresources/settings/banner.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\x99\x05\n" +
 	"\tAppConfig\x12\x1d\n" +
 	"\aversion\x18\x01 \x01(\tH\x00R\aversion\x88\x01\x01\x12.\n" +
 	"\x0edefault_locale\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\x14R\rdefaultLocale\x12,\n" +
@@ -1135,7 +1143,8 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x06system\x18\t \x01(\v2\x1a.resources.settings.SystemR\x06system\x125\n" +
 	"\adisplay\x18\n" +
 	" \x01(\v2\x1b.resources.settings.DisplayR\adisplay\x12E\n" +
-	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
+	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsR\fquickButtons\x12,\n" +
+	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataR\x04data:\b\xe2\xf3\x18\x04\b\x01\x18\x01B\n" +
 	"\n" +
 	"\b_version\"S\n" +
 	"\x04Auth\x12%\n" +
@@ -1188,11 +1197,11 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x04_url\"\x88\x01\n" +
 	"\x06System\x124\n" +
 	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12H\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"\x87\x01\n" +
-	"\aDisplay\x125\n" +
-	"\vintl_locale\x18\x01 \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x18 H\x00R\n" +
-	"intlLocale\x88\x01\x01\x125\n" +
-	"\rcurrency_name\x18\x02 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03\x98\x01\x03R\fcurrencyNameB\x0e\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageR\rbannerMessage\"\xb5\x01\n" +
+	"\aDisplay\x12K\n" +
+	"\vintl_locale\x18\x01 \x01(\tB%\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x11json:\"intlLocale\"\xbaH\x04r\x02\x18 H\x00R\n" +
+	"intlLocale\x88\x01\x01\x12M\n" +
+	"\rcurrency_name\x18\x02 \x01(\tB(\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\x13json:\"currencyName\"\xbaH\x05r\x03\x98\x01\x03R\fcurrencyNameB\x0e\n" +
 	"\f_intl_locale\"\x83\x01\n" +
 	"\fQuickButtons\x12s\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\v2%.resources.settings.PenaltyCalculatorB\x1d\x9a\x84\x9e\x03\x18json:\"penaltyCalculator\"R\x11penaltyCalculator\"\xd0\x03\n" +
@@ -1263,8 +1272,9 @@ var file_resources_settings_config_proto_goTypes = []any{
 	(*PenaltyCalculator)(nil),                  // 15: resources.settings.PenaltyCalculator
 	(*PenaltyCalculatorDetentionTimeUnit)(nil), // 16: resources.settings.PenaltyCalculatorDetentionTimeUnit
 	(*PenaltyCalculatorWarn)(nil),              // 17: resources.settings.PenaltyCalculatorWarn
-	(*durationpb.Duration)(nil),                // 18: google.protobuf.Duration
-	(*BannerMessage)(nil),                      // 19: resources.settings.BannerMessage
+	(*Data)(nil),                               // 18: resources.settings.Data
+	(*durationpb.Duration)(nil),                // 19: google.protobuf.Duration
+	(*BannerMessage)(nil),                      // 20: resources.settings.BannerMessage
 }
 var file_resources_settings_config_proto_depIdxs = []int32{
 	2,  // 0: resources.settings.AppConfig.auth:type_name -> resources.settings.Auth
@@ -1276,23 +1286,24 @@ var file_resources_settings_config_proto_depIdxs = []int32{
 	12, // 6: resources.settings.AppConfig.system:type_name -> resources.settings.System
 	13, // 7: resources.settings.AppConfig.display:type_name -> resources.settings.Display
 	14, // 8: resources.settings.AppConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	4,  // 9: resources.settings.Perms.default:type_name -> resources.settings.Perm
-	6,  // 10: resources.settings.Website.links:type_name -> resources.settings.Links
-	8,  // 11: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
-	18, // 12: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
-	18, // 13: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
-	18, // 14: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
-	11, // 15: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
-	0,  // 16: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
-	19, // 17: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
-	15, // 18: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
-	16, // 19: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
-	17, // 20: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
-	21, // [21:21] is the sub-list for method output_type
-	21, // [21:21] is the sub-list for method input_type
-	21, // [21:21] is the sub-list for extension type_name
-	21, // [21:21] is the sub-list for extension extendee
-	0,  // [0:21] is the sub-list for field type_name
+	18, // 9: resources.settings.AppConfig.data:type_name -> resources.settings.Data
+	4,  // 10: resources.settings.Perms.default:type_name -> resources.settings.Perm
+	6,  // 11: resources.settings.Website.links:type_name -> resources.settings.Links
+	8,  // 12: resources.settings.JobInfo.unemployed_job:type_name -> resources.settings.UnemployedJob
+	19, // 13: resources.settings.UserTracker.refresh_time:type_name -> google.protobuf.Duration
+	19, // 14: resources.settings.UserTracker.db_refresh_time:type_name -> google.protobuf.Duration
+	19, // 15: resources.settings.Discord.sync_interval:type_name -> google.protobuf.Duration
+	11, // 16: resources.settings.Discord.bot_presence:type_name -> resources.settings.DiscordBotPresence
+	0,  // 17: resources.settings.DiscordBotPresence.type:type_name -> resources.settings.DiscordBotPresenceType
+	20, // 18: resources.settings.System.banner_message:type_name -> resources.settings.BannerMessage
+	15, // 19: resources.settings.QuickButtons.penalty_calculator:type_name -> resources.settings.PenaltyCalculator
+	16, // 20: resources.settings.PenaltyCalculator.detention_time_unit:type_name -> resources.settings.PenaltyCalculatorDetentionTimeUnit
+	17, // 21: resources.settings.PenaltyCalculator.warn_settings:type_name -> resources.settings.PenaltyCalculatorWarn
+	22, // [22:22] is the sub-list for method output_type
+	22, // [22:22] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_resources_settings_config_proto_init() }
@@ -1301,6 +1312,7 @@ func file_resources_settings_config_proto_init() {
 		return
 	}
 	file_resources_settings_banner_proto_init()
+	file_resources_settings_data_proto_init()
 	file_resources_settings_config_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[5].OneofWrappers = []any{}
 	file_resources_settings_config_proto_msgTypes[9].OneofWrappers = []any{}

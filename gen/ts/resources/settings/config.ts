@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "./banner";
 import { Duration } from "../../google/protobuf/duration";
+import { Data } from "./data";
 /**
  * @generated from protobuf message resources.settings.AppConfig
  */
@@ -61,6 +62,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.QuickButtons quick_buttons = 11
      */
     quickButtons?: QuickButtons;
+    /**
+     * @generated from protobuf field: resources.settings.Data data = 12
+     */
+    data?: Data;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -353,7 +358,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 7, name: "discord", kind: "message", T: () => Discord },
             { no: 9, name: "system", kind: "message", T: () => System },
             { no: 10, name: "display", kind: "message", T: () => Display },
-            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons }
+            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons },
+            { no: 12, name: "data", kind: "message", T: () => Data }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -401,6 +407,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.QuickButtons quick_buttons */ 11:
                     message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
                     break;
+                case /* resources.settings.Data data */ 12:
+                    message.data = Data.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -446,6 +455,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.QuickButtons quick_buttons = 11; */
         if (message.quickButtons)
             QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Data data = 12; */
+        if (message.data)
+            Data.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1100,8 +1112,8 @@ export const System = new System$Type();
 class Display$Type extends MessageType<Display> {
     constructor() {
         super("resources.settings.Display", [
-            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
-            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
+            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"intlLocale\"" } },
+            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"currencyName\"" } }
         ]);
     }
     create(value?: PartialMessage<Display>): Display {

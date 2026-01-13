@@ -9,9 +9,49 @@ import (
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
+func (m *Auth) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Providers
+	for idx, item := range m.Providers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
 func (m *ClientConfig) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Auth
+	if m.Auth != nil {
+		if v, ok := any(m.GetAuth()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: DefaultLocale
@@ -47,15 +87,6 @@ func (m *ClientConfig) Sanitize() error {
 	// Field: Game
 	if m.Game != nil {
 		if v, ok := any(m.GetGame()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Login
-	if m.Login != nil {
-		if v, ok := any(m.GetLogin()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -161,28 +192,6 @@ func (m *Links) Sanitize() error {
 	// Field: PrivacyPolicy
 	if m.PrivacyPolicy != nil {
 		*m.PrivacyPolicy = htmlsanitizer.Sanitize(*m.PrivacyPolicy)
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *LoginConfig) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Providers
-	for idx, item := range m.Providers {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil

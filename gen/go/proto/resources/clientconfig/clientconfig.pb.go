@@ -27,7 +27,7 @@ type ClientConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
 	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"defaultLocale"`
-	Login         *LoginConfig           `protobuf:"bytes,3,opt,name=login,proto3" json:"login,omitempty"`
+	Auth          *Auth                  `protobuf:"bytes,3,opt,name=auth,proto3" json:"auth,omitempty"`
 	Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3" json:"discord,omitempty"`
 	Website       *Website               `protobuf:"bytes,5,opt,name=website,proto3" json:"website,omitempty"`
 	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"featureGates"`
@@ -35,6 +35,7 @@ type ClientConfig struct {
 	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system,omitempty"`
 	Display       *Display               `protobuf:"bytes,9,opt,name=display,proto3" json:"display"`
 	QuickButtons  *settings.QuickButtons `protobuf:"bytes,11,opt,name=quick_buttons,json=quickButtons,proto3" json:"quickButtons"`
+	Data          *settings.Data         `protobuf:"bytes,12,opt,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -83,9 +84,9 @@ func (x *ClientConfig) GetDefaultLocale() string {
 	return ""
 }
 
-func (x *ClientConfig) GetLogin() *LoginConfig {
+func (x *ClientConfig) GetAuth() *Auth {
 	if x != nil {
-		return x.Login
+		return x.Auth
 	}
 	return nil
 }
@@ -139,7 +140,14 @@ func (x *ClientConfig) GetQuickButtons() *settings.QuickButtons {
 	return nil
 }
 
-type LoginConfig struct {
+func (x *ClientConfig) GetData() *settings.Data {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type Auth struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signupEnabled"`
 	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"lastCharLock"`
@@ -148,20 +156,20 @@ type LoginConfig struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *LoginConfig) Reset() {
-	*x = LoginConfig{}
+func (x *Auth) Reset() {
+	*x = Auth{}
 	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *LoginConfig) String() string {
+func (x *Auth) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LoginConfig) ProtoMessage() {}
+func (*Auth) ProtoMessage() {}
 
-func (x *LoginConfig) ProtoReflect() protoreflect.Message {
+func (x *Auth) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_clientconfig_clientconfig_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -173,26 +181,26 @@ func (x *LoginConfig) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LoginConfig.ProtoReflect.Descriptor instead.
-func (*LoginConfig) Descriptor() ([]byte, []int) {
+// Deprecated: Use Auth.ProtoReflect.Descriptor instead.
+func (*Auth) Descriptor() ([]byte, []int) {
 	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LoginConfig) GetSignupEnabled() bool {
+func (x *Auth) GetSignupEnabled() bool {
 	if x != nil {
 		return x.SignupEnabled
 	}
 	return false
 }
 
-func (x *LoginConfig) GetLastCharLock() bool {
+func (x *Auth) GetLastCharLock() bool {
 	if x != nil {
 		return x.LastCharLock
 	}
 	return false
 }
 
-func (x *LoginConfig) GetProviders() []*ProviderConfig {
+func (x *Auth) GetProviders() []*ProviderConfig {
 	if x != nil {
 		return x.Providers
 	}
@@ -689,19 +697,20 @@ var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x13tagger/tagger.proto\"\x9b\x05\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x1fresources/settings/config.proto\x1a\x1dresources/settings/data.proto\x1a\x13tagger/tagger.proto\"\xd2\x05\n" +
 	"\fClientConfig\x12\x18\n" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
-	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x129\n" +
-	"\x05login\x18\x03 \x01(\v2#.resources.clientconfig.LoginConfigR\x05login\x129\n" +
+	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x120\n" +
+	"\x04auth\x18\x03 \x01(\v2\x1c.resources.clientconfig.AuthR\x04auth\x129\n" +
 	"\adiscord\x18\x04 \x01(\v2\x1f.resources.clientconfig.DiscordR\adiscord\x129\n" +
 	"\awebsite\x18\x05 \x01(\v2\x1f.resources.clientconfig.WebsiteR\awebsite\x12c\n" +
 	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x120\n" +
 	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameR\x04game\x126\n" +
 	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\x12N\n" +
 	"\adisplay\x18\t \x01(\v2\x1f.resources.clientconfig.DisplayB\x13\x9a\x84\x9e\x03\x0ejson:\"display\"R\adisplay\x12_\n" +
-	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsB\x18\x9a\x84\x9e\x03\x13json:\"quickButtons\"R\fquickButtons\"\xec\x01\n" +
-	"\vLoginConfig\x12@\n" +
+	"\rquick_buttons\x18\v \x01(\v2 .resources.settings.QuickButtonsB\x18\x9a\x84\x9e\x03\x13json:\"quickButtons\"R\fquickButtons\x12>\n" +
+	"\x04data\x18\f \x01(\v2\x18.resources.settings.DataB\x10\x9a\x84\x9e\x03\vjson:\"data\"R\x04data\"\xe5\x01\n" +
+	"\x04Auth\x12@\n" +
 	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
 	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
 	"\tproviders\x18\x03 \x03(\v2&.resources.clientconfig.ProviderConfigB\x15\x9a\x84\x9e\x03\x10json:\"providers\"R\tproviders\"x\n" +
@@ -763,7 +772,7 @@ func file_resources_clientconfig_clientconfig_proto_rawDescGZIP() []byte {
 var file_resources_clientconfig_clientconfig_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*ClientConfig)(nil),           // 0: resources.clientconfig.ClientConfig
-	(*LoginConfig)(nil),            // 1: resources.clientconfig.LoginConfig
+	(*Auth)(nil),                   // 1: resources.clientconfig.Auth
 	(*ProviderConfig)(nil),         // 2: resources.clientconfig.ProviderConfig
 	(*Discord)(nil),                // 3: resources.clientconfig.Discord
 	(*Website)(nil),                // 4: resources.clientconfig.Website
@@ -775,10 +784,11 @@ var file_resources_clientconfig_clientconfig_proto_goTypes = []any{
 	(*Display)(nil),                // 10: resources.clientconfig.Display
 	nil,                            // 11: resources.clientconfig.OTLPFrontend.HeadersEntry
 	(*settings.QuickButtons)(nil),  // 12: resources.settings.QuickButtons
-	(*settings.BannerMessage)(nil), // 13: resources.settings.BannerMessage
+	(*settings.Data)(nil),          // 13: resources.settings.Data
+	(*settings.BannerMessage)(nil), // 14: resources.settings.BannerMessage
 }
 var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
-	1,  // 0: resources.clientconfig.ClientConfig.login:type_name -> resources.clientconfig.LoginConfig
+	1,  // 0: resources.clientconfig.ClientConfig.auth:type_name -> resources.clientconfig.Auth
 	3,  // 1: resources.clientconfig.ClientConfig.discord:type_name -> resources.clientconfig.Discord
 	4,  // 2: resources.clientconfig.ClientConfig.website:type_name -> resources.clientconfig.Website
 	6,  // 3: resources.clientconfig.ClientConfig.feature_gates:type_name -> resources.clientconfig.FeatureGates
@@ -786,16 +796,17 @@ var file_resources_clientconfig_clientconfig_proto_depIdxs = []int32{
 	8,  // 5: resources.clientconfig.ClientConfig.system:type_name -> resources.clientconfig.System
 	10, // 6: resources.clientconfig.ClientConfig.display:type_name -> resources.clientconfig.Display
 	12, // 7: resources.clientconfig.ClientConfig.quick_buttons:type_name -> resources.settings.QuickButtons
-	2,  // 8: resources.clientconfig.LoginConfig.providers:type_name -> resources.clientconfig.ProviderConfig
-	5,  // 9: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
-	13, // 10: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
-	9,  // 11: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
-	11, // 12: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
-	13, // [13:13] is the sub-list for method output_type
-	13, // [13:13] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	13, // 8: resources.clientconfig.ClientConfig.data:type_name -> resources.settings.Data
+	2,  // 9: resources.clientconfig.Auth.providers:type_name -> resources.clientconfig.ProviderConfig
+	5,  // 10: resources.clientconfig.Website.links:type_name -> resources.clientconfig.Links
+	14, // 11: resources.clientconfig.System.banner_message:type_name -> resources.settings.BannerMessage
+	9,  // 12: resources.clientconfig.System.otlp:type_name -> resources.clientconfig.OTLPFrontend
+	11, // 13: resources.clientconfig.OTLPFrontend.headers:type_name -> resources.clientconfig.OTLPFrontend.HeadersEntry
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_resources_clientconfig_clientconfig_proto_init() }

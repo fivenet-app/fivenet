@@ -23,6 +23,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: DefaultLocale
 	m.DefaultLocale = htmlsanitizer.Sanitize(m.DefaultLocale)
 

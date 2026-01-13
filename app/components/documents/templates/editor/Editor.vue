@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import type { JSONContent } from '@tiptap/core';
 import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
@@ -55,7 +54,7 @@ const schema = z.object({
     color: z.coerce.string().max(7),
     icon: z.coerce.string().max(128).optional(),
     contentTitle: z.coerce.string().min(3).max(2048),
-    content: z.custom<JSONContent | string>().optional(),
+    content: z.custom<string>().optional(),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: jobsAccessEntries(t).max(maxAccessEntries).default([]),
@@ -220,7 +219,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             color: values.color,
             icon: values.icon,
             contentTitle: values.contentTitle,
-            content: values.content, // TODO
+            content: values.content ?? '', // TODO need to handle content as raw HTML here
             state: values.contentState,
             schema: {
                 requirements: tRequirements,

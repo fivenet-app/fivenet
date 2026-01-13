@@ -16,7 +16,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { login } = useAppConfig();
+const { auth } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
@@ -34,7 +34,7 @@ const links = computed<ButtonProps[]>(() =>
                       size: 'lg',
                       to: '/auth/login',
                   },
-            login.signupEnabled
+            auth.signupEnabled
                 ? {
                       label: t('components.auth.RegistrationForm.title'),
                       trailingIcon: 'i-mdi-account-plus',

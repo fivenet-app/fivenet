@@ -1,4 +1,4 @@
-import type { Extensions } from '@tiptap/core';
+import { mergeAttributes, type Extensions } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
 import { Bold } from '@tiptap/extension-bold';
 import { Code } from '@tiptap/extension-code';
@@ -44,7 +44,9 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
             limit: charLimit?.value ?? 0,
         }),
         CheckboxStandalone,
-        Code,
+        Code.extend({
+            excludes: 'code',
+        }),
         CodeBlock,
         Details.configure({
             persist: true,
@@ -67,7 +69,11 @@ export function useTiptapEditor(charLimit?: Ref<number>, placeholder?: Ref<strin
         Highlight.configure({
             multicolor: true,
         }),
-        HorizontalRule,
+        HorizontalRule.extend({
+            renderHTML() {
+                return ['div', mergeAttributes(this.options.HTMLAttributes, { 'data-type': this.name }), ['hr']];
+            },
+        }),
         InvisibleCharacters.configure({
             visible: editorSettings.value.showInvisibleCharacters,
         }),
