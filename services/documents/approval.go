@@ -429,7 +429,7 @@ func (s *Server) createApprovalPolicy(
 		).
 		VALUES(
 			documentId,
-			pol.GetSnapshotDate(),
+			dbutils.DateTimeToMySQL(pol.GetSnapshotDate()),
 			int32(pol.GetRuleKind()),
 			pol.GetRequiredCount(),
 			pol.GetOnEditBehavior(),
@@ -487,7 +487,7 @@ func (s *Server) UpsertApprovalPolicy(
 		).
 		VALUES(
 			pol.GetDocumentId(),
-			mysql.CURRENT_TIMESTAMP(), // Initialize snapshot_date
+			mysql.DateTimeExp(mysql.CURRENT_TIMESTAMP()), // Initialize snapshot_date
 			int32(pol.GetOnEditBehavior()),
 			int32(pol.GetRuleKind()),
 			pol.GetRequiredCount(),
@@ -689,7 +689,8 @@ func (s *Server) UpsertApprovalTasks(
 	var pol documents.ApprovalPolicy
 	if err := tApprovalPolicy.
 		SELECT(
-			tApprovalPolicy.DocumentID, tApprovalPolicy.SnapshotDate,
+			tApprovalPolicy.DocumentID,
+			tApprovalPolicy.SnapshotDate,
 		).
 		FROM(tApprovalPolicy).
 		WHERE(tApprovalPolicy.DocumentID.EQ(mysql.Int64(req.GetDocumentId()))).
@@ -1572,7 +1573,7 @@ func (s *Server) DecideApproval(
 			).
 			VALUES(
 				pol.GetDocumentId(),
-				dbutils.DateTimeToMySQL(pol.GetSnapshotDate()),
+				mysql.DateTimeT(snapTime),
 				userInfo.GetUserId(),
 				userInfo.GetJob(),
 				mysql.Int32(userInfo.GetJobGrade()),
