@@ -52,6 +52,8 @@ export default defineAppConfig({
         mode: DataMode.UNAVAILABLE,
     } as Data,
 
+    maxContentLength: 40_000,
+
     // File upload related config
     fileUpload: {
         fileSizes: {

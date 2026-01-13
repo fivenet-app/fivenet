@@ -47,7 +47,7 @@ const historyStore = useHistoryStore();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const { maxAccessEntries } = useAppConfig();
+const { maxAccessEntries, maxContentLength } = useAppConfig();
 
 const schema = z.object({
     weight: z.coerce.number(),
@@ -649,6 +649,7 @@ const formRef = useTemplateRef('formRef');
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
+                                    :limit="maxContentLength"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
                                     :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"

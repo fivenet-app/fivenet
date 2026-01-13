@@ -252,7 +252,13 @@ const formRef = useTemplateRef('formRef');
 
                     <UFormField class="flex-1" name="content" :label="$t('common.content')" required :ui="{ error: 'hidden' }">
                         <ClientOnly>
-                            <TiptapEditor v-model="state.content" name="content" wrapper-class="min-h-80" class="w-full" />
+                            <TiptapEditor
+                                v-model="state.content"
+                                name="content"
+                                wrapper-class="min-h-80"
+                                class="w-full"
+                                :limit="10_000"
+                            />
                         </ClientOnly>
                     </UFormField>
 

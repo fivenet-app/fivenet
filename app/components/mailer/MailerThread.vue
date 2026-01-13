@@ -41,6 +41,8 @@ const { can, isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
+const { maxContentLength } = useAppConfig();
+
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, messages, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
@@ -617,6 +619,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                             v-model="state.content"
                                             name="content"
                                             :disabled="!canSubmit"
+                                            :limit="maxContentLength"
                                             wrapper-class="min-h-44"
                                         />
                                     </ClientOnly>

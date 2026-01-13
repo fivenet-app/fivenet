@@ -1142,7 +1142,11 @@ const formRef = useTemplateRef('formRef');
                                 :label="$t('common.message')"
                                 :ui="{ container: '', error: 'hidden' }"
                             >
-                                <TiptapEditor v-model="state.system.bannerMessage.title" name="system.bannerMessage.title" />
+                                <TiptapEditor
+                                    v-model="state.system.bannerMessage.title"
+                                    name="system.bannerMessage.title"
+                                    :limit="1024"
+                                />
                             </UFormField>
 
                             <UFormField

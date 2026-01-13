@@ -711,6 +711,7 @@ const formRef = useTemplateRef('formRef');
                                         name="content"
                                         class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :extensions="extensions"
+                                        :limit="125_000"
                                     >
                                         <template #toolbar="{ editor }">
                                             <ToolbarButtons :editor="editor" />

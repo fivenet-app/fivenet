@@ -35,6 +35,10 @@ const { attr, activeChar } = useAuth();
 
 const historyStore = useHistoryStore();
 
+const notifications = useNotificationsStore();
+
+const { maxAccessEntries, maxContentLength } = useAppConfig();
+
 const route = useRoute<'wiki-job-id-slug-edit'>();
 
 const wikiClient = await getWikiWikiClient();
@@ -71,10 +75,6 @@ useHead({
             ? `${page.value.meta.title} - ${page.value.jobLabel} - ${t('pages.wiki.edit.title')}`
             : t('pages.wiki.edit.title'),
 });
-
-const notifications = useNotificationsStore();
-
-const { maxAccessEntries } = useAppConfig();
 
 const confirmModal = overlay.create(ConfirmModal);
 
@@ -598,6 +598,7 @@ const formRef = useTemplateRef('formRef');
                                         v-model="state.content"
                                         v-model:files="state.files"
                                         name="content"
+                                        :limit="maxContentLength"
                                         class="mx-auto my-2 h-full w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :disabled="!canDo.edit"
                                         history-type="wiki"

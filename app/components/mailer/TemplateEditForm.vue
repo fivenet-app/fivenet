@@ -124,6 +124,7 @@ onBeforeMount(() => setFromProps());
                     name="content"
                     class="mx-auto w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                     wrapper-class="min-h-100"
+                    :limit="1024"
                 />
             </ClientOnly>
         </UFormField>

@@ -47,6 +47,8 @@ const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 
+const { maxAccessEntries, maxContentLength } = useAppConfig();
+
 const documentsDocuments = await useDocumentsDocuments();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
@@ -64,8 +66,6 @@ useHead({
             ? `${document.value.document.title} - ${t('pages.documents.edit.title')}`
             : t('pages.documents.edit.title'),
 });
-
-const { maxAccessEntries } = useAppConfig();
 
 const { ydoc, provider } = await useCollabDoc('documents', props.documentId);
 
@@ -643,6 +643,7 @@ provide('yjsProvider', provider);
                                 class="m-2 mx-auto w-full max-w-(--breakpoint-xl) flex-1"
                                 :disabled="!canDo.edit"
                                 history-type="document"
+                                :limit="maxContentLength"
                                 :saving="saving"
                                 enable-collab
                                 :target-id="document.document?.id"

@@ -40,6 +40,8 @@ const completorStore = useCompletorStore();
 
 const notifications = useNotificationsStore();
 
+const { maxContentLength } = useAppConfig();
+
 const jobsConductClient = await getJobsConductClient();
 
 const cTypes = ref<{ status: ConductType }[]>([
@@ -283,6 +285,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                         name="message"
                                         class="min-h-120 w-full"
                                         :target-id="entry?.id"
+                                        history-type="jobs-conduct"
+                                        :limit="maxContentLength"
                                         filestore-namespace="jobs-conduct"
                                         :filestore-service="(opts) => jobsConductClient.uploadFile(opts)"
                                     />

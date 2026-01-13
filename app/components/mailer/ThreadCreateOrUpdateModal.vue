@@ -20,6 +20,8 @@ const { can, activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
+const { maxContentLength } = useAppConfig();
+
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, emails, selectedEmail } = storeToRefs(mailerStore);
 
@@ -292,6 +294,7 @@ const formRef = useTemplateRef('formRef');
                                     name="content"
                                     class="flex-1 overflow-y-hidden"
                                     :disabled="!canSubmit"
+                                    :limit="maxContentLength"
                                     wrapper-class="min-h-96"
                                 />
                             </ClientOnly>

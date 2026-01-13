@@ -117,6 +117,7 @@ const formRef = useTemplateRef('formRef');
                                 v-model="state.signature"
                                 name="signature"
                                 :disabled="disabled || !canManage"
+                                :limit="1024"
                                 wrapper-class="min-h-44"
                             />
                         </ClientOnly>
