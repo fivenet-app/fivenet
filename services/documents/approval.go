@@ -318,8 +318,14 @@ func (s *Server) ListApprovalPolicies(
 		return nil, err
 	}
 
+	docMeta, err := s.getDocumentMeta(ctx, s.db, req.GetDocumentId())
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	return &pbdocuments.ListApprovalPoliciesResponse{
-		Policy: policy,
+		Policy:  policy,
+		DocMeta: docMeta,
 	}, nil
 }
 

@@ -308,7 +308,5 @@ export function tiptapTextPreview(
         result += opt.ellipsis;
     }
 
-    console.log('result', result);
-
     return result;
 }

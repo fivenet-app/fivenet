@@ -8,6 +8,7 @@ import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/approval.proto";
+import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
@@ -34,6 +35,7 @@ message ListApprovalPoliciesRequest {
 // Only one policy per document is supported currently.
 message ListApprovalPoliciesResponse {
   resources.documents.ApprovalPolicy policy = 1;
+  resources.documents.DocumentMeta doc_meta = 2;
 }
 
 message UpsertApprovalPolicyRequest {

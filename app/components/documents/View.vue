@@ -83,7 +83,7 @@ const approvalDrawer = overlay.create(ApprovalDrawer);
 
 const hash = useRouteHash('', { mode: 'push' });
 
-function openRequestsDrawer(): void {
+async function openRequestsDrawer(): Promise<void> {
     if (doc.value?.access === undefined || doc.value?.document === undefined) return;
 
     requestDrawer
@@ -97,7 +97,7 @@ function openRequestsDrawer(): void {
     hash.value = `#requests`;
 }
 
-function openApprovalDrawer(): void {
+async function openApprovalDrawer(): Promise<void> {
     approvalDrawer
         .open({
             documentId: props.documentId,
@@ -107,12 +107,15 @@ function openApprovalDrawer(): void {
                 if (doc.value?.document) doc.value.document.meta = $event;
             },
         })
-        .then(() => (hash.value = ''));
+        .then(() => (hash.value = ''))
+        .finally(() => {
+            hash.value = '';
+        });
 
     hash.value = `#approvals`;
 }
 
-function handleHash(): void {
+async function handleHash(): Promise<void> {
     if (hash.value === undefined || hash.value === null) return;
 
     const val = hash.value.replace(/^#/, '');

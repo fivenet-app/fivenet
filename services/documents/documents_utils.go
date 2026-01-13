@@ -349,6 +349,39 @@ func (s *Server) getDocumentQuery(
 		)
 }
 
+func (s *Server) getDocumentMeta(
+	ctx context.Context,
+	tx qrm.DB,
+	documentId int64,
+) (*documents.DocumentMeta, error) {
+	tDMeta := tDMeta.AS("document_meta")
+
+	stmt := tDMeta.
+		SELECT(
+			tDMeta.DocumentID,
+			tDMeta.Approved,
+			tDMeta.ApRequiredTotal,
+			tDMeta.ApCollectedApproved,
+			tDMeta.ApRequiredRemaining,
+			tDMeta.ApDeclinedCount,
+			tDMeta.ApPendingCount,
+			tDMeta.ApAnyDeclined,
+			tDMeta.ApPoliciesActive,
+		).
+		FROM(tDMeta).
+		WHERE(
+			tDMeta.DocumentID.EQ(mysql.Int64(documentId)),
+		).
+		LIMIT(1)
+
+	dest := &documents.DocumentMeta{}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return dest, nil
+}
+
 func (s *Server) updateDocumentOwner(
 	ctx context.Context,
 	tx qrm.DB,

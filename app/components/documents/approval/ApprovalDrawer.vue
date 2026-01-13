@@ -47,8 +47,6 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
     });
     const { response } = await call;
 
-    if (!response.policy) return undefined;
-
     if (docMeta.value === undefined) {
         docMeta.value = {
             documentId: props.documentId,
@@ -60,25 +58,9 @@ async function getPolicy(): Promise<ApprovalPolicy | undefined> {
         };
     }
 
-    const policy = response.policy;
+    docMeta.value.approved = response.docMeta?.approved ?? false;
 
-    if (
-        policy.approvedCount >= (response.policy.requiredCount ?? 1)
-            ? ApprovalTaskStatus.APPROVED
-            : policy.anyDeclined
-              ? ApprovalTaskStatus.PENDING
-              : ApprovalTaskStatus.DECLINED
-    ) {
-        docMeta.value.approved = true;
-    } else if (
-        !policy.anyDeclined && policy.approvedCount > policy.assignedCount
-            ? ApprovalTaskStatus.APPROVED
-            : ApprovalTaskStatus.DECLINED
-    ) {
-        docMeta.value.approved = true;
-    }
-
-    return policy;
+    return response.policy;
 }
 
 async function recomputeApprovalPolicyCounters() {
@@ -121,7 +103,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                     <TaskStatusBadge
                         v-if="policy.ruleKind === ApprovalRuleKind.REQUIRE_ALL"
                         :status="
-                            !policy.anyDeclined && policy.assignedCount > 0 && policy.approvedCount >= policy.assignedCount
+                            !!docMeta?.approved || (policy.assignedCount > 0 && policy.approvedCount >= policy.assignedCount)
                                 ? ApprovalTaskStatus.APPROVED
                                 : ApprovalTaskStatus.DECLINED
                         "
@@ -129,7 +111,7 @@ const taskFormDrawer = overlay.create(TaskForm);
                     <TaskStatusBadge
                         v-else
                         :status="
-                            policy.approvedCount >= (policy.requiredCount ?? 1)
+                            !!docMeta?.approved || policy.approvedCount >= (policy.requiredCount ?? 1)
                                 ? ApprovalTaskStatus.APPROVED
                                 : policy.anyDeclined
                                   ? ApprovalTaskStatus.PENDING
@@ -261,9 +243,12 @@ const taskFormDrawer = overlay.create(TaskForm);
                                     />
 
                                     <UBadge
-                                        v-if="policy?.selfApproveAllowed"
-                                        :label="$t('components.documents.approval.self_approve_allowed_badge')"
-                                        color="info"
+                                        :label="
+                                            policy?.selfApproveAllowed
+                                                ? $t('components.documents.approval.self_approve_allowed_badge')
+                                                : $t('components.documents.approval.self_approve_disallowed_badge')
+                                        "
+                                        :color="policy?.selfApproveAllowed ? 'info' : 'warning'"
                                         variant="outline"
                                     />
                                 </div>
@@ -306,9 +291,13 @@ const taskFormDrawer = overlay.create(TaskForm);
                         </div>
 
                         <div class="flex flex-1 basis-3/4 flex-col gap-4 overflow-x-hidden p-0.5">
-                            <ApprovalList :document-id="documentId" :doc-creator-id="doc.creatorId" />
+                            <ApprovalList
+                                :document-id="documentId"
+                                :doc-creator-id="doc.creatorId"
+                                @refresh="() => refresh()"
+                            />
 
-                            <TaskList :document-id="documentId">
+                            <TaskList :document-id="documentId" @refresh="() => refresh()">
                                 <template
                                     v-if="can('documents.ApprovalService/UpsertApprovalTasks').value"
                                     #header="{ refresh: tasksRefresh }"

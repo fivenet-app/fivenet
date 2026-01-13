@@ -962,7 +962,8 @@
                     "title": "Selbstgenehmigung zulassen",
                     "description": "Sollen Genehmigungen vom Dokumenten-Ersteller zu den Benötigten Genehmigungen zählen."
                 },
-                "self_approve_allowed_badge": "Selbstgenehmigung zugelassen"
+                "self_approve_allowed_badge": "Selbstgenehmigung zugelassen",
+                "self_approve_disallowed_badge": "Selbstgenehmigung nicht zugelassen"
             }
         },
         "livemap": {

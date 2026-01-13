@@ -8661,6 +8661,7 @@ Only one policy per document is supported currently.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+| `doc_meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 
 
 

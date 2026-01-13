@@ -12,6 +12,10 @@ const props = defineProps<{
     documentId: number;
 }>();
 
+const emits = defineEmits<{
+    (e: 'refresh'): void;
+}>();
+
 const { can } = useAuth();
 
 const approvalClient = await getDocumentsApprovalClient();
@@ -39,7 +43,7 @@ async function removeTask(id: number): Promise<DeleteApprovalTasksResponse> {
         });
         const { response } = await call;
 
-        await refresh();
+        emits('refresh');
 
         return response;
     } catch (e) {
