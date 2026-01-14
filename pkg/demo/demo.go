@@ -1,7 +1,7 @@
 // Package demo provides functionality for generating random dispatches and user locations
 // in demo mode, allowing for testing and demonstration of the centrum service.
 //
-//nolint:gosec // G404: rand.Intn is not cryptographically secure, but we don't need it to be here.
+//nolint:gosec // G404: rand.IntN is not cryptographically secure, but we don't need it to be here.
 package demo
 
 import (
@@ -24,7 +24,10 @@ import (
 	"go.uber.org/zap"
 )
 
-var tLocs = table.FivenetCentrumUserLocations
+var (
+	tLocs      = table.FivenetCentrumUserLocations
+	tTimeClock = table.FivenetJobTimeclock
+)
 
 var Module = fx.Module(
 	"demo",
@@ -61,6 +64,11 @@ var (
 	}
 )
 
+type user struct {
+	UserID     int32  `alias:"user.userid"     sql:"primary_key"`
+	Identifier string `alias:"user.identifier"`
+}
+
 // Demo provides demo mode functionality for generating random dispatches and user locations.
 type Demo struct {
 	// logger for demo operations
@@ -73,7 +81,7 @@ type Demo struct {
 	cfg *config.Config
 
 	// users is a list of user identifiers for demo operations
-	users []string
+	users []*user
 }
 
 // Params contains dependencies for constructing a Demo instance.
@@ -124,30 +132,59 @@ func New(p Params) *Demo {
 	return d
 }
 
-// Start runs the main demo loop, periodically generating and updating dispatches and moving user markers.
-func (d *Demo) Start(ctx context.Context) error {
+func (d *Demo) lookupUsers(ctx context.Context, identifiers []string) ([]*user, error) {
 	tUsers := tables.User()
+
+	condition := tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob))
+	if len(identifiers) > 0 {
+		idds := make([]mysql.Expression, len(identifiers))
+		for i, id := range identifiers {
+			idds[i] = mysql.String(id)
+		}
+		condition = condition.AND(tUsers.Identifier.IN(idds...))
+	}
 
 	stmt := tUsers.
 		SELECT(
-			tUsers.Identifier,
+			tUsers.ID.AS("user.userid"),
+			tUsers.Identifier.AS("user.identifier"),
 		).
 		FROM(tUsers).
-		WHERE(
-			tUsers.Job.EQ(mysql.String(d.cfg.Demo.TargetJob)),
-		).
+		WHERE(condition).
 		ORDER_BY(tUsers.ID.ASC()).
 		LIMIT(20)
 
-	var users []string
+	users := []*user{}
 	if err := stmt.QueryContext(ctx, d.db, &users); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query users. %w", err)
+			return nil, fmt.Errorf("failed to query users. %w", err)
 		}
 	}
-	users = append(users, d.cfg.Demo.Users...)
-	utils.RemoveSliceDuplicates(users)
+
+	return users, nil
+}
+
+// Start runs the main demo loop, periodically generating and updating dispatches and moving user markers.
+func (d *Demo) Start(ctx context.Context) error {
+	users, err := d.lookupUsers(ctx, nil)
+	if err != nil {
+		d.logger.Error("failed to lookup users", zap.Error(err))
+		return err
+	}
+
+	demoUsers, err := d.lookupUsers(ctx, d.cfg.Demo.Users)
+	if err != nil {
+		d.logger.Error("failed to lookup demo users", zap.Error(err))
+		return err
+	}
+	users = append(users, demoUsers...)
+
+	utils.RemoveSliceDuplicatesFn(users, func(u *user) string {
+		return u.Identifier
+	})
 	d.users = users
+
+	d.createTimeclockEntries(ctx)
 
 	go d.moveUserMarkers(ctx)
 
@@ -266,14 +303,14 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 					tLocs.Y.AS("y"),
 				).
 				FROM(tLocs).
-				WHERE(tLocs.Identifier.EQ(mysql.String(user))).
+				WHERE(tLocs.Identifier.EQ(mysql.String(user.Identifier))).
 				LIMIT(1)
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
 			if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 				d.logger.Error(
 					"failed to select user location",
-					zap.String("user", user),
+					zap.String("user", user.Identifier),
 					zap.Error(err),
 				)
 				continue
@@ -332,7 +369,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {
 				d.logger.Error(
 					"failed to update user location",
-					zap.String("user", user),
+					zap.String("user", user.Identifier),
 					zap.Error(err),
 				)
 				continue
@@ -341,6 +378,93 @@ func (d *Demo) moveUserMarkers(ctx context.Context) {
 
 		if firstRun {
 			firstRun = false
+		}
+	}
+}
+
+// createTimeclockEntries creates or updates timeclock table entries for the users in d.users.
+// It creates multiple past entries of random lengths and sometimes an active entry.
+func (d *Demo) createTimeclockEntries(ctx context.Context) {
+	for _, user := range d.users {
+		// Create multiple past entries
+		// Randomly create 1 to 10 past entries
+		numPastEntries := rand.IntN(10) + 1
+		for range numPastEntries {
+			daysAgo := rand.IntN(14) + 1 // Randomly pick a day within the last 14 days
+			entryDate := time.Now().AddDate(0, 0, -daysAgo)
+			startTime := entryDate.Add(
+				time.Duration(rand.IntN(8)) * time.Hour,
+			) // Random start time within the day
+			endTime := startTime.Add(
+				time.Duration(rand.IntN(8)+1) * time.Hour,
+			) // Random end time after start time
+			spentTime := endTime.Sub(startTime).Hours()
+
+			insertStmt := tTimeClock.
+				INSERT(
+					tTimeClock.Job,
+					tTimeClock.UserID,
+					tTimeClock.Date,
+					tTimeClock.StartTime,
+					tTimeClock.EndTime,
+					tTimeClock.SpentTime,
+				).
+				VALUES(
+					d.cfg.Demo.TargetJob,
+					user.UserID,
+					entryDate,
+					startTime,
+					endTime,
+					spentTime,
+				)
+
+			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {
+				d.logger.Error(
+					"failed to create past timeclock entry",
+					zap.String("user", user.Identifier),
+					zap.Error(err),
+				)
+				continue
+			}
+		}
+
+		// Sometimes create an active entry
+		if rand.IntN(2) == 0 { // 50% chance to create an active entry
+			activeStartTime := time.Now().
+				Add(-time.Duration(rand.IntN(8)+1) * time.Hour)
+				// Random start time within the last 8 hours
+
+			insertStmt := tTimeClock.
+				INSERT(
+					tTimeClock.Job,
+					tTimeClock.UserID,
+					tTimeClock.Date,
+					tTimeClock.StartTime,
+					tTimeClock.EndTime,
+					tTimeClock.SpentTime,
+				).
+				VALUES(
+					d.cfg.Demo.TargetJob,
+					user.UserID,
+					time.Now(),
+					activeStartTime,
+					nil, // Active entry has no end time
+					nil, // Spent time is nil for active entries
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tTimeClock.StartTime.SET(mysql.TimestampT(activeStartTime)),
+					tTimeClock.EndTime.SET(mysql.TimestampExp(mysql.NULL)),
+					tTimeClock.SpentTime.SET(mysql.FloatExp(mysql.NULL)),
+				)
+
+			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {
+				d.logger.Error(
+					"failed to create active timeclock entry",
+					zap.String("user", user.Identifier),
+					zap.Error(err),
+				)
+				continue
+			}
 		}
 	}
 }

@@ -142,6 +142,7 @@ tables:
       sex: "sex"
       phoneNumber: "phone_number"
       height: "height"
+      # Optional columns
       visum: "-" # Indicates that this column is not available
       playtime: "-" # Indicates that this column is not available
     # Custom query to retrieve users data.
@@ -239,7 +240,7 @@ tables:
       #ownerId: "owner"
       plate: "plate"
       type: "type"
-      model: "model"
+      model: "-" # Indicates that this column is not available
     # Custom query to retrieve all vehicles
     #
     # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
