@@ -41,7 +41,7 @@ function toggleBlur(): void {
     }
 }
 
-const src = useGenerateImageURL(props.src);
+const src = useImageURL(props.src);
 </script>
 
 <template>

@@ -425,7 +425,6 @@ func (x *Links) GetPrivacyPolicy() string {
 
 type FeatureGates struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ImageProxy    bool                   `protobuf:"varint,1,opt,name=image_proxy,json=imageProxy,proto3" json:"imageProxy"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -458,13 +457,6 @@ func (x *FeatureGates) ProtoReflect() protoreflect.Message {
 // Deprecated: Use FeatureGates.ProtoReflect.Descriptor instead.
 func (*FeatureGates) Descriptor() ([]byte, []int) {
 	return file_resources_clientconfig_clientconfig_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *FeatureGates) GetImageProxy() bool {
-	if x != nil {
-		return x.ImageProxy
-	}
-	return false
 }
 
 type Game struct {
@@ -732,10 +724,8 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\x0eprivacy_policy\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"privacyPolicy\"H\x01R\rprivacyPolicy\x88\x01\x01B\n" +
 	"\n" +
 	"\b_imprintB\x11\n" +
-	"\x0f_privacy_policy\"G\n" +
-	"\fFeatureGates\x127\n" +
-	"\vimage_proxy\x18\x01 \x01(\bB\x16\x9a\x84\x9e\x03\x11json:\"imageProxy\"R\n" +
-	"imageProxy\"\x98\x01\n" +
+	"\x0f_privacy_policy\"\x0e\n" +
+	"\fFeatureGates\"\x98\x01\n" +
 	"\x04Game\x12M\n" +
 	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
 	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\"\x98\x02\n" +

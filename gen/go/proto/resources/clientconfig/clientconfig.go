@@ -38,9 +38,7 @@ func BuildClientConfig(
 			},
 			StatsPage: appCfg.Website.GetStatsPage(),
 		},
-		FeatureGates: &FeatureGates{
-			ImageProxy: cfg.ImageProxy.Enabled,
-		},
+		FeatureGates: &FeatureGates{},
 		Game: &Game{
 			UnemployedJobName: appCfg.JobInfo.GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,

@@ -27,9 +27,7 @@ export default defineAppConfig({
     website: {
         links: undefined,
     } as Website,
-    featureGates: {
-        imageProxy: false,
-    } as FeatureGates,
+    featureGates: {} as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
         startJobGrade: 0,

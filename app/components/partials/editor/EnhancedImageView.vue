@@ -126,7 +126,8 @@ watch(
                     style="border-radius: 4px"
                     class="h-auto max-w-full cursor-pointer select-none"
                     :class="[selected || isResizing ? 'border border-primary-500' : '']"
-                    draggable="true"
+                    :draggable="true"
+                    :src="cleanupImageURL(node.attrs.src)"
                     @click="onImageClick"
                 />
 

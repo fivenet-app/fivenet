@@ -2727,11 +2727,6 @@ Dummy - DO NOT USE!
 ### resources.clientconfig.FeatureGates
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image_proxy` | [bool](#bool) |  |  |
-
-
 
 
 

@@ -252,7 +252,6 @@ type S3Storage struct {
 }
 
 type ImageProxy struct {
-	Enabled     bool              `default:"true"    yaml:"enabled"`
 	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
 	Options     ImageProxyOptions `                  yaml:"options"`
 }
@@ -408,8 +407,6 @@ type UpdateCheck struct {
 }
 
 type Icons struct {
-	// If true, the Iconify API is enabled and will be served from the backend to serve icons.
-	Enabled bool `default:"true"                       yaml:"enabled"`
 	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
 	Proxy bool `default:"false"                      yaml:"proxy"`
 	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/

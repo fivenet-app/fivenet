@@ -140,10 +140,6 @@ export interface Links {
  * @generated from protobuf message resources.clientconfig.FeatureGates
  */
 export interface FeatureGates {
-    /**
-     * @generated from protobuf field: bool image_proxy = 1
-     */
-    imageProxy: boolean;
 }
 /**
  * @generated from protobuf message resources.clientconfig.Game
@@ -619,13 +615,10 @@ export const Links = new Links$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FeatureGates$Type extends MessageType<FeatureGates> {
     constructor() {
-        super("resources.clientconfig.FeatureGates", [
-            { no: 1, name: "image_proxy", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"imageProxy\"" } }
-        ]);
+        super("resources.clientconfig.FeatureGates", []);
     }
     create(value?: PartialMessage<FeatureGates>): FeatureGates {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.imageProxy = false;
         if (value !== undefined)
             reflectionMergePartial<FeatureGates>(this, message, value);
         return message;
@@ -635,9 +628,6 @@ class FeatureGates$Type extends MessageType<FeatureGates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool image_proxy */ 1:
-                    message.imageProxy = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -650,9 +640,6 @@ class FeatureGates$Type extends MessageType<FeatureGates> {
         return message;
     }
     internalBinaryWrite(message: FeatureGates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool image_proxy = 1; */
-        if (message.imageProxy !== false)
-            writer.tag(1, WireType.Varint).bool(message.imageProxy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

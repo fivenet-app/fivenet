@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
-import { safeImagePaths } from '~/types/editor';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
@@ -26,7 +25,7 @@ const emit = defineEmits<{
     (e: 'openFileList'): void;
 }>();
 
-const { featureGates, fileUpload } = useAppConfig();
+const { fileUpload } = useAppConfig();
 
 const notifications = useNotificationsStore();
 
@@ -44,18 +43,19 @@ const imageState = reactive<Schema>({
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
     canSubmit.value = false;
 
+    // Use image proxy for external URLs
     if (typeof urlOrBlob === 'string') {
         let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
-        if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
+        if (urlOrBlob.startsWith('http')) {
             const url = new URL(urlOrBlob);
             // Check if image is already served by our host and one of the paths
             const isSameHost = url.host === window.location.host;
-            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path));
+            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path + '/'));
             if (isSameHost && isServedPath) {
                 url.pathname = url.pathname.replace(/(?<!:)\/\//, '/');
                 dataUrl = urlOrBlob;
-            } else if (props.uploadHandler) {
+            } else {
                 dataUrl = `/api/image_proxy/${urlOrBlob}`;
             }
         } else {

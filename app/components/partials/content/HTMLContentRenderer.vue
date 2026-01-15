@@ -48,14 +48,22 @@ export default defineComponent({
                 return h('br', value.attrs);
             }
 
-            // 4. Resolve tag/component
+            // 4. img tag
+            if (value.tag === 'img') {
+                return h(NuxtImg, {
+                    ...value.attrs,
+                    src: cleanupImageURL(value.attrs?.src || ''),
+                });
+            }
+
+            // 5. Tag remapping
             if (tagRemapping[value.tag]) {
                 return h(tagRemapping[value.tag]!, value.attrs);
             }
 
             const tag = value.tag === 'body' ? 'div' : value.tag;
 
-            // 5. Recursively render children
+            // 6. Recursively render children
             const children = (value.content || []).map((child: RichTextHtmlNode, idx: number) =>
                 h(self, {
                     key: idx,
@@ -63,7 +71,7 @@ export default defineComponent({
                 }),
             );
 
-            // 6. Append external link icon
+            // 7. Append external link icon
             if (value.tag === 'a' && !value.attrs?.href?.startsWith('/')) {
                 children.push(
                     h(UIcon, {
@@ -73,7 +81,7 @@ export default defineComponent({
                 );
             }
 
-            // 7. Return final tag/component with attributes
+            // 8. Return final tag/component with attributes
             return h(
                 tag,
                 {

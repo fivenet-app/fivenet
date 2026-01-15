@@ -52,9 +52,7 @@ message Links {
   optional string privacy_policy = 2 [(tagger.tags) = "json:\"privacyPolicy\""];
 }
 
-message FeatureGates {
-  bool image_proxy = 1 [(tagger.tags) = "json:\"imageProxy\""];
-}
+message FeatureGates {}
 
 message Game {
   string unemployed_job_name = 1 [(tagger.tags) = "json:\"unemployedJobName\""];

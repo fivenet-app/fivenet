@@ -139,10 +139,6 @@ func setupSanitizer() {
 func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	sanitizerOnce.Do(setupSanitizer)
 
-	if !cfg.ImageProxy.Enabled {
-		return sanitizer, nil
-	}
-
 	// Use Image Proxy if enabled using the rewrite src function
 	proxyUrl, err := url.Parse(strings.TrimRight(imageproxy.Path, "/"))
 	if err != nil {

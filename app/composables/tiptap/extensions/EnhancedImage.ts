@@ -86,7 +86,10 @@ export const EnhancedImage = Node.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+        return [
+            'img',
+            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src: cleanupImageURL(HTMLAttributes.src) }),
+        ];
     },
 
     parseMarkdown: (token, helpers) => {
@@ -98,7 +101,7 @@ export const EnhancedImage = Node.create({
     },
 
     renderMarkdown: (node) => {
-        const src = node.attrs?.src ?? '';
+        const src = cleanupImageURL(node.attrs?.src ?? '');
         const alt = node.attrs?.alt ?? '';
         const title = node.attrs?.title ?? '';
 
