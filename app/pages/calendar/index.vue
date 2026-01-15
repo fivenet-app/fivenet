@@ -282,6 +282,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.calendar')"
                             @click="calendarCreateOrUpdateModal.open({})"
@@ -292,6 +293,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"
@@ -542,6 +544,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.calendar')"
                             @click="calendarCreateOrUpdateModal.open({})"
@@ -552,6 +555,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"

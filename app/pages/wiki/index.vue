@@ -89,7 +89,7 @@ const wikiService = await useWikiWiki();
                     </UTooltip>
 
                     <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
-                        <UButton color="neutral" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
+                        <UButton color="neutral" variant="outline" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
                             {{ $t('common.page') }}
                         </UButton>
                     </UTooltip>

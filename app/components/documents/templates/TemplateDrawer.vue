@@ -49,7 +49,7 @@ function clipboardComponent(type: RequirementType) {
     }
 }
 
-async function templateSelected(t: TemplateShort | undefined): Promise<void> {
+async function selectTemplate(t?: TemplateShort | undefined): Promise<void> {
     if (t) {
         template.value = t;
         if (t.schema) {
@@ -82,6 +82,8 @@ async function templateSelected(t: TemplateShort | undefined): Promise<void> {
 function goBackDialog(): void {
     steps.value.selectTemplate = true;
     steps.value.selectClipboard = false;
+
+    nextTick(() => selectTemplate());
 }
 
 const submit = ref(false);
@@ -105,7 +107,7 @@ const filteredRequirementTypes = computed(() => {
         :ui="{ container: 'flex-1', content: 'min-h-[70%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
-            <span>{{ $t('common.template', 2) }} {{ template ? ` - ${template?.title}` : '' }}</span>
+            <span>{{ $t('common.template', 2) }}{{ template ? ` - ${template?.title}` : '' }}</span>
 
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
@@ -119,7 +121,7 @@ const filteredRequirementTypes = computed(() => {
 
                     <USeparator class="my-4" />
 
-                    <List @selected="templateSelected($event)" />
+                    <List @selected="selectTemplate($event)" />
                 </template>
                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                     <div>
@@ -152,7 +154,7 @@ const filteredRequirementTypes = computed(() => {
                 v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                 class="inline-flex w-full"
             >
-                <UButton class="flex-1" color="neutral" block @click="goBackDialog">
+                <UButton class="flex-1" color="neutral" block @click="goBackDialog()">
                     {{ $t('common.go_back') }}
                 </UButton>
 

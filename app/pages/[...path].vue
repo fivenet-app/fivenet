@@ -49,13 +49,13 @@ const { username } = storeToRefs(authStore);
                         color="neutral"
                         variant="solid"
                         size="lg"
+                        :label="$t('pages.notfound.error')"
                         @click="
                             emojiBlast({
                                 emojis: ['😵‍💫', '🔍', '🔎', '👀'],
                             })
                         "
-                        >{{ $t('pages.notfound.error') }}</UBadge
-                    >
+                    />
                 </template>
             </UPageHero>
         </div>

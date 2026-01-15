@@ -138,6 +138,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         :label="$t('common.create')"
                         trailing-icon="i-mdi-plus"
                         color="neutral"
+                        variant="outline"
                         @click="
                             creating = !creating;
                             selectedEmail = undefined;
@@ -170,6 +171,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         :label="$t('common.back')"
                         icon="i-mdi-arrow-back"
                         color="neutral"
+                        variant="outline"
                         @click="creating = false"
                     />
 
@@ -177,6 +179,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         <UButton
                             class="hidden md:flex"
                             color="neutral"
+                            variant="outline"
                             icon="i-mdi-arrow-back"
                             :label="$t('common.back')"
                             @click="selectedEmail = undefined"

@@ -112,6 +112,7 @@ const canSubmit = ref(true);
                 <UButton
                     block
                     color="neutral"
+                    variant="outline"
                     trailing-icon="i-mdi-account-plus"
                     :to="{ name: 'auth-registration' }"
                     :disabled="!canSubmit"

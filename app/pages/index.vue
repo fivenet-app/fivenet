@@ -53,7 +53,7 @@ const links = computed<ButtonProps[]>(() =>
         <div class="hero absolute inset-0 z-[-1] mask-[radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="flex min-h-[calc(100dvh-var(--ui-header-height))] flex-col items-center justify-center">
-            <UCard class="w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
+            <UCard class="my-4 w-full max-w-4xl bg-white/75 backdrop-blur-sm dark:bg-white/5">
                 <div class="space-y-4">
                     <UPageHero
                         :title="$t('pages.index.welcome')"
@@ -65,6 +65,7 @@ const links = computed<ButtonProps[]>(() =>
                             <UButton
                                 class="rounded-full"
                                 color="neutral"
+                                variant="outline"
                                 :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
                                 external
                                 :label="$t('pages.index.whats_new_in', { version: appVersion })"

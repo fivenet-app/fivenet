@@ -44,11 +44,15 @@ watch(designDocumentListStyle, async () => {
 
 <template>
     <UPageCard :title="$t('common.theme')" :description="$t('components.auth.user_settings_panel.customization')">
-        <template #links>
-            <UColorModeSelect color="neutral" />
-        </template>
+        <UFormField
+            class="grid grid-cols-2 items-center gap-2"
+            name="darkMode"
+            :label="$t('components.auth.user_settings_panel.color_mode')"
+        >
+            <UColorModeSelect color="neutral" variant="outline" class="w-full" />
+        </UFormField>
 
-        <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color')">
+        <UFormField class="grid grid-cols-2 items-center gap-2" name="primaryColor" :label="$t('common.color', 1)">
             <ColorPickerTW v-model="design.ui.primary" name="primaryColor" class="w-full" />
         </UFormField>
 

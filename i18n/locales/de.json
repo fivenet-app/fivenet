@@ -1336,7 +1336,8 @@
                 "events_disabled": {
                     "label": "Event-Effekte deaktivieren",
                     "description": "Wie z.B. Schneeflocken zur Weihnachtszeit. Kann die Leistung auf schwächeren Geräten verbessern."
-                }
+                },
+                "color_mode": "Farbmodus"
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",

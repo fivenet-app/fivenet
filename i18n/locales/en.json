@@ -1335,7 +1335,8 @@
                 "events_disabled": {
                     "label": "Disable event effects",
                     "description": "Like snow flakes during Christmas time. Can improve performance on lower-end devices."
-                }
+                },
+                "color_mode": "Color Mode"
             },
             "ChangeUsernameModal": {
                 "change_username": "Change Username",
