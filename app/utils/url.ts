@@ -29,7 +29,7 @@ export function useGenerateImageURL(filePath: string | File | undefined | Ref<st
 
     const cleanupURL = (path: string | File | undefined) => {
         if (path === undefined) {
-            imageURL.value = '/images/broken_link.png';
+            imageURL.value = '/images/broken_image.png';
             return;
         }
 
