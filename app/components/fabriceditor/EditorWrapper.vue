@@ -7,13 +7,17 @@ withDefaults(
         maxHeight?: number;
         maxWidth?: number;
         backgroundColor?: string;
+        disabled?: boolean;
     }>(),
     {
         maxHeight: 350,
         maxWidth: 900,
         backgroundColor: undefined,
+        disabled: false,
     },
 );
+
+const svgData = defineModel<string>({ required: true });
 </script>
 
 <template>
@@ -23,7 +27,14 @@ withDefaults(
         <div class="flex flex-1 overflow-hidden">
             <div ref="canvasContainer" class="flex-1 overflow-hidden">
                 <!-- Canvas area fills remaining space -->
-                <EditorCanvas :min-height="350" :min-width="900" :background-color="backgroundColor" v-bind="$attrs" />
+                <EditorCanvas
+                    v-model="svgData"
+                    :min-height="350"
+                    :min-width="900"
+                    :background-color="backgroundColor"
+                    :disabled="disabled"
+                    v-bind="$attrs"
+                />
             </div>
 
             <!-- Sidebar on the right with fixed width -->

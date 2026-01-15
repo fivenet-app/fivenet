@@ -55,7 +55,13 @@ async function listApprovalTasks(): Promise<ListUsableStampsResponse> {
                     <PartialsBackButton fallback-to="/documents" />
 
                     <UTooltip v-if="can('documents.StampsService/UpsertStamp').value" :text="$t('common.stamp')">
-                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate to="/documents/stamps/create">
+                        <UButton
+                            trailing-icon="i-mdi-plus"
+                            color="neutral"
+                            variant="outline"
+                            truncate
+                            to="/documents/stamps/create"
+                        >
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.stamp', 1) }}
                             </span>

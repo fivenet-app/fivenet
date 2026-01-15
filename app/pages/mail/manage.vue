@@ -170,16 +170,16 @@ const confirmModal = overlay.create(ConfirmModal);
                         v-if="creating"
                         :label="$t('common.back')"
                         icon="i-mdi-arrow-back"
-                        color="neutral"
-                        variant="outline"
+                        color="gray"
+                        variant="ghost"
                         @click="creating = false"
                     />
 
                     <template v-else-if="selectedEmail">
                         <UButton
                             class="hidden md:flex"
-                            color="neutral"
-                            variant="outline"
+                            color="gray"
+                            variant="ghost"
                             icon="i-mdi-arrow-back"
                             :label="$t('common.back')"
                             @click="selectedEmail = undefined"

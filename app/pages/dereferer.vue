@@ -82,9 +82,10 @@ const target = route.query.target as string;
                     </UButton>
 
                     <UButton
-                        color="error"
-                        leading-icon="i-mdi-arrow-back"
                         block
+                        color="gray"
+                        variant="ghost"
+                        leading-icon="i-mdi-arrow-back"
                         :label="$t('common.back')"
                         @click="router.back()"
                     />

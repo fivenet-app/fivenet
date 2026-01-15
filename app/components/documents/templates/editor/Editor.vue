@@ -490,13 +490,10 @@ const formRef = useTemplateRef('formRef');
                 </template>
 
                 <template #right>
-                    <UButton
-                        color="neutral"
-                        icon="i-mdi-arrow-left"
+                    <PartialsBackButton
                         :to="
                             templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
                         "
-                        :label="$t('common.back')"
                     />
 
                     <UButton

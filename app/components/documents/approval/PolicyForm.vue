@@ -148,10 +148,10 @@ const formRef = useTemplateRef('formRef');
             <div class="mx-auto flex w-full max-w-[80%] min-w-3/4 flex-1 flex-col">
                 <UFieldGroup class="w-full flex-1">
                     <UButton
-                        color="neutral"
-                        variant="subtle"
-                        icon="i-mdi-arrow-back"
                         block
+                        color="gray"
+                        variant="ghost"
+                        icon="i-mdi-arrow-back"
                         :label="$t('common.back')"
                         @click="() => $emit('close', false)"
                     />

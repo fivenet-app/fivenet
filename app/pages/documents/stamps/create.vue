@@ -33,7 +33,7 @@ const stampsClient = await getDocumentsStampsClient();
 
 async function createOrUpsertStamp(values: Schema) {
     try {
-        const call = await stampsClient.upsertStamp({
+        const call = stampsClient.upsertStamp({
             stamp: {
                 id: 0,
                 job: '',
@@ -44,7 +44,6 @@ async function createOrUpsertStamp(values: Schema) {
                 },
             },
         });
-
         const { response } = await call;
 
         return response;
@@ -92,7 +91,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
 
         <template #body>
-            <EditorWrapper :max-width="900" :max-height="350" background-color="#ffffff" />
+            <EditorWrapper v-model="state.svgData" :max-width="900" :max-height="350" background-color="#ffffff" />
         </template>
     </UDashboardPanel>
 </template>

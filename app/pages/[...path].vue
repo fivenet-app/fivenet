@@ -31,7 +31,8 @@ const { username } = storeToRefs(authStore);
                         label: $t('common.back'),
                         icon: 'i-mdi-arrow-back',
                         size: 'lg',
-                        color: 'neutral',
+                        color: 'gray',
+                        variant: 'ghost',
                         onClick: () => useRouter().back(),
                     },
                     username
