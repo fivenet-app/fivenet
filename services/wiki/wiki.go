@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
@@ -498,7 +499,7 @@ func (s *Server) CreatePage(
 		VALUES(
 			userInfo.GetJob(),
 			req.ParentId,
-			req.GetContentType(),
+			content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
 			true,
 			true,
 			false,

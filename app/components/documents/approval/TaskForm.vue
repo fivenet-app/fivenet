@@ -109,7 +109,6 @@ onBeforeMount(async () => listJobs());
 <template>
     <UDrawer
         :title="$t('common.approve')"
-        :overlay="false"
         handle-only
         :close="{ onClick: () => $emit('close', false) }"
         :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2', body: 'h-full' }"

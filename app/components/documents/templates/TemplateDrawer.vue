@@ -9,7 +9,7 @@ import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/do
 
 const clipboardStore = useClipboardStore();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'close', v: boolean): void;
 }>();
 
@@ -68,7 +68,7 @@ async function templateSelected(t: TemplateShort | undefined): Promise<void> {
             steps.value.selectClipboard = true;
         } else {
             await documentsDocuments.createDocument(template.value.id);
-            emit('close', false);
+            emits('close', false);
         }
     } else {
         requirementTypes.forEach((type) => {
@@ -90,7 +90,7 @@ async function clipboardDialog(): Promise<void> {
     submit.value = true;
     await documentsDocuments.createDocument(template.value?.id);
 
-    emit('close', false);
+    emits('close', false);
 }
 
 const filteredRequirementTypes = computed(() => {
@@ -100,37 +100,48 @@ const filteredRequirementTypes = computed(() => {
 </script>
 
 <template>
-    <UModal :title="`${$t('common.template', 2)}${template ? ` - ${template?.title}` : ''}`">
+    <UDrawer
+        :close="{ onClick: () => $emit('close', false) }"
+        :ui="{ container: 'flex-1', content: 'min-h-[70%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
+    >
+        <template #title>
+            <span>{{ $t('common.template', 2) }} {{ template ? ` - ${template?.title}` : '' }}</span>
+
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+        </template>
+
         <template #body>
-            <template v-if="steps.selectTemplate">
-                <UButton block @click="clipboardDialog()">
-                    {{ $t('components.documents.templates.templates_modal.no_template') }}
-                </UButton>
+            <div class="mx-auto w-full max-w-[80%] min-w-3/4">
+                <template v-if="steps.selectTemplate">
+                    <UButton block @click="clipboardDialog()">
+                        {{ $t('components.documents.templates.templates_modal.no_template') }}
+                    </UButton>
 
-                <USeparator class="my-4" />
+                    <USeparator class="my-4" />
 
-                <List @selected="templateSelected($event)" />
-            </template>
-            <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
-                <div>
-                    <div v-for="type in filteredRequirementTypes" :key="type">
-                        <component
-                            :is="clipboardComponent(type)"
-                            v-model:submit="submit"
-                            :specs="reqs[type === 'citizens' ? 'users' : type]!"
-                            @statisfied="(v: boolean) => (reqStatus[type] = v)"
-                            @close="$emit('close', false)"
-                        >
-                            <template #header>
-                                <span class="text-sm">
-                                    <RequirementsList
-                                        :name="$t('common.' + type.slice(0, -1), 2)"
-                                        :plural="$t('common.' + type.slice(0, -1), 2)"
-                                        :specs="reqs[type === 'citizens' ? 'users' : type]!"
-                                    />
-                                </span>
-                            </template>
-                        </component>
+                    <List @selected="templateSelected($event)" />
+                </template>
+                <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
+                    <div>
+                        <div v-for="type in filteredRequirementTypes" :key="type">
+                            <component
+                                :is="clipboardComponent(type)"
+                                v-model:submit="submit"
+                                :specs="reqs[type === 'citizens' ? 'users' : type]!"
+                                @statisfied="(v: boolean) => (reqStatus[type] = v)"
+                                @close="$emit('close', false)"
+                            >
+                                <template #header>
+                                    <span class="text-sm">
+                                        <RequirementsList
+                                            :name="$t('common.' + type.slice(0, -1), 2)"
+                                            :plural="$t('common.' + type.slice(0, -1), 2)"
+                                            :specs="reqs[type === 'citizens' ? 'users' : type]!"
+                                        />
+                                    </span>
+                                </template>
+                            </component>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,5 +165,5 @@ const filteredRequirementTypes = computed(() => {
                 {{ $t('common.close', 1) }}
             </UButton>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

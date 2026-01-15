@@ -27,7 +27,7 @@ import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue
 import DraftBadge from '../partials/DraftBadge.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
-import ReminderModal from './ReminderModal.vue';
+import ReminderDrawer from './ReminderDrawer.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
 
 const props = defineProps<{
@@ -247,7 +247,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
 const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
-const reminderModal = overlay.create(ReminderModal, { props: { documentId: props.documentId } });
+const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: props.documentId } });
 </script>
 
 <template>
@@ -438,7 +438,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 :label="$t('common.reminder')"
                                 @click="
                                     () => {
-                                        reminderModal.open({
+                                        reminderDrawer.open({
                                             documentId: documentId,
                                             reminderTime: doc?.document?.workflowUser?.manualReminderTime ?? undefined,
                                             'onUpdate:reminderTime': ($event) => updateReminderTime($event),

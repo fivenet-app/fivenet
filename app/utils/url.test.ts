@@ -97,7 +97,7 @@ describe('useImageURL', () => {
         expect(imageURL.value).toBe('/api/image_proxy/example.png');
     });
 
-    it('should return the origianl "fixed" path when filePath starts with /api/filestore but is missing a slash', () => {
+    it('should return the original "fixed" path when filePath starts with /api/filestore but is missing a slash', () => {
         const filePath = ref('/api/filestoreexample/path/to/image.png');
         const imageURL = useImageURL(filePath);
 
@@ -114,5 +114,18 @@ describe('useImageURL', () => {
         await nextTick();
 
         expect(imageURL.value).toBe('/api/image_proxy/http%3A%2F%2Fexample.com%2Fnew-image.png');
+    });
+
+    it('should return the original data base64 url', () => {
+        const filePath = ref(
+            // Taken from "ashleedawg" on <https://gist.github.com/ondrek/7413434?permalink_comment_id=3914686#gistcomment-3914686>
+            // Thanks for the tiny image! :-)
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII=',
+        );
+        const imageURL = useImageURL(filePath);
+
+        expect(imageURL.value).toBe(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII=',
+        );
     });
 });

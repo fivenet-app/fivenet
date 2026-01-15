@@ -53,6 +53,11 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 		StaleIfError:         cachecontrol.Duration(1 * 24 * time.Hour),
 	}))
 
+	dummyFn := func(ctx *gin.Context) {
+		ctx.AbortWithStatus(http.StatusBadRequest)
+	}
+	g.Any("/", dummyFn)
+	g.Any("/:prefix", dummyFn)
 	g.HEAD("/:prefix/*fileName", s.HEAD)
 	g.GET("/:prefix/*fileName", s.GET)
 }

@@ -19,7 +19,7 @@ import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/serv
 import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';
 import PinnedList from './PinnedList.vue';
-import TemplateModal from './templates/TemplateModal.vue';
+import TemplateDrawer from './templates/TemplateDrawer.vue';
 
 const { t } = useI18n();
 
@@ -143,7 +143,7 @@ const isPinnedDocumentsVisible = ref(false);
 
 const inputRef = useTemplateRef('inputRef');
 
-const templateModal = overlay.create(TemplateModal);
+const templateDrawer = overlay.create(TemplateDrawer);
 
 defineShortcuts({
     '/': () => inputRef.value?.inputRef?.focus(),
@@ -196,7 +196,7 @@ defineShortcuts({
                     </UFieldGroup>
 
                     <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
-                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="templateModal.open({})">
+                        <UButton trailing-icon="i-mdi-plus" color="neutral" truncate @click="templateDrawer.open({})">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}
                             </span>

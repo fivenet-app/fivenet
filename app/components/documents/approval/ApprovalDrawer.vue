@@ -93,7 +93,7 @@ const taskFormDrawer = overlay.create(TaskForm);
         :overlay="false"
         handle-only
         :close="{ onClick: () => $emit('close', false) }"
-        :ui="{ container: 'flex-1', content: 'min-h-[50%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
+        :ui="{ container: 'flex-1', content: 'min-h-[60%]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
     >
         <template #title>
             <div class="inline-flex items-center gap-2">

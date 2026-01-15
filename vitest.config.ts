@@ -3,6 +3,7 @@ import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
     root: '.',
+    appType: 'spa',
 
     test: {
         projects: [

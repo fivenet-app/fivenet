@@ -289,7 +289,11 @@ func (s *Server) CreateDocument(
 ) (*pbdocuments.CreateDocumentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	var docContent *content.Content
+	docContent := &content.Content{
+		Version:     content.ContentVersionTiptapV1,
+		ContentType: content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
+		TiptapJson:  nil,
+	}
 	var docTitle string
 	var docState string
 	var categoryId *int64
@@ -392,8 +396,6 @@ func (s *Server) CreateDocument(
 		})
 	}
 
-	// extracted := req.GetContent().Extract()
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -426,7 +428,7 @@ func (s *Server) CreateDocument(
 			"", // DocSummaryLength
 			docContent,
 			"",
-			req.GetContentType(),
+			docContent.GetContentType(),
 			docState,
 			mysql.NULL,
 			false,

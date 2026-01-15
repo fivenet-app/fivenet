@@ -81,23 +81,36 @@ const formRef = useTemplateRef('formRef');
 </script>
 
 <template>
-    <UModal :title="$t('common.reminder', 2)">
+    <UDrawer
+        :overlay="false"
+        :close="{ onClick: () => $emit('close', false) }"
+        :ui="{ container: 'flex-1', content: 'min-h-[275px]', title: 'flex flex-row gap-2 justify-between', body: 'h-full' }"
+    >
+        <template #title>
+            <span>{{ $t('common.reminder', 2) }}</span>
+
+            <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
+        </template>
+
         <template #body>
-            <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
-                <UFormField name="reminderTime" :label="$t('common.time')">
-                    <InputDatePicker
-                        v-model="state.reminderTime"
-                        time
-                        clearable
-                        :max-value="new CalendarDate(yesterday.getFullYear(), yesterday.getMonth() + 1, yesterday.getDate())"
-                    />
-                </UFormField>
+            <div class="mx-auto w-full max-w-[80%] min-w-3/4">
+                <UForm ref="formRef" :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UFormField name="reminderTime" :label="$t('common.time')">
+                        <InputDatePicker
+                            v-model="state.reminderTime"
+                            time
+                            clearable
+                            :max-value="
+                                new CalendarDate(yesterday.getFullYear(), yesterday.getMonth() + 1, yesterday.getDate())
+                            "
+                        />
+                    </UFormField>
 
-                <UFormField name="message" :label="$t('common.message')">
-                    <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" class="w-full" />
-                </UFormField>
+                    <UFormField name="message" :label="$t('common.message')">
+                        <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" class="w-full" />
+                    </UFormField>
 
-                <!--
+                    <!--
                     Only show if recurring reminders are enabled
                     <UFormField
                         name="message"
@@ -107,7 +120,8 @@ const formRef = useTemplateRef('formRef');
                         <UInputNumber v-model="state.maxReminderCount" :min="1" :max="10" :step="1" />
                     </UFormField>
                     -->
-            </UForm>
+                </UForm>
+            </div>
         </template>
 
         <template #footer>
@@ -124,5 +138,5 @@ const formRef = useTemplateRef('formRef');
                 />
             </UFieldGroup>
         </template>
-    </UModal>
+    </UDrawer>
 </template>

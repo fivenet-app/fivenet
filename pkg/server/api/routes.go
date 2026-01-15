@@ -86,6 +86,10 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 	// API Base
 	g := e.Group("/api")
 	{
+		e.Any("/", func(ctx *gin.Context) {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+		})
+
 		g.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, PingResponse)
 		})

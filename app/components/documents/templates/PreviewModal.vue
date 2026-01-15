@@ -3,6 +3,7 @@ import { logger } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
@@ -65,71 +66,66 @@ async function getTemplate(): Promise<Template> {
             />
             <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 
-            <template v-else>
-                <div>
-                    <label class="mb-2 block text-sm text-xl leading-6 font-medium">
-                        {{ $t('common.title') }}
-                    </label>
-                    <h2 class="mt-4 rounded-lg p-2 text-2xl font-bold break-words">
-                        {{ template?.title }}
-                    </h2>
+            <div v-else class="mx-auto w-full max-w-(--breakpoint-xl)">
+                <div class="mb-2">
+                    <UFormField name="title" :label="$t('common.title')">
+                        <UInput :model-value="template?.title" type="text" size="xl" class="w-full" disabled />
+                    </UFormField>
+
+                    <div class="flex flex-row gap-2">
+                        <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
+                            <CategoryBadge v-if="template?.category" :category="template.category" />
+                            <span v-else>{{ $t('common.categories', 0) }}</span>
+                        </UFormField>
+
+                        <UFormField class="flex-1" name="state" :label="$t('common.state')">
+                            <UInput :model-value="template?.state" type="text" class="w-full" disabled />
+                        </UFormField>
+                    </div>
                 </div>
 
-                <USeparator class="mb-4" />
-
-                <div>
-                    <label class="mb-2 block text-sm text-xl leading-6 font-medium">
-                        {{ $t('common.state') }}
-                    </label>
-
-                    <p class="mt-4 rounded-lg p-2 text-base font-bold break-words">
-                        {{ template?.state }}
-                    </p>
-                </div>
-
-                <USeparator class="mb-4" />
-
-                <label class="mb-2 block text-sm text-xl leading-6 font-medium">
-                    {{ $t('common.content') }}
-                </label>
-                <div class="mt-4 rounded-lg p-2 break-words">
+                <UFormField name="content" :label="$t('common.content')">
                     <div
-                        class="tiptap prose prose-sm max-w-full min-w-full break-words sm:prose-base lg:prose-lg dark:prose-invert"
-                        :class="[
-                            'hover:prose-a:text-blue-500',
-                            'dark:hover:prose-a:text-blue-300',
-                            'prose-headings:mt-0.5',
-                            'prose-lead:mt-0.5',
-                            'prose-h1:mt-0.5',
-                            'prose-h2:mt-0.5',
-                            'prose-h3:mt-0.5',
-                            'prose-h4:mt-0.5',
-                            'prose-p:mt-0.5',
-                            'prose-a:mt-0.5',
-                            'prose-blockquote:mt-0.5',
-                            'prose-figure:mt-0.5',
-                            'prose-figcaption:mt-0.5',
-                            'prose-strong:mt-0.5',
-                            'prose-em:mt-0.5',
-                            'prose-kbd:mt-0.5',
-                            'prose-code:mt-0.5',
-                            'prose-pre:mt-0.5',
-                            'prose-ol:mt-0.5',
-                            'prose-ul:mt-0.5',
-                            'prose-li:mt-0.5',
-                            'prose-table:mt-0.5',
-                            'prose-thead:mt-0.5',
-                            'prose-tr:mt-0.5',
-                            'prose-th:mt-0.5',
-                            'prose-td:mt-0.5',
-                            'prose-img:mt-0.5',
-                            'prose-video:mt-0.5',
-                            'prose-hr:mt-0.5',
-                        ]"
-                        v-html="template?.content"
-                    ></div>
-                </div>
-            </template>
+                        class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
+                    >
+                        <div
+                            class="tiptap prose prose-sm max-w-full min-w-full break-words sm:prose-base lg:prose-lg dark:prose-invert"
+                            :class="[
+                                'hover:prose-a:text-blue-500',
+                                'dark:hover:prose-a:text-blue-300',
+                                'prose-headings:mt-0.5',
+                                'prose-lead:mt-0.5',
+                                'prose-h1:mt-0.5',
+                                'prose-h2:mt-0.5',
+                                'prose-h3:mt-0.5',
+                                'prose-h4:mt-0.5',
+                                'prose-p:mt-0.5',
+                                'prose-a:mt-0.5',
+                                'prose-blockquote:mt-0.5',
+                                'prose-figure:mt-0.5',
+                                'prose-figcaption:mt-0.5',
+                                'prose-strong:mt-0.5',
+                                'prose-em:mt-0.5',
+                                'prose-kbd:mt-0.5',
+                                'prose-code:mt-0.5',
+                                'prose-pre:mt-0.5',
+                                'prose-ol:mt-0.5',
+                                'prose-ul:mt-0.5',
+                                'prose-li:mt-0.5',
+                                'prose-table:mt-0.5',
+                                'prose-thead:mt-0.5',
+                                'prose-tr:mt-0.5',
+                                'prose-th:mt-0.5',
+                                'prose-td:mt-0.5',
+                                'prose-img:mt-0.5',
+                                'prose-video:mt-0.5',
+                                'prose-hr:mt-0.5',
+                            ]"
+                            v-html="template?.content"
+                        ></div>
+                    </div>
+                </UFormField>
+            </div>
         </template>
 
         <template #footer>

@@ -3,7 +3,7 @@ import SetJobModal from '~/components/citizens/info/props/SetJobModal.vue';
 import SetMugshotModal from '~/components/citizens/info/props/SetMugshotModal.vue';
 import SetTrafficPointsModal from '~/components/citizens/info/props/SetTrafficPointsModal.vue';
 import SetWantedModal from '~/components/citizens/info/props/SetWantedModal.vue';
-import TemplateModal from '~/components/documents/templates/TemplateModal.vue';
+import TemplateDrawer from '~/components/documents/templates/TemplateDrawer.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -36,7 +36,7 @@ const notifications = useNotificationsStore();
 
 const overlay = useOverlay();
 
-const templateModal = overlay.create(TemplateModal);
+const templateDrawer = overlay.create(TemplateDrawer);
 const setWantedModal = overlay.create(SetWantedModal);
 const setJobModal = overlay.create(SetJobModal);
 const setTrafficPointsModal = overlay.create(SetTrafficPointsModal);
@@ -47,7 +47,7 @@ function openTemplates(): void {
 
     clipboardStore.addUser(props.user, true);
 
-    templateModal.open({});
+    templateDrawer.open({});
 }
 
 function copyLinkToClipboard(): void {
