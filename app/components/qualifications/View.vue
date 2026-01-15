@@ -223,6 +223,7 @@ const requestUserModal = overlay.create(RequestUserModal);
                         (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL) ||
                         canDo.request)
                 "
+                class="p-1 print:hidden"
             >
                 <template #default>
                     <div
