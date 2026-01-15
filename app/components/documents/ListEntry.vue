@@ -84,30 +84,24 @@ const links = computed(() =>
                             />
                         </div>
 
-                        <UBadge
-                            v-if="document.meta?.state"
-                            class="inline-flex gap-1"
-                            size="md"
-                            icon="i-mdi-note-check"
-                            :label="document.meta.state"
-                        />
+                        <div class="inline-flex gap-2">
+                            <UBadge
+                                v-if="document.meta?.state"
+                                class="inline-flex gap-1"
+                                size="md"
+                                icon="i-mdi-note-check"
+                                :label="document.meta.state"
+                            />
 
-                        <div
-                            v-if="document.deletedAt"
-                            class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold"
-                        >
-                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                            {{ $t('common.deleted') }}
+                            <UBadge
+                                v-if="document?.meta?.apPoliciesActive"
+                                class="inline-flex gap-1"
+                                size="md"
+                                :color="document?.meta?.approved ? 'info' : 'warning'"
+                                icon="i-mdi-approval"
+                                :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
+                            />
                         </div>
-
-                        <UBadge
-                            v-if="document?.meta?.apPoliciesActive"
-                            class="inline-flex gap-1"
-                            size="md"
-                            :color="document?.meta?.approved ? 'info' : 'warning'"
-                            icon="i-mdi-approval"
-                            :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                        />
 
                         <div class="flex flex-row items-center gap-1">
                             <OpenClosedBadge :closed="document.meta?.closed" />
@@ -188,6 +182,14 @@ const links = computed(() =>
 
                         <div v-if="$slots.default" class="flex flex-1 items-center justify-center gap-1.5">
                             <slot name="default" />
+                        </div>
+
+                        <div
+                            v-if="document.deletedAt"
+                            class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold"
+                        >
+                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
+                            {{ $t('common.deleted') }}
                         </div>
 
                         <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
