@@ -6,7 +6,13 @@ import { UploadFileRequest, UploadMeta, type UploadFileResponse } from '~~/gen/t
 
 const MAX_READ_SIZE = 128 * 1024; // 128 KB
 
-export type UploadNamespaces = 'documents' | 'jobprops' | 'qualifications' | 'qualifications-exam-questions' | 'wiki';
+export type UploadNamespaces =
+    | 'documents'
+    | 'jobprops'
+    | 'qualifications'
+    | 'qualifications-exam-questions'
+    | 'wiki'
+    | 'jobs-conduct';
 
 /**
  * Factory that returns resize + upload helpers bound to a parent record.
@@ -14,7 +20,7 @@ export type UploadNamespaces = 'documents' | 'jobprops' | 'qualifications' | 'qu
 export function useFileUploader(
     filestore: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>,
     namespace: UploadNamespaces,
-    parentId: number,
+    parentId: number | Ref<number>,
 ) {
     // 1. Resize and convert to webp (if available) in browser
     const resizeImage = async (file: File): Promise<{ blob: Blob; fileName: string; mime: string }> => {
@@ -74,7 +80,7 @@ export function useFileUploader(
 
             // Meta packet
             const meta = UploadMeta.create();
-            meta.parentId = parentId;
+            meta.parentId = unref(parentId);
             meta.namespace = namespace;
             meta.originalName = originalName;
             meta.contentType = mime || blob.type;

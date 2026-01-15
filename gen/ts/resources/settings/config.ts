@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "./banner";
 import { Duration } from "../../google/protobuf/duration";
+import { Data } from "./data";
 /**
  * @generated from protobuf message resources.settings.AppConfig
  */
@@ -61,6 +62,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.settings.QuickButtons quick_buttons = 11
      */
     quickButtons?: QuickButtons;
+    /**
+     * @generated from protobuf field: resources.settings.Data data = 12
+     */
+    data?: Data;
 }
 /**
  * @generated from protobuf message resources.settings.Auth
@@ -353,7 +358,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 7, name: "discord", kind: "message", T: () => Discord },
             { no: 9, name: "system", kind: "message", T: () => System },
             { no: 10, name: "display", kind: "message", T: () => Display },
-            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons }
+            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons },
+            { no: 12, name: "data", kind: "message", T: () => Data }
         ], { "codegen.dbscanner.dbscanner": { enabled: true, partial: true } });
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -401,6 +407,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.settings.QuickButtons quick_buttons */ 11:
                     message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
                     break;
+                case /* resources.settings.Data data */ 12:
+                    message.data = Data.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -446,6 +455,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.settings.QuickButtons quick_buttons = 11; */
         if (message.quickButtons)
             QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Data data = 12; */
+        if (message.data)
+            Data.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -562,8 +574,8 @@ export const Perms = new Perms$Type();
 class Perm$Type extends MessageType<Perm> {
     constructor() {
         super("resources.settings.Perm", [
-            { no: 1, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<Perm>): Perm {
@@ -671,8 +683,8 @@ export const Website = new Website$Type();
 class Links$Type extends MessageType<Links> {
     constructor() {
         super("resources.settings.Links", [
-            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 2, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<Links>): Links {
@@ -725,8 +737,8 @@ class JobInfo$Type extends MessageType<JobInfo> {
     constructor() {
         super("resources.settings.JobInfo", [
             { no: 1, name: "unemployed_job", kind: "message", T: () => UnemployedJob, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 3, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 2, name: "public_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 3, name: "hidden_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<JobInfo>): JobInfo {
@@ -896,10 +908,10 @@ class Discord$Type extends MessageType<Discord> {
         super("resources.settings.Discord", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "sync_interval", kind: "message", T: () => Duration, options: { "buf.validate.field": { required: true, duration: { lt: { seconds: "180000000" }, gte: { seconds: "60" } } } } },
-            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "100" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 5, name: "bot_presence", kind: "message", T: () => DiscordBotPresence },
-            { no: 6, name: "bot_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 6, name: "bot_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 7, name: "bot_permissions", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
@@ -986,8 +998,8 @@ class DiscordBotPresence$Type extends MessageType<DiscordBotPresence> {
     constructor() {
         super("resources.settings.DiscordBotPresence", [
             { no: 1, name: "type", kind: "enum", T: () => ["resources.settings.DiscordBotPresenceType", DiscordBotPresenceType, "DISCORD_BOT_PRESENCE_TYPE_"] },
-            { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<DiscordBotPresence>): DiscordBotPresence {
@@ -1100,8 +1112,8 @@ export const System = new System$Type();
 class Display$Type extends MessageType<Display> {
     constructor() {
         super("resources.settings.Display", [
-            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "intl_locale", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"intlLocale\"" } },
+            { no: 2, name: "currency_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "3" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true }, "tagger.tags": "json:\"currencyName\"" } }
         ]);
     }
     create(value?: PartialMessage<Display>): Display {

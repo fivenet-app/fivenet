@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { Range } from '@tiptap/core';
+import type { JSONContent, Range } from '@tiptap/core';
 import type { Editor } from '@tiptap/vue-3';
 import z from 'zod';
 import { fontColors, fonts, highlightColors } from '~/types/editor';
-import type { Content, Version } from '~/types/history';
+import type { HistoryContent, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'update:content', val: string): void;
+    (e: 'update:content', val: JSONContent | string | undefined): void;
 }>();
 
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
@@ -181,10 +181,9 @@ const clear = () => {
 
 const replaceAll = () => ed.value?.commands.replaceAll();
 
-function applyVersion(version: Version<unknown>): void {
-    const v = version as Version<Content>;
-    emits('update:content', v.content.content);
-    files.value = v.content.files;
+function applyVersion(version: Version<HistoryContent>): void {
+    emits('update:content', version.content.content);
+    files.value = version.content.files;
 
     notifications.add({
         title: { key: 'notifications.action_successful.title', parameters: {} },
@@ -296,6 +295,17 @@ const isLinkOpen = ref(false);
                     variant="ghost"
                     icon="i-mdi-format-pilcrow"
                     @click="editorSettings.showInvisibleCharacters = !editorSettings.showInvisibleCharacters"
+                />
+            </UTooltip>
+
+            <UTooltip :text="$t('components.partials.tiptap_editor.focus_mode')">
+                <UButton
+                    :class="{ 'bg-neutral-300 dark:bg-neutral-900': editorSettings.focusMode }"
+                    :disabled="disabled"
+                    color="neutral"
+                    variant="ghost"
+                    icon="i-mdi-border-radius"
+                    @click="editorSettings.focusMode = !editorSettings.focusMode"
                 />
             </UTooltip>
         </UFieldGroup>
@@ -874,7 +884,7 @@ const isLinkOpen = ref(false);
                     @click="
                         versionHistoryModal.open({
                             historyType: historyType,
-                            currentContent: { content: ed?.getHTML() || '', files: files },
+                            currentContent: { content: ed?.getJSON(), files: files },
                             onApply: applyVersion,
                         })
                     "

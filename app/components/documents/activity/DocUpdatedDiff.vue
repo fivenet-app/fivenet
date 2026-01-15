@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TextDiff from '~/components/partials/content/TextDiff.vue';
 import DiffBlock from '~/components/partials/DiffBlock.vue';
 import type { DocUpdated } from '~~/gen/ts/resources/documents/activity';
 
@@ -9,12 +10,14 @@ defineProps<{
 
 <template>
     <div>
-        <div v-if="update.titleDiff">
+        <div v-if="update.titleDiff || update.titleCdiff">
             <p class="text-base font-semibold">
                 {{ $t('common.title') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
+
             <div class="my-2 rounded-lg break-words">
-                <span v-if="update.titleDiff?.length === 0">
+                <TextDiff v-if="update.titleCdiff" :ops="update.titleCdiff.ops" />
+                <span v-else-if="update.titleDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
@@ -22,12 +25,14 @@ defineProps<{
             </div>
         </div>
 
-        <div v-if="update.stateDiff">
+        <div v-if="update.stateDiff || update.stateCdiff">
             <p class="text-base font-semibold">
                 {{ $t('common.state') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
+
             <div class="my-2 rounded-lg break-words">
-                <span v-if="update.stateDiff?.length === 0">
+                <TextDiff v-if="update.stateCdiff" :ops="update.stateCdiff.ops" />
+                <span v-else-if="update.stateDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
@@ -35,15 +40,17 @@ defineProps<{
             </div>
         </div>
 
-        <div v-if="update.contentDiff">
+        <div v-if="update.contentDiff || update.contentCdiff">
             <p class="text-base font-semibold">
                 {{ $t('common.content') }} {{ $t('components.documents.activity_list.difference') }}:
             </p>
+
             <div class="my-2 rounded-lg break-words">
-                <span v-if="update.contentDiff?.length === 0">
+                <TextDiff v-if="update.contentCdiff" :ops="update.contentCdiff.ops" />
+                <span v-else-if="update.contentDiff?.length === 0">
                     {{ $t('common.na') }}
                 </span>
-                <div v-else-if="update.contentDiff.startsWith('---')" class="p-4">
+                <div v-else-if="update.contentDiff?.startsWith('---')" class="p-4">
                     <DiffBlock :diff="update.contentDiff" />
                 </div>
                 <!-- eslint-disable vue/no-v-html -->

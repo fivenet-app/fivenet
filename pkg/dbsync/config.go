@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -55,6 +56,10 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 		s.v.AddConfigPath("/config")
 	}
 
+	if err := s.LoadConfig(); err != nil {
+		return ResultConfig{}, err
+	}
+
 	cc := s.cfg.Load()
 	r := ResultConfig{
 		Config: s,
@@ -62,15 +67,18 @@ func NewConfig(p ParamsConfig) (ResultConfig, error) {
 			Mode:     cc.Mode,
 			LogLevel: cc.LogLevel,
 			Log:      cc.Log,
+
 			// Ignore db requirements, dbsync doesn't need them
 			IgnoreRequirements: true,
 			UpdateCheck:        cc.UpdateCheck,
+
+			Database: config.Database{
+				DatabaseConnection: cc.Source.DatabaseConnection,
+			},
 		},
 	}
-
-	if err := s.LoadConfig(); err != nil {
-		return r, err
-	}
+	// Do not run DB migrations for dbsync
+	r.Cfg.Database.SkipMigrations = true
 
 	return r, nil
 }
@@ -166,6 +174,10 @@ type DBSyncSourceTables struct {
 
 func (c *DBSyncSourceTables) GetAllTables() []DBSyncTable {
 	tables := []DBSyncTable{}
+
+	if c == nil {
+		return tables
+	}
 
 	if c.Jobs.Enabled {
 		tables = append(tables, c.Jobs.DBSyncTable)
@@ -267,9 +279,12 @@ func (c *JobGradesTable) GetQuery(
 	where ...string,
 ) string {
 	if c.Query != nil {
-		return prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		q := prepareStringQuery(*c.Query, c.DBSyncTable, state, offset, limit)
+		q = strings.ReplaceAll(q, "$jobName", "?")
+		return q
 	}
 
+	where = append(where, fmt.Sprintf("`%s` = ?", c.Columns.JobName))
 	where = append(where, getWhereCondition(c.DBSyncTable, state))
 	return buildQueryFromColumns(c.TableName, map[string]string{
 		"job_grade.job_name": c.Columns.JobName,

@@ -4,7 +4,7 @@
 package wiki
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -45,7 +45,7 @@ func (m *Page) Sanitize() error {
 	}
 
 	// Field: Job
-	m.Job = htmlsanitizer.StripTags(m.Job)
+	m.Job = htmlsanitizer.StripHTMLTags(m.Job)
 
 	// Field: JobLabel
 	if m.JobLabel != nil {
@@ -99,18 +99,18 @@ func (m *PageMeta) Sanitize() error {
 	}
 
 	// Field: Description
-	m.Description = htmlsanitizer.StripTags(m.Description)
+	m.Description = htmlsanitizer.StripHTMLTags(m.Description)
 
 	// Field: Slug
 	if m.Slug != nil {
-		*m.Slug = htmlsanitizer.StripTags(*m.Slug)
+		*m.Slug = htmlsanitizer.StripHTMLTags(*m.Slug)
 	}
 
 	// Field: Tags
 	for idx, item := range m.Tags {
 		_, _ = idx, item
 
-		m.Tags[idx] = htmlsanitizer.StripTags(m.Tags[idx])
+		m.Tags[idx] = htmlsanitizer.StripHTMLTags(m.Tags[idx])
 
 	}
 
@@ -198,7 +198,7 @@ func (m *PageShort) Sanitize() error {
 
 	// Field: Slug
 	if m.Slug != nil {
-		*m.Slug = htmlsanitizer.StripTags(*m.Slug)
+		*m.Slug = htmlsanitizer.StripHTMLTags(*m.Slug)
 	}
 
 	// Field: Title

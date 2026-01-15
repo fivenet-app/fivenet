@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -19,13 +20,13 @@ import (
 	"go.uber.org/multierr"
 )
 
-type FilestoreCmd struct {
+type MigrationsFilestoreCmd struct {
 	db      *sql.DB
 	storage storage.IStorage
 }
 
-func (c *FilestoreCmd) Run() error {
-	fxOpts := getFxBaseOpts(Cli.StartTimeout, false, true)
+func (c *MigrationsFilestoreCmd) Run() error {
+	fxOpts := getFxBaseOpts(12*time.Hour, false, true)
 
 	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
 		return err
@@ -61,7 +62,7 @@ func (c *FilestoreCmd) Run() error {
 	return nil
 }
 
-func (c *FilestoreCmd) run(ctx context.Context) error {
+func (c *MigrationsFilestoreCmd) run(ctx context.Context) error {
 	var errs error
 	if err := c.migrateJobLogos(ctx); err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("failed to migrate job logos. %w", err))
@@ -78,7 +79,7 @@ func (c *FilestoreCmd) run(ctx context.Context) error {
 	return errs
 }
 
-func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
+func (c *MigrationsFilestoreCmd) migrateJobLogos(ctx context.Context) error {
 	// Query for jobs with non-null logo URLs
 	tJobProps := table.FivenetJobProps
 	tFiles := table.FivenetFiles
@@ -188,7 +189,7 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 	return nil
 }
 
-func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
+func (c *MigrationsFilestoreCmd) migrateAvatars(ctx context.Context) error {
 	var errs error
 
 	// Query for users with non-null profile_picture columns
@@ -301,7 +302,7 @@ func (c *FilestoreCmd) migrateAvatars(ctx context.Context) error {
 	return errs
 }
 
-func (c *FilestoreCmd) migrateMugshots(ctx context.Context) error {
+func (c *MigrationsFilestoreCmd) migrateMugshots(ctx context.Context) error {
 	var errs error
 
 	// Query for users with non-null profile_picture columns

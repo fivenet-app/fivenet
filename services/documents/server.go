@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -124,7 +123,6 @@ type Server struct {
 	enricher      *mstlystcdata.UserAwareEnricher
 	ui            userinfo.UserInfoRetriever
 	notifi        notifi.INotifi
-	htmlDiff      *htmldiffer.Differ
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
@@ -150,7 +148,6 @@ type Params struct {
 	Enricher      *mstlystcdata.UserAwareEnricher
 	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
-	HTMLDiffer    *htmldiffer.Differ
 	JS            *events.JSWrapper
 }
 
@@ -209,7 +206,6 @@ func NewServer(p Params) Result {
 		enricher:      p.Enricher,
 		ui:            p.Ui,
 		notifi:        p.Notif,
-		htmlDiff:      p.HTMLDiffer,
 
 		access: docAccess,
 		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](

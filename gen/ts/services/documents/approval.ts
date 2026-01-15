@@ -15,6 +15,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Approval } from "../../resources/documents/approval";
 import { ApprovalStatus } from "../../resources/documents/approval";
 import { Timestamp } from "../../resources/timestamp/timestamp";
+import { DocumentMeta } from "../../resources/documents/documents";
 import { ApprovalPolicy } from "../../resources/documents/approval";
 import { ApprovalTask } from "../../resources/documents/approval";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -74,6 +75,10 @@ export interface ListApprovalPoliciesResponse {
      * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
+    /**
+     * @generated from protobuf field: resources.documents.DocumentMeta doc_meta = 2
+     */
+    docMeta?: DocumentMeta;
 }
 /**
  * @generated from protobuf message services.documents.UpsertApprovalPolicyRequest
@@ -568,7 +573,8 @@ export const ListApprovalPoliciesRequest = new ListApprovalPoliciesRequest$Type(
 class ListApprovalPoliciesResponse$Type extends MessageType<ListApprovalPoliciesResponse> {
     constructor() {
         super("services.documents.ListApprovalPoliciesResponse", [
-            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy }
+            { no: 1, name: "policy", kind: "message", T: () => ApprovalPolicy },
+            { no: 2, name: "doc_meta", kind: "message", T: () => DocumentMeta }
         ]);
     }
     create(value?: PartialMessage<ListApprovalPoliciesResponse>): ListApprovalPoliciesResponse {
@@ -585,6 +591,9 @@ class ListApprovalPoliciesResponse$Type extends MessageType<ListApprovalPolicies
                 case /* resources.documents.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
+                case /* resources.documents.DocumentMeta doc_meta */ 2:
+                    message.docMeta = DocumentMeta.internalBinaryRead(reader, reader.uint32(), options, message.docMeta);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -600,6 +609,9 @@ class ListApprovalPoliciesResponse$Type extends MessageType<ListApprovalPolicies
         /* resources.documents.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentMeta doc_meta = 2; */
+        if (message.docMeta)
+            DocumentMeta.internalBinaryWrite(message.docMeta, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -819,7 +831,7 @@ class ApprovalTaskSeed$Type extends MessageType<ApprovalTaskSeed> {
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 4, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "120" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 5, name: "signature_required", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "slots", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 5, gte: 1 } } } },
             { no: 7, name: "due_at", kind: "message", T: () => Timestamp },

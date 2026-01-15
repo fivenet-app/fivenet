@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package resources.settings;
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
+
+message Data {
+  DataMode mode = 1;
+}
+
+enum DataMode {
+  DATA_MODE_UNSPECIFIED = 0;
+  DATA_MODE_UNAVAILABLE = 1;
+  DATA_MODE_READONLY = 2;
+  DATA_MODE_READWRITE = 3;
+}

@@ -8,6 +8,7 @@ package jobs
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,9 +21,11 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ConductService_ListConductEntries_FullMethodName = "/services.jobs.ConductService/ListConductEntries"
+	ConductService_GetConductEntry_FullMethodName    = "/services.jobs.ConductService/GetConductEntry"
 	ConductService_CreateConductEntry_FullMethodName = "/services.jobs.ConductService/CreateConductEntry"
 	ConductService_UpdateConductEntry_FullMethodName = "/services.jobs.ConductService/UpdateConductEntry"
 	ConductService_DeleteConductEntry_FullMethodName = "/services.jobs.ConductService/DeleteConductEntry"
+	ConductService_UploadFile_FullMethodName         = "/services.jobs.ConductService/UploadFile"
 )
 
 // ConductServiceClient is the client API for ConductService service.
@@ -30,9 +33,11 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConductServiceClient interface {
 	ListConductEntries(ctx context.Context, in *ListConductEntriesRequest, opts ...grpc.CallOption) (*ListConductEntriesResponse, error)
+	GetConductEntry(ctx context.Context, in *GetConductEntryRequest, opts ...grpc.CallOption) (*GetConductEntryResponse, error)
 	CreateConductEntry(ctx context.Context, in *CreateConductEntryRequest, opts ...grpc.CallOption) (*CreateConductEntryResponse, error)
 	UpdateConductEntry(ctx context.Context, in *UpdateConductEntryRequest, opts ...grpc.CallOption) (*UpdateConductEntryResponse, error)
 	DeleteConductEntry(ctx context.Context, in *DeleteConductEntryRequest, opts ...grpc.CallOption) (*DeleteConductEntryResponse, error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
 type conductServiceClient struct {
@@ -47,6 +52,16 @@ func (c *conductServiceClient) ListConductEntries(ctx context.Context, in *ListC
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListConductEntriesResponse)
 	err := c.cc.Invoke(ctx, ConductService_ListConductEntries_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *conductServiceClient) GetConductEntry(ctx context.Context, in *GetConductEntryRequest, opts ...grpc.CallOption) (*GetConductEntryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetConductEntryResponse)
+	err := c.cc.Invoke(ctx, ConductService_GetConductEntry_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -83,14 +98,29 @@ func (c *conductServiceClient) DeleteConductEntry(ctx context.Context, in *Delet
 	return out, nil
 }
 
+func (c *conductServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &ConductService_ServiceDesc.Streams[0], ConductService_UploadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ConductService_UploadFileClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
+
 // ConductServiceServer is the server API for ConductService service.
 // All implementations must embed UnimplementedConductServiceServer
 // for forward compatibility.
 type ConductServiceServer interface {
 	ListConductEntries(context.Context, *ListConductEntriesRequest) (*ListConductEntriesResponse, error)
+	GetConductEntry(context.Context, *GetConductEntryRequest) (*GetConductEntryResponse, error)
 	CreateConductEntry(context.Context, *CreateConductEntryRequest) (*CreateConductEntryResponse, error)
 	UpdateConductEntry(context.Context, *UpdateConductEntryRequest) (*UpdateConductEntryResponse, error)
 	DeleteConductEntry(context.Context, *DeleteConductEntryRequest) (*DeleteConductEntryResponse, error)
+	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedConductServiceServer()
 }
 
@@ -104,6 +134,9 @@ type UnimplementedConductServiceServer struct{}
 func (UnimplementedConductServiceServer) ListConductEntries(context.Context, *ListConductEntriesRequest) (*ListConductEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListConductEntries not implemented")
 }
+func (UnimplementedConductServiceServer) GetConductEntry(context.Context, *GetConductEntryRequest) (*GetConductEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetConductEntry not implemented")
+}
 func (UnimplementedConductServiceServer) CreateConductEntry(context.Context, *CreateConductEntryRequest) (*CreateConductEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateConductEntry not implemented")
 }
@@ -112,6 +145,9 @@ func (UnimplementedConductServiceServer) UpdateConductEntry(context.Context, *Up
 }
 func (UnimplementedConductServiceServer) DeleteConductEntry(context.Context, *DeleteConductEntryRequest) (*DeleteConductEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteConductEntry not implemented")
+}
+func (UnimplementedConductServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedConductServiceServer) mustEmbedUnimplementedConductServiceServer() {}
 func (UnimplementedConductServiceServer) testEmbeddedByValue()                        {}
@@ -148,6 +184,24 @@ func _ConductService_ListConductEntries_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConductServiceServer).ListConductEntries(ctx, req.(*ListConductEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConductService_GetConductEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetConductEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConductServiceServer).GetConductEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ConductService_GetConductEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConductServiceServer).GetConductEntry(ctx, req.(*GetConductEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -206,6 +260,13 @@ func _ConductService_DeleteConductEntry_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConductService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ConductServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type ConductService_UploadFileServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
+
 // ConductService_ServiceDesc is the grpc.ServiceDesc for ConductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -216,6 +277,10 @@ var ConductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListConductEntries",
 			Handler:    _ConductService_ListConductEntries_Handler,
+		},
+		{
+			MethodName: "GetConductEntry",
+			Handler:    _ConductService_GetConductEntry_Handler,
 		},
 		{
 			MethodName: "CreateConductEntry",
@@ -230,6 +295,12 @@ var ConductService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ConductService_DeleteConductEntry_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _ConductService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/jobs/conduct.proto",
 }

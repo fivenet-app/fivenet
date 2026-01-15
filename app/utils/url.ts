@@ -24,32 +24,49 @@ export function generateDiscordConnectURL(provider: string, redirect?: string, p
     return url.pathname + url.search;
 }
 
-export function useGenerateImageURL(filePath: string | File | undefined | Ref<string | File | undefined>) {
-    const imageURL = ref('');
+export const safeImagePaths = ['/api/image_proxy', '/api/filestore'] as const;
 
-    const cleanupURL = (path: string | File | undefined) => {
-        if (path === undefined) {
-            imageURL.value = '/images/broken_link.png';
-            return;
-        }
+export const brokenImageURL = '/images/broken_image.png' as const;
 
-        const resolvedPath = typeof path === 'object' ? path.filePath : path;
+export function cleanupImageURL(path: string | File | undefined, fallback?: string | undefined): string | undefined {
+    if (path === undefined) return fallback;
 
-        if (
-            !resolvedPath.startsWith('http') &&
-            !resolvedPath.startsWith('/images') &&
-            !resolvedPath.startsWith('/api/filestore')
-        ) {
-            imageURL.value = `/api/filestore/${resolvedPath.replace(/^\//, '')}`;
+    const resolvedPath = typeof path === 'object' ? path.filePath : path;
+
+    if (resolvedPath.startsWith('data:image') || resolvedPath.startsWith('/images')) {
+        return resolvedPath;
+    } else if (safeImagePaths.some((safePath) => resolvedPath.startsWith(safePath))) {
+        const correctedPath = safeImagePaths.find((safePath) => resolvedPath.startsWith(safePath));
+        if (correctedPath) {
+            const remainingPath = resolvedPath.slice(correctedPath.length).replace(/^\//, '');
+            return `${correctedPath}/${remainingPath}`;
         } else {
-            imageURL.value = resolvedPath;
+            return resolvedPath;
         }
-    };
+    } else if (resolvedPath.startsWith('http')) {
+        const url = new URL(resolvedPath);
+        const isSameHost = url.host === window.location.host;
+        const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path + '/'));
+        if (isSameHost && isServedPath) {
+            return url.pathname.replace(/(?<!:)\/\//, '/');
+        }
+
+        return `/api/image_proxy/${encodeURIComponent(resolvedPath)}`;
+    }
+
+    return `/api/filestore/${resolvedPath.replace(/^\//, '')}`;
+}
+
+export function useImageURL(
+    filePath: string | File | undefined | Ref<string | File | undefined>,
+    fallback?: string | undefined,
+): Ref<string | undefined> {
+    const imageURL = ref<string | undefined>(undefined);
 
     watch(
         () => (typeof filePath === 'object' && 'value' in filePath ? filePath.value : filePath),
         (newPath) => {
-            cleanupURL(newPath);
+            imageURL.value = cleanupImageURL(newPath, fallback);
         },
         { immediate: true },
     );

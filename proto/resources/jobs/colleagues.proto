@@ -40,7 +40,7 @@ message Colleague {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -53,7 +53,7 @@ message ColleagueProps {
   optional resources.timestamp.Timestamp absence_end = 5;
   optional string note = 6 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   optional Labels labels = 7;
   optional string name_prefix = 8 [(buf.validate.field).string.max_len = 12];

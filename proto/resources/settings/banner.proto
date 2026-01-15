@@ -14,7 +14,7 @@ message BannerMessage {
     (buf.validate.field).string.max_len = 64,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string title = 2 [
@@ -32,14 +32,14 @@ message BannerMessage {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string color = 4 [
     (buf.validate.field).string.max_len = 12,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   resources.timestamp.Timestamp created_at = 5 [(tagger.tags) = "json:\"createdAt\""];

@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "../settings/banner";
+import { Data } from "../settings/data";
 import { QuickButtons } from "../settings/config";
 /**
  * @generated from protobuf message resources.clientconfig.ClientConfig
@@ -26,9 +27,9 @@ export interface ClientConfig {
      */
     defaultLocale: string;
     /**
-     * @generated from protobuf field: resources.clientconfig.LoginConfig login = 3
+     * @generated from protobuf field: resources.clientconfig.Auth auth = 3
      */
-    login?: LoginConfig;
+    auth?: Auth;
     /**
      * @generated from protobuf field: resources.clientconfig.Discord discord = 4
      */
@@ -57,11 +58,15 @@ export interface ClientConfig {
      * @generated from protobuf field: resources.settings.QuickButtons quick_buttons = 11
      */
     quickButtons?: QuickButtons;
+    /**
+     * @generated from protobuf field: resources.settings.Data data = 12
+     */
+    data?: Data;
 }
 /**
- * @generated from protobuf message resources.clientconfig.LoginConfig
+ * @generated from protobuf message resources.clientconfig.Auth
  */
-export interface LoginConfig {
+export interface Auth {
     /**
      * @generated from protobuf field: bool signup_enabled = 1
      */
@@ -135,10 +140,6 @@ export interface Links {
  * @generated from protobuf message resources.clientconfig.FeatureGates
  */
 export interface FeatureGates {
-    /**
-     * @generated from protobuf field: bool image_proxy = 1
-     */
-    imageProxy: boolean;
 }
 /**
  * @generated from protobuf message resources.clientconfig.Game
@@ -212,14 +213,15 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         super("resources.clientconfig.ClientConfig", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"defaultLocale\"" } },
-            { no: 3, name: "login", kind: "message", T: () => LoginConfig },
+            { no: 3, name: "auth", kind: "message", T: () => Auth },
             { no: 4, name: "discord", kind: "message", T: () => Discord },
             { no: 5, name: "website", kind: "message", T: () => Website },
             { no: 6, name: "feature_gates", kind: "message", T: () => FeatureGates, options: { "tagger.tags": "json:\"featureGates\"" } },
             { no: 7, name: "game", kind: "message", T: () => Game },
             { no: 8, name: "system", kind: "message", T: () => System },
             { no: 9, name: "display", kind: "message", T: () => Display, options: { "tagger.tags": "json:\"display\"" } },
-            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons, options: { "tagger.tags": "json:\"quickButtons\"" } }
+            { no: 11, name: "quick_buttons", kind: "message", T: () => QuickButtons, options: { "tagger.tags": "json:\"quickButtons\"" } },
+            { no: 12, name: "data", kind: "message", T: () => Data, options: { "tagger.tags": "json:\"data\"" } }
         ]);
     }
     create(value?: PartialMessage<ClientConfig>): ClientConfig {
@@ -241,8 +243,8 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
                 case /* string default_locale */ 2:
                     message.defaultLocale = reader.string();
                     break;
-                case /* resources.clientconfig.LoginConfig login */ 3:
-                    message.login = LoginConfig.internalBinaryRead(reader, reader.uint32(), options, message.login);
+                case /* resources.clientconfig.Auth auth */ 3:
+                    message.auth = Auth.internalBinaryRead(reader, reader.uint32(), options, message.auth);
                     break;
                 case /* resources.clientconfig.Discord discord */ 4:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
@@ -265,6 +267,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
                 case /* resources.settings.QuickButtons quick_buttons */ 11:
                     message.quickButtons = QuickButtons.internalBinaryRead(reader, reader.uint32(), options, message.quickButtons);
                     break;
+                case /* resources.settings.Data data */ 12:
+                    message.data = Data.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -283,9 +288,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* string default_locale = 2; */
         if (message.defaultLocale !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.defaultLocale);
-        /* resources.clientconfig.LoginConfig login = 3; */
-        if (message.login)
-            LoginConfig.internalBinaryWrite(message.login, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.clientconfig.Auth auth = 3; */
+        if (message.auth)
+            Auth.internalBinaryWrite(message.auth, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.clientconfig.Discord discord = 4; */
         if (message.discord)
             Discord.internalBinaryWrite(message.discord, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
@@ -307,6 +312,9 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
         /* resources.settings.QuickButtons quick_buttons = 11; */
         if (message.quickButtons)
             QuickButtons.internalBinaryWrite(message.quickButtons, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.settings.Data data = 12; */
+        if (message.data)
+            Data.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -318,24 +326,24 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
  */
 export const ClientConfig = new ClientConfig$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class LoginConfig$Type extends MessageType<LoginConfig> {
+class Auth$Type extends MessageType<Auth> {
     constructor() {
-        super("resources.clientconfig.LoginConfig", [
+        super("resources.clientconfig.Auth", [
             { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"signupEnabled\"" } },
             { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"lastCharLock\"" } },
             { no: 3, name: "providers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ProviderConfig, options: { "tagger.tags": "json:\"providers\"" } }
         ]);
     }
-    create(value?: PartialMessage<LoginConfig>): LoginConfig {
+    create(value?: PartialMessage<Auth>): Auth {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.signupEnabled = false;
         message.lastCharLock = false;
         message.providers = [];
         if (value !== undefined)
-            reflectionMergePartial<LoginConfig>(this, message, value);
+            reflectionMergePartial<Auth>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LoginConfig): LoginConfig {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Auth): Auth {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -360,7 +368,7 @@ class LoginConfig$Type extends MessageType<LoginConfig> {
         }
         return message;
     }
-    internalBinaryWrite(message: LoginConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Auth, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool signup_enabled = 1; */
         if (message.signupEnabled !== false)
             writer.tag(1, WireType.Varint).bool(message.signupEnabled);
@@ -377,9 +385,9 @@ class LoginConfig$Type extends MessageType<LoginConfig> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.clientconfig.LoginConfig
+ * @generated MessageType for protobuf message resources.clientconfig.Auth
  */
-export const LoginConfig = new LoginConfig$Type();
+export const Auth = new Auth$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ProviderConfig$Type extends MessageType<ProviderConfig> {
     constructor() {
@@ -607,13 +615,10 @@ export const Links = new Links$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class FeatureGates$Type extends MessageType<FeatureGates> {
     constructor() {
-        super("resources.clientconfig.FeatureGates", [
-            { no: 1, name: "image_proxy", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"imageProxy\"" } }
-        ]);
+        super("resources.clientconfig.FeatureGates", []);
     }
     create(value?: PartialMessage<FeatureGates>): FeatureGates {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.imageProxy = false;
         if (value !== undefined)
             reflectionMergePartial<FeatureGates>(this, message, value);
         return message;
@@ -623,9 +628,6 @@ class FeatureGates$Type extends MessageType<FeatureGates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool image_proxy */ 1:
-                    message.imageProxy = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -638,9 +640,6 @@ class FeatureGates$Type extends MessageType<FeatureGates> {
         return message;
     }
     internalBinaryWrite(message: FeatureGates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool image_proxy = 1; */
-        if (message.imageProxy !== false)
-            writer.tag(1, WireType.Varint).bool(message.imageProxy);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -35,7 +35,7 @@ func (s *Server) ListTimeclock(
 
 	tColleague := tables.User().AS("colleague")
 
-	condition := tColleague.Job.EQ(mysql.String(userInfo.GetJob()))
+	condition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
 	statsCondition := tTimeClock.Job.EQ(mysql.String(userInfo.GetJob()))
 
 	// Field Permission Check

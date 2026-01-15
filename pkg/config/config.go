@@ -2,6 +2,10 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
@@ -202,6 +206,34 @@ type Storage struct {
 	MetricsInterval time.Duration `default:"15m"  yaml:"metricsInterval"`
 }
 
+func (c *Storage) Validate() error {
+	var prefix string
+
+	switch c.Type {
+	case StorageTypeFilesystem:
+		prefix = c.Filesystem.Prefix
+	case StorageTypeS3:
+		prefix = c.S3.Prefix
+	case StorageTypeNoop:
+		return nil
+
+	default:
+		return fmt.Errorf("unknown storage type: %s", c.Type)
+	}
+
+	if prefix != "" {
+		p := filepath.Clean(filepath.FromSlash(prefix))
+		if p == "." || p == ".." || strings.HasPrefix(p, ".."+string(os.PathSeparator)) {
+			return fmt.Errorf("invalid storage prefix: %q", prefix)
+		}
+		if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
+			return fmt.Errorf("invalid storage prefix: %q", prefix)
+		}
+	}
+
+	return nil
+}
+
 type FilesystemStorage struct {
 	Path   string `yaml:"path"`
 	Prefix string `yaml:"prefix"`
@@ -220,7 +252,6 @@ type S3Storage struct {
 }
 
 type ImageProxy struct {
-	Enabled     bool              `default:"true"    yaml:"enabled"`
 	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
 	Options     ImageProxyOptions `                  yaml:"options"`
 }
@@ -376,8 +407,6 @@ type UpdateCheck struct {
 }
 
 type Icons struct {
-	// If true, the Iconify API is enabled and will be served from the backend to serve icons.
-	Enabled bool `default:"true"                       yaml:"enabled"`
 	// If true, the backend server will act as a proxy for the Iconify API (URL specified via `APIURL` setting).
 	Proxy bool `default:"false"                      yaml:"proxy"`
 	// If you are using the proxy mode, make sure to support the Iconify project: https://iconify.design/sponsors/

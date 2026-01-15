@@ -473,10 +473,10 @@ const file_resources_permissions_attributes_proto_rawDesc = "" +
 	"stringList\x12>\n" +
 	"\bjob_list\x18\x02 \x01(\v2!.resources.permissions.StringListH\x00R\ajobList\x12K\n" +
 	"\x0ejob_grade_list\x18\x03 \x01(\v2#.resources.permissions.JobGradeListH\x00R\fjobGradeList:\x06\xe2\xf3\x18\x02\b\x01B\x15\n" +
-	"\fvalid_values\x12\x05\xbaH\x02\b\x01\"9\n" +
+	"\fvalid_values\x12\x05\xbaH\x02\b\x01\"0\n" +
 	"\n" +
-	"StringList\x12+\n" +
-	"\astrings\x18\x01 \x03(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\astrings\"\xd3\x02\n" +
+	"StringList\x12\"\n" +
+	"\astrings\x18\x01 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\astrings\"\xd3\x02\n" +
 	"\fJobGradeList\x12!\n" +
 	"\ffine_grained\x18\x02 \x01(\bR\vfineGrained\x12A\n" +
 	"\x04jobs\x18\x01 \x03(\v2-.resources.permissions.JobGradeList.JobsEntryR\x04jobs\x12G\n" +

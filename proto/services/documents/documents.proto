@@ -191,7 +191,7 @@ message DeleteDocumentRequest {
     (buf.validate.field).ignore = IGNORE_IF_ZERO_VALUE,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -233,7 +233,7 @@ message UpdateDocumentRequest {
     (tagger.tags) = "alias:\"title\"",
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   resources.common.content.Content content = 4;
@@ -412,7 +412,7 @@ message SetDocumentReminderRequest {
     (buf.validate.field).string.max_bytes = 1024,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   int32 max_reminder_count = 4 [(buf.validate.field).int32 = {

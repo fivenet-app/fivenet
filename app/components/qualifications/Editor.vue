@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import RequirementEntry from '~/components/qualifications/RequirementEntry.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
@@ -44,14 +47,14 @@ const historyStore = useHistoryStore();
 
 const qualificationsQualificationsClient = await getQualificationsQualificationsClient();
 
-const { maxAccessEntries } = useAppConfig();
+const { maxAccessEntries, maxContentLength } = useAppConfig();
 
 const schema = z.object({
     weight: z.coerce.number(),
     abbreviation: z.coerce.string().min(3).max(20),
     title: z.coerce.string().min(3).max(255),
     description: z.union([z.coerce.string().min(3).max(512), z.coerce.string().length(0).optional()]),
-    content: z.coerce.string().min(3).max(750000),
+    content: z.custom<JSONContent | string>().optional(),
     closed: z.coerce.boolean(),
     draft: z.coerce.boolean(),
     public: z.coerce.boolean(),
@@ -207,7 +210,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'qualification'): Promise<void> {
@@ -219,7 +222,7 @@ async function saveHistory(values: Schema, type = 'qualification'): Promise<void
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.qualificationId,
         {
@@ -298,7 +301,9 @@ function setFromProps(): void {
     state.abbreviation = qualification.value.abbreviation;
     state.title = qualification.value.title;
     state.description = qualification.value.description;
-    state.content = qualification.value.content?.rawContent ?? '';
+    state.content = qualification.value.content?.tiptapJson
+        ? (Struct.toJson(qualification.value.content.tiptapJson) as JSONContent)
+        : (qualification.value.content?.rawHtml ?? '');
     state.closed = qualification.value.closed;
     state.public = qualification.value.public;
     state.abbreviation = qualification.value.abbreviation;
@@ -362,7 +367,9 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             title: values.title,
             description: values.description,
             content: {
-                rawContent: values.content,
+                contentType: ContentType.TIPTAP_JSON,
+                version: '',
+                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
@@ -642,6 +649,7 @@ const formRef = useTemplateRef('formRef');
                                     :disabled="!canDo.edit"
                                     :saving="saving"
                                     history-type="qualification"
+                                    :limit="maxContentLength"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
                                     :filestore-service="(opts) => qualificationsQualificationsClient.uploadFile(opts)"

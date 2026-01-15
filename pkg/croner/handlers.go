@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

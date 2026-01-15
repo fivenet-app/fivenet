@@ -15,6 +15,10 @@ const props = defineProps<{
     docCreatorId?: number;
 }>();
 
+const emits = defineEmits<{
+    (e: 'refresh'): void;
+}>();
+
 const overlay = useOverlay();
 
 const { can } = useAuth();
@@ -47,7 +51,7 @@ async function revokeApproval(approvalId: number, comment: string = '') {
         });
         await call;
 
-        await refresh();
+        emits('refresh');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

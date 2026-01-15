@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -13,7 +14,8 @@ func getWhereCondition(
 ) string {
 	// Add "updatedAt" column condition if available
 	if state == nil ||
-		(table.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
+		(table.UpdatedTimeColumn == nil || *table.UpdatedTimeColumn == "" ||
+			(state.LastCheck == nil || state.LastCheck.IsZero())) {
 		return ""
 	}
 
@@ -61,7 +63,7 @@ func buildQueryFromColumns(
 	sort.Strings(keys)
 	for _, alias := range keys {
 		column := columns[alias]
-		if column == "" {
+		if column == "" || column == "-" {
 			continue
 		}
 
@@ -72,12 +74,19 @@ func buildQueryFromColumns(
 		strings.Join(columnsList, ", "),
 		tableName,
 	)
+	whereCondition = slices.DeleteFunc(whereCondition, func(c string) bool {
+		return strings.TrimSpace(c) == ""
+	})
 	if len(whereCondition) > 0 {
 		q += "WHERE " + strings.Join(whereCondition, " AND ")
 		q += "\n"
 	}
 
-	q += fmt.Sprintf("LIMIT %d OFFSET %d", limit, offset)
+	if limit > 0 {
+		q += fmt.Sprintf("LIMIT %d OFFSET %d;", limit, offset)
+	} else {
+		q += ";"
+	}
 
 	return q
 }

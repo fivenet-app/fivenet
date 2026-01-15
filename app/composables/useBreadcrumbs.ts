@@ -31,7 +31,7 @@ function getBreadcrumbs(input: string) {
         const currentPathName = node.pathname;
         // when we hit the root the path will be an empty string; we swap it out for a slash
         nodes.push(fullPath || '/');
-        // strip the last path segment (/my/cool/path → /my/cool)
+        // strip the last path segment (/my/cool/path -> /my/cool)
         node.pathname = currentPathName.substring(0, currentPathName.lastIndexOf('/'));
         // if the input was provided with a trailing slash we need to honour that
         if (appendsTrailingSlash) {

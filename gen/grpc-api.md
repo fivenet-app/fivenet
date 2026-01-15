@@ -85,6 +85,9 @@ description: Documentation for GRPC Protobuf files.
 | ----- | ---- | ----- | ----------- |
 | `enabled` | [bool](#bool) |  |  |
 | `method` | [string](#string) | optional |  |
+| `strip_html_tags` | [bool](#bool) | optional |  |
+| `tiptap_json` | [bool](#bool) | optional |  |
+| `max_bytes` | [uint32](#uint32) | optional |  |
 
 
 
@@ -832,15 +835,30 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
-| `content` | [JSONNode](#resourcescommoncontentJSONNode) | optional |  |
-| `raw_content` | [string](#string) | optional |  |
+| `version` | [string](#string) |  |  |
+| `content_type` | [ContentType](#resourcescommoncontentContentType) |  |  |
+| `raw_html` | [string](#string) | optional | Deprecated: Legacy HTML (only for viewing old content) |
+| `content` | [RichTextHtmlNode](#resourcescommoncontentRichTextHtmlNode) | optional | Deprecated: Legacy custom HTML to JSON AST (only for viewing old content) |
+| `tiptap_json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  | Tiptap JSON Document |
 
 
 
 
 
-### resources.common.content.JSONNode
+### resources.common.content.ExtractedContent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) |  |  |
+| `first_heading` | [string](#string) |  |  |
+
+
+
+
+
+### resources.common.content.RichTextHtmlNode
 
 
 | Field | Type | Label | Description |
@@ -848,35 +866,21 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `type` | [NodeType](#resourcescommoncontentNodeType) |  |  |
 | `id` | [string](#string) | optional |  |
 | `tag` | [string](#string) |  |  |
-| `attrs` | [JSONNode.AttrsEntry](#resourcescommoncontentJSONNodeAttrsEntry) | repeated |  |
+| `attrs` | [RichTextHtmlNode.AttrsEntry](#resourcescommoncontentRichTextHtmlNodeAttrsEntry) | repeated |  |
 | `text` | [string](#string) | optional |  |
-| `content` | [JSONNode](#resourcescommoncontentJSONNode) | repeated |  |
+| `content` | [RichTextHtmlNode](#resourcescommoncontentRichTextHtmlNode) | repeated |  |
 
 
 
 
 
-### resources.common.content.JSONNode.AttrsEntry
+### resources.common.content.RichTextHtmlNode.AttrsEntry
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  |  |
 | `value` | [string](#string) |  |  |
-
-
-
-
-
-### resources.common.content.TiptapJSONDocument
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `json` | [google.protobuf.Struct](https://protobuf.dev/reference/protobuf/google.protobuf/#struct) |  |  |
-| `summary` | [string](#string) |  |  |
-| `word_count` | [uint32](#uint32) |  |  |
-| `first_heading` | [string](#string) |  |  |
 
 
 
@@ -889,8 +893,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `CONTENT_TYPE_UNSPECIFIED` | 0 |  |
-| `CONTENT_TYPE_HTML` | 1 |  |
-| `CONTENT_TYPE_TIPTAP_JSON` | 2 |  |
+| `CONTENT_TYPE_HTML` | 1 | Used for legacy HTML content |
+| `CONTENT_TYPE_TIPTAP_JSON` | 2 | Used for Tiptap JSON content |
 
 
 
@@ -2378,6 +2382,40 @@ Dummy - DO NOT USE!
 
 
 
+## resources/settings/data.proto
+
+
+### resources.settings.Data
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `mode` | [DataMode](#resourcessettingsDataMode) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.settings.DataMode
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DATA_MODE_UNSPECIFIED` | 0 |  |
+| `DATA_MODE_UNAVAILABLE` | 1 |  |
+| `DATA_MODE_READONLY` | 2 |  |
+| `DATA_MODE_READWRITE` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/settings/config.proto
 
 
@@ -2397,6 +2435,7 @@ Dummy - DO NOT USE!
 | `system` | [System](#resourcessettingsSystem) |  |  |
 | `display` | [Display](#resourcessettingsDisplay) |  |  |
 | `quick_buttons` | [QuickButtons](#resourcessettingsQuickButtons) |  |  |
+| `data` | [Data](#resourcessettingsData) |  |  |
 
 
 
@@ -2628,6 +2667,19 @@ Dummy - DO NOT USE!
 ## resources/clientconfig/clientconfig.proto
 
 
+### resources.clientconfig.Auth
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+| `providers` | [ProviderConfig](#resourcesclientconfigProviderConfig) | repeated |  |
+
+
+
+
+
 ### resources.clientconfig.ClientConfig
 
 
@@ -2635,7 +2687,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `version` | [string](#string) |  |  |
 | `default_locale` | [string](#string) |  |  |
-| `login` | [LoginConfig](#resourcesclientconfigLoginConfig) |  |  |
+| `auth` | [Auth](#resourcesclientconfigAuth) |  |  |
 | `discord` | [Discord](#resourcesclientconfigDiscord) |  |  |
 | `website` | [Website](#resourcesclientconfigWebsite) |  |  |
 | `feature_gates` | [FeatureGates](#resourcesclientconfigFeatureGates) |  |  |
@@ -2643,6 +2695,7 @@ Dummy - DO NOT USE!
 | `system` | [System](#resourcesclientconfigSystem) |  |  |
 | `display` | [Display](#resourcesclientconfigDisplay) |  |  |
 | `quick_buttons` | [resources.settings.QuickButtons](#resourcessettingsQuickButtons) |  |  |
+| `data` | [resources.settings.Data](#resourcessettingsData) |  |  |
 
 
 
@@ -2674,11 +2727,6 @@ Dummy - DO NOT USE!
 ### resources.clientconfig.FeatureGates
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image_proxy` | [bool](#bool) |  |  |
-
-
 
 
 
@@ -2701,19 +2749,6 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `imprint` | [string](#string) | optional |  |
 | `privacy_policy` | [string](#string) | optional |  |
-
-
-
-
-
-### resources.clientconfig.LoginConfig
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signup_enabled` | [bool](#bool) |  |  |
-| `last_char_lock` | [bool](#bool) |  |  |
-| `providers` | [ProviderConfig](#resourcesclientconfigProviderConfig) | repeated |  |
 
 
 
@@ -2933,99 +2968,45 @@ Dummy - DO NOT USE!
 
 
 
-## resources/common/cron/cron.proto
+## resources/common/content/diff_activity.proto
 
 
-### resources.common.cron.Cronjob
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | Cronjob name |
-| `schedule` | [string](#string) |  | Cron schedule expression For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).<br/><br/>To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/. |
-| `state` | [CronjobState](#resourcescommoncronCronjobState) |  | Cronjob state |
-| `next_schedule_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Next time the cronjob should be run |
-| `last_attempt_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Last attempted start time of Cronjob |
-| `started_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Time current cronjob was started |
-| `timeout` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional | Optional timeout for cronjob execution |
-| `data` | [CronjobData](#resourcescommoncronCronjobData) |  | Cronjob data |
-| `last_completed_event` | [CronjobCompletedEvent](#resourcescommoncronCronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
-
-
-
-
-
-### resources.common.cron.CronjobCompletedEvent
+### resources.common.content.ContentDiff
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | Cronjob name |
-| `success` | [bool](#bool) |  | Cronjob execution success status |
-| `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
-| `end_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Cronjob end time |
-| `elapsed` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  | Cronjob execution time/elapsed time |
-| `data` | [CronjobData](#resourcescommoncronCronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
-| `node_name` | [string](#string) |  | Name of the node where the cronjob was executed |
-| `error_message` | [string](#string) | optional | Error message (if success = false) |
+| `stats` | [ContentDiffStats](#resourcescommoncontentContentDiffStats) |  | Quick summary for badge like "+12 / -3" |
+| `ops` | [ContentDiffOp](#resourcescommoncontentContentDiffOp) | repeated | The diff itself for inline rendering |
 
 
 
 
 
-### resources.common.cron.CronjobData
+### resources.common.content.ContentDiffOp
+One diff operation, designed for inline client rendering.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-| `data` | [google.protobuf.Any](https://protobuf.dev/reference/protobuf/google.protobuf/#any) | optional |  |
+| `kind` | [Kind](#resourcescommoncontentKind) |  |  |
+| `text` | [string](#string) |  | Plain text segment. Can contain whitespace and newlines. Client renders: - EQUAL: normal text - INSERT: highlighted - DELETE: strikethrough or hidden behind a toggle |
 
 
 
 
 
-### resources.common.cron.CronjobLockOwnerState
+### resources.common.content.ContentDiffStats
+Optional stats to quickly show "what changed" without parsing ops.
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `hostname` | [string](#string) |  | Hostname of the agent the cronjob is running on |
-| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
-
-
-
-
-
-### resources.common.cron.CronjobSchedulerEvent
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `cronjob` | [Cronjob](#resourcescommoncronCronjob) |  | Full Cronjob spec |
-
-
-
-
-
-### resources.common.cron.GenericCronData
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `attributes` | [GenericCronData.AttributesEntry](#resourcescommoncronGenericCronDataAttributesEntry) | repeated |  |
-
-
-
-
-
-### resources.common.cron.GenericCronData.AttributesEntry
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [string](#string) |  |  |
+| `inserted_runes` | [uint32](#uint32) |  | Counts are measured in runes/codepoints on the server side. |
+| `deleted_runes` | [uint32](#uint32) |  |  |
+| `op_count` | [uint32](#uint32) |  | Optional: number of diff ops (after cleanup/coalescing). |
 
 
 
@@ -3033,16 +3014,14 @@ Dummy - DO NOT USE!
  <!-- end messages -->
 
 
-### resources.common.cron.CronjobState
-States of Cronjbo
-
+### resources.common.content.Kind
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `CRONJOB_STATE_UNSPECIFIED` | 0 |  |
-| `CRONJOB_STATE_WAITING` | 1 |  |
-| `CRONJOB_STATE_PENDING` | 2 |  |
-| `CRONJOB_STATE_RUNNING` | 3 |  |
+| `KIND_UNSPECIFIED` | 0 |  |
+| `KIND_EQUAL` | 1 |  |
+| `KIND_INSERT` | 2 |  |
+| `KIND_DELETE` | 3 |  |
 
 
  <!-- end enums -->
@@ -3393,6 +3372,126 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+## resources/cron/cron.proto
+
+
+### resources.cron.Cronjob
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | Cronjob name |
+| `schedule` | [string](#string) |  | Cron schedule expression For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).<br/><br/>To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/. |
+| `state` | [CronjobState](#resourcescronCronjobState) |  | Cronjob state |
+| `next_schedule_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Next time the cronjob should be run |
+| `last_attempt_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Last attempted start time of Cronjob |
+| `started_time` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional | Time current cronjob was started |
+| `timeout` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional | Optional timeout for cronjob execution |
+| `data` | [CronjobData](#resourcescronCronjobData) |  | Cronjob data |
+| `last_completed_event` | [CronjobCompletedEvent](#resourcescronCronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
+
+
+
+
+
+### resources.cron.CronjobCompletedEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | Cronjob name |
+| `success` | [bool](#bool) |  | Cronjob execution success status |
+| `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
+| `end_date` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  | Cronjob end time |
+| `elapsed` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) |  | Cronjob execution time/elapsed time |
+| `data` | [CronjobData](#resourcescronCronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
+| `node_name` | [string](#string) |  | Name of the node where the cronjob was executed |
+| `error_message` | [string](#string) | optional | Error message (if success = false) |
+
+
+
+
+
+### resources.cron.CronjobData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+| `data` | [google.protobuf.Any](https://protobuf.dev/reference/protobuf/google.protobuf/#any) | optional |  |
+
+
+
+
+
+### resources.cron.CronjobLockOwnerState
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `hostname` | [string](#string) |  | Hostname of the agent the cronjob is running on |
+| `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) |  |  |
+
+
+
+
+
+### resources.cron.CronjobSchedulerEvent
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `cronjob` | [Cronjob](#resourcescronCronjob) |  | Full Cronjob spec |
+
+
+
+
+
+### resources.cron.GenericCronData
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `attributes` | [GenericCronData.AttributesEntry](#resourcescronGenericCronDataAttributesEntry) | repeated |  |
+
+
+
+
+
+### resources.cron.GenericCronData.AttributesEntry
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.cron.CronjobState
+States of Cronjbo
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CRONJOB_STATE_UNSPECIFIED` | 0 |  |
+| `CRONJOB_STATE_WAITING` | 1 |  |
+| `CRONJOB_STATE_PENDING` | 2 |  |
+| `CRONJOB_STATE_RUNNING` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 ## resources/discord/discord.proto
 
 
@@ -3637,8 +3736,11 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `title_diff` | [string](#string) | optional |  |
+| `title_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
+| `content_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `state_diff` | [string](#string) | optional |  |
+| `state_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `files_change` | [DocFilesChange](#resourcesdocumentsDocFilesChange) | optional |  |
 
 
@@ -3834,6 +3936,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) | optional | Derived field (server authored) |
+| `first_heading` | [string](#string) | optional | Derived field (server authored) |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `data` | [string](#string) | optional |  |
@@ -3926,6 +4030,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `category_id` | [int64](#int64) | optional |  |
 | `category` | [Category](#resourcesdocumentsCategory) | optional |  |
 | `title` | [string](#string) |  |  |
+| `word_count` | [uint32](#uint32) | optional | Derived field (server authored) |
+| `first_heading` | [string](#string) | optional | Derived field (server authored) |
 | `content_type` | [resources.common.content.ContentType](#resourcescommoncontentContentType) |  |  |
 | `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
@@ -4785,7 +4891,9 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `type` | [ConductType](#resourcesjobsConductType) |  |  |
-| `message` | [string](#string) |  |  |
+| `draft` | [bool](#bool) |  |  |
+| `message` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
+| `files` | [resources.file.File](#resourcesfileFile) | repeated |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `target_user_id` | [int32](#int32) |  |  |
 | `target_user` | [Colleague](#resourcesjobsColleague) | optional |  |
@@ -5413,7 +5521,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `email_id` | [int64](#int64) |  |  |
-| `signature` | [string](#string) | optional |  |
+| `signature` | [resources.common.content.Content](#resourcescommoncontentContent) | optional |  |
 | `blocked_emails` | [string](#string) | repeated |  |
 
 
@@ -5642,7 +5750,7 @@ Dummy - DO NOT USE!
 | `deleted_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `email_id` | [int64](#int64) |  |  |
 | `title` | [string](#string) |  |  |
-| `content` | [string](#string) |  |  |
+| `content` | [resources.common.content.Content](#resourcescommoncontentContent) |  |  |
 | `creator_job` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
 
@@ -6840,8 +6948,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `title_diff` | [string](#string) | optional |  |
+| `title_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `description_diff` | [string](#string) | optional |  |
+| `description_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
+| `content_cdiff` | [resources.common.content.ContentDiff](#resourcescommoncontentContentDiff) | optional |  |
 | `files_change` | [PageFilesChange](#resourceswikiPageFilesChange) | optional |  |
 
 
@@ -8545,6 +8656,7 @@ Only one policy per document is supported currently.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `policy` | [resources.documents.ApprovalPolicy](#resourcesdocumentsApprovalPolicy) |  |  |
+| `doc_meta` | [resources.documents.DocumentMeta](#resourcesdocumentsDocumentMeta) |  |  |
 
 
 
@@ -9875,6 +9987,28 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 
 
 
+### services.jobs.GetConductEntryRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int64](#int64) |  |  |
+
+
+
+
+
+### services.jobs.GetConductEntryResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `entry` | [resources.jobs.ConductEntry](#resourcesjobsConductEntry) |  |  |
+
+
+
+
+
 ### services.jobs.ListConductEntriesRequest
 
 
@@ -9884,6 +10018,7 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `types` | [resources.jobs.ConductType](#resourcesjobsConductType) | repeated | Search params |
 | `show_expired` | [bool](#bool) | optional |  |
+| `show_drafts` | [bool](#bool) | optional |  |
 | `user_ids` | [int32](#int32) | repeated |  |
 | `ids` | [int64](#int64) | repeated |  |
 
@@ -9936,9 +10071,11 @@ Upsert = insert missing PENDING tasks/slots; will NOT delete existing tasks. Ide
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListConductEntries` | [ListConductEntriesRequest](#servicesjobsListConductEntriesRequest) | [ListConductEntriesResponse](#servicesjobsListConductEntriesResponse) | |
+| `GetConductEntry` | [GetConductEntryRequest](#servicesjobsGetConductEntryRequest) | [GetConductEntryResponse](#servicesjobsGetConductEntryResponse) | |
 | `CreateConductEntry` | [CreateConductEntryRequest](#servicesjobsCreateConductEntryRequest) | [CreateConductEntryResponse](#servicesjobsCreateConductEntryResponse) | |
 | `UpdateConductEntry` | [UpdateConductEntryRequest](#servicesjobsUpdateConductEntryRequest) | [UpdateConductEntryResponse](#servicesjobsUpdateConductEntryResponse) | |
 | `DeleteConductEntry` | [DeleteConductEntryRequest](#servicesjobsDeleteConductEntryRequest) | [DeleteConductEntryResponse](#servicesjobsDeleteConductEntryResponse) | |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) | |
 
  <!-- end services -->
 
@@ -11721,7 +11858,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.common.cron.Cronjob](#resourcescommoncronCronjob) | repeated |  |
+| `jobs` | [resources.cron.Cronjob](#resourcescronCronjob) | repeated |  |
 
 
 

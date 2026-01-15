@@ -45,7 +45,7 @@ message AttributeValues {
 message StringList {
   repeated string strings = 1 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
 }
 

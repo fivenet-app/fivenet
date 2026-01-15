@@ -16,7 +16,7 @@ const emit = defineEmits<{
 
 const canSubmit = useVModel(props, 'modelValue', emit);
 
-const { login } = useAppConfig();
+const { auth } = useAppConfig();
 
 const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
@@ -92,7 +92,7 @@ const passwordVisibility = ref(false);
 
         <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" :label="$t('common.login')" />
 
-        <template v-if="!nuiEnabled && login.providers.length > 0">
+        <template v-if="!nuiEnabled && auth.providers.length > 0">
             <UAlert
                 v-if="!socialLoginEnabled"
                 :description="$t('components.auth.LoginForm.social_login_disabled')"
@@ -115,7 +115,7 @@ const passwordVisibility = ref(false);
                 <USeparator :label="$t('common.or')" orientation="horizontal" />
 
                 <div class="space-y-2">
-                    <div v-for="provider in login.providers" :key="provider.name">
+                    <div v-for="provider in auth.providers" :key="provider.name">
                         <UButton
                             block
                             color="neutral"

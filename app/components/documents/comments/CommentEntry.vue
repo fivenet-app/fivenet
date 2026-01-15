@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
+import CustomContentRenderer from '~/components/partials/content/CustomContentRenderer.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { Content } from '~/types/history';
+import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -42,7 +45,7 @@ const documentsDocumentsClient = await getDocumentsDocumentsClient();
 const editing = ref(false);
 
 const schema = z.object({
-    content: z.coerce.string().min(3).max(1536),
+    content: z.custom<JSONContent | string>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -55,7 +58,7 @@ const changed = ref(false);
 const saving = ref(false);
 
 // Track last saved string and timestamp
-let lastSavedString = '';
+let lastSavedString: JSONContent | string | undefined = undefined;
 let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'document_comments'): Promise<void> {
@@ -67,7 +70,7 @@ async function saveHistory(values: Schema, type = 'document_comments'): Promise<
 
     saving.value = true;
 
-    historyStore.addVersion<Content>(
+    historyStore.addVersion<HistoryContent>(
         type,
         props.documentId,
         {
@@ -109,7 +112,9 @@ async function editComment(documentId: number, commentId: number, values: Schema
                 id: commentId,
                 documentId,
                 content: {
-                    rawContent: values.content,
+                    contentType: ContentType.TIPTAP_JSON,
+                    version: '',
+                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
                 },
                 creatorJob: '',
             },
@@ -122,7 +127,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
         });
 
         editing.value = false;
-        resetForm();
+        setFromProps();
 
         if (!response.comment) return;
 
@@ -152,14 +157,16 @@ async function deleteComment(id: number): Promise<void> {
     }
 }
 
-function resetForm(): void {
+function setFromProps(): void {
     if (!comment.value) return;
 
-    state.content = comment.value.content?.rawContent ?? '';
+    state.content = comment.value.content?.tiptapJson
+        ? (Struct.toJson(comment.value.content.tiptapJson) as JSONContent)
+        : (comment.value.content?.rawHtml ?? '');
 }
 
-onBeforeMount(() => resetForm());
-watch(props, () => resetForm());
+onBeforeMount(() => setFromProps());
+watch(props, () => setFromProps());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -213,7 +220,7 @@ const confirmModal = overlay.create(ConfirmModal);
                 </div>
 
                 <div class="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-900">
-                    <HTMLContent v-if="comment.content?.content" :value="comment.content.content" />
+                    <CustomContentRenderer v-if="comment.content" :value="comment.content" />
                 </div>
             </div>
         </div>

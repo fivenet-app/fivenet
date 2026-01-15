@@ -30,7 +30,7 @@ message Qualification {
     (buf.validate.field).string.max_len = 20,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string title = 11 [
@@ -44,7 +44,7 @@ message Qualification {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   resources.common.content.Content content = 13;
@@ -65,7 +65,7 @@ message Qualification {
     (buf.validate.field).string.max_len = 128,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   repeated resources.file.File files = 28 [(tagger.tags) = "alias:\"files\""];
@@ -85,7 +85,7 @@ message QualificationShort {
     (buf.validate.field).string.max_len = 20,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string title = 11 [
@@ -99,7 +99,7 @@ message QualificationShort {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
@@ -178,7 +178,7 @@ message QualificationRequest {
     (buf.validate.field).string = {max_len: 512},
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional RequestStatus status = 8 [(buf.validate.field).enum.defined_only = true];
@@ -187,7 +187,7 @@ message QualificationRequest {
     (buf.validate.field).string = {max_len: 512},
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional int32 approver_id = 11 [(buf.validate.field).int32.gt = 0];
@@ -219,7 +219,7 @@ message QualificationResult {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];

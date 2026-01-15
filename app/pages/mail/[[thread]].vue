@@ -180,7 +180,6 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller('lg');
 </script>
 
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel
         id="mail-threads"
@@ -211,6 +210,7 @@ const isMobile = breakpoints.smaller('lg');
                     >
                         <UButton
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('components.mailer.create_thread')"
                             @click="threadCreateOrUpdateModal.open({})"
@@ -308,6 +308,7 @@ const isMobile = breakpoints.smaller('lg');
                     <UTooltip :text="$t('common.settings')">
                         <UButton
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-cog"
                             @click="
                                 () => {
@@ -320,7 +321,7 @@ const isMobile = breakpoints.smaller('lg');
                     </UTooltip>
 
                     <UTooltip :text="$t('pages.mailer.manage.title')">
-                        <UButton icon="i-mdi-email-plus" color="neutral" to="/mail/manage" />
+                        <UButton icon="i-mdi-email-plus" color="neutral" variant="outline" to="/mail/manage" />
                     </UTooltip>
                 </template>
 
@@ -328,6 +329,7 @@ const isMobile = breakpoints.smaller('lg');
                     <UTooltip :text="$t('common.template', 2)">
                         <UButton
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-file-outline"
                             @click="
                                 () => {

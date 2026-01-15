@@ -322,8 +322,8 @@ func (s *Store[T, U]) get(key string) (U, error) {
 // only "JOB.GRADE.USER_ID", not "JOB.GRADE2.X" or "JOB.GRADE_USER_ID".
 func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 	// ensure we only match whole segments:
-	//   "JOB.GRADE" → "JOB.GRADE."
-	//   ""          → "" (no prefix => match everything)
+	//   "JOB.GRADE" -> "JOB.GRADE."
+	//   ""          -> "" (no prefix => match everything)
 	seg := prefix
 	if seg != "" && !strings.HasSuffix(seg, ".") {
 		seg += "."
@@ -353,7 +353,7 @@ func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 		return zero, jetstream.ErrKeyNotFound
 
 	case 1:
-		// delegate your normal Get (cache → KV)
+		// delegate your normal Get (cache -> KV)
 		return s.Get(candidates[0])
 
 	default:
@@ -647,7 +647,7 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U, oldItem U) err
 	var rev uint64
 	entry, err := s.kv.Get(ctx, key)
 	if err == nil {
-		// Key exists → optimistic CAS
+		// Key exists -> optimistic CAS
 		rev, err = s.kv.Update(ctx, key, data, entry.Revision())
 		if err != nil {
 			return fmt.Errorf("failed to update value for key %s in put. %w", key, err)

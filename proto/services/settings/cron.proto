@@ -3,14 +3,14 @@ syntax = "proto3";
 package services.settings;
 
 import "codegen/perms/perms.proto";
-import "resources/common/cron/cron.proto";
+import "resources/cron/cron.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
 
 message ListCronjobsRequest {}
 
 message ListCronjobsResponse {
-  repeated resources.common.cron.Cronjob jobs = 1;
+  repeated resources.cron.Cronjob jobs = 1;
 }
 
 service CronService {

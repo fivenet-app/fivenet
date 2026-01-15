@@ -5,12 +5,17 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { ConductService } from "./conduct";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
+import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { DeleteConductEntryResponse } from "./conduct";
 import type { DeleteConductEntryRequest } from "./conduct";
 import type { UpdateConductEntryResponse } from "./conduct";
 import type { UpdateConductEntryRequest } from "./conduct";
 import type { CreateConductEntryResponse } from "./conduct";
 import type { CreateConductEntryRequest } from "./conduct";
+import type { GetConductEntryResponse } from "./conduct";
+import type { GetConductEntryRequest } from "./conduct";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListConductEntriesResponse } from "./conduct";
 import type { ListConductEntriesRequest } from "./conduct";
@@ -25,6 +30,10 @@ export interface IConductServiceClient {
      */
     listConductEntries(input: ListConductEntriesRequest, options?: RpcOptions): UnaryCall<ListConductEntriesRequest, ListConductEntriesResponse>;
     /**
+     * @generated from protobuf rpc: GetConductEntry
+     */
+    getConductEntry(input: GetConductEntryRequest, options?: RpcOptions): UnaryCall<GetConductEntryRequest, GetConductEntryResponse>;
+    /**
      * @generated from protobuf rpc: CreateConductEntry
      */
     createConductEntry(input: CreateConductEntryRequest, options?: RpcOptions): UnaryCall<CreateConductEntryRequest, CreateConductEntryResponse>;
@@ -36,6 +45,10 @@ export interface IConductServiceClient {
      * @generated from protobuf rpc: DeleteConductEntry
      */
     deleteConductEntry(input: DeleteConductEntryRequest, options?: RpcOptions): UnaryCall<DeleteConductEntryRequest, DeleteConductEntryResponse>;
+    /**
+     * @generated from protobuf rpc: UploadFile
+     */
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.ConductService
@@ -54,24 +67,38 @@ export class ConductServiceClient implements IConductServiceClient, ServiceInfo 
         return stackIntercept<ListConductEntriesRequest, ListConductEntriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: GetConductEntry
+     */
+    getConductEntry(input: GetConductEntryRequest, options?: RpcOptions): UnaryCall<GetConductEntryRequest, GetConductEntryResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetConductEntryRequest, GetConductEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: CreateConductEntry
      */
     createConductEntry(input: CreateConductEntryRequest, options?: RpcOptions): UnaryCall<CreateConductEntryRequest, CreateConductEntryResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateConductEntryRequest, CreateConductEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: UpdateConductEntry
      */
     updateConductEntry(input: UpdateConductEntryRequest, options?: RpcOptions): UnaryCall<UpdateConductEntryRequest, UpdateConductEntryResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateConductEntryRequest, UpdateConductEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteConductEntry
      */
     deleteConductEntry(input: DeleteConductEntryRequest, options?: RpcOptions): UnaryCall<DeleteConductEntryRequest, DeleteConductEntryResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteConductEntryRequest, DeleteConductEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UploadFile
+     */
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

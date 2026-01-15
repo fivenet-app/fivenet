@@ -99,7 +99,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 12, name: "mugshot_file_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 13, name: "mugshot", kind: "message", T: () => File, options: { "tagger.tags": "alias:\"mugshot\"" } },
             { no: 14, name: "labels", kind: "message", T: () => Labels },
-            { no: 15, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 15, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "6", maxLen: "80" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {

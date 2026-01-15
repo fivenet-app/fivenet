@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultEmptyContent } from './helpers';
@@ -17,12 +20,14 @@ const { can, activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
+const { maxContentLength } = useAppConfig();
+
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, emails, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
     title: z.coerce.string().min(3).max(255),
-    content: z.coerce.string().min(1).max(2048),
+    content: z.custom<JSONContent | string>().optional(),
     recipients: z
         .object({ label: z.coerce.string().min(6).max(80) })
         .array()
@@ -52,7 +57,9 @@ async function createThread(values: Schema): Promise<void> {
             senderId: selectedEmail.value?.id,
             title: values.title,
             content: {
-                rawContent: values.content,
+                contentType: ContentType.TIPTAP_JSON,
+                version: '',
+                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
@@ -113,6 +120,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
+
+const editorRef = useTemplateRef('editorRef');
 
 const formRef = useTemplateRef('formRef');
 </script>
@@ -275,15 +284,17 @@ const formRef = useTemplateRef('formRef');
                             <div class="flex flex-1 flex-col items-center sm:flex-row">
                                 <span class="flex-1">{{ $t('common.template', 1) }}</span>
 
-                                <TemplateSelector v-model="state.content" class="ml-auto" />
+                                <TemplateSelector v-if="editorRef" :editor="unref(editorRef).editor" class="ml-auto" />
                             </div>
 
                             <ClientOnly>
                                 <TiptapEditor
+                                    ref="editorRef"
                                     v-model="state.content"
                                     name="content"
                                     class="flex-1 overflow-y-hidden"
                                     :disabled="!canSubmit"
+                                    :limit="maxContentLength"
                                     wrapper-class="min-h-96"
                                 />
                             </ClientOnly>

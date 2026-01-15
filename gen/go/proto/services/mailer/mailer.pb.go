@@ -2121,12 +2121,12 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\bemail_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\aemailId\x12$\n" +
 	"\tthread_id\x18\x02 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\bthreadId\"E\n" +
 	"\x11GetThreadResponse\x120\n" +
-	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xd1\x01\n" +
+	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xc8\x01\n" +
 	"\x13CreateThreadRequest\x128\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadB\x06\xbaH\x03\xc8\x01\x01R\x06thread\x12;\n" +
-	"\amessage\x18\x02 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12C\n" +
+	"\amessage\x18\x02 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12:\n" +
 	"\n" +
-	"recipients\x18\x03 \x03(\tB#\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x0f\x92\x01\f\b\x01\x10\x0f\"\x06r\x04\x10\x06\x18PR\n" +
+	"recipients\x18\x03 \x03(\tB\x1a\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x0f\x92\x01\f\b\x01\x10\x0f\"\x06r\x04\x10\x06\x18PR\n" +
 	"recipients\"H\n" +
 	"\x14CreateThreadResponse\x120\n" +
 	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"_\n" +
@@ -2173,11 +2173,11 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x12;\n" +
-	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x94\x01\n" +
+	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\x8b\x01\n" +
 	"\x12PostMessageRequest\x12;\n" +
-	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x12A\n" +
+	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageB\x06\xbaH\x03\xc8\x01\x01R\amessage\x128\n" +
 	"\n" +
-	"recipients\x18\x02 \x03(\tB!\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\r\x92\x01\n" +
+	"recipients\x18\x02 \x03(\tB\x18\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\r\x92\x01\n" +
 	"\x10\n" +
 	"\"\x06r\x04\x10\x06\x18PR\n" +
 	"recipients\"J\n" +

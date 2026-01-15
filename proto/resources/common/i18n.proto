@@ -13,10 +13,10 @@ message I18NItem {
 
   string key = 1 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
   map<string, string> parameters = 2 [(codegen.sanitizer.sanitizer) = {
     enabled: true
-    method: "StripTags"
+    strip_html_tags: true
   }];
 }

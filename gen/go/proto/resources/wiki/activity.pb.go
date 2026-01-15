@@ -8,6 +8,7 @@ package wiki
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
@@ -286,13 +287,16 @@ func (*PageActivityData_Updated) isPageActivityData_Data() {}
 func (*PageActivityData_AccessUpdated) isPageActivityData_Data() {}
 
 type PageUpdated struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	TitleDiff       *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
-	DescriptionDiff *string                `protobuf:"bytes,2,opt,name=description_diff,json=descriptionDiff,proto3,oneof" json:"description_diff,omitempty"`
-	ContentDiff     *string                `protobuf:"bytes,3,opt,name=content_diff,json=contentDiff,proto3,oneof" json:"content_diff,omitempty"`
-	FilesChange     *PageFilesChange       `protobuf:"bytes,4,opt,name=files_change,json=filesChange,proto3,oneof" json:"files_change,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	TitleDiff        *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
+	TitleCdiff       *content.ContentDiff   `protobuf:"bytes,5,opt,name=title_cdiff,json=titleCdiff,proto3,oneof" json:"title_cdiff,omitempty"`
+	DescriptionDiff  *string                `protobuf:"bytes,2,opt,name=description_diff,json=descriptionDiff,proto3,oneof" json:"description_diff,omitempty"`
+	DescriptionCdiff *content.ContentDiff   `protobuf:"bytes,6,opt,name=description_cdiff,json=descriptionCdiff,proto3,oneof" json:"description_cdiff,omitempty"`
+	ContentDiff      *string                `protobuf:"bytes,3,opt,name=content_diff,json=contentDiff,proto3,oneof" json:"content_diff,omitempty"`
+	ContentCdiff     *content.ContentDiff   `protobuf:"bytes,7,opt,name=content_cdiff,json=contentCdiff,proto3,oneof" json:"content_cdiff,omitempty"`
+	FilesChange      *PageFilesChange       `protobuf:"bytes,4,opt,name=files_change,json=filesChange,proto3,oneof" json:"files_change,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *PageUpdated) Reset() {
@@ -332,6 +336,13 @@ func (x *PageUpdated) GetTitleDiff() string {
 	return ""
 }
 
+func (x *PageUpdated) GetTitleCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.TitleCdiff
+	}
+	return nil
+}
+
 func (x *PageUpdated) GetDescriptionDiff() string {
 	if x != nil && x.DescriptionDiff != nil {
 		return *x.DescriptionDiff
@@ -339,11 +350,25 @@ func (x *PageUpdated) GetDescriptionDiff() string {
 	return ""
 }
 
+func (x *PageUpdated) GetDescriptionCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.DescriptionCdiff
+	}
+	return nil
+}
+
 func (x *PageUpdated) GetContentDiff() string {
 	if x != nil && x.ContentDiff != nil {
 		return *x.ContentDiff
 	}
 	return ""
+}
+
+func (x *PageUpdated) GetContentCdiff() *content.ContentDiff {
+	if x != nil {
+		return x.ContentCdiff
+	}
+	return nil
 }
 
 func (x *PageUpdated) GetFilesChange() *PageFilesChange {
@@ -581,7 +606,7 @@ var File_resources_wiki_activity_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/wiki/activity.proto\x12\x0eresources.wiki\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
+	"\x1dresources/wiki/activity.proto\x12\x0eresources.wiki\x1a!codegen/dbscanner/dbscanner.proto\x1a,resources/common/content/diff_activity.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\xb8\x04\n" +
 	"\fPageActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -605,16 +630,23 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\x10PageActivityData\x127\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1b.resources.wiki.PageUpdatedH\x00R\aupdated\x12J\n" +
 	"\x0eaccess_updated\x18\x02 \x01(\v2!.resources.wiki.PageAccessUpdatedH\x00R\raccessUpdated:\x06\xe2\xf3\x18\x02\b\x01B\r\n" +
-	"\x04data\x12\x05\xbaH\x02\b\x01\"\x98\x02\n" +
+	"\x04data\x12\x05\xbaH\x02\b\x01\"\xc7\x04\n" +
 	"\vPageUpdated\x12\"\n" +
 	"\n" +
-	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12.\n" +
-	"\x10description_diff\x18\x02 \x01(\tH\x01R\x0fdescriptionDiff\x88\x01\x01\x12&\n" +
-	"\fcontent_diff\x18\x03 \x01(\tH\x02R\vcontentDiff\x88\x01\x01\x12G\n" +
-	"\ffiles_change\x18\x04 \x01(\v2\x1f.resources.wiki.PageFilesChangeH\x03R\vfilesChange\x88\x01\x01B\r\n" +
-	"\v_title_diffB\x13\n" +
-	"\x11_description_diffB\x0f\n" +
-	"\r_content_diffB\x0f\n" +
+	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12K\n" +
+	"\vtitle_cdiff\x18\x05 \x01(\v2%.resources.common.content.ContentDiffH\x01R\n" +
+	"titleCdiff\x88\x01\x01\x12.\n" +
+	"\x10description_diff\x18\x02 \x01(\tH\x02R\x0fdescriptionDiff\x88\x01\x01\x12W\n" +
+	"\x11description_cdiff\x18\x06 \x01(\v2%.resources.common.content.ContentDiffH\x03R\x10descriptionCdiff\x88\x01\x01\x12&\n" +
+	"\fcontent_diff\x18\x03 \x01(\tH\x04R\vcontentDiff\x88\x01\x01\x12O\n" +
+	"\rcontent_cdiff\x18\a \x01(\v2%.resources.common.content.ContentDiffH\x05R\fcontentCdiff\x88\x01\x01\x12G\n" +
+	"\ffiles_change\x18\x04 \x01(\v2\x1f.resources.wiki.PageFilesChangeH\x06R\vfilesChange\x88\x01\x01B\r\n" +
+	"\v_title_diffB\x0e\n" +
+	"\f_title_cdiffB\x13\n" +
+	"\x11_description_diffB\x14\n" +
+	"\x12_description_cdiffB\x0f\n" +
+	"\r_content_diffB\x10\n" +
+	"\x0e_content_cdiffB\x0f\n" +
 	"\r_files_change\"A\n" +
 	"\x0fPageFilesChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\x03R\x05added\x12\x18\n" +
@@ -664,8 +696,9 @@ var file_resources_wiki_activity_proto_goTypes = []any{
 	(*PageAccessUsersDiff)(nil), // 7: resources.wiki.PageAccessUsersDiff
 	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
 	(*users.UserShort)(nil),     // 9: resources.users.UserShort
-	(*PageJobAccess)(nil),       // 10: resources.wiki.PageJobAccess
-	(*PageUserAccess)(nil),      // 11: resources.wiki.PageUserAccess
+	(*content.ContentDiff)(nil), // 10: resources.common.content.ContentDiff
+	(*PageJobAccess)(nil),       // 11: resources.wiki.PageJobAccess
+	(*PageUserAccess)(nil),      // 12: resources.wiki.PageUserAccess
 }
 var file_resources_wiki_activity_proto_depIdxs = []int32{
 	8,  // 0: resources.wiki.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
@@ -674,20 +707,23 @@ var file_resources_wiki_activity_proto_depIdxs = []int32{
 	2,  // 3: resources.wiki.PageActivity.data:type_name -> resources.wiki.PageActivityData
 	3,  // 4: resources.wiki.PageActivityData.updated:type_name -> resources.wiki.PageUpdated
 	5,  // 5: resources.wiki.PageActivityData.access_updated:type_name -> resources.wiki.PageAccessUpdated
-	4,  // 6: resources.wiki.PageUpdated.files_change:type_name -> resources.wiki.PageFilesChange
-	6,  // 7: resources.wiki.PageAccessUpdated.jobs:type_name -> resources.wiki.PageAccessJobsDiff
-	7,  // 8: resources.wiki.PageAccessUpdated.users:type_name -> resources.wiki.PageAccessUsersDiff
-	10, // 9: resources.wiki.PageAccessJobsDiff.to_create:type_name -> resources.wiki.PageJobAccess
-	10, // 10: resources.wiki.PageAccessJobsDiff.to_update:type_name -> resources.wiki.PageJobAccess
-	10, // 11: resources.wiki.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.PageJobAccess
-	11, // 12: resources.wiki.PageAccessUsersDiff.to_create:type_name -> resources.wiki.PageUserAccess
-	11, // 13: resources.wiki.PageAccessUsersDiff.to_update:type_name -> resources.wiki.PageUserAccess
-	11, // 14: resources.wiki.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.PageUserAccess
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	10, // 6: resources.wiki.PageUpdated.title_cdiff:type_name -> resources.common.content.ContentDiff
+	10, // 7: resources.wiki.PageUpdated.description_cdiff:type_name -> resources.common.content.ContentDiff
+	10, // 8: resources.wiki.PageUpdated.content_cdiff:type_name -> resources.common.content.ContentDiff
+	4,  // 9: resources.wiki.PageUpdated.files_change:type_name -> resources.wiki.PageFilesChange
+	6,  // 10: resources.wiki.PageAccessUpdated.jobs:type_name -> resources.wiki.PageAccessJobsDiff
+	7,  // 11: resources.wiki.PageAccessUpdated.users:type_name -> resources.wiki.PageAccessUsersDiff
+	11, // 12: resources.wiki.PageAccessJobsDiff.to_create:type_name -> resources.wiki.PageJobAccess
+	11, // 13: resources.wiki.PageAccessJobsDiff.to_update:type_name -> resources.wiki.PageJobAccess
+	11, // 14: resources.wiki.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.PageJobAccess
+	12, // 15: resources.wiki.PageAccessUsersDiff.to_create:type_name -> resources.wiki.PageUserAccess
+	12, // 16: resources.wiki.PageAccessUsersDiff.to_update:type_name -> resources.wiki.PageUserAccess
+	12, // 17: resources.wiki.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.PageUserAccess
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_wiki_activity_proto_init() }

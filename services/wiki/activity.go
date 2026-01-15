@@ -5,7 +5,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
@@ -13,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/textdiff"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
 	"github.com/go-jet/jet/v2/mysql"
@@ -163,34 +163,23 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 	diff := &wiki.PageUpdated{}
 
 	if !strings.EqualFold(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()) {
-		titleDiff, err := s.htmlDiff.FancyDiff(old.GetMeta().GetTitle(), new.GetMeta().GetTitle())
-		if err != nil {
-			return nil, err
-		}
-		if titleDiff != "" {
-			diff.TitleDiff = &titleDiff
+		if titleDiff := textdiff.DiffText(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()); titleDiff.HasChanges() {
+			diff.TitleCdiff = titleDiff
 		}
 	}
 
 	if !strings.EqualFold(old.GetMeta().GetDescription(), new.GetMeta().GetDescription()) {
-		descriptionDiff, err := s.htmlDiff.FancyDiff(
+		if descriptionDiff := textdiff.DiffText(
 			old.GetMeta().GetDescription(),
 			new.GetMeta().GetDescription(),
-		)
-		if err != nil {
-			return nil, err
-		}
-		if descriptionDiff != "" {
-			diff.DescriptionDiff = &descriptionDiff
+		); descriptionDiff.HasChanges() {
+			diff.DescriptionCdiff = descriptionDiff
 		}
 	}
 
-	newRawContent, err := content.PrettyHTML(new.GetContent().GetRawContent())
-	if err != nil {
-		return nil, err
-	}
-	if d := s.htmlDiff.PatchDiff(old.GetContent().GetRawContent(), newRawContent); d != "" {
-		diff.ContentDiff = &d
+	newRawContent := new.GetContent().Extract().GetText()
+	if cd := textdiff.DiffText(old.GetContent().GetRawHtml(), newRawContent); cd.HasChanges() {
+		diff.ContentCdiff = cd
 	}
 
 	return diff, nil

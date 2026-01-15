@@ -4,7 +4,7 @@
 package settings
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -17,6 +17,15 @@ func (m *AppConfig) Sanitize() error {
 	// Field: Auth
 	if m.Auth != nil {
 		if v, ok := any(m.GetAuth()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -125,7 +134,7 @@ func (m *Discord) Sanitize() error {
 
 	// Field: BotId
 	if m.BotId != nil {
-		*m.BotId = htmlsanitizer.StripTags(*m.BotId)
+		*m.BotId = htmlsanitizer.StripHTMLTags(*m.BotId)
 	}
 
 	// Field: BotPresence
@@ -141,13 +150,13 @@ func (m *Discord) Sanitize() error {
 	for idx, item := range m.IgnoredJobs {
 		_, _ = idx, item
 
-		m.IgnoredJobs[idx] = htmlsanitizer.StripTags(m.IgnoredJobs[idx])
+		m.IgnoredJobs[idx] = htmlsanitizer.StripHTMLTags(m.IgnoredJobs[idx])
 
 	}
 
 	// Field: InviteUrl
 	if m.InviteUrl != nil {
-		*m.InviteUrl = htmlsanitizer.StripTags(*m.InviteUrl)
+		*m.InviteUrl = htmlsanitizer.StripHTMLTags(*m.InviteUrl)
 	}
 
 	// Field: SyncInterval
@@ -171,12 +180,12 @@ func (m *DiscordBotPresence) Sanitize() error {
 
 	// Field: Status
 	if m.Status != nil {
-		*m.Status = htmlsanitizer.StripTags(*m.Status)
+		*m.Status = htmlsanitizer.StripHTMLTags(*m.Status)
 	}
 
 	// Field: Url
 	if m.Url != nil {
-		*m.Url = htmlsanitizer.StripTags(*m.Url)
+		*m.Url = htmlsanitizer.StripHTMLTags(*m.Url)
 	}
 
 	return nil
@@ -190,11 +199,11 @@ func (m *Display) Sanitize() error {
 	}
 
 	// Field: CurrencyName
-	m.CurrencyName = htmlsanitizer.StripTags(m.CurrencyName)
+	m.CurrencyName = htmlsanitizer.StripHTMLTags(m.CurrencyName)
 
 	// Field: IntlLocale
 	if m.IntlLocale != nil {
-		*m.IntlLocale = htmlsanitizer.StripTags(*m.IntlLocale)
+		*m.IntlLocale = htmlsanitizer.StripHTMLTags(*m.IntlLocale)
 	}
 
 	return nil
@@ -211,7 +220,7 @@ func (m *JobInfo) Sanitize() error {
 	for idx, item := range m.HiddenJobs {
 		_, _ = idx, item
 
-		m.HiddenJobs[idx] = htmlsanitizer.StripTags(m.HiddenJobs[idx])
+		m.HiddenJobs[idx] = htmlsanitizer.StripHTMLTags(m.HiddenJobs[idx])
 
 	}
 
@@ -219,7 +228,7 @@ func (m *JobInfo) Sanitize() error {
 	for idx, item := range m.PublicJobs {
 		_, _ = idx, item
 
-		m.PublicJobs[idx] = htmlsanitizer.StripTags(m.PublicJobs[idx])
+		m.PublicJobs[idx] = htmlsanitizer.StripHTMLTags(m.PublicJobs[idx])
 
 	}
 
@@ -244,12 +253,12 @@ func (m *Links) Sanitize() error {
 
 	// Field: Imprint
 	if m.Imprint != nil {
-		*m.Imprint = htmlsanitizer.StripTags(*m.Imprint)
+		*m.Imprint = htmlsanitizer.StripHTMLTags(*m.Imprint)
 	}
 
 	// Field: PrivacyPolicy
 	if m.PrivacyPolicy != nil {
-		*m.PrivacyPolicy = htmlsanitizer.StripTags(*m.PrivacyPolicy)
+		*m.PrivacyPolicy = htmlsanitizer.StripHTMLTags(*m.PrivacyPolicy)
 	}
 
 	return nil
@@ -326,10 +335,10 @@ func (m *Perm) Sanitize() error {
 	}
 
 	// Field: Category
-	m.Category = htmlsanitizer.StripTags(m.Category)
+	m.Category = htmlsanitizer.StripHTMLTags(m.Category)
 
 	// Field: Name
-	m.Name = htmlsanitizer.StripTags(m.Name)
+	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
 
 	return nil
 }

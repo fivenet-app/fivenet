@@ -6,6 +6,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DraftBadge from '../partials/DraftBadge.vue';
 
 const props = defineProps<{
     document: DocumentShort;
@@ -83,30 +84,24 @@ const links = computed(() =>
                             />
                         </div>
 
-                        <UBadge
-                            v-if="document.meta?.state"
-                            class="inline-flex gap-1"
-                            size="md"
-                            icon="i-mdi-note-check"
-                            :label="document.meta.state"
-                        />
+                        <div class="inline-flex gap-2">
+                            <UBadge
+                                v-if="document.meta?.state"
+                                class="inline-flex gap-1"
+                                size="md"
+                                icon="i-mdi-note-check"
+                                :label="document.meta.state"
+                            />
 
-                        <div
-                            v-if="document.deletedAt"
-                            class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold"
-                        >
-                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
-                            {{ $t('common.deleted') }}
+                            <UBadge
+                                v-if="document?.meta?.apPoliciesActive"
+                                class="inline-flex gap-1"
+                                size="md"
+                                :color="document?.meta?.approved ? 'info' : 'warning'"
+                                icon="i-mdi-approval"
+                                :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
+                            />
                         </div>
-
-                        <UBadge
-                            v-if="document?.meta?.apPoliciesActive"
-                            class="inline-flex gap-1"
-                            size="md"
-                            :color="document?.meta?.approved ? 'info' : 'warning'"
-                            icon="i-mdi-approval"
-                            :label="document?.meta?.approved ? $t('common.approved') : $t('common.unapproved')"
-                        />
 
                         <div class="flex flex-row items-center gap-1">
                             <OpenClosedBadge :closed="document.meta?.closed" />
@@ -130,14 +125,7 @@ const links = computed(() =>
                                 </span>
                             </h2>
 
-                            <UBadge
-                                v-if="document.meta?.draft"
-                                class="inline-flex grow-0 gap-1 self-start"
-                                color="info"
-                                size="md"
-                                icon="i-mdi-pencil"
-                                :label="$t('common.draft')"
-                            />
+                            <DraftBadge v-if="document.meta?.draft" class="self-start" />
                         </div>
                     </div>
 
@@ -194,6 +182,14 @@ const links = computed(() =>
 
                         <div v-if="$slots.default" class="flex flex-1 items-center justify-center gap-1.5">
                             <slot name="default" />
+                        </div>
+
+                        <div
+                            v-if="document.deletedAt"
+                            class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold"
+                        >
+                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
+                            {{ $t('common.deleted') }}
                         </div>
 
                         <div class="flex flex-1 flex-row items-center justify-end gap-1.5">

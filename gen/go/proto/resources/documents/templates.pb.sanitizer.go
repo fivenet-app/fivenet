@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -44,11 +44,11 @@ func (m *Template) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.StripTags(*m.Color)
+		*m.Color = htmlsanitizer.StripHTMLTags(*m.Color)
 	}
 
 	// Field: Content
-	m.Content = htmlsanitizer.SanitizeNoEntities(m.Content)
+	m.Content = htmlsanitizer.SanitizeAndUnescape(m.Content)
 
 	// Field: ContentAccess
 	if m.ContentAccess != nil {
@@ -60,7 +60,7 @@ func (m *Template) Sanitize() error {
 	}
 
 	// Field: ContentTitle
-	m.ContentTitle = htmlsanitizer.SanitizeNoEntities(m.ContentTitle)
+	m.ContentTitle = htmlsanitizer.SanitizeAndUnescape(m.ContentTitle)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -84,7 +84,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+		*m.Icon = htmlsanitizer.StripHTMLTags(*m.Icon)
 	}
 
 	// Field: JobAccess
@@ -193,7 +193,7 @@ func (m *TemplateApprovalTaskSeed) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.StripTags(*m.Label)
+		*m.Label = htmlsanitizer.StripHTMLTags(*m.Label)
 	}
 
 	return nil
@@ -360,7 +360,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.StripTags(*m.Color)
+		*m.Color = htmlsanitizer.StripHTMLTags(*m.Color)
 	}
 
 	// Field: CreatedAt
@@ -385,7 +385,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+		*m.Icon = htmlsanitizer.StripHTMLTags(*m.Icon)
 	}
 
 	// Field: Schema

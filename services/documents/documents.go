@@ -289,7 +289,11 @@ func (s *Server) CreateDocument(
 ) (*pbdocuments.CreateDocumentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	var docContent string
+	docContent := &content.Content{
+		Version:     content.ContentVersionTiptapV1,
+		ContentType: content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
+		TiptapJson:  nil,
+	}
 	var docTitle string
 	var docState string
 	var categoryId *int64
@@ -305,9 +309,21 @@ func (s *Server) CreateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		docTitle, docState, docContent, err = s.renderTemplate(tmpl, req.GetTemplateData())
+		var tplContent string
+		docTitle, docState, tplContent, err = s.renderTemplate(tmpl, req.GetTemplateData())
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+
+		// Build Content object
+		htmlNode, err := content.FromHTML(tplContent)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		docContent = &content.Content{
+			Version:     content.ContentVersionLegacyJSONV1,
+			ContentType: content.ContentType_CONTENT_TYPE_HTML,
+			Content:     htmlNode,
 		}
 
 		// Set access based on template
@@ -391,10 +407,11 @@ func (s *Server) CreateDocument(
 	tDocument := table.FivenetDocuments
 	stmt := tDocument.
 		INSERT(
+			tDocument.CategoryID,
 			tDocument.Title,
 			tDocument.Summary,
-			tDocument.CategoryID,
-			tDocument.Content,
+			tDocument.ContentJSON,
+			tDocument.ContentText,
 			tDocument.ContentType,
 			tDocument.State,
 			tDocument.Data,
@@ -406,11 +423,12 @@ func (s *Server) CreateDocument(
 			tDocument.CreatorJob,
 		).
 		VALUES(
-			docTitle,
-			content.GetSummary(docContent, DocSummaryLength),
 			categoryId,
+			docTitle,
+			"", // DocSummaryLength
 			docContent,
-			req.GetContentType(),
+			"",
+			docContent.GetContentType(),
 			docState,
 			mysql.NULL,
 			false,
@@ -568,13 +586,19 @@ func (s *Server) UpdateDocument(
 	}
 
 	if !onlyUpdateAccess {
+		extracted := req.GetContent().Extract()
+
 		tDocument := table.FivenetDocuments
 		stmt := tDocument.
 			UPDATE(
 				tDocument.CategoryID,
 				tDocument.Title,
 				tDocument.Summary,
-				tDocument.Content,
+				tDocument.WordCount,
+				tDocument.FirstHeading,
+				tDocument.ContentType,
+				tDocument.ContentJSON,
+				tDocument.ContentText,
 				tDocument.Data,
 				tDocument.State,
 				tDocument.Closed,
@@ -584,8 +608,12 @@ func (s *Server) UpdateDocument(
 			SET(
 				req.CategoryId,
 				req.GetTitle(),
-				req.GetContent().GetSummary(DocSummaryLength),
+				extracted.GetSummary(DocSummaryLength),
+				extracted.WordCount,
+				extracted.FirstHeading,
+				content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
 				req.GetContent(),
+				extracted.Text,
 				mysql.NULL,
 				req.GetMeta().GetState(),
 				req.GetMeta().GetClosed(),
@@ -627,18 +655,21 @@ func (s *Server) UpdateDocument(
 			}
 		}
 
-		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-			DocumentId:   oldDoc.GetId(),
-			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
-			CreatorId:    &userInfo.UserId,
-			CreatorJob:   userInfo.GetJob(),
-			Data: &documents.DocActivityData{
-				Data: &documents.DocActivityData_Updated{
-					Updated: diff,
+		// Only store activity if there are actual changes
+		if diff.HasChanges() {
+			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+				DocumentId:   oldDoc.GetId(),
+				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
+				CreatorId:    &userInfo.UserId,
+				CreatorJob:   userInfo.GetJob(),
+				Data: &documents.DocActivityData{
+					Data: &documents.DocActivityData_Updated{
+						Updated: diff,
+					},
 				},
-			},
-		}); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}); err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
 		}
 
 		if tmpl != nil && tmpl.GetWorkflow() != nil {

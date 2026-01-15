@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
+import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 import HTMLContentRenderer from './HTMLContentRenderer.vue';
 
 defineProps<{
-    value: JSONNode;
+    value: RichTextHtmlNode;
 }>();
 
 defineOptions({

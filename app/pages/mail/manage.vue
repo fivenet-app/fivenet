@@ -78,7 +78,6 @@ const creating = ref(false);
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="maileremaillist">
         <template #header>
@@ -139,6 +138,7 @@ const confirmModal = overlay.create(ConfirmModal);
                         :label="$t('common.create')"
                         trailing-icon="i-mdi-plus"
                         color="neutral"
+                        variant="outline"
                         @click="
                             creating = !creating;
                             selectedEmail = undefined;
@@ -170,14 +170,16 @@ const confirmModal = overlay.create(ConfirmModal);
                         v-if="creating"
                         :label="$t('common.back')"
                         icon="i-mdi-arrow-back"
-                        color="neutral"
+                        color="gray"
+                        variant="ghost"
                         @click="creating = false"
                     />
 
                     <template v-else-if="selectedEmail">
                         <UButton
                             class="hidden md:flex"
-                            color="neutral"
+                            color="gray"
+                            variant="ghost"
                             icon="i-mdi-arrow-back"
                             :label="$t('common.back')"
                             @click="selectedEmail = undefined"

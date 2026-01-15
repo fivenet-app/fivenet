@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"mime"
+	"path"
 	"path/filepath"
 	"regexp"
 	"time"
@@ -62,6 +63,8 @@ func sniff(userCType, name string) string {
 // buildKey generates a unique storage key for a file using the namespace, current UTC date,
 // a new UUID, and the sanitized file name.
 func buildKey(ns, name string) string {
-	return fmt.Sprintf("%s/%s/%s-%s",
-		ns, time.Now().UTC().Format("20060102"), uuid.NewString(), name)
+	return path.Join(
+		ns, time.Now().UTC().Format("20060102"),
+		fmt.Sprintf("%s-%s", uuid.NewString(), name),
+	)
 }

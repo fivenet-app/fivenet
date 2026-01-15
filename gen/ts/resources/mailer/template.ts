@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.mailer.Template
@@ -41,9 +42,9 @@ export interface Template {
      */
     title: string;
     /**
-     * @generated from protobuf field: string content = 8
+     * @generated from protobuf field: resources.common.content.Content content = 8
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: optional string creator_job = 9
      */
@@ -62,8 +63,8 @@ class Template$Type extends MessageType<Template> {
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "10240" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 8, name: "content", kind: "message", T: () => Content },
             { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "40" } } } },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } }
         ]);
@@ -73,7 +74,6 @@ class Template$Type extends MessageType<Template> {
         message.id = 0;
         message.emailId = 0;
         message.title = "";
-        message.content = "";
         if (value !== undefined)
             reflectionMergePartial<Template>(this, message, value);
         return message;
@@ -101,8 +101,8 @@ class Template$Type extends MessageType<Template> {
                 case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* string content */ 8:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 8:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional string creator_job */ 9:
                     message.creatorJob = reader.string();
@@ -140,9 +140,9 @@ class Template$Type extends MessageType<Template> {
         /* string title = 7; */
         if (message.title !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.title);
-        /* string content = 8; */
-        if (message.content !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 8; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         /* optional string creator_job = 9; */
         if (message.creatorJob !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);

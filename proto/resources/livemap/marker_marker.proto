@@ -41,7 +41,7 @@ message MarkerMarker {
     (buf.validate.field).string.max_len = 48,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string color = 11 [
@@ -51,7 +51,7 @@ message MarkerMarker {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string job = 12 [(buf.validate.field).string.max_len = 20];
@@ -94,7 +94,7 @@ message IconMarker {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

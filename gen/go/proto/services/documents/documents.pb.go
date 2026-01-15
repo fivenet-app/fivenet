@@ -3658,12 +3658,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
 	"\x15DeleteCommentResponse\"S\n" +
 	"\x16UpdateDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x91\x01\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\"\x88\x01\n" +
 	"\x15DeleteDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
-	"documentId\x12;\n" +
-	"\x06reason\x18\x02 \x01(\tB\x1e\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\n" +
+	"documentId\x122\n" +
+	"\x06reason\x18\x02 \x01(\tB\x15\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\n" +
 	"\xd8\x01\x01r\x05\x10\x00\x18\xff\x01H\x00R\x06reason\x88\x01\x01B\t\n" +
 	"\a_reason\"\x18\n" +
 	"\x16DeleteDocumentResponse\"P\n" +
@@ -3686,14 +3686,14 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\xce\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc5\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
 	"documentId\x12$\n" +
 	"\vcategory_id\x18\x02 \x01(\x03H\x00R\n" +
-	"categoryId\x88\x01\x01\x12C\n" +
-	"\x05title\x18\x03 \x01(\tB-\xda\xf3\x18\r\b\x01\x12\tStripTags\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
+	"categoryId\x88\x01\x01\x12:\n" +
+	"\x05title\x18\x03 \x01(\tB$\xda\xf3\x18\x04\b\x01\x18\x01\x9a\x84\x9e\x03\ralias:\"title\"\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
 	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12R\n" +
 	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\"\n" +
 	"\x04data\x18\x06 \x01(\tB\t\xbaH\x06r\x04(\xc0\x84=H\x01R\x04data\x88\x01\x01\x12=\n" +
@@ -3809,12 +3809,12 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\t_personal\"n\n" +
 	"\x19ToggleDocumentPinResponse\x12I\n" +
 	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
-	"\x04_pin\"\x98\x02\n" +
+	"\x04_pin\"\x8f\x02\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
-	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x128\n" +
-	"\amessage\x18\x03 \x01(\tB\x19\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
+	"\rreminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\freminderTime\x88\x01\x01\x12/\n" +
+	"\amessage\x18\x03 \x01(\tB\x10\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x05r\x03(\x80\bH\x01R\amessage\x88\x01\x01\x127\n" +
 	"\x12max_reminder_count\x18\x04 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
 	"(\x01R\x10maxReminderCountB\x10\n" +
 	"\x0e_reminder_timeB\n" +

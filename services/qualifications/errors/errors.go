@@ -41,4 +41,9 @@ var (
 		&common.I18NItem{Key: "errors.QualificationsService.ErrQualiUpdateDenied"},
 		nil,
 	)
+	ErrQualiViewDenied = common.NewI18nErr(
+		codes.PermissionDenied,
+		&common.I18NItem{Key: "errors.QualificationsService.ErrQualiViewDenied"},
+		nil,
+	)
 )

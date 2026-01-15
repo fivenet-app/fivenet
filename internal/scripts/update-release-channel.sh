@@ -57,4 +57,4 @@ jq --arg ch "$CHANNEL" \
    ' "$JSON_FILE" > "$TMP_FILE"
 mv "$TMP_FILE" "$JSON_FILE"
 
-echo "✅ Updated '$CHANNEL' → chartVersion=$CHART_VER, appVersion=$IMAGE_TAG, publishedAt=$TIMESTAMP"
+echo "✅ Updated '$CHANNEL' -> chartVersion=$CHART_VER, appVersion=$IMAGE_TAG, publishedAt=$TIMESTAMP"

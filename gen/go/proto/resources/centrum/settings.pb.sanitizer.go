@@ -4,7 +4,7 @@
 package centrum
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -96,7 +96,7 @@ func (m *PredefinedStatus) Sanitize() error {
 	for idx, item := range m.DispatchStatus {
 		_, _ = idx, item
 
-		m.DispatchStatus[idx] = htmlsanitizer.StripTags(m.DispatchStatus[idx])
+		m.DispatchStatus[idx] = htmlsanitizer.StripHTMLTags(m.DispatchStatus[idx])
 
 	}
 
@@ -104,7 +104,7 @@ func (m *PredefinedStatus) Sanitize() error {
 	for idx, item := range m.UnitStatus {
 		_, _ = idx, item
 
-		m.UnitStatus[idx] = htmlsanitizer.StripTags(m.UnitStatus[idx])
+		m.UnitStatus[idx] = htmlsanitizer.StripHTMLTags(m.UnitStatus[idx])
 
 	}
 

@@ -105,7 +105,7 @@ export default function colorMixTransparencyFallback(opts = {}) {
                     decl.value = fallbackVal;
                 }
             } else {
-                // No @supports ancestors → insert fallback right before this decl
+                // No @supports ancestors -> insert fallback right before this decl
                 if (preserve) decl.cloneBefore({ value: fallbackVal });
                 else decl.value = fallbackVal;
             }

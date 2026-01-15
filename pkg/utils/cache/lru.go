@@ -33,7 +33,7 @@ type pair[V any] struct {
 type LRUCache[K comparable, V any] struct {
 	_        utils.NoCopy            // disallow copying of LRUCache
 	capacity int                     // max items retained by cache
-	store    *xsync.Map[K, *pair[V]] // key → *pair[V]
+	store    *xsync.Map[K, *pair[V]] // key -> *pair[V]
 }
 
 // NewLRUCache constructs a cache with a fixed positive capacity. A panic is

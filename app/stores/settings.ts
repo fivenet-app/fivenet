@@ -102,8 +102,9 @@ export const useSettingsStore = defineStore(
             cardView: true,
         });
 
-        const editor = ref<{ showInvisibleCharacters: boolean }>({
+        const editor = ref<{ showInvisibleCharacters: boolean; focusMode: boolean }>({
             showInvisibleCharacters: false,
+            focusMode: false,
         });
 
         const signature = ref<SignatureSettings>({

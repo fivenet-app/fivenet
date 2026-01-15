@@ -16,7 +16,14 @@ stateFile: "dbsync.state.yaml"
 
 # The target FiveNet instance to sync data to (the instance must have the sync API enabled and you need a valid token)
 destination:
-  # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs, unless insecure is set to `true`)
+  # Your FiveNet Hostname, with port if your port is not 443 (HTTPS),
+  # requires the FiveNet instance to **use HTTPS**.
+  # ! Make sure to not include the protocol (http:// or https://) here!
+  # ! Don't include a trailing slash!
+  #
+  # Example:
+  # 'https://demo.fivenet.app'   -> 'demo.fivenet.app:443'
+  # 'https://fivenet.example.com' -> 'fivenet.example.com:443'
   url: "fivenet.example.com"
   token: "YOUR_SYNC_API_TOKEN"
   # Disable TLS verification (not recommended)
@@ -135,8 +142,9 @@ tables:
       sex: "sex"
       phoneNumber: "phone_number"
       height: "height"
-      visum: "visum"
-      playtime: "playtime"
+      # Optional columns
+      visum: "-" # Indicates that this column is not available
+      playtime: "-" # Indicates that this column is not available
     # Custom query to retrieve users data.
     # The identifier column should be a smart combination of values when using a multichar system.
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
@@ -232,7 +240,7 @@ tables:
       #ownerId: "owner"
       plate: "plate"
       type: "type"
-      model: "model"
+      model: "-" # Indicates that this column is not available
     # Custom query to retrieve all vehicles
     #
     # Must return result columns named: `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`,
@@ -248,6 +256,7 @@ tables:
     #    `owned_vehicles`
     #  LIMIT $limit
     #  OFFSET $offset;
+
 tableManager:
   # By default enabled, to create missing `updated_at` columns on tables that have it configured
   enabled: true

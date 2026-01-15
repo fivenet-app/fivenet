@@ -5,6 +5,7 @@ package resources.documents;
 import "buf/validate/validate.proto";
 import "codegen/dbscanner/dbscanner.proto";
 import "codegen/sanitizer/sanitizer.proto";
+import "resources/common/content/diff_activity.proto";
 import "resources/documents/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -78,8 +79,14 @@ message DocActivityData {
 
 message DocUpdated {
   optional string title_diff = 1;
+  optional resources.common.content.ContentDiff title_cdiff = 5;
+
   optional string content_diff = 2;
+  optional resources.common.content.ContentDiff content_cdiff = 6;
+
   optional string state_diff = 3;
+  optional resources.common.content.ContentDiff state_cdiff = 7;
+
   optional DocFilesChange files_change = 4;
 }
 

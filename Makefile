@@ -54,11 +54,15 @@ release:
 	docker tag docker.io/fivenet-app/fivenet:latest docker.io/fivenet-app/fivenet:$(VERSION)
 
 .PHONY: tests
-tests: tests-go
+tests: tests-go tests-js
 
 .PHONY: tests-go
 tests-go:
 	$(GO) test -v ./...
+
+.PHONY: tests-js
+tests-js:
+	pnpm run test
 
 .PHONY: build-go
 build-go:

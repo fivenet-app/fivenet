@@ -324,7 +324,7 @@ var File_resources_mailer_message_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_message_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/mailer/message.proto\x12\x10resources.mailer\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xb0\x05\n" +
+	"\x1eresources/mailer/message.proto\x12\x10resources.mailer\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x1cresources/mailer/email.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa7\x05\n" +
 	"\aMessage\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1b\n" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1b\n" +
@@ -335,8 +335,8 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x121\n" +
-	"\x05title\x18\b \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12C\n" +
+	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12(\n" +
+	"\x05title\x18\b \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12C\n" +
 	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x06\xda\xf3\x18\x02\b\x01R\acontent\x126\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2\x1d.resources.mailer.MessageDataH\x03R\x04data\x88\x01\x01\x12\"\n" +

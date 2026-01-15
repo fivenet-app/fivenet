@@ -123,8 +123,10 @@
         "dereferer": {
             "title": "Weiterleitung",
             "subtitle": "Sie verlassen nun FiveNet.",
-            "description": "Bitte beachten Sie, dass Sie auf eine Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
-            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!"
+            "description": "Bitte beachten Sie, dass Sie auf eine andere Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
+
+            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!",
+            "countdown": "Sie werden in {0} Sekunden weitergeleitet..."
         },
         "stats": {
             "title": "Statistik",
@@ -847,7 +849,8 @@
                     }
                 },
                 "invisible_characters": "Unsichtbare Zeichen anzeigen/verbergen",
-                "font_size": "Schriftgröße"
+                "font_size": "Schriftgröße",
+                "focus_mode": "Fokus-Modus"
             },
             "signature_pad": {
                 "pen_color": "Stiftfarbe",
@@ -959,7 +962,8 @@
                     "title": "Selbstgenehmigung zulassen",
                     "description": "Sollen Genehmigungen vom Dokumenten-Ersteller zu den Benötigten Genehmigungen zählen."
                 },
-                "self_approve_allowed_badge": "Selbstgenehmigung zugelassen"
+                "self_approve_allowed_badge": "Selbstgenehmigung zugelassen",
+                "self_approve_disallowed_badge": "Selbstgenehmigung nicht zugelassen"
             }
         },
         "livemap": {
@@ -1332,7 +1336,8 @@
                 "events_disabled": {
                     "label": "Event-Effekte deaktivieren",
                     "description": "Wie z.B. Schneeflocken zur Weihnachtszeit. Kann die Leistung auf schwächeren Geräten verbessern."
-                }
+                },
+                "color_mode": "Farbmodus"
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
@@ -2162,6 +2167,18 @@
                     "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
                 }
             }
+        },
+        "editor": {
+            "file_upload": {
+                "failed": {
+                    "title": "Datei-Upload fehlgeschlagen",
+                    "content": "Datei konnte nicht hochgeladen werden, bitte erneut versuchen. Fehler: {err}"
+                },
+                "success": {
+                    "title": "Datei-Upload erfolgreich",
+                    "content": "Datei wurde erfolgreich hochgeladen."
+                }
+            }
         }
     },
     "errors": {
@@ -2251,7 +2268,8 @@
             "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
             "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifizierungsanforderungen, die sich auf die Qualifizierung beziehen, die Sie bearbeiten!",
             "ErrQualiAccessDenied": "Sie haben keinen Zugriff auf diese Qualifizierung!",
-            "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!"
+            "ErrQualiUpdateDenied": "Sie haben keine Berechtigung, diese Qualifizierung zu bearbeiten!",
+            "ErrQualiViewDenied": "Sie haben keine Berechtigung, diese Qualifizierung anzusehen!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
@@ -2307,7 +2325,8 @@
             "ErrEmailDisabled": {
                 "title": "Die E-Mail Adresse wurde deaktiviert!",
                 "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
-            }
+            },
+            "ErrSignatureTooLong": "Ihre E-Mail Signatur ist zu lang!"
         },
         "CitizensService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",

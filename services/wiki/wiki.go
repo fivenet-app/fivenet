@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
@@ -498,7 +499,7 @@ func (s *Server) CreatePage(
 		VALUES(
 			userInfo.GetJob(),
 			req.ParentId,
-			req.GetContentType(),
+			content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
 			true,
 			true,
 			false,
@@ -715,18 +716,21 @@ func (s *Server) UpdatePage(
 		}
 	}
 
-	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
-		PageId:       req.GetPage().GetId(),
-		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
-		CreatorId:    &userInfo.UserId,
-		CreatorJob:   userInfo.GetJob(),
-		Data: &wiki.PageActivityData{
-			Data: &wiki.PageActivityData_Updated{
-				Updated: diff,
+	// Only store activity if there are actual changes
+	if diff.HasChanges() {
+		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+			PageId:       req.GetPage().GetId(),
+			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.GetJob(),
+			Data: &wiki.PageActivityData{
+				Data: &wiki.PageActivityData_Updated{
+					Updated: diff,
+				},
 			},
-		},
-	}); err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
 	}
 
 	if err := s.handlePageAccessChange(ctx, tx, req.GetPage().GetId(), userInfo, req.GetPage().GetAccess(), true); err != nil {

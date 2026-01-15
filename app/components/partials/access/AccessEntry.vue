@@ -305,7 +305,7 @@ watch(
                 <UButton
                     color="red"
                     class="flex-initial"
-                    icon="i-mdi-close"
+                    icon="i-mdi-remove"
                     :label="$t('components.access.remove_entry')"
                     :ui="{ label: 'md:hidden' }"
                     @click="$emit('delete')"

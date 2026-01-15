@@ -19,7 +19,10 @@ message Account {
   bool enabled = 6;
   optional int32 last_char = 7 [(buf.validate.field).int32.gt = 0];
 
-  repeated OAuth2Account oauth2_accounts = 8 [(buf.validate.field).repeated.max_items = 10, (tagger.tags) = "alias:\"oauth2_account\""];
+  repeated OAuth2Account oauth2_accounts = 8 [
+    (buf.validate.field).repeated.max_items = 10,
+    (tagger.tags) = "alias:\"oauth2_account\""
+  ];
 }
 
 message Character {

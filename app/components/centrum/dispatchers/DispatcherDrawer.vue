@@ -22,6 +22,7 @@ const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centru
     >
         <template #title>
             <span class="flex-1">{{ $t('common.dispatchers', 2) }}</span>
+
             <UButton icon="i-mdi-close" color="neutral" variant="link" size="sm" @click="$emit('close', false)" />
         </template>
 

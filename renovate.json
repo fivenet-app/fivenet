@@ -8,7 +8,14 @@
       "at any time"
     ],
     "baseBranchPatterns": ["develop"],
-    "postUpdateOptions": ["gomodTidy"],
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "packageRules": [{
+        "matchDepTypes": ["resolutions"],
+        "enabled": false
+    }],
+    "postUpdateOptions": ["gomodTidy", "pnpmDedupe"],
     "nix": {
         "enabled": true
     }

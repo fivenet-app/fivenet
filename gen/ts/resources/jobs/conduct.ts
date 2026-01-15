@@ -12,6 +12,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "./colleagues";
+import { File } from "../file/file";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.jobs.ConductEntry
@@ -42,27 +44,35 @@ export interface ConductEntry {
      */
     type: ConductType;
     /**
-     * @generated from protobuf field: string message = 7
+     * @generated from protobuf field: bool draft = 7
      */
-    message: string;
+    draft: boolean;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 8
+     * @generated from protobuf field: resources.common.content.Content message = 8
+     */
+    message?: Content;
+    /**
+     * @generated from protobuf field: repeated resources.file.File files = 9
+     */
+    files: File[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 10
      */
     expiresAt?: Timestamp;
     /**
-     * @generated from protobuf field: int32 target_user_id = 9
+     * @generated from protobuf field: int32 target_user_id = 11
      */
     targetUserId: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague target_user = 10
+     * @generated from protobuf field: optional resources.jobs.Colleague target_user = 12
      */
     targetUser?: Colleague;
     /**
-     * @generated from protobuf field: int32 creator_id = 11
+     * @generated from protobuf field: int32 creator_id = 13
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague creator = 12
+     * @generated from protobuf field: optional resources.jobs.Colleague creator = 14
      */
     creator?: Colleague;
 }
@@ -109,12 +119,14 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 6, name: "type", kind: "enum", T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "2048" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 8, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 10, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },
-            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
-            { no: 12, name: "creator", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"creator\"" } }
+            { no: 7, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "message", kind: "message", T: () => Content },
+            { no: 9, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File, options: { "tagger.tags": "alias:\"files\"" } },
+            { no: 10, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 11, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 12, name: "target_user", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"target_user\"" } },
+            { no: 13, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 14, name: "creator", kind: "message", T: () => Colleague, options: { "tagger.tags": "alias:\"creator\"" } }
         ]);
     }
     create(value?: PartialMessage<ConductEntry>): ConductEntry {
@@ -122,7 +134,8 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
         message.id = 0;
         message.job = "";
         message.type = 0;
-        message.message = "";
+        message.draft = false;
+        message.files = [];
         message.targetUserId = 0;
         message.creatorId = 0;
         if (value !== undefined)
@@ -152,22 +165,28 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
                 case /* resources.jobs.ConductType type */ 6:
                     message.type = reader.int32();
                     break;
-                case /* string message */ 7:
-                    message.message = reader.string();
+                case /* bool draft */ 7:
+                    message.draft = reader.bool();
                     break;
-                case /* optional resources.timestamp.Timestamp expires_at */ 8:
+                case /* resources.common.content.Content message */ 8:
+                    message.message = Content.internalBinaryRead(reader, reader.uint32(), options, message.message);
+                    break;
+                case /* repeated resources.file.File files */ 9:
+                    message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional resources.timestamp.Timestamp expires_at */ 10:
                     message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
                     break;
-                case /* int32 target_user_id */ 9:
+                case /* int32 target_user_id */ 11:
                     message.targetUserId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague target_user */ 10:
+                case /* optional resources.jobs.Colleague target_user */ 12:
                     message.targetUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
-                case /* int32 creator_id */ 11:
+                case /* int32 creator_id */ 13:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague creator */ 12:
+                case /* optional resources.jobs.Colleague creator */ 14:
                     message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 default:
@@ -200,24 +219,30 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
         /* resources.jobs.ConductType type = 6; */
         if (message.type !== 0)
             writer.tag(6, WireType.Varint).int32(message.type);
-        /* string message = 7; */
-        if (message.message !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.message);
-        /* optional resources.timestamp.Timestamp expires_at = 8; */
+        /* bool draft = 7; */
+        if (message.draft !== false)
+            writer.tag(7, WireType.Varint).bool(message.draft);
+        /* resources.common.content.Content message = 8; */
+        if (message.message)
+            Content.internalBinaryWrite(message.message, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.file.File files = 9; */
+        for (let i = 0; i < message.files.length; i++)
+            File.internalBinaryWrite(message.files[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp expires_at = 10; */
         if (message.expiresAt)
-            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* int32 target_user_id = 9; */
+            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* int32 target_user_id = 11; */
         if (message.targetUserId !== 0)
-            writer.tag(9, WireType.Varint).int32(message.targetUserId);
-        /* optional resources.jobs.Colleague target_user = 10; */
+            writer.tag(11, WireType.Varint).int32(message.targetUserId);
+        /* optional resources.jobs.Colleague target_user = 12; */
         if (message.targetUser)
-            Colleague.internalBinaryWrite(message.targetUser, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* int32 creator_id = 11; */
+            Colleague.internalBinaryWrite(message.targetUser, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* int32 creator_id = 13; */
         if (message.creatorId !== 0)
-            writer.tag(11, WireType.Varint).int32(message.creatorId);
-        /* optional resources.jobs.Colleague creator = 12; */
+            writer.tag(13, WireType.Varint).int32(message.creatorId);
+        /* optional resources.jobs.Colleague creator = 14; */
         if (message.creator)
-            Colleague.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

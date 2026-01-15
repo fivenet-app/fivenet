@@ -13,10 +13,10 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const { login } = useAppConfig();
+const { auth } = useAppConfig();
 
 onBeforeMount(() => {
-    if (!login.signupEnabled) {
+    if (!auth.signupEnabled) {
         navigateTo('/auth/login');
     }
 });

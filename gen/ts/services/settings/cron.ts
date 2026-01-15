@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Cronjob } from "../../resources/common/cron/cron";
+import { Cronjob } from "../../resources/cron/cron";
 /**
  * @generated from protobuf message services.settings.ListCronjobsRequest
  */
@@ -23,7 +23,7 @@ export interface ListCronjobsRequest {
  */
 export interface ListCronjobsResponse {
     /**
-     * @generated from protobuf field: repeated resources.common.cron.Cronjob jobs = 1
+     * @generated from protobuf field: repeated resources.cron.Cronjob jobs = 1
      */
     jobs: Cronjob[];
 }
@@ -84,7 +84,7 @@ class ListCronjobsResponse$Type extends MessageType<ListCronjobsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.common.cron.Cronjob jobs */ 1:
+                case /* repeated resources.cron.Cronjob jobs */ 1:
                     message.jobs.push(Cronjob.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -99,7 +99,7 @@ class ListCronjobsResponse$Type extends MessageType<ListCronjobsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListCronjobsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.common.cron.Cronjob jobs = 1; */
+        /* repeated resources.cron.Cronjob jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
             Cronjob.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

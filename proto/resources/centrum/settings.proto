@@ -52,7 +52,7 @@ message PredefinedStatus {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   repeated string dispatch_status = 2 [
@@ -64,7 +64,7 @@ message PredefinedStatus {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

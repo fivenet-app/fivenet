@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -33,7 +33,7 @@ func (m *ApprovalTaskSeed) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		*m.Label = htmlsanitizer.StripTags(*m.Label)
+		*m.Label = htmlsanitizer.StripHTMLTags(*m.Label)
 	}
 
 	return nil
@@ -129,6 +129,15 @@ func (m *ListApprovalPoliciesRequest) Sanitize() error {
 func (m *ListApprovalPoliciesResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: DocMeta
+	if m.DocMeta != nil {
+		if v, ok := any(m.GetDocMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Field: Policy

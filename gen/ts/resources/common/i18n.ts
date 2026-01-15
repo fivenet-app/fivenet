@@ -32,8 +32,8 @@ export interface I18NItem {
 class I18NItem$Type extends MessageType<I18NItem> {
     constructor() {
         super("resources.common.I18NItem", [
-            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ }, options: { "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<I18NItem>): I18NItem {

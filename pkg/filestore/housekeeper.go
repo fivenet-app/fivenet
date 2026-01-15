@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
@@ -18,6 +18,13 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/durationpb"
+)
+
+var Module = fx.Module(
+	"filestore.housekeeper",
+	fx.Provide(
+		NewHousekeeper,
+	),
 )
 
 // Housekeeper is responsible for cleaning up orphaned and expired files from the filestore.

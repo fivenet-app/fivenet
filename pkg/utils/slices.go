@@ -15,6 +15,23 @@ func RemoveSliceDuplicates[T comparable](in []T) []T {
 	return list
 }
 
+// RemoveSliceDuplicatesFn returns a new slice with duplicate values removed determined by a function, preserving order.
+// keyFn should return true for items that are considered duplicates.
+func RemoveSliceDuplicatesFn[T comparable, V comparable](in []T, keyFn func(T) V) []T {
+	allKeys := make(map[V]struct{}, len(in))
+	list := make([]T, 0, len(in))
+
+	for _, item := range in {
+		key := keyFn(item)
+		if _, value := allKeys[key]; !value {
+			allKeys[key] = struct{}{}
+			list = append(list, item)
+		}
+	}
+
+	return list
+}
+
 // SlicesDifference returns the values added and removed between two slices, ignoring duplicates.
 // Duplicates of values are ignored.
 func SlicesDifference[T comparable](a, b []T) ([]T, []T) {

@@ -21,7 +21,7 @@ message UserMarker {
     (buf.validate.field).string.max_len = 48,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string color = 6 [
@@ -31,7 +31,7 @@ message UserMarker {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string job = 7 [(buf.validate.field).string.max_len = 20];

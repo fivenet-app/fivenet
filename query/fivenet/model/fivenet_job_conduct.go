@@ -18,6 +18,7 @@ type FivenetJobConduct struct {
 	DeletedAt    *time.Time `json:"deleted_at"`
 	Job          string     `json:"job"`
 	Type         int16      `json:"type"`
+	Draft        *bool      `json:"draft"`
 	Message      *string    `json:"message"`
 	ExpiresAt    *time.Time `json:"expires_at"`
 	TargetUserID *int32     `json:"target_user_id"`

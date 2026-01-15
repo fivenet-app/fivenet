@@ -32,6 +32,13 @@ const cacheTTL = 20 * time.Second
 
 var ErrAccountError = errors.New("failed to retrieve account data")
 
+var RetrieverModule = fx.Module(
+	"userinfo.retriever",
+	fx.Provide(
+		NewRetriever,
+	),
+)
+
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId int64) (*pbuserinfo.UserInfo, error)
 	GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error)

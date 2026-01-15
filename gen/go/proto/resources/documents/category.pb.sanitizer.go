@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -16,7 +16,7 @@ func (m *Category) Sanitize() error {
 
 	// Field: Color
 	if m.Color != nil {
-		*m.Color = htmlsanitizer.StripTags(*m.Color)
+		*m.Color = htmlsanitizer.StripHTMLTags(*m.Color)
 	}
 
 	// Field: CreatedAt
@@ -44,7 +44,7 @@ func (m *Category) Sanitize() error {
 
 	// Field: Icon
 	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+		*m.Icon = htmlsanitizer.StripHTMLTags(*m.Icon)
 	}
 
 	// Field: Job

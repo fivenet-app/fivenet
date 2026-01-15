@@ -234,6 +234,14 @@ var PermsRemap = map[string][]string{
 		"Superuser",
 	},
 
+	// Service: jobs.ConductService
+	"jobs.ConductService/GetConductEntry": []string{
+		"jobs.ConductService/ListConductEntries",
+	},
+	"jobs.ConductService/UploadFile": []string{
+		"jobs.ConductService/CreateConductEntry", "jobs.ConductService/UpdateConductEntry",
+	},
+
 	// Service: jobs.JobsService
 	"jobs.JobsService/GetColleagueLabels": []string{
 		"jobs.JobsService/GetColleague",

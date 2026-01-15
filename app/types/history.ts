@@ -1,3 +1,4 @@
+import type { JSONContent } from '@tiptap/core';
 import type { File } from '~~/gen/ts/resources/file/file';
 
 export interface Version<TContent> {
@@ -8,8 +9,8 @@ export interface Version<TContent> {
     content: TContent;
 }
 
-export interface Content {
+export interface HistoryContent {
     title?: string;
-    content: string;
+    content: JSONContent | string | undefined;
     files: File[]; // Associated files, if any
 }

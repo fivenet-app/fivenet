@@ -10,7 +10,6 @@ import RequestAccess from '~/components/documents/requests/RequestAccess.vue';
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -24,9 +23,11 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
+import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
+import DraftBadge from '../partials/DraftBadge.vue';
 import ScrollToTop from '../partials/ScrollToTop.vue';
 import ApprovalDrawer from './approval/ApprovalDrawer.vue';
-import ReminderModal from './ReminderModal.vue';
+import ReminderDrawer from './ReminderDrawer.vue';
 import RequestDrawer from './requests/RequestDrawer.vue';
 
 const props = defineProps<{
@@ -82,7 +83,7 @@ const approvalDrawer = overlay.create(ApprovalDrawer);
 
 const hash = useRouteHash('', { mode: 'push' });
 
-function openRequestsDrawer(): void {
+async function openRequestsDrawer(): Promise<void> {
     if (doc.value?.access === undefined || doc.value?.document === undefined) return;
 
     requestDrawer
@@ -96,7 +97,7 @@ function openRequestsDrawer(): void {
     hash.value = `#requests`;
 }
 
-function openApprovalDrawer(): void {
+async function openApprovalDrawer(): Promise<void> {
     approvalDrawer
         .open({
             documentId: props.documentId,
@@ -106,12 +107,15 @@ function openApprovalDrawer(): void {
                 if (doc.value?.document) doc.value.document.meta = $event;
             },
         })
-        .then(() => (hash.value = ''));
+        .then(() => (hash.value = ''))
+        .finally(() => {
+            hash.value = '';
+        });
 
     hash.value = `#approvals`;
 }
 
-function handleHash(): void {
+async function handleHash(): Promise<void> {
     if (hash.value === undefined || hash.value === null) return;
 
     const val = hash.value.replace(/^#/, '');
@@ -243,7 +247,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
 const confirmModal = overlay.create(ConfirmModal);
 const confirmModalWithReason = overlay.create(ConfirmModalWithReason);
-const reminderModal = overlay.create(ReminderModal, { props: { documentId: props.documentId } });
+const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: props.documentId } });
 </script>
 
 <template>
@@ -434,7 +438,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                 :label="$t('common.reminder')"
                                 @click="
                                     () => {
-                                        reminderModal.open({
+                                        reminderDrawer.open({
                                             documentId: documentId,
                                             reminderTime: doc?.document?.workflowUser?.manualReminderTime ?? undefined,
                                             'onUpdate:reminderTime': ($event) => updateReminderTime($event),
@@ -621,14 +625,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                                     <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
                                 </UBadge>
 
-                                <UBadge
-                                    v-if="doc.document?.meta?.draft"
-                                    class="inline-flex gap-1"
-                                    color="info"
-                                    size="md"
-                                    icon="i-mdi-pencil"
-                                    :label="$t('common.draft')"
-                                />
+                                <DraftBadge v-if="doc.document?.meta?.draft" />
 
                                 <UBadge
                                     v-if="doc.document?.deletedAt"
@@ -688,7 +685,7 @@ const reminderModal = overlay.create(ReminderModal, { props: { documentId: props
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <HTMLContent v-if="doc.document?.content?.content" :value="doc.document.content.content" />
+                        <CustomContentRenderer v-if="doc.document?.content" :value="doc.document.content" />
                     </div>
                 </div>
 

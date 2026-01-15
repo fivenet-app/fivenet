@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { canAccess } from './helpers';
 
@@ -23,14 +26,16 @@ const mailerStore = useMailerStore();
 const { addressBook, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
-    signature: z.coerce.string().max(1024),
+    signature: z.custom<JSONContent | string>().optional(),
     emails: z.coerce.string().array().max(25).default([]),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    signature: selectedEmail.value?.settings?.signature ?? '',
+    signature: selectedEmail.value?.settings?.signature?.tiptapJson
+        ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
+        : (selectedEmail.value?.settings?.signature?.rawHtml ?? ''),
     emails: selectedEmail.value?.settings?.blockedEmails ?? [],
 });
 
@@ -46,7 +51,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         .setEmailSettings({
             settings: {
                 emailId: selectedEmail.value?.id,
-                signature: values.signature,
+                signature: {
+                    contentType: ContentType.TIPTAP_JSON,
+                    version: '',
+                    tiptapJson: Struct.fromJsonString(JSON.stringify(values.signature)),
+                },
                 blockedEmails: values.emails.map((e) => e.trim()),
             },
         })
@@ -108,6 +117,7 @@ const formRef = useTemplateRef('formRef');
                                 v-model="state.signature"
                                 name="signature"
                                 :disabled="disabled || !canManage"
+                                :limit="1024"
                                 wrapper-class="min-h-44"
                             />
                         </ClientOnly>

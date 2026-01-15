@@ -4,7 +4,8 @@
 package content
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -23,22 +24,44 @@ func (m *Content) Sanitize() error {
 		}
 	}
 
-	// Field: RawContent
-	if m.RawContent != nil {
-		*m.RawContent = htmlsanitizer.Sanitize(*m.RawContent)
+	// Field: RawHtml
+	if m.RawHtml != nil {
+		*m.RawHtml = htmlsanitizer.Sanitize(*m.RawHtml)
+	}
+
+	// Field: TiptapJson
+	if m.TiptapJson != nil {
+		err := tiptapsanitizer.SanitizeStruct(m.GetTiptapJson(), 100000, 20)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Field: Version
-	if m.Version != nil {
-		*m.Version = htmlsanitizer.Sanitize(*m.Version)
-	}
+	m.Version = htmlsanitizer.Sanitize(m.Version)
 
 	return nil
 }
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *JSONNode) Sanitize() error {
+func (m *ExtractedContent) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: FirstHeading
+	m.FirstHeading = htmlsanitizer.Sanitize(m.FirstHeading)
+
+	// Field: Text
+	m.Text = htmlsanitizer.Sanitize(m.Text)
+
+	return nil
+}
+
+// Sanitize sanitizes the message's fields, in case of complex types it calls
+// their Sanitize() method recursively.
+func (m *RichTextHtmlNode) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -47,7 +70,7 @@ func (m *JSONNode) Sanitize() error {
 	for idx, item := range m.Attrs {
 		_, _ = idx, item
 
-		m.Attrs[idx] = htmlsanitizer.StripTags(m.Attrs[idx])
+		m.Attrs[idx] = htmlsanitizer.StripHTMLTags(m.Attrs[idx])
 
 	}
 
@@ -65,41 +88,16 @@ func (m *JSONNode) Sanitize() error {
 
 	// Field: Id
 	if m.Id != nil {
-		*m.Id = htmlsanitizer.StripTags(*m.Id)
+		*m.Id = htmlsanitizer.StripHTMLTags(*m.Id)
 	}
 
 	// Field: Tag
-	m.Tag = htmlsanitizer.StripTags(m.Tag)
+	m.Tag = htmlsanitizer.StripHTMLTags(m.Tag)
 
 	// Field: Text
 	if m.Text != nil {
-		*m.Text = htmlsanitizer.StripTags(*m.Text)
+		*m.Text = htmlsanitizer.StripHTMLTags(*m.Text)
 	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *TiptapJSONDocument) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: FirstHeading
-	m.FirstHeading = htmlsanitizer.StripTags(m.FirstHeading)
-
-	// Field: Json
-	if m.Json != nil {
-		if v, ok := any(m.GetJson()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Summary
-	m.Summary = htmlsanitizer.StripTags(m.Summary)
 
 	return nil
 }

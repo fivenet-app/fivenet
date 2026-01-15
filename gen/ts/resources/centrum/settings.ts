@@ -324,8 +324,8 @@ export const Settings = new Settings$Type();
 class PredefinedStatus$Type extends MessageType<PredefinedStatus> {
     constructor() {
         super("resources.centrum.PredefinedStatus", [
-            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "20", items: { string: { maxLen: "64" } } } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ], { "codegen.dbscanner.dbscanner": { enabled: true } });
     }
     create(value?: PartialMessage<PredefinedStatus>): PredefinedStatus {

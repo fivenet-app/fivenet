@@ -4,6 +4,7 @@ package resources.clientconfig;
 
 import "resources/settings/banner.proto";
 import "resources/settings/config.proto";
+import "resources/settings/data.proto";
 import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfig";
@@ -13,18 +14,18 @@ message ClientConfig {
 
   string default_locale = 2 [(tagger.tags) = "json:\"defaultLocale\""];
 
-  LoginConfig login = 3;
+  Auth auth = 3;
   Discord discord = 4;
   Website website = 5;
   FeatureGates feature_gates = 6 [(tagger.tags) = "json:\"featureGates\""];
   Game game = 7;
   System system = 8;
   Display display = 9 [(tagger.tags) = "json:\"display\""];
-
   resources.settings.QuickButtons quick_buttons = 11 [(tagger.tags) = "json:\"quickButtons\""];
+  resources.settings.Data data = 12 [(tagger.tags) = "json:\"data\""];
 }
 
-message LoginConfig {
+message Auth {
   bool signup_enabled = 1 [(tagger.tags) = "json:\"signupEnabled\""];
   bool last_char_lock = 2 [(tagger.tags) = "json:\"lastCharLock\""];
   repeated ProviderConfig providers = 3 [(tagger.tags) = "json:\"providers\""];
@@ -51,9 +52,7 @@ message Links {
   optional string privacy_policy = 2 [(tagger.tags) = "json:\"privacyPolicy\""];
 }
 
-message FeatureGates {
-  bool image_proxy = 1 [(tagger.tags) = "json:\"imageProxy\""];
-}
+message FeatureGates {}
 
 message Game {
   string unemployed_job_name = 1 [(tagger.tags) = "json:\"unemployedJobName\""];

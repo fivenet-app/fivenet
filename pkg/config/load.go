@@ -112,6 +112,11 @@ func Load() (Result, error) {
 		c.IgnoreRequirements = skip
 	}
 
+	// Validate config (currently only storage config)
+	if err := c.Storage.Validate(); err != nil {
+		return res, fmt.Errorf("invalid storage config. %w", err)
+	}
+
 	return res, nil
 }
 

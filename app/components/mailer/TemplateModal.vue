@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import type { JSONContent } from '@tiptap/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
@@ -42,7 +44,6 @@ async function listTemplates(): Promise<ListTemplatesResponse> {
 
 const accordionItems = computed(() =>
     templates.value?.templates.map((t) => ({
-        ...t,
         label: t.title,
     })),
 );
@@ -103,7 +104,13 @@ const editing = ref(false);
 
                                     <ClientOnly>
                                         <TiptapEditor
-                                            v-model="templates.templates[index].content"
+                                            :model-value="
+                                                templates.templates[index].content?.tiptapJson
+                                                    ? (Struct.toJson(
+                                                          templates.templates[index].content.tiptapJson,
+                                                      ) as JSONContent)
+                                                    : (templates.templates[index].content?.rawHtml ?? '')
+                                            "
                                             disabled
                                             hide-toolbar
                                             wrapper-class="min-h-44"

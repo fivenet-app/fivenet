@@ -4,7 +4,7 @@
 package mailer
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -18,13 +18,17 @@ func (m *EmailSettings) Sanitize() error {
 	for idx, item := range m.BlockedEmails {
 		_, _ = idx, item
 
-		m.BlockedEmails[idx] = htmlsanitizer.StripTags(m.BlockedEmails[idx])
+		m.BlockedEmails[idx] = htmlsanitizer.StripHTMLTags(m.BlockedEmails[idx])
 
 	}
 
 	// Field: Signature
 	if m.Signature != nil {
-		*m.Signature = htmlsanitizer.Sanitize(*m.Signature)
+		if v, ok := any(m.GetSignature()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

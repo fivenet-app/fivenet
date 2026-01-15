@@ -4,7 +4,7 @@
 package calendar
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -24,7 +24,7 @@ func (m *Calendar) Sanitize() error {
 	}
 
 	// Field: Color
-	m.Color = htmlsanitizer.StripTags(m.Color)
+	m.Color = htmlsanitizer.StripHTMLTags(m.Color)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -58,7 +58,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripTags(*m.Description)
+		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
 	}
 
 	// Field: Job
@@ -67,7 +67,7 @@ func (m *Calendar) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.StripTags(m.Name)
+	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
 
 	// Field: Subscription
 	if m.Subscription != nil {
@@ -187,7 +187,7 @@ func (m *CalendarEntry) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
+	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
@@ -259,7 +259,7 @@ func (m *CalendarShort) Sanitize() error {
 	}
 
 	// Field: Color
-	m.Color = htmlsanitizer.StripTags(m.Color)
+	m.Color = htmlsanitizer.StripHTMLTags(m.Color)
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
@@ -272,7 +272,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Description
 	if m.Description != nil {
-		*m.Description = htmlsanitizer.StripTags(*m.Description)
+		*m.Description = htmlsanitizer.StripHTMLTags(*m.Description)
 	}
 
 	// Field: Job
@@ -281,7 +281,7 @@ func (m *CalendarShort) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.StripTags(m.Name)
+	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
 
 	// Field: Subscription
 	if m.Subscription != nil {

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CalendarDate } from '@internationalized/date';
 import type { TabsItem } from '@nuxt/ui';
-import { addDays, addWeeks, isBefore, isFuture, subDays, subMonths, subWeeks } from 'date-fns';
+import { addDays, addWeeks, isBefore, isFuture, nextSaturday, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -54,6 +54,7 @@ const route = useRoute();
 const dateLowerLimit = new Date(2022, 1, 1);
 const today = new Date();
 const tomorrow = addDays(today, 1);
+const nextSaturdayDate = nextSaturday(today);
 const minMonth = subMonths(today, 6);
 
 const schema = z.object({
@@ -393,6 +394,7 @@ const { game } = useAppConfig();
 
                                             <InputDatePicker
                                                 v-model="query.date.end"
+                                                date-format="date"
                                                 :min-value="
                                                     new CalendarDate(
                                                         minMonth.getFullYear(),
@@ -441,9 +443,9 @@ const { game } = useAppConfig();
                                                 "
                                                 :max-value="
                                                     new CalendarDate(
-                                                        tomorrow.getFullYear(),
-                                                        tomorrow.getMonth() + 1,
-                                                        tomorrow.getDate(),
+                                                        nextSaturdayDate.getFullYear(),
+                                                        nextSaturdayDate.getMonth() + 1,
+                                                        nextSaturdayDate.getDate(),
                                                     )
                                                 "
                                             />

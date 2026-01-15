@@ -25,14 +25,14 @@ message ExamQuestion {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional string description = 6 [
     (buf.validate.field).string.max_len = 1024,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   ExamQuestionData data = 7 [(buf.validate.field).required = true];
@@ -78,7 +78,7 @@ message ExamQuestionSingleChoice {
     (buf.validate.field).repeated.max_items = 10,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -88,7 +88,7 @@ message ExamQuestionMultipleChoice {
     (buf.validate.field).repeated.max_items = 10,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   optional int32 limit = 2 [(buf.validate.field).int32 = {
@@ -160,7 +160,7 @@ message ExamResponseText {
     (buf.validate.field).string.max_bytes = 500000,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ]; // 0.5 Megabyte
 }
@@ -170,7 +170,7 @@ message ExamResponseSingleChoice {
     (buf.validate.field).string.max_len = 512,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -180,7 +180,7 @@ message ExamResponseMultipleChoice {
     (buf.validate.field).repeated.max_items = 10,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

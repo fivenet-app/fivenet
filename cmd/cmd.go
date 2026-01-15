@@ -22,11 +22,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	tiptapsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/tiptap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/api"
@@ -75,7 +75,7 @@ import (
 type Context struct{}
 
 var Cli struct {
-	Version kong.VersionFlag `help:"Print version information and quit"`
+	Version kong.VersionFlag `short:"v" aliases:"V" help:"Print version information and quit"`
 
 	Config             string        `               help:"Config file path"                                  env:"FIVENET_CONFIG_FILE"`
 	StartTimeout       time.Duration `default:"180s" help:"App start timeout duration"                        env:"FIVENET_START_TIMEOUT"`
@@ -102,6 +102,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		}),
 		fx.StartTimeout(startTimeout),
 
+		// Base
 		admin.Module,
 		appconfig.Module,
 		audit.Module,
@@ -116,7 +117,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
-		htmldiffer.Module,
+		tiptapsanitizer.Module,
 		i18n.Module,
 		fx.Provide(
 			converter.New,
@@ -130,17 +131,23 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		modules.LoggerModule,
 		modules.TracerProviderModule,
 		perms.Module,
-		query.Module,
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
 		storage.Module,
 		storage.MetricsCollectorModule,
 		housekeeper.Module,
-		dbsync.Module,
-		fx.Provide(pkgfilestore.NewHousekeeper),
-		fx.Provide(crypt.New),
-		fx.Provide(demo.New),
+		crypt.Module,
+		demo.Module,
 		updatecheck.Module,
+		dbsync.Module,
+		dbsync.TableManagerModule,
+
+		userinfo.PollerModule,
+		userinfo.RetrieverModule,
+
+		pbjobs.HousekeeperModule,
+		pbdocuments.WorkflowModule,
+		pkgfilestore.Module,
 
 		// Discord Bot
 		discord.StateModule,
@@ -154,30 +161,24 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 		),
 
 		fx.Provide(
+			manager.New,
 			mstlystcdata.NewDocumentCategories,
+			mstlystcdata.NewEnricher,
 			mstlystcdata.NewJobs,
 			mstlystcdata.NewJobsSearch,
 			mstlystcdata.NewLaws,
-			mstlystcdata.NewEnricher,
 			mstlystcdata.NewUserAwareEnricher,
+			notifi.New,
 			postals.New,
 			tracker.New,
-			manager.New,
-			notifi.New,
-			userinfo.NewRetriever,
-			userinfo.NewPoller,
-
-			// GRPC Service Helpers, Housekeepers and Co.
-			pbjobs.NewHousekeeper,
-			pbdocuments.NewWorkflow,
 
 			// HTTP Services
 			server.AsService(api.New),
 			server.AsService(filestore.New),
+			server.AsService(icons.New),
 			server.AsService(images.New),
 			server.AsService(oauth2.New),
 			server.AsService(wk.New),
-			server.AsService(icons.New),
 		),
 
 		// GRPC Services
@@ -187,8 +188,8 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			pbcentrum.NewServer,
 			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),
-			grpc.AsService(pbvehicles.NewServer),
 			pbdocuments.NewServer,
+			grpc.AsService(pbfilestore.NewServer),
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
@@ -196,12 +197,14 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),
-			grpc.AsService(pbwiki.NewServer),
 			pbsync.NewServer,
-			grpc.AsService(pbfilestore.NewServer),
+			grpc.AsService(pbvehicles.NewServer),
+			grpc.AsService(pbwiki.NewServer),
 		),
 
+		// Ensure sanitizer instances are created and initialized
 		fx.Invoke(func(*bluemonday.Policy) {}),
+		fx.Invoke(func(*tiptapsanitizer.Sanitizer) {}),
 	}
 
 	if withServer {
@@ -213,9 +216,16 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 	}
 
 	if withConfig {
-		opts = append(opts, config.Module)
+		opts = append(opts,
+			config.Module,
+			query.Module,
+		)
 	} else {
-		opts = append(opts, fx.Provide(dbsync.NewConfig))
+		// Don't include query module, provide only the dbsync config
+		opts = append(opts,
+			fx.Provide(dbsync.NewConfig),
+			fx.Provide(dbsync.NewDB),
+		)
 	}
 
 	return opts

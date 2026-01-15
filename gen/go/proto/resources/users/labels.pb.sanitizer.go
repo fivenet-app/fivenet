@@ -4,7 +4,7 @@
 package users
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -15,7 +15,7 @@ func (m *Label) Sanitize() error {
 	}
 
 	// Field: Color
-	m.Color = htmlsanitizer.StripTags(m.Color)
+	m.Color = htmlsanitizer.StripHTMLTags(m.Color)
 
 	// Field: Job
 	if m.Job != nil {
@@ -23,7 +23,7 @@ func (m *Label) Sanitize() error {
 	}
 
 	// Field: Name
-	m.Name = htmlsanitizer.StripTags(m.Name)
+	m.Name = htmlsanitizer.StripHTMLTags(m.Name)
 
 	return nil
 }

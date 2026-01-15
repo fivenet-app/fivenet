@@ -33,7 +33,7 @@ message CreateAccountRequest {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   string password = 3 [
@@ -111,7 +111,7 @@ message ChangeUsernameRequest {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }
@@ -169,7 +169,7 @@ message DeleteSocialLoginRequest {
     (buf.validate.field).string.max_len = 50,
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
 }

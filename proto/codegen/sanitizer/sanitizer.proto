@@ -13,4 +13,8 @@ extend google.protobuf.FieldOptions {
 message FieldOptions {
   bool enabled = 1;
   optional string method = 2;
+  optional bool strip_html_tags = 3;
+
+  optional bool tiptap_json = 4;
+  optional uint32 max_bytes = 5;
 }

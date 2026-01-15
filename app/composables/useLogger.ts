@@ -3,7 +3,7 @@ import { Logger, type ILogger } from '~/utils/logger';
 const logger = new Logger();
 
 export function useLogger(prefix?: string): ILogger {
-    if (prefix === '') {
+    if (prefix === undefined || prefix === '') {
         return logger;
     }
 

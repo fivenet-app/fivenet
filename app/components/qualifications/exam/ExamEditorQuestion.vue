@@ -443,6 +443,7 @@ watch(
                                 :rounded="false"
                                 :src="question.data?.data.image.image.filePath"
                                 :alt="question.data?.data.image.alt"
+                                src-fallback
                             />
                         </div>
                     </div>

@@ -8,13 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/XSAM/otelsql"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
-	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -53,11 +48,17 @@ type Sync struct {
 type Params struct {
 	fx.In
 
-	LC         fx.Lifecycle
-	Shutdowner fx.Shutdowner
+	LC fx.Lifecycle
 
 	Logger *zap.Logger
 	Config *Config
+	DB     *sql.DB
+}
+
+type Result struct {
+	fx.Out
+
+	Sync *Sync
 }
 
 func New(p Params) (*Sync, error) {
@@ -67,6 +68,7 @@ func New(p Params) (*Sync, error) {
 
 		logger: logger,
 		cfg:    p.Config,
+		db:     p.DB,
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
@@ -79,45 +81,11 @@ func New(p Params) (*Sync, error) {
 		return nil, fmt.Errorf("failed to load dbsync state. %w", err)
 	}
 
-	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN, false)
-	if err != nil {
-		return nil, fmt.Errorf("failed to prepare source database connection (bad DSN). %w", err)
-	}
-
-	// Connect to source database
-	db, err := otelsql.Open("mysql", dsn,
-		otelsql.WithAttributes(
-			semconv.DBSystemMySQL,
-		),
-		otelsql.WithSpanOptions(otelsql.SpanOptions{
-			DisableErrSkip: true,
-		}),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to source database. %w", err)
-	}
-	s.db = db
-
-	reg, err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
-		semconv.DBSystemMySQL,
-	))
-	if err != nil {
-		return nil, fmt.Errorf("failed to register db stats metrics. %w", err)
-	}
-	defer reg.Unregister()
-
-	// Setup SQL Prometheus metrics collector
-	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
-
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(s.start))
 	p.LC.Append(fx.StopHook(func() error {
 		if err := s.stop(); err != nil {
-			return err
-		}
-
-		if err := s.db.Close(); err != nil {
 			return err
 		}
 
@@ -225,6 +193,8 @@ func (s *Sync) restart() error {
 func (s *Sync) Run(ctx context.Context) {
 	defer s.wg.Done()
 
+	s.logger.Info("started dbsync loop")
+
 	for {
 		if err := s.run(ctx); err != nil {
 			s.logger.Error("error during sync run", zap.Error(err))
@@ -243,14 +213,11 @@ func (s *Sync) run(ctx context.Context) error {
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {
-		s.logger.Error("error during jobs sync", zap.Error(err))
+		s.logger.Error("error during base data sync", zap.Error(err))
 		return err
 	}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			s.syncBaseData(ctx)
 
@@ -261,13 +228,10 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(5 * time.Minute):
 			}
 		}
-	}()
+	})
 
 	// User data sync loop
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			if err := s.users.Sync(ctx); err != nil {
 				s.logger.Error("error during users sync", zap.Error(err))
@@ -280,13 +244,10 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
 			}
 		}
-	}()
+	})
 
 	// Vehicles data sync loop
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
 				s.logger.Error("error during vehicles sync", zap.Error(err))
@@ -299,7 +260,7 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
 			}
 		}
-	}()
+	})
 
 	wg.Wait()
 

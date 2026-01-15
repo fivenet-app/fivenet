@@ -220,6 +220,7 @@ func (s *usersSync) retrieveLicenses(
 	identifier string,
 ) ([]*users.License, error) {
 	q := s.cfg.Tables.CitizensLicenses.GetQuery(s.state, 0, 100)
+	s.logger.Debug("citizens licenses sync query", zap.String("query", q))
 
 	args := []any{}
 	if strings.Contains(q, "$userId") {
@@ -245,6 +246,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		wheres = append(wheres, fmt.Sprintf("`%s` = %d", s.cfg.Tables.Users.Columns.ID, userId))
 	}
 	q := s.cfg.Tables.Users.GetQuery(s.state, 0, 1, wheres...)
+	s.logger.Debug("users sync query", zap.String("query", q))
 
 	user := &users.User{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &user); err != nil {

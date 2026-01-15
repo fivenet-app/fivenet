@@ -123,8 +123,9 @@
         "dereferer": {
             "title": "You are being redirected",
             "subtitle": "You are about to leave FiveNet.",
-            "description": "Please note that you will be redirected to a website for whose content we are not responsible and to which our privacy policy does not apply.",
-            "goto": "If the automatic redirection does not work, please click here!"
+            "description": "Please note that you will be redirected to another website for whose content we are not responsible and to which our privacy policy does not apply.",
+            "goto": "If the automatic redirection does not work, please click here!",
+            "countdown": "You will be redirected in {0} seconds..."
         },
         "stats": {
             "title": "Statistics",
@@ -847,7 +848,8 @@
                     }
                 },
                 "invisible_characters": "Show/Hide Invisible Characters",
-                "font_size": "Font Size"
+                "font_size": "Font Size",
+                "focus_mode": "Focus Mode"
             },
             "signature_pad": {
                 "pen_color": "Pen Color",
@@ -959,7 +961,8 @@
                     "title": "Count self-approve",
                     "description": "Count self-approvals towards required approvals."
                 },
-                "self_approve_allowed_badge": "Self-approvals allowed"
+                "self_approve_allowed_badge": "Self-approvals allowed",
+                "self_approve_disallowed_badge": "Self-approvals not allowed"
             }
         },
         "livemap": {
@@ -1332,7 +1335,8 @@
                 "events_disabled": {
                     "label": "Disable event effects",
                     "description": "Like snow flakes during Christmas time. Can improve performance on lower-end devices."
-                }
+                },
+                "color_mode": "Color Mode"
             },
             "ChangeUsernameModal": {
                 "change_username": "Change Username",
@@ -1679,7 +1683,8 @@
                     "last_activity_received": "Last Activity Received",
                     "last_dbsync_version": "Last seen DB Sync Version"
                 },
-                "title": "System Status"
+                "title": "System Status",
+                "new_version_available": "New version available"
             },
             "system_settings": "System Settings"
         },
@@ -2162,6 +2167,18 @@
                     "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
                 }
             }
+        },
+        "editor": {
+            "file_upload": {
+                "failed": {
+                    "title": "File upload failed",
+                    "content": "Failed to upload the file. Please try again. Error: {err}"
+                },
+                "success": {
+                    "title": "File uploaded",
+                    "content": "File has been successfully uploaded."
+                }
+            }
         }
     },
     "errors": {
@@ -2251,7 +2268,8 @@
             "ErrExamDisabled": "The qualification's exam is disabled!",
             "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
             "ErrQualiAccessDenied": "You can't access this qualifcation!",
-            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!"
+            "ErrQualiUpdateDenied": "You don't have permission to edit this qualification!",
+            "ErrQualiViewDenied": "You don't have permission to view this qualification!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Failed to load calendar data!",
@@ -2307,7 +2325,8 @@
             "ErrEmailDisabled": {
                 "title": "This e-mail address has been disabled!",
                 "content": "Please contact the FiveNet administration for help on this."
-            }
+            },
+            "ErrSignatureTooLong": "Your e-mail signature is too long!"
         },
         "CitizensService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",

@@ -27,7 +27,7 @@ message Thread {
     },
     (codegen.sanitizer.sanitizer) = {
       enabled: true
-      method: "StripTags"
+      strip_html_tags: true
     }
   ];
   repeated ThreadRecipientEmail recipients = 10 [(buf.validate.field).repeated.max_items = 20];

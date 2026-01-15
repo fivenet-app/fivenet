@@ -46,6 +46,9 @@ export const EnhancedImage = Node.create({
                     return { 'data-file-id': attributes.fileId };
                 },
             },
+            width: {
+                default: null,
+            },
             style: {
                 default: 'width: 100%; height: auto; cursor: pointer; margin: 0 auto 0 0;',
                 parseHTML: (element) => {
@@ -83,7 +86,26 @@ export const EnhancedImage = Node.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        return ['img', mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)];
+        return [
+            'img',
+            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { src: cleanupImageURL(HTMLAttributes.src) }),
+        ];
+    },
+
+    parseMarkdown: (token, helpers) => {
+        return helpers.createNode('image', {
+            src: token.href,
+            title: token.title,
+            alt: token.text,
+        });
+    },
+
+    renderMarkdown: (node) => {
+        const src = cleanupImageURL(node.attrs?.src ?? '');
+        const alt = node.attrs?.alt ?? '';
+        const title = node.attrs?.title ?? '';
+
+        return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
     },
 
     addCommands() {

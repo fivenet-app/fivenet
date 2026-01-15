@@ -6,6 +6,7 @@ import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "resources/common/database/database.proto";
+import "resources/file/filestore.proto";
 import "resources/jobs/conduct.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobs";
@@ -18,13 +19,22 @@ message ListConductEntriesRequest {
   // Search params
   repeated resources.jobs.ConductType types = 3;
   optional bool show_expired = 4;
-  repeated int32 user_ids = 5;
-  repeated int64 ids = 6;
+  optional bool show_drafts = 5;
+  repeated int32 user_ids = 6;
+  repeated int64 ids = 7;
 }
 
 message ListConductEntriesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.jobs.ConductEntry entries = 2 [(codegen.itemslen.enabled) = true];
+}
+
+message GetConductEntryRequest {
+  int64 id = 1 [(buf.validate.field).required = true];
+}
+
+message GetConductEntryResponse {
+  resources.jobs.ConductEntry entry = 1 [(buf.validate.field).required = true];
 }
 
 message CreateConductEntryRequest {
@@ -70,6 +80,13 @@ service ConductService {
       ]
     };
   }
+  rpc GetConductEntry(GetConductEntryRequest) returns (GetConductEntryResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      name: "ListConductEntries"
+    };
+  }
+
   rpc CreateConductEntry(CreateConductEntryRequest) returns (CreateConductEntryResponse) {
     option (codegen.perms.perms) = {enabled: true};
   }
@@ -78,5 +95,15 @@ service ConductService {
   }
   rpc DeleteConductEntry(DeleteConductEntryRequest) returns (DeleteConductEntryResponse) {
     option (codegen.perms.perms) = {enabled: true};
+  }
+
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse) {
+    option (codegen.perms.perms) = {
+      enabled: true
+      names: [
+        "CreateConductEntry",
+        "UpdateConductEntry"
+      ]
+    };
   }
 }

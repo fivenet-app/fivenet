@@ -8,6 +8,7 @@ package mailer
 
 import (
 	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -31,7 +32,7 @@ type Template struct {
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	EmailId       int64                  `protobuf:"varint,6,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
 	Title         string                 `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	Content       string                 `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty"`
+	Content       *content.Content       `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty"`
 	CreatorJob    *string                `protobuf:"bytes,9,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -110,11 +111,11 @@ func (x *Template) GetTitle() string {
 	return ""
 }
 
-func (x *Template) GetContent() string {
+func (x *Template) GetContent() *content.Content {
 	if x != nil {
 		return x.Content
 	}
-	return ""
+	return nil
 }
 
 func (x *Template) GetCreatorJob() string {
@@ -135,7 +136,7 @@ var File_resources_mailer_template_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_template_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\"\xf4\x03\n" +
+	"\x1fresources/mailer/template.proto\x12\x10resources.mailer\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\"\xfc\x03\n" +
 	"\bTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -144,9 +145,9 @@ const file_resources_mailer_template_proto_rawDesc = "" +
 	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x19\n" +
-	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x121\n" +
-	"\x05title\x18\a \x01(\tB\x1b\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12*\n" +
-	"\acontent\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80PR\acontent\x12-\n" +
+	"\bemail_id\x18\x06 \x01(\x03R\aemailId\x12(\n" +
+	"\x05title\x18\a \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\xff\x01R\x05title\x12;\n" +
+	"\acontent\x18\b \x01(\v2!.resources.common.content.ContentR\acontent\x12-\n" +
 	"\vcreator_job\x18\t \x01(\tB\a\xbaH\x04r\x02\x18(H\x02R\n" +
 	"creatorJob\x88\x01\x01\x12+\n" +
 	"\n" +
@@ -173,16 +174,18 @@ var file_resources_mailer_template_proto_msgTypes = make([]protoimpl.MessageInfo
 var file_resources_mailer_template_proto_goTypes = []any{
 	(*Template)(nil),            // 0: resources.mailer.Template
 	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
+	(*content.Content)(nil),     // 2: resources.common.content.Content
 }
 var file_resources_mailer_template_proto_depIdxs = []int32{
 	1, // 0: resources.mailer.Template.created_at:type_name -> resources.timestamp.Timestamp
 	1, // 1: resources.mailer.Template.updated_at:type_name -> resources.timestamp.Timestamp
 	1, // 2: resources.mailer.Template.deleted_at:type_name -> resources.timestamp.Timestamp
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	2, // 3: resources.mailer.Template.content:type_name -> resources.common.content.Content
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_mailer_template_proto_init() }

@@ -17,7 +17,7 @@ type FivenetDocumentsComments struct {
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DeletedAt  *time.Time `json:"deleted_at"`
 	DocumentID int64      `json:"document_id"`
-	Comment    *string    `json:"comment"`
+	Content    *string    `json:"content"`
 	CreatorID  int32      `json:"creator_id"`
 	CreatorJob string     `json:"creator_job"`
 }

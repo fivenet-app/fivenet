@@ -2,8 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { Editor } from '@tiptap/vue-3';
 import { z } from 'zod';
-import { safeImagePaths } from '~/types/editor';
-import { remoteImageURLToBase64Data } from './helpers';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -26,7 +25,9 @@ const emit = defineEmits<{
     (e: 'openFileList'): void;
 }>();
 
-const { featureGates, fileUpload } = useAppConfig();
+const { fileUpload } = useAppConfig();
+
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     url: z.url().max(512),
@@ -42,21 +43,20 @@ const imageState = reactive<Schema>({
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
     canSubmit.value = false;
 
+    // Use image proxy for external URLs
     if (typeof urlOrBlob === 'string') {
         let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
-        if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
+        if (urlOrBlob.startsWith('http')) {
             const url = new URL(urlOrBlob);
             // Check if image is already served by our host and one of the paths
             const isSameHost = url.host === window.location.host;
-            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path));
+            const isServedPath = safeImagePaths.some((path) => url.pathname.startsWith(path + '/'));
             if (isSameHost && isServedPath) {
                 url.pathname = url.pathname.replace(/(?<!:)\/\//, '/');
                 dataUrl = urlOrBlob;
-            } else if (props.uploadHandler) {
-                dataUrl = `/api/image_proxy/${urlOrBlob}`;
             } else {
-                dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
+                dataUrl = `/api/image_proxy/${urlOrBlob}`;
             }
         } else {
             dataUrl = urlOrBlob;
@@ -64,9 +64,28 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
 
         return setImage(dataUrl);
     } else if (props.uploadHandler) {
-        await props.uploadHandler([urlOrBlob]);
+        try {
+            await props.uploadHandler([urlOrBlob]);
+
+            notifications.add({
+                title: { key: 'notifications.editor.file_upload.success.title', parameters: {} },
+                description: { key: 'notifications.editor.file_upload.success.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        } catch (e) {
+            console.error('Editor - Image upload failed', e);
+
+            notifications.add({
+                title: { key: 'notifications.editor.file_upload.failed.title', parameters: {} },
+                description: {
+                    key: 'notifications.editor.file_upload.failed.content',
+                    parameters: { error: (e as Error)?.message?.toString() ?? 'N/A' },
+                },
+                type: NotificationType.ERROR,
+            });
+        }
     } else {
-        setImage(await blobToBase64(urlOrBlob));
+        console.warn('Editor - No upload handler provided for image upload');
     }
 }
 

@@ -248,7 +248,15 @@ const columns = computed(
             {
                 accessorKey: 'summary',
                 header: t('common.summary'),
-                cell: ({ row }) => (row.original.summary ? h('p', { class: 'text-sm' }, row.original.summary) : null),
+                cell: ({ row }) =>
+                    row.original.summary
+                        ? h('p', { class: 'line-clamp-1 whitespace-normal hover:line-clamp-3' }, row.original.summary)
+                        : null,
+                meta: {
+                    class: {
+                        td: 'max-w-48 w-full min-w-0',
+                    },
+                },
             },
             {
                 accessorKey: 'createdAt',
@@ -288,7 +296,7 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <div>
+    <div class="overflow-x-hidden">
         <DataErrorBlock
             v-if="error"
             :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"

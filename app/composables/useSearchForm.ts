@@ -92,7 +92,7 @@ export function useSearchForm<T extends ZodRawShape, S extends ZodObject<T>>(key
         store.setSearch(key, state);
     }
 
-    // Step 6: Watch it → sync back to URL & store
+    // Step 6: Watch it -> sync back to URL & store
     watch(
         state,
         (s) => {

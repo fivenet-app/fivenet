@@ -284,7 +284,7 @@ var File_resources_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xc7\x06\n" +
+	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xbe\x06\n" +
 	"\tColleague\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -302,8 +302,8 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\fphone_number\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12:\n" +
 	"\x17profile_picture_file_id\x18\x11 \x01(\x03H\x04R\x14profilePictureFileId\x88\x01\x01\x12J\n" +
 	"\x0fprofile_picture\x18\x12 \x01(\tB\x1c\x9a\x84\x9e\x03\x17alias:\"profile_picture\"H\x05R\x0eprofilePicture\x88\x01\x01\x12R\n" +
-	"\x05props\x18\x13 \x01(\v2\x1e.resources.jobs.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x125\n" +
-	"\x05email\x18\x14 \x01(\tB\x1a\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x06r\x04\x10\x06\x18PH\x06R\x05email\x88\x01\x01B\r\n" +
+	"\x05props\x18\x13 \x01(\v2\x1e.resources.jobs.ColleaguePropsB\x1c\x9a\x84\x9e\x03\x17alias:\"colleague_props\"R\x05props\x12,\n" +
+	"\x05email\x18\x14 \x01(\tB\x11\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x06r\x04\x10\x06\x18PH\x06R\x05email\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
@@ -311,7 +311,7 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\r_phone_numberB\x1a\n" +
 	"\x18_profile_picture_file_idB\x12\n" +
 	"\x10_profile_pictureB\b\n" +
-	"\x06_email\"\xc5\x04\n" +
+	"\x06_email\"\xbc\x04\n" +
 	"\x0eColleagueProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12B\n" +
@@ -319,8 +319,8 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12H\n" +
 	"\rabsence_begin\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fabsenceBegin\x88\x01\x01\x12D\n" +
 	"\vabsence_end\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\n" +
-	"absenceEnd\x88\x01\x01\x12*\n" +
-	"\x04note\x18\x06 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsH\x03R\x04note\x88\x01\x01\x123\n" +
+	"absenceEnd\x88\x01\x01\x12!\n" +
+	"\x04note\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x03R\x04note\x88\x01\x01\x123\n" +
 	"\x06labels\x18\a \x01(\v2\x16.resources.jobs.LabelsH\x04R\x06labels\x88\x01\x01\x12-\n" +
 	"\vname_prefix\x18\b \x01(\tB\a\xbaH\x04r\x02\x18\fH\x05R\n" +
 	"namePrefix\x88\x01\x01\x12-\n" +

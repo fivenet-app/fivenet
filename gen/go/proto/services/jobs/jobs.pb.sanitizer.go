@@ -4,7 +4,7 @@
 package jobs
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -387,7 +387,7 @@ func (m *SetMOTDRequest) Sanitize() error {
 	}
 
 	// Field: Motd
-	m.Motd = htmlsanitizer.StripTags(m.Motd)
+	m.Motd = htmlsanitizer.StripHTMLTags(m.Motd)
 
 	return nil
 }

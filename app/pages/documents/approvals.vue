@@ -7,6 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
+import DraftBadge from '~/components/partials/DraftBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
@@ -243,14 +244,7 @@ async function listApprovalTasksInbox(): Promise<ListApprovalTasksInboxResponse>
                                         </span>
                                     </h2>
 
-                                    <UBadge
-                                        v-if="task.document?.meta?.draft"
-                                        class="inline-flex grow-0 gap-1 self-start"
-                                        color="info"
-                                        size="md"
-                                        icon="i-mdi-pencil"
-                                        :label="$t('common.draft')"
-                                    />
+                                    <DraftBadge v-if="task.document?.meta?.draft" class="self-start" />
                                 </div>
                             </div>
 

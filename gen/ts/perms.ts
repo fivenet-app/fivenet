@@ -85,6 +85,7 @@ export type GRPCServicePerms =
 	| 'jobs.ConductService/DeleteConductEntry'
 	| 'jobs.ConductService/ListConductEntries'
 	| 'jobs.ConductService/UpdateConductEntry'
+	| 'jobs.ConductService/UploadFile'
 	| 'jobs.JobsService/GetColleague'
 	| 'jobs.JobsService/ListColleagueActivity'
 	| 'jobs.JobsService/ListColleagues'
@@ -193,6 +194,7 @@ export const GRPCServiceMethods = [
 	'jobs.ConductService/DeleteConductEntry',
 	'jobs.ConductService/ListConductEntries',
 	'jobs.ConductService/UpdateConductEntry',
+	'jobs.ConductService/UploadFile',
 	'jobs.JobsService/GetColleague',
 	'jobs.JobsService/ListColleagueActivity',
 	'jobs.JobsService/ListColleagues',

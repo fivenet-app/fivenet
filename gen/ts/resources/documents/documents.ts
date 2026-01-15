@@ -52,6 +52,18 @@ export interface Document {
      */
     title: string;
     /**
+     * Derived field (server authored)
+     *
+     * @generated from protobuf field: optional uint32 word_count = 21
+     */
+    wordCount?: number;
+    /**
+     * Derived field (server authored)
+     *
+     * @generated from protobuf field: optional string first_heading = 22
+     */
+    firstHeading?: string;
+    /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 8
      */
     contentType: ContentType;
@@ -136,6 +148,18 @@ export interface DocumentShort {
      * @generated from protobuf field: string title = 7
      */
     title: string;
+    /**
+     * Derived field (server authored)
+     *
+     * @generated from protobuf field: optional uint32 word_count = 21
+     */
+    wordCount?: number;
+    /**
+     * Derived field (server authored)
+     *
+     * @generated from protobuf field: optional string first_heading = 22
+     */
+    firstHeading?: string;
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 8
      */
@@ -463,9 +487,11 @@ class Document$Type extends MessageType<Document> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 21, name: "word_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 22, name: "first_heading", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
-            { no: 9, name: "content", kind: "message", T: () => Content },
+            { no: 9, name: "content", kind: "message", T: () => Content, options: { "tagger.tags": "alias:\"content_json\"" } },
             { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "1000000" } }, "codegen.sanitizer.sanitizer": { enabled: true }, "tagger.tags": "alias:\"data\"" } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort, options: { "tagger.tags": "alias:\"creator\"" } },
@@ -515,6 +541,12 @@ class Document$Type extends MessageType<Document> {
                     break;
                 case /* string title */ 7:
                     message.title = reader.string();
+                    break;
+                case /* optional uint32 word_count */ 21:
+                    message.wordCount = reader.uint32();
+                    break;
+                case /* optional string first_heading */ 22:
+                    message.firstHeading = reader.string();
                     break;
                 case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
@@ -627,6 +659,12 @@ class Document$Type extends MessageType<Document> {
         /* repeated resources.file.File files = 20; */
         for (let i = 0; i < message.files.length; i++)
             File.internalBinaryWrite(message.files[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint32 word_count = 21; */
+        if (message.wordCount !== undefined)
+            writer.tag(21, WireType.Varint).uint32(message.wordCount);
+        /* optional string first_heading = 22; */
+        if (message.firstHeading !== undefined)
+            writer.tag(22, WireType.LengthDelimited).string(message.firstHeading);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -647,7 +685,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "category", kind: "message", T: () => Category, options: { "tagger.tags": "alias:\"category\"" } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 21, name: "word_count", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 22, name: "first_heading", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
@@ -695,6 +735,12 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                     break;
                 case /* string title */ 7:
                     message.title = reader.string();
+                    break;
+                case /* optional uint32 word_count */ 21:
+                    message.wordCount = reader.uint32();
+                    break;
+                case /* optional string first_heading */ 22:
+                    message.firstHeading = reader.string();
                     break;
                 case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
@@ -789,6 +835,12 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* optional resources.documents.WorkflowUserState workflow_user = 19; */
         if (message.workflowUser)
             WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint32 word_count = 21; */
+        if (message.wordCount !== undefined)
+            writer.tag(21, WireType.Varint).uint32(message.wordCount);
+        /* optional string first_heading = 22; */
+        if (message.firstHeading !== undefined)
+            writer.tag(22, WireType.LengthDelimited).string(message.firstHeading);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

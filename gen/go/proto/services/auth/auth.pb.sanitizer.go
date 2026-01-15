@@ -4,7 +4,7 @@
 package auth
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -53,7 +53,7 @@ func (m *ChangeUsernameRequest) Sanitize() error {
 	m.Current = htmlsanitizer.Sanitize(m.Current)
 
 	// Field: New
-	m.New = htmlsanitizer.StripTags(m.New)
+	m.New = htmlsanitizer.StripHTMLTags(m.New)
 
 	return nil
 }
@@ -156,7 +156,7 @@ func (m *CreateAccountRequest) Sanitize() error {
 	m.RegToken = htmlsanitizer.Sanitize(m.RegToken)
 
 	// Field: Username
-	m.Username = htmlsanitizer.StripTags(m.Username)
+	m.Username = htmlsanitizer.StripHTMLTags(m.Username)
 
 	return nil
 }
@@ -179,7 +179,7 @@ func (m *DeleteSocialLoginRequest) Sanitize() error {
 	}
 
 	// Field: Provider
-	m.Provider = htmlsanitizer.StripTags(m.Provider)
+	m.Provider = htmlsanitizer.StripHTMLTags(m.Provider)
 
 	return nil
 }

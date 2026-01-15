@@ -8,7 +8,13 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"go.uber.org/fx"
 	"golang.org/x/crypto/argon2"
+)
+
+var Module = fx.Module(
+	"crypt",
+	fx.Provide(New),
 )
 
 // saltLength is the length of the random salt in bytes (128 bits).

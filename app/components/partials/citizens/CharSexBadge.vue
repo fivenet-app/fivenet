@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <UBadge :color="sexToColor(sex)" size="lg" :icon="sexToIcon(sex)" />
+    <UBadge :color="sexToColor(sex)" size="lg" :icon="sexToIcon(sex)" variant="soft" />
 </template>

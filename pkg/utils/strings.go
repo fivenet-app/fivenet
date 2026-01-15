@@ -63,3 +63,16 @@ func RemoveTitlePrefixes(s string) string {
 
 	return s
 }
+
+func SummaryFromText(text string, maxChars int) string {
+	if text == "" || maxChars <= 0 {
+		return ""
+	}
+
+	r := []rune(text)
+	if len(r) <= maxChars {
+		return text
+	}
+
+	return strings.TrimSpace(string(r[:maxChars]))
+}

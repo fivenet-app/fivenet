@@ -54,7 +54,7 @@ const schema = z.object({
     color: z.coerce.string().max(7),
     icon: z.coerce.string().max(128).optional(),
     contentTitle: z.coerce.string().min(3).max(2048),
-    content: z.coerce.string().min(3).max(1500000),
+    content: z.custom<string>().optional(),
     contentState: z.union([z.coerce.string().min(1).max(512), z.coerce.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: jobsAccessEntries(t).max(maxAccessEntries).default([]),
@@ -219,7 +219,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             color: values.color,
             icon: values.icon,
             contentTitle: values.contentTitle,
-            content: values.content,
+            content: values.content ?? '', // TODO need to handle content as raw HTML here
             state: values.contentState,
             schema: {
                 requirements: tRequirements,
@@ -490,13 +490,10 @@ const formRef = useTemplateRef('formRef');
                 </template>
 
                 <template #right>
-                    <UButton
-                        color="neutral"
-                        icon="i-mdi-arrow-left"
+                    <PartialsBackButton
                         :to="
                             templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
                         "
-                        :label="$t('common.back')"
                     />
 
                     <UButton
@@ -711,6 +708,7 @@ const formRef = useTemplateRef('formRef');
                                         name="content"
                                         class="mx-auto min-h-120 w-full max-w-(--breakpoint-xl) flex-1 overflow-y-hidden"
                                         :extensions="extensions"
+                                        :limit="125_000"
                                     >
                                         <template #toolbar="{ editor }">
                                             <ToolbarButtons :editor="editor" />

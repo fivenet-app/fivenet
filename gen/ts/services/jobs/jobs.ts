@@ -1237,7 +1237,7 @@ export const GetMOTDResponse = new GetMOTDResponse$Type();
 class SetMOTDRequest$Type extends MessageType<SetMOTDRequest> {
     constructor() {
         super("services.jobs.SetMOTDRequest", [
-            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "motd", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<SetMOTDRequest>): SetMOTDRequest {

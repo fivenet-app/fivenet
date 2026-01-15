@@ -4,7 +4,7 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -293,7 +293,7 @@ func (m *DeleteDocumentRequest) Sanitize() error {
 
 	// Field: Reason
 	if m.Reason != nil {
-		*m.Reason = htmlsanitizer.StripTags(*m.Reason)
+		*m.Reason = htmlsanitizer.StripHTMLTags(*m.Reason)
 	}
 
 	return nil
@@ -1069,7 +1069,7 @@ func (m *SetDocumentReminderRequest) Sanitize() error {
 
 	// Field: Message
 	if m.Message != nil {
-		*m.Message = htmlsanitizer.StripTags(*m.Message)
+		*m.Message = htmlsanitizer.StripHTMLTags(*m.Message)
 	}
 
 	// Field: ReminderTime
@@ -1238,7 +1238,7 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 	}
 
 	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
+	m.Title = htmlsanitizer.StripHTMLTags(m.Title)
 
 	return nil
 }

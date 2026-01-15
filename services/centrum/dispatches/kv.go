@@ -165,7 +165,7 @@ func (d *DispatchDB) TouchActivity(ctx context.Context, id int64) error {
 			return err // a real failure
 		}
 
-		// Key already exists → refresh its TTL with Update.
+		// Key already exists -> refresh its TTL with Update.
 		// We need the current revision to comply with optimistic locking.
 		entry, err := d.idleKV.Get(ctx, key)
 		if err != nil {

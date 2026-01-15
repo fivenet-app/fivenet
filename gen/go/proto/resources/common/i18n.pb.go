@@ -80,11 +80,11 @@ var File_resources_common_i18n_proto protoreflect.FileDescriptor
 
 const file_resources_common_i18n_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/common/i18n.proto\x12\x10resources.common\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\"\xd5\x01\n" +
-	"\bI18NItem\x12#\n" +
-	"\x03key\x18\x01 \x01(\tB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\x03key\x12]\n" +
+	"\x1bresources/common/i18n.proto\x12\x10resources.common\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\"\xc3\x01\n" +
+	"\bI18NItem\x12\x1a\n" +
+	"\x03key\x18\x01 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03key\x12T\n" +
 	"\n" +
-	"parameters\x18\x02 \x03(\v2*.resources.common.I18NItem.ParametersEntryB\x11\xda\xf3\x18\r\b\x01\x12\tStripTagsR\n" +
+	"parameters\x18\x02 \x03(\v2*.resources.common.I18NItem.ParametersEntryB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
 	"parameters\x1a=\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +

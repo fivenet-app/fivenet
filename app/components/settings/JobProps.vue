@@ -386,10 +386,13 @@ const confirmModal = overlay.create(ConfirmModal);
                                     name="logoFile"
                                     :label="$t('common.logo')"
                                 >
-                                    <div v-if="jobProps.logoFileId" class="flex w-full flex-1 items-center justify-center">
+                                    <div
+                                        v-if="jobProps.logoFile?.filePath"
+                                        class="flex w-full flex-1 items-center justify-center"
+                                    >
                                         <GenericImg
-                                            :src="`/api/filestore/jobprops/${jobProps.job}`"
-                                            :alt="`${jobProps.job} ${$t('common.logo')}`"
+                                            :src="`/api/filestore/${jobProps.logoFile.filePath}`"
+                                            :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
                                             class="mb-2 size-full max-h-40 min-h-40 max-w-40"
                                         />
                                     </div>
@@ -1000,7 +1003,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                                 <UButton
                                                     v-if="canEdit"
                                                     :disabled="!canSubmit"
-                                                    icon="i-mdi-close"
+                                                    color="red"
+                                                    icon="i-mdi-remove"
                                                     @click="
                                                         state.discordSyncSettings?.userInfoSyncSettings.groupMapping.splice(
                                                             idx,
@@ -1132,9 +1136,17 @@ const confirmModal = overlay.create(ConfirmModal);
                                             :filename="$d(toDate(jobProps.discordSyncChanges.changes[0]?.time), 'short')"
                                             :new-filename="$d(toDate(selectedChange?.time), 'short')"
                                             output-format="side-by-side"
-                                            hide-stat
                                             trim
-                                        />
+                                        >
+                                            <template #stat="{ stat }">
+                                                <span class="diff-stat-added"
+                                                    >+{{ stat.additionsNum }} {{ $t('common.additions') }}</span
+                                                >
+                                                <span class="diff-stat-deleted"
+                                                    >-{{ stat.deletionsNum }} {{ $t('common.deletions') }}</span
+                                                >
+                                            </template>
+                                        </LazyPartialsCodeDiff>
                                     </template>
                                 </UAccordion>
                             </UPageCard>
@@ -1187,7 +1199,8 @@ const confirmModal = overlay.create(ConfirmModal);
                                             <UButton
                                                 v-if="canEdit"
                                                 :disabled="!canSubmit"
-                                                icon="i-mdi-close"
+                                                icon="i-mdi-remove"
+                                                color="red"
                                                 @click="
                                                     state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(idx, 1)
                                                 "

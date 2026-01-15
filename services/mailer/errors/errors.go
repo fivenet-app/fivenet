@@ -79,4 +79,10 @@ var (
 		&common.I18NItem{Key: "errors.MailerService.ErrThreadAccessDenied.content"},
 		&common.I18NItem{Key: "errors.MailerService.ErrThreadAccessDenied.title"},
 	)
+
+	ErrSignatureTooLong = common.NewI18nErr(
+		codes.InvalidArgument,
+		&common.I18NItem{Key: "errors.MailerService.ErrSignatureTooLong.content"},
+		nil,
+	)
 )

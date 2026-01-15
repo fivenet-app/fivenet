@@ -8,7 +8,11 @@ import (
 	"github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEntry, error) {
+func (s *Server) getConductEntry(
+	ctx context.Context,
+	id int64,
+	withFiles bool,
+) (*jobs.ConductEntry, error) {
 	tColleague := tables.User().AS("target_user")
 	tCreator := tColleague.AS("creator")
 
@@ -20,6 +24,7 @@ func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEn
 			tConduct.DeletedAt,
 			tConduct.Job,
 			tConduct.Type,
+			tConduct.Draft,
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
@@ -50,6 +55,14 @@ func (s *Server) getConductEntry(ctx context.Context, id int64) (*jobs.ConductEn
 	dest := &jobs.ConductEntry{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		return nil, err
+	}
+
+	if withFiles {
+		files, err := s.fHandler.ListFilesForParentID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		dest.Files = files
 	}
 
 	return dest, nil

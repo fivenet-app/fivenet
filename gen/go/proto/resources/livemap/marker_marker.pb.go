@@ -432,7 +432,7 @@ var File_resources_livemap_marker_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xdb\a\n" +
+	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc9\a\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -446,10 +446,10 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\x04name\x18\b \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x01\x18\xff\x01R\x04name\x125\n" +
-	"\vdescription\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x125\n" +
+	"\vdescription\x18\t \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x12,\n" +
 	"\x06postal\x18\n" +
-	" \x01(\tB\x18\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12G\n" +
-	"\x05color\x18\v \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
+	" \x01(\tB\x0f\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x04r\x02\x180H\x05R\x06postal\x88\x01\x01\x12>\n" +
+	"\x05color\x18\v \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x06R\x05color\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\f \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
 	"\tjob_label\x18\r \x01(\tR\bjobLabel\x12J\n" +
 	"\x04type\x18\x0e \x01(\x0e2\x1d.resources.livemap.MarkerTypeB\x17\x9a\x84\x9e\x03\x12alias:\"markerType\"R\x04type\x12J\n" +
@@ -478,10 +478,10 @@ const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
 	"\x1d\x00\x00\x96B-\x00\x00\x80?H\x00R\aopacity\x88\x01\x01B\n" +
 	"\n" +
-	"\b_opacity\"A\n" +
+	"\b_opacity\"8\n" +
 	"\n" +
-	"IconMarker\x123\n" +
-	"\x04icon\x18\x01 \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconR\x04icon*l\n" +
+	"IconMarker\x12*\n" +
+	"\x04icon\x18\x01 \x01(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\vr\t\x18\x80\x01B\x04IconR\x04icon*l\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +

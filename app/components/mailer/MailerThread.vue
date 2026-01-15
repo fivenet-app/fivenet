@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui';
+import type { JSONContent } from '@tiptap/core';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import EmailInfoPopover from './EmailInfoPopover.vue';
 import { canAccess, generateResponseTitle } from './helpers';
@@ -38,12 +41,14 @@ const { can, isSuperuser } = useAuth();
 
 const notifications = useNotificationsStore();
 
+const { maxContentLength } = useAppConfig();
+
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, messages, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
 const schema = z.object({
     title: z.coerce.string().min(1).max(255),
-    content: z.coerce.string().min(1).max(2048),
+    content: z.custom<JSONContent | string>().optional(),
     recipients: z
         .object({ label: z.coerce.string().min(6).max(80) })
         .array()
@@ -61,7 +66,14 @@ function resetForm(): void {
         }
 
         if ((!state.value.content || state.value.content === '<p><br></p>') && !!selectedEmail.value?.settings?.signature) {
-            state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
+            const end = editorRef.value?.editor?.$doc.content.size || 0;
+
+            editorRef.value?.editor?.commands.insertContentAt(
+                end,
+                selectedEmail.value.settings.signature.tiptapJson
+                    ? (Struct.toJson(selectedEmail.value.settings.signature.tiptapJson) as JSONContent)
+                    : selectedEmail.value.settings.signature.rawHtml || '',
+            );
         }
     }
 }
@@ -124,7 +136,9 @@ async function postMessage(values: Schema): Promise<void> {
             threadId: props.threadId,
             title: values.title,
             content: {
-                rawContent: values.content,
+                contentType: ContentType.TIPTAP_JSON,
+                version: '',
+                tiptapJson: Struct.fromJsonString(JSON.stringify(values.content)),
             },
             data: {
                 attachments: values.attachments.filter((a) => {
@@ -200,6 +214,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
+
+const editorRef = useTemplateRef('editorRef');
 
 const confirmModal = overlay.create(ConfirmModal);
 const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
@@ -451,7 +467,7 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <HTMLContent v-if="message.content?.content" :value="message.content.content" />
+                        <CustomContentRenderer v-if="message.content" :value="message.content" />
                     </div>
 
                     <UCollapsible v-if="message.data?.attachments && message.data?.attachments.length > 0" class="my-2">
@@ -587,16 +603,23 @@ const threadAttachmentsModal = overlay.create(ThreadAttachmentsModal);
                                             </template>
                                         </UInput>
 
-                                        <TemplateSelector v-model="state.content" class="ml-auto" size="lg" />
+                                        <TemplateSelector
+                                            v-if="editorRef"
+                                            :editor="unref(editorRef).editor"
+                                            class="ml-auto"
+                                            size="lg"
+                                        />
                                     </div>
                                 </UFormField>
 
                                 <UFormField name="content" :ui="{ error: 'hidden' }">
                                     <ClientOnly>
                                         <TiptapEditor
+                                            ref="editorRef"
                                             v-model="state.content"
                                             name="content"
                                             :disabled="!canSubmit"
+                                            :limit="maxContentLength"
                                             wrapper-class="min-h-44"
                                         />
                                     </ClientOnly>

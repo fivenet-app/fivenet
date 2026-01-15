@@ -1,13 +1,14 @@
 import type {
+    Auth,
     Discord,
     Display,
     FeatureGates,
     Game,
-    LoginConfig,
     System,
     Website,
 } from '~~/gen/ts/resources/clientconfig/clientconfig';
 import type { QuickButtons } from '~~/gen/ts/resources/settings/config';
+import { DataMode, type Data } from '~~/gen/ts/resources/settings/data';
 
 export default defineAppConfig({
     // Server provided App Config
@@ -15,20 +16,18 @@ export default defineAppConfig({
 
     defaultLocale: 'en',
 
-    login: {
+    auth: {
         signupEnabled: true,
         lastCharLock: false,
         providers: [],
-    } as LoginConfig,
+    } as Auth,
     discord: {
         botEnabled: false,
     } as Discord,
     website: {
         links: undefined,
     } as Website,
-    featureGates: {
-        imageProxy: false,
-    } as FeatureGates,
+    featureGates: {} as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
@@ -47,6 +46,11 @@ export default defineAppConfig({
     quickButtons: {
         penaltyCalculator: {},
     } as QuickButtons,
+    data: {
+        mode: DataMode.UNAVAILABLE,
+    } as Data,
+
+    maxContentLength: 40_000,
 
     // File upload related config
     fileUpload: {
@@ -139,6 +143,7 @@ export default defineAppConfig({
             chevronRight: 'mdi-chevron-right',
             chevronUp: 'mdi-chevron-up',
             close: 'mdi-close',
+            drag: 'i-mdi-drag-vertical',
             ellipsis: 'mdi-dots-horizontal',
             external: 'mdi-arrow-top-right',
             file: 'mdi-file-document',
@@ -175,6 +180,12 @@ export default defineAppConfig({
         alert: {
             slots: {
                 root: 'p-2',
+            },
+        },
+
+        avatar: {
+            slots: {
+                root: 'rounded-md',
             },
         },
 

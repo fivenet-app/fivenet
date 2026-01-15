@@ -7,7 +7,8 @@
 package jobs
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -93,12 +94,14 @@ type ConductEntry struct {
 	DeletedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Job           string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
 	Type          ConductType            `protobuf:"varint,6,opt,name=type,proto3,enum=resources.jobs.ConductType" json:"type,omitempty"`
-	Message       string                 `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	TargetUserId  int32                  `protobuf:"varint,9,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *Colleague             `protobuf:"bytes,10,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
-	CreatorId     int32                  `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator       *Colleague             `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Draft         bool                   `protobuf:"varint,7,opt,name=draft,proto3" json:"draft,omitempty"`
+	Message       *content.Content       `protobuf:"bytes,8,opt,name=message,proto3" json:"message,omitempty"`
+	Files         []*file.File           `protobuf:"bytes,9,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	ExpiresAt     *timestamp.Timestamp   `protobuf:"bytes,10,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	TargetUserId  int32                  `protobuf:"varint,11,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	TargetUser    *Colleague             `protobuf:"bytes,12,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"`
+	CreatorId     int32                  `protobuf:"varint,13,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator       *Colleague             `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -175,11 +178,25 @@ func (x *ConductEntry) GetType() ConductType {
 	return ConductType_CONDUCT_TYPE_UNSPECIFIED
 }
 
-func (x *ConductEntry) GetMessage() string {
+func (x *ConductEntry) GetDraft() bool {
+	if x != nil {
+		return x.Draft
+	}
+	return false
+}
+
+func (x *ConductEntry) GetMessage() *content.Content {
 	if x != nil {
 		return x.Message
 	}
-	return ""
+	return nil
+}
+
+func (x *ConductEntry) GetFiles() []*file.File {
+	if x != nil {
+		return x.Files
+	}
+	return nil
 }
 
 func (x *ConductEntry) GetExpiresAt() *timestamp.Timestamp {
@@ -221,7 +238,7 @@ var File_resources_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xad\x06\n" +
+	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x94\a\n" +
 	"\fConductEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -231,17 +248,19 @@ const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x129\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12*\n" +
-	"\amessage\x18\a \x01(\tB\x10\xda\xf3\x18\x02\b\x01\xbaH\ar\x05\x10\x03\x18\x80\x10R\amessage\x12B\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x14\n" +
+	"\x05draft\x18\a \x01(\bR\x05draft\x12;\n" +
+	"\amessage\x18\b \x01(\v2!.resources.common.content.ContentR\amessage\x12>\n" +
+	"\x05files\x18\t \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05files\x12B\n" +
 	"\n" +
-	"expires_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12-\n" +
-	"\x0etarget_user_id\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12Y\n" +
-	"\vtarget_user\x18\n" +
-	" \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"H\x04R\n" +
+	"expires_at\x18\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12-\n" +
+	"\x0etarget_user_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12Y\n" +
+	"\vtarget_user\x18\f \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"H\x04R\n" +
 	"targetUser\x88\x01\x01\x12&\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\tcreatorId\x12N\n" +
-	"\acreator\x18\f \x01(\v2\x19.resources.jobs.ColleagueB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01B\r\n" +
+	"creator_id\x18\r \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\tcreatorId\x12N\n" +
+	"\acreator\x18\x0e \x01(\v2\x19.resources.jobs.ColleagueB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\r\n" +
@@ -276,21 +295,25 @@ var file_resources_jobs_conduct_proto_goTypes = []any{
 	(ConductType)(0),            // 0: resources.jobs.ConductType
 	(*ConductEntry)(nil),        // 1: resources.jobs.ConductEntry
 	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*Colleague)(nil),           // 3: resources.jobs.Colleague
+	(*content.Content)(nil),     // 3: resources.common.content.Content
+	(*file.File)(nil),           // 4: resources.file.File
+	(*Colleague)(nil),           // 5: resources.jobs.Colleague
 }
 var file_resources_jobs_conduct_proto_depIdxs = []int32{
 	2, // 0: resources.jobs.ConductEntry.created_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.jobs.ConductEntry.updated_at:type_name -> resources.timestamp.Timestamp
 	2, // 2: resources.jobs.ConductEntry.deleted_at:type_name -> resources.timestamp.Timestamp
 	0, // 3: resources.jobs.ConductEntry.type:type_name -> resources.jobs.ConductType
-	2, // 4: resources.jobs.ConductEntry.expires_at:type_name -> resources.timestamp.Timestamp
-	3, // 5: resources.jobs.ConductEntry.target_user:type_name -> resources.jobs.Colleague
-	3, // 6: resources.jobs.ConductEntry.creator:type_name -> resources.jobs.Colleague
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	3, // 4: resources.jobs.ConductEntry.message:type_name -> resources.common.content.Content
+	4, // 5: resources.jobs.ConductEntry.files:type_name -> resources.file.File
+	2, // 6: resources.jobs.ConductEntry.expires_at:type_name -> resources.timestamp.Timestamp
+	5, // 7: resources.jobs.ConductEntry.target_user:type_name -> resources.jobs.Colleague
+	5, // 8: resources.jobs.ConductEntry.creator:type_name -> resources.jobs.Colleague
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_conduct_proto_init() }

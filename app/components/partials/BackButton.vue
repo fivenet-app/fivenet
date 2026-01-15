@@ -27,7 +27,7 @@ async function goBack(): Promise<void> {
 
 <template>
     <UTooltip :text="$t('common.back')">
-        <UButton color="neutral" variant="subtle" icon="i-mdi-arrow-back" :to="to" @click="goBack">
+        <UButton color="gray" variant="ghost" icon="i-mdi-arrow-back" :to="to" @click="goBack">
             <span class="hidden truncate sm:block">
                 {{ $t('common.back') }}
             </span>

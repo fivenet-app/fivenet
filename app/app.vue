@@ -59,7 +59,7 @@ async function setThemeColors(): Promise<void> {
 
     // Only set CSS variables for Chrome 103+ due to lack of support in earlier versions
     const root = document.documentElement;
-    if (!root.classList.contains('chrome103')) return;
+    if (!root.classList.contains('polyfills')) return;
 
     root.style.setProperty('--ui-color-primary-50-rgb', `var(--color-${primary}-50-rgb)`);
     root.style.setProperty('--ui-color-primary-100-rgb', `var(--color-${primary}-100-rgb)`);

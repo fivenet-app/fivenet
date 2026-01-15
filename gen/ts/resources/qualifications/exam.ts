@@ -445,8 +445,8 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
             { no: 2, name: "qualification_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
-            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 7, name: "data", kind: "message", T: () => ExamQuestionData, options: { "buf.validate.field": { required: true } } },
             { no: 8, name: "answer", kind: "message", T: () => ExamQuestionAnswerData },
             { no: 9, name: "points", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
@@ -838,7 +838,7 @@ export const ExamQuestionText = new ExamQuestionText$Type();
 class ExamQuestionSingleChoice$Type extends MessageType<ExamQuestionSingleChoice> {
     constructor() {
         super("resources.qualifications.ExamQuestionSingleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestionSingleChoice>): ExamQuestionSingleChoice {
@@ -885,7 +885,7 @@ export const ExamQuestionSingleChoice = new ExamQuestionSingleChoice$Type();
 class ExamQuestionMultipleChoice$Type extends MessageType<ExamQuestionMultipleChoice> {
     constructor() {
         super("resources.qualifications.ExamQuestionMultipleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } },
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } },
             { no: 2, name: "limit", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 10, gte: 0 } } } }
         ]);
     }
@@ -1417,7 +1417,7 @@ export const ExamResponseYesNo = new ExamResponseYesNo$Type();
 class ExamResponseText$Type extends MessageType<ExamResponseText> {
     constructor() {
         super("resources.qualifications.ExamResponseText", [
-            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "500000" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxBytes: "500000" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseText>): ExamResponseText {
@@ -1464,7 +1464,7 @@ export const ExamResponseText = new ExamResponseText$Type();
 class ExamResponseSingleChoice$Type extends MessageType<ExamResponseSingleChoice> {
     constructor() {
         super("resources.qualifications.ExamResponseSingleChoice", [
-            { no: 1, name: "choice", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "choice", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseSingleChoice>): ExamResponseSingleChoice {
@@ -1511,7 +1511,7 @@ export const ExamResponseSingleChoice = new ExamResponseSingleChoice$Type();
 class ExamResponseMultipleChoice$Type extends MessageType<ExamResponseMultipleChoice> {
     constructor() {
         super("resources.qualifications.ExamResponseMultipleChoice", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseMultipleChoice>): ExamResponseMultipleChoice {

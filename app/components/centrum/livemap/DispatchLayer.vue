@@ -138,7 +138,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsSlideover);
                         v-if="dispatchQueryRaw !== ''"
                         color="neutral"
                         variant="link"
-                        icon="i-mdi-close"
+                        icon="i-mdi-clear"
                         aria-controls="search"
                         @click="dispatchQueryRaw = ''"
                     />

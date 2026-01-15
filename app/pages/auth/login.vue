@@ -17,7 +17,7 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const { login } = useAppConfig();
+const { auth } = useAppConfig();
 
 const { t } = useI18n();
 
@@ -106,12 +106,13 @@ const canSubmit = ref(true);
                 </template>
             </UTabs>
 
-            <div v-if="login.signupEnabled" class="space-y-4">
+            <div v-if="auth.signupEnabled" class="space-y-4">
                 <USeparator orientation="horizontal" color="gray" />
 
                 <UButton
                     block
                     color="neutral"
+                    variant="outline"
                     trailing-icon="i-mdi-account-plus"
                     :to="{ name: 'auth-registration' }"
                     :disabled="!canSubmit"

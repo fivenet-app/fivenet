@@ -1,14 +1,15 @@
 <script lang="ts">
-import { NuxtImg, UCheckbox, UIcon } from '#components';
+import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
-import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
+import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
+import GenericImg from '../elements/GenericImg.vue';
 
 export default defineComponent({
     name: 'HTMLContentRenderer',
 
     props: {
         value: {
-            type: Object as () => JSONNode,
+            type: Object as () => RichTextHtmlNode,
             required: true,
         },
     },
@@ -18,9 +19,7 @@ export default defineComponent({
         const self = getCurrentInstance()?.type as Component;
 
         // Optional tag remapping
-        const tagRemapping: Record<string, Component> = {
-            img: NuxtImg as Component,
-        };
+        const tagRemapping: Record<string, Component> = {};
 
         return (): VNode => {
             const value = props.value;
@@ -48,22 +47,30 @@ export default defineComponent({
                 return h('br', value.attrs);
             }
 
-            // 4. Resolve tag/component
+            // 4. img tag
+            if (value.tag === 'img') {
+                return h(GenericImg, {
+                    ...value.attrs,
+                    src: cleanupImageURL(value.attrs?.src || ''),
+                });
+            }
+
+            // 5. Tag remapping
             if (tagRemapping[value.tag]) {
                 return h(tagRemapping[value.tag]!, value.attrs);
             }
 
             const tag = value.tag === 'body' ? 'div' : value.tag;
 
-            // 5. Recursively render children
-            const children = (value.content || []).map((child: JSONNode, idx: number) =>
+            // 6. Recursively render children
+            const children = (value.content || []).map((child: RichTextHtmlNode, idx: number) =>
                 h(self, {
                     key: idx,
                     value: child,
                 }),
             );
 
-            // 6. Append external link icon
+            // 7. Append external link icon
             if (value.tag === 'a' && !value.attrs?.href?.startsWith('/')) {
                 children.push(
                     h(UIcon, {
@@ -73,7 +80,7 @@ export default defineComponent({
                 );
             }
 
-            // 7. Return final tag/component with attributes
+            // 8. Return final tag/component with attributes
             return h(
                 tag,
                 {

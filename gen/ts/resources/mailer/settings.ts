@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Content } from "../common/content/content";
 /**
  * @generated from protobuf message resources.mailer.EmailSettings
  */
@@ -20,9 +21,9 @@ export interface EmailSettings {
      */
     emailId: number;
     /**
-     * @generated from protobuf field: optional string signature = 2
+     * @generated from protobuf field: optional resources.common.content.Content signature = 2
      */
-    signature?: string;
+    signature?: Content;
     /**
      * @generated from protobuf field: repeated string blocked_emails = 3
      */
@@ -33,8 +34,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
     constructor() {
         super("resources.mailer.EmailSettings", [
             { no: 1, name: "email_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
-            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } }, "codegen.sanitizer.sanitizer": { enabled: true, method: "StripTags" } } }
+            { no: 2, name: "signature", kind: "message", T: () => Content },
+            { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { repeated: { maxItems: "25" } }, "codegen.sanitizer.sanitizer": { enabled: true, stripHtmlTags: true } } }
         ]);
     }
     create(value?: PartialMessage<EmailSettings>): EmailSettings {
@@ -53,8 +54,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
                 case /* int64 email_id */ 1:
                     message.emailId = reader.int64().toNumber();
                     break;
-                case /* optional string signature */ 2:
-                    message.signature = reader.string();
+                case /* optional resources.common.content.Content signature */ 2:
+                    message.signature = Content.internalBinaryRead(reader, reader.uint32(), options, message.signature);
                     break;
                 case /* repeated string blocked_emails */ 3:
                     message.blockedEmails.push(reader.string());
@@ -74,9 +75,9 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         /* int64 email_id = 1; */
         if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).int64(message.emailId);
-        /* optional string signature = 2; */
-        if (message.signature !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.signature);
+        /* optional resources.common.content.Content signature = 2; */
+        if (message.signature)
+            Content.internalBinaryWrite(message.signature, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* repeated string blocked_emails = 3; */
         for (let i = 0; i < message.blockedEmails.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.blockedEmails[i]);

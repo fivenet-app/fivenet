@@ -5,7 +5,7 @@ import { useAuthStore } from '~/stores/auth';
 
 const { t } = useI18n();
 
-const { login } = useAppConfig();
+const { auth } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
@@ -74,7 +74,7 @@ const { locale, setLocale } = useI18n();
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" to="/auth/login" />
 
                 <UButton
-                    v-if="login.signupEnabled"
+                    v-if="auth.signupEnabled"
                     class="hidden lg:flex"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"

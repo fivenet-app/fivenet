@@ -32,10 +32,10 @@ const showRadioFrequency = ref(false);
                     <template #header>
                         <div class="flex flex-row gap-2">
                             <GenericImg
-                                v-if="jobProps && jobProps.logoFile"
-                                :src="jobProps.logoFile.filePath"
-                                :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"
-                                size="xl"
+                                v-if="jobProps?.logoFile"
+                                :src="`/api/filestore/${jobProps.logoFile.filePath}`"
+                                :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
+                                size="3xl"
                                 no-blur
                             />
 

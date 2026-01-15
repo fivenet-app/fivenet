@@ -23,7 +23,7 @@ func BuildClientConfig(
 
 		DefaultLocale: appCfg.DefaultLocale,
 
-		Login: &LoginConfig{
+		Auth: &Auth{
 			SignupEnabled: appCfg.Auth.GetSignupEnabled(),
 			LastCharLock:  appCfg.Auth.GetLastCharLock(),
 			Providers:     providers,
@@ -38,9 +38,7 @@ func BuildClientConfig(
 			},
 			StatsPage: appCfg.Website.GetStatsPage(),
 		},
-		FeatureGates: &FeatureGates{
-			ImageProxy: cfg.ImageProxy.Enabled,
-		},
+		FeatureGates: &FeatureGates{},
 		Game: &Game{
 			UnemployedJobName: appCfg.JobInfo.GetUnemployedJob().GetName(),
 			StartJobGrade:     cfg.Game.StartJobGrade,
@@ -58,6 +56,9 @@ func BuildClientConfig(
 			CurrencyName: appCfg.Display.CurrencyName,
 		},
 		QuickButtons: quickButtons,
+		Data: &settings.Data{
+			Mode: appCfg.Data.GetMode(),
+		},
 	}
 
 	if appCfg.System.GetBannerMessage() != nil {

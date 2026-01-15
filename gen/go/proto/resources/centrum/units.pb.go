@@ -525,7 +525,7 @@ var File_resources_centrum_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xa0\a\n" +
+	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a!codegen/sanitizer/sanitizer.proto\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x8e\a\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -535,9 +535,9 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12#\n" +
 	"\x04name\x18\x05 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04\x10\x03\x18\x18R\x04name\x12+\n" +
-	"\binitials\x18\x06 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04\x10\x02\x18\x04R\binitials\x12B\n" +
-	"\x05color\x18\a \x01(\tB,\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x128\n" +
-	"\x04icon\x18\x10 \x01(\tB\x1f\xda\xf3\x18\r\b\x01\x12\tStripTags\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x125\n" +
+	"\binitials\x18\x06 \x01(\tB\x0f\xda\xf3\x18\x02\b\x01\xbaH\x06r\x04\x10\x02\x18\x04R\binitials\x129\n" +
+	"\x05color\x18\a \x01(\tB#\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12/\n" +
+	"\x04icon\x18\x10 \x01(\tB\x16\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x125\n" +
 	"\vdescription\x18\b \x01(\tB\x0e\xda\xf3\x18\x02\b\x01\xbaH\x05r\x03\x18\xff\x01H\x04R\vdescription\x88\x01\x01\x12:\n" +
 	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x05R\x06status\x88\x01\x01\x127\n" +
 	"\x05users\x18\v \x03(\v2!.resources.centrum.UnitAssignmentR\x05users\x12F\n" +

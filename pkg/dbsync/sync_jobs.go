@@ -3,8 +3,7 @@ package dbsync
 import (
 	"context"
 	"errors"
-	"slices"
-	"strings"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
@@ -74,70 +73,83 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 
 func (s *jobsSync) fetchJobs(ctx context.Context) ([]*jobs.Job, error) {
 	limit := int64(200)
-	query := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
+	q := s.cfg.Tables.Jobs.GetQuery(s.state, 0, limit)
+	s.logger.Debug("jobs sync query", zap.String("query", q))
 
-	jobs := []*jobs.Job{}
-	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
+	jobsResults := []*jobs.Job{}
+	if _, err := qrm.Query(ctx, s.db, q, []any{}, &jobsResults); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to query jobs. %w", err)
 		}
 	}
 
-	return jobs, nil
+	return jobsResults, nil
 }
 
 func (s *jobsSync) applyFiltersAndRetrieveGrades(
 	ctx context.Context,
-	jobs []*jobs.Job,
+	js []*jobs.Job,
 	hasFilters bool,
 ) ([]*jobs.Job, error) {
 	sQuery := s.cfg.Tables.Jobs
 
-outer:
-	for k := range jobs {
+	filtered := make([]*jobs.Job, 0, len(js))
+
+	for _, job := range js {
 		if hasFilters {
 			// Apply filters
+			filtered := false
 			for _, filter := range sQuery.Filters {
-				if filter.compiledPattern.MatchString(jobs[k].Name) {
+				if filter.compiledPattern.MatchString(job.Name) {
 					switch filter.Action {
 					case FilterActionDrop:
-						jobs = slices.Delete(jobs, k, 1)
-						continue outer
+						filtered = true
 
 					case FilterActionReplace:
-						jobs[k].Name = filter.compiledPattern.ReplaceAllString(
-							jobs[k].Name,
+						job.Name = filter.compiledPattern.ReplaceAllString(
+							job.Name,
 							filter.Replacement,
 						)
 
 					default:
-						s.logger.Warn("unknown filter action", zap.String("action", string(filter.Action)))
+						s.logger.Warn(
+							"unknown filter action",
+							zap.String("action", string(filter.Action)),
+						)
 					}
-					continue
+
+					if filtered {
+						break
+					}
 				}
+			}
+			if filtered {
+				continue
 			}
 		}
 
-		grades, err := s.getGrades(ctx, jobs[k].GetName())
+		grades, err := s.getGrades(ctx, job.GetName())
 		if err != nil {
 			return nil, err
 		}
-		jobs[k].Grades = grades
+		job.Grades = grades
+		filtered = append(filtered, job)
 	}
 
-	return jobs, nil
+	js = filtered
+
+	return js, nil
 }
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
 	query := s.cfg.Tables.JobGrades.GetQuery(nil, 0, 200)
-	query = strings.ReplaceAll(query, "$jobName", "?")
 
 	grades := []*jobs.JobGrade{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{
 		job,
 	}, &grades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to query job grades for job %q. %w", job, err)
 		}
 	}
 

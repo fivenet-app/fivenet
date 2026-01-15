@@ -264,7 +264,6 @@ const viewOptions = [
 ];
 </script>
 
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
@@ -283,6 +282,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.calendar')"
                             @click="calendarCreateOrUpdateModal.open({})"
@@ -293,6 +293,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"
@@ -543,6 +544,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.calendar')"
                             @click="calendarCreateOrUpdateModal.open({})"
@@ -553,6 +555,7 @@ const viewOptions = [
                             class="flex-1"
                             block
                             color="neutral"
+                            variant="outline"
                             trailing-icon="i-mdi-plus"
                             :label="$t('common.entry', 1)"
                             @click="entryCreateOrUpdateModal.open({})"

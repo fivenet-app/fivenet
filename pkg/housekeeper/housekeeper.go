@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"

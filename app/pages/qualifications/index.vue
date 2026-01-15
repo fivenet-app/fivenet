@@ -64,7 +64,12 @@ const qualifications = await useQualifications();
                         v-if="can('qualifications.QualificationsService/UpdateQualification').value"
                         :text="$t('common.create')"
                     >
-                        <UButton trailing-icon="i-mdi-plus" color="neutral" @click="qualifications.createQualification()">
+                        <UButton
+                            trailing-icon="i-mdi-plus"
+                            color="neutral"
+                            variant="outline"
+                            @click="qualifications.createQualification()"
+                        >
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.qualification', 1) }}
                             </span>

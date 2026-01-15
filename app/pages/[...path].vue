@@ -31,7 +31,8 @@ const { username } = storeToRefs(authStore);
                         label: $t('common.back'),
                         icon: 'i-mdi-arrow-back',
                         size: 'lg',
-                        color: 'neutral',
+                        color: 'gray',
+                        variant: 'ghost',
                         onClick: () => useRouter().back(),
                     },
                     username
@@ -49,13 +50,13 @@ const { username } = storeToRefs(authStore);
                         color="neutral"
                         variant="solid"
                         size="lg"
+                        :label="$t('pages.notfound.error')"
                         @click="
                             emojiBlast({
                                 emojis: ['😵‍💫', '🔍', '🔎', '👀'],
                             })
                         "
-                        >{{ $t('pages.notfound.error') }}</UBadge
-                    >
+                    />
                 </template>
             </UPageHero>
         </div>

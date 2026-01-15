@@ -20,7 +20,7 @@
 
 LOCK TABLES `fivenet_documents` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents` DISABLE KEYS */;
-INSERT INTO `fivenet_documents` (`id`, `created_at`, `updated_at`, `deleted_at`, `category_id`, `title`, `content_type`, `content`, `data`, `creator_id`, `creator_job`, `state`, `closed`, `public`) VALUES (1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.',NULL,1,'ambulance','Open',NULL,1),
+INSERT INTO `fivenet_documents` (`id`, `created_at`, `updated_at`, `deleted_at`, `category_id`, `title`, `content_type`, `content_json`, `data`, `creator_id`, `creator_job`, `state`, `closed`, `public`) VALUES (1,'2023-03-17 19:57:09.898','2023-03-17 18:57:16.587',NULL,NULL,'Public Document without category',0,'I\'m a public Document without a category.',NULL,1,'ambulance','Open',NULL,1),
 (2,'2023-03-17 19:57:13.244','2023-03-17 18:57:16.596',NULL,4,'Public Document with category (Closed State)',0,'I\'m a public Document with a category that is closed.',NULL,1,'ambulance','Closed',1,1),
 (3,'2023-03-17 18:54:44.115','2023-03-17 18:57:04.438',NULL,1,'Patientenakte Thomas G.',0,'Only for Ambulance.',NULL,2,'ambulance','Open',0,0),
 (4,'2023-03-17 18:57:04.391',NULL,NULL,1,'Bloodresults for DOJ Case',0,'Only for DOJ, Ambulance and the patient.',NULL,2,'ambulance','Open',0,0),
@@ -51,7 +51,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_documents_comments` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_comments` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_comments` (`id`, `created_at`, `updated_at`, `deleted_at`, `document_id`, `comment`, `creator_id`) VALUES (1,'2023-03-17 19:34:30.052',NULL,NULL,1,'Hello World!',2);
+INSERT INTO `fivenet_documents_comments` (`id`, `created_at`, `updated_at`, `deleted_at`, `document_id`, `content`, `creator_id`) VALUES (1,'2023-03-17 19:34:30.052',NULL,NULL,1,'Hello World!',2);
 /*!40000 ALTER TABLE `fivenet_documents_comments` ENABLE KEYS */;
 UNLOCK TABLES;
 

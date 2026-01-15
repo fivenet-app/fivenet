@@ -4,7 +4,7 @@ const props = withDefaults(
         // Whether to show the legend
         show?: boolean;
         max?: number;
-        // Optional color ramp; keys 0‒1 → color strings
+        // Optional color ramp; keys 0‒1 -> color strings
         gradient?: Record<number, string>;
     }>(),
     {
