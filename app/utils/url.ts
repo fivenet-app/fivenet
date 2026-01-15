@@ -26,8 +26,10 @@ export function generateDiscordConnectURL(provider: string, redirect?: string, p
 
 export const safeImagePaths = ['/api/image_proxy', '/api/filestore'] as const;
 
-export function cleanupImageURL(path: string | File | undefined): string {
-    if (path === undefined) return '/images/broken_image.png';
+export const brokenImageURL = '/images/broken_image.png' as const;
+
+export function cleanupImageURL(path: string | File | undefined, fallback?: string | undefined): string | undefined {
+    if (path === undefined) return fallback;
 
     const resolvedPath = typeof path === 'object' ? path.filePath : path;
 
@@ -55,13 +57,16 @@ export function cleanupImageURL(path: string | File | undefined): string {
     return `/api/filestore/${resolvedPath.replace(/^\//, '')}`;
 }
 
-export function useImageURL(filePath: string | File | undefined | Ref<string | File | undefined>) {
-    const imageURL = ref('');
+export function useImageURL(
+    filePath: string | File | undefined | Ref<string | File | undefined>,
+    fallback?: string | undefined,
+): Ref<string | undefined> {
+    const imageURL = ref<string | undefined>(undefined);
 
     watch(
         () => (typeof filePath === 'object' && 'value' in filePath ? filePath.value : filePath),
         (newPath) => {
-            imageURL.value = cleanupImageURL(newPath);
+            imageURL.value = cleanupImageURL(newPath, fallback);
         },
         { immediate: true },
     );

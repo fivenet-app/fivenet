@@ -14,6 +14,7 @@ const props = withDefaults(
         disableBlurToggle?: boolean;
         rounded?: boolean;
         imgClass?: string;
+        srcFallback?: boolean;
     }>(),
     {
         src: undefined,
@@ -23,8 +24,9 @@ const props = withDefaults(
         noBlur: undefined,
         enablePopup: false,
         disableBlurToggle: false,
-        rounded: true,
+        rounded: false,
         imgClass: '',
+        srcFallback: false,
     },
 );
 
@@ -41,7 +43,7 @@ function toggleBlur(): void {
     }
 }
 
-const src = useImageURL(props.src);
+const src = useImageURL(props.src, !props.srcFallback ? undefined : brokenImageURL);
 </script>
 
 <template>
@@ -49,6 +51,7 @@ const src = useImageURL(props.src);
         <UButton
             variant="link"
             :disabled="!src || !enablePopup"
+            :style="$attrs.style"
             :ui="{
                 base:
                     !src || !enablePopup

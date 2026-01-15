@@ -183,6 +183,12 @@ export default defineAppConfig({
             },
         },
 
+        avatar: {
+            slots: {
+                root: 'rounded-md',
+            },
+        },
+
         inputMenu: {
             slots: {
                 content: 'min-w-fit',

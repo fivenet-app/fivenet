@@ -1,7 +1,8 @@
 <script lang="ts">
-import { NuxtImg, UCheckbox, UIcon } from '#components';
+import { UCheckbox, UIcon } from '#components';
 import { defineComponent, getCurrentInstance, h, Text, type Component, type VNode } from 'vue';
 import type { RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
+import GenericImg from '../elements/GenericImg.vue';
 
 export default defineComponent({
     name: 'HTMLContentRenderer',
@@ -18,9 +19,7 @@ export default defineComponent({
         const self = getCurrentInstance()?.type as Component;
 
         // Optional tag remapping
-        const tagRemapping: Record<string, Component> = {
-            img: NuxtImg as Component,
-        };
+        const tagRemapping: Record<string, Component> = {};
 
         return (): VNode => {
             const value = props.value;
@@ -50,7 +49,7 @@ export default defineComponent({
 
             // 4. img tag
             if (value.tag === 'img') {
-                return h(NuxtImg, {
+                return h(GenericImg, {
                     ...value.attrs,
                     src: cleanupImageURL(value.attrs?.src || ''),
                 });

@@ -50,6 +50,7 @@ const response = useVModel(props, 'modelValue', emit);
                     :rounded="false"
                     :src="modelValue?.question!.data?.data.image?.image?.filePath"
                     :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
+                    src-fallback
                 />
             </div>
 

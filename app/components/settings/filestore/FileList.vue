@@ -179,6 +179,7 @@ const columns = computed(
                                 { class: 'flex justify-center items-center' },
                                 h(GenericImg, {
                                     src: `/api/filestore/${row.original.filePath.replace(/^\//, '')}`,
+                                    srcFallback: true,
                                     alt: row.original.filePath,
                                     loading: 'lazy',
                                     rounded: false,

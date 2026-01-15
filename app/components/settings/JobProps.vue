@@ -386,10 +386,13 @@ const confirmModal = overlay.create(ConfirmModal);
                                     name="logoFile"
                                     :label="$t('common.logo')"
                                 >
-                                    <div v-if="jobProps.logoFileId" class="flex w-full flex-1 items-center justify-center">
+                                    <div
+                                        v-if="jobProps.logoFile?.filePath"
+                                        class="flex w-full flex-1 items-center justify-center"
+                                    >
                                         <GenericImg
-                                            :src="`/api/filestore/jobprops/${jobProps.job}`"
-                                            :alt="`${jobProps.job} ${$t('common.logo')}`"
+                                            :src="`/api/filestore/${jobProps.logoFile.filePath}`"
+                                            :alt="`${jobProps.jobLabel ?? jobProps.job} ${$t('common.logo')}`"
                                             class="mb-2 size-full max-h-40 min-h-40 max-w-40"
                                         />
                                     </div>

@@ -166,6 +166,7 @@ function onClickNext() {
                     :items-per-page="pagination?.pageSize ?? 0"
                     :total="pagination?.totalCount ?? 0"
                     :show-edges="false"
+                    active-variant="subtle"
                     :ui="{ first: 'hidden', last: 'hidden' }"
                 />
                 <UFieldGroup v-else>
@@ -176,7 +177,9 @@ function onClickNext() {
                         :disabled="!canGoFirstOrPrev || isRequestPending(status)"
                         @click="onClickPrev"
                     />
-                    <UButton :label="currentPage.toString()" color="primary" variant="solid" />
+
+                    <UButton :label="currentPage.toString()" color="primary" variant="outline" />
+
                     <UButton
                         color="neutral"
                         variant="outline"

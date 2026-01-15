@@ -42,9 +42,16 @@ describe('generateDiscordConnectURL', () => {
 });
 
 describe('useImageURL', () => {
-    it('should return a broken image URL when the filePath is undefined', () => {
+    it('should return a broken image URL when the filePath is undefined and no fallback is set', () => {
         const filePath = ref(undefined);
         const imageURL = useImageURL(filePath);
+
+        expect(imageURL.value).toBe(undefined);
+    });
+
+    it('should return a broken image URL when the filePath is undefined and fallback is set', () => {
+        const filePath = ref(undefined);
+        const imageURL = useImageURL(filePath, '/images/broken_image.png');
 
         expect(imageURL.value).toBe('/images/broken_image.png');
     });
