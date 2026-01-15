@@ -34,6 +34,7 @@ export default withNuxt(
                     'prefer-inline': true,
                 },
             ],
+            'vue/no-multiple-template-root': 'off',
         },
     },
     {

@@ -180,7 +180,6 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const isMobile = breakpoints.smaller('lg');
 </script>
 
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel
         id="mail-threads"

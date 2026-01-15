@@ -78,7 +78,6 @@ const creating = ref(false);
 const confirmModal = overlay.create(ConfirmModal);
 </script>
 
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
     <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="maileremaillist">
         <template #header>
