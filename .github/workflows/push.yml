@@ -89,6 +89,8 @@ jobs:
 
   binary-build:
     name: Binaries Build Test
+    needs:
+      - golang-tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
