@@ -84,46 +84,8 @@ jobs:
 
       - name: Run pnpm build
         env:
-          NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
           NODE_OPTIONS: "--max-old-space-size=8192"
         run: pnpm build
-
-  container-build:
-    name: Container Build Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
-        with:
-          images: |
-            ghcr.io/fivenet-app/fivenet
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern=v{{version}}
-            type=semver,pattern=v{{major}}.{{minor}}
-            type=semver,pattern=v{{major}}
-            type=sha
-
-      - name: Build Container Image
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
-        with:
-          context: .
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            NUXT_UI_PRO_LICENSE=${{ secrets.NUXT_UI_PRO_LICENSE }}
 
   binary-build:
     name: Binaries Build Test
@@ -152,7 +114,6 @@ jobs:
     name: Image Build
     if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
-      - container-build
       - node-lint-tests
       - node-build-tests
       - binary-build

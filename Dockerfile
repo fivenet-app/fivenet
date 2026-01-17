@@ -3,8 +3,6 @@
 # Frontend Build
 FROM docker.io/library/node:24.12.0-alpine3.22 AS nodebuilder
 
-ARG NUXT_UI_PRO_LICENSE
-
 WORKDIR /app
 
 COPY --exclude=public/images/livemap/ . ./
@@ -14,7 +12,6 @@ RUN apk add --no-cache git && \
     corepack prepare pnpm@10.15.1 --activate && \
     pnpm install && \
     NODE_OPTIONS="--max-old-space-size=8192" \
-        NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} \
         pnpm generate
 
 # Livemap Tiles Layer for improved caching

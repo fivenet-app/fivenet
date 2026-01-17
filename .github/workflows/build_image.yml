@@ -65,8 +65,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           tags: ghcr.io/fivenet-app/fivenet
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
-          build-args: |
-            NUXT_UI_PRO_LICENSE=${{ secrets.NUXT_UI_PRO_LICENSE }}
 
       - name: Export digest
         run: |

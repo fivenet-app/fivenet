@@ -45,9 +45,7 @@ watch:
 
 .PHONY: build-container
 build-container:
-	docker build -t docker.io/fivenet-app/fivenet:latest \
-		--build-arg NUXT_UI_PRO_LICENSE=$(NUXT_UI_PRO_LICENSE) \
-		.
+	docker build -t docker.io/fivenet-app/fivenet:latest .
 
 .PHONY: release
 release:
