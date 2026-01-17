@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.20-labs
 
 # Frontend Build
-FROM docker.io/library/node:24.12.0-alpine3.22 AS nodebuilder
+FROM docker.io/library/node:24.13.0-alpine3.22 AS nodebuilder
 
 WORKDIR /app
 
