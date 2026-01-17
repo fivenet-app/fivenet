@@ -89,8 +89,6 @@ jobs:
 
   binary-build:
     name: Binaries Build Test
-    needs:
-      - golang-tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -116,14 +114,16 @@ jobs:
     needs:
       - node-lint-tests
       - node-build-tests
-      - binary-build
+      - golang-tests
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
 
   update-dev-channel:
     name: Update Dev Channel
     if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' }}
-    needs: build-image
+    needs:
+      - binary-build
+      - build-image
     uses: ./.github/workflows/update-channel.yml
     with:
       channel: dev
