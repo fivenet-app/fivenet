@@ -424,14 +424,12 @@ func (p *Perms) GetEffectiveRolePermissions(
 			continue
 		}
 
-		permsRoleMap.Range(func(key int64, value bool) bool {
+		for key, value := range permsRoleMap.All() {
 			// Only allow the first perm "value" to be set (because that's how role perms inheritance works)
 			if _, ok := perms[key]; !ok {
 				perms[key] = value
 			}
-
-			return true
-		})
+		}
 	}
 
 	ps := []*permissions.Permission{}

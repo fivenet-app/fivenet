@@ -54,14 +54,13 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]int64, 
 	}
 
 	grades := []int32{}
-	gradesMap.Range(func(g int32, _ int64) bool {
+	for g := range gradesMap.All() {
 		if g > grade {
-			return true
+			continue
 		}
 
 		grades = append(grades, g)
-		return true
-	})
+	}
 
 	slices.Sort(grades)
 

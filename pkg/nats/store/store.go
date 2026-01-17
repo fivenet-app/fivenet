@@ -321,7 +321,7 @@ func (s *Store[T, U]) get(key string) (U, error) {
 // start with the given prefix.  E.g. prefix="JOB.GRADE" will match
 // only "JOB.GRADE.USER_ID", not "JOB.GRADE2.X" or "JOB.GRADE_USER_ID".
 func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
-	// ensure we only match whole segments:
+	// Ensure we only match whole segments:
 	//   "JOB.GRADE" -> "JOB.GRADE."
 	//   ""          -> "" (no prefix => match everything)
 	seg := prefix
@@ -329,9 +329,9 @@ func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 		seg += "."
 	}
 
-	// 1) find matching keys in-memory
+	// 1) Find matching keys in-memory
 	var candidates []string
-	s.data.Range(func(internalKey string, _ U) bool {
+	for internalKey := range s.data.All() {
 		// strip your store.prefix to get the user-key
 		userKey := internalKey
 		if s.prefix != "" {
@@ -341,11 +341,10 @@ func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 			candidates = append(candidates, userKey)
 
 			if len(candidates) > 1 {
-				return false // Stop early if we have more than 1 candidate
+				break // Stop early if we have more than 1 candidate
 			}
 		}
-		return true
-	})
+	}
 
 	switch len(candidates) {
 	case 0:
@@ -353,7 +352,7 @@ func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 		return zero, jetstream.ErrKeyNotFound
 
 	case 1:
-		// delegate your normal Get (cache -> KV)
+		// Delegate your normal Get (cache -> KV)
 		return s.Get(candidates[0])
 
 	default:
@@ -445,7 +444,7 @@ func (s *Store[T, U]) Keys(prefix string) []string {
 	}
 
 	keys := []string{}
-	s.data.Range(func(key string, _ U) bool {
+	for key := range s.data.All() {
 		if hasPrefix {
 			if strings.HasPrefix(key, prefix) {
 				if s.prefix != "" {
@@ -454,7 +453,7 @@ func (s *Store[T, U]) Keys(prefix string) []string {
 				}
 
 				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-					return true
+					continue
 				}
 
 				keys = append(keys, key)
@@ -462,9 +461,7 @@ func (s *Store[T, U]) Keys(prefix string) []string {
 		} else {
 			keys = append(keys, key)
 		}
-
-		return true
-	})
+	}
 
 	return keys
 }
@@ -479,10 +476,10 @@ func (s *Store[T, U]) KeysFiltered(prefix string, filter func(string) bool) []st
 	}
 
 	var out []string
-	s.data.Range(func(internalKey string, _ U) bool {
+	for internalKey := range s.data.All() {
 		// must start with the bucket-prefix + user prefix
 		if full != "" && !strings.HasPrefix(internalKey, full) {
-			return true
+			continue
 		}
 
 		// strip off store.prefix so we return the "user" key
@@ -492,14 +489,13 @@ func (s *Store[T, U]) KeysFiltered(prefix string, filter func(string) bool) []st
 		}
 
 		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, userKey) {
-			return true
+			continue
 		}
 
 		if filter(userKey) {
 			out = append(out, userKey)
 		}
-		return true
-	})
+	}
 
 	return out
 }
@@ -507,9 +503,9 @@ func (s *Store[T, U]) KeysFiltered(prefix string, filter func(string) bool) []st
 func (s *Store[T, U]) List() []U {
 	list := []U{}
 
-	s.data.Range(func(key string, value U) bool {
+	for key, value := range s.data.All() {
 		if value == nil {
-			return true
+			continue
 		}
 
 		if s.prefix != "" {
@@ -517,17 +513,16 @@ func (s *Store[T, U]) List() []U {
 		}
 
 		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-			return true
+			continue
 		}
 
 		item, err := s.Get(key)
 		if err != nil {
-			return true
+			continue
 		}
 
 		list = append(list, item)
-		return true
-	})
+	}
 
 	return list
 }
@@ -540,10 +535,10 @@ func (s *Store[T, U]) ListFiltered(prefix string, filter func(key string, val U)
 	}
 
 	var list []U
-	s.data.Range(func(internalKey string, val U) bool {
+	for internalKey, val := range s.data.All() {
 		// must start with the bucket-prefix + user prefix
 		if full != "" && !strings.HasPrefix(internalKey, full) {
-			return true
+			continue
 		}
 
 		// strip off store.prefix so we return the "user" key
@@ -553,14 +548,13 @@ func (s *Store[T, U]) ListFiltered(prefix string, filter func(key string, val U)
 		}
 
 		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, userKey) {
-			return true
+			continue
 		}
 
 		if filter == nil || filter(userKey, val) {
 			list = append(list, val)
 		}
-		return true
-	})
+	}
 
 	return list
 }
@@ -584,24 +578,27 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 		}
 	}
 
-	s.data.Range(func(internalKey string, _ U) bool {
+	for internalKey := range s.data.All() {
 		// strip store prefix so we expose the "user key"
 		userKey := internalKey
 		if s.prefix != "" {
 			userKey = strings.TrimPrefix(internalKey, s.prefix)
 		}
 		if _, ok := skip[userKey]; ok {
-			return true // ignore
+			continue // Ignore
 		}
 		v, err := s.Get(internalKey)
 		if err != nil {
-			return true // ignore errors, just skip this entry
+			continue // Ignore errors, just skip this entry
 		}
 
 		// Clone the value to ensure no parallel access issues
-		//nolint:errcheck // We know that i is of type U as we only store U in the data map.
-		return fn(userKey, proto.Clone(v).(U))
-	})
+		//nolint:errcheck // We know that v is of type U as we only store U in the data map.
+		v = proto.Clone(v).(U)
+		if !fn(userKey, v) {
+			break
+		}
+	}
 }
 
 // Put upload the message to kv and local.

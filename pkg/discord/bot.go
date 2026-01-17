@@ -403,21 +403,18 @@ func (b *Bot) runSync(ctx context.Context) error {
 	errs := multierr.Combine()
 
 	// Submit guilds to sync via work channel
-	b.activeGuilds.Range(func(_ discord.GuildID, guild *Guild) bool {
+	for _, guild := range b.activeGuilds.All() {
 		b.workCh <- guild
-		return true
-	})
+	}
 
 	return errs
 }
 
 func (b *Bot) stop() error {
 	errs := multierr.Combine()
-	b.activeGuilds.Range(func(key discord.GuildID, guild *Guild) bool {
+	for _, guild := range b.activeGuilds.All() {
 		guild.Stop()
-
-		return true
-	})
+	}
 
 	b.activeGuilds.Clear()
 

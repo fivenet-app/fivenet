@@ -232,19 +232,18 @@ func (c *Cache[T, U]) Keys(prefix string) []string {
 	}
 
 	var keys []string
-	c.data.Range(func(key string, _ *EntryWrapper[T, U]) bool {
+	for key := range c.data.All() {
 		if fullPrefix != "" && !strings.HasPrefix(key, fullPrefix) {
-			return true
+			continue
 		}
 
 		userKey := strings.TrimPrefix(key, c.prefix)
 		if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, userKey) {
-			return true
+			continue
 		}
 
 		keys = append(keys, userKey)
-		return true
-	})
+	}
 
 	return keys
 }
@@ -252,46 +251,47 @@ func (c *Cache[T, U]) Keys(prefix string) []string {
 // List returns all values in the cache as a slice.
 func (c *Cache[T, U]) List() []U {
 	var list []U
-	c.data.Range(func(internalKey string, value *EntryWrapper[T, U]) bool {
+	for internalKey, value := range c.data.All() {
 		if value == nil {
-			return true
+			continue
 		}
 
 		userKey := strings.TrimPrefix(internalKey, c.prefix)
 		if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, userKey) {
-			return true
+			continue
 		}
 
 		if c.ttl != nil && time.Since(value.Created) > *c.ttl {
-			return true
+			continue
 		}
 
 		//nolint:forcetypeassert // Value type is guaranteed to be U (generics type)
 		list = append(list, proto.Clone(value.Data).(U))
-		return true
-	})
+	}
 
 	return list
 }
 
 // Range executes the given function for each key-value pair in the cache.
 func (c *Cache[T, U]) Range(fn func(key string, value U) bool) {
-	c.data.Range(func(internalKey string, wrapper *EntryWrapper[T, U]) bool {
-		if wrapper == nil {
-			return true
+	for internalKey, value := range c.data.All() {
+		if value == nil {
+			continue
 		}
 
 		userKey := strings.TrimPrefix(internalKey, c.prefix)
 		if c.ignoredKeys != nil && slices.Contains(c.ignoredKeys, userKey) {
-			return true
+			continue
 		}
 
-		if c.ttl != nil && time.Since(wrapper.Created) > *c.ttl {
-			return true
+		if c.ttl != nil && time.Since(value.Created) > *c.ttl {
+			continue
 		}
 
-		return fn(userKey, proto.Clone(wrapper.Data).(U))
-	})
+		if !fn(userKey, proto.Clone(value.Data).(U)) {
+			break
+		}
+	}
 }
 
 // Put adds or updates a value in the cache, storing it in the NATS KeyValue store.

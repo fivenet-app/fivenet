@@ -55,10 +55,9 @@ func (s *Server) getAndSendACL(
 	}
 
 	if userInfo.GetSuperuser() {
-		s.markersCache.Range(func(job string, _ []*livemap.MarkerMarker) bool {
+		for job := range s.markersCache.All() {
 			markerJobs.Strings = append(markerJobs.Strings, job)
-			return true
-		})
+		}
 		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.GetStrings())
 
 		if usersJobs.Jobs == nil {

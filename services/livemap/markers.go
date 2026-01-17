@@ -357,13 +357,12 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 	}
 
-	s.markersCache.Range(func(key string, value []*livemap.MarkerMarker) bool {
+	// Remove any jobs that are no longer present
+	for key := range s.markersCache.All() {
 		if _, ok := markers[key]; !ok {
 			s.markersCache.Delete(key)
 		}
-
-		return true
-	})
+	}
 
 	return s.refreshDeletedMarkers(ctx)
 }

@@ -238,12 +238,11 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId int64) error {
 			continue
 		}
 
-		perms.Range(func(permId int64, _ bool) bool {
+		for permId := range perms.All() {
 			if !slices.Contains(list, permId) {
 				perms.Delete(permId)
 			}
-			return true
-		})
+		}
 	}
 
 	return nil
@@ -305,12 +304,11 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId int64) error {
 			continue
 		}
 
-		attrRoleMap.Range(func(attrId int64, _ *cacheRoleAttr) bool {
+		for attrId := range attrRoleMap.All() {
 			if !slices.Contains(list, attrId) {
 				attrRoleMap.Delete(attrId)
 			}
-			return true
-		})
+		}
 	}
 
 	return nil

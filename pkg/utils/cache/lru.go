@@ -122,12 +122,11 @@ func (c *LRUCache[K, V]) StartJanitor(ctx context.Context, sweepInterval time.Du
 // concurrently with other API methods.
 func (c *LRUCache[K, V]) cleanupExpired() {
 	now := time.Now()
-	c.store.Range(func(key K, elem *pair[V]) bool {
+	for key, elem := range c.store.All() {
 		if !elem.expiresAt.IsZero() && elem.expiresAt.Before(now) {
 			c.store.Delete(key)
 		}
-		return true
-	})
+	}
 }
 
 // evictLRU drops a random element (since xsync.Map has no order).
@@ -136,12 +135,12 @@ func (c *LRUCache[K, V]) evictLRU() {
 	// xsync.Map does not track recency, so we evict a random element.
 	// For true LRU, a different data structure is needed.
 	var evicted bool
-	c.store.Range(func(key K, _ *pair[V]) bool {
+	for key := range c.store.All() {
 		c.store.Delete(key)
 		evicted = true
-		return false // stop after one
-	})
-	_ = evicted // for clarity
+		break // Stop after one
+	}
+	_ = evicted // For debugging
 }
 
 // isExpired returns true if the pair has a nonzero expiration and is expired.

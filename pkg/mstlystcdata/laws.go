@@ -161,14 +161,13 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 		}
 
 		// Delete non-existing law books, based on which are in the database
-		c.lawBooks.Range(func(key int64, value *laws.LawBook) bool {
+		for key := range c.lawBooks.All() {
 			if !slices.ContainsFunc(found, func(in int64) bool {
 				return in == key
 			}) {
 				c.lawBooks.Delete(key)
 			}
-			return true
-		})
+		}
 	}
 
 	return nil
@@ -177,10 +176,9 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId int64) error {
 // GetLawBooks returns all cached law books, sorted by name using natural order.
 func (c *Laws) GetLawBooks() []*laws.LawBook {
 	lawBooks := []*laws.LawBook{}
-	c.lawBooks.Range(func(key int64, value *laws.LawBook) bool {
+	for _, value := range c.lawBooks.All() {
 		lawBooks = append(lawBooks, value)
-		return true
-	})
+	}
 
 	sort.Slice(lawBooks, func(i, j int) bool {
 		return natural.Less(lawBooks[i].GetName(), lawBooks[j].GetName())
