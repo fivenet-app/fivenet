@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.1.0] - 2026-01-17
+
+### 🚀 Features
+
+- Add aligning guidelines to fabric
+- Add copy debug info button
+- Add registered since time to account info
+- Migrate html json legacy to tiptap json format
+- Add "focus" mode (highlight current block) to tiptap
+- Add notification for editor file upload
+- Dbsync service arguments and added status command
+- Add basic data mode structure
+- Add timeclock entry generation to demo data
+- Image proxy + iconify api always enabled
+- Add v-model to fabricjs editor component
+- Add basics for config validation and image proxy minimum cache
+
+### 🐛 Bug Fixes
+
+- Wiki page toc not showing correctly and cleanup path logic
+- Doc relation and reference addition/removal not working
+- Penalty calculator warning not respecting new lines
+- Port filesystem storage and wrapper changes from feature branch
+- Implement tiptap json for more editors
+- Continue work on implementing new tiptap json content format
+- Filesystem storage test issues
+- Fixup issues caused by switch to tiptap json format
+- Editor version diff/history modal
+- Content detection in content query logic
+- Dbsync config loading
+- Dbsync not adding database config to base config
+- Dbsync applying migrations due to table manager
+- Dbsync query issues with "empty" conditions
+- Dbsync jobs query issues
+- Allow columns to be disabled in dbsync
+- Dbsync sql not ignoring columns
+- Add missing dbsync started log message
+- Dbsync jobs filter causing out of bounds
+- UseLogger prefix type check
+- Improve dbsync table manager
+- Fx opts issue caused by dbsync module changes
+- Update fx modules ordering
+- Add missing tests-js makefile target
+- Add fx modules and re-order in list
+- Change dbsync stream "dropped" to warn
+- Test issues caused by recent db migrations
+- Add char limits to editors
+- Show timeclock entries regardless of user's actual job as long as
+- Approval signatures getting inserted with "different" snapshot date
+- Return document meta with ListApprovalPolicies response
+- Update eslint config to ignore no multiple template root errors
+- Broken image url
+- Backend filestore routing and change some modals to drawers
+- Issues with job logo and switch to rounded-md for avatars
+- Center document state and approved badges in doc list
+- Add line-clamp to qualification tutor list comment and summary
+- Qualifications toolbar missing classes
+- Start fixing button colors and improve template selection
+- Switch to xsync map All() in favor of Range() with funcs
+
+### ⚙️ Miscellaneous Tasks
+
+- Remove container-build step in favor of matrix container build
+
 ## [2025.12.0] - 2025-12-30
 
 ### 🏗️ Breaking changes
