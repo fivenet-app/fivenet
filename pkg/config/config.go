@@ -2,7 +2,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/zaputils"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap/zapcore"
 )
 
@@ -35,7 +35,7 @@ type Config struct {
 	ImageProxy     ImageProxy     `yaml:"imageProxy"`
 	Audit          Audit          `yaml:"audit"`
 	OAuth2         OAuth2         `yaml:"oauth2"`
-	PostalsFile    string         `yaml:"postalsFile"    default:".output/public/data/postals.json"`
+	PostalsFile    string         `yaml:"postalsFile"    default:".output/public/data/postals.json" validate:"filepath"`
 	Auth           Auth           `yaml:"auth"`
 	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
 	Discord        Discord        `yaml:"discord"`
@@ -206,32 +206,39 @@ type Storage struct {
 	MetricsInterval time.Duration `default:"15m"  yaml:"metricsInterval"`
 }
 
-func (c *Storage) Validate() error {
-	var prefix string
+func ValidateStorage(fl validator.StructLevel) {
+	storage, ok := fl.Current().Interface().(Storage)
+	if !ok {
+		fl.ReportError(storage, "Storage", "storage", "storage", "")
+		return
+	}
 
-	switch c.Type {
+	var prefix string
+	switch storage.Type {
 	case StorageTypeFilesystem:
-		prefix = c.Filesystem.Prefix
+		prefix = storage.Filesystem.Prefix
 	case StorageTypeS3:
-		prefix = c.S3.Prefix
+		prefix = storage.S3.Prefix
+
 	case StorageTypeNoop:
-		return nil
+		return
 
 	default:
-		return fmt.Errorf("unknown storage type: %s", c.Type)
+		fl.ReportError(storage, "Type", "type", "storagetype", "")
+		return
 	}
 
 	if prefix != "" {
 		p := filepath.Clean(filepath.FromSlash(prefix))
 		if p == "." || p == ".." || strings.HasPrefix(p, ".."+string(os.PathSeparator)) {
-			return fmt.Errorf("invalid storage prefix: %q", prefix)
+			fl.ReportError(storage, "Prefix", "prefix", "storageprefix", "")
+			return
 		}
 		if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
-			return fmt.Errorf("invalid storage prefix: %q", prefix)
+			fl.ReportError(storage, "Prefix", "prefix", "storageprefix", "")
+			return
 		}
 	}
-
-	return nil
 }
 
 type FilesystemStorage struct {
@@ -257,12 +264,13 @@ type ImageProxy struct {
 }
 
 type ImageProxyOptions struct {
-	AllowHosts []string `yaml:"allowHosts"`
-	DenyHosts  []string `yaml:"denyHosts"`
+	AllowHosts           []string      `yaml:"allowHosts"`
+	DenyHosts            []string      `yaml:"denyHosts"`
+	MinimumCacheDuration time.Duration `yaml:"minimumCacheDuration" default:"30m"`
 }
 
 type Cache struct {
-	RefreshTime time.Duration `default:"2m" yaml:"refreshTime"`
+	RefreshTime time.Duration `default:"2m" yaml:"refreshTime" validate:"gte=1"`
 }
 
 type Audit struct {

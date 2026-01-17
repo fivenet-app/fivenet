@@ -96,8 +96,9 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool, withConfig bool)
 	opts := []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			l := &fxevent.ZapLogger{Logger: log}
-			// Show fx logs only when debug logs are enabled
+			// Show fx logs only when on debug level
 			l.UseLogLevel(zap.DebugLevel)
+			l.UseErrorLevel(zap.ErrorLevel)
 			return l
 		}),
 		fx.StartTimeout(startTimeout),

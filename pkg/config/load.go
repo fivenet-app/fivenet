@@ -3,11 +3,13 @@ package config
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/creasty/defaults"
 	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/go-playground/validator/v10"
 	"github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
@@ -112,9 +114,29 @@ func Load() (Result, error) {
 		c.IgnoreRequirements = skip
 	}
 
-	// Validate config (currently only storage config)
-	if err := c.Storage.Validate(); err != nil {
-		return res, fmt.Errorf("invalid storage config. %w", err)
+	// Validate config
+	validate := validator.New()
+	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("yaml"), ",", 2)[0]
+		// Skip if tag key says it should be ignored
+		if name == "-" {
+			return ""
+		}
+		return name
+	})
+	validate.RegisterStructValidation(ValidateStorage, Storage{})
+
+	if err := validate.Struct(c); err != nil {
+		// Build detailed validation error message
+		msg := "Invalid FiveNet config detected:\n"
+		for _, validationErr := range err.(validator.ValidationErrors) {
+			msg += fmt.Sprintf(
+				"- Field `%s` violated %s validation.\n",
+				validationErr.StructNamespace(),
+				validationErr.Tag(),
+			)
+		}
+		return res, fmt.Errorf("%s", msg)
 	}
 
 	return res, nil

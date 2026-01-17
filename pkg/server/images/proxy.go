@@ -44,6 +44,7 @@ func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 	proxy.UserAgent = "FiveNet Image Proxy " + version.Version
 	proxy.ContentTypes = []string{"image/*"}
 	proxy.ScaleUp = false
+	proxy.MinimumCacheDuration = p.config.Options.MinimumCacheDuration
 
 	// Example URLs:
 	// - http://localhost:3000/api/image_proxy/500/https://octodex.github.com/images/codercat.jpg

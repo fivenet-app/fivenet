@@ -109,6 +109,7 @@ imageProxy:
   options:
     allowHosts: []
     denyHosts: []
+    minimumCacheDuration: 30m
 
 audit:
   retentionDays: 90
