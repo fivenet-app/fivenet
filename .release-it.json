@@ -3,14 +3,14 @@
     "requireCleanWorkingDir": false,
     "commitMessage": "chore(release): v${version}",
     "tagName": "v${version}",
-    "changelog": "./internal/scripts/changelog.sh stdout"
+    "changelog": "./internal/scripts/changelog.sh stdout ${version}"
   },
   "github": {
     "release": true,
     "releaseName": "v${version}",
     "web": false,
     "draft": false,
-    "releaseNotes": "./internal/scripts/changelog.sh stdout"
+    "releaseNotes": "./internal/scripts/changelog.sh stdout ${version}"
   },
   "hooks": {
     "before:init": [],
