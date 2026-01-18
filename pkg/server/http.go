@@ -234,7 +234,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	}
 
 	// Setup assets and other static files serving
-	frontendFS := static.LocalFile(".output/public/", true)
+	frontendFS := static.LocalFile(".output/public/", false)
 	fileServer := http.FileServer(frontendFS)
 
 	// GRPC-web and websocket handling
@@ -275,7 +275,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
 
-		// If the target is a directory (e.g., `/livemap`), load root `index.html``
+		// If the target is a directory (e.g., `/livemap`, `/settings/jobprops`), load root `index.html``
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
 			c.Request.URL.Path = "/"
 			fileServer.ServeHTTP(c.Writer, c.Request)

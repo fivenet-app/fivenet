@@ -3,7 +3,6 @@ package filestore
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"path"
 	"path/filepath"
@@ -150,10 +149,7 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 			return
 		}
 		c.Error(err)
-		c.AbortWithError(
-			http.StatusBadRequest,
-			fmt.Errorf("failed to retrieve file from store. %w", err),
-		)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 	defer object.Close()

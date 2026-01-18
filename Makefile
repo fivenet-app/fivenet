@@ -11,8 +11,8 @@ PROTOC ?= protoc
 # Read .env file and export the vars
 ifneq (,$(wildcard ./.env))
     include .env
-    export
 endif
+export
 
 build_dir:
 	mkdir -p $(BUILD_DIR)
