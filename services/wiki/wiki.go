@@ -499,7 +499,7 @@ func (s *Server) CreatePage(
 		VALUES(
 			userInfo.GetJob(),
 			req.ParentId,
-			content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
+			int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
 			true,
 			true,
 			false,
@@ -669,7 +669,7 @@ func (s *Server) UpdatePage(
 		).
 		SET(
 			req.GetPage().ParentId,
-			req.GetPage().GetMeta().GetContentType(),
+			int32(req.GetPage().GetContent().GetContentType()),
 			req.GetPage().GetMeta().Toc,
 			req.GetPage().GetMeta().GetDraft(),
 			req.GetPage().GetMeta().GetPublic(),

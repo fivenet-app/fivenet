@@ -425,10 +425,10 @@ func (s *Server) CreateDocument(
 		VALUES(
 			categoryId,
 			docTitle,
-			"", // DocSummaryLength
+			"",
 			docContent,
 			"",
-			docContent.GetContentType(),
+			int32(docContent.GetContentType()),
 			docState,
 			mysql.NULL,
 			false,
@@ -611,7 +611,7 @@ func (s *Server) UpdateDocument(
 				extracted.GetSummary(DocSummaryLength),
 				extracted.WordCount,
 				extracted.FirstHeading,
-				content.ContentType_CONTENT_TYPE_TIPTAP_JSON,
+				int32(content.ContentType_CONTENT_TYPE_TIPTAP_JSON),
 				req.GetContent(),
 				extracted.Text,
 				mysql.NULL,

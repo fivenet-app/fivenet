@@ -83,13 +83,13 @@ func (x *Content) Value() (driver.Value, error) {
 		x.RawHtml = nil
 	}
 
-	if x.GetTiptapJson() != nil {
+	if x.GetTiptapJson() != nil || x.GetContentType() == ContentType_CONTENT_TYPE_TIPTAP_JSON {
 		return protoutils.MarshalToJSON(&Content{
 			Version:     "tiptap/v1",
 			ContentType: ContentType_CONTENT_TYPE_TIPTAP_JSON,
 			TiptapJson:  x.GetTiptapJson(),
 		})
-	} else if x.GetContent() != nil {
+	} else if x.GetContent() != nil || x.GetContentType() == ContentType_CONTENT_TYPE_HTML {
 		// Legacy JSON content stored directly in Content.Content field
 		return protoutils.MarshalToJSON(&Content{
 			Version:     "legacy_json/v1",
