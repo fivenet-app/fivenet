@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.1.1] - 2026-01-18
+
+### 🐛 Bug Fixes
+
+- Git release notes showing wrong version
+- Http server always returning 400
+- Api routes grouping
+
 ## [2026.1.0] - 2026-01-17
 
 ### 🚀 Features
