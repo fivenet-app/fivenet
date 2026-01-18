@@ -86,7 +86,7 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 	// API Base
 	g := e.Group("/api")
 	{
-		e.Any("/", func(ctx *gin.Context) {
+		g.Any("/", func(ctx *gin.Context) {
 			ctx.AbortWithStatus(http.StatusBadRequest)
 		})
 
