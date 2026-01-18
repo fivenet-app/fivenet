@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2026.1.2] - 2026-01-18
+
+### 🐛 Bug Fixes
+
+- Content type enum sql issue
+
 ## [2026.1.1] - 2026-01-18
 
 ### 🐛 Bug Fixes
