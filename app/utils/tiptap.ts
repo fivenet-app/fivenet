@@ -1,9 +1,11 @@
 import { getSchema, type Extensions, type JSONContent } from '@tiptap/core';
 import type { DOMOutputSpec, Mark as PMMark, Node as PMNode } from 'prosemirror-model';
 import { Fragment, h, type VNodeChild } from 'vue';
+import { Struct } from '~~/gen/ts/google/protobuf/struct';
+import { NodeType, type RichTextHtmlNode } from '~~/gen/ts/resources/common/content/content';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export function isSameDoc(a: any, b: any, extensions: Extensions) {
+export function isSameDoc(a: JSONContent, b: JSONContent, extensions: Extensions) {
     const schema = getSchema(extensions);
 
     const nodeA = schema.nodeFromJSON(a);
@@ -156,12 +158,18 @@ type ExtractTextOptions = {
      * Suffix appended when output is truncated.
      */
     ellipsis?: string;
+
+    /**
+     * Limit elements processed.
+     */
+    limit?: number;
 };
 
 const ExtractTextOptionsDEFAULTS: Required<ExtractTextOptions> = {
     blockSeparators: true,
     collapseWhitespace: true,
     ellipsis: '…',
+    limit: 150,
 };
 
 export function tiptapTextPreview(
@@ -178,6 +186,7 @@ export function tiptapTextPreview(
 
     const push = (s: string) => {
         if (!s || remaining <= 0) return;
+
         // Avoid expensive rune splitting. JS strings are UTF-16, so "chars" here are code units.
         // For UI previews this is usually fine.
         if (s.length <= remaining) {
@@ -233,7 +242,7 @@ export function tiptapTextPreview(
     };
 
     const walk = (node: any) => {
-        if (!node || remaining <= 0) return;
+        if (!node || remaining <= 0 || --opt.limit < 1) return;
 
         if (Array.isArray(node)) {
             for (const n of node) {
@@ -309,4 +318,36 @@ export function tiptapTextPreview(
     }
 
     return result;
+}
+
+export function isEmptyDoc(content: Struct | JSONContent | null | undefined): boolean {
+    if (!content) return true;
+
+    let c: JSONContent;
+    if ('fields' in content) {
+        c = Struct.toJson(content as Struct) as JSONContent;
+    } else {
+        c = content as JSONContent;
+    }
+
+    return !c.content || c.content.length === 0 || tiptapTextPreview(c, 1, { limit: 25 }).length === 0;
+}
+
+export function isEmptyRichContentDoc(content: RichTextHtmlNode | null | undefined): boolean {
+    if (!content || !content.content || content.content.length === 0) return true;
+
+    // Check if all top-level nodes are empty paragraphs
+    for (const node of content.content[0]?.content || []) {
+        if (node.type === NodeType.ELEMENT && node.tag === 'p') {
+            if (node.content && node.content.length > 0) {
+                // Paragraph has content
+                return false;
+            }
+        } else {
+            // Found a non-paragraph node
+            return false;
+        }
+    }
+
+    return true;
 }

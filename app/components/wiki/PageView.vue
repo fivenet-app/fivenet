@@ -109,7 +109,7 @@ async function deletePage(id: number): Promise<void> {
             return;
         }
 
-        await navigateTo({ name: 'wiki' });
+        await navigateTo('/wiki');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -398,7 +398,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             <div
                                 class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                             >
-                                <CustomContentRenderer :value="page.content" />
+                                <CustomContentRenderer :value="page.content" :placeholder="$t('common.no_content')" />
                             </div>
 
                             <template v-if="surround.filter((s) => s !== undefined).length > 0">

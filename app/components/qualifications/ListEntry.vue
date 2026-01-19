@@ -17,10 +17,7 @@ defineProps<{
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm leading-6 font-semibold text-toned">
-                    <ULink
-                        class="inline-flex items-center gap-2"
-                        :to="{ name: 'qualifications-id', params: { id: qualification.id } }"
-                    >
+                    <ULink class="inline-flex items-center gap-2" :to="`/qualifications/${qualification.id}`">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         <span class="text-highlighted"
                             ><template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>

@@ -253,7 +253,7 @@ const dispatchDetailsSlideover = overlay.create(DispatchDetailsByIDSlideover);
                 {{ $t('common.dispatches') }}
 
                 <UTooltip v-if="showButton" :text="$t('common.archive')">
-                    <UButton :to="{ name: 'centrum-dispatches' }" icon="i-mdi-archive" variant="link" />
+                    <UButton to="/centrum/dispatches" icon="i-mdi-archive" variant="link" />
                 </UTooltip>
             </h2>
 

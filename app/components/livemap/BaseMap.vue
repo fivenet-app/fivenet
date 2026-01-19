@@ -24,7 +24,6 @@ import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
 import { backgroundColorList, tileLayers } from '~/types/livemap';
-import type { ValueOf } from '~/utils/types';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
@@ -149,7 +148,7 @@ watchDebounced(
     { debounce: 1000, maxWait: 3000 },
 );
 
-const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.postal);
+const backgroundColor = ref<(typeof backgroundColorList)[keyof typeof backgroundColorList]>(backgroundColorList.postal);
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {

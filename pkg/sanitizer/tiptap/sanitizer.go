@@ -230,7 +230,6 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 			if fileId, ok := a["fileId"].(uint64); ok {
 				out["fileId"] = fileId
 			}
-
 			if style, ok := a["style"].(string); ok {
 				split := strings.Split(style, ";")
 				if len(split) > 6 {
@@ -250,7 +249,6 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 					a["width"] = strings.TrimSpace(keyValue[1])
 				}
 			}
-
 			if width, ok := a["width"].(float64); ok && width > 0 && width <= 5000 {
 				out["width"] = int(width)
 			}
@@ -262,14 +260,37 @@ func buildAllowed(cfg *config.Config) *Sanitizer {
 		"templateVar": {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 
-			// TODO
+			val, _ := a["data-template-var"].(string)
+			val = strings.TrimSpace(val)
+			if val == "" || len(val) > 512 {
+				return false, nil
+			}
+			out["data-template-var"] = val
 
+			if lt, ok := a["data-left-trim"].(bool); ok {
+				out["data-left-trim"] = lt
+			}
+			if rt, ok := a["data-right-trim"].(bool); ok {
+				out["data-right-trim"] = rt
+			}
 			return true, out
 		}},
 		"templateBlock": {Validate: func(a map[string]any) (bool, map[string]any) {
 			out := map[string]any{}
 
-			// TODO
+			val, _ := a["data-template-block"].(string)
+			val = strings.TrimSpace(val)
+			if val == "" || len(val) > 512 {
+				return false, nil
+			}
+			out["data-template-block"] = val
+
+			if lt, ok := a["data-left-trim"].(bool); ok {
+				out["data-left-trim"] = lt
+			}
+			if rt, ok := a["data-right-trim"].(bool); ok {
+				out["data-right-trim"] = rt
+			}
 
 			return true, out
 		}},

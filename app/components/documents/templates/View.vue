@@ -142,8 +142,8 @@ const templatePreviewModal = overlay.create(PreviewModal, { props: { templateId:
                                 color="neutral"
                                 variant="ghost"
                                 icon="i-mdi-pencil"
-                                :to="{ name: 'documents-templates-id-edit', params: { id: templateId } }"
                                 :label="$t('common.edit')"
+                                :to="`/documents/templates/${templateId}/edit`"
                             />
                         </UTooltip>
 

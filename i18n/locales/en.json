@@ -749,7 +749,8 @@
         "fullscreen_enter": "Enter Fullscreen",
         "fullscreen_exit": "Exit Fullscreen",
         "browser": "Browser",
-        "registered_since": "Registered since"
+        "registered_since": "Registered since",
+        "no_content": "(No content yet)"
     },
     "components": {
         "partials": {

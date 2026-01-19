@@ -685,7 +685,11 @@ const reminderDrawer = overlay.create(ReminderDrawer, { props: { documentId: pro
                     <div
                         class="mx-auto w-full max-w-(--breakpoint-xl) rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                     >
-                        <CustomContentRenderer v-if="doc.document?.content" :value="doc.document.content" />
+                        <CustomContentRenderer
+                            v-if="doc.document?.content"
+                            :value="doc.document.content"
+                            :placeholder="$t('common.no_content')"
+                        />
                     </div>
                 </div>
 

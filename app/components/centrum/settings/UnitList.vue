@@ -186,7 +186,7 @@ const confirmModal = overlay.create(ConfirmModal);
 </script>
 
 <template>
-    <UDashboardPanel>
+    <UDashboardPanel :ui="{ body: 'p-0 sm:p-0 gap-0 sm:gap-0' }">
         <template #header>
             <UDashboardNavbar :title="$t('common.unit', 2)">
                 <template #right>

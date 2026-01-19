@@ -46,7 +46,7 @@ async function changePassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        await navigateTo({ name: 'overview' });
+        await navigateTo('/overview');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

@@ -333,7 +333,7 @@ export const useAuthStore = defineStore(
                 });
                 const { response } = await call;
 
-                await navigateTo({ name: 'overview' });
+                await navigateTo('/overview');
 
                 // Update permissions based on superuser mode
                 if (superuser) {

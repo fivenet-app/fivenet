@@ -34,13 +34,13 @@ const { design } = storeToRefs(settingsStore);
 
 const documentsDocuments = await useDocumentsDocuments();
 
-const openclose: ToggleItem[] = [
+const openclose: ToggleItem<boolean | undefined>[] = [
     { id: 0, label: t('common.not_selected'), value: undefined },
     { id: 1, label: t('common.open', 2), value: false },
     { id: 2, label: t('common.close', 2), value: true },
 ];
 
-const onlyDrafts: ToggleItem[] = [
+const onlyDrafts: ToggleItem<boolean | undefined>[] = [
     { id: 0, label: t('common.all_documents'), value: undefined },
     { id: 1, label: t('common.only_published'), value: false },
     { id: 2, label: t('common.only_drafts'), value: true },
@@ -174,7 +174,7 @@ defineShortcuts({
                     <UFieldGroup class="inline-flex">
                         <UButton
                             v-if="can('completor.CompletorService/CompleteDocumentCategories').value"
-                            :to="{ name: 'documents-categories' }"
+                            to="/documents/categories"
                             icon="i-mdi-shape"
                             truncate
                         >
@@ -185,7 +185,7 @@ defineShortcuts({
 
                         <UButton
                             v-if="can('documents.DocumentsService/ListTemplates').value"
-                            :to="{ name: 'documents-templates' }"
+                            to="/documents/templates"
                             icon="i-mdi-file-code"
                             truncate
                         >

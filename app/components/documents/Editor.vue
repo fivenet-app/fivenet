@@ -484,7 +484,7 @@ provide('yjsProvider', provider);
                 </template>
 
                 <template #right>
-                    <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
+                    <PartialsBackButton :fallback-to="`/documents/${documentId}`" />
 
                     <UButton
                         trailing-icon="i-mdi-content-save"

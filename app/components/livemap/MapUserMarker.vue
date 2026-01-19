@@ -142,7 +142,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             block
                             class="!text-(--ui-primary)"
                             :label="$t('common.profile')"
-                            :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
+                            :to="`/citizens/${marker.user?.userId ?? 0}`"
                         />
 
                         <UButton
@@ -157,7 +157,7 @@ const unitDetailsSlideover = overlay.create(UnitDetailsSlideover);
                             block
                             class="!text-(--ui-primary)"
                             :label="$t('common.colleague')"
-                            :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
+                            :to="`/jobs/colleagues/${marker.user?.userId ?? 0}/info`"
                         />
 
                         <PhoneNumberBlock

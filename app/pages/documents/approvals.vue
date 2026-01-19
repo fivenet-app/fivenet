@@ -44,7 +44,7 @@ const statuses = computed(() => [
     { label: t('enums.documents.ApprovalTaskStatus.CANCELLED'), value: ApprovalTaskStatus.CANCELLED },
 ]);
 
-const onlyDrafts: ToggleItem[] = [
+const onlyDrafts: ToggleItem<boolean | undefined>[] = [
     { id: 0, label: t('common.all_documents'), value: undefined },
     { id: 1, label: t('common.only_published'), value: false },
     { id: 2, label: t('common.only_drafts'), value: true },

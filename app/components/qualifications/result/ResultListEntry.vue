@@ -15,7 +15,7 @@ defineProps<{
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm leading-6 font-semibold text-toned">
-                    <ULink class="text-highlighted" :to="{ name: 'qualifications-id', params: { id: result.qualificationId } }">
+                    <ULink class="text-highlighted" :to="`/qualifications/${result.qualificationId}`">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         {{ result.qualification?.abbreviation }}:
                         {{ !result.qualification?.title ? $t('common.untitled') : result.qualification?.title }}

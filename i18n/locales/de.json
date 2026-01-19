@@ -750,7 +750,8 @@
         "fullscreen_enter": "Vollbildmodus betreten",
         "fullscreen_exit": "Vollbildmodus verlassen",
         "browser": "Browser",
-        "registered_since": "Registriert seit"
+        "registered_since": "Registriert seit",
+        "no_content": "(Noch kein Inhalt vorhanden)"
     },
     "components": {
         "partials": {

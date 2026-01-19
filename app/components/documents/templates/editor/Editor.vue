@@ -219,7 +219,8 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
             color: values.color,
             icon: values.icon,
             contentTitle: values.contentTitle,
-            content: values.content ?? '', // TODO need to handle content as raw HTML here
+            // Handle templates as raw HTML content
+            content: values.content ?? '',
             state: values.contentState,
             schema: {
                 requirements: tRequirements,

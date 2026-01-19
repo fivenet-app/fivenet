@@ -54,7 +54,7 @@ const grouped = computedAsync(async () => {
                     v-if="can('centrum.CentrumService/CreateOrUpdateUnit').value"
                     :text="$t('components.centrum.units.edit_units')"
                 >
-                    <UButton :to="{ name: 'centrum-units' }" icon="i-mdi-cog" variant="link" />
+                    <UButton to="/centrum/units" icon="i-mdi-cog" variant="link" />
                 </UTooltip>
             </h2>
         </div>

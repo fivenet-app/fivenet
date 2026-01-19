@@ -114,7 +114,7 @@ const canSubmit = ref(true);
                     color="neutral"
                     variant="outline"
                     trailing-icon="i-mdi-account-plus"
-                    :to="{ name: 'auth-registration' }"
+                    to="/auth/registration"
                     :disabled="!canSubmit"
                 >
                     {{ $t('components.auth.LoginForm.register_account') }}

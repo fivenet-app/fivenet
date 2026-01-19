@@ -25,7 +25,7 @@ const { t } = useI18n();
 
 const documentsDocumentsClient = await getDocumentsDocumentsClient();
 
-const openclose: ToggleItem[] = [
+const openclose: ToggleItem<boolean | undefined>[] = [
     { id: 0, label: t('common.not_selected'), value: undefined },
     { id: 1, label: t('common.open', 2), value: false },
     { id: 2, label: t('common.close', 2), value: true },

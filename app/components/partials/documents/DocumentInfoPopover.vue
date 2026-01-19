@@ -144,11 +144,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UTooltip v-if="can('documents.DocumentsService/ListDocuments').value" :text="$t('common.open')">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-eye"
-                            :to="{ name: 'documents-id', params: { id: documentId ?? document?.id ?? 0 } }"
-                        >
+                        <UButton variant="link" icon="i-mdi-eye" :to="`/documents/${documentId ?? document?.id ?? 0}`">
                             {{ $t('common.open') }}
                         </UButton>
                     </UTooltip>
@@ -172,11 +168,7 @@ watchOnce(opened, async () => {
                 </div>
 
                 <div v-else-if="document" class="flex flex-col gap-2 text-highlighted">
-                    <UButton
-                        variant="link"
-                        :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }"
-                        :ui="{ base: 'p-0' }"
-                    >
+                    <UButton variant="link" :to="`/documents/${document.id ?? 0}`" :ui="{ base: 'p-0' }">
                         <CategoryBadge v-if="document?.category" :category="document?.category" />
 
                         <span class="line-clamp-1 text-lg hover:line-clamp-3">{{ document.title }}</span>

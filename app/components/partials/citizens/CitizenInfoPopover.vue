@@ -132,7 +132,7 @@ watchOnce(opened, async () => {
                         variant="link"
                         icon="i-mdi-account"
                         :label="$t('common.profile')"
-                        :to="{ name: 'citizens-id', params: { id: userId ?? user?.userId ?? 0 } }"
+                        :to="`/citizens/${userId ?? user?.userId ?? 0}`"
                     />
 
                     <UButton
@@ -140,7 +140,7 @@ watchOnce(opened, async () => {
                         variant="link"
                         icon="i-mdi-briefcase"
                         :label="$t('common.colleague')"
-                        :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"
+                        :to="`/jobs/colleagues/${userId ?? user?.userId ?? 0}/info`"
                     />
 
                     <PhoneNumberBlock v-if="user?.phoneNumber" :number="user.phoneNumber" hide-number show-label />
@@ -176,7 +176,7 @@ watchOnce(opened, async () => {
                         <UButton
                             variant="link"
                             :label="`${user.firstname} ${user.lastname}`"
-                            :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
+                            :to="`/citizens/${user.userId ?? 0}`"
                         />
                     </div>
 

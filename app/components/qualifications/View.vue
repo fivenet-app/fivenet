@@ -509,7 +509,10 @@ const requestUserModal = overlay.create(RequestUserModal);
                                         v-if="qualification.content"
                                         class="w-full rounded-lg bg-neutral-100 p-4 break-words dark:bg-neutral-800"
                                     >
-                                        <CustomContentRenderer :value="qualification.content" />
+                                        <CustomContentRenderer
+                                            :value="qualification.content"
+                                            :placeholder="$t('common.no_content')"
+                                        />
                                     </div>
                                     <UAlert
                                         v-else

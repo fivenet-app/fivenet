@@ -46,7 +46,7 @@ export async function useDocumentsDocuments() {
         } catch (e) {
             handleGRPCError(e as RpcError);
 
-            if (redirectOnError === true) await navigateTo({ name: 'documents' });
+            if (redirectOnError === true) await navigateTo('/documents/');
             throw e;
         }
     };
@@ -94,7 +94,7 @@ export async function useDocumentsDocuments() {
                     type: NotificationType.SUCCESS,
                 });
 
-                await navigateTo({ name: 'documents' });
+                await navigateTo('/documents/');
                 return false;
             } else {
                 notifications.add({

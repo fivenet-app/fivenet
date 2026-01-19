@@ -39,7 +39,7 @@ const items = computed<CardElements>(() => [
     {
         title: t('common.document', 2),
         description: t('pages.overview.features.documents'),
-        to: { name: 'documents' },
+        to: '/documents/',
         permission: 'documents.DocumentsService/ListDocuments',
         icon: 'i-mdi-file-document-box-multiple-outline',
     },

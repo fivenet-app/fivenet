@@ -5,7 +5,7 @@ import TiptapContentRenderer from './TiptapContentRenderer.vue';
 
 const props = withDefaults(
     defineProps<{
-        value: Struct;
+        value: Struct | undefined;
         extensions?: Extensions;
     }>(),
     {
@@ -51,7 +51,7 @@ const builtInExtensions = useTiptapEditor();
             'prose-hr:my-0.5',
         ]"
         :extensions="[...builtInExtensions, ...props.extensions]"
-        :value="Struct.toJson(props.value) as JSONContent"
+        :value="props.value ? (Struct.toJson(props.value) as JSONContent) : undefined"
         v-bind="$attrs"
     />
 </template>
