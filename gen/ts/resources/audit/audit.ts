@@ -50,10 +50,14 @@ export interface AuditEntry {
      */
     targetUserJob?: string;
     /**
+     * GRPC Service name
+     *
      * @generated from protobuf field: string service = 9
      */
     service: string;
     /**
+     * GRPC Method name
+     *
      * @generated from protobuf field: string method = 10
      */
     method: string;
@@ -94,8 +98,6 @@ export enum EventAction {
      */
     UNSPECIFIED = 0,
     /**
-     * EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
-     *
      * @generated from protobuf enum value: EVENT_ACTION_VIEWED = 2;
      */
     VIEWED = 2,

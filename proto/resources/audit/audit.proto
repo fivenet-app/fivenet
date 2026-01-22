@@ -10,10 +10,9 @@ import "resources/users/users.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;audit";
 
 enum EventAction {
-  reserved 1;
-
   EVENT_ACTION_UNSPECIFIED = 0;
   // EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
+  reserved 1;
   EVENT_ACTION_VIEWED = 2;
   EVENT_ACTION_CREATED = 3;
   EVENT_ACTION_UPDATED = 4;
@@ -39,7 +38,9 @@ message AuditEntry {
   optional resources.users.UserShort target_user = 7;
   optional string target_user_job = 8;
 
+  // GRPC Service name
   string service = 9;
+  // GRPC Method name
   string method = 10;
 
   EventAction action = 11 [(buf.validate.field).enum.defined_only = true];

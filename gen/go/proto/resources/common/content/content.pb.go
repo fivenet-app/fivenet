@@ -356,19 +356,19 @@ var File_resources_common_content_content_proto protoreflect.FileDescriptor
 
 const file_resources_common_content_content_proto_rawDesc = "" +
 	"\n" +
-	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xc8\x02\n" +
-	"\aContent\x12!\n" +
-	"\aversion\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x18R\aversion\x12R\n" +
-	"\fcontent_type\x18\x02 \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12\x1e\n" +
+	"&resources/common/content/content.proto\x12\x18resources.common.content\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1cgoogle/protobuf/struct.proto\"\xb5\x02\n" +
+	"\aContent\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12H\n" +
+	"\fcontent_type\x18\x02 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12\x1e\n" +
 	"\braw_html\x18\x03 \x01(\tH\x00R\arawHtml\x88\x01\x01\x12I\n" +
 	"\acontent\x18\x04 \x01(\v2*.resources.common.content.RichTextHtmlNodeH\x01R\acontent\x88\x01\x01\x12B\n" +
 	"\vtiptap_json\x18\x05 \x01(\v2\x17.google.protobuf.StructB\b\xda\xf3\x18\x04\b\x01 \x01R\n" +
 	"tiptapJsonB\v\n" +
 	"\t_raw_htmlB\n" +
 	"\n" +
-	"\b_content\"\x99\x03\n" +
-	"\x10RichTextHtmlNode\x12@\n" +
-	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x1d\n" +
+	"\b_content\"\x8f\x03\n" +
+	"\x10RichTextHtmlNode\x126\n" +
+	"\x04type\x18\x01 \x01(\x0e2\".resources.common.content.NodeTypeR\x04type\x12\x1d\n" +
 	"\x02id\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01H\x00R\x02id\x88\x01\x01\x12\x1a\n" +
 	"\x03tag\x18\x03 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03tag\x12U\n" +
 	"\x05attrs\x18\x04 \x03(\v25.resources.common.content.RichTextHtmlNode.AttrsEntryB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05attrs\x12!\n" +

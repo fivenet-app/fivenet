@@ -306,7 +306,7 @@ const stopWatch = watch(modelValue, (value) => {
         if (props.enableCollab && ydoc && yjsProvider) {
             seedDocument(yjsSchema!, value);
         } else {
-            unref(editor)?.commands.setContent(value, { emitUpdate: true, contentType: props.contentType });
+            unref(editor)?.commands.setContent(value, { emitUpdate: true });
         }
     }
 

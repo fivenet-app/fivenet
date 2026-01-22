@@ -201,10 +201,10 @@ const file_services_documents_forms_proto_rawDesc = "" +
 	"\x04form\x18\x01 \x01(\v2\x19.resources.documents.FormR\x04form\"\x12\n" +
 	"\x10ListFormsRequest\"D\n" +
 	"\x11ListFormsResponse\x12/\n" +
-	"\x05forms\x18\x01 \x03(\v2\x19.resources.documents.FormR\x05forms2\xc0\x01\n" +
-	"\fFormsService\x12T\n" +
-	"\aGetForm\x12\".services.documents.GetFormRequest\x1a#.services.documents.GetFormResponse\"\x00\x12Z\n" +
-	"\tListForms\x12$.services.documents.ListFormsRequest\x1a%.services.documents.ListFormsResponse\"\x00BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x05forms\x18\x01 \x03(\v2\x19.resources.documents.FormR\x05forms2\xbc\x01\n" +
+	"\fFormsService\x12R\n" +
+	"\aGetForm\x12\".services.documents.GetFormRequest\x1a#.services.documents.GetFormResponse\x12X\n" +
+	"\tListForms\x12$.services.documents.ListFormsRequest\x1a%.services.documents.ListFormsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_forms_proto_rawDescOnce sync.Once

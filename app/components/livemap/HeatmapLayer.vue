@@ -39,10 +39,8 @@ const heat = inject<Ref<L.HeatLayer | undefined>>('heat');
 
 async function handleProps(show: boolean): Promise<void> {
     if (show) {
-        // If we have no heatmap data, or it's pending, refresh it
-        if (!heatmap.value || isRequestPending(status.value)) {
-            await refresh();
-        }
+        // If we have no heatmap data, or it's still pending, refresh it
+        if (!heatmap.value || isRequestPending(status.value)) await refresh();
 
         heatmap.value?.entries.forEach((e) => heat?.value?.addLatLng([e.y, e.x, e.w]));
     } else {

@@ -690,8 +690,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `target_user_id` | [int32](#int32) | optional |  |
 | `target_user` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `target_user_job` | [string](#string) | optional |  |
-| `service` | [string](#string) |  |  |
-| `method` | [string](#string) |  |  |
+| `service` | [string](#string) |  | GRPC Service name |
+| `method` | [string](#string) |  | GRPC Method name |
 | `action` | [EventAction](#resourcesauditEventAction) |  |  |
 | `result` | [EventResult](#resourcesauditEventResult) |  |  |
 | `meta` | [AuditEntryMeta](#resourcesauditAuditEntryMeta) | optional |  |
@@ -731,7 +731,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | `EVENT_ACTION_UNSPECIFIED` | 0 |  |
-| `EVENT_ACTION_VIEWED` | 2 | EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum. |
+| `EVENT_ACTION_VIEWED` | 2 |  |
 | `EVENT_ACTION_CREATED` | 3 |  |
 | `EVENT_ACTION_UPDATED` | 4 |  |
 | `EVENT_ACTION_DELETED` | 5 |  |

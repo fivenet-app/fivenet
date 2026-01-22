@@ -28,11 +28,10 @@ type EventAction int32
 
 const (
 	EventAction_EVENT_ACTION_UNSPECIFIED EventAction = 0
-	// EVENT_ACTION_ERRORED (previously EVENT_TYPE_ERRORED) has been moved to EventResult enum.
-	EventAction_EVENT_ACTION_VIEWED  EventAction = 2
-	EventAction_EVENT_ACTION_CREATED EventAction = 3
-	EventAction_EVENT_ACTION_UPDATED EventAction = 4
-	EventAction_EVENT_ACTION_DELETED EventAction = 5
+	EventAction_EVENT_ACTION_VIEWED      EventAction = 2
+	EventAction_EVENT_ACTION_CREATED     EventAction = 3
+	EventAction_EVENT_ACTION_UPDATED     EventAction = 4
+	EventAction_EVENT_ACTION_DELETED     EventAction = 5
 )
 
 // Enum value maps for EventAction.
@@ -142,12 +141,14 @@ type AuditEntry struct {
 	TargetUserId  *int32                 `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty"`
 	TargetUser    *users.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
 	TargetUserJob *string                `protobuf:"bytes,8,opt,name=target_user_job,json=targetUserJob,proto3,oneof" json:"target_user_job,omitempty"`
-	Service       string                 `protobuf:"bytes,9,opt,name=service,proto3" json:"service,omitempty"`
-	Method        string                 `protobuf:"bytes,10,opt,name=method,proto3" json:"method,omitempty"`
-	Action        EventAction            `protobuf:"varint,11,opt,name=action,proto3,enum=resources.audit.EventAction" json:"action,omitempty"`
-	Result        EventResult            `protobuf:"varint,12,opt,name=result,proto3,enum=resources.audit.EventResult" json:"result,omitempty"`
-	Meta          *AuditEntryMeta        `protobuf:"bytes,13,opt,name=meta,proto3,oneof" json:"meta,omitempty"`
-	Data          *string                `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	// GRPC Service name
+	Service string `protobuf:"bytes,9,opt,name=service,proto3" json:"service,omitempty"`
+	// GRPC Method name
+	Method        string          `protobuf:"bytes,10,opt,name=method,proto3" json:"method,omitempty"`
+	Action        EventAction     `protobuf:"varint,11,opt,name=action,proto3,enum=resources.audit.EventAction" json:"action,omitempty"`
+	Result        EventResult     `protobuf:"varint,12,opt,name=result,proto3,enum=resources.audit.EventResult" json:"result,omitempty"`
+	Meta          *AuditEntryMeta `protobuf:"bytes,13,opt,name=meta,proto3,oneof" json:"meta,omitempty"`
+	Data          *string         `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -328,7 +329,7 @@ var File_resources_audit_audit_proto protoreflect.FileDescriptor
 
 const file_resources_audit_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xb5\x05\n" +
+	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa1\x05\n" +
 	"\n" +
 	"AuditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
@@ -343,9 +344,9 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x0ftarget_user_job\x18\b \x01(\tH\x03R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
 	"\aservice\x18\t \x01(\tR\aservice\x12\x16\n" +
 	"\x06method\x18\n" +
-	" \x01(\tR\x06method\x12>\n" +
-	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06action\x12>\n" +
-	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultB\b\xbaH\x05\x82\x01\x02\x10\x01R\x06result\x128\n" +
+	" \x01(\tR\x06method\x124\n" +
+	"\x06action\x18\v \x01(\x0e2\x1c.resources.audit.EventActionR\x06action\x124\n" +
+	"\x06result\x18\f \x01(\x0e2\x1c.resources.audit.EventResultR\x06result\x128\n" +
 	"\x04meta\x18\r \x01(\v2\x1f.resources.audit.AuditEntryMetaH\x04R\x04meta\x88\x01\x01\x12\x17\n" +
 	"\x04data\x18\x0e \x01(\tH\x05R\x04data\x88\x01\x01B\a\n" +
 	"\x05_userB\x11\n" +

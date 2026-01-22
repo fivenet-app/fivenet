@@ -302,25 +302,25 @@ var File_services_documents_stamps_proto protoreflect.FileDescriptor
 
 const file_services_documents_stamps_proto_rawDesc = "" +
 	"\n" +
-	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/documents/stamp.proto\"\xa5\x01\n" +
-	"\x17ListUsableStampsRequest\x12T\n" +
+	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/documents/stamp.proto\"\x9d\x01\n" +
+	"\x17ListUsableStampsRequest\x12L\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12$\n" +
 	"\vdocument_id\x18\x02 \x01(\x03H\x00R\n" +
 	"documentId\x88\x01\x01B\x0e\n" +
-	"\f_document_id\"\xab\x01\n" +
-	"\x18ListUsableStampsResponse\x12U\n" +
+	"\f_document_id\"\xa3\x01\n" +
+	"\x18ListUsableStampsResponse\x12M\n" +
 	"\n" +
-	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
+	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"N\n" +
-	"\x12UpsertStampRequest\x128\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampB\x06\xbaH\x03\xc8\x01\x01R\x05stamp\"G\n" +
+	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"F\n" +
+	"\x12UpsertStampRequest\x120\n" +
+	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"G\n" +
 	"\x13UpsertStampResponse\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"8\n" +
-	"\x12DeleteStampRequest\x12\"\n" +
-	"\bstamp_id\x18\x01 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\astampId\"\x15\n" +
+	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"/\n" +
+	"\x12DeleteStampRequest\x12\x19\n" +
+	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
 	"\x13DeleteStampResponse2\xed\x02\n" +
 	"\rStampsService\x12u\n" +
 	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +

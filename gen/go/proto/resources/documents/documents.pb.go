@@ -1107,7 +1107,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\x8f\f\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xd7\v\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -1118,21 +1118,21 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12U\n" +
-	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12(\n" +
-	"\x05title\x18\a \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12\"\n" +
+	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12\"\n" +
 	"\n" +
 	"word_count\x18\x15 \x01(\rH\x04R\twordCount\x88\x01\x01\x12(\n" +
-	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12R\n" +
-	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12V\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x19\x9a\x84\x9e\x03\x14alias:\"content_json\"R\acontent\x129\n" +
+	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12H\n" +
+	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12V\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentB\x19\x9a\x84\x9e\x03\x14alias:\"content_json\"R\acontent\x120\n" +
 	"\x04data\x18\n" +
-	" \x01(\tB \xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\falias:\"data\"\xbaH\x06r\x04(\xc0\x84=H\x06R\x04data\x88\x01\x01\x12+\n" +
+	" \x01(\tB\x17\xda\xf3\x18\x02\b\x01\x9a\x84\x9e\x03\falias:\"data\"H\x06R\x04data\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\aR\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
-	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\tR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"creator_id\x18\v \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12O\n" +
+	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\r \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\tR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
 	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12$\n" +
 	"\vtemplate_id\x18\x10 \x01(\x03H\n" +
 	"R\n" +
@@ -1155,7 +1155,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\f_template_idB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xbf\n" +
+	"\x0e_workflow_user\"\x90\n" +
 	"\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
@@ -1167,19 +1167,19 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12$\n" +
 	"\vcategory_id\x18\x05 \x01(\x03H\x02R\n" +
 	"categoryId\x88\x01\x01\x12U\n" +
-	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12(\n" +
-	"\x05title\x18\a \x01(\tB\x12\xda\xf3\x18\x04\b\x01\x18\x01\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12\"\n" +
+	"\bcategory\x18\x06 \x01(\v2\x1d.resources.documents.CategoryB\x15\x9a\x84\x9e\x03\x10alias:\"category\"H\x03R\bcategory\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\a \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12\"\n" +
 	"\n" +
 	"word_count\x18\x15 \x01(\rH\x04R\twordCount\x88\x01\x01\x12(\n" +
-	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12R\n" +
-	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\vcontentType\x12;\n" +
-	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
+	"\rfirst_heading\x18\x16 \x01(\tH\x05R\ffirstHeading\x88\x01\x01\x12H\n" +
+	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12;\n" +
+	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x06R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\r \x01(\tB\a\xbaH\x04r\x02\x18\x14R\n" +
-	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\x0e \x01(\tB\a\xbaH\x04r\x02\x182H\bR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
+	"creator_id\x18\v \x01(\x05H\x06R\tcreatorId\x88\x01\x01\x12O\n" +
+	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\aR\acreator\x88\x01\x01\x12\x1f\n" +
+	"\vcreator_job\x18\r \x01(\tR\n" +
+	"creatorJob\x12/\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tH\bR\x0fcreatorJobLabel\x88\x01\x01\x12H\n" +
 	"\x04meta\x18\x0f \x01(\v2!.resources.documents.DocumentMetaB\x11\x9a\x84\x9e\x03\falias:\"meta\"R\x04meta\x12I\n" +
 	"\x03pin\x18\x11 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\tR\x03pin\x88\x01\x01\x12N\n" +
 	"\x0eworkflow_state\x18\x12 \x01(\v2\".resources.documents.WorkflowStateH\n" +
@@ -1197,15 +1197,15 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_creator_job_labelB\x06\n" +
 	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xa7\x06\n" +
+	"\x0e_workflow_user\"\xa0\x06\n" +
 	"\fDocumentMeta\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12H\n" +
 	"\rrecomputed_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\frecomputedAt\x88\x01\x01\x12\x16\n" +
 	"\x06closed\x18\x03 \x01(\bR\x06closed\x12\x14\n" +
 	"\x05draft\x18\x04 \x01(\bR\x05draft\x12\x16\n" +
-	"\x06public\x18\x05 \x01(\bR\x06public\x12#\n" +
-	"\x05state\x18\x06 \x01(\tB\r\xda\xf3\x18\x02\b\x01\xbaH\x04r\x02\x18 R\x05state\x12\x1f\n" +
+	"\x06public\x18\x05 \x01(\bR\x06public\x12\x1c\n" +
+	"\x05state\x18\x06 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05state\x12\x1f\n" +
 	"\bapproved\x18\a \x01(\bH\x01R\bapproved\x88\x01\x01\x12/\n" +
 	"\x11ap_required_total\x18\x10 \x01(\x05H\x02R\x0fapRequiredTotal\x88\x01\x01\x127\n" +
 	"\x15ap_collected_approved\x18\x11 \x01(\x05H\x03R\x13apCollectedApproved\x88\x01\x01\x127\n" +
@@ -1222,18 +1222,18 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x12_ap_declined_countB\x13\n" +
 	"\x11_ap_pending_countB\x12\n" +
 	"\x10_ap_any_declinedB\x15\n" +
-	"\x13_ap_policies_active\"\xa6\x06\n" +
+	"\x13_ap_policies_active\"\x95\x06\n" +
 	"\x11DocumentReference\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12M\n" +
 	"\x12source_document_id\x18\x03 \x01(\x03B\x1f\x9a\x84\x9e\x03\x1aalias:\"source_document_id\"R\x10sourceDocumentId\x12n\n" +
-	"\x0fsource_document\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"source_document\"H\x02R\x0esourceDocument\x88\x01\x01\x12_\n" +
-	"\treference\x18\x05 \x01(\x0e2!.resources.documents.DocReferenceB\x1e\x9a\x84\x9e\x03\x11alias:\"reference\"\xbaH\x05\x82\x01\x02\x10\x01R\treference\x12M\n" +
+	"\x0fsource_document\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"source_document\"H\x02R\x0esourceDocument\x88\x01\x01\x12W\n" +
+	"\treference\x18\x05 \x01(\x0e2!.resources.documents.DocReferenceB\x16\x9a\x84\x9e\x03\x11alias:\"reference\"R\treference\x12M\n" +
 	"\x12target_document_id\x18\x06 \x01(\x03B\x1f\x9a\x84\x9e\x03\x1aalias:\"target_document_id\"R\x10targetDocumentId\x12n\n" +
-	"\x0ftarget_document\x18\a \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"target_document\"H\x03R\x0etargetDocument\x88\x01\x01\x12+\n" +
+	"\x0ftarget_document\x18\a \x01(\v2\".resources.documents.DocumentShortB\x1c\x9a\x84\x9e\x03\x17alias:\"target_document\"H\x03R\x0etargetDocument\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"creator_id\x18\b \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x12S\n" +
+	"creator_id\x18\b \x01(\x05H\x04R\tcreatorId\x88\x01\x01\x12S\n" +
 	"\acreator\x18\t \x01(\v2\x1a.resources.users.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"ref_creator\"H\x05R\acreator\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_created_atB\x12\n" +
@@ -1241,33 +1241,32 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x10_target_documentB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator\"\xd4\x05\n" +
+	"\b_creator\"\xbe\x05\n" +
 	"\x10DocumentRelation\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1f\n" +
 	"\vdocument_id\x18\x03 \x01(\x03R\n" +
 	"documentId\x12Z\n" +
-	"\bdocument\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x15\x9a\x84\x9e\x03\x10alias:\"document\"H\x02R\bdocument\x88\x01\x01\x12H\n" +
-	"\x0esource_user_id\x18\x05 \x01(\x05B\"\x9a\x84\x9e\x03\x16alias:\"source_user_id\"\xbaH\x04\x1a\x02 \x00R\fsourceUserId\x12Z\n" +
+	"\bdocument\x18\x04 \x01(\v2\".resources.documents.DocumentShortB\x15\x9a\x84\x9e\x03\x10alias:\"document\"H\x02R\bdocument\x88\x01\x01\x12A\n" +
+	"\x0esource_user_id\x18\x05 \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"source_user_id\"R\fsourceUserId\x12Z\n" +
 	"\vsource_user\x18\x06 \x01(\v2\x1a.resources.users.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"source_user\"H\x03R\n" +
-	"sourceUser\x88\x01\x01\x12[\n" +
-	"\brelation\x18\a \x01(\x0e2 .resources.documents.DocRelationB\x1d\x9a\x84\x9e\x03\x10alias:\"relation\"\xbaH\x05\x82\x01\x02\x10\x01R\brelation\x12H\n" +
-	"\x0etarget_user_id\x18\b \x01(\x05B\"\x9a\x84\x9e\x03\x16alias:\"target_user_id\"\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12Z\n" +
+	"sourceUser\x88\x01\x01\x12S\n" +
+	"\brelation\x18\a \x01(\x0e2 .resources.documents.DocRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\brelation\x12A\n" +
+	"\x0etarget_user_id\x18\b \x01(\x05B\x1b\x9a\x84\x9e\x03\x16alias:\"target_user_id\"R\ftargetUserId\x12Z\n" +
 	"\vtarget_user\x18\t \x01(\v2\x1a.resources.users.UserShortB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"H\x04R\n" +
 	"targetUser\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_created_atB\v\n" +
 	"\t_documentB\x0e\n" +
 	"\f_source_userB\x0e\n" +
-	"\f_target_user\"\xb0\x04\n" +
+	"\f_target_user\"\xa5\x04\n" +
 	"\rWorkflowState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12Q\n" +
 	"\x12next_reminder_time\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x10nextReminderTime\x88\x01\x01\x123\n" +
-	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x120\n" +
-	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\rreminderCount\x12K\n" +
+	"\x13next_reminder_count\x18\x03 \x01(\x05H\x01R\x11nextReminderCount\x88\x01\x01\x12%\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05R\rreminderCount\x12K\n" +
 	"\x0fauto_close_time\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\rautoCloseTime\x88\x01\x01\x12U\n" +
 	"\bworkflow\x18\x06 \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x03R\bworkflow\x88\x01\x01\x12C\n" +
 	"\bdocument\x18\a \x01(\v2\".resources.documents.DocumentShortH\x04R\bdocument\x88\x01\x01B\x15\n" +
@@ -1275,17 +1274,15 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x14_next_reminder_countB\x12\n" +
 	"\x10_auto_close_timeB\v\n" +
 	"\t_workflowB\v\n" +
-	"\t_document\"\xca\x04\n" +
+	"\t_document\"\xa1\x04\n" +
 	"\x11WorkflowUserState\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12 \n" +
-	"\auser_id\x18\x02 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12U\n" +
-	"\x14manual_reminder_time\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x12manualReminderTime\x88\x01\x01\x12E\n" +
-	"\x17manual_reminder_message\x18\x04 \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x01R\x15manualReminderMessage\x88\x01\x01\x120\n" +
-	"\x0ereminder_count\x18\x05 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\rreminderCount\x127\n" +
-	"\x12max_reminder_count\x18\x06 \x01(\x05B\t\xbaH\x06\x1a\x04\x18\n" +
-	"(\x01R\x10maxReminderCount\x12U\n" +
+	"documentId\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12U\n" +
+	"\x14manual_reminder_time\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x12manualReminderTime\x88\x01\x01\x12;\n" +
+	"\x17manual_reminder_message\x18\x04 \x01(\tH\x01R\x15manualReminderMessage\x88\x01\x01\x12%\n" +
+	"\x0ereminder_count\x18\x05 \x01(\x05R\rreminderCount\x12,\n" +
+	"\x12max_reminder_count\x18\x06 \x01(\x05R\x10maxReminderCount\x12U\n" +
 	"\bworkflow\x18\a \x01(\v2\x1d.resources.documents.WorkflowB\x15\x9a\x84\x9e\x03\x10alias:\"workflow\"H\x02R\bworkflow\x88\x01\x01\x12C\n" +
 	"\bdocument\x18\b \x01(\v2\".resources.documents.DocumentShortH\x03R\bdocument\x88\x01\x01B\x17\n" +
 	"\x15_manual_reminder_timeB\x1a\n" +

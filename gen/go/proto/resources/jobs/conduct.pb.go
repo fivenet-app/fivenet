@@ -238,7 +238,7 @@ var File_resources_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x94\a\n" +
+	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xef\x06\n" +
 	"\fConductEntry\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -246,20 +246,20 @@ const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x129\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xbaH\x05\x82\x01\x02\x10\x01R\x04type\x12\x14\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x10\n" +
+	"\x03job\x18\x05 \x01(\tR\x03job\x12/\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeR\x04type\x12\x14\n" +
 	"\x05draft\x18\a \x01(\bR\x05draft\x12;\n" +
 	"\amessage\x18\b \x01(\v2!.resources.common.content.ContentR\amessage\x12>\n" +
 	"\x05files\x18\t \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05files\x12B\n" +
 	"\n" +
 	"expires_at\x18\n" +
-	" \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12-\n" +
-	"\x0etarget_user_id\x18\v \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12Y\n" +
+	" \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12$\n" +
+	"\x0etarget_user_id\x18\v \x01(\x05R\ftargetUserId\x12Y\n" +
 	"\vtarget_user\x18\f \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"H\x04R\n" +
-	"targetUser\x88\x01\x01\x12&\n" +
+	"targetUser\x88\x01\x01\x12\x1d\n" +
 	"\n" +
-	"creator_id\x18\r \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\tcreatorId\x12N\n" +
+	"creator_id\x18\r \x01(\x05R\tcreatorId\x12N\n" +
 	"\acreator\x18\x0e \x01(\v2\x19.resources.jobs.ColleagueB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x05R\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
