@@ -2,7 +2,7 @@
 import DispatcherDrawer from '~/components/centrum/dispatchers/DispatcherDrawer.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 
 const props = withDefaults(
     defineProps<{

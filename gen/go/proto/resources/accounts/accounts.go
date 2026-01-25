@@ -1,8 +1,8 @@
 package accounts
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
 )
 
 func ConvertFromModelAcc(a *model.FivenetAccounts) *Account {

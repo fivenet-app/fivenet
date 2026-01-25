@@ -1,0 +1,210 @@
+syntax = "proto3";
+
+package resources.documents.templates;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/documents/access/access.proto";
+import "resources/documents/approval/approval.proto";
+import "resources/documents/category/category.proto";
+import "resources/documents/documents.proto";
+import "resources/documents/workflow/workflow.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/user.proto";
+import "resources/users/short/user.proto";
+import "resources/vehicles/vehicles.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates;documentstemplates";
+
+message Template {
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  resources.documents.category.Category category = 4 [(tagger.tags) = "alias:\"category\""];
+  uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
+  string title = 6 [
+    (buf.validate.field).string.min_len = 3,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string description = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string color = 8 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 7
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional string icon = 9 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  string content_title = 10 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_bytes: 10240
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeAndUnescape"
+    },
+    (tagger.tags) = "alias:\"content_title\""
+  ];
+  string content = 11 [
+    (buf.validate.field).string = {
+      min_len: 0
+      max_bytes: 2000000
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      method: "SanitizeAndUnescape"
+    },
+    (tagger.tags) = "alias:\"content\""
+  ];
+  string state = 12 [
+    (buf.validate.field).string.max_len = 512,
+    (tagger.tags) = "alias:\"state\""
+  ];
+  TemplateSchema schema = 13 [(tagger.tags) = "alias:\"schema\""];
+  string creator_job = 14 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 15 [(buf.validate.field).string.max_len = 50];
+  repeated TemplateJobAccess job_access = 16 [(buf.validate.field).repeated.max_items = 20];
+  resources.documents.access.DocumentAccess content_access = 17 [(tagger.tags) = "alias:\"access\""];
+  optional resources.documents.workflow.Workflow workflow = 18;
+  optional TemplateApproval approval = 19;
+}
+
+message TemplateShort {
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  resources.documents.category.Category category = 4 [(tagger.tags) = "alias:\"category\""];
+  uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
+  string title = 6 [
+    (buf.validate.field).string.min_len = 3,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  string description = 7 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  optional string color = 8 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 7
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional string icon = 9 [
+    (buf.validate.field).string = {
+      max_len: 128
+      suffix: "Icon"
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  TemplateSchema schema = 10 [(tagger.tags) = "alias:\"schema\""];
+  string creator_job = 11 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 12 [(buf.validate.field).string.max_len = 50];
+  optional resources.documents.workflow.Workflow workflow = 18;
+}
+
+message TemplateSchema {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  TemplateRequirements requirements = 1;
+}
+
+message TemplateRequirements {
+  optional ObjectSpecs documents = 1;
+  optional ObjectSpecs users = 2;
+  optional ObjectSpecs vehicles = 3;
+}
+
+message ObjectSpecs {
+  optional bool required = 1;
+  optional int32 min = 2;
+  optional int32 max = 3;
+}
+
+message TemplateData {
+  resources.users.User active_char = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocumentShort documents = 2 [(buf.validate.field).repeated.max_items = 12];
+  repeated resources.users.short.UserShort users = 3 [(buf.validate.field).repeated.max_items = 12];
+  repeated resources.vehicles.Vehicle vehicles = 4 [(buf.validate.field).repeated.max_items = 12];
+}
+
+message TemplateJobAccess {
+  int64 id = 1 [(tagger.tags) = "alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  int64 target_id = 3 [(tagger.tags) = "alias:\"template_id\""];
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  resources.documents.access.AccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
+}
+
+// Dummy - DO NOT USE!
+message TemplateUserAccess {}
+
+message TemplateApproval {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool enabled = 1;
+  optional TemplateApprovalPolicy policy = 2;
+  repeated TemplateApprovalTaskSeed tasks = 3 [(buf.validate.field).repeated.max_items = 5];
+}
+
+message TemplateApprovalPolicy {
+  resources.documents.approval.ApprovalRuleKind rule_kind = 1 [(buf.validate.field).enum.defined_only = true];
+  resources.documents.approval.OnEditBehavior on_edit_behavior = 2 [(buf.validate.field).enum.defined_only = true];
+  optional int32 required_count = 3 [(buf.validate.field).int32.gte = 1];
+  bool signature_required = 4;
+  bool self_approve_allowed = 5;
+}
+
+message TemplateApprovalTaskSeed {
+  int32 user_id = 1;
+  // If user_id == 0 -> JOB task
+  string job = 2;
+  int32 minimum_grade = 3;
+
+  // Label of task
+  optional string label = 4 [
+    (buf.validate.field).string.max_len = 120,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  bool signature_required = 5;
+
+  // Only for JOB tasks; number of PENDING slots to ensure (>=1)
+  int32 slots = 6 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 5
+  }];
+  // Optional default due date for created slots
+  optional int32 due_in_days = 7;
+  // Optional note set on created tasks
+  optional string comment = 8;
+}

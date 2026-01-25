@@ -4,7 +4,7 @@ import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
 withDefaults(
     defineProps<{

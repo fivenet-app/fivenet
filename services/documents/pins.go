@@ -5,15 +5,17 @@ import (
 	"errors"
 	"slices"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentspins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -76,7 +78,7 @@ func (s *Server) ListDocumentPins(
 		WHERE(idCondition).
 		LIMIT(50)
 
-	docPins := []*documents.DocumentPin{}
+	docPins := []*documentspins.DocumentPin{}
 	if err := idStmt.QueryContext(ctx, s.db, &docPins); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -157,7 +159,7 @@ func (s *Server) ToggleDocumentPin(
 			ctx,
 			req.GetDocumentId(),
 			userInfo,
-			documents.AccessLevel_ACCESS_LEVEL_VIEW,
+			documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -235,7 +237,7 @@ func (s *Server) getDocumentPin(
 	ctx context.Context,
 	documentId int64,
 	userInfo *userinfo.UserInfo,
-) (*documents.DocumentPin, error) {
+) (*documentspins.DocumentPin, error) {
 	tDPins := table.FivenetDocumentsPins.AS("document_pin")
 
 	condition := mysql.AND(
@@ -265,7 +267,7 @@ func (s *Server) getDocumentPin(
 		ORDER_BY(tDPins.UserID.DESC()).
 		LIMIT(2)
 
-	pins := []*documents.DocumentPin{}
+	pins := []*documentspins.DocumentPin{}
 	if err := stmt.QueryContext(ctx, s.db, &pins); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -276,7 +278,7 @@ func (s *Server) getDocumentPin(
 		return nil, nil
 	}
 
-	pin := &documents.DocumentPin{
+	pin := &documentspins.DocumentPin{
 		DocumentId: documentId,
 	}
 	for _, p := range pins {

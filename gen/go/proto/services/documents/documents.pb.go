@@ -7,14 +7,23 @@
 package documents
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	comment "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/comment"
+	pins "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/pins"
+	references "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
+	relations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	requests "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/requests"
+	templates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -68,7 +77,7 @@ func (*ListTemplatesRequest) Descriptor() ([]byte, []int) {
 
 type ListTemplatesResponse struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
-	Templates     []*documents.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
+	Templates     []*templates.TemplateShort `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,7 +112,7 @@ func (*ListTemplatesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *ListTemplatesResponse) GetTemplates() []*documents.TemplateShort {
+func (x *ListTemplatesResponse) GetTemplates() []*templates.TemplateShort {
 	if x != nil {
 		return x.Templates
 	}
@@ -113,7 +122,7 @@ func (x *ListTemplatesResponse) GetTemplates() []*documents.TemplateShort {
 type GetTemplateRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	TemplateId    int64                   `protobuf:"varint,1,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Data          *documents.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Data          *templates.TemplateData `protobuf:"bytes,2,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	Render        *bool                   `protobuf:"varint,3,opt,name=render,proto3,oneof" json:"render,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -156,7 +165,7 @@ func (x *GetTemplateRequest) GetTemplateId() int64 {
 	return 0
 }
 
-func (x *GetTemplateRequest) GetData() *documents.TemplateData {
+func (x *GetTemplateRequest) GetData() *templates.TemplateData {
 	if x != nil {
 		return x.Data
 	}
@@ -172,7 +181,7 @@ func (x *GetTemplateRequest) GetRender() bool {
 
 type GetTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *documents.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	Rendered      bool                   `protobuf:"varint,2,opt,name=rendered,proto3" json:"rendered,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -208,7 +217,7 @@ func (*GetTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetTemplateResponse) GetTemplate() *documents.Template {
+func (x *GetTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -224,7 +233,7 @@ func (x *GetTemplateResponse) GetRendered() bool {
 
 type CreateTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *documents.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -259,7 +268,7 @@ func (*CreateTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CreateTemplateRequest) GetTemplate() *documents.Template {
+func (x *CreateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -312,7 +321,7 @@ func (x *CreateTemplateResponse) GetId() int64 {
 
 type UpdateTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *documents.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -347,7 +356,7 @@ func (*UpdateTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateTemplateRequest) GetTemplate() *documents.Template {
+func (x *UpdateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -356,7 +365,7 @@ func (x *UpdateTemplateRequest) GetTemplate() *documents.Template {
 
 type UpdateTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *documents.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -391,7 +400,7 @@ func (*UpdateTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateTemplateResponse) GetTemplate() *documents.Template {
+func (x *UpdateTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -704,9 +713,9 @@ func (x *GetDocumentRequest) GetInfoOnly() bool {
 }
 
 type GetDocumentResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Document      *documents.Document       `protobuf:"bytes,1,opt,name=document,proto3" json:"document,omitempty"`
-	Access        *documents.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Document      *documents.Document    `protobuf:"bytes,1,opt,name=document,proto3" json:"document,omitempty"`
+	Access        *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -748,7 +757,7 @@ func (x *GetDocumentResponse) GetDocument() *documents.Document {
 	return nil
 }
 
-func (x *GetDocumentResponse) GetAccess() *documents.DocumentAccess {
+func (x *GetDocumentResponse) GetAccess() *access.DocumentAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -800,8 +809,8 @@ func (x *GetDocumentReferencesRequest) GetDocumentId() int64 {
 }
 
 type GetDocumentReferencesResponse struct {
-	state         protoimpl.MessageState         `protogen:"open.v1"`
-	References    []*documents.DocumentReference `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty" alias:"reference"`
+	state         protoimpl.MessageState          `protogen:"open.v1"`
+	References    []*references.DocumentReference `protobuf:"bytes,1,rep,name=references,proto3" json:"references,omitempty" alias:"reference"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -836,7 +845,7 @@ func (*GetDocumentReferencesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *GetDocumentReferencesResponse) GetReferences() []*documents.DocumentReference {
+func (x *GetDocumentReferencesResponse) GetReferences() []*references.DocumentReference {
 	if x != nil {
 		return x.References
 	}
@@ -889,7 +898,7 @@ func (x *GetDocumentRelationsRequest) GetDocumentId() int64 {
 
 type GetDocumentRelationsResponse struct {
 	state         protoimpl.MessageState        `protogen:"open.v1"`
-	Relations     []*documents.DocumentRelation `protobuf:"bytes,1,rep,name=relations,proto3" json:"relations,omitempty" alias:"relation"`
+	Relations     []*relations.DocumentRelation `protobuf:"bytes,1,rep,name=relations,proto3" json:"relations,omitempty" alias:"relation"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -924,7 +933,7 @@ func (*GetDocumentRelationsResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *GetDocumentRelationsResponse) GetRelations() []*documents.DocumentRelation {
+func (x *GetDocumentRelationsResponse) GetRelations() []*relations.DocumentRelation {
 	if x != nil {
 		return x.Relations
 	}
@@ -932,8 +941,8 @@ func (x *GetDocumentRelationsResponse) GetRelations() []*documents.DocumentRelat
 }
 
 type AddDocumentReferenceRequest struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Reference     *documents.DocumentReference `protobuf:"bytes,1,opt,name=reference,proto3" json:"reference,omitempty"`
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Reference     *references.DocumentReference `protobuf:"bytes,1,opt,name=reference,proto3" json:"reference,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -968,7 +977,7 @@ func (*AddDocumentReferenceRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *AddDocumentReferenceRequest) GetReference() *documents.DocumentReference {
+func (x *AddDocumentReferenceRequest) GetReference() *references.DocumentReference {
 	if x != nil {
 		return x.Reference
 	}
@@ -1101,7 +1110,7 @@ func (*RemoveDocumentReferenceResponse) Descriptor() ([]byte, []int) {
 
 type AddDocumentRelationRequest struct {
 	state         protoimpl.MessageState      `protogen:"open.v1"`
-	Relation      *documents.DocumentRelation `protobuf:"bytes,1,opt,name=relation,proto3" json:"relation,omitempty"`
+	Relation      *relations.DocumentRelation `protobuf:"bytes,1,opt,name=relation,proto3" json:"relation,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1136,7 +1145,7 @@ func (*AddDocumentRelationRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *AddDocumentRelationRequest) GetRelation() *documents.DocumentRelation {
+func (x *AddDocumentRelationRequest) GetRelation() *relations.DocumentRelation {
 	if x != nil {
 		return x.Relation
 	}
@@ -1322,7 +1331,7 @@ func (x *GetCommentsRequest) GetDocumentId() int64 {
 type GetCommentsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Comments      []*documents.Comment         `protobuf:"bytes,2,rep,name=comments,proto3" json:"comments,omitempty"`
+	Comments      []*comment.Comment           `protobuf:"bytes,2,rep,name=comments,proto3" json:"comments,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1364,7 +1373,7 @@ func (x *GetCommentsResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *GetCommentsResponse) GetComments() []*documents.Comment {
+func (x *GetCommentsResponse) GetComments() []*comment.Comment {
 	if x != nil {
 		return x.Comments
 	}
@@ -1373,7 +1382,7 @@ func (x *GetCommentsResponse) GetComments() []*documents.Comment {
 
 type PostCommentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Comment       *documents.Comment     `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
+	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1408,7 +1417,7 @@ func (*PostCommentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *PostCommentRequest) GetComment() *documents.Comment {
+func (x *PostCommentRequest) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
 	}
@@ -1417,7 +1426,7 @@ func (x *PostCommentRequest) GetComment() *documents.Comment {
 
 type PostCommentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Comment       *documents.Comment     `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
+	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1452,7 +1461,7 @@ func (*PostCommentResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *PostCommentResponse) GetComment() *documents.Comment {
+func (x *PostCommentResponse) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
 	}
@@ -1461,7 +1470,7 @@ func (x *PostCommentResponse) GetComment() *documents.Comment {
 
 type EditCommentRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Comment       *documents.Comment     `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
+	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1496,7 +1505,7 @@ func (*EditCommentRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{30}
 }
 
-func (x *EditCommentRequest) GetComment() *documents.Comment {
+func (x *EditCommentRequest) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
 	}
@@ -1505,7 +1514,7 @@ func (x *EditCommentRequest) GetComment() *documents.Comment {
 
 type EditCommentResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Comment       *documents.Comment     `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
+	Comment       *comment.Comment       `protobuf:"bytes,1,opt,name=comment,proto3" json:"comment,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1540,7 +1549,7 @@ func (*EditCommentResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *EditCommentResponse) GetComment() *documents.Comment {
+func (x *EditCommentResponse) GetComment() *comment.Comment {
 	if x != nil {
 		return x.Comment
 	}
@@ -1939,7 +1948,7 @@ type CreateDocumentRequest struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	ContentType   content.ContentType     `protobuf:"varint,1,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	TemplateId    *int64                  `protobuf:"varint,2,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	TemplateData  *documents.TemplateData `protobuf:"bytes,3,opt,name=template_data,json=templateData,proto3,oneof" json:"template_data,omitempty"`
+	TemplateData  *templates.TemplateData `protobuf:"bytes,3,opt,name=template_data,json=templateData,proto3,oneof" json:"template_data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1988,7 +1997,7 @@ func (x *CreateDocumentRequest) GetTemplateId() int64 {
 	return 0
 }
 
-func (x *CreateDocumentRequest) GetTemplateData() *documents.TemplateData {
+func (x *CreateDocumentRequest) GetTemplateData() *templates.TemplateData {
 	if x != nil {
 		return x.TemplateData
 	}
@@ -2040,16 +2049,16 @@ func (x *CreateDocumentResponse) GetId() int64 {
 }
 
 type UpdateDocumentRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
-	CategoryId    *int64                    `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
-	Title         string                    `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
-	Content       *content.Content          `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	ContentType   content.ContentType       `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Data          *string                   `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	Meta          *documents.DocumentMeta   `protobuf:"bytes,7,opt,name=meta,proto3" json:"meta,omitempty"`
-	Access        *documents.DocumentAccess `protobuf:"bytes,11,opt,name=access,proto3,oneof" json:"access,omitempty"`
-	Files         []*file.File              `protobuf:"bytes,12,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	DocumentId    int64                   `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`
+	CategoryId    *int64                  `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
+	Title         string                  `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`
+	Content       *content.Content        `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
+	ContentType   content.ContentType     `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	Data          *string                 `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Meta          *documents.DocumentMeta `protobuf:"bytes,7,opt,name=meta,proto3" json:"meta,omitempty"`
+	Access        *access.DocumentAccess  `protobuf:"bytes,11,opt,name=access,proto3,oneof" json:"access,omitempty"`
+	Files         []*file.File            `protobuf:"bytes,12,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2133,7 +2142,7 @@ func (x *UpdateDocumentRequest) GetMeta() *documents.DocumentMeta {
 	return nil
 }
 
-func (x *UpdateDocumentRequest) GetAccess() *documents.DocumentAccess {
+func (x *UpdateDocumentRequest) GetAccess() *access.DocumentAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -2152,7 +2161,7 @@ type ListDocumentActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId int64                       `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	// Search params
-	ActivityTypes []documents.DocActivityType `protobuf:"varint,3,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.documents.DocActivityType" json:"activity_types,omitempty"`
+	ActivityTypes []activity.DocActivityType `protobuf:"varint,3,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.documents.activity.DocActivityType" json:"activity_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2201,7 +2210,7 @@ func (x *ListDocumentActivityRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *ListDocumentActivityRequest) GetActivityTypes() []documents.DocActivityType {
+func (x *ListDocumentActivityRequest) GetActivityTypes() []activity.DocActivityType {
 	if x != nil {
 		return x.ActivityTypes
 	}
@@ -2211,7 +2220,7 @@ func (x *ListDocumentActivityRequest) GetActivityTypes() []documents.DocActivity
 type ListDocumentActivityResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*documents.DocActivity     `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	Activity      []*activity.DocActivity      `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2253,7 +2262,7 @@ func (x *ListDocumentActivityResponse) GetPagination() *database.PaginationRespo
 	return nil
 }
 
-func (x *ListDocumentActivityResponse) GetActivity() []*documents.DocActivity {
+func (x *ListDocumentActivityResponse) GetActivity() []*activity.DocActivity {
 	if x != nil {
 		return x.Activity
 	}
@@ -2315,7 +2324,7 @@ func (x *ListDocumentReqsRequest) GetDocumentId() int64 {
 type ListDocumentReqsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Requests      []*documents.DocRequest      `protobuf:"bytes,2,rep,name=requests,proto3" json:"requests,omitempty"`
+	Requests      []*requests.DocRequest       `protobuf:"bytes,2,rep,name=requests,proto3" json:"requests,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2357,7 +2366,7 @@ func (x *ListDocumentReqsResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListDocumentReqsResponse) GetRequests() []*documents.DocRequest {
+func (x *ListDocumentReqsResponse) GetRequests() []*requests.DocRequest {
 	if x != nil {
 		return x.Requests
 	}
@@ -2365,11 +2374,11 @@ func (x *ListDocumentReqsResponse) GetRequests() []*documents.DocRequest {
 }
 
 type CreateDocumentReqRequest struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
-	DocumentId    int64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	RequestType   documents.DocActivityType  `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.DocActivityType" json:"request_type,omitempty"`
-	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Data          *documents.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RequestType   activity.DocActivityType  `protobuf:"varint,2,opt,name=request_type,json=requestType,proto3,enum=resources.documents.activity.DocActivityType" json:"request_type,omitempty"`
+	Reason        *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Data          *activity.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2411,11 +2420,11 @@ func (x *CreateDocumentReqRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *CreateDocumentReqRequest) GetRequestType() documents.DocActivityType {
+func (x *CreateDocumentReqRequest) GetRequestType() activity.DocActivityType {
 	if x != nil {
 		return x.RequestType
 	}
-	return documents.DocActivityType(0)
+	return activity.DocActivityType(0)
 }
 
 func (x *CreateDocumentReqRequest) GetReason() string {
@@ -2425,7 +2434,7 @@ func (x *CreateDocumentReqRequest) GetReason() string {
 	return ""
 }
 
-func (x *CreateDocumentReqRequest) GetData() *documents.DocActivityData {
+func (x *CreateDocumentReqRequest) GetData() *activity.DocActivityData {
 	if x != nil {
 		return x.Data
 	}
@@ -2434,7 +2443,7 @@ func (x *CreateDocumentReqRequest) GetData() *documents.DocActivityData {
 
 type CreateDocumentReqResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Request       *documents.DocRequest  `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	Request       *requests.DocRequest   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2469,7 +2478,7 @@ func (*CreateDocumentReqResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{49}
 }
 
-func (x *CreateDocumentReqResponse) GetRequest() *documents.DocRequest {
+func (x *CreateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	if x != nil {
 		return x.Request
 	}
@@ -2477,12 +2486,12 @@ func (x *CreateDocumentReqResponse) GetRequest() *documents.DocRequest {
 }
 
 type UpdateDocumentReqRequest struct {
-	state         protoimpl.MessageState     `protogen:"open.v1"`
-	DocumentId    int64                      `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	RequestId     int64                      `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	Reason        *string                    `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Data          *documents.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	Accepted      bool                       `protobuf:"varint,5,opt,name=accepted,proto3" json:"accepted,omitempty"`
+	state         protoimpl.MessageState    `protogen:"open.v1"`
+	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	RequestId     int64                     `protobuf:"varint,2,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	Reason        *string                   `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Data          *activity.DocActivityData `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Accepted      bool                      `protobuf:"varint,5,opt,name=accepted,proto3" json:"accepted,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2538,7 +2547,7 @@ func (x *UpdateDocumentReqRequest) GetReason() string {
 	return ""
 }
 
-func (x *UpdateDocumentReqRequest) GetData() *documents.DocActivityData {
+func (x *UpdateDocumentReqRequest) GetData() *activity.DocActivityData {
 	if x != nil {
 		return x.Data
 	}
@@ -2554,7 +2563,7 @@ func (x *UpdateDocumentReqRequest) GetAccepted() bool {
 
 type UpdateDocumentReqResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Request       *documents.DocRequest  `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	Request       *requests.DocRequest   `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2589,7 +2598,7 @@ func (*UpdateDocumentReqResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{51}
 }
 
-func (x *UpdateDocumentReqResponse) GetRequest() *documents.DocRequest {
+func (x *UpdateDocumentReqResponse) GetRequest() *requests.DocRequest {
 	if x != nil {
 		return x.Request
 	}
@@ -2721,8 +2730,8 @@ func (x *GetDocumentAccessRequest) GetDocumentId() int64 {
 }
 
 type GetDocumentAccessResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Access        *documents.DocumentAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Access        *access.DocumentAccess `protobuf:"bytes,1,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2757,7 +2766,7 @@ func (*GetDocumentAccessResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{55}
 }
 
-func (x *GetDocumentAccessResponse) GetAccess() *documents.DocumentAccess {
+func (x *GetDocumentAccessResponse) GetAccess() *access.DocumentAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -2765,9 +2774,9 @@ func (x *GetDocumentAccessResponse) GetAccess() *documents.DocumentAccess {
 }
 
 type SetDocumentAccessRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	DocumentId    int64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Access        *documents.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	DocumentId    int64                  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Access        *access.DocumentAccess `protobuf:"bytes,2,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2809,7 +2818,7 @@ func (x *SetDocumentAccessRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *SetDocumentAccessRequest) GetAccess() *documents.DocumentAccess {
+func (x *SetDocumentAccessRequest) GetAccess() *access.DocumentAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -2857,7 +2866,7 @@ type ListUserDocumentsRequest struct {
 	Pagination    *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort          *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	UserId        int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Relations     []documents.DocRelation     `protobuf:"varint,4,rep,packed,name=relations,proto3,enum=resources.documents.DocRelation" json:"relations,omitempty"`
+	Relations     []relations.DocRelation     `protobuf:"varint,4,rep,packed,name=relations,proto3,enum=resources.documents.relations.DocRelation" json:"relations,omitempty"`
 	Closed        *bool                       `protobuf:"varint,5,opt,name=closed,proto3,oneof" json:"closed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -2914,7 +2923,7 @@ func (x *ListUserDocumentsRequest) GetUserId() int32 {
 	return 0
 }
 
-func (x *ListUserDocumentsRequest) GetRelations() []documents.DocRelation {
+func (x *ListUserDocumentsRequest) GetRelations() []relations.DocRelation {
 	if x != nil {
 		return x.Relations
 	}
@@ -2931,7 +2940,7 @@ func (x *ListUserDocumentsRequest) GetClosed() bool {
 type ListUserDocumentsResponse struct {
 	state         protoimpl.MessageState        `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Relations     []*documents.DocumentRelation `protobuf:"bytes,2,rep,name=relations,proto3" json:"relations,omitempty"`
+	Relations     []*relations.DocumentRelation `protobuf:"bytes,2,rep,name=relations,proto3" json:"relations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2973,7 +2982,7 @@ func (x *ListUserDocumentsResponse) GetPagination() *database.PaginationResponse
 	return nil
 }
 
-func (x *ListUserDocumentsResponse) GetRelations() []*documents.DocumentRelation {
+func (x *ListUserDocumentsResponse) GetRelations() []*relations.DocumentRelation {
 	if x != nil {
 		return x.Relations
 	}
@@ -3018,7 +3027,7 @@ func (*ListCategoriesRequest) Descriptor() ([]byte, []int) {
 
 type ListCategoriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Categories    []*documents.Category  `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
+	Categories    []*category.Category   `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3053,7 +3062,7 @@ func (*ListCategoriesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{61}
 }
 
-func (x *ListCategoriesResponse) GetCategories() []*documents.Category {
+func (x *ListCategoriesResponse) GetCategories() []*category.Category {
 	if x != nil {
 		return x.Categories
 	}
@@ -3062,7 +3071,7 @@ func (x *ListCategoriesResponse) GetCategories() []*documents.Category {
 
 type CreateOrUpdateCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      *documents.Category    `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	Category      *category.Category     `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3097,7 +3106,7 @@ func (*CreateOrUpdateCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{62}
 }
 
-func (x *CreateOrUpdateCategoryRequest) GetCategory() *documents.Category {
+func (x *CreateOrUpdateCategoryRequest) GetCategory() *category.Category {
 	if x != nil {
 		return x.Category
 	}
@@ -3106,7 +3115,7 @@ func (x *CreateOrUpdateCategoryRequest) GetCategory() *documents.Category {
 
 type CreateOrUpdateCategoryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      *documents.Category    `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	Category      *category.Category     `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3141,7 +3150,7 @@ func (*CreateOrUpdateCategoryResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{63}
 }
 
-func (x *CreateOrUpdateCategoryResponse) GetCategory() *documents.Category {
+func (x *CreateOrUpdateCategoryResponse) GetCategory() *category.Category {
 	if x != nil {
 		return x.Category
 	}
@@ -3397,7 +3406,7 @@ func (x *ToggleDocumentPinRequest) GetPersonal() bool {
 
 type ToggleDocumentPinResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Pin           *documents.DocumentPin `protobuf:"bytes,1,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
+	Pin           *pins.DocumentPin      `protobuf:"bytes,1,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3432,7 +3441,7 @@ func (*ToggleDocumentPinResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_documents_proto_rawDescGZIP(), []int{69}
 }
 
-func (x *ToggleDocumentPinResponse) GetPin() *documents.DocumentPin {
+func (x *ToggleDocumentPinResponse) GetPin() *pins.DocumentPin {
 	if x != nil {
 		return x.Pin
 	}
@@ -3547,28 +3556,28 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
-	"\x14ListTemplatesRequest\"Y\n" +
-	"\x15ListTemplatesResponse\x12@\n" +
-	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a'resources/documents/access/access.proto\x1a+resources/documents/activity/activity.proto\x1a+resources/documents/category/category.proto\x1a)resources/documents/comment/comment.proto\x1a#resources/documents/documents.proto\x1a#resources/documents/pins/pins.proto\x1a/resources/documents/references/references.proto\x1a-resources/documents/relations/relations.proto\x1a+resources/documents/requests/requests.proto\x1a-resources/documents/templates/templates.proto\x1a\x19resources/file/file.proto\x1a\x1eresources/file/filestore.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x16\n" +
+	"\x14ListTemplatesRequest\"c\n" +
+	"\x15ListTemplatesResponse\x12J\n" +
+	"\ttemplates\x18\x01 \x03(\v2,.resources.documents.templates.TemplateShortR\ttemplates\"\xac\x01\n" +
 	"\x12GetTemplateRequest\x12\x1f\n" +
 	"\vtemplate_id\x18\x01 \x01(\x03R\n" +
-	"templateId\x12:\n" +
-	"\x04data\x18\x02 \x01(\v2!.resources.documents.TemplateDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
+	"templateId\x12D\n" +
+	"\x04data\x18\x02 \x01(\v2+.resources.documents.templates.TemplateDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
 	"\x06render\x18\x03 \x01(\bH\x01R\x06render\x88\x01\x01B\a\n" +
 	"\x05_dataB\t\n" +
-	"\a_render\"l\n" +
-	"\x13GetTemplateResponse\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\x12\x1a\n" +
-	"\brendered\x18\x02 \x01(\bR\brendered\"R\n" +
-	"\x15CreateTemplateRequest\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"(\n" +
+	"\a_render\"v\n" +
+	"\x13GetTemplateResponse\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\x12\x1a\n" +
+	"\brendered\x18\x02 \x01(\bR\brendered\"\\\n" +
+	"\x15CreateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"(\n" +
 	"\x16CreateTemplateResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"R\n" +
-	"\x15UpdateTemplateRequest\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"S\n" +
-	"\x16UpdateTemplateResponse\x129\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"'\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\\\n" +
+	"\x15UpdateTemplateRequest\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"]\n" +
+	"\x16UpdateTemplateResponse\x12C\n" +
+	"\btemplate\x18\x01 \x01(\v2'.resources.documents.templates.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteTemplateResponse\"\x92\x04\n" +
@@ -3604,31 +3613,31 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
-	"_info_only\"\x8d\x01\n" +
+	"_info_only\"\x94\x01\n" +
 	"\x13GetDocumentResponse\x129\n" +
-	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\x12;\n" +
-	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"?\n" +
+	"\bdocument\x18\x01 \x01(\v2\x1d.resources.documents.DocumentR\bdocument\x12B\n" +
+	"\x06access\x18\x02 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"?\n" +
 	"\x1cGetDocumentReferencesRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"\x7f\n" +
-	"\x1dGetDocumentReferencesResponse\x12^\n" +
+	"documentId\"\x8a\x01\n" +
+	"\x1dGetDocumentReferencesResponse\x12i\n" +
 	"\n" +
-	"references\x18\x01 \x03(\v2&.resources.documents.DocumentReferenceB\x16\x9a\x84\x9e\x03\x11alias:\"reference\"R\n" +
+	"references\x18\x01 \x03(\v21.resources.documents.references.DocumentReferenceB\x16\x9a\x84\x9e\x03\x11alias:\"reference\"R\n" +
 	"references\">\n" +
 	"\x1bGetDocumentRelationsRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"z\n" +
-	"\x1cGetDocumentRelationsResponse\x12Z\n" +
-	"\trelations\x18\x01 \x03(\v2%.resources.documents.DocumentRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\trelations\"c\n" +
-	"\x1bAddDocumentReferenceRequest\x12D\n" +
-	"\treference\x18\x01 \x01(\v2&.resources.documents.DocumentReferenceR\treference\".\n" +
+	"documentId\"\x84\x01\n" +
+	"\x1cGetDocumentRelationsResponse\x12d\n" +
+	"\trelations\x18\x01 \x03(\v2/.resources.documents.relations.DocumentRelationB\x15\x9a\x84\x9e\x03\x10alias:\"relation\"R\trelations\"n\n" +
+	"\x1bAddDocumentReferenceRequest\x12O\n" +
+	"\treference\x18\x01 \x01(\v21.resources.documents.references.DocumentReferenceR\treference\".\n" +
 	"\x1cAddDocumentReferenceResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
 	"\x1eRemoveDocumentReferenceRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"!\n" +
-	"\x1fRemoveDocumentReferenceResponse\"_\n" +
-	"\x1aAddDocumentRelationRequest\x12A\n" +
-	"\brelation\x18\x01 \x01(\v2%.resources.documents.DocumentRelationR\brelation\"-\n" +
+	"\x1fRemoveDocumentReferenceResponse\"i\n" +
+	"\x1aAddDocumentRelationRequest\x12K\n" +
+	"\brelation\x18\x01 \x01(\v2/.resources.documents.relations.DocumentRelationR\brelation\"-\n" +
 	"\x1bAddDocumentRelationResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"/\n" +
 	"\x1dRemoveDocumentRelationRequest\x12\x0e\n" +
@@ -3639,20 +3648,20 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xa4\x01\n" +
+	"documentId\"\xac\x01\n" +
 	"\x13GetCommentsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12>\n" +
-	"\bcomments\x18\x02 \x03(\v2\x1c.resources.documents.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"L\n" +
-	"\x12PostCommentRequest\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"M\n" +
-	"\x13PostCommentResponse\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"L\n" +
-	"\x12EditCommentRequest\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"M\n" +
-	"\x13EditCommentResponse\x126\n" +
-	"\acomment\x18\x01 \x01(\v2\x1c.resources.documents.CommentR\acomment\"5\n" +
+	"pagination\x12F\n" +
+	"\bcomments\x18\x02 \x03(\v2$.resources.documents.comment.CommentB\x04\xc8\xf3\x18\x01R\bcomments\"T\n" +
+	"\x12PostCommentRequest\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
+	"\x13PostCommentResponse\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"T\n" +
+	"\x12EditCommentRequest\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"U\n" +
+	"\x13EditCommentResponse\x12>\n" +
+	"\acomment\x18\x01 \x01(\v2$.resources.documents.comment.CommentR\acomment\"5\n" +
 	"\x14DeleteCommentRequest\x12\x1d\n" +
 	"\n" +
 	"comment_id\x18\x01 \x01(\x03R\tcommentId\"\x17\n" +
@@ -3676,16 +3685,16 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12#\n" +
 	"\vnew_user_id\x18\x02 \x01(\x05H\x00R\tnewUserId\x88\x01\x01B\x0e\n" +
 	"\f_new_user_id\"\x1d\n" +
-	"\x1bChangeDocumentOwnerResponse\"\xf6\x01\n" +
+	"\x1bChangeDocumentOwnerResponse\"\x80\x02\n" +
 	"\x15CreateDocumentRequest\x12H\n" +
 	"\fcontent_type\x18\x01 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12$\n" +
 	"\vtemplate_id\x18\x02 \x01(\x03H\x00R\n" +
-	"templateId\x88\x01\x01\x12K\n" +
-	"\rtemplate_data\x18\x03 \x01(\v2!.resources.documents.TemplateDataH\x01R\ftemplateData\x88\x01\x01B\x0e\n" +
+	"templateId\x88\x01\x01\x12U\n" +
+	"\rtemplate_data\x18\x03 \x01(\v2+.resources.documents.templates.TemplateDataH\x01R\ftemplateData\x88\x01\x01B\x0e\n" +
 	"\f_template_idB\x10\n" +
 	"\x0e_template_data\"(\n" +
 	"\x16CreateDocumentResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"\x9e\x04\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xa5\x04\n" +
 	"\x15UpdateDocumentRequest\x120\n" +
 	"\vdocument_id\x18\x01 \x01(\x03B\x0f\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"R\n" +
@@ -3696,95 +3705,95 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\acontent\x18\x04 \x01(\v2!.resources.common.content.ContentR\acontent\x12H\n" +
 	"\fcontent_type\x18\x05 \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12\x17\n" +
 	"\x04data\x18\x06 \x01(\tH\x01R\x04data\x88\x01\x01\x125\n" +
-	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaR\x04meta\x12@\n" +
-	"\x06access\x18\v \x01(\v2#.resources.documents.DocumentAccessH\x02R\x06access\x88\x01\x01\x12>\n" +
+	"\x04meta\x18\a \x01(\v2!.resources.documents.DocumentMetaR\x04meta\x12G\n" +
+	"\x06access\x18\v \x01(\v2*.resources.documents.access.DocumentAccessH\x02R\x06access\x88\x01\x01\x12>\n" +
 	"\x05files\x18\f \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\x0e\n" +
 	"\f_category_idB\a\n" +
 	"\x05_dataB\t\n" +
-	"\a_access\"\xd9\x01\n" +
+	"\a_access\"\xe2\x01\n" +
 	"\x1bListDocumentActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\x12K\n" +
-	"\x0eactivity_types\x18\x03 \x03(\x0e2$.resources.documents.DocActivityTypeR\ractivityTypes\"\xb1\x01\n" +
+	"documentId\x12T\n" +
+	"\x0eactivity_types\x18\x03 \x03(\x0e2-.resources.documents.activity.DocActivityTypeR\ractivityTypes\"\xba\x01\n" +
 	"\x1cListDocumentActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12B\n" +
-	"\bactivity\x18\x02 \x03(\v2 .resources.documents.DocActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x88\x01\n" +
+	"pagination\x12K\n" +
+	"\bactivity\x18\x02 \x03(\v2).resources.documents.activity.DocActivityB\x04\xc8\xf3\x18\x01R\bactivity\"\x88\x01\n" +
 	"\x17ListDocumentReqsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x03R\n" +
-	"documentId\"\xac\x01\n" +
+	"documentId\"\xb5\x01\n" +
 	"\x18ListDocumentReqsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12A\n" +
-	"\brequests\x18\x02 \x03(\v2\x1f.resources.documents.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\xfc\x01\n" +
+	"pagination\x12J\n" +
+	"\brequests\x18\x02 \x03(\v2(.resources.documents.requests.DocRequestB\x04\xc8\xf3\x18\x01R\brequests\"\x8e\x02\n" +
 	"\x18CreateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12G\n" +
-	"\frequest_type\x18\x02 \x01(\x0e2$.resources.documents.DocActivityTypeR\vrequestType\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
-	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01B\t\n" +
+	"documentId\x12P\n" +
+	"\frequest_type\x18\x02 \x01(\x0e2-.resources.documents.activity.DocActivityTypeR\vrequestType\x12#\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12F\n" +
+	"\x04data\x18\x04 \x01(\v2-.resources.documents.activity.DocActivityDataH\x01R\x04data\x88\x01\x01B\t\n" +
 	"\a_reasonB\a\n" +
-	"\x05_data\"V\n" +
-	"\x19CreateDocumentReqResponse\x129\n" +
-	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"\xee\x01\n" +
+	"\x05_data\"_\n" +
+	"\x19CreateDocumentReqResponse\x12B\n" +
+	"\arequest\x18\x01 \x01(\v2(.resources.documents.requests.DocRequestR\arequest\"\xf7\x01\n" +
 	"\x18UpdateDocumentReqRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x02 \x01(\x03R\trequestId\x12#\n" +
-	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
-	"\x04data\x18\x04 \x01(\v2$.resources.documents.DocActivityDataH\x01R\x04data\x88\x01\x01\x12\x1a\n" +
+	"\x06reason\x18\x03 \x01(\tB\x06\xda\xf3\x18\x02\b\x01H\x00R\x06reason\x88\x01\x01\x12F\n" +
+	"\x04data\x18\x04 \x01(\v2-.resources.documents.activity.DocActivityDataH\x01R\x04data\x88\x01\x01\x12\x1a\n" +
 	"\baccepted\x18\x05 \x01(\bR\bacceptedB\t\n" +
 	"\a_reasonB\a\n" +
-	"\x05_data\"V\n" +
-	"\x19UpdateDocumentReqResponse\x129\n" +
-	"\arequest\x18\x01 \x01(\v2\x1f.resources.documents.DocRequestR\arequest\"9\n" +
+	"\x05_data\"_\n" +
+	"\x19UpdateDocumentReqResponse\x12B\n" +
+	"\arequest\x18\x01 \x01(\v2(.resources.documents.requests.DocRequestR\arequest\"9\n" +
 	"\x18DeleteDocumentReqRequest\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\x03R\trequestId\"\x1b\n" +
 	"\x19DeleteDocumentReqResponse\";\n" +
 	"\x18GetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"X\n" +
-	"\x19GetDocumentAccessResponse\x12;\n" +
-	"\x06access\x18\x01 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"x\n" +
+	"documentId\"_\n" +
+	"\x19GetDocumentAccessResponse\x12B\n" +
+	"\x06access\x18\x01 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"\x7f\n" +
 	"\x18SetDocumentAccessRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12;\n" +
-	"\x06access\x18\x02 \x01(\v2#.resources.documents.DocumentAccessR\x06access\"\x1b\n" +
-	"\x19SetDocumentAccessResponse\"\xac\x02\n" +
+	"documentId\x12B\n" +
+	"\x06access\x18\x02 \x01(\v2*.resources.documents.access.DocumentAccessR\x06access\"\x1b\n" +
+	"\x19SetDocumentAccessResponse\"\xb6\x02\n" +
 	"\x18ListUserDocumentsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12>\n" +
-	"\trelations\x18\x04 \x03(\x0e2 .resources.documents.DocRelationR\trelations\x12\x1b\n" +
+	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12H\n" +
+	"\trelations\x18\x04 \x03(\x0e2*.resources.documents.relations.DocRelationR\trelations\x12\x1b\n" +
 	"\x06closed\x18\x05 \x01(\bH\x01R\x06closed\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
-	"\a_closed\"\xb5\x01\n" +
+	"\a_closed\"\xbf\x01\n" +
 	"\x19ListUserDocumentsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12I\n" +
-	"\trelations\x18\x02 \x03(\v2%.resources.documents.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x17\n" +
-	"\x15ListCategoriesRequest\"W\n" +
-	"\x16ListCategoriesResponse\x12=\n" +
+	"pagination\x12S\n" +
+	"\trelations\x18\x02 \x03(\v2/.resources.documents.relations.DocumentRelationB\x04\xc8\xf3\x18\x01R\trelations\"\x17\n" +
+	"\x15ListCategoriesRequest\"`\n" +
+	"\x16ListCategoriesResponse\x12F\n" +
 	"\n" +
-	"categories\x18\x01 \x03(\v2\x1d.resources.documents.CategoryR\n" +
-	"categories\"Z\n" +
-	"\x1dCreateOrUpdateCategoryRequest\x129\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryR\bcategory\"[\n" +
-	"\x1eCreateOrUpdateCategoryResponse\x129\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryR\bcategory\"'\n" +
+	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +
+	"categories\"c\n" +
+	"\x1dCreateOrUpdateCategoryRequest\x12B\n" +
+	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"d\n" +
+	"\x1eCreateOrUpdateCategoryResponse\x12B\n" +
+	"\bcategory\x18\x01 \x01(\v2&.resources.documents.category.CategoryR\bcategory\"'\n" +
 	"\x15DeleteCategoryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x18\n" +
 	"\x16DeleteCategoryResponse\"\x95\x01\n" +
@@ -3804,9 +3813,9 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"documentId\x12\x14\n" +
 	"\x05state\x18\x02 \x01(\bR\x05state\x12\x1f\n" +
 	"\bpersonal\x18\x03 \x01(\bH\x00R\bpersonal\x88\x01\x01B\v\n" +
-	"\t_personal\"n\n" +
-	"\x19ToggleDocumentPinResponse\x12I\n" +
-	"\x03pin\x18\x01 \x01(\v2 .resources.documents.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
+	"\t_personal\"s\n" +
+	"\x19ToggleDocumentPinResponse\x12N\n" +
+	"\x03pin\x18\x01 \x01(\v2%.resources.documents.pins.DocumentPinB\x10\x9a\x84\x9e\x03\valias:\"pin\"H\x00R\x03pin\x88\x01\x01B\x06\n" +
 	"\x04_pin\"\xfc\x01\n" +
 	"\x1aSetDocumentReminderRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
@@ -3868,7 +3877,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x05Types\x18\x01\"\aJobWide\x12~\n" +
 	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12m\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01\x1a0\xea\xf3\x18,\b2\x12(i-mdi-file-document-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eUpdateDocument(\x01\x1a0\xea\xf3\x18,\b2\x12(i-mdi-file-document-box-multiple-outlineBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_documents_proto_rawDescOnce sync.Once
@@ -3956,40 +3965,40 @@ var file_services_documents_documents_proto_goTypes = []any{
 	(*ToggleDocumentPinResponse)(nil),       // 69: services.documents.ToggleDocumentPinResponse
 	(*SetDocumentReminderRequest)(nil),      // 70: services.documents.SetDocumentReminderRequest
 	(*SetDocumentReminderResponse)(nil),     // 71: services.documents.SetDocumentReminderResponse
-	(*documents.TemplateShort)(nil),         // 72: resources.documents.TemplateShort
-	(*documents.TemplateData)(nil),          // 73: resources.documents.TemplateData
-	(*documents.Template)(nil),              // 74: resources.documents.Template
+	(*templates.TemplateShort)(nil),         // 72: resources.documents.templates.TemplateShort
+	(*templates.TemplateData)(nil),          // 73: resources.documents.templates.TemplateData
+	(*templates.Template)(nil),              // 74: resources.documents.templates.Template
 	(*database.PaginationRequest)(nil),      // 75: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                   // 76: resources.common.database.Sort
 	(*timestamp.Timestamp)(nil),             // 77: resources.timestamp.Timestamp
 	(*database.PaginationResponse)(nil),     // 78: resources.common.database.PaginationResponse
 	(*documents.DocumentShort)(nil),         // 79: resources.documents.DocumentShort
 	(*documents.Document)(nil),              // 80: resources.documents.Document
-	(*documents.DocumentAccess)(nil),        // 81: resources.documents.DocumentAccess
-	(*documents.DocumentReference)(nil),     // 82: resources.documents.DocumentReference
-	(*documents.DocumentRelation)(nil),      // 83: resources.documents.DocumentRelation
-	(*documents.Comment)(nil),               // 84: resources.documents.Comment
+	(*access.DocumentAccess)(nil),           // 81: resources.documents.access.DocumentAccess
+	(*references.DocumentReference)(nil),    // 82: resources.documents.references.DocumentReference
+	(*relations.DocumentRelation)(nil),      // 83: resources.documents.relations.DocumentRelation
+	(*comment.Comment)(nil),                 // 84: resources.documents.comment.Comment
 	(content.ContentType)(0),                // 85: resources.common.content.ContentType
 	(*content.Content)(nil),                 // 86: resources.common.content.Content
 	(*documents.DocumentMeta)(nil),          // 87: resources.documents.DocumentMeta
 	(*file.File)(nil),                       // 88: resources.file.File
-	(documents.DocActivityType)(0),          // 89: resources.documents.DocActivityType
-	(*documents.DocActivity)(nil),           // 90: resources.documents.DocActivity
-	(*documents.DocRequest)(nil),            // 91: resources.documents.DocRequest
-	(*documents.DocActivityData)(nil),       // 92: resources.documents.DocActivityData
-	(documents.DocRelation)(0),              // 93: resources.documents.DocRelation
-	(*documents.Category)(nil),              // 94: resources.documents.Category
-	(*documents.DocumentPin)(nil),           // 95: resources.documents.DocumentPin
+	(activity.DocActivityType)(0),           // 89: resources.documents.activity.DocActivityType
+	(*activity.DocActivity)(nil),            // 90: resources.documents.activity.DocActivity
+	(*requests.DocRequest)(nil),             // 91: resources.documents.requests.DocRequest
+	(*activity.DocActivityData)(nil),        // 92: resources.documents.activity.DocActivityData
+	(relations.DocRelation)(0),              // 93: resources.documents.relations.DocRelation
+	(*category.Category)(nil),               // 94: resources.documents.category.Category
+	(*pins.DocumentPin)(nil),                // 95: resources.documents.pins.DocumentPin
 	(*file.UploadFileRequest)(nil),          // 96: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),         // 97: resources.file.UploadFileResponse
 }
 var file_services_documents_documents_proto_depIdxs = []int32{
-	72, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
-	73, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.TemplateData
-	74, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.Template
-	74, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.Template
-	74, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.Template
-	74, // 5: services.documents.UpdateTemplateResponse.template:type_name -> resources.documents.Template
+	72, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.templates.TemplateShort
+	73, // 1: services.documents.GetTemplateRequest.data:type_name -> resources.documents.templates.TemplateData
+	74, // 2: services.documents.GetTemplateResponse.template:type_name -> resources.documents.templates.Template
+	74, // 3: services.documents.CreateTemplateRequest.template:type_name -> resources.documents.templates.Template
+	74, // 4: services.documents.UpdateTemplateRequest.template:type_name -> resources.documents.templates.Template
+	74, // 5: services.documents.UpdateTemplateResponse.template:type_name -> resources.documents.templates.Template
 	75, // 6: services.documents.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	76, // 7: services.documents.ListDocumentsRequest.sort:type_name -> resources.common.database.Sort
 	77, // 8: services.documents.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
@@ -3997,52 +4006,52 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	78, // 10: services.documents.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	79, // 11: services.documents.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
 	80, // 12: services.documents.GetDocumentResponse.document:type_name -> resources.documents.Document
-	81, // 13: services.documents.GetDocumentResponse.access:type_name -> resources.documents.DocumentAccess
-	82, // 14: services.documents.GetDocumentReferencesResponse.references:type_name -> resources.documents.DocumentReference
-	83, // 15: services.documents.GetDocumentRelationsResponse.relations:type_name -> resources.documents.DocumentRelation
-	82, // 16: services.documents.AddDocumentReferenceRequest.reference:type_name -> resources.documents.DocumentReference
-	83, // 17: services.documents.AddDocumentRelationRequest.relation:type_name -> resources.documents.DocumentRelation
+	81, // 13: services.documents.GetDocumentResponse.access:type_name -> resources.documents.access.DocumentAccess
+	82, // 14: services.documents.GetDocumentReferencesResponse.references:type_name -> resources.documents.references.DocumentReference
+	83, // 15: services.documents.GetDocumentRelationsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
+	82, // 16: services.documents.AddDocumentReferenceRequest.reference:type_name -> resources.documents.references.DocumentReference
+	83, // 17: services.documents.AddDocumentRelationRequest.relation:type_name -> resources.documents.relations.DocumentRelation
 	75, // 18: services.documents.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	78, // 19: services.documents.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	84, // 20: services.documents.GetCommentsResponse.comments:type_name -> resources.documents.Comment
-	84, // 21: services.documents.PostCommentRequest.comment:type_name -> resources.documents.Comment
-	84, // 22: services.documents.PostCommentResponse.comment:type_name -> resources.documents.Comment
-	84, // 23: services.documents.EditCommentRequest.comment:type_name -> resources.documents.Comment
-	84, // 24: services.documents.EditCommentResponse.comment:type_name -> resources.documents.Comment
+	84, // 20: services.documents.GetCommentsResponse.comments:type_name -> resources.documents.comment.Comment
+	84, // 21: services.documents.PostCommentRequest.comment:type_name -> resources.documents.comment.Comment
+	84, // 22: services.documents.PostCommentResponse.comment:type_name -> resources.documents.comment.Comment
+	84, // 23: services.documents.EditCommentRequest.comment:type_name -> resources.documents.comment.Comment
+	84, // 24: services.documents.EditCommentResponse.comment:type_name -> resources.documents.comment.Comment
 	80, // 25: services.documents.UpdateDocumentResponse.document:type_name -> resources.documents.Document
 	85, // 26: services.documents.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	73, // 27: services.documents.CreateDocumentRequest.template_data:type_name -> resources.documents.TemplateData
+	73, // 27: services.documents.CreateDocumentRequest.template_data:type_name -> resources.documents.templates.TemplateData
 	86, // 28: services.documents.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
 	85, // 29: services.documents.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
 	87, // 30: services.documents.UpdateDocumentRequest.meta:type_name -> resources.documents.DocumentMeta
-	81, // 31: services.documents.UpdateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
+	81, // 31: services.documents.UpdateDocumentRequest.access:type_name -> resources.documents.access.DocumentAccess
 	88, // 32: services.documents.UpdateDocumentRequest.files:type_name -> resources.file.File
 	75, // 33: services.documents.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	89, // 34: services.documents.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.DocActivityType
+	89, // 34: services.documents.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.activity.DocActivityType
 	78, // 35: services.documents.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	90, // 36: services.documents.ListDocumentActivityResponse.activity:type_name -> resources.documents.DocActivity
+	90, // 36: services.documents.ListDocumentActivityResponse.activity:type_name -> resources.documents.activity.DocActivity
 	75, // 37: services.documents.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	78, // 38: services.documents.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	91, // 39: services.documents.ListDocumentReqsResponse.requests:type_name -> resources.documents.DocRequest
-	89, // 40: services.documents.CreateDocumentReqRequest.request_type:type_name -> resources.documents.DocActivityType
-	92, // 41: services.documents.CreateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
-	91, // 42: services.documents.CreateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
-	92, // 43: services.documents.UpdateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
-	91, // 44: services.documents.UpdateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
-	81, // 45: services.documents.GetDocumentAccessResponse.access:type_name -> resources.documents.DocumentAccess
-	81, // 46: services.documents.SetDocumentAccessRequest.access:type_name -> resources.documents.DocumentAccess
+	91, // 39: services.documents.ListDocumentReqsResponse.requests:type_name -> resources.documents.requests.DocRequest
+	89, // 40: services.documents.CreateDocumentReqRequest.request_type:type_name -> resources.documents.activity.DocActivityType
+	92, // 41: services.documents.CreateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
+	91, // 42: services.documents.CreateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
+	92, // 43: services.documents.UpdateDocumentReqRequest.data:type_name -> resources.documents.activity.DocActivityData
+	91, // 44: services.documents.UpdateDocumentReqResponse.request:type_name -> resources.documents.requests.DocRequest
+	81, // 45: services.documents.GetDocumentAccessResponse.access:type_name -> resources.documents.access.DocumentAccess
+	81, // 46: services.documents.SetDocumentAccessRequest.access:type_name -> resources.documents.access.DocumentAccess
 	75, // 47: services.documents.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	76, // 48: services.documents.ListUserDocumentsRequest.sort:type_name -> resources.common.database.Sort
-	93, // 49: services.documents.ListUserDocumentsRequest.relations:type_name -> resources.documents.DocRelation
+	93, // 49: services.documents.ListUserDocumentsRequest.relations:type_name -> resources.documents.relations.DocRelation
 	78, // 50: services.documents.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	83, // 51: services.documents.ListUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
-	94, // 52: services.documents.ListCategoriesResponse.categories:type_name -> resources.documents.Category
-	94, // 53: services.documents.CreateOrUpdateCategoryRequest.category:type_name -> resources.documents.Category
-	94, // 54: services.documents.CreateOrUpdateCategoryResponse.category:type_name -> resources.documents.Category
+	83, // 51: services.documents.ListUserDocumentsResponse.relations:type_name -> resources.documents.relations.DocumentRelation
+	94, // 52: services.documents.ListCategoriesResponse.categories:type_name -> resources.documents.category.Category
+	94, // 53: services.documents.CreateOrUpdateCategoryRequest.category:type_name -> resources.documents.category.Category
+	94, // 54: services.documents.CreateOrUpdateCategoryResponse.category:type_name -> resources.documents.category.Category
 	75, // 55: services.documents.ListDocumentPinsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	78, // 56: services.documents.ListDocumentPinsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	79, // 57: services.documents.ListDocumentPinsResponse.documents:type_name -> resources.documents.DocumentShort
-	95, // 58: services.documents.ToggleDocumentPinResponse.pin:type_name -> resources.documents.DocumentPin
+	95, // 58: services.documents.ToggleDocumentPinResponse.pin:type_name -> resources.documents.pins.DocumentPin
 	77, // 59: services.documents.SetDocumentReminderRequest.reminder_time:type_name -> resources.timestamp.Timestamp
 	0,  // 60: services.documents.DocumentsService.ListTemplates:input_type -> services.documents.ListTemplatesRequest
 	2,  // 61: services.documents.DocumentsService.GetTemplate:input_type -> services.documents.GetTemplateRequest

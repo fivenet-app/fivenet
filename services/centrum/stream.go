@@ -8,17 +8,20 @@ import (
 	"strings"
 	"time"
 
-	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatchers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatchers"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
+	eventscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/events"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -31,7 +34,7 @@ func (s *Server) sendHandshakre(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
 	userJob string,
-	acls *centrum.EffectiveAccess,
+	acls *centrumsettings.EffectiveAccess,
 ) error {
 	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
@@ -57,11 +60,11 @@ func (s *Server) sendLatestState(
 	ctx context.Context,
 	srv pbcentrum.CentrumService_StreamServer,
 	userInfo *userinfo.UserInfo,
-	acls *centrum.EffectiveAccess,
+	acls *centrumsettings.EffectiveAccess,
 	jobList []string,
 ) error {
 	// Dispatchers
-	dispatchers := &centrum.JobDispatchers{}
+	dispatchers := &centrumdispatchers.JobDispatchers{}
 	for _, j := range acls.GetDispatches().GetJobs() {
 		dispos, err := s.dispatchers.Get(ctx, j.GetJob())
 		if err != nil {
@@ -80,11 +83,11 @@ func (s *Server) sendLatestState(
 	// Retrieve units and dispatches
 	units := s.units.List(ctx, jobList)
 
-	dispatches := s.dispatches.Filter(ctx, jobList, nil, []centrum.StatusDispatch{
-		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-		centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
+	dispatches := s.dispatches.Filter(ctx, jobList, nil, []centrumdispatches.StatusDispatch{
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+		centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
 	})
 
 	// Send initial state to client
@@ -157,12 +160,12 @@ var feeds = []feedCfg{
 		Bucket:     "centrum_settings",
 		NoWildcard: true,
 		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrum.Settings
+			var u centrumsettings.Settings
 			return &u, proto.Unmarshal(b, &u)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrum.Settings)},
+				Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrumsettings.Settings)},
 			}
 		},
 	},
@@ -171,13 +174,13 @@ var feeds = []feedCfg{
 		Bucket:     "centrum_dispatchers",
 		NoWildcard: true,
 		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
-			var u centrum.Dispatchers
+			var u centrumdispatchers.Dispatchers
 			return &u, proto.Unmarshal(b, &u)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{
 				Change: &pbcentrum.StreamResponse_Dispatchers{
-					Dispatchers: m.(*centrum.Dispatchers),
+					Dispatchers: m.(*centrumdispatchers.Dispatchers),
 				},
 			}
 		},
@@ -194,7 +197,7 @@ var feeds = []feedCfg{
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{
-				Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrum.Unit)},
+				Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrumunits.Unit)},
 			}
 		},
 		WrapDelete: func(key string) *pbcentrum.StreamResponse {
@@ -223,7 +226,7 @@ var feeds = []feedCfg{
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{
 				Change: &pbcentrum.StreamResponse_DispatchUpdated{
-					DispatchUpdated: m.(*centrum.Dispatch),
+					DispatchUpdated: m.(*centrumdispatches.Dispatch),
 				},
 			}
 		},
@@ -305,7 +308,7 @@ func (s *Server) stream(
 						continue
 					}
 
-					var d centrum.DispatchStatus
+					var d centrumdispatches.DispatchStatus
 					if err := proto.Unmarshal(m.Data(), &d); err != nil {
 						s.logger.Error(
 							"failed to unmarshal dispatch status",
@@ -324,7 +327,7 @@ func (s *Server) stream(
 					if tType != eventscentrum.TypeUnitStatus {
 						continue
 					}
-					var u centrum.UnitStatus
+					var u centrumunits.UnitStatus
 					if err := proto.Unmarshal(m.Data(), &u); err != nil {
 						s.logger.Error(
 							"failed to unmarshal unit status",

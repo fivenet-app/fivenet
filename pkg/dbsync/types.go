@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"go.uber.org/zap"
 )
 

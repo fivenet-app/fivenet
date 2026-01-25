@@ -6,20 +6,21 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -42,7 +43,7 @@ func (s *Server) ShareCalendarEntry(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_SHARE,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_SHARE,
 		false,
 	)
 	if err != nil {
@@ -113,7 +114,7 @@ func (s *Server) shareCalendarEntry(
 			tCalendarRSVP.UserID.IN(userIds...),
 		))
 
-	var currentRSVPs []*calendar.CalendarEntryRSVP
+	var currentRSVPs []*calendarentries.CalendarEntryRSVP
 	if err := stmt.QueryContext(ctx, tx, &currentRSVPs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -142,7 +143,7 @@ func (s *Server) shareCalendarEntry(
 		insertStmt = insertStmt.VALUES(
 			entryId,
 			userIds[i],
-			calendar.RsvpResponses_RSVP_RESPONSES_INVITED,
+			calendarentries.RsvpResponses_RSVP_RESPONSES_INVITED,
 		)
 	}
 
@@ -158,7 +159,7 @@ func (s *Server) shareCalendarEntry(
 func (s *Server) sendShareNotifications(
 	ctx context.Context,
 	sourceUserId int32,
-	entry *calendar.CalendarEntry,
+	entry *calendarentries.CalendarEntry,
 	targetCitizens []int32,
 ) error {
 	tUsers := tables.User().AS("user_short")
@@ -177,7 +178,7 @@ func (s *Server) sendShareNotifications(
 		).
 		LIMIT(1)
 
-	sourceUser := &users.UserShort{}
+	sourceUser := &usershort.UserShort{}
 	if err := stmt.QueryContext(ctx, s.db, sourceUser); err != nil {
 		return err
 	}
@@ -202,7 +203,7 @@ func (s *Server) sendShareNotifications(
 				Link: &notifications.Link{
 					To: fmt.Sprintf("/calendar?entry_id=%d", entry.GetId()),
 				},
-				CausedBy: &users.UserShort{
+				CausedBy: &usershort.UserShort{
 					UserId:      sourceUserId,
 					Firstname:   sourceUser.GetFirstname(),
 					Lastname:    sourceUser.GetLastname(),

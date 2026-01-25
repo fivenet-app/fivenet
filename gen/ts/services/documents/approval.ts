@@ -12,14 +12,14 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Approval } from "../../resources/documents/approval";
-import { ApprovalStatus } from "../../resources/documents/approval";
+import { Approval } from "../../resources/documents/approval/approval";
+import { ApprovalStatus } from "../../resources/documents/approval/approval";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { DocumentMeta } from "../../resources/documents/documents";
-import { ApprovalPolicy } from "../../resources/documents/approval";
-import { ApprovalTask } from "../../resources/documents/approval";
+import { ApprovalPolicy } from "../../resources/documents/approval/approval";
+import { ApprovalTask } from "../../resources/documents/approval/approval";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { ApprovalTaskStatus } from "../../resources/documents/approval";
+import { ApprovalTaskStatus } from "../../resources/documents/approval/approval";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.documents.ListApprovalTasksInboxRequest
@@ -30,7 +30,7 @@ export interface ListApprovalTasksInboxRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 2
+     * @generated from protobuf field: repeated resources.documents.approval.ApprovalTaskStatus statuses = 2
      */
     statuses: ApprovalTaskStatus[];
     /**
@@ -52,7 +52,7 @@ export interface ListApprovalTasksInboxResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTask tasks = 2
+     * @generated from protobuf field: repeated resources.documents.approval.ApprovalTask tasks = 2
      */
     tasks: ApprovalTask[];
 }
@@ -72,7 +72,7 @@ export interface ListApprovalPoliciesRequest {
  */
 export interface ListApprovalPoliciesResponse {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
     /**
@@ -85,7 +85,7 @@ export interface ListApprovalPoliciesResponse {
  */
 export interface UpsertApprovalPolicyRequest {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
 }
@@ -94,7 +94,7 @@ export interface UpsertApprovalPolicyRequest {
  */
 export interface UpsertApprovalPolicyResponse {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
 }
@@ -107,7 +107,7 @@ export interface ListApprovalTasksRequest {
      */
     documentId: number;
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTaskStatus statuses = 2
+     * @generated from protobuf field: repeated resources.documents.approval.ApprovalTaskStatus statuses = 2
      */
     statuses: ApprovalTaskStatus[];
 }
@@ -116,7 +116,7 @@ export interface ListApprovalTasksRequest {
  */
 export interface ListApprovalTasksResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.ApprovalTask tasks = 1
+     * @generated from protobuf field: repeated resources.documents.approval.ApprovalTask tasks = 1
      */
     tasks: ApprovalTask[];
 }
@@ -216,7 +216,7 @@ export interface UpsertApprovalTasksResponse {
     /**
      * Echo (optional convenience)
      *
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 3
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 3
      */
     policy?: ApprovalPolicy;
 }
@@ -266,7 +266,7 @@ export interface ListApprovalsRequest {
     /**
      * Optional filters
      *
-     * @generated from protobuf field: optional resources.documents.ApprovalStatus status = 4
+     * @generated from protobuf field: optional resources.documents.approval.ApprovalStatus status = 4
      */
     status?: ApprovalStatus;
     /**
@@ -281,7 +281,7 @@ export interface ListApprovalsRequest {
  */
 export interface ListApprovalsResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Approval approvals = 3
+     * @generated from protobuf field: repeated resources.documents.approval.Approval approvals = 3
      */
     approvals: Approval[];
 }
@@ -303,7 +303,7 @@ export interface RevokeApprovalRequest {
  */
 export interface RevokeApprovalResponse {
     /**
-     * @generated from protobuf field: resources.documents.Approval approval = 1
+     * @generated from protobuf field: resources.documents.approval.Approval approval = 1
      */
     approval?: Approval;
 }
@@ -320,7 +320,7 @@ export interface DecideApprovalRequest {
      */
     taskId?: number;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalTaskStatus new_status = 3
+     * @generated from protobuf field: resources.documents.approval.ApprovalTaskStatus new_status = 3
      */
     newStatus: ApprovalTaskStatus; // APPROVED or DECLINED
     /**
@@ -343,15 +343,15 @@ export interface DecideApprovalRequest {
  */
 export interface DecideApprovalResponse {
     /**
-     * @generated from protobuf field: resources.documents.Approval approval = 1
+     * @generated from protobuf field: resources.documents.approval.Approval approval = 1
      */
     approval?: Approval;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalTask task = 2
+     * @generated from protobuf field: resources.documents.approval.ApprovalTask task = 2
      */
     task?: ApprovalTask;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 3
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 3
      */
     policy?: ApprovalPolicy;
 }
@@ -373,11 +373,11 @@ export interface ReopenApprovalTaskRequest {
  */
 export interface ReopenApprovalTaskResponse {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalTask task = 1
+     * @generated from protobuf field: resources.documents.approval.ApprovalTask task = 1
      */
     task?: ApprovalTask;
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 2
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 2
      */
     policy?: ApprovalPolicy;
 }
@@ -395,7 +395,7 @@ export interface RecomputeApprovalPolicyCountersRequest {
  */
 export interface RecomputeApprovalPolicyCountersResponse {
     /**
-     * @generated from protobuf field: resources.documents.ApprovalPolicy policy = 1
+     * @generated from protobuf field: resources.documents.approval.ApprovalPolicy policy = 1
      */
     policy?: ApprovalPolicy;
 }
@@ -404,7 +404,7 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
     constructor() {
         super("services.documents.ListApprovalTasksInboxRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } },
             { no: 3, name: "only_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -423,7 +423,7 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 2:
+                case /* repeated resources.documents.approval.ApprovalTaskStatus statuses */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
@@ -448,7 +448,7 @@ class ListApprovalTasksInboxRequest$Type extends MessageType<ListApprovalTasksIn
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalTaskStatus statuses = 2; */
+        /* repeated resources.documents.approval.ApprovalTaskStatus statuses = 2; */
         if (message.statuses.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
@@ -491,7 +491,7 @@ class ListApprovalTasksInboxResponse$Type extends MessageType<ListApprovalTasksI
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.documents.ApprovalTask tasks */ 2:
+                case /* repeated resources.documents.approval.ApprovalTask tasks */ 2:
                     message.tasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -509,7 +509,7 @@ class ListApprovalTasksInboxResponse$Type extends MessageType<ListApprovalTasksI
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.documents.ApprovalTask tasks = 2; */
+        /* repeated resources.documents.approval.ApprovalTask tasks = 2; */
         for (let i = 0; i < message.tasks.length; i++)
             ApprovalTask.internalBinaryWrite(message.tasks[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -588,7 +588,7 @@ class ListApprovalPoliciesResponse$Type extends MessageType<ListApprovalPolicies
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalPolicy policy */ 1:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 case /* resources.documents.DocumentMeta doc_meta */ 2:
@@ -606,7 +606,7 @@ class ListApprovalPoliciesResponse$Type extends MessageType<ListApprovalPolicies
         return message;
     }
     internalBinaryWrite(message: ListApprovalPoliciesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalPolicy policy = 1; */
+        /* resources.documents.approval.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* resources.documents.DocumentMeta doc_meta = 2; */
@@ -640,7 +640,7 @@ class UpsertApprovalPolicyRequest$Type extends MessageType<UpsertApprovalPolicyR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalPolicy policy */ 1:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -655,7 +655,7 @@ class UpsertApprovalPolicyRequest$Type extends MessageType<UpsertApprovalPolicyR
         return message;
     }
     internalBinaryWrite(message: UpsertApprovalPolicyRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalPolicy policy = 1; */
+        /* resources.documents.approval.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -686,7 +686,7 @@ class UpsertApprovalPolicyResponse$Type extends MessageType<UpsertApprovalPolicy
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalPolicy policy */ 1:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -701,7 +701,7 @@ class UpsertApprovalPolicyResponse$Type extends MessageType<UpsertApprovalPolicy
         return message;
     }
     internalBinaryWrite(message: UpsertApprovalPolicyResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalPolicy policy = 1; */
+        /* resources.documents.approval.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -719,7 +719,7 @@ class ListApprovalTasksRequest$Type extends MessageType<ListApprovalTasksRequest
     constructor() {
         super("services.documents.ListApprovalTasksRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
+            { no: 2, name: "statuses", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { repeated: { maxItems: "4" } } } }
         ]);
     }
     create(value?: PartialMessage<ListApprovalTasksRequest>): ListApprovalTasksRequest {
@@ -738,7 +738,7 @@ class ListApprovalTasksRequest$Type extends MessageType<ListApprovalTasksRequest
                 case /* int64 document_id */ 1:
                     message.documentId = reader.int64().toNumber();
                     break;
-                case /* repeated resources.documents.ApprovalTaskStatus statuses */ 2:
+                case /* repeated resources.documents.approval.ApprovalTaskStatus statuses */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.statuses.push(reader.int32());
@@ -760,7 +760,7 @@ class ListApprovalTasksRequest$Type extends MessageType<ListApprovalTasksRequest
         /* int64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).int64(message.documentId);
-        /* repeated resources.documents.ApprovalTaskStatus statuses = 2; */
+        /* repeated resources.documents.approval.ApprovalTaskStatus statuses = 2; */
         if (message.statuses.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.statuses.length; i++)
@@ -796,7 +796,7 @@ class ListApprovalTasksResponse$Type extends MessageType<ListApprovalTasksRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.ApprovalTask tasks */ 1:
+                case /* repeated resources.documents.approval.ApprovalTask tasks */ 1:
                     message.tasks.push(ApprovalTask.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -811,7 +811,7 @@ class ListApprovalTasksResponse$Type extends MessageType<ListApprovalTasksRespon
         return message;
     }
     internalBinaryWrite(message: ListApprovalTasksResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.ApprovalTask tasks = 1; */
+        /* repeated resources.documents.approval.ApprovalTask tasks = 1; */
         for (let i = 0; i < message.tasks.length; i++)
             ApprovalTask.internalBinaryWrite(message.tasks[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1014,7 +1014,7 @@ class UpsertApprovalTasksResponse$Type extends MessageType<UpsertApprovalTasksRe
                 case /* int32 tasks_ensured */ 2:
                     message.tasksEnsured = reader.int32();
                     break;
-                case /* resources.documents.ApprovalPolicy policy */ 3:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 3:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -1035,7 +1035,7 @@ class UpsertApprovalTasksResponse$Type extends MessageType<UpsertApprovalTasksRe
         /* int32 tasks_ensured = 2; */
         if (message.tasksEnsured !== 0)
             writer.tag(2, WireType.Varint).int32(message.tasksEnsured);
-        /* resources.documents.ApprovalPolicy policy = 3; */
+        /* resources.documents.approval.ApprovalPolicy policy = 3; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1164,7 +1164,7 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 3, name: "snapshot_date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"] },
+            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.documents.approval.ApprovalStatus", ApprovalStatus, "APPROVAL_STATUS_"] },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -1189,7 +1189,7 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
                 case /* optional resources.timestamp.Timestamp snapshot_date */ 3:
                     message.snapshotDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.snapshotDate);
                     break;
-                case /* optional resources.documents.ApprovalStatus status */ 4:
+                case /* optional resources.documents.approval.ApprovalStatus status */ 4:
                     message.status = reader.int32();
                     break;
                 case /* optional int32 user_id */ 5:
@@ -1216,7 +1216,7 @@ class ListApprovalsRequest$Type extends MessageType<ListApprovalsRequest> {
         /* optional resources.timestamp.Timestamp snapshot_date = 3; */
         if (message.snapshotDate)
             Timestamp.internalBinaryWrite(message.snapshotDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.ApprovalStatus status = 4; */
+        /* optional resources.documents.approval.ApprovalStatus status = 4; */
         if (message.status !== undefined)
             writer.tag(4, WireType.Varint).int32(message.status);
         /* optional int32 user_id = 5; */
@@ -1251,7 +1251,7 @@ class ListApprovalsResponse$Type extends MessageType<ListApprovalsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Approval approvals */ 3:
+                case /* repeated resources.documents.approval.Approval approvals */ 3:
                     message.approvals.push(Approval.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1266,7 +1266,7 @@ class ListApprovalsResponse$Type extends MessageType<ListApprovalsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListApprovalsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Approval approvals = 3; */
+        /* repeated resources.documents.approval.Approval approvals = 3; */
         for (let i = 0; i < message.approvals.length; i++)
             Approval.internalBinaryWrite(message.approvals[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1352,7 +1352,7 @@ class RevokeApprovalResponse$Type extends MessageType<RevokeApprovalResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Approval approval */ 1:
+                case /* resources.documents.approval.Approval approval */ 1:
                     message.approval = Approval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
                     break;
                 default:
@@ -1367,7 +1367,7 @@ class RevokeApprovalResponse$Type extends MessageType<RevokeApprovalResponse> {
         return message;
     }
     internalBinaryWrite(message: RevokeApprovalResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Approval approval = 1; */
+        /* resources.documents.approval.Approval approval = 1; */
         if (message.approval)
             Approval.internalBinaryWrite(message.approval, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1386,7 +1386,7 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
         super("services.documents.DecideApprovalRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
             { no: 2, name: "task_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { gt: "0" } } } },
-            { no: 3, name: "new_status", kind: "enum", T: () => ["resources.documents.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 3, name: "new_status", kind: "enum", T: () => ["resources.documents.approval.ApprovalTaskStatus", ApprovalTaskStatus, "APPROVAL_TASK_STATUS_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 4, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "500" } } } },
             { no: 5, name: "payload_svg", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "codegen.sanitizer.sanitizer": { enabled: true, method: "SanitizeSVG" } } },
             { no: 6, name: "stamp_id", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
@@ -1412,7 +1412,7 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
                 case /* optional int64 task_id */ 2:
                     message.taskId = reader.int64().toNumber();
                     break;
-                case /* resources.documents.ApprovalTaskStatus new_status */ 3:
+                case /* resources.documents.approval.ApprovalTaskStatus new_status */ 3:
                     message.newStatus = reader.int32();
                     break;
                 case /* string comment */ 4:
@@ -1442,7 +1442,7 @@ class DecideApprovalRequest$Type extends MessageType<DecideApprovalRequest> {
         /* optional int64 task_id = 2; */
         if (message.taskId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.taskId);
-        /* resources.documents.ApprovalTaskStatus new_status = 3; */
+        /* resources.documents.approval.ApprovalTaskStatus new_status = 3; */
         if (message.newStatus !== 0)
             writer.tag(3, WireType.Varint).int32(message.newStatus);
         /* string comment = 4; */
@@ -1484,13 +1484,13 @@ class DecideApprovalResponse$Type extends MessageType<DecideApprovalResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Approval approval */ 1:
+                case /* resources.documents.approval.Approval approval */ 1:
                     message.approval = Approval.internalBinaryRead(reader, reader.uint32(), options, message.approval);
                     break;
-                case /* resources.documents.ApprovalTask task */ 2:
+                case /* resources.documents.approval.ApprovalTask task */ 2:
                     message.task = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
                     break;
-                case /* resources.documents.ApprovalPolicy policy */ 3:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 3:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -1505,13 +1505,13 @@ class DecideApprovalResponse$Type extends MessageType<DecideApprovalResponse> {
         return message;
     }
     internalBinaryWrite(message: DecideApprovalResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Approval approval = 1; */
+        /* resources.documents.approval.Approval approval = 1; */
         if (message.approval)
             Approval.internalBinaryWrite(message.approval, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.ApprovalTask task = 2; */
+        /* resources.documents.approval.ApprovalTask task = 2; */
         if (message.task)
             ApprovalTask.internalBinaryWrite(message.task, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.ApprovalPolicy policy = 3; */
+        /* resources.documents.approval.ApprovalPolicy policy = 3; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1598,10 +1598,10 @@ class ReopenApprovalTaskResponse$Type extends MessageType<ReopenApprovalTaskResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalTask task */ 1:
+                case /* resources.documents.approval.ApprovalTask task */ 1:
                     message.task = ApprovalTask.internalBinaryRead(reader, reader.uint32(), options, message.task);
                     break;
-                case /* resources.documents.ApprovalPolicy policy */ 2:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 2:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -1616,10 +1616,10 @@ class ReopenApprovalTaskResponse$Type extends MessageType<ReopenApprovalTaskResp
         return message;
     }
     internalBinaryWrite(message: ReopenApprovalTaskResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalTask task = 1; */
+        /* resources.documents.approval.ApprovalTask task = 1; */
         if (message.task)
             ApprovalTask.internalBinaryWrite(message.task, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.ApprovalPolicy policy = 2; */
+        /* resources.documents.approval.ApprovalPolicy policy = 2; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1697,7 +1697,7 @@ class RecomputeApprovalPolicyCountersResponse$Type extends MessageType<Recompute
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.ApprovalPolicy policy */ 1:
+                case /* resources.documents.approval.ApprovalPolicy policy */ 1:
                     message.policy = ApprovalPolicy.internalBinaryRead(reader, reader.uint32(), options, message.policy);
                     break;
                 default:
@@ -1712,7 +1712,7 @@ class RecomputeApprovalPolicyCountersResponse$Type extends MessageType<Recompute
         return message;
     }
     internalBinaryWrite(message: RecomputeApprovalPolicyCountersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.ApprovalPolicy policy = 1; */
+        /* resources.documents.approval.ApprovalPolicy policy = 1; */
         if (message.policy)
             ApprovalPolicy.internalBinaryWrite(message.policy, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

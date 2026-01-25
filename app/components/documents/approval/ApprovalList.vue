@@ -5,7 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { type ApprovalPolicy, ApprovalStatus } from '~~/gen/ts/resources/documents/approval';
+import { type ApprovalPolicy, ApprovalStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import type { ListApprovalsResponse } from '~~/gen/ts/services/documents/approval';
 import StatusBadge from './StatusBadge.vue';
 

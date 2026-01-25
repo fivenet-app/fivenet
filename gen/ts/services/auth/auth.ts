@@ -12,13 +12,13 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RoleAttribute } from "../../resources/permissions/attributes";
-import { Permission } from "../../resources/permissions/permissions";
-import { User } from "../../resources/users/users";
-import { JobProps } from "../../resources/jobs/job_props";
+import { RoleAttribute } from "../../resources/permissions/attributes/attributes";
+import { Permission } from "../../resources/permissions/permissions/permissions";
+import { User } from "../../resources/users/user";
+import { JobProps } from "../../resources/jobs/props/props";
 import { Character } from "../../resources/accounts/accounts";
-import { OAuth2Account } from "../../resources/accounts/oauth2";
-import { OAuth2Provider } from "../../resources/accounts/oauth2";
+import { OAuth2Account } from "../../resources/accounts/oauth2/oauth2";
+import { OAuth2Provider } from "../../resources/accounts/oauth2/oauth2";
 import { Account } from "../../resources/accounts/accounts";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
@@ -163,11 +163,11 @@ export interface GetAccountInfoResponse {
      */
     account?: Account;
     /**
-     * @generated from protobuf field: repeated resources.accounts.OAuth2Provider oauth2_providers = 2
+     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Provider oauth2_providers = 2
      */
     oauth2Providers: OAuth2Provider[];
     /**
-     * @generated from protobuf field: repeated resources.accounts.OAuth2Account oauth2_connections = 3
+     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Account oauth2_connections = 3
      */
     oauth2Connections: OAuth2Account[];
 }
@@ -207,7 +207,7 @@ export interface ChooseCharacterResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 3
+     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 3
      */
     jobProps?: JobProps;
     /**
@@ -215,11 +215,11 @@ export interface ChooseCharacterResponse {
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 5
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 5
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 6
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 6
      */
     attributes: RoleAttribute[];
 }
@@ -263,7 +263,7 @@ export interface SetSuperuserModeResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.jobs.JobProps job_props = 3
+     * @generated from protobuf field: optional resources.jobs.props.JobProps job_props = 3
      */
     jobProps?: JobProps;
     /**
@@ -271,11 +271,11 @@ export interface SetSuperuserModeResponse {
      */
     char?: User;
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 5
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 5
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 6
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 6
      */
     attributes: RoleAttribute[];
 }
@@ -940,10 +940,10 @@ class GetAccountInfoResponse$Type extends MessageType<GetAccountInfoResponse> {
                 case /* resources.accounts.Account account */ 1:
                     message.account = Account.internalBinaryRead(reader, reader.uint32(), options, message.account);
                     break;
-                case /* repeated resources.accounts.OAuth2Provider oauth2_providers */ 2:
+                case /* repeated resources.accounts.oauth2.OAuth2Provider oauth2_providers */ 2:
                     message.oauth2Providers.push(OAuth2Provider.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.accounts.OAuth2Account oauth2_connections */ 3:
+                case /* repeated resources.accounts.oauth2.OAuth2Account oauth2_connections */ 3:
                     message.oauth2Connections.push(OAuth2Account.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -961,10 +961,10 @@ class GetAccountInfoResponse$Type extends MessageType<GetAccountInfoResponse> {
         /* resources.accounts.Account account = 1; */
         if (message.account)
             Account.internalBinaryWrite(message.account, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.accounts.OAuth2Provider oauth2_providers = 2; */
+        /* repeated resources.accounts.oauth2.OAuth2Provider oauth2_providers = 2; */
         for (let i = 0; i < message.oauth2Providers.length; i++)
             OAuth2Provider.internalBinaryWrite(message.oauth2Providers[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.accounts.OAuth2Account oauth2_connections = 3; */
+        /* repeated resources.accounts.oauth2.OAuth2Account oauth2_connections = 3; */
         for (let i = 0; i < message.oauth2Connections.length; i++)
             OAuth2Account.internalBinaryWrite(message.oauth2Connections[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1141,16 +1141,16 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
                 case /* resources.timestamp.Timestamp expires */ 2:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* resources.jobs.JobProps job_props */ 3:
+                case /* resources.jobs.props.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.Permission permissions */ 5:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 5:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 6:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 6:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1171,16 +1171,16 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         /* resources.timestamp.Timestamp expires = 2; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobProps job_props = 3; */
+        /* resources.jobs.props.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.Permission permissions = 5; */
+        /* repeated resources.permissions.permissions.Permission permissions = 5; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 6; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 6; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1368,16 +1368,16 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
                 case /* resources.timestamp.Timestamp expires */ 2:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* optional resources.jobs.JobProps job_props */ 3:
+                case /* optional resources.jobs.props.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* repeated resources.permissions.Permission permissions */ 5:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 5:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 6:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 6:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1395,16 +1395,16 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         /* resources.timestamp.Timestamp expires = 2; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.jobs.JobProps job_props = 3; */
+        /* optional resources.jobs.props.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.Permission permissions = 5; */
+        /* repeated resources.permissions.permissions.Permission permissions = 5; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 6; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 6; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

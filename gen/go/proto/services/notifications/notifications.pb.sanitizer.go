@@ -86,10 +86,10 @@ func (m *StreamRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: ClientView
+	// Field: Clientview
 	switch v := m.Data.(type) {
 
-	case *StreamRequest_ClientView:
+	case *StreamRequest_Clientview:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

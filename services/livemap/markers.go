@@ -5,18 +5,18 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
-	permslivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	pblivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap"
+	permslivemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorslivemap "github.com/fivenet-app/fivenet/v2026/services/livemap/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -210,7 +210,7 @@ func (s *Server) DeleteMarker(
 	return &pblivemap.DeleteMarkerResponse{}, nil
 }
 
-func (s *Server) getMarker(ctx context.Context, id int64) (*livemap.MarkerMarker, error) {
+func (s *Server) getMarker(ctx context.Context, id int64) (*livemapmarkers.MarkerMarker, error) {
 	tUsers := tables.User().AS("user_short")
 
 	stmt := tMarkers.
@@ -249,7 +249,7 @@ func (s *Server) getMarker(ctx context.Context, id int64) (*livemap.MarkerMarker
 		).
 		LIMIT(1)
 
-	var dest livemap.MarkerMarker
+	var dest livemapmarkers.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
@@ -260,9 +260,9 @@ func (s *Server) getMarker(ctx context.Context, id int64) (*livemap.MarkerMarker
 }
 
 func (s *Server) getMarkerMarkers(
-	jobs *permissions.StringList,
-) ([]*livemap.MarkerMarker, []int64) {
-	updated := []*livemap.MarkerMarker{}
+	jobs *permissionsattributes.StringList,
+) ([]*livemapmarkers.MarkerMarker, []int64) {
+	updated := []*livemapmarkers.MarkerMarker{}
 	deleted := []int64{}
 
 	for _, job := range jobs.GetStrings() {
@@ -331,19 +331,19 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 			tMarkers.ID.ASC(),
 		)
 
-	var dest []*livemap.MarkerMarker
+	var dest []*livemapmarkers.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
 
-	markers := map[string][]*livemap.MarkerMarker{}
+	markers := map[string][]*livemapmarkers.MarkerMarker{}
 	for _, m := range dest {
 		s.enricher.EnrichJobName(m)
 
 		if _, ok := markers[m.GetJob()]; !ok {
-			markers[m.GetJob()] = []*livemap.MarkerMarker{}
+			markers[m.GetJob()] = []*livemapmarkers.MarkerMarker{}
 		}
 
 		markers[m.GetJob()] = append(markers[m.GetJob()], m)
@@ -385,7 +385,7 @@ func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
 			tMarkers.ID.ASC(),
 		)
 
-	var dest []*livemap.MarkerMarker
+	var dest []*livemapmarkers.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err

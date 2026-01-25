@@ -4,20 +4,20 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
-	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobsconduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -267,7 +267,7 @@ func (s *Server) GetConductEntry(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbjobs.GetConductEntryResponse{
-		Entry: &jobs.ConductEntry{},
+		Entry: &jobsconduct.ConductEntry{},
 	}
 
 	condition := mysql.AND(
@@ -515,10 +515,10 @@ func (s *Server) UpdateConductEntry(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_CONDUCT,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_JOBS_CONDUCT,
 		Id:        &entry.Id,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,

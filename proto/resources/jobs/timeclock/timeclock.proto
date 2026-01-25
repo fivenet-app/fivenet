@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package resources.jobs.timeclock;
+
+import "buf/validate/validate.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock;jobstimeclock";
+
+enum TimeclockMode {
+  TIMECLOCK_MODE_UNSPECIFIED = 0;
+  TIMECLOCK_MODE_DAILY = 1;
+  TIMECLOCK_MODE_WEEKLY = 2;
+  TIMECLOCK_MODE_RANGE = 3;
+  TIMECLOCK_MODE_TIMELINE = 4;
+}
+
+enum TimeclockViewMode {
+  TIMECLOCK_VIEW_MODE_UNSPECIFIED = 0;
+  TIMECLOCK_VIEW_MODE_SELF = 1;
+  TIMECLOCK_VIEW_MODE_ALL = 2;
+}
+
+message TimeclockEntry {
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gte = 0,
+    (tagger.tags) = "sql:\"primary_key\""
+  ];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  resources.timestamp.Timestamp date = 3 [(tagger.tags) = "sql:\"primary_key\""];
+  optional resources.jobs.colleagues.Colleague user = 4;
+  optional resources.timestamp.Timestamp start_time = 5 [(tagger.tags) = "sql:\"primary_key\""];
+  optional resources.timestamp.Timestamp end_time = 6;
+  float spent_time = 7;
+}
+
+message TimeclockStats {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  float spent_time_sum = 2;
+  float spent_time_avg = 3;
+  float spent_time_max = 4;
+}
+
+message TimeclockWeeklyStats {
+  int32 year = 1;
+  int32 calendar_week = 2;
+
+  float sum = 3;
+  float avg = 4;
+  float max = 5;
+}

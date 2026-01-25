@@ -1,7 +1,7 @@
 package userinfo
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -10,7 +10,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';

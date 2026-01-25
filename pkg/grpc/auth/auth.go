@@ -3,11 +3,11 @@ package auth
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -33,13 +33,13 @@ const (
 )
 
 var (
-	PermCanBeSuperuser = &permissions.Permission{
+	PermCanBeSuperuser = &permissionspermissions.Permission{
 		Category:  PermSuperuserCategory,
 		Name:      PermCanBeSuperuserName,
 		GuardName: PermCanBeSuperuserGuardName,
 	}
 
-	PermSuperuser = &permissions.Permission{
+	PermSuperuser = &permissionspermissions.Permission{
 		Category:  PermSuperuserCategory,
 		Name:      PermSuperuserName,
 		GuardName: PermSuperuserGuardName,

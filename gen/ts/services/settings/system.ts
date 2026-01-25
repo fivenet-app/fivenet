@@ -15,8 +15,8 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { SystemStatus } from "../../resources/settings/status";
 import { AttrsUpdate } from "../../resources/settings/perms";
 import { PermsUpdate } from "../../resources/settings/perms";
-import { RoleAttribute } from "../../resources/permissions/attributes";
-import { Permission } from "../../resources/permissions/permissions";
+import { RoleAttribute } from "../../resources/permissions/attributes/attributes";
+import { Permission } from "../../resources/permissions/permissions/permissions";
 /**
  * @generated from protobuf message services.settings.GetAllPermissionsRequest
  */
@@ -31,11 +31,11 @@ export interface GetAllPermissionsRequest {
  */
 export interface GetAllPermissionsResponse {
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 1
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 1
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 2
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 2
      */
     attributes: RoleAttribute[];
 }
@@ -61,11 +61,11 @@ export interface GetJobLimitsResponse {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 3
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 3
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 4
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 4
      */
     attributes: RoleAttribute[];
 }
@@ -187,10 +187,10 @@ class GetAllPermissionsResponse$Type extends MessageType<GetAllPermissionsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.permissions.Permission permissions */ 1:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 1:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 2:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 2:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -205,10 +205,10 @@ class GetAllPermissionsResponse$Type extends MessageType<GetAllPermissionsRespon
         return message;
     }
     internalBinaryWrite(message: GetAllPermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.Permission permissions = 1; */
+        /* repeated resources.permissions.permissions.Permission permissions = 1; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 2; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 2; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -298,10 +298,10 @@ class GetJobLimitsResponse$Type extends MessageType<GetJobLimitsResponse> {
                 case /* optional string job_label */ 2:
                     message.jobLabel = reader.string();
                     break;
-                case /* repeated resources.permissions.Permission permissions */ 3:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 3:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 4:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 4:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -322,10 +322,10 @@ class GetJobLimitsResponse$Type extends MessageType<GetJobLimitsResponse> {
         /* optional string job_label = 2; */
         if (message.jobLabel !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
-        /* repeated resources.permissions.Permission permissions = 3; */
+        /* repeated resources.permissions.permissions.Permission permissions = 3; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 4; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 4; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

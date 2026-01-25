@@ -8,14 +8,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -25,15 +25,15 @@ import (
 
 type ITracker interface {
 	ListTrackedJobs() []string
-	GetUserMarkerById(id int32) (*livemap.UserMarker, bool)
+	GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
 	Subscribe(
 		ctx context.Context,
-	) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error)
+	) (store.IKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker], error)
 	GetFilteredUserMarkers(
-		acl *permissions.JobGradeList,
+		acl *permissionsattributes.JobGradeList,
 		userInfo *userinfo.UserInfo,
-	) []*livemap.UserMarker
+	) []*livemapmarkers.UserMarker
 
 	GetUserMapping(userId int32) (*tracker.UserMapping, error)
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
@@ -49,8 +49,8 @@ type Tracker struct {
 
 	jsCons jetstream.ConsumeContext
 
-	userByIDStore     *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	userLocStore      *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	userByIDStore     *store.Store[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]
+	userLocStore      *store.Store[livemapmarkers.UserMarker, *livemapmarkers.UserMarker]
 	userMappingsStore *store.Store[tracker.UserMapping, *tracker.UserMapping]
 }
 
@@ -94,12 +94,12 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+		userLocStore, err := store.New[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 			ctxStartup,
 			storeLogger,
 			p.JS,
 			BucketUserLoc,
-			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
 		)
 		if err != nil {
 			return err
@@ -109,9 +109,9 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userLocStore = userLocStore
 
-		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+		byID, err := store.New[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](
 			ctxStartup, storeLogger, p.JS, BucketUserLocByID,
-			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithLocks[livemapmarkers.UserMarker, *livemapmarkers.UserMarker](nil),
 		)
 		if err != nil {
 			return err
@@ -146,7 +146,7 @@ func New(p Params) (ITracker, error) {
 func (t *Tracker) ListTrackedJobs() []string {
 	seen := make(map[string]struct{})
 
-	t.userLocStore.Range(func(key string, _ *livemap.UserMarker) bool {
+	t.userLocStore.Range(func(key string, _ *livemapmarkers.UserMarker) bool {
 		// key format = JOB.GRADE.USER_ID -> cut at first dot
 		if i := strings.IndexByte(key, '.'); i > 0 {
 			seen[key[:i]] = struct{}{}
@@ -162,7 +162,7 @@ func (t *Tracker) ListTrackedJobs() []string {
 	return jobs
 }
 
-func (t *Tracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
+func (t *Tracker) GetUserMarkerById(id int32) (*livemapmarkers.UserMarker, bool) {
 	marker, err := t.userByIDStore.Get(strconv.Itoa(int(id)))
 	if err != nil {
 		return nil, false
@@ -177,15 +177,15 @@ func (t *Tracker) IsUserOnDuty(id int32) bool {
 
 func (t *Tracker) Subscribe(
 	ctx context.Context,
-) (store.IKVWatcher[livemap.UserMarker, *livemap.UserMarker], error) {
+) (store.IKVWatcher[livemapmarkers.UserMarker, *livemapmarkers.UserMarker], error) {
 	return t.userLocStore.WatchAll(ctx)
 }
 
 func (t *Tracker) GetFilteredUserMarkers(
-	acl *permissions.JobGradeList,
+	acl *permissionsattributes.JobGradeList,
 	userInfo *userinfo.UserInfo,
-) []*livemap.UserMarker {
-	return t.userLocStore.ListFiltered("", func(key string, um *livemap.UserMarker) bool {
+) []*livemapmarkers.UserMarker {
+	return t.userLocStore.ListFiltered("", func(key string, um *livemapmarkers.UserMarker) bool {
 		if um == nil || um.GetHidden() {
 			return false
 		}

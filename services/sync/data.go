@@ -7,12 +7,13 @@ import (
 	"slices"
 	"time"
 
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -535,7 +536,7 @@ func (s *Server) handleUsersData(
 func (s *Server) handleCitizensLicenses(
 	ctx context.Context,
 	identifier string,
-	licenses []*users.License,
+	licenses []*userslicenses.License,
 ) error {
 	tCitizensLicenses := tables.UserLicenses()
 

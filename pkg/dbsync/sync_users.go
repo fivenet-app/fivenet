@@ -9,9 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
@@ -218,7 +219,7 @@ func (s *usersSync) retrieveLicenses(
 	ctx context.Context,
 	userId int32,
 	identifier string,
-) ([]*users.License, error) {
+) ([]*userslicenses.License, error) {
 	q := s.cfg.Tables.CitizensLicenses.GetQuery(s.state, 0, 100)
 	s.logger.Debug("citizens licenses sync query", zap.String("query", q))
 
@@ -231,7 +232,7 @@ func (s *usersSync) retrieveLicenses(
 		args = append(args, identifier)
 	}
 
-	licenses := []*users.License{}
+	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, args, &licenses); err != nil {
 		return nil, err
 	}

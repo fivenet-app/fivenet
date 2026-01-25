@@ -11,13 +11,13 @@ import (
 	discordapi "github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	pbdiscord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	accountsoauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	pbdiscord "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/discord"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 )
 
 func (s *Server) ListDiscordChannels(
@@ -92,7 +92,7 @@ func (s *Server) ListUserGuilds(
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	acc, err := accounts.RetrieveOAuth2Account(
+	acc, err := accountsoauth2.RetrieveOAuth2Account(
 		ctx,
 		s.db,
 		s.crypt,
@@ -103,7 +103,7 @@ func (s *Server) ListUserGuilds(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	accessToken, err := accounts.GetAccessToken(
+	accessToken, err := accountsoauth2.GetAccessToken(
 		ctx,
 		s.db,
 		s.crypt,

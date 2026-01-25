@@ -6,7 +6,7 @@ import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlo
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const props = defineProps<{
     user: User;

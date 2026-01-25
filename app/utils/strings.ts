@@ -1,5 +1,5 @@
-import { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
-import type { UserProps } from '~~/gen/ts/resources/users/props';
+import { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import type { UserProps } from '~~/gen/ts/resources/users/props/props';
 
 export function toTitleCase(s: string): string {
     return s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());

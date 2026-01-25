@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/XSAM/otelsql"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/dsn"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"

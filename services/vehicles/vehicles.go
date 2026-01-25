@@ -4,19 +4,19 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
-	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
-	permsvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	vehiclesprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
+	permscitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
+	permsvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsvehicles "github.com/fivenet-app/fivenet/v2026/services/vehicles/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -244,7 +244,7 @@ func (s *Server) SetVehicleProps(
 	}
 
 	resp := &pbvehicles.SetVehiclePropsResponse{
-		Props: &vehicles.VehicleProps{},
+		Props: &vehiclesprops.VehicleProps{},
 	}
 
 	// Field Permission Check
@@ -295,7 +295,7 @@ func (s *Server) SetVehicleProps(
 func (s *Server) getVehicleProps(
 	ctx context.Context,
 	plate string,
-) (*vehicles.VehicleProps, error) {
+) (*vehiclesprops.VehicleProps, error) {
 	tVehicleProps := table.FivenetVehiclesProps.AS("vehicle_props")
 
 	stmt := tVehicleProps.
@@ -311,7 +311,7 @@ func (s *Server) getVehicleProps(
 		).
 		LIMIT(1)
 
-	var dest vehicles.VehicleProps
+	var dest vehiclesprops.VehicleProps
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

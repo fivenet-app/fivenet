@@ -6,21 +6,24 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	documentsrequests "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/requests"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -42,7 +45,7 @@ func (s *Server) ListDocumentReqs(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -72,7 +75,7 @@ func (s *Server) ListDocumentReqs(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, ActivityDefaultPageSize)
 	resp := &pbdocuments.ListDocumentReqsResponse{
 		Pagination: pag,
-		Requests:   []*documents.DocRequest{},
+		Requests:   []*documentsrequests.DocRequest{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
@@ -142,13 +145,13 @@ func (s *Server) CreateDocumentReq(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 	if !check &&
-		req.GetRequestType() != documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
+		req.GetRequestType() != documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS {
 		return nil, errorsdocuments.ErrDocViewDenied
 	}
 
@@ -168,8 +171,8 @@ func (s *Server) CreateDocumentReq(
 	// Owner override hatch for when a colleague isn't part of the job anymore and the document should be taken over
 	if doc.GetCreatorJob() == userInfo.GetJob() &&
 		(doc.GetCreator() == nil || doc.GetCreator().GetJob() != doc.GetCreatorJob()) &&
-		req.GetRequestType() == documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
-		if err := s.updateDocumentOwner(ctx, s.db, doc.GetId(), userInfo, &users.UserShort{
+		req.GetRequestType() == documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
+		if err := s.updateDocumentOwner(ctx, s.db, doc.GetId(), userInfo, &usershort.UserShort{
 			UserId: userInfo.GetUserId(),
 			Job:    userInfo.GetJob(),
 		}); err != nil {
@@ -178,9 +181,9 @@ func (s *Server) CreateDocumentReq(
 
 		accepted := true
 		return &pbdocuments.CreateDocumentReqResponse{
-			Request: &documents.DocRequest{
+			Request: &documentsrequests.DocRequest{
 				DocumentId:  doc.GetId(),
-				RequestType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
+				RequestType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
 				CreatorId:   &userInfo.UserId,
 				CreatorJob:  userInfo.GetJob(),
 				Reason:      req.Reason,
@@ -217,7 +220,7 @@ func (s *Server) CreateDocumentReq(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   doc.GetId(),
 		ActivityType: req.GetRequestType(),
 		CreatorId:    &userInfo.UserId,
@@ -230,7 +233,7 @@ func (s *Server) CreateDocumentReq(
 
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
 	if request == nil {
-		request, err = s.addAndGetDocumentReq(ctx, tx, &documents.DocRequest{
+		request, err = s.addAndGetDocumentReq(ctx, tx, &documentsrequests.DocRequest{
 			DocumentId:  doc.GetId(),
 			CreatorId:   &userInfo.UserId,
 			CreatorJob:  userInfo.GetJob(),
@@ -243,7 +246,7 @@ func (s *Server) CreateDocumentReq(
 		}
 	} else {
 		accepted := false
-		if err := s.updateDocumentReq(ctx, tx, request.GetId(), &documents.DocRequest{
+		if err := s.updateDocumentReq(ctx, tx, request.GetId(), &documentsrequests.DocRequest{
 			Id:          request.GetId(),
 			DocumentId:  doc.GetId(),
 			CreatorId:   &userInfo.UserId,
@@ -306,7 +309,7 @@ func (s *Server) UpdateDocumentReq(
 		ctx,
 		request.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -352,10 +355,10 @@ func (s *Server) UpdateDocumentReq(
 
 	// Accepted the change
 	if req.GetAccepted() {
-		activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
+		activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 		switch request.GetRequestType() {
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
 
 			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
 				DocumentId: request.GetDocumentId(),
@@ -364,8 +367,8 @@ func (s *Server) UpdateDocumentReq(
 				return nil, err
 			}
 
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OPENING:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 
 			if _, err := s.ToggleDocument(ctx, &pbdocuments.ToggleDocumentRequest{
 				DocumentId: request.GetDocumentId(),
@@ -374,19 +377,19 @@ func (s *Server) UpdateDocumentReq(
 				return nil, err
 			}
 
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_UPDATE:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED
 			// Nothing to do here, because the user is simply redirected to the editor on the frontend
 
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED
 
 			if err := s.updateDocumentOwner(ctx, tx, request.GetDocumentId(), userInfo, request.GetCreator()); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_DELETION:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_DELETED
 
 			if _, err := s.DeleteDocument(ctx, &pbdocuments.DeleteDocumentRequest{
 				DocumentId: request.GetDocumentId(),
@@ -395,15 +398,15 @@ func (s *Server) UpdateDocumentReq(
 				return nil, err
 			}
 
-		case documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
-			activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
+		case documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_ACCESS:
+			activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED
 
 			if request.CreatorId == nil || request.GetData() == nil ||
 				request.GetData().GetAccessRequested() == nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 
-			if err := s.access.Users.CreateEntry(ctx, tx, request.GetDocumentId(), &documents.DocumentUserAccess{
+			if err := s.access.Users.CreateEntry(ctx, tx, request.GetDocumentId(), &documentsaccess.DocumentUserAccess{
 				UserId:   request.GetCreatorId(),
 				TargetId: request.GetDocumentId(),
 				Access:   request.GetData().GetAccessRequested().GetLevel(),
@@ -412,7 +415,7 @@ func (s *Server) UpdateDocumentReq(
 			}
 		}
 
-		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 			DocumentId:   request.GetDocumentId(),
 			ActivityType: activityType,
 			CreatorId:    &userInfo.UserId,
@@ -457,7 +460,7 @@ func (s *Server) DeleteDocumentReq(
 		ctx,
 		request.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -491,7 +494,7 @@ func (s *Server) notifyUserAboutRequest(
 		ctx,
 		doc.GetId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return err
@@ -515,7 +518,7 @@ func (s *Server) notifyUserAboutRequest(
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d#requests", doc.GetId()),
 			},
-			CausedBy: &users.UserShort{
+			CausedBy: &usershort.UserShort{
 				UserId: sourceUserId,
 			},
 		},
@@ -530,7 +533,7 @@ func (s *Server) notifyUserAboutRequest(
 func (s *Server) addDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
-	request *documents.DocRequest,
+	request *documentsrequests.DocRequest,
 ) (int64, error) {
 	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
@@ -571,8 +574,8 @@ func (s *Server) addDocumentReq(
 func (s *Server) addAndGetDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
-	activitiy *documents.DocRequest,
-) (*documents.DocRequest, error) {
+	activitiy *documentsrequests.DocRequest,
+) (*documentsrequests.DocRequest, error) {
 	id, err := s.addDocumentReq(ctx, tx, activitiy)
 	if err != nil {
 		return nil, err
@@ -585,7 +588,7 @@ func (s *Server) updateDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
 	id int64,
-	request *documents.DocRequest,
+	request *documentsrequests.DocRequest,
 ) error {
 	tDocRequest := table.FivenetDocumentsRequests
 	stmt := tDocRequest.
@@ -624,7 +627,7 @@ func (s *Server) getDocumentReqById(
 	ctx context.Context,
 	tx qrm.DB,
 	id int64,
-) (*documents.DocRequest, error) {
+) (*documentsrequests.DocRequest, error) {
 	return s.getDocumentReq(ctx, tx, tDocRequest.ID.EQ(mysql.Int64(id)))
 }
 
@@ -632,7 +635,7 @@ func (s *Server) getDocumentReq(
 	ctx context.Context,
 	tx qrm.DB,
 	condition mysql.BoolExpression,
-) (*documents.DocRequest, error) {
+) (*documentsrequests.DocRequest, error) {
 	tCreator := tables.User().AS("creator")
 
 	stmt := tDocRequest.
@@ -662,7 +665,7 @@ func (s *Server) getDocumentReq(
 		WHERE(condition).
 		LIMIT(1)
 
-	var dest documents.DocRequest
+	var dest documentsrequests.DocRequest
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 )
 

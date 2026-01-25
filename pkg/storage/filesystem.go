@@ -11,8 +11,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/h2non/filetype"
 	"go.uber.org/fx"
 )

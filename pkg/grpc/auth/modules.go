@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"go.uber.org/fx"
 )
 

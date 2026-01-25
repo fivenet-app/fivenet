@@ -5,16 +5,18 @@ import (
 	"errors"
 	"strings"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
-	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/textdiff"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	wikiactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
+	pbwiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/textdiff"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -34,7 +36,7 @@ func (s *Server) ListPageActivity(
 		ctx,
 		req.GetPageId(),
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_VIEW,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -67,7 +69,7 @@ func (s *Server) ListPageActivity(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 10)
 	resp := &pbwiki.ListPageActivityResponse{
 		Pagination: pag,
-		Activity:   []*wiki.PageActivity{},
+		Activity:   []*wikiactivity.PageActivity{},
 	}
 	if count.Total <= 0 {
 		return resp, nil
@@ -123,7 +125,7 @@ func (s *Server) ListPageActivity(
 func (s *Server) addPageActivity(
 	ctx context.Context,
 	tx qrm.DB,
-	activitiy *wiki.PageActivity,
+	activitiy *wikiactivity.PageActivity,
 ) (int64, error) {
 	stmt := tPActivity.
 		INSERT(
@@ -159,8 +161,11 @@ func (s *Server) addPageActivity(
 }
 
 // generatePageDiff Generates diff if the old and new contents are not equal, using a simple "string comparison".
-func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpdated, error) {
-	diff := &wiki.PageUpdated{}
+func (s *Server) generatePageDiff(
+	old *wiki.Page,
+	new *wiki.Page,
+) (*wikiactivity.PageUpdated, error) {
+	diff := &wikiactivity.PageUpdated{}
 
 	if !strings.EqualFold(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()) {
 		if titleDiff := textdiff.DiffText(old.GetMeta().GetTitle(), new.GetMeta().GetTitle()); titleDiff.HasChanges() {

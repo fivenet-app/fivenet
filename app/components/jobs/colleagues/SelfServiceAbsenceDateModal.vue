@@ -6,7 +6,7 @@ import { z } from 'zod';
 import InputDateRangePopover from '~/components/partials/InputDateRangePopover.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
-import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
+import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 

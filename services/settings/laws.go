@@ -3,13 +3,13 @@ package settings
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )

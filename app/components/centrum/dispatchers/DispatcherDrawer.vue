@@ -3,7 +3,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 
 defineEmits<{
     (e: 'close', v: boolean): void;

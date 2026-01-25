@@ -7,7 +7,7 @@
 package database
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -322,7 +322,7 @@ const file_resources_common_database_database_proto_rawDesc = "" +
 	"\x04desc\x18\x02 \x01(\bR\x04desc\"s\n" +
 	"\tDateRange\x124\n" +
 	"\x05start\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x05start\x120\n" +
-	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03endBVZTgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database;databaseb\x06proto3"
+	"\x03end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\x03endBVZTgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database;databaseb\x06proto3"
 
 var (
 	file_resources_common_database_database_proto_rawDescOnce sync.Once

@@ -5,15 +5,16 @@ import (
 	"errors"
 	"slices"
 
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor"
-	permscompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscompletor "github.com/fivenet-app/fivenet/v2025/services/completor/errors"
+	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbcompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor"
+	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscompletor "github.com/fivenet-app/fivenet/v2026/services/completor/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -88,7 +89,7 @@ func (s *Server) CompleteCitizens(
 		ORDER_BY(orderBys...).
 		LIMIT(15)
 
-	var dest []*users.UserShort
+	var dest []*usershort.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
@@ -96,7 +97,7 @@ func (s *Server) CompleteCitizens(
 	}
 
 	if req.OnDuty != nil && req.GetOnDuty() {
-		dest = slices.DeleteFunc(dest, func(us *users.UserShort) bool {
+		dest = slices.DeleteFunc(dest, func(us *usershort.UserShort) bool {
 			return !s.tracker.IsUserOnDuty(us.GetUserId())
 		})
 	}
@@ -255,7 +256,7 @@ func (s *Server) CompleteCitizenLabels(
 		LIMIT(10)
 
 	resp := &pbcompletor.CompleteCitizenLabelsResponse{
-		Labels: []*users.Label{},
+		Labels: []*userslabels.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

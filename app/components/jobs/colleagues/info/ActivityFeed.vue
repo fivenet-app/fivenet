@@ -10,7 +10,7 @@ import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/activity';
+import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/colleagues/activity/activity';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
 

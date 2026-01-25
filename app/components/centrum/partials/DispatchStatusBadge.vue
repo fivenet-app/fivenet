@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { BadgeProps } from '@nuxt/ui';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBadgeColor } from '../helpers';
 
 interface Props extends /* @vue-ignore */ BadgeProps {

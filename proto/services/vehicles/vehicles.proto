@@ -7,10 +7,10 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
-import "resources/vehicles/props.proto";
+import "resources/vehicles/props/props.proto";
 import "resources/vehicles/vehicles.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehicles";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehicles";
 
 message ListVehiclesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
@@ -29,11 +29,11 @@ message ListVehiclesResponse {
 }
 
 message SetVehiclePropsRequest {
-  resources.vehicles.VehicleProps props = 1 [(buf.validate.field).required = true];
+  resources.vehicles.props.VehicleProps props = 1 [(buf.validate.field).required = true];
 }
 
 message SetVehiclePropsResponse {
-  resources.vehicles.VehicleProps props = 1;
+  resources.vehicles.props.VehicleProps props = 1;
   string reason = 2 [
     (buf.validate.field).string = {
       min_len: 3

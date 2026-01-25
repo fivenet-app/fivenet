@@ -4,8 +4,8 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
 	"go.uber.org/zap"
 )
 

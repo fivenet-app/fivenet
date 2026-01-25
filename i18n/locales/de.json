@@ -2126,7 +2126,7 @@
                     "content": "Dokument wurde geschlossen."
                 }
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Dokument wurde aktualisiert",
                 "content": "Das Dokument wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um das Dokument neu zu laden."
             }
@@ -2144,26 +2144,26 @@
                 "title": "Bürger-ID kopiert",
                 "content": "Bürger-ID in die Zwischenablage kopiert."
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Bürger aktualisiert",
                 "content": "Der Bürger wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Bürgerdaten neu zu laden."
             }
         },
         "wiki": {
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Seite wurde aktualisiert",
                 "content": "Die Seite wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Seite neu zu laden."
             }
         },
         "jobs": {
             "colleague": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Kollege wurde aktualisiert",
                     "content": "Der Kollege wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Kollegen neu zu laden."
                 }
             },
             "conduct": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Führungsregister-Eintrag wurde aktualisiert",
                     "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
                 }

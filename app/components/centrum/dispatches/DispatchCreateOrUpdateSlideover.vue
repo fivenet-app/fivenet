@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import type { Coordinate } from '~~/shared/types/types';
 
 const props = defineProps<{

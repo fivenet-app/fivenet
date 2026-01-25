@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 
 defineProps<{
     colleague: Colleague;

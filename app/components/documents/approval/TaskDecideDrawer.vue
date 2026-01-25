@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import SignaturePad from '~/components/partials/SignaturePad.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
-import { type ApprovalPolicy, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { type ApprovalPolicy, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

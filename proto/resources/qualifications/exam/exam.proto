@@ -1,0 +1,228 @@
+syntax = "proto3";
+
+package resources.qualifications.exam;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "google/protobuf/duration.proto";
+import "resources/file/file.proto";
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam;qualificationsexam";
+
+enum QualificationExamMode {
+  QUALIFICATION_EXAM_MODE_UNSPECIFIED = 0;
+  QUALIFICATION_EXAM_MODE_DISABLED = 1;
+  QUALIFICATION_EXAM_MODE_REQUEST_NEEDED = 2;
+  QUALIFICATION_EXAM_MODE_ENABLED = 3;
+}
+
+message QualificationExamSettings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  google.protobuf.Duration time = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 1036800} /* 24 hours */
+      gte: {seconds: 300} /* 5 minutes */
+    },
+    (buf.validate.field).required = true
+  ];
+  bool auto_grade = 2;
+  AutoGradeMode auto_grade_mode = 3 [(buf.validate.field).enum.defined_only = true];
+  int32 minimum_points = 4;
+}
+
+enum AutoGradeMode {
+  AUTO_GRADE_MODE_UNSPECIFIED = 0;
+  AUTO_GRADE_MODE_STRICT = 1;
+  AUTO_GRADE_MODE_PARTIAL_CREDIT = 2;
+}
+
+message ExamQuestions {
+  repeated ExamQuestion questions = 1 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message ExamQuestion {
+  int64 id = 1;
+  int64 qualification_id = 2;
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+  string title = 5 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional string description = 6 [
+    (buf.validate.field).string.max_len = 1024,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  ExamQuestionData data = 7 [(buf.validate.field).required = true];
+  optional ExamQuestionAnswerData answer = 8;
+  optional int32 points = 9 [(buf.validate.field).int32.gte = 0];
+  int32 order = 10 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 1000
+  }];
+}
+
+message ExamQuestionData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    ExamQuestionSeparator separator = 1;
+    ExamQuestionImage image = 6;
+    ExamQuestionYesNo yesno = 2;
+    ExamQuestionText free_text = 3;
+    ExamQuestionSingleChoice single_choice = 4;
+    ExamQuestionMultipleChoice multiple_choice = 5;
+  }
+}
+
+message ExamQuestionSeparator {}
+
+message ExamQuestionImage {
+  resources.file.File image = 1;
+  optional string alt = 2 [(buf.validate.field).string.max_len = 128];
+}
+
+message ExamQuestionYesNo {}
+
+message ExamQuestionText {
+  int32 min_length = 1;
+  int32 max_length = 2;
+}
+
+message ExamQuestionSingleChoice {
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message ExamQuestionMultipleChoice {
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  optional int32 limit = 2 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 10
+  }];
+}
+
+message ExamQuestionAnswerData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  string answer_key = 1 [(buf.validate.field).string.max_len = 1024];
+
+  oneof answer {
+    ExamResponseYesNo yesno = 4;
+    ExamResponseText free_text = 5;
+    ExamResponseSingleChoice single_choice = 6;
+    ExamResponseMultipleChoice multiple_choice = 7;
+  }
+}
+
+// User Response
+
+message ExamUser {
+  int64 qualification_id = 1;
+  int32 user_id = 2;
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp started_at = 4;
+  optional resources.timestamp.Timestamp ends_at = 5;
+  optional resources.timestamp.Timestamp ended_at = 6;
+}
+
+message ExamResponses {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  int64 qualification_id = 1;
+  int32 user_id = 2;
+  repeated ExamResponse responses = 3 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message ExamResponse {
+  int64 question_id = 1;
+  int32 user_id = 2;
+
+  ExamQuestion question = 3;
+  ExamResponseData response = 4;
+}
+
+message ExamResponseData {
+  oneof response {
+    option (buf.validate.oneof).required = true;
+
+    ExamResponseSeparator separator = 3;
+    ExamResponseYesNo yesno = 4;
+    ExamResponseText free_text = 5;
+    ExamResponseSingleChoice single_choice = 6;
+    ExamResponseMultipleChoice multiple_choice = 7;
+  }
+}
+
+message ExamResponseSeparator {}
+
+message ExamResponseYesNo {
+  bool value = 1;
+}
+
+message ExamResponseText {
+  string text = 1 [
+    (buf.validate.field).string.max_bytes = 500000,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ]; // 0.5 Megabyte
+}
+
+message ExamResponseSingleChoice {
+  string choice = 1 [
+    (buf.validate.field).string.max_len = 512,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message ExamResponseMultipleChoice {
+  repeated string choices = 1 [
+    (buf.validate.field).repeated.max_items = 10,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message ExamGrading {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated ExamGradingResponse responses = 1 [(buf.validate.field).repeated.max_items = 100];
+}
+
+message ExamGradingResponse {
+  int64 question_id = 1;
+  float points = 2 [(buf.validate.field).float = {
+    gte: 0
+    lte: 1000
+  }];
+  optional bool checked = 3;
+}

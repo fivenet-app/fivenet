@@ -6,9 +6,9 @@
 package jobs
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -35,7 +35,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.ConductServiceListConductEntriesAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "All"},
 				},
 			},
@@ -57,12 +57,12 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.JobsServiceGetColleagueAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
 					Key:         permkeys.JobsServiceGetColleagueTypesPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Note", "Labels"},
 				},
 			},
@@ -75,7 +75,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
 				},
 			},
@@ -102,12 +102,12 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.JobsServiceSetColleaguePropsAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
 					Key:         permkeys.JobsServiceSetColleaguePropsTypesPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
 			},
@@ -136,7 +136,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.TimeclockServiceListTimeclockAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"All"},
 				},
 			},

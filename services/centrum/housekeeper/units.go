@@ -6,10 +6,11 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"go.uber.org/zap"
 )
 
@@ -38,11 +39,11 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 	for _, settings := range s.settings.List(ctx) {
 		job := settings.GetJob()
 
-		dsps := s.dispatches.Filter(ctx, []string{job}, nil, []centrum.StatusDispatch{
-			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-			centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
+		dsps := s.dispatches.Filter(ctx, []string{job}, nil, []centrumdispatches.StatusDispatch{
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
 		})
 
 		for _, dsp := range dsps {
@@ -54,10 +55,10 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					zap.String("job", job),
 					zap.Int64("dispatch_id", dsp.GetId()),
 				)
-				if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrum.DispatchStatus{
+				if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.GetId(),
-					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+					Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
 					CreatorJob: &job,
 				}); err != nil {
 					return err
@@ -126,19 +127,19 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 			// Either unit has users but is static and in a wrong status
 			if len(unit.GetUsers()) > 0 {
 				if unit.GetAttributes() == nil ||
-					!unit.GetAttributes().Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
+					!unit.GetAttributes().Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 					continue
 				}
 
 				if unit.GetStatus() != nil &&
-					(unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_BUSY ||
-						unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_ON_BREAK ||
-						unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
+					(unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_BUSY ||
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_ON_BREAK ||
+						unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE) {
 					continue
 				}
 			} else if unit.GetStatus() != nil &&
 				// Or the unit is not already set to be unavailable (because it is empty)
-				unit.GetStatus().GetStatus() == centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+				unit.GetStatus().GetStatus() == centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE {
 				continue
 			}
 
@@ -156,10 +157,10 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 				zap.Int64("unit_id", unit.GetId()),
 				zap.Int32p("user_id", userId),
 			)
-			if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
+			if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 				CreatedAt:  timestamp.Now(),
 				UnitId:     unit.GetId(),
-				Status:     centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				Status:     centrumunits.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 				UserId:     userId,
 				CreatorJob: &job,
 			}); err != nil {
@@ -240,7 +241,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 
 func (s *Housekeeper) checkAndUpdateUnitUsers(
 	ctx context.Context,
-	unit *centrum.Unit,
+	unit *centrumunits.Unit,
 ) ([]int32, bool, error) {
 	if len(unit.GetUsers()) == 0 {
 		return nil, false, nil

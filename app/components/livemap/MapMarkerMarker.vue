@@ -2,7 +2,7 @@
 import type { PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
-import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
+import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 
 const props = withDefaults(
     defineProps<{

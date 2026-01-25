@@ -9,7 +9,7 @@ import { useClipboardStore } from '~/stores/clipboard';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const props = withDefaults(
     defineProps<{

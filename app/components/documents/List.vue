@@ -14,7 +14,7 @@ import { useSettingsStore } from '~/stores/settings';
 import type { ToggleItem } from '~/utils/types';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 import CategoryBadge from '../partials/documents/CategoryBadge.vue';
 import SelectMenu from '../partials/SelectMenu.vue';

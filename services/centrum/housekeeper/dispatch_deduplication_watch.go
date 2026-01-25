@@ -7,9 +7,9 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
 	"go.uber.org/zap"
@@ -70,7 +70,7 @@ func (s *Housekeeper) watchDispatches(ctx context.Context) error {
 }
 
 // tryDeduplicate single-dispatch dedup logic.
-func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch) error {
+func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrumdispatches.Dispatch) error {
 	// Check if the dispatch has already been cancelled, completed, etc.
 	if dsp.GetStatus() == nil ||
 		centrumutils.IsStatusDispatchComplete(dsp.GetStatus().GetStatus()) {
@@ -83,7 +83,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 	}
 
 	if dsp.GetAttributes() != nil &&
-		(dsp.GetAttributes().Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) || dsp.GetAttributes().Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
+		(dsp.GetAttributes().Has(centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) || dsp.GetAttributes().Has(centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
 		return nil // Already marked as multiple or duplicate, no need to deduplicate
 	}
 
@@ -106,17 +106,17 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 
 	// Search the spatial index for nearby active dispatches (same logic as before)
 	closeBy := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
-		//nolint:forcetypeassert // We know that p is a *centrum.Dispatch because locs is a generics spatial index
-		return p.(*centrum.Dispatch).GetId() != dsp.GetId()
+		//nolint:forcetypeassert // We know that p is a *centrumdispatches.Dispatch because locs is a generics spatial index
+		return p.(*centrumdispatches.Dispatch).GetId() != dsp.GetId()
 	}, radius) // meters
 	if len(closeBy) == 0 {
 		return nil
 	}
 
-	active := []*centrum.Dispatch{}
+	active := []*centrumdispatches.Dispatch{}
 	for _, dest := range closeBy {
-		//nolint:forcetypeassert // We know that p is a *centrum.Dispatch because closeBy is a list of dispatches from a generics spatial index
-		other := dest.(*centrum.Dispatch)
+		//nolint:forcetypeassert // We know that p is a *centrumdispatches.Dispatch because closeBy is a list of dispatches from a generics spatial index
+		other := dest.(*centrumdispatches.Dispatch)
 		if other.GetStatus() != nil &&
 			centrumutils.IsStatusDispatchComplete(other.GetStatus().GetStatus()) {
 			continue
@@ -125,8 +125,9 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 			continue
 		}
 		if other.GetAttributes() != nil {
-			if other.GetAttributes().Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) {
-			} else if other.GetAttributes().Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE) {
+			if other.GetAttributes().
+				Has(centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) {
+			} else if other.GetAttributes().Has(centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE) {
 				continue // Already marked as duplicate, skip it
 			}
 		}
@@ -138,7 +139,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 		return nil
 	}
 
-	slices.SortFunc(active, func(a, b *centrum.Dispatch) int {
+	slices.SortFunc(active, func(a, b *centrumdispatches.Dispatch) int {
 		return int(a.GetId() - b.GetId())
 	})
 	mainDsp := dsp
@@ -148,24 +149,24 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 			active = active[1:]          // Remove the new main dispatch from the list of duplicates
 			active = append(active, dsp) // Add the original dispatch to the list of duplicates
 		} else {
-			active = []*centrum.Dispatch{dsp}
+			active = []*centrumdispatches.Dispatch{dsp}
 		}
 	}
 
-	refs := &centrum.DispatchReferences{}
+	refs := &centrumdispatches.DispatchReferences{}
 	for _, dup := range active {
 		if dup.GetId() == mainDsp.GetId() {
 			continue // Skip the main dispatch itself
 		}
 
-		refs.Add(&centrum.DispatchReference{
+		refs.Add(&centrumdispatches.DispatchReference{
 			TargetDispatchId: dup.GetId(),
-			ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
+			ReferenceType:    centrumdispatches.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
 		})
 	}
 
 	// Mark the current dispatch as "multiple" and add the references
-	if err := s.dispatches.AddAttributeToDispatch(ctx, mainDsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
+	if err := s.dispatches.AddAttributeToDispatch(ctx, mainDsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
 		return err
 	}
 	if err := s.dispatches.AddReferencesToDispatch(ctx, mainDsp, refs.GetReferences()...); err != nil {
@@ -173,9 +174,9 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 	}
 
 	// Mark the close-by ones as duplicates & cancel them (same as original)
-	sourceRef := &centrum.DispatchReference{
+	sourceRef := &centrumdispatches.DispatchReference{
 		TargetDispatchId: mainDsp.GetId(),
-		ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
+		ReferenceType:    centrumdispatches.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
 	}
 
 	for _, dup := range active {
@@ -183,17 +184,17 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 			continue // Skip the main dispatch itself
 		}
 
-		if err := s.dispatches.AddAttributeToDispatch(ctx, dup, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
+		if err := s.dispatches.AddAttributeToDispatch(ctx, dup, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
 			return err
 		}
 		if err := s.dispatches.AddReferencesToDispatch(ctx, dup, sourceRef); err != nil {
 			return err
 		}
 
-		if _, err := s.dispatches.UpdateStatus(ctx, dup.GetId(), &centrum.DispatchStatus{
+		if _, err := s.dispatches.UpdateStatus(ctx, dup.GetId(), &centrumdispatches.DispatchStatus{
 			CreatedAt:  timestamp.Now(),
 			DispatchId: dup.GetId(),
-			Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}); err != nil {
 			return err
 		}

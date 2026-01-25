@@ -6,9 +6,9 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	lang "github.com/fivenet-app/fivenet/v2025/i18n"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	discordtypes "github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	lang "github.com/fivenet-app/fivenet/v2026/i18n"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
+	discordtypes "github.com/fivenet-app/fivenet/v2026/pkg/discord/types"
 )
 
 type SyncCommand struct {

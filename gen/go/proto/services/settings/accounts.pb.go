@@ -7,11 +7,11 @@
 package settings
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	accounts "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -169,7 +169,7 @@ type CreateAccountRequest struct {
 	Username string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
 	LastChar *int32                 `protobuf:"varint,3,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
 	// Allow creating a char at the same time (only when dbsync is used)
-	Char          *users.UserShort `protobuf:"bytes,4,opt,name=char,proto3,oneof" json:"char,omitempty"`
+	Char          *short.UserShort `protobuf:"bytes,4,opt,name=char,proto3,oneof" json:"char,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -225,7 +225,7 @@ func (x *CreateAccountRequest) GetLastChar() int32 {
 	return 0
 }
 
-func (x *CreateAccountRequest) GetChar() *users.UserShort {
+func (x *CreateAccountRequest) GetChar() *short.UserShort {
 	if x != nil {
 		return x.Char
 	}
@@ -552,7 +552,7 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a\x1bresources/users/users.proto\"\xe0\x02\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\x1a resources/users/short/user.proto\"\xe0\x02\n" +
 	"\x13ListAccountsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -574,12 +574,12 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\xba\x01\n" +
+	"\baccounts\x18\x02 \x03(\v2\x1b.resources.accounts.AccountB\x04\xc8\xf3\x18\x01R\baccounts\"\xc0\x01\n" +
 	"\x14CreateAccountRequest\x12\x18\n" +
 	"\alicense\x18\x01 \x01(\tR\alicense\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12 \n" +
-	"\tlast_char\x18\x03 \x01(\x05H\x00R\blastChar\x88\x01\x01\x123\n" +
-	"\x04char\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04char\x88\x01\x01B\f\n" +
+	"\tlast_char\x18\x03 \x01(\x05H\x00R\blastChar\x88\x01\x01\x129\n" +
+	"\x04char\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x01R\x04char\x88\x01\x01B\f\n" +
 	"\n" +
 	"_last_charB\a\n" +
 	"\x05_char\"4\n" +
@@ -607,7 +607,7 @@ const file_services_settings_accounts_proto_rawDesc = "" +
 	"\rCreateAccount\x12'.services.settings.CreateAccountRequest\x1a(.services.settings.CreateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
 	"\rUpdateAccount\x12'.services.settings.UpdateAccountRequest\x1a(.services.settings.UpdateAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x8d\x01\n" +
 	"\x15DisconnectSocialLogin\x12/.services.settings.DisconnectSocialLoginRequest\x1a0.services.settings.DisconnectSocialLoginResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteAccount\x12'.services.settings.DeleteAccountRequest\x1a(.services.settings.DeleteAccountResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_accounts_proto_rawDescOnce sync.Once
@@ -637,14 +637,14 @@ var file_services_settings_accounts_proto_goTypes = []any{
 	(*database.Sort)(nil),                 // 11: resources.common.database.Sort
 	(*database.PaginationResponse)(nil),   // 12: resources.common.database.PaginationResponse
 	(*accounts.Account)(nil),              // 13: resources.accounts.Account
-	(*users.UserShort)(nil),               // 14: resources.users.UserShort
+	(*short.UserShort)(nil),               // 14: resources.users.short.UserShort
 }
 var file_services_settings_accounts_proto_depIdxs = []int32{
 	10, // 0: services.settings.ListAccountsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	11, // 1: services.settings.ListAccountsRequest.sort:type_name -> resources.common.database.Sort
 	12, // 2: services.settings.ListAccountsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	13, // 3: services.settings.ListAccountsResponse.accounts:type_name -> resources.accounts.Account
-	14, // 4: services.settings.CreateAccountRequest.char:type_name -> resources.users.UserShort
+	14, // 4: services.settings.CreateAccountRequest.char:type_name -> resources.users.short.UserShort
 	13, // 5: services.settings.UpdateAccountResponse.account:type_name -> resources.accounts.Account
 	0,  // 6: services.settings.AccountsService.ListAccounts:input_type -> services.settings.ListAccountsRequest
 	2,  // 7: services.settings.AccountsService.CreateAccount:input_type -> services.settings.CreateAccountRequest

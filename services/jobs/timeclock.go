@@ -6,16 +6,17 @@ import (
 	"math"
 	"time"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
-	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	jobstimeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -50,10 +51,10 @@ func (s *Server) ListTimeclock(
 	}
 
 	if !fields.Contains("All") {
-		req.UserMode = jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
+		req.UserMode = jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
 
-	if req.GetUserMode() <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
+	if req.GetUserMode() <= jobstimeclock.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
 		condition = condition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(mysql.Int32(userInfo.GetUserId())))
 	} else if len(req.GetUserIds()) > 0 {
@@ -71,7 +72,7 @@ func (s *Server) ListTimeclock(
 	}
 
 	if req.GetDate() != nil {
-		if req.GetMode() <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+		if req.GetMode() <= jobstimeclock.TimeclockMode_TIMECLOCK_MODE_DAILY {
 			if req.GetDate().GetEnd() == nil {
 				req.Date.End = timestamp.Now()
 			}
@@ -79,7 +80,7 @@ func (s *Server) ListTimeclock(
 			condition = condition.AND(tTimeClock.Date.EQ(
 				mysql.DateT(req.GetDate().GetEnd().AsTime()),
 			))
-		} else if req.GetMode() == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+		} else if req.GetMode() == jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
 			if req.GetDate().GetEnd() != nil {
 				condition = condition.AND(mysql.BoolExp(mysql.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
 					mysql.RawArgs{"$date": req.GetDate().GetEnd().AsTime()},
@@ -269,10 +270,10 @@ func (s *Server) ListTimeclock(
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 
 	switch req.GetMode() {
-	case jobs.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
+	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_UNSPECIFIED:
 		fallthrough
 
-	case jobs.TimeclockMode_TIMECLOCK_MODE_DAILY:
+	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_DAILY:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Daily{
 			Daily: &pbjobs.TimeclockDay{},
 		}
@@ -298,7 +299,7 @@ func (s *Server) ListTimeclock(
 
 		resp.GetPagination().Update(len(data.GetEntries()))
 
-	case jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY:
+	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_WEEKLY:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Weekly{
 			Weekly: &pbjobs.TimeclockWeekly{},
 		}
@@ -323,7 +324,7 @@ func (s *Server) ListTimeclock(
 
 		resp.GetPagination().Update(len(data.GetEntries()))
 
-	case jobs.TimeclockMode_TIMECLOCK_MODE_RANGE:
+	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_RANGE:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
@@ -346,7 +347,7 @@ func (s *Server) ListTimeclock(
 
 		resp.GetPagination().Update(len(data.GetEntries()))
 
-	case jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE:
+	case jobstimeclock.TimeclockMode_TIMECLOCK_MODE_TIMELINE:
 		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
 			Range: &pbjobs.TimeclockRange{},
 		}
@@ -533,7 +534,7 @@ func (s *Server) ListInactiveEmployees(
 	pag, limit := req.GetPagination().GetResponseWithPageSize(count.Total, 20)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
-		Colleagues: []*jobs.Colleague{},
+		Colleagues: []*jobscolleagues.Colleague{},
 	}
 	if count.Total <= 0 {
 		return resp, nil

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 )
 
 // MockUserInfoRetriever is a mock implementation of a user info retriever for testing purposes.

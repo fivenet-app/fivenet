@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { VehicleProps } from "./props";
-import { UserShort } from "../users/users";
+import { VehicleProps } from "./props/props";
+import { UserShort } from "../users/short/user";
 /**
  * @generated from protobuf message resources.vehicles.Vehicle
  */
@@ -38,7 +38,7 @@ export interface Vehicle {
      */
     ownerIdentifier?: string;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort owner = 5
+     * @generated from protobuf field: optional resources.users.short.UserShort owner = 5
      */
     owner?: UserShort;
     /**
@@ -50,7 +50,7 @@ export interface Vehicle {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional resources.vehicles.VehicleProps props = 9
+     * @generated from protobuf field: optional resources.vehicles.props.VehicleProps props = 9
      */
     props?: VehicleProps;
 }
@@ -97,7 +97,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* optional string owner_identifier */ 6:
                     message.ownerIdentifier = reader.string();
                     break;
-                case /* optional resources.users.UserShort owner */ 5:
+                case /* optional resources.users.short.UserShort owner */ 5:
                     message.owner = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.owner);
                     break;
                 case /* optional string job */ 7:
@@ -106,7 +106,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* optional string job_label */ 8:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional resources.vehicles.VehicleProps props */ 9:
+                case /* optional resources.vehicles.props.VehicleProps props */ 9:
                     message.props = VehicleProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
@@ -133,7 +133,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* optional int32 owner_id = 4; */
         if (message.ownerId !== undefined)
             writer.tag(4, WireType.Varint).int32(message.ownerId);
-        /* optional resources.users.UserShort owner = 5; */
+        /* optional resources.users.short.UserShort owner = 5; */
         if (message.owner)
             UserShort.internalBinaryWrite(message.owner, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* optional string owner_identifier = 6; */
@@ -145,7 +145,7 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* optional string job_label = 8; */
         if (message.jobLabel !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional resources.vehicles.VehicleProps props = 9; */
+        /* optional resources.vehicles.props.VehicleProps props = 9; */
         if (message.props)
             VehicleProps.internalBinaryWrite(message.props, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

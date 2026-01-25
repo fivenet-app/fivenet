@@ -5,7 +5,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
-import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineProps<{

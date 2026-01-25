@@ -8,7 +8,8 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { type ClipboardDocument, getDocument, useClipboardStore } from '~/stores/clipboard';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { type DocumentReference, type DocumentShort, DocReference } from '~~/gen/ts/resources/documents/documents';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { type DocumentReference, DocReference } from '~~/gen/ts/resources/documents/references/references';
 
 const props = defineProps<{
     documentId?: number;

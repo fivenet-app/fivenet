@@ -5,19 +5,20 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -57,7 +58,7 @@ func (s *Server) ListQualificationRequests(
 			ctx,
 			req.GetQualificationId(),
 			userInfo,
-			qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+			qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 		)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -79,9 +80,9 @@ func (s *Server) ListQualificationRequests(
 					tQAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 
 					mysql.OR(
-						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE))),
 						mysql.AND(
-							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_VIEW))),
+							tQAccess.Access.GT_EQ(mysql.Int32(int32(qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW))),
 							tQualiRequests.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						),
 					),
@@ -276,7 +277,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 		ctx,
 		req.GetRequest().GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -362,7 +363,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(
 
 		grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 	} else {
-		canRequest, err := s.access.CanUserAccessTarget(ctx, req.GetRequest().GetQualificationId(), userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		canRequest, err := s.access.CanUserAccessTarget(ctx, req.GetRequest().GetQualificationId(), userInfo, qualificationsaccess.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -544,7 +545,7 @@ func (s *Server) DeleteQualificationReq(
 		ctx,
 		re.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

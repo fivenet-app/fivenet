@@ -1,14 +1,14 @@
 package wiki
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	wikiaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	errorswiki "github.com/fivenet-app/fivenet/v2026/services/wiki/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
@@ -32,7 +32,7 @@ func (s *Server) UploadFile(
 		ctx,
 		meta.GetParentId(),
 		userInfo,
-		wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+		wikiaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorswiki.ErrPageDenied)

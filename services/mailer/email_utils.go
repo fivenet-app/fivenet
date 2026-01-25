@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -97,7 +97,7 @@ func (s *Server) generateEmailProposals(
 			).
 			LIMIT(1)
 
-		user := &users.UserShort{}
+		user := &usershort.UserShort{}
 		if err := stmt.QueryContext(ctx, s.db, user); err != nil {
 			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}

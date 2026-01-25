@@ -14,10 +14,10 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCalendarStore } from '~/stores/calendar';
 import { useCompletorStore } from '~/stores/completor';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{

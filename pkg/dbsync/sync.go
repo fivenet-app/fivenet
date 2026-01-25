@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"

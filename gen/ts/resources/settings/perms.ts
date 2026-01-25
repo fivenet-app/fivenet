@@ -11,18 +11,18 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { RoleAttribute } from "../permissions/attributes";
-import { PermItem } from "../permissions/permissions";
+import { RoleAttribute } from "../permissions/attributes/attributes";
+import { PermItem } from "../permissions/permissions/permissions";
 /**
  * @generated from protobuf message resources.settings.PermsUpdate
  */
 export interface PermsUpdate {
     /**
-     * @generated from protobuf field: repeated resources.permissions.PermItem to_update = 1
+     * @generated from protobuf field: repeated resources.permissions.permissions.PermItem to_update = 1
      */
     toUpdate: PermItem[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.PermItem to_remove = 2
+     * @generated from protobuf field: repeated resources.permissions.permissions.PermItem to_remove = 2
      */
     toRemove: PermItem[];
 }
@@ -31,11 +31,11 @@ export interface PermsUpdate {
  */
 export interface AttrsUpdate {
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute to_update = 1
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute to_update = 1
      */
     toUpdate: RoleAttribute[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute to_remove = 2
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute to_remove = 2
      */
     toRemove: RoleAttribute[];
 }
@@ -60,10 +60,10 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.permissions.PermItem to_update */ 1:
+                case /* repeated resources.permissions.permissions.PermItem to_update */ 1:
                     message.toUpdate.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.PermItem to_remove */ 2:
+                case /* repeated resources.permissions.permissions.PermItem to_remove */ 2:
                     message.toRemove.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -78,10 +78,10 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
         return message;
     }
     internalBinaryWrite(message: PermsUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.PermItem to_update = 1; */
+        /* repeated resources.permissions.permissions.PermItem to_update = 1; */
         for (let i = 0; i < message.toUpdate.length; i++)
             PermItem.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.PermItem to_remove = 2; */
+        /* repeated resources.permissions.permissions.PermItem to_remove = 2; */
         for (let i = 0; i < message.toRemove.length; i++)
             PermItem.internalBinaryWrite(message.toRemove[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -115,10 +115,10 @@ class AttrsUpdate$Type extends MessageType<AttrsUpdate> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.permissions.RoleAttribute to_update */ 1:
+                case /* repeated resources.permissions.attributes.RoleAttribute to_update */ 1:
                     message.toUpdate.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute to_remove */ 2:
+                case /* repeated resources.permissions.attributes.RoleAttribute to_remove */ 2:
                     message.toRemove.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -133,10 +133,10 @@ class AttrsUpdate$Type extends MessageType<AttrsUpdate> {
         return message;
     }
     internalBinaryWrite(message: AttrsUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.RoleAttribute to_update = 1; */
+        /* repeated resources.permissions.attributes.RoleAttribute to_update = 1; */
         for (let i = 0; i < message.toUpdate.length; i++)
             RoleAttribute.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute to_remove = 2; */
+        /* repeated resources.permissions.attributes.RoleAttribute to_remove = 2; */
         for (let i = 0; i < message.toRemove.length; i++)
             RoleAttribute.internalBinaryWrite(message.toRemove[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

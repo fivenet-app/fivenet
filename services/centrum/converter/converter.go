@@ -7,14 +7,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
 	"github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -186,9 +187,9 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 			}
 		}
 
-		dsp := &centrum.Dispatch{
+		dsp := &centrumdispatches.Dispatch{
 			CreatedAt:  timestamp.Now(),
-			Attributes: &centrum.DispatchAttributes{},
+			Attributes: &centrumdispatches.DispatchAttributes{},
 			Jobs: &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{
@@ -296,9 +297,9 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 			}
 		}
 
-		dsp := &centrum.Dispatch{
+		dsp := &centrumdispatches.Dispatch{
 			CreatedAt:  timestamp.Now(),
-			Attributes: &centrum.DispatchAttributes{},
+			Attributes: &centrumdispatches.DispatchAttributes{},
 			Jobs: &centrum.JobList{
 				Jobs: []*centrum.JobListEntry{
 					{

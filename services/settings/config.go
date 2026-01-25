@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 )
 
@@ -21,7 +21,6 @@ func (s *Server) GetAppConfig(
 	ctx context.Context,
 	req *pbsettings.GetAppConfigRequest,
 ) (*pbsettings.GetAppConfigResponse, error) {
-
 	cfg, err := s.appCfg.Reload(ctx)
 	if err != nil {
 		return nil, err
@@ -38,7 +37,6 @@ func (s *Server) UpdateAppConfig(
 	ctx context.Context,
 	req *pbsettings.UpdateAppConfigRequest,
 ) (*pbsettings.UpdateAppConfigResponse, error) {
-
 	req.GetConfig().Default()
 	if req.GetConfig().GetSystem().GetBannerMessage() != nil {
 		var expiresAt time.Time
@@ -98,8 +96,8 @@ func (s *Server) UpdateAppConfig(
 		s.appCfg.Get(),
 	)
 
-	s.notifi.SendSystemEvent(ctx, &notifications.SystemEvent{
-		Data: &notifications.SystemEvent_ClientConfig{
+	s.notifi.SendSystemEvent(ctx, &notificationsevents.SystemEvent{
+		Data: &notificationsevents.SystemEvent_ClientConfig{
 			ClientConfig: clientCfg,
 		},
 	})

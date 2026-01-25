@@ -1,0 +1,109 @@
+syntax = "proto3";
+
+package resources.centrum.settings;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "google/protobuf/duration.proto";
+import "resources/centrum/access/access.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings;centrumsettings";
+
+enum CentrumType {
+  CENTRUM_TYPE_UNSPECIFIED = 0;
+  CENTRUM_TYPE_DISPATCH = 1;
+  CENTRUM_TYPE_DELIVERY = 2;
+}
+
+enum CentrumMode {
+  CENTRUM_MODE_UNSPECIFIED = 0;
+  CENTRUM_MODE_MANUAL = 1;
+  CENTRUM_MODE_CENTRAL_COMMAND = 2;
+  CENTRUM_MODE_AUTO_ROUND_ROBIN = 3;
+  CENTRUM_MODE_SIMPLIFIED = 4;
+}
+
+message Settings {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  bool enabled = 2;
+  CentrumType type = 3 [(buf.validate.field).enum.defined_only = true];
+  bool public = 9;
+  CentrumMode mode = 8 [(buf.validate.field).enum.defined_only = true];
+  CentrumMode fallback_mode = 4 [(buf.validate.field).enum.defined_only = true];
+  optional PredefinedStatus predefined_status = 5;
+  Timings timings = 6;
+  Configuration configuration = 10;
+  optional resources.centrum.access.CentrumAccess access = 7;
+  optional resources.centrum.access.CentrumAccess offered_access = 12;
+  optional EffectiveAccess effective_access = 11;
+}
+
+message PredefinedStatus {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  repeated string unit_status = 1 [
+    (buf.validate.field).repeated = {
+      max_items: 20
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+  repeated string dispatch_status = 2 [
+    (buf.validate.field).repeated = {
+      max_items: 20
+      items: {
+        string: {max_len: 64}
+      }
+    },
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}
+
+message Timings {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  int64 dispatch_max_wait = 1 [(buf.validate.field).int64 = {
+    gt: 30
+    lt: 6000
+  }];
+  bool require_unit = 2;
+  int64 require_unit_reminder_seconds = 3 [(buf.validate.field).int64 = {
+    gt: 30
+    lt: 6000
+  }];
+}
+
+message Configuration {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool deduplication_enabled = 1;
+  int64 deduplication_radius = 2 [(buf.validate.field).int64 = {
+    gt: 5
+    lt: 1000000
+  }];
+  optional google.protobuf.Duration deduplication_duration = 3;
+}
+
+message EffectiveAccess {
+  EffectiveDispatchAccess dispatches = 1;
+}
+
+message EffectiveDispatchAccess {
+  repeated JobAccessEntry jobs = 1 [(tagger.tags) = "alias:\"job_access\""];
+}
+
+message JobAccessEntry {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 2;
+  resources.centrum.access.CentrumAccessLevel access = 3 [(buf.validate.field).enum.defined_only = true];
+}

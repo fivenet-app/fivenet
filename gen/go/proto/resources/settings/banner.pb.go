@@ -7,8 +7,8 @@
 package settings
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -124,7 +124,7 @@ const file_resources_settings_banner_proto_rawDesc = "" +
 	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampB\x15\x9a\x84\x9e\x03\x10json:\"expiresAt\"H\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_iconB\b\n" +
 	"\x06_colorB\r\n" +
-	"\v_expires_atBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"
+	"\v_expires_atBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var (
 	file_resources_settings_banner_proto_rawDescOnce sync.Once

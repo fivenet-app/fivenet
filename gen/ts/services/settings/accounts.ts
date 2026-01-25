@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../../resources/users/users";
+import { UserShort } from "../../resources/users/short/user";
 import { Account } from "../../resources/accounts/accounts";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -80,7 +80,7 @@ export interface CreateAccountRequest {
     /**
      * Allow creating a char at the same time (only when dbsync is used)
      *
-     * @generated from protobuf field: optional resources.users.UserShort char = 4
+     * @generated from protobuf field: optional resources.users.short.UserShort char = 4
      */
     char?: UserShort;
 }
@@ -318,7 +318,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
                 case /* optional int32 last_char */ 3:
                     message.lastChar = reader.int32();
                     break;
-                case /* optional resources.users.UserShort char */ 4:
+                case /* optional resources.users.short.UserShort char */ 4:
                     message.char = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -342,7 +342,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
         /* optional int32 last_char = 3; */
         if (message.lastChar !== undefined)
             writer.tag(3, WireType.Varint).int32(message.lastChar);
-        /* optional resources.users.UserShort char = 4; */
+        /* optional resources.users.short.UserShort char = 4; */
         if (message.char)
             UserShort.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

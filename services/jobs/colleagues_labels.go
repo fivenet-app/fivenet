@@ -4,21 +4,21 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
-	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
-	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
+	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -35,7 +35,7 @@ func (s *Server) GetColleagueLabels(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbjobs.GetColleagueLabelsResponse{
-		Labels: []*jobs.Label{},
+		Labels: []*jobslabels.Label{},
 	}
 
 	// Fields Permission Check
@@ -118,7 +118,7 @@ func (s *Server) ManageLabels(
 			tJobLabels.Job.EQ(mysql.String(userInfo.GetJob())),
 		))
 
-	labels := []*jobs.Label{}
+	labels := []*jobslabels.Label{}
 	if err := stmt.QueryContext(ctx, s.db, &labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -126,7 +126,7 @@ func (s *Server) ManageLabels(
 	}
 
 	_, removed := utils.SlicesDifferenceFunc(labels, req.GetLabels(),
-		func(in *jobs.Label) int64 {
+		func(in *jobslabels.Label) int64 {
 			return in.GetId()
 		})
 
@@ -139,8 +139,8 @@ func (s *Server) ManageLabels(
 
 	tJobLabels := table.FivenetJobLabels
 	if len(req.GetLabels()) > 0 {
-		toCreate := []*jobs.Label{}
-		toUpdate := []*jobs.Label{}
+		toCreate := []*jobslabels.Label{}
+		toUpdate := []*jobslabels.Label{}
 
 		for _, label := range req.GetLabels() {
 			if label.GetId() == 0 {
@@ -221,7 +221,7 @@ func (s *Server) ManageLabels(
 	}
 
 	resp := &pbjobs.ManageLabelsResponse{
-		Labels: []*jobs.Label{},
+		Labels: []*jobslabels.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -237,7 +237,7 @@ func (s *Server) ManageLabels(
 func (s *Server) validateLabels(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	labels []*jobs.Label,
+	labels []*jobslabels.Label,
 ) (bool, error) {
 	if len(labels) == 0 {
 		return true, nil
@@ -277,7 +277,7 @@ func (s *Server) getUserLabels(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	userId int32,
-) (*jobs.Labels, error) {
+) (*jobslabels.Labels, error) {
 	stmt := tColleagueLabels.
 		SELECT(
 			tJobLabels.ID,
@@ -298,8 +298,8 @@ func (s *Server) getUserLabels(
 		)).
 		ORDER_BY(tJobLabels.Order.ASC())
 
-	list := &jobs.Labels{
-		List: []*jobs.Label{},
+	list := &jobslabels.Labels{
+		List: []*jobslabels.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -364,7 +364,7 @@ func (s *Server) GetColleagueLabelsStats(
 			tJobLabels.Order.ASC(),
 		)
 
-	dest := []*jobs.LabelCount{}
+	dest := []*jobslabels.LabelCount{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

@@ -1,6 +1,8 @@
 package common
 
-import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+import (
+	documentscategory "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+)
 
 // IJobInfo defines methods for accessing and mutating job and grade information.
 type IJobInfo interface {
@@ -31,5 +33,5 @@ type ICategory interface {
 	// GetCategoryId returns the unique identifier for the category.
 	GetCategoryId() int64
 	// SetCategory sets the category using a Category struct.
-	SetCategory(category *documents.Category)
+	SetCategory(category *documentscategory.Category)
 }

@@ -11,8 +11,8 @@ import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import DispatchAssignModal from '../dispatches/DispatchAssignModal.vue';
 import DispatchStatusBadge from '../partials/DispatchStatusBadge.vue';
 

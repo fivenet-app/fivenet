@@ -7,7 +7,7 @@
 package userinfo
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -394,7 +394,7 @@ const file_resources_userinfo_user_info_proto_rawDesc = "" +
 	"\x14_new_job_grade_labelB\x13\n" +
 	"\x11_can_be_superuserB\f\n" +
 	"\n" +
-	"_superuserBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo;userinfob\x06proto3"
+	"_superuserBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo;userinfob\x06proto3"
 
 var (
 	file_resources_userinfo_user_info_proto_rawDescOnce sync.Once

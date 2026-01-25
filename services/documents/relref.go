@@ -5,20 +5,23 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsreferences "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
+	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usersactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -41,7 +44,7 @@ func (s *Server) GetDocumentReferences(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -95,7 +98,7 @@ func (s *Server) GetDocumentReferences(
 	ids, err := s.access.CanUserAccessTargetIDs(
 		ctx,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		docIds...)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -179,7 +182,7 @@ func (s *Server) GetDocumentReferences(
 		).
 		LIMIT(25)
 
-	var dest []*documents.DocumentReference
+	var dest []*documentsreferences.DocumentReference
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -217,7 +220,7 @@ func (s *Server) GetDocumentRelations(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -255,7 +258,7 @@ func (s *Server) AddDocumentReference(
 	check, err := s.access.CanUserAccessTargets(
 		ctx,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		req.GetReference().GetSourceDocumentId(),
 		req.GetReference().GetTargetDocumentId(),
 	)
@@ -268,7 +271,7 @@ func (s *Server) AddDocumentReference(
 
 	req.Reference.CreatorId = &userInfo.UserId
 
-	lastId, err := s.addDocumentReference(ctx, s.db, &documents.DocumentReference{
+	lastId, err := s.addDocumentReference(ctx, s.db, &documentsreferences.DocumentReference{
 		SourceDocumentId: req.GetReference().GetSourceDocumentId(),
 		TargetDocumentId: req.GetReference().GetTargetDocumentId(),
 		Reference:        req.GetReference().GetReference(),
@@ -288,7 +291,7 @@ func (s *Server) AddDocumentReference(
 func (s *Server) addDocumentReference(
 	ctx context.Context,
 	db qrm.DB,
-	ref *documents.DocumentReference,
+	ref *documentsreferences.DocumentReference,
 ) (int64, error) {
 	docRef := table.FivenetDocumentsReferences
 	stmt := docRef.
@@ -348,7 +351,7 @@ func (s *Server) RemoveDocumentReference(
 	check, err := s.access.CanUserAccessTargets(
 		ctx,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		docIDs.Source,
 		docIDs.Target,
 	)
@@ -395,7 +398,7 @@ func (s *Server) AddDocumentRelation(
 		ctx,
 		req.GetRelation().GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -406,7 +409,7 @@ func (s *Server) AddDocumentRelation(
 
 	req.Relation.SourceUserId = userInfo.GetUserId()
 
-	lastId, err := s.addDocumentRelation(ctx, s.db, userInfo, &documents.DocumentRelation{
+	lastId, err := s.addDocumentRelation(ctx, s.db, userInfo, &documentsrelations.DocumentRelation{
 		DocumentId:   req.GetRelation().GetDocumentId(),
 		SourceUserId: req.GetRelation().GetSourceUserId(),
 		Relation:     req.GetRelation().GetRelation(),
@@ -427,7 +430,7 @@ func (s *Server) addDocumentRelation(
 	ctx context.Context,
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
-	rel *documents.DocumentRelation,
+	rel *documentsrelations.DocumentRelation,
 ) (int64, error) {
 	tDocRel := table.FivenetDocumentsRelations
 	stmt := tDocRel.
@@ -480,19 +483,19 @@ func (s *Server) addDocumentRelation(
 
 		// Only mention users when the relation has been created and not been "duplicated"
 		if err := s.addUserActivity(ctx, tx,
-			userInfo.GetUserId(), rel.GetTargetUserId(), users.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &users.UserActivityData{
-				Data: &users.UserActivityData_DocumentRelation{
-					DocumentRelation: &users.CitizenDocumentRelation{
+			userInfo.GetUserId(), rel.GetTargetUserId(), usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &usersactivity.UserActivityData{
+				Data: &usersactivity.UserActivityData_DocumentRelation{
+					DocumentRelation: &usersactivity.CitizenDocumentRelation{
 						Added:      true,
 						DocumentId: rel.GetDocumentId(),
-						Relation:   int32(rel.GetRelation()),
+						Relation:   rel.GetRelation(),
 					},
 				},
 			}); err != nil {
 			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if rel.GetRelation() == documents.DocRelation_DOC_RELATION_MENTIONED {
+		if rel.GetRelation() == documentsrelations.DocRelation_DOC_RELATION_MENTIONED {
 			if err := s.notifyMentionedUser(ctx, rel.GetDocumentId(), userInfo.GetUserId(), rel.GetTargetUserId()); err != nil {
 				return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
@@ -531,7 +534,7 @@ func (s *Server) RemoveDocumentRelation(
 		ctx,
 		docID.ID,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
@@ -569,9 +572,9 @@ func (s *Server) RemoveDocumentRelation(
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userInfo.GetUserId(), rel.GetTargetUserId(), users.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &users.UserActivityData{
-			Data: &users.UserActivityData_DocumentRelation{
-				DocumentRelation: &users.CitizenDocumentRelation{
+		userInfo.GetUserId(), rel.GetTargetUserId(), usersactivity.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &usersactivity.UserActivityData{
+			Data: &usersactivity.UserActivityData_DocumentRelation{
+				DocumentRelation: &usersactivity.CitizenDocumentRelation{
 					Added:      false,
 					DocumentId: docID.ID,
 					// Relation:   rel.Relation,
@@ -594,7 +597,7 @@ func (s *Server) RemoveDocumentRelation(
 func (s *Server) getDocumentRelation(
 	ctx context.Context,
 	id int64,
-) (*documents.DocumentRelation, error) {
+) (*documentsrelations.DocumentRelation, error) {
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,
@@ -612,7 +615,7 @@ func (s *Server) getDocumentRelation(
 		).
 		LIMIT(1)
 
-	var dest documents.DocumentRelation
+	var dest documentsrelations.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -626,7 +629,7 @@ func (s *Server) getDocumentRelations(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	documentId int64,
-) ([]*documents.DocumentRelation, error) {
+) ([]*documentsrelations.DocumentRelation, error) {
 	tSourceUser := tables.User().AS("source_user")
 	tTargetUser := tSourceUser.AS("target_user")
 
@@ -693,7 +696,7 @@ func (s *Server) getDocumentRelations(
 		).
 		LIMIT(25)
 
-	var dest []*documents.DocumentRelation
+	var dest []*documentsrelations.DocumentRelation
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -729,7 +732,7 @@ func (s *Server) notifyMentionedUser(
 		ctx,
 		documentId,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return err
@@ -761,7 +764,7 @@ func (s *Server) notifyMentionedUser(
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", doc.GetId()),
 			},
-			CausedBy: &users.UserShort{
+			CausedBy: &usershort.UserShort{
 				UserId: sourceUserId,
 			},
 		},

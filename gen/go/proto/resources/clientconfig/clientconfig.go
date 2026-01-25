@@ -1,10 +1,10 @@
 package clientconfig
 
 import (
-	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"google.golang.org/protobuf/proto"
 )
 

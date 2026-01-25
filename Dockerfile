@@ -47,7 +47,7 @@ RUN apk add --no-cache git && \
 # Backend Build
 FROM docker.io/library/golang:1.25.5 AS gobuilder
 
-WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
+WORKDIR /go/src/github.com/fivenet-app/fivenet/v2026/
 
 COPY --exclude=public/images/livemap/ . ./
 
@@ -82,7 +82,7 @@ RUN apk --no-cache add ca-certificates tini tzdata && \
 ## Copy built files from the builder stages
 COPY --from=iconsets /app/icons/ ./icons/
 COPY --from=nodebuilder /app/.output/public ./.output/public
-COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/v2025/fivenet /usr/local/bin
+COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/v2026/fivenet /usr/local/bin
 
 USER 2000
 

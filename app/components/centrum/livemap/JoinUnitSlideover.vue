@@ -2,8 +2,8 @@
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
+import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { checkUnitAccess } from '../helpers';
 
 const emit = defineEmits<{

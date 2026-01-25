@@ -3,10 +3,10 @@ syntax = "proto3";
 package resources.sync;
 
 import "buf/validate/validate.proto";
-import "resources/jobs/colleagues.proto";
-import "resources/users/props.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/users/props/props.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;sync";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;sync";
 
 // Connect an identifier/license to the provider with the specified external id
 // (e.g., auto discord social connect on server join)
@@ -19,12 +19,12 @@ message UserOAuth2Conn {
 
 message UserProps {
   optional string reason = 1 [(buf.validate.field).string.max_len = 255];
-  resources.users.UserProps props = 2 [(buf.validate.field).required = true];
+  resources.users.props.UserProps props = 2 [(buf.validate.field).required = true];
 }
 
 message ColleagueProps {
   optional string reason = 1 [(buf.validate.field).string.max_len = 255];
-  resources.jobs.ColleagueProps props = 2 [(buf.validate.field).required = true];
+  resources.jobs.colleagues.ColleagueProps props = 2 [(buf.validate.field).required = true];
 }
 
 message UserUpdate {

@@ -6,12 +6,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -21,7 +21,7 @@ func RetrieveColleagueById(
 	db *sql.DB,
 	enricher *mstlystcdata.Enricher,
 	u ...int32,
-) ([]*jobs.Colleague, error) {
+) ([]*jobscolleagues.Colleague, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -73,7 +73,7 @@ func RetrieveColleagueById(
 		).
 		LIMIT(int64(len(u)))
 
-	dest := []*jobs.Colleague{}
+	dest := []*jobscolleagues.Colleague{}
 	if err := stmt.QueryContext(ctx, db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to retrieve colleagues by ids %+v. %w", u, err)
 	}
@@ -91,7 +91,7 @@ func RetrieveUserShortById(
 	db *sql.DB,
 	enricher *mstlystcdata.Enricher,
 	u int32,
-) (*jobs.Colleague, error) {
+) (*jobscolleagues.Colleague, error) {
 	us, err := RetrieveColleagueById(ctx, db, enricher, u)
 	if err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ func RetrieveUsersForUnit(
 	ctx context.Context,
 	db *sql.DB,
 	enricher *mstlystcdata.Enricher,
-	u *[]*centrum.UnitAssignment,
+	u *[]*centrumunits.UnitAssignment,
 ) error {
 	userIds := make([]int32, len(*u))
 	for i := range *u {

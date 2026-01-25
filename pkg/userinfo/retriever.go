@@ -8,19 +8,19 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/cache"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/cache"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -201,8 +201,8 @@ func (r *Retriever) handleMsg(m jetstream.Msg) {
 		zap.Int64("accountId", evt.GetAccountId()),
 	)
 
-	r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notifications.UserEvent{
-		Data: &notifications.UserEvent_UserInfoChanged{
+	r.notifi.SendUserEvent(r.ctx, evt.GetUserId(), &notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_UserInfoChanged{
 			UserInfoChanged: &evt,
 		},
 	})

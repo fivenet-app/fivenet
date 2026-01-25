@@ -3,13 +3,13 @@ package qualifications
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 )
 
@@ -24,7 +24,7 @@ func (s *Server) GetQualificationAccess(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_VIEW,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -48,7 +48,7 @@ func (s *Server) GetQualificationAccess(
 	}
 
 	resp := &pbqualifications.GetQualificationAccessResponse{
-		Access: &qualifications.QualificationAccess{
+		Access: &qualificationsaccess.QualificationAccess{
 			Jobs: access,
 		},
 	}
@@ -68,7 +68,7 @@ func (s *Server) SetQualificationAccess(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

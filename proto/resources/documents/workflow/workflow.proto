@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package resources.documents.workflow;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "google/protobuf/duration.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow;documentsworkflow";
+
+message Workflow {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  bool reminder = 1;
+  ReminderSettings reminder_settings = 2;
+
+  bool auto_close = 3;
+  AutoCloseSettings auto_close_settings = 4;
+}
+
+message ReminderSettings {
+  repeated Reminder reminders = 1 [(buf.validate.field).repeated.max_items = 3];
+  int32 max_reminder_count = 2 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
+}
+
+message Reminder {
+  google.protobuf.Duration duration = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 7776000} /* 90 days */
+      gte: {seconds: 3600} /* 1 hour */
+    },
+    (buf.validate.field).required = true
+  ];
+  string message = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message AutoCloseSettings {
+  google.protobuf.Duration duration = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 7776000} /* 90 days */
+      gte: {seconds: 86400} /* 1 day */
+    },
+    (buf.validate.field).required = true
+  ];
+  string message = 2 [(buf.validate.field).string.max_len = 255];
+}
+
+message WorkflowCronData {
+  int64 last_doc_id = 1;
+}
+
+message WorkflowState {
+  int64 document_id = 1;
+  optional resources.timestamp.Timestamp next_reminder_time = 2;
+  optional int32 next_reminder_count = 3;
+  int32 reminder_count = 5 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
+  optional resources.timestamp.Timestamp auto_close_time = 4;
+
+  optional Workflow workflow = 6 [(tagger.tags) = "alias:\"workflow\""];
+}
+
+message WorkflowUserState {
+  int64 document_id = 1;
+  int32 user_id = 2 [(buf.validate.field).int32.gt = 0];
+
+  optional resources.timestamp.Timestamp manual_reminder_time = 3;
+  optional string manual_reminder_message = 4 [(buf.validate.field).string.max_len = 255];
+  int32 reminder_count = 5 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
+  int32 max_reminder_count = 6 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 10
+  }];
+
+  optional Workflow workflow = 7 [(tagger.tags) = "alias:\"workflow\""];
+}

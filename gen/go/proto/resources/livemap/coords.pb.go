@@ -80,7 +80,7 @@ const file_resources_livemap_coords_proto_rawDesc = "" +
 	"\x1eresources/livemap/coords.proto\x12\x11resources.livemap\"$\n" +
 	"\x06Coords\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x01R\x01yBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
+	"\x01y\x18\x02 \x01(\x01R\x01yBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var (
 	file_resources_livemap_coords_proto_rawDescOnce sync.Once

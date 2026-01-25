@@ -7,11 +7,12 @@
 package completor
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	laws "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	category "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/category"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	laws "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -105,7 +106,7 @@ func (x *CompleteCitizensRequest) GetUserIdsOnly() bool {
 
 type CompleteCitizensResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*users.UserShort     `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty" alias:"user"`
+	Users         []*short.UserShort     `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty" alias:"user"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -140,7 +141,7 @@ func (*CompleteCitizensResponse) Descriptor() ([]byte, []int) {
 	return file_services_completor_completor_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CompleteCitizensResponse) GetUsers() []*users.UserShort {
+func (x *CompleteCitizensResponse) GetUsers() []*short.UserShort {
 	if x != nil {
 		return x.Users
 	}
@@ -297,7 +298,7 @@ func (x *CompleteDocumentCategoriesRequest) GetSearch() string {
 
 type CompleteDocumentCategoriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Categories    []*documents.Category  `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
+	Categories    []*category.Category   `protobuf:"bytes,1,rep,name=categories,proto3" json:"categories,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -332,7 +333,7 @@ func (*CompleteDocumentCategoriesResponse) Descriptor() ([]byte, []int) {
 	return file_services_completor_completor_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CompleteDocumentCategoriesResponse) GetCategories() []*documents.Category {
+func (x *CompleteDocumentCategoriesResponse) GetCategories() []*category.Category {
 	if x != nil {
 		return x.Categories
 	}
@@ -465,7 +466,7 @@ func (x *CompleteCitizenLabelsRequest) GetSearch() string {
 
 type CompleteCitizenLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*users.Label         `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -500,7 +501,7 @@ func (*CompleteCitizenLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_services_completor_completor_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CompleteCitizenLabelsResponse) GetLabels() []*users.Label {
+func (x *CompleteCitizenLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -511,7 +512,7 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a\"resources/documents/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xe7\x01\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\x19codegen/perms/perms.proto\x1a+resources/documents/category/category.proto\x1a\x19resources/jobs/jobs.proto\x1a\x19resources/laws/laws.proto\x1a#resources/users/labels/labels.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xe7\x01\n" +
 	"\x17CompleteCitizensRequest\x12\x16\n" +
 	"\x06search\x18\x01 \x01(\tR\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
@@ -522,9 +523,9 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\f_current_jobB\n" +
 	"\n" +
 	"\b_on_dutyB\x10\n" +
-	"\x0e_user_ids_only\"_\n" +
-	"\x18CompleteCitizensResponse\x12C\n" +
-	"\x05users\x18\x01 \x03(\v2\x1a.resources.users.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x05users\"\xa9\x01\n" +
+	"\x0e_user_ids_only\"e\n" +
+	"\x18CompleteCitizensResponse\x12I\n" +
+	"\x05users\x18\x01 \x03(\v2 .resources.users.short.UserShortB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x05users\"\xa9\x01\n" +
 	"\x13CompleteJobsRequest\x12\x1b\n" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01\x12$\n" +
 	"\vexact_match\x18\x02 \x01(\bH\x01R\n" +
@@ -537,18 +538,18 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x14CompleteJobsResponse\x12'\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\";\n" +
 	"!CompleteDocumentCategoriesRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\"c\n" +
-	"\"CompleteDocumentCategoriesResponse\x12=\n" +
+	"\x06search\x18\x01 \x01(\tR\x06search\"l\n" +
+	"\"CompleteDocumentCategoriesResponse\x12F\n" +
 	"\n" +
-	"categories\x18\x01 \x03(\v2\x1d.resources.documents.CategoryR\n" +
+	"categories\x18\x01 \x03(\v2&.resources.documents.category.CategoryR\n" +
 	"categories\"\x15\n" +
 	"\x13ListLawBooksRequest\"E\n" +
 	"\x14ListLawBooksResponse\x12-\n" +
 	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"6\n" +
 	"\x1cCompleteCitizenLabelsRequest\x12\x16\n" +
-	"\x06search\x18\x01 \x01(\tR\x06search\"O\n" +
-	"\x1dCompleteCitizenLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xbb\x05\n" +
+	"\x06search\x18\x01 \x01(\tR\x06search\"V\n" +
+	"\x1dCompleteCitizenLabelsResponse\x125\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x06labels2\xbb\x05\n" +
 	"\x10CompletorService\x12z\n" +
 	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a,.services.completor.CompleteCitizensResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
 	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x9d\x01\n" +
@@ -557,7 +558,7 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x8e\x01\n" +
 	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponse\"\x10\xd2\xf3\x18\f\b\x01*\b\n" +
 	"\x04Jobs\x18\x02\x1a\x1a\xea\xf3\x18\x16\b\n" +
-	"\x12\x12i-mdi-keyboard-tabBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completorb\x06proto3"
+	"\x12\x12i-mdi-keyboard-tabBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor;completorb\x06proto3"
 
 var (
 	file_services_completor_completor_proto_rawDescOnce sync.Once
@@ -583,18 +584,18 @@ var file_services_completor_completor_proto_goTypes = []any{
 	(*ListLawBooksResponse)(nil),               // 7: services.completor.ListLawBooksResponse
 	(*CompleteCitizenLabelsRequest)(nil),       // 8: services.completor.CompleteCitizenLabelsRequest
 	(*CompleteCitizenLabelsResponse)(nil),      // 9: services.completor.CompleteCitizenLabelsResponse
-	(*users.UserShort)(nil),                    // 10: resources.users.UserShort
+	(*short.UserShort)(nil),                    // 10: resources.users.short.UserShort
 	(*jobs.Job)(nil),                           // 11: resources.jobs.Job
-	(*documents.Category)(nil),                 // 12: resources.documents.Category
+	(*category.Category)(nil),                  // 12: resources.documents.category.Category
 	(*laws.LawBook)(nil),                       // 13: resources.laws.LawBook
-	(*users.Label)(nil),                        // 14: resources.users.Label
+	(*labels.Label)(nil),                       // 14: resources.users.labels.Label
 }
 var file_services_completor_completor_proto_depIdxs = []int32{
-	10, // 0: services.completor.CompleteCitizensResponse.users:type_name -> resources.users.UserShort
+	10, // 0: services.completor.CompleteCitizensResponse.users:type_name -> resources.users.short.UserShort
 	11, // 1: services.completor.CompleteJobsResponse.jobs:type_name -> resources.jobs.Job
-	12, // 2: services.completor.CompleteDocumentCategoriesResponse.categories:type_name -> resources.documents.Category
+	12, // 2: services.completor.CompleteDocumentCategoriesResponse.categories:type_name -> resources.documents.category.Category
 	13, // 3: services.completor.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
-	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.users.Label
+	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.users.labels.Label
 	0,  // 5: services.completor.CompletorService.CompleteCitizens:input_type -> services.completor.CompleteCitizensRequest
 	2,  // 6: services.completor.CompletorService.CompleteJobs:input_type -> services.completor.CompleteJobsRequest
 	4,  // 7: services.completor.CompletorService.CompleteDocumentCategories:input_type -> services.completor.CompleteDocumentCategoriesRequest

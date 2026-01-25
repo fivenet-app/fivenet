@@ -3,7 +3,7 @@ import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDe
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useSettingsStore } from '~/stores/settings';
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 
 const props = defineProps<{
     showAllDispatches?: boolean;

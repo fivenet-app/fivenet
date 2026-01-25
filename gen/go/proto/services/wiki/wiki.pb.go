@@ -7,12 +7,13 @@
 package wiki
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	wiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	wiki "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/activity"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -571,7 +572,7 @@ func (x *ListPageActivityRequest) GetPageId() int64 {
 type ListPageActivityResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*wiki.PageActivity         `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	Activity      []*activity.PageActivity     `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -613,7 +614,7 @@ func (x *ListPageActivityResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListPageActivityResponse) GetActivity() []*wiki.PageActivity {
+func (x *ListPageActivityResponse) GetActivity() []*activity.PageActivity {
 	if x != nil {
 		return x.Activity
 	}
@@ -624,7 +625,7 @@ var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\"\x9a\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a&resources/wiki/activity/activity.proto\x1a\x19resources/wiki/page.proto\"\x9a\x02\n" +
 	"\x10ListPagesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -688,7 +689,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x1e\xd2\xf3\x18\x1a\b\x012\n" +
 	"CreatePage2\n" +
-	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
+	"UpdatePage(\x01\x1a\x13\xea\xf3\x18\x0f\bn\x12\vi-mdi-brainBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var (
 	file_services_wiki_wiki_proto_rawDescOnce sync.Once
@@ -722,7 +723,7 @@ var file_services_wiki_wiki_proto_goTypes = []any{
 	(*wiki.PageShort)(nil),              // 15: resources.wiki.PageShort
 	(*wiki.Page)(nil),                   // 16: resources.wiki.Page
 	(content.ContentType)(0),            // 17: resources.common.content.ContentType
-	(*wiki.PageActivity)(nil),           // 18: resources.wiki.PageActivity
+	(*activity.PageActivity)(nil),       // 18: resources.wiki.PageActivity
 	(*file.UploadFileRequest)(nil),      // 19: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),     // 20: resources.file.UploadFileResponse
 }

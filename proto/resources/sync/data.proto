@@ -5,11 +5,11 @@ package resources.sync;
 import "buf/validate/validate.proto";
 import "resources/jobs/jobs.proto";
 import "resources/livemap/coords.proto";
-import "resources/users/licenses.proto";
-import "resources/users/users.proto";
+import "resources/users/licenses/licenses.proto";
+import "resources/users/user.proto";
 import "resources/vehicles/vehicles.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;sync";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;sync";
 
 message DataStatus {
   int64 count = 1;
@@ -28,7 +28,7 @@ message DataVehicles {
 }
 
 message DataLicenses {
-  repeated resources.users.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
+  repeated resources.users.licenses.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message DataUserLocations {

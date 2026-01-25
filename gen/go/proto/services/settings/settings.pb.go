@@ -7,17 +7,18 @@
 package settings
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	discord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	audit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	discord "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/discord"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -70,7 +71,7 @@ func (*GetJobPropsRequest) Descriptor() ([]byte, []int) {
 
 type GetJobPropsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobProps      *jobs.JobProps         `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	JobProps      *props.JobProps        `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -105,7 +106,7 @@ func (*GetJobPropsResponse) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetJobPropsResponse) GetJobProps() *jobs.JobProps {
+func (x *GetJobPropsResponse) GetJobProps() *props.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -114,7 +115,7 @@ func (x *GetJobPropsResponse) GetJobProps() *jobs.JobProps {
 
 type SetJobPropsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobProps      *jobs.JobProps         `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	JobProps      *props.JobProps        `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -149,7 +150,7 @@ func (*SetJobPropsRequest) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SetJobPropsRequest) GetJobProps() *jobs.JobProps {
+func (x *SetJobPropsRequest) GetJobProps() *props.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -158,7 +159,7 @@ func (x *SetJobPropsRequest) GetJobProps() *jobs.JobProps {
 
 type SetJobPropsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JobProps      *jobs.JobProps         `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	JobProps      *props.JobProps        `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -193,7 +194,7 @@ func (*SetJobPropsResponse) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *SetJobPropsResponse) GetJobProps() *jobs.JobProps {
+func (x *SetJobPropsResponse) GetJobProps() *props.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -693,9 +694,9 @@ func (x *GetPermissionsRequest) GetRoleId() int64 {
 }
 
 type GetPermissionsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -737,7 +738,7 @@ func (x *GetPermissionsResponse) GetPermissions() []*permissions.Permission {
 	return nil
 }
 
-func (x *GetPermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *GetPermissionsResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
@@ -789,10 +790,10 @@ func (x *GetEffectivePermissionsRequest) GetRoleId() int64 {
 }
 
 type GetEffectivePermissionsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Role          *permissions.Role            `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Role          *permissions.Role           `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,3,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -841,7 +842,7 @@ func (x *GetEffectivePermissionsResponse) GetPermissions() []*permissions.Permis
 	return nil
 }
 
-func (x *GetEffectivePermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *GetEffectivePermissionsResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
@@ -1253,29 +1254,29 @@ var File_services_settings_settings_proto protoreflect.FileDescriptor
 
 const file_services_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
-	"\x12GetJobPropsRequest\"L\n" +
-	"\x13GetJobPropsResponse\x125\n" +
-	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"K\n" +
-	"\x12SetJobPropsRequest\x125\n" +
-	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"L\n" +
-	"\x13SetJobPropsResponse\x125\n" +
-	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\"G\n" +
+	" services/settings/settings.proto\x12\x11services.settings\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/audit/audit.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/discord/discord.proto\x1a\x1eresources/file/filestore.proto\x1a resources/jobs/props/props.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a#resources/timestamp/timestamp.proto\"\x14\n" +
+	"\x12GetJobPropsRequest\"R\n" +
+	"\x13GetJobPropsResponse\x12;\n" +
+	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsR\bjobProps\"Q\n" +
+	"\x12SetJobPropsRequest\x12;\n" +
+	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsR\bjobProps\"R\n" +
+	"\x13SetJobPropsResponse\x12;\n" +
+	"\tjob_props\x18\x01 \x01(\v2\x1e.resources.jobs.props.JobPropsR\bjobProps\"G\n" +
 	"\x0fGetRolesRequest\x12$\n" +
 	"\vlowest_rank\x18\x01 \x01(\bH\x00R\n" +
 	"lowestRank\x88\x01\x01B\x0e\n" +
-	"\f_lowest_rank\"E\n" +
-	"\x10GetRolesResponse\x121\n" +
-	"\x05roles\x18\x01 \x03(\v2\x1b.resources.permissions.RoleR\x05roles\" \n" +
+	"\f_lowest_rank\"Q\n" +
+	"\x10GetRolesResponse\x12=\n" +
+	"\x05roles\x18\x01 \x03(\v2'.resources.permissions.permissions.RoleR\x05roles\" \n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"B\n" +
-	"\x0fGetRoleResponse\x12/\n" +
-	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\";\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"N\n" +
+	"\x0fGetRoleResponse\x12;\n" +
+	"\x04role\x18\x01 \x01(\v2'.resources.permissions.permissions.RoleR\x04role\";\n" +
 	"\x11CreateRoleRequest\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x14\n" +
-	"\x05grade\x18\x02 \x01(\x05R\x05grade\"E\n" +
-	"\x12CreateRoleResponse\x12/\n" +
-	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"#\n" +
+	"\x05grade\x18\x02 \x01(\x05R\x05grade\"Q\n" +
+	"\x12CreateRoleResponse\x12;\n" +
+	"\x04role\x18\x01 \x01(\v2'.resources.permissions.permissions.RoleR\x04role\"#\n" +
 	"\x11DeleteRoleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x14\n" +
 	"\x12DeleteRoleResponse\"\xb4\x01\n" +
@@ -1287,19 +1288,19 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x06_attrs\"\x19\n" +
 	"\x17UpdateRolePermsResponse\"0\n" +
 	"\x15GetPermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\xa3\x01\n" +
-	"\x16GetPermissionsResponse\x12C\n" +
-	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\xba\x01\n" +
+	"\x16GetPermissionsResponse\x12O\n" +
+	"\vpermissions\x18\x01 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\x18\x02 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributes\"9\n" +
 	"\x1eGetEffectivePermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\xdd\x01\n" +
-	"\x1fGetEffectivePermissionsResponse\x12/\n" +
-	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\x12C\n" +
-	"\vpermissions\x18\x02 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\arole_id\x18\x01 \x01(\x03R\x06roleId\"\x80\x02\n" +
+	"\x1fGetEffectivePermissionsResponse\x12;\n" +
+	"\x04role\x18\x01 \x01(\v2'.resources.permissions.permissions.RoleR\x04role\x12O\n" +
+	"\vpermissions\x18\x02 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x03 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\x18\x03 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributes\"\xa1\x04\n" +
 	"\x13ViewAuditLogRequest\x12L\n" +
 	"\n" +
@@ -1348,7 +1349,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12z\n" +
 	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x12m\n" +
 	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps(\x01\x12w\n" +
-	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x1a\x19\xea\xf3\x18\x15\bx\x12\x11i-mdi-cog-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponse\"\x13\xd2\xf3\x18\x0f\b\x01\x1a\vSetJobProps\x1a\x19\xea\xf3\x18\x15\bx\x12\x11i-mdi-cog-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_settings_proto_rawDescOnce sync.Once
@@ -1390,12 +1391,12 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*ListUserGuildsResponse)(nil),          // 23: services.settings.ListUserGuildsResponse
 	(*DeleteJobLogoRequest)(nil),            // 24: services.settings.DeleteJobLogoRequest
 	(*DeleteJobLogoResponse)(nil),           // 25: services.settings.DeleteJobLogoResponse
-	(*jobs.JobProps)(nil),                   // 26: resources.jobs.JobProps
-	(*permissions.Role)(nil),                // 27: resources.permissions.Role
+	(*props.JobProps)(nil),                  // 26: resources.jobs.props.JobProps
+	(*permissions.Role)(nil),                // 27: resources.permissions.permissions.Role
 	(*settings.PermsUpdate)(nil),            // 28: resources.settings.PermsUpdate
 	(*settings.AttrsUpdate)(nil),            // 29: resources.settings.AttrsUpdate
-	(*permissions.Permission)(nil),          // 30: resources.permissions.Permission
-	(*permissions.RoleAttribute)(nil),       // 31: resources.permissions.RoleAttribute
+	(*permissions.Permission)(nil),          // 30: resources.permissions.permissions.Permission
+	(*attributes.RoleAttribute)(nil),        // 31: resources.permissions.attributes.RoleAttribute
 	(*database.PaginationRequest)(nil),      // 32: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                   // 33: resources.common.database.Sort
 	(*timestamp.Timestamp)(nil),             // 34: resources.timestamp.Timestamp
@@ -1409,19 +1410,19 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*file.UploadFileResponse)(nil),         // 42: resources.file.UploadFileResponse
 }
 var file_services_settings_settings_proto_depIdxs = []int32{
-	26, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	26, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
-	26, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	27, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
-	27, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
-	27, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
+	26, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.props.JobProps
+	26, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.props.JobProps
+	26, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.props.JobProps
+	27, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.permissions.Role
+	27, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.permissions.Role
+	27, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.permissions.Role
 	28, // 6: services.settings.UpdateRolePermsRequest.perms:type_name -> resources.settings.PermsUpdate
 	29, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> resources.settings.AttrsUpdate
-	30, // 8: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	31, // 9: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	27, // 10: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
-	30, // 11: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	31, // 12: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	30, // 8: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	31, // 9: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	27, // 10: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.permissions.Role
+	30, // 11: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	31, // 12: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
 	32, // 13: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	33, // 14: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
 	34, // 15: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp

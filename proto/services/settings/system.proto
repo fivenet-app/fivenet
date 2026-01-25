@@ -4,20 +4,20 @@ package services.settings;
 
 import "buf/validate/validate.proto";
 import "codegen/perms/perms.proto";
-import "resources/permissions/attributes.proto";
-import "resources/permissions/permissions.proto";
+import "resources/permissions/attributes/attributes.proto";
+import "resources/permissions/permissions/permissions.proto";
 import "resources/settings/perms.proto";
 import "resources/settings/status.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settings";
 
 message GetAllPermissionsRequest {
   string job = 1 [(buf.validate.field).string.max_len = 20];
 }
 
 message GetAllPermissionsResponse {
-  repeated resources.permissions.Permission permissions = 1;
-  repeated resources.permissions.RoleAttribute attributes = 2;
+  repeated resources.permissions.permissions.Permission permissions = 1;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 2;
 }
 
 message GetJobLimitsRequest {
@@ -27,8 +27,8 @@ message GetJobLimitsRequest {
 message GetJobLimitsResponse {
   string job = 1 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 2;
-  repeated resources.permissions.Permission permissions = 3;
-  repeated resources.permissions.RoleAttribute attributes = 4;
+  repeated resources.permissions.permissions.Permission permissions = 3;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 4;
 }
 
 message UpdateJobLimitsRequest {

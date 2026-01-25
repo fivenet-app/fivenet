@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
 import { stringToDate } from '~/utils/time';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
-import type { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates/templates';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
+import type { User } from '~~/gen/ts/resources/users/user';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
 /**

@@ -7,12 +7,16 @@
 package mailer
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	emails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	messages "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/messages"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings"
+	templates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/templates"
+	threads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -83,7 +87,7 @@ func (x *ListEmailsRequest) GetAll() bool {
 type ListEmailsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Emails        []*mailer.Email              `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
+	Emails        []*emails.Email              `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -125,7 +129,7 @@ func (x *ListEmailsResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *ListEmailsResponse) GetEmails() []*mailer.Email {
+func (x *ListEmailsResponse) GetEmails() []*emails.Email {
 	if x != nil {
 		return x.Emails
 	}
@@ -178,7 +182,7 @@ func (x *GetEmailRequest) GetId() int64 {
 
 type GetEmailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         *mailer.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -213,7 +217,7 @@ func (*GetEmailResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetEmailResponse) GetEmail() *mailer.Email {
+func (x *GetEmailResponse) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
 	}
@@ -222,7 +226,7 @@ func (x *GetEmailResponse) GetEmail() *mailer.Email {
 
 type CreateOrUpdateEmailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         *mailer.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -257,7 +261,7 @@ func (*CreateOrUpdateEmailRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CreateOrUpdateEmailRequest) GetEmail() *mailer.Email {
+func (x *CreateOrUpdateEmailRequest) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
 	}
@@ -266,7 +270,7 @@ func (x *CreateOrUpdateEmailRequest) GetEmail() *mailer.Email {
 
 type CreateOrUpdateEmailResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Email         *mailer.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Email         *emails.Email          `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -301,7 +305,7 @@ func (*CreateOrUpdateEmailResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateOrUpdateEmailResponse) GetEmail() *mailer.Email {
+func (x *CreateOrUpdateEmailResponse) GetEmail() *emails.Email {
 	if x != nil {
 		return x.Email
 	}
@@ -546,7 +550,7 @@ func (x *ListTemplatesRequest) GetEmailId() int64 {
 
 type ListTemplatesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Templates     []*mailer.Template     `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
+	Templates     []*templates.Template  `protobuf:"bytes,1,rep,name=templates,proto3" json:"templates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -581,7 +585,7 @@ func (*ListTemplatesResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListTemplatesResponse) GetTemplates() []*mailer.Template {
+func (x *ListTemplatesResponse) GetTemplates() []*templates.Template {
 	if x != nil {
 		return x.Templates
 	}
@@ -642,7 +646,7 @@ func (x *GetTemplateRequest) GetTemplateId() int64 {
 
 type GetTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *mailer.Template       `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -677,7 +681,7 @@ func (*GetTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *GetTemplateResponse) GetTemplate() *mailer.Template {
+func (x *GetTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -686,7 +690,7 @@ func (x *GetTemplateResponse) GetTemplate() *mailer.Template {
 
 type CreateOrUpdateTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *mailer.Template       `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -721,7 +725,7 @@ func (*CreateOrUpdateTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *CreateOrUpdateTemplateRequest) GetTemplate() *mailer.Template {
+func (x *CreateOrUpdateTemplateRequest) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -730,7 +734,7 @@ func (x *CreateOrUpdateTemplateRequest) GetTemplate() *mailer.Template {
 
 type CreateOrUpdateTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *mailer.Template       `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	Template      *templates.Template    `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -765,7 +769,7 @@ func (*CreateOrUpdateTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *CreateOrUpdateTemplateResponse) GetTemplate() *mailer.Template {
+func (x *CreateOrUpdateTemplateResponse) GetTemplate() *templates.Template {
 	if x != nil {
 		return x.Template
 	}
@@ -932,7 +936,7 @@ func (x *ListThreadsRequest) GetArchived() bool {
 type ListThreadsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Threads       []*mailer.Thread             `protobuf:"bytes,2,rep,name=threads,proto3" json:"threads,omitempty"`
+	Threads       []*threads.Thread            `protobuf:"bytes,2,rep,name=threads,proto3" json:"threads,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -974,7 +978,7 @@ func (x *ListThreadsResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *ListThreadsResponse) GetThreads() []*mailer.Thread {
+func (x *ListThreadsResponse) GetThreads() []*threads.Thread {
 	if x != nil {
 		return x.Threads
 	}
@@ -1035,7 +1039,7 @@ func (x *GetThreadRequest) GetThreadId() int64 {
 
 type GetThreadResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Thread        *mailer.Thread         `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1070,7 +1074,7 @@ func (*GetThreadResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *GetThreadResponse) GetThread() *mailer.Thread {
+func (x *GetThreadResponse) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
 	}
@@ -1079,8 +1083,8 @@ func (x *GetThreadResponse) GetThread() *mailer.Thread {
 
 type CreateThreadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Thread        *mailer.Thread         `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
-	Message       *mailer.Message        `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Message       *messages.Message      `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 	Recipients    []string               `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1116,14 +1120,14 @@ func (*CreateThreadRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *CreateThreadRequest) GetThread() *mailer.Thread {
+func (x *CreateThreadRequest) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
 	}
 	return nil
 }
 
-func (x *CreateThreadRequest) GetMessage() *mailer.Message {
+func (x *CreateThreadRequest) GetMessage() *messages.Message {
 	if x != nil {
 		return x.Message
 	}
@@ -1139,7 +1143,7 @@ func (x *CreateThreadRequest) GetRecipients() []string {
 
 type CreateThreadResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Thread        *mailer.Thread         `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Thread        *threads.Thread        `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1174,7 +1178,7 @@ func (*CreateThreadResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *CreateThreadResponse) GetThread() *mailer.Thread {
+func (x *CreateThreadResponse) GetThread() *threads.Thread {
 	if x != nil {
 		return x.Thread
 	}
@@ -1323,7 +1327,7 @@ func (x *GetThreadStateRequest) GetThreadId() int64 {
 
 type GetThreadStateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	State         *mailer.ThreadState    `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
+	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1358,7 +1362,7 @@ func (*GetThreadStateResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *GetThreadStateResponse) GetState() *mailer.ThreadState {
+func (x *GetThreadStateResponse) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
 	}
@@ -1367,7 +1371,7 @@ func (x *GetThreadStateResponse) GetState() *mailer.ThreadState {
 
 type SetThreadStateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	State         *mailer.ThreadState    `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
+	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1402,7 +1406,7 @@ func (*SetThreadStateRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{28}
 }
 
-func (x *SetThreadStateRequest) GetState() *mailer.ThreadState {
+func (x *SetThreadStateRequest) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
 	}
@@ -1411,7 +1415,7 @@ func (x *SetThreadStateRequest) GetState() *mailer.ThreadState {
 
 type SetThreadStateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	State         *mailer.ThreadState    `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
+	State         *threads.ThreadState   `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1446,7 +1450,7 @@ func (*SetThreadStateResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *SetThreadStateResponse) GetState() *mailer.ThreadState {
+func (x *SetThreadStateResponse) GetState() *threads.ThreadState {
 	if x != nil {
 		return x.State
 	}
@@ -1498,8 +1502,8 @@ func (x *GetEmailSettingsRequest) GetEmailId() int64 {
 }
 
 type GetEmailSettingsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Settings      *mailer.EmailSettings  `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1534,7 +1538,7 @@ func (*GetEmailSettingsResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *GetEmailSettingsResponse) GetSettings() *mailer.EmailSettings {
+func (x *GetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
 	}
@@ -1542,8 +1546,8 @@ func (x *GetEmailSettingsResponse) GetSettings() *mailer.EmailSettings {
 }
 
 type SetEmailSettingsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Settings      *mailer.EmailSettings  `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1578,7 +1582,7 @@ func (*SetEmailSettingsRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *SetEmailSettingsRequest) GetSettings() *mailer.EmailSettings {
+func (x *SetEmailSettingsRequest) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
 	}
@@ -1586,8 +1590,8 @@ func (x *SetEmailSettingsRequest) GetSettings() *mailer.EmailSettings {
 }
 
 type SetEmailSettingsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Settings      *mailer.EmailSettings  `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Settings      *settings.EmailSettings `protobuf:"bytes,1,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1622,7 +1626,7 @@ func (*SetEmailSettingsResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *SetEmailSettingsResponse) GetSettings() *mailer.EmailSettings {
+func (x *SetEmailSettingsResponse) GetSettings() *settings.EmailSettings {
 	if x != nil {
 		return x.Settings
 	}
@@ -1685,7 +1689,7 @@ func (x *SearchThreadsRequest) GetSearch() string {
 type SearchThreadsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Messages      []*mailer.Message            `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
+	Messages      []*messages.Message          `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1727,7 +1731,7 @@ func (x *SearchThreadsResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *SearchThreadsResponse) GetMessages() []*mailer.Message {
+func (x *SearchThreadsResponse) GetMessages() []*messages.Message {
 	if x != nil {
 		return x.Messages
 	}
@@ -1805,7 +1809,7 @@ func (x *ListThreadMessagesRequest) GetAfter() *timestamp.Timestamp {
 type ListThreadMessagesResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Messages      []*mailer.Message            `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
+	Messages      []*messages.Message          `protobuf:"bytes,2,rep,name=messages,proto3" json:"messages,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1847,7 +1851,7 @@ func (x *ListThreadMessagesResponse) GetPagination() *database.PaginationRespons
 	return nil
 }
 
-func (x *ListThreadMessagesResponse) GetMessages() []*mailer.Message {
+func (x *ListThreadMessagesResponse) GetMessages() []*messages.Message {
 	if x != nil {
 		return x.Messages
 	}
@@ -1856,7 +1860,7 @@ func (x *ListThreadMessagesResponse) GetMessages() []*mailer.Message {
 
 type PostMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       *mailer.Message        `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Message       *messages.Message      `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	Recipients    []string               `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1892,7 +1896,7 @@ func (*PostMessageRequest) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{38}
 }
 
-func (x *PostMessageRequest) GetMessage() *mailer.Message {
+func (x *PostMessageRequest) GetMessage() *messages.Message {
 	if x != nil {
 		return x.Message
 	}
@@ -1908,7 +1912,7 @@ func (x *PostMessageRequest) GetRecipients() []string {
 
 type PostMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Message       *mailer.Message        `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	Message       *messages.Message      `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1943,7 +1947,7 @@ func (*PostMessageResponse) Descriptor() ([]byte, []int) {
 	return file_services_mailer_mailer_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *PostMessageResponse) GetMessage() *mailer.Message {
+func (x *PostMessageResponse) GetMessage() *messages.Message {
 	if x != nil {
 		return x.Message
 	}
@@ -2050,26 +2054,26 @@ var File_services_mailer_mailer_proto protoreflect.FileDescriptor
 
 const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1cresources/mailer/email.proto\x1a\x1eresources/mailer/message.proto\x1a\x1fresources/mailer/settings.proto\x1a\x1fresources/mailer/template.proto\x1a\x1dresources/mailer/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x80\x01\n" +
+	"\x1cservices/mailer/mailer.proto\x12\x0fservices.mailer\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a#resources/mailer/emails/email.proto\x1a'resources/mailer/messages/message.proto\x1a(resources/mailer/settings/settings.proto\x1a)resources/mailer/templates/template.proto\x1a%resources/mailer/threads/thread.proto\x1a#resources/timestamp/timestamp.proto\"\x80\x01\n" +
 	"\x11ListEmailsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x15\n" +
 	"\x03all\x18\x02 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
-	"\x04_all\"\x9a\x01\n" +
+	"\x04_all\"\xa1\x01\n" +
 	"\x12ListEmailsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x125\n" +
-	"\x06emails\x18\x02 \x03(\v2\x17.resources.mailer.EmailB\x04\xc8\xf3\x18\x01R\x06emails\"!\n" +
+	"pagination\x12<\n" +
+	"\x06emails\x18\x02 \x03(\v2\x1e.resources.mailer.emails.EmailB\x04\xc8\xf3\x18\x01R\x06emails\"!\n" +
 	"\x0fGetEmailRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"A\n" +
-	"\x10GetEmailResponse\x12-\n" +
-	"\x05email\x18\x01 \x01(\v2\x17.resources.mailer.EmailR\x05email\"K\n" +
-	"\x1aCreateOrUpdateEmailRequest\x12-\n" +
-	"\x05email\x18\x01 \x01(\v2\x17.resources.mailer.EmailR\x05email\"L\n" +
-	"\x1bCreateOrUpdateEmailResponse\x12-\n" +
-	"\x05email\x18\x01 \x01(\v2\x17.resources.mailer.EmailR\x05email\"$\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"H\n" +
+	"\x10GetEmailResponse\x124\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"R\n" +
+	"\x1aCreateOrUpdateEmailRequest\x124\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"S\n" +
+	"\x1bCreateOrUpdateEmailResponse\x124\n" +
+	"\x05email\x18\x01 \x01(\v2\x1e.resources.mailer.emails.EmailR\x05email\"$\n" +
 	"\x12DeleteEmailRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x15\n" +
 	"\x13DeleteEmailResponse\"y\n" +
@@ -2084,19 +2088,19 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x06emails\x18\x01 \x03(\tR\x06emails\x12\x18\n" +
 	"\adomains\x18\x02 \x03(\tR\adomains\"1\n" +
 	"\x14ListTemplatesRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"Q\n" +
-	"\x15ListTemplatesResponse\x128\n" +
-	"\ttemplates\x18\x01 \x03(\v2\x1a.resources.mailer.TemplateR\ttemplates\"P\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"[\n" +
+	"\x15ListTemplatesResponse\x12B\n" +
+	"\ttemplates\x18\x01 \x03(\v2$.resources.mailer.templates.TemplateR\ttemplates\"P\n" +
 	"\x12GetTemplateRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\x03R\n" +
-	"templateId\"M\n" +
-	"\x13GetTemplateResponse\x126\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1a.resources.mailer.TemplateR\btemplate\"W\n" +
-	"\x1dCreateOrUpdateTemplateRequest\x126\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1a.resources.mailer.TemplateR\btemplate\"X\n" +
-	"\x1eCreateOrUpdateTemplateResponse\x126\n" +
-	"\btemplate\x18\x01 \x01(\v2\x1a.resources.mailer.TemplateR\btemplate\"B\n" +
+	"templateId\"W\n" +
+	"\x13GetTemplateResponse\x12@\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"a\n" +
+	"\x1dCreateOrUpdateTemplateRequest\x12@\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"b\n" +
+	"\x1eCreateOrUpdateTemplateResponse\x12@\n" +
+	"\btemplate\x18\x01 \x01(\v2$.resources.mailer.templates.TemplateR\btemplate\"B\n" +
 	"\x15DeleteTemplateRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"\x18\n" +
@@ -2109,56 +2113,56 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x06unread\x18\x04 \x01(\bH\x00R\x06unread\x88\x01\x01\x12\x1f\n" +
 	"\barchived\x18\x05 \x01(\bH\x01R\barchived\x88\x01\x01B\t\n" +
 	"\a_unreadB\v\n" +
-	"\t_archived\"\x9e\x01\n" +
+	"\t_archived\"\xa6\x01\n" +
 	"\x13ListThreadsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x128\n" +
-	"\athreads\x18\x02 \x03(\v2\x18.resources.mailer.ThreadB\x04\xc8\xf3\x18\x01R\athreads\"J\n" +
+	"pagination\x12@\n" +
+	"\athreads\x18\x02 \x03(\v2 .resources.mailer.threads.ThreadB\x04\xc8\xf3\x18\x01R\athreads\"J\n" +
 	"\x10GetThreadRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
-	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"E\n" +
-	"\x11GetThreadResponse\x120\n" +
-	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"\xa6\x01\n" +
-	"\x13CreateThreadRequest\x120\n" +
-	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\x123\n" +
-	"\amessage\x18\x02 \x01(\v2\x19.resources.mailer.MessageR\amessage\x12(\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"M\n" +
+	"\x11GetThreadResponse\x128\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"\xb7\x01\n" +
+	"\x13CreateThreadRequest\x128\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\x12<\n" +
+	"\amessage\x18\x02 \x01(\v2\".resources.mailer.messages.MessageR\amessage\x12(\n" +
 	"\n" +
 	"recipients\x18\x03 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
-	"recipients\"H\n" +
-	"\x14CreateThreadResponse\x120\n" +
-	"\x06thread\x18\x01 \x01(\v2\x18.resources.mailer.ThreadR\x06thread\"M\n" +
+	"recipients\"P\n" +
+	"\x14CreateThreadResponse\x128\n" +
+	"\x06thread\x18\x01 \x01(\v2 .resources.mailer.threads.ThreadR\x06thread\"M\n" +
 	"\x13DeleteThreadRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"\x16\n" +
 	"\x14DeleteThreadResponse\"O\n" +
 	"\x15GetThreadStateRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
-	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"M\n" +
-	"\x16GetThreadStateResponse\x123\n" +
-	"\x05state\x18\x01 \x01(\v2\x1d.resources.mailer.ThreadStateR\x05state\"L\n" +
-	"\x15SetThreadStateRequest\x123\n" +
-	"\x05state\x18\x01 \x01(\v2\x1d.resources.mailer.ThreadStateR\x05state\"M\n" +
-	"\x16SetThreadStateResponse\x123\n" +
-	"\x05state\x18\x01 \x01(\v2\x1d.resources.mailer.ThreadStateR\x05state\"4\n" +
+	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\"U\n" +
+	"\x16GetThreadStateResponse\x12;\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"T\n" +
+	"\x15SetThreadStateRequest\x12;\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"U\n" +
+	"\x16SetThreadStateResponse\x12;\n" +
+	"\x05state\x18\x01 \x01(\v2%.resources.mailer.threads.ThreadStateR\x05state\"4\n" +
 	"\x17GetEmailSettingsRequest\x12\x19\n" +
-	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"W\n" +
-	"\x18GetEmailSettingsResponse\x12;\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1f.resources.mailer.EmailSettingsR\bsettings\"V\n" +
-	"\x17SetEmailSettingsRequest\x12;\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1f.resources.mailer.EmailSettingsR\bsettings\"W\n" +
-	"\x18SetEmailSettingsResponse\x12;\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1f.resources.mailer.EmailSettingsR\bsettings\"|\n" +
+	"\bemail_id\x18\x01 \x01(\x03R\aemailId\"`\n" +
+	"\x18GetEmailSettingsResponse\x12D\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"_\n" +
+	"\x17SetEmailSettingsRequest\x12D\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"`\n" +
+	"\x18SetEmailSettingsResponse\x12D\n" +
+	"\bsettings\x18\x01 \x01(\v2(.resources.mailer.settings.EmailSettingsR\bsettings\"|\n" +
 	"\x14SearchThreadsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x16\n" +
-	"\x06search\x18\x02 \x01(\tR\x06search\"\xa3\x01\n" +
+	"\x06search\x18\x02 \x01(\tR\x06search\"\xac\x01\n" +
 	"\x15SearchThreadsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12;\n" +
-	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\xe6\x01\n" +
+	"pagination\x12D\n" +
+	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"\xe6\x01\n" +
 	"\x19ListThreadMessagesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -2166,19 +2170,19 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\bemail_id\x18\x02 \x01(\x03R\aemailId\x12\x1b\n" +
 	"\tthread_id\x18\x03 \x01(\x03R\bthreadId\x129\n" +
 	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05after\x88\x01\x01B\b\n" +
-	"\x06_after\"\xa8\x01\n" +
+	"\x06_after\"\xb1\x01\n" +
 	"\x1aListThreadMessagesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12;\n" +
-	"\bmessages\x18\x02 \x03(\v2\x19.resources.mailer.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"s\n" +
-	"\x12PostMessageRequest\x123\n" +
-	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageR\amessage\x12(\n" +
+	"pagination\x12D\n" +
+	"\bmessages\x18\x02 \x03(\v2\".resources.mailer.messages.MessageB\x04\xc8\xf3\x18\x01R\bmessages\"|\n" +
+	"\x12PostMessageRequest\x12<\n" +
+	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageR\amessage\x12(\n" +
 	"\n" +
 	"recipients\x18\x02 \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\n" +
-	"recipients\"J\n" +
-	"\x13PostMessageResponse\x123\n" +
-	"\amessage\x18\x01 \x01(\v2\x19.resources.mailer.MessageR\amessage\"m\n" +
+	"recipients\"S\n" +
+	"\x13PostMessageResponse\x12<\n" +
+	"\amessage\x18\x01 \x01(\v2\".resources.mailer.messages.MessageR\amessage\"m\n" +
 	"\x14DeleteMessageRequest\x12\x19\n" +
 	"\bemail_id\x18\x01 \x01(\x03R\aemailId\x12\x1b\n" +
 	"\tthread_id\x18\x02 \x01(\x03R\bthreadId\x12\x1d\n" +
@@ -2224,7 +2228,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
 	"ListEmails\x12{\n" +
 	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponse\"\x12\xd2\xf3\x18\x0e\b\x01\x1a\n" +
-	"ListEmails\x1a \xea\xf3\x18\x1c\b\x14\x12\x18i-mdi-inbox-full-outlineBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"ListEmails\x1a \xea\xf3\x18\x1c\b\x14\x12\x18i-mdi-inbox-full-outlineBJZHgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var (
 	file_services_mailer_mailer_proto_rawDescOnce sync.Once
@@ -2284,47 +2288,47 @@ var file_services_mailer_mailer_proto_goTypes = []any{
 	(*DeleteMessageResponse)(nil),          // 41: services.mailer.DeleteMessageResponse
 	(*database.PaginationRequest)(nil),     // 42: resources.common.database.PaginationRequest
 	(*database.PaginationResponse)(nil),    // 43: resources.common.database.PaginationResponse
-	(*mailer.Email)(nil),                   // 44: resources.mailer.Email
-	(*mailer.Template)(nil),                // 45: resources.mailer.Template
-	(*mailer.Thread)(nil),                  // 46: resources.mailer.Thread
-	(*mailer.Message)(nil),                 // 47: resources.mailer.Message
-	(*mailer.ThreadState)(nil),             // 48: resources.mailer.ThreadState
-	(*mailer.EmailSettings)(nil),           // 49: resources.mailer.EmailSettings
+	(*emails.Email)(nil),                   // 44: resources.mailer.emails.Email
+	(*templates.Template)(nil),             // 45: resources.mailer.templates.Template
+	(*threads.Thread)(nil),                 // 46: resources.mailer.threads.Thread
+	(*messages.Message)(nil),               // 47: resources.mailer.messages.Message
+	(*threads.ThreadState)(nil),            // 48: resources.mailer.threads.ThreadState
+	(*settings.EmailSettings)(nil),         // 49: resources.mailer.settings.EmailSettings
 	(*timestamp.Timestamp)(nil),            // 50: resources.timestamp.Timestamp
 }
 var file_services_mailer_mailer_proto_depIdxs = []int32{
 	42, // 0: services.mailer.ListEmailsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	43, // 1: services.mailer.ListEmailsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	44, // 2: services.mailer.ListEmailsResponse.emails:type_name -> resources.mailer.Email
-	44, // 3: services.mailer.GetEmailResponse.email:type_name -> resources.mailer.Email
-	44, // 4: services.mailer.CreateOrUpdateEmailRequest.email:type_name -> resources.mailer.Email
-	44, // 5: services.mailer.CreateOrUpdateEmailResponse.email:type_name -> resources.mailer.Email
-	45, // 6: services.mailer.ListTemplatesResponse.templates:type_name -> resources.mailer.Template
-	45, // 7: services.mailer.GetTemplateResponse.template:type_name -> resources.mailer.Template
-	45, // 8: services.mailer.CreateOrUpdateTemplateRequest.template:type_name -> resources.mailer.Template
-	45, // 9: services.mailer.CreateOrUpdateTemplateResponse.template:type_name -> resources.mailer.Template
+	44, // 2: services.mailer.ListEmailsResponse.emails:type_name -> resources.mailer.emails.Email
+	44, // 3: services.mailer.GetEmailResponse.email:type_name -> resources.mailer.emails.Email
+	44, // 4: services.mailer.CreateOrUpdateEmailRequest.email:type_name -> resources.mailer.emails.Email
+	44, // 5: services.mailer.CreateOrUpdateEmailResponse.email:type_name -> resources.mailer.emails.Email
+	45, // 6: services.mailer.ListTemplatesResponse.templates:type_name -> resources.mailer.templates.Template
+	45, // 7: services.mailer.GetTemplateResponse.template:type_name -> resources.mailer.templates.Template
+	45, // 8: services.mailer.CreateOrUpdateTemplateRequest.template:type_name -> resources.mailer.templates.Template
+	45, // 9: services.mailer.CreateOrUpdateTemplateResponse.template:type_name -> resources.mailer.templates.Template
 	42, // 10: services.mailer.ListThreadsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	43, // 11: services.mailer.ListThreadsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	46, // 12: services.mailer.ListThreadsResponse.threads:type_name -> resources.mailer.Thread
-	46, // 13: services.mailer.GetThreadResponse.thread:type_name -> resources.mailer.Thread
-	46, // 14: services.mailer.CreateThreadRequest.thread:type_name -> resources.mailer.Thread
-	47, // 15: services.mailer.CreateThreadRequest.message:type_name -> resources.mailer.Message
-	46, // 16: services.mailer.CreateThreadResponse.thread:type_name -> resources.mailer.Thread
-	48, // 17: services.mailer.GetThreadStateResponse.state:type_name -> resources.mailer.ThreadState
-	48, // 18: services.mailer.SetThreadStateRequest.state:type_name -> resources.mailer.ThreadState
-	48, // 19: services.mailer.SetThreadStateResponse.state:type_name -> resources.mailer.ThreadState
-	49, // 20: services.mailer.GetEmailSettingsResponse.settings:type_name -> resources.mailer.EmailSettings
-	49, // 21: services.mailer.SetEmailSettingsRequest.settings:type_name -> resources.mailer.EmailSettings
-	49, // 22: services.mailer.SetEmailSettingsResponse.settings:type_name -> resources.mailer.EmailSettings
+	46, // 12: services.mailer.ListThreadsResponse.threads:type_name -> resources.mailer.threads.Thread
+	46, // 13: services.mailer.GetThreadResponse.thread:type_name -> resources.mailer.threads.Thread
+	46, // 14: services.mailer.CreateThreadRequest.thread:type_name -> resources.mailer.threads.Thread
+	47, // 15: services.mailer.CreateThreadRequest.message:type_name -> resources.mailer.messages.Message
+	46, // 16: services.mailer.CreateThreadResponse.thread:type_name -> resources.mailer.threads.Thread
+	48, // 17: services.mailer.GetThreadStateResponse.state:type_name -> resources.mailer.threads.ThreadState
+	48, // 18: services.mailer.SetThreadStateRequest.state:type_name -> resources.mailer.threads.ThreadState
+	48, // 19: services.mailer.SetThreadStateResponse.state:type_name -> resources.mailer.threads.ThreadState
+	49, // 20: services.mailer.GetEmailSettingsResponse.settings:type_name -> resources.mailer.settings.EmailSettings
+	49, // 21: services.mailer.SetEmailSettingsRequest.settings:type_name -> resources.mailer.settings.EmailSettings
+	49, // 22: services.mailer.SetEmailSettingsResponse.settings:type_name -> resources.mailer.settings.EmailSettings
 	42, // 23: services.mailer.SearchThreadsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	43, // 24: services.mailer.SearchThreadsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	47, // 25: services.mailer.SearchThreadsResponse.messages:type_name -> resources.mailer.Message
+	47, // 25: services.mailer.SearchThreadsResponse.messages:type_name -> resources.mailer.messages.Message
 	42, // 26: services.mailer.ListThreadMessagesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	50, // 27: services.mailer.ListThreadMessagesRequest.after:type_name -> resources.timestamp.Timestamp
 	43, // 28: services.mailer.ListThreadMessagesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	47, // 29: services.mailer.ListThreadMessagesResponse.messages:type_name -> resources.mailer.Message
-	47, // 30: services.mailer.PostMessageRequest.message:type_name -> resources.mailer.Message
-	47, // 31: services.mailer.PostMessageResponse.message:type_name -> resources.mailer.Message
+	47, // 29: services.mailer.ListThreadMessagesResponse.messages:type_name -> resources.mailer.messages.Message
+	47, // 30: services.mailer.PostMessageRequest.message:type_name -> resources.mailer.messages.Message
+	47, // 31: services.mailer.PostMessageResponse.message:type_name -> resources.mailer.messages.Message
 	0,  // 32: services.mailer.MailerService.ListEmails:input_type -> services.mailer.ListEmailsRequest
 	2,  // 33: services.mailer.MailerService.GetEmail:input_type -> services.mailer.GetEmailRequest
 	4,  // 34: services.mailer.MailerService.CreateOrUpdateEmail:input_type -> services.mailer.CreateOrUpdateEmailRequest

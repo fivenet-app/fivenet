@@ -7,8 +7,9 @@
 package accounts
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	oauth2 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts/oauth2"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,15 +26,15 @@ const (
 )
 
 type Account struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"`
-	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
-	License        string                 `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
-	Enabled        bool                   `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	LastChar       *int32                 `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	Oauth2Accounts []*OAuth2Account       `protobuf:"bytes,8,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
+	state          protoimpl.MessageState  `protogen:"open.v1"`
+	Id             int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"`
+	CreatedAt      *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt      *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Username       string                  `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	License        string                  `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
+	Enabled        bool                    `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	LastChar       *int32                  `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	Oauth2Accounts []*oauth2.OAuth2Account `protobuf:"bytes,8,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -117,7 +118,7 @@ func (x *Account) GetLastChar() int32 {
 	return 0
 }
 
-func (x *Account) GetOauth2Accounts() []*OAuth2Account {
+func (x *Account) GetOauth2Accounts() []*oauth2.OAuth2Account {
 	if x != nil {
 		return x.Oauth2Accounts
 	}
@@ -188,7 +189,7 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xc0\x03\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a&resources/accounts/oauth2/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/user.proto\x1a\x13tagger/tagger.proto\"\xc7\x03\n" +
 	"\aAccount\x12&\n" +
 	"\x02id\x18\x01 \x01(\x03B\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x02id\x12B\n" +
 	"\n" +
@@ -198,8 +199,8 @@ const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\busername\x18\x04 \x01(\tR\busername\x12\x18\n" +
 	"\alicense\x18\x05 \x01(\tR\alicense\x12\x18\n" +
 	"\aenabled\x18\x06 \x01(\bR\aenabled\x12 \n" +
-	"\tlast_char\x18\a \x01(\x05H\x02R\blastChar\x88\x01\x01\x12g\n" +
-	"\x0foauth2_accounts\x18\b \x03(\v2!.resources.accounts.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
+	"\tlast_char\x18\a \x01(\x05H\x02R\blastChar\x88\x01\x01\x12n\n" +
+	"\x0foauth2_accounts\x18\b \x03(\v2(.resources.accounts.oauth2.OAuth2AccountB\x1b\x9a\x84\x9e\x03\x16alias:\"oauth2_account\"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
@@ -207,7 +208,7 @@ const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\tCharacter\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x14\n" +
 	"\x05group\x18\x02 \x01(\tR\x05group\x12<\n" +
-	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04charBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accountsb\x06proto3"
+	"\x04char\x18\x03 \x01(\v2\x15.resources.users.UserB\x11\x9a\x84\x9e\x03\falias:\"user\"R\x04charBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts;accountsb\x06proto3"
 
 var (
 	file_resources_accounts_accounts_proto_rawDescOnce sync.Once
@@ -223,16 +224,16 @@ func file_resources_accounts_accounts_proto_rawDescGZIP() []byte {
 
 var file_resources_accounts_accounts_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_accounts_accounts_proto_goTypes = []any{
-	(*Account)(nil),             // 0: resources.accounts.Account
-	(*Character)(nil),           // 1: resources.accounts.Character
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*OAuth2Account)(nil),       // 3: resources.accounts.OAuth2Account
-	(*users.User)(nil),          // 4: resources.users.User
+	(*Account)(nil),              // 0: resources.accounts.Account
+	(*Character)(nil),            // 1: resources.accounts.Character
+	(*timestamp.Timestamp)(nil),  // 2: resources.timestamp.Timestamp
+	(*oauth2.OAuth2Account)(nil), // 3: resources.accounts.oauth2.OAuth2Account
+	(*users.User)(nil),           // 4: resources.users.User
 }
 var file_resources_accounts_accounts_proto_depIdxs = []int32{
 	2, // 0: resources.accounts.Account.created_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.accounts.Account.updated_at:type_name -> resources.timestamp.Timestamp
-	3, // 2: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.OAuth2Account
+	3, // 2: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.oauth2.OAuth2Account
 	4, // 3: resources.accounts.Character.char:type_name -> resources.users.User
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
@@ -246,7 +247,6 @@ func file_resources_accounts_accounts_proto_init() {
 	if File_resources_accounts_accounts_proto != nil {
 		return
 	}
-	file_resources_accounts_oauth2_proto_init()
 	file_resources_accounts_accounts_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

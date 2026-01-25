@@ -128,7 +128,7 @@ const file_resources_settings_data_proto_rawDesc = "" +
 	"\x15DATA_MODE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15DATA_MODE_UNAVAILABLE\x10\x01\x12\x16\n" +
 	"\x12DATA_MODE_READONLY\x10\x02\x12\x17\n" +
-	"\x13DATA_MODE_READWRITE\x10\x03BOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"
+	"\x13DATA_MODE_READWRITE\x10\x03BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var (
 	file_resources_settings_data_proto_rawDescOnce sync.Once

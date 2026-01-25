@@ -8,7 +8,7 @@ package documents
 
 import (
 	context "context"
-	collab "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
+	collab "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

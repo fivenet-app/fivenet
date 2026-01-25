@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package resources.permissions.events;
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events;permissionsevents";
+
+message RoleIDEvent {
+  int64 role_id = 1;
+  string job = 2;
+  int32 grade = 3;
+}
+
+message JobLimitsUpdatedEvent {
+  string job = 1;
+}

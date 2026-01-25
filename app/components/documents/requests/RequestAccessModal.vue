@@ -2,8 +2,8 @@
 import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
+import { DocActivityType } from '~~/gen/ts/resources/documents/activity/activity';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

@@ -8,6 +8,6 @@
 package model
 
 type FivenetUserLicenses struct {
-	Type  string `sql:"primary_key" json:"type"`
-	Owner string `sql:"primary_key" json:"owner"`
+	UserID int32  `sql:"primary_key" json:"user_id"`
+	Type   string `sql:"primary_key" json:"type"`
 }

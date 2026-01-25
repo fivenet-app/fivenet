@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package resources.mailer.settings;
+
+import "buf/validate/validate.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/common/content/content.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/settings;mailersettings";
+
+message EmailSettings {
+  int64 email_id = 1;
+
+  optional resources.common.content.Content signature = 2;
+
+  repeated string blocked_emails = 3 [
+    (buf.validate.field).repeated.max_items = 25,
+    (codegen.sanitizer.sanitizer) = {
+      enabled: true
+      strip_html_tags: true
+    }
+  ];
+}

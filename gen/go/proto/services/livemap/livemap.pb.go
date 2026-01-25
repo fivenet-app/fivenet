@@ -7,9 +7,9 @@
 package livemap
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	markers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -252,7 +252,7 @@ func (x *JobsList) GetMarkers() []*jobs.Job {
 
 type MarkerMarkersUpdates struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Updated       []*livemap.MarkerMarker `protobuf:"bytes,1,rep,name=updated,proto3" json:"updated,omitempty"`
+	Updated       []*markers.MarkerMarker `protobuf:"bytes,1,rep,name=updated,proto3" json:"updated,omitempty"`
 	Deleted       []int64                 `protobuf:"varint,2,rep,packed,name=deleted,proto3" json:"deleted,omitempty"`
 	Part          int32                   `protobuf:"varint,3,opt,name=part,proto3" json:"part,omitempty"`
 	Partial       bool                    `protobuf:"varint,4,opt,name=partial,proto3" json:"partial,omitempty"`
@@ -290,7 +290,7 @@ func (*MarkerMarkersUpdates) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *MarkerMarkersUpdates) GetUpdated() []*livemap.MarkerMarker {
+func (x *MarkerMarkersUpdates) GetUpdated() []*markers.MarkerMarker {
 	if x != nil {
 		return x.Updated
 	}
@@ -328,7 +328,7 @@ type Snapshot struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// All currently-known user markers, already filtered for
 	// obsolete PURGE/DELETE events.
-	Markers       []*livemap.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
+	Markers       []*markers.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -363,7 +363,7 @@ func (*Snapshot) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *Snapshot) GetMarkers() []*livemap.UserMarker {
+func (x *Snapshot) GetMarkers() []*markers.UserMarker {
 	if x != nil {
 		return x.Markers
 	}
@@ -372,7 +372,7 @@ func (x *Snapshot) GetMarkers() []*livemap.UserMarker {
 
 type UserUpdates struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Updates       []*livemap.UserMarker  `protobuf:"bytes,1,rep,name=updates,proto3" json:"updates,omitempty"`
+	Updates       []*markers.UserMarker  `protobuf:"bytes,1,rep,name=updates,proto3" json:"updates,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -407,7 +407,7 @@ func (*UserUpdates) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UserUpdates) GetUpdates() []*livemap.UserMarker {
+func (x *UserUpdates) GetUpdates() []*markers.UserMarker {
 	if x != nil {
 		return x.Updates
 	}
@@ -514,7 +514,7 @@ func (x *UserDelete) GetJob() string {
 
 type CreateOrUpdateMarkerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Marker        *livemap.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
+	Marker        *markers.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -549,7 +549,7 @@ func (*CreateOrUpdateMarkerRequest) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *CreateOrUpdateMarkerRequest) GetMarker() *livemap.MarkerMarker {
+func (x *CreateOrUpdateMarkerRequest) GetMarker() *markers.MarkerMarker {
 	if x != nil {
 		return x.Marker
 	}
@@ -558,7 +558,7 @@ func (x *CreateOrUpdateMarkerRequest) GetMarker() *livemap.MarkerMarker {
 
 type CreateOrUpdateMarkerResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Marker        *livemap.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
+	Marker        *markers.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -593,7 +593,7 @@ func (*CreateOrUpdateMarkerResponse) Descriptor() ([]byte, []int) {
 	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CreateOrUpdateMarkerResponse) GetMarker() *livemap.MarkerMarker {
+func (x *CreateOrUpdateMarkerResponse) GetMarker() *markers.MarkerMarker {
 	if x != nil {
 		return x.Marker
 	}
@@ -684,7 +684,7 @@ var File_services_livemap_livemap_proto protoreflect.FileDescriptor
 
 const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a%resources/livemap/marker_marker.proto\x1a#resources/livemap/user_marker.proto\"\x0f\n" +
+	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a\x19codegen/perms/perms.proto\x1a\x19resources/jobs/jobs.proto\x1a-resources/livemap/markers/marker_marker.proto\x1a+resources/livemap/markers/user_marker.proto\"\x0f\n" +
 	"\rStreamRequest\"\x88\x03\n" +
 	"\x0eStreamResponse\x12%\n" +
 	"\fuser_on_duty\x18\x01 \x01(\bH\x01R\n" +
@@ -698,26 +698,26 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\r_user_on_duty\"d\n" +
 	"\bJobsList\x12)\n" +
 	"\x05users\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x05users\x12-\n" +
-	"\amarkers\x18\x02 \x03(\v2\x13.resources.jobs.JobR\amarkers\"\x99\x01\n" +
-	"\x14MarkerMarkersUpdates\x129\n" +
-	"\aupdated\x18\x01 \x03(\v2\x1f.resources.livemap.MarkerMarkerR\aupdated\x12\x18\n" +
+	"\amarkers\x18\x02 \x03(\v2\x13.resources.jobs.JobR\amarkers\"\xa1\x01\n" +
+	"\x14MarkerMarkersUpdates\x12A\n" +
+	"\aupdated\x18\x01 \x03(\v2'.resources.livemap.markers.MarkerMarkerR\aupdated\x12\x18\n" +
 	"\adeleted\x18\x02 \x03(\x03R\adeleted\x12\x12\n" +
 	"\x04part\x18\x03 \x01(\x05R\x04part\x12\x18\n" +
-	"\apartial\x18\x04 \x01(\bR\apartial\"C\n" +
-	"\bSnapshot\x127\n" +
-	"\amarkers\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\amarkers\"F\n" +
-	"\vUserUpdates\x127\n" +
-	"\aupdates\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\aupdates\"E\n" +
+	"\apartial\x18\x04 \x01(\bR\apartial\"K\n" +
+	"\bSnapshot\x12?\n" +
+	"\amarkers\x18\x01 \x03(\v2%.resources.livemap.markers.UserMarkerR\amarkers\"N\n" +
+	"\vUserUpdates\x12?\n" +
+	"\aupdates\x18\x01 \x03(\v2%.resources.livemap.markers.UserMarkerR\aupdates\"E\n" +
 	"\vUserDeletes\x126\n" +
 	"\adeletes\x18\x01 \x03(\v2\x1c.services.livemap.UserDeleteR\adeletes\".\n" +
 	"\n" +
 	"UserDelete\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\"V\n" +
-	"\x1bCreateOrUpdateMarkerRequest\x127\n" +
-	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"W\n" +
-	"\x1cCreateOrUpdateMarkerResponse\x127\n" +
-	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerR\x06marker\"%\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\"^\n" +
+	"\x1bCreateOrUpdateMarkerRequest\x12?\n" +
+	"\x06marker\x18\x01 \x01(\v2'.resources.livemap.markers.MarkerMarkerR\x06marker\"_\n" +
+	"\x1cCreateOrUpdateMarkerResponse\x12?\n" +
+	"\x06marker\x18\x01 \x01(\v2'.resources.livemap.markers.MarkerMarkerR\x06marker\"%\n" +
 	"\x13DeleteMarkerRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x16\n" +
 	"\x14DeleteMarkerResponse2\xde\x03\n" +
@@ -730,7 +730,7 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"Lower_Rank\"\tSame_Rank\"\x03Any\x12\x92\x01\n" +
 	"\fDeleteMarker\x12%.services.livemap.DeleteMarkerRequest\x1a&.services.livemap.DeleteMarkerResponse\"3\xd2\xf3\x18/\b\x01*+\n" +
 	"\x06Access\x18\x01\"\x03Own\"\n" +
-	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a\x19\xea\xf3\x18\x15\bZ\x12\x11i-mdi-map-outlineBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemapb\x06proto3"
+	"Lower_Rank\"\tSame_Rank\"\x03Any\x1a\x19\xea\xf3\x18\x15\bZ\x12\x11i-mdi-map-outlineBLZJgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/livemap;livemapb\x06proto3"
 
 var (
 	file_services_livemap_livemap_proto_rawDescOnce sync.Once
@@ -759,8 +759,8 @@ var file_services_livemap_livemap_proto_goTypes = []any{
 	(*DeleteMarkerRequest)(nil),          // 10: services.livemap.DeleteMarkerRequest
 	(*DeleteMarkerResponse)(nil),         // 11: services.livemap.DeleteMarkerResponse
 	(*jobs.Job)(nil),                     // 12: resources.jobs.Job
-	(*livemap.MarkerMarker)(nil),         // 13: resources.livemap.MarkerMarker
-	(*livemap.UserMarker)(nil),           // 14: resources.livemap.UserMarker
+	(*markers.MarkerMarker)(nil),         // 13: resources.livemap.markers.MarkerMarker
+	(*markers.UserMarker)(nil),           // 14: resources.livemap.markers.UserMarker
 }
 var file_services_livemap_livemap_proto_depIdxs = []int32{
 	2,  // 0: services.livemap.StreamResponse.jobs:type_name -> services.livemap.JobsList
@@ -770,12 +770,12 @@ var file_services_livemap_livemap_proto_depIdxs = []int32{
 	6,  // 4: services.livemap.StreamResponse.user_deletes:type_name -> services.livemap.UserDeletes
 	12, // 5: services.livemap.JobsList.users:type_name -> resources.jobs.Job
 	12, // 6: services.livemap.JobsList.markers:type_name -> resources.jobs.Job
-	13, // 7: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.MarkerMarker
-	14, // 8: services.livemap.Snapshot.markers:type_name -> resources.livemap.UserMarker
-	14, // 9: services.livemap.UserUpdates.updates:type_name -> resources.livemap.UserMarker
+	13, // 7: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.markers.MarkerMarker
+	14, // 8: services.livemap.Snapshot.markers:type_name -> resources.livemap.markers.UserMarker
+	14, // 9: services.livemap.UserUpdates.updates:type_name -> resources.livemap.markers.UserMarker
 	7,  // 10: services.livemap.UserDeletes.deletes:type_name -> services.livemap.UserDelete
-	13, // 11: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.MarkerMarker
-	13, // 12: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.MarkerMarker
+	13, // 11: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.markers.MarkerMarker
+	13, // 12: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.markers.MarkerMarker
 	0,  // 13: services.livemap.LivemapService.Stream:input_type -> services.livemap.StreamRequest
 	8,  // 14: services.livemap.LivemapService.CreateOrUpdateMarker:input_type -> services.livemap.CreateOrUpdateMarkerRequest
 	10, // 15: services.livemap.LivemapService.DeleteMarker:input_type -> services.livemap.DeleteMarkerRequest

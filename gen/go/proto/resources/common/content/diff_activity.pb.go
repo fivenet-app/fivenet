@@ -268,7 +268,7 @@ const file_resources_common_content_diff_activity_proto_rawDesc = "" +
 	"\n" +
 	"KIND_EQUAL\x10\x01\x12\x0f\n" +
 	"\vKIND_INSERT\x10\x02\x12\x0f\n" +
-	"\vKIND_DELETE\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;contentb\x06proto3"
+	"\vKIND_DELETE\x10\x03BTZRgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content;contentb\x06proto3"
 
 var (
 	file_resources_common_content_diff_activity_proto_rawDescOnce sync.Once

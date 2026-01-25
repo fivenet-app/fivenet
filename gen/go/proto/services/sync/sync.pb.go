@@ -7,10 +7,10 @@
 package sync
 
 import (
-	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	sync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	dispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	activity1 "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	sync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -192,7 +192,7 @@ func (x *AddActivityRequest) GetUserOauth2() *sync.UserOAuth2Conn {
 	return nil
 }
 
-func (x *AddActivityRequest) GetDispatch() *centrum.Dispatch {
+func (x *AddActivityRequest) GetDispatch() *dispatches.Dispatch {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_Dispatch); ok {
 			return x.Dispatch
@@ -201,7 +201,7 @@ func (x *AddActivityRequest) GetDispatch() *centrum.Dispatch {
 	return nil
 }
 
-func (x *AddActivityRequest) GetUserActivity() *users.UserActivity {
+func (x *AddActivityRequest) GetUserActivity() *activity.UserActivity {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_UserActivity); ok {
 			return x.UserActivity
@@ -219,7 +219,7 @@ func (x *AddActivityRequest) GetUserProps() *sync.UserProps {
 	return nil
 }
 
-func (x *AddActivityRequest) GetColleagueActivity() *jobs.ColleagueActivity {
+func (x *AddActivityRequest) GetColleagueActivity() *activity1.ColleagueActivity {
 	if x != nil {
 		if x, ok := x.Activity.(*AddActivityRequest_ColleagueActivity); ok {
 			return x.ColleagueActivity
@@ -264,12 +264,12 @@ type AddActivityRequest_UserOauth2 struct {
 }
 
 type AddActivityRequest_Dispatch struct {
-	Dispatch *centrum.Dispatch `protobuf:"bytes,2,opt,name=dispatch,proto3,oneof"`
+	Dispatch *dispatches.Dispatch `protobuf:"bytes,2,opt,name=dispatch,proto3,oneof"`
 }
 
 type AddActivityRequest_UserActivity struct {
 	// User activity
-	UserActivity *users.UserActivity `protobuf:"bytes,3,opt,name=user_activity,json=userActivity,proto3,oneof"`
+	UserActivity *activity.UserActivity `protobuf:"bytes,3,opt,name=user_activity,json=userActivity,proto3,oneof"`
 }
 
 type AddActivityRequest_UserProps struct {
@@ -279,7 +279,7 @@ type AddActivityRequest_UserProps struct {
 
 type AddActivityRequest_ColleagueActivity struct {
 	// Jobs user activity
-	ColleagueActivity *jobs.ColleagueActivity `protobuf:"bytes,5,opt,name=colleague_activity,json=colleagueActivity,proto3,oneof"`
+	ColleagueActivity *activity1.ColleagueActivity `protobuf:"bytes,5,opt,name=colleague_activity,json=colleagueActivity,proto3,oneof"`
 }
 
 type AddActivityRequest_ColleagueProps struct {
@@ -965,21 +965,21 @@ var File_services_sync_sync_proto protoreflect.FileDescriptor
 
 const file_services_sync_sync_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/sync/sync.proto\x12\rservices.sync\x1a\"resources/centrum/dispatches.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1dresources/sync/activity.proto\x1a\x19resources/sync/data.proto\x1a\x1eresources/users/activity.proto\"\x12\n" +
+	"\x18services/sync/sync.proto\x12\rservices.sync\x1a-resources/centrum/dispatches/dispatches.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a\x1dresources/sync/activity.proto\x1a\x19resources/sync/data.proto\x1a'resources/users/activity/activity.proto\"\x12\n" +
 	"\x10GetStatusRequest\"\xe5\x01\n" +
 	"\x11GetStatusResponse\x12.\n" +
 	"\x04jobs\x18\x01 \x01(\v2\x1a.resources.sync.DataStatusR\x04jobs\x126\n" +
 	"\blicenses\x18\x02 \x01(\v2\x1a.resources.sync.DataStatusR\blicenses\x120\n" +
 	"\x05users\x18\x03 \x01(\v2\x1a.resources.sync.DataStatusR\x05users\x126\n" +
-	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xc6\x04\n" +
+	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xee\x04\n" +
 	"\x12AddActivityRequest\x12A\n" +
 	"\vuser_oauth2\x18\x01 \x01(\v2\x1e.resources.sync.UserOAuth2ConnH\x00R\n" +
-	"userOauth2\x129\n" +
-	"\bdispatch\x18\x02 \x01(\v2\x1b.resources.centrum.DispatchH\x00R\bdispatch\x12D\n" +
-	"\ruser_activity\x18\x03 \x01(\v2\x1d.resources.users.UserActivityH\x00R\fuserActivity\x12:\n" +
+	"userOauth2\x12D\n" +
+	"\bdispatch\x18\x02 \x01(\v2&.resources.centrum.dispatches.DispatchH\x00R\bdispatch\x12M\n" +
+	"\ruser_activity\x18\x03 \x01(\v2&.resources.users.activity.UserActivityH\x00R\fuserActivity\x12:\n" +
 	"\n" +
-	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12R\n" +
-	"\x12colleague_activity\x18\x05 \x01(\v2!.resources.jobs.ColleagueActivityH\x00R\x11colleagueActivity\x12I\n" +
+	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12f\n" +
+	"\x12colleague_activity\x18\x05 \x01(\v25.resources.jobs.colleagues.activity.ColleagueActivityH\x00R\x11colleagueActivity\x12I\n" +
 	"\x0fcolleague_props\x18\x06 \x01(\v2\x1e.resources.sync.ColleaguePropsH\x00R\x0ecolleagueProps\x12F\n" +
 	"\rjob_timeclock\x18\a \x01(\v2\x1f.resources.sync.TimeclockUpdateH\x00R\fjobTimeclock\x12=\n" +
 	"\vuser_update\x18\b \x01(\v2\x1a.resources.sync.UserUpdateH\x00R\n" +
@@ -1042,7 +1042,7 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bSendData\x12\x1e.services.sync.SendDataRequest\x1a\x1f.services.sync.SendDataResponse\x12Q\n" +
 	"\n" +
 	"DeleteData\x12 .services.sync.DeleteDataRequest\x1a!.services.sync.DeleteDataResponse\x12G\n" +
-	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;syncb\x06proto3"
+	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01BFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;syncb\x06proto3"
 
 var (
 	file_services_sync_sync_proto_rawDescOnce sync1.Once
@@ -1058,37 +1058,37 @@ func file_services_sync_sync_proto_rawDescGZIP() []byte {
 
 var file_services_sync_sync_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_sync_sync_proto_goTypes = []any{
-	(*GetStatusRequest)(nil),        // 0: services.sync.GetStatusRequest
-	(*GetStatusResponse)(nil),       // 1: services.sync.GetStatusResponse
-	(*AddActivityRequest)(nil),      // 2: services.sync.AddActivityRequest
-	(*AddActivityResponse)(nil),     // 3: services.sync.AddActivityResponse
-	(*RegisterAccountRequest)(nil),  // 4: services.sync.RegisterAccountRequest
-	(*RegisterAccountResponse)(nil), // 5: services.sync.RegisterAccountResponse
-	(*TransferAccountRequest)(nil),  // 6: services.sync.TransferAccountRequest
-	(*TransferAccountResponse)(nil), // 7: services.sync.TransferAccountResponse
-	(*SendDataRequest)(nil),         // 8: services.sync.SendDataRequest
-	(*SendDataResponse)(nil),        // 9: services.sync.SendDataResponse
-	(*DeleteDataRequest)(nil),       // 10: services.sync.DeleteDataRequest
-	(*DeleteDataResponse)(nil),      // 11: services.sync.DeleteDataResponse
-	(*StreamRequest)(nil),           // 12: services.sync.StreamRequest
-	(*StreamResponse)(nil),          // 13: services.sync.StreamResponse
-	(*sync.DataStatus)(nil),         // 14: resources.sync.DataStatus
-	(*sync.UserOAuth2Conn)(nil),     // 15: resources.sync.UserOAuth2Conn
-	(*centrum.Dispatch)(nil),        // 16: resources.centrum.Dispatch
-	(*users.UserActivity)(nil),      // 17: resources.users.UserActivity
-	(*sync.UserProps)(nil),          // 18: resources.sync.UserProps
-	(*jobs.ColleagueActivity)(nil),  // 19: resources.jobs.ColleagueActivity
-	(*sync.ColleagueProps)(nil),     // 20: resources.sync.ColleagueProps
-	(*sync.TimeclockUpdate)(nil),    // 21: resources.sync.TimeclockUpdate
-	(*sync.UserUpdate)(nil),         // 22: resources.sync.UserUpdate
-	(*sync.DataJobs)(nil),           // 23: resources.sync.DataJobs
-	(*sync.DataLicenses)(nil),       // 24: resources.sync.DataLicenses
-	(*sync.DataUsers)(nil),          // 25: resources.sync.DataUsers
-	(*sync.DataVehicles)(nil),       // 26: resources.sync.DataVehicles
-	(*sync.DataUserLocations)(nil),  // 27: resources.sync.DataUserLocations
-	(*sync.LastCharID)(nil),         // 28: resources.sync.LastCharID
-	(*sync.DeleteUsers)(nil),        // 29: resources.sync.DeleteUsers
-	(*sync.DeleteVehicles)(nil),     // 30: resources.sync.DeleteVehicles
+	(*GetStatusRequest)(nil),            // 0: services.sync.GetStatusRequest
+	(*GetStatusResponse)(nil),           // 1: services.sync.GetStatusResponse
+	(*AddActivityRequest)(nil),          // 2: services.sync.AddActivityRequest
+	(*AddActivityResponse)(nil),         // 3: services.sync.AddActivityResponse
+	(*RegisterAccountRequest)(nil),      // 4: services.sync.RegisterAccountRequest
+	(*RegisterAccountResponse)(nil),     // 5: services.sync.RegisterAccountResponse
+	(*TransferAccountRequest)(nil),      // 6: services.sync.TransferAccountRequest
+	(*TransferAccountResponse)(nil),     // 7: services.sync.TransferAccountResponse
+	(*SendDataRequest)(nil),             // 8: services.sync.SendDataRequest
+	(*SendDataResponse)(nil),            // 9: services.sync.SendDataResponse
+	(*DeleteDataRequest)(nil),           // 10: services.sync.DeleteDataRequest
+	(*DeleteDataResponse)(nil),          // 11: services.sync.DeleteDataResponse
+	(*StreamRequest)(nil),               // 12: services.sync.StreamRequest
+	(*StreamResponse)(nil),              // 13: services.sync.StreamResponse
+	(*sync.DataStatus)(nil),             // 14: resources.sync.DataStatus
+	(*sync.UserOAuth2Conn)(nil),         // 15: resources.sync.UserOAuth2Conn
+	(*dispatches.Dispatch)(nil),         // 16: resources.centrum.dispatches.Dispatch
+	(*activity.UserActivity)(nil),       // 17: resources.users.activity.UserActivity
+	(*sync.UserProps)(nil),              // 18: resources.sync.UserProps
+	(*activity1.ColleagueActivity)(nil), // 19: resources.jobs.colleagues.activity.ColleagueActivity
+	(*sync.ColleagueProps)(nil),         // 20: resources.sync.ColleagueProps
+	(*sync.TimeclockUpdate)(nil),        // 21: resources.sync.TimeclockUpdate
+	(*sync.UserUpdate)(nil),             // 22: resources.sync.UserUpdate
+	(*sync.DataJobs)(nil),               // 23: resources.sync.DataJobs
+	(*sync.DataLicenses)(nil),           // 24: resources.sync.DataLicenses
+	(*sync.DataUsers)(nil),              // 25: resources.sync.DataUsers
+	(*sync.DataVehicles)(nil),           // 26: resources.sync.DataVehicles
+	(*sync.DataUserLocations)(nil),      // 27: resources.sync.DataUserLocations
+	(*sync.LastCharID)(nil),             // 28: resources.sync.LastCharID
+	(*sync.DeleteUsers)(nil),            // 29: resources.sync.DeleteUsers
+	(*sync.DeleteVehicles)(nil),         // 30: resources.sync.DeleteVehicles
 }
 var file_services_sync_sync_proto_depIdxs = []int32{
 	14, // 0: services.sync.GetStatusResponse.jobs:type_name -> resources.sync.DataStatus
@@ -1096,10 +1096,10 @@ var file_services_sync_sync_proto_depIdxs = []int32{
 	14, // 2: services.sync.GetStatusResponse.users:type_name -> resources.sync.DataStatus
 	14, // 3: services.sync.GetStatusResponse.vehicles:type_name -> resources.sync.DataStatus
 	15, // 4: services.sync.AddActivityRequest.user_oauth2:type_name -> resources.sync.UserOAuth2Conn
-	16, // 5: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.Dispatch
-	17, // 6: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.UserActivity
+	16, // 5: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.dispatches.Dispatch
+	17, // 6: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.activity.UserActivity
 	18, // 7: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.UserProps
-	19, // 8: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.ColleagueActivity
+	19, // 8: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
 	20, // 9: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.ColleagueProps
 	21, // 10: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.TimeclockUpdate
 	22, // 11: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.UserUpdate

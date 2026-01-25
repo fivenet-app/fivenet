@@ -8,10 +8,12 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissionsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/events"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -38,7 +40,7 @@ type Perm struct {
 type Attr struct {
 	ID            int64
 	Key           Key
-	Type          permissions.AttributeTypes
+	Type          permissionsattributes.AttributeTypes
 	ValidValues   any
 	DefaultValues any
 }
@@ -208,7 +210,7 @@ func (p *Perms) registerOrUpdateAttribute(
 	ctx context.Context,
 	permId int64,
 	key Key,
-	aType permissions.AttributeTypes,
+	aType permissionsattributes.AttributeTypes,
 	validValues any,
 ) (int64, error) {
 	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
@@ -218,7 +220,7 @@ func (p *Perms) registerOrUpdateAttribute(
 		}
 	}
 
-	attrValidValues := &permissions.AttributeValues{}
+	attrValidValues := &permissionsattributes.AttributeValues{}
 	if attr != nil && attr.ValidValues != nil {
 		if err := p.convertRawValue(attrValidValues, *attr.ValidValues, aType); err != nil {
 			return 0, fmt.Errorf("failed to convert raw value. %w", err)
@@ -235,7 +237,7 @@ func (p *Perms) registerOrUpdateAttribute(
 			}
 
 		default:
-			if aType == permissions.StringListAttributeType {
+			if aType == permissionsattributes.StringListAttributeType {
 				marshaled, err := json.Marshal(v)
 				if err != nil {
 					return 0, fmt.Errorf("failed to marshal valid values to string. %w", err)
@@ -248,7 +250,7 @@ func (p *Perms) registerOrUpdateAttribute(
 		validValsOut = "{}"
 	}
 
-	validVals := &permissions.AttributeValues{}
+	validVals := &permissionsattributes.AttributeValues{}
 	if err := p.convertRawValue(validVals, validValsOut, aType); err != nil {
 		return 0, fmt.Errorf("failed to convert raw value for valid values. %w", err)
 	}
@@ -316,7 +318,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	// Remove default role from the list of roles
-	existingRoles = slices.DeleteFunc(existingRoles, func(role *permissions.Role) bool {
+	existingRoles = slices.DeleteFunc(existingRoles, func(role *permissionspermissions.Role) bool {
 		return role.GetJob() == DefaultRoleJob && role.GetGrade() == p.startJobGrade
 	})
 
@@ -331,7 +333,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 				continue
 			}
 
-			index := slices.IndexFunc(existingRoles, func(r *permissions.Role) bool {
+			index := slices.IndexFunc(existingRoles, func(r *permissionspermissions.Role) bool {
 				return role.GetId() == r.GetId()
 			})
 			if index > -1 {
@@ -417,7 +419,7 @@ func (p *Perms) ApplyJobPermissions(ctx context.Context, job string) error {
 		}
 	}
 
-	if err := p.publishMessage(ctx, JobLimitsUpdatedSubject, &permissions.RoleIDEvent{
+	if err := p.publishMessage(ctx, JobLimitsUpdatedSubject, &permissionsevents.RoleIDEvent{
 		Job: job,
 	}); err != nil {
 		return fmt.Errorf("failed to publish job perm update message for job %s. %w", job, err)
@@ -477,7 +479,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 
 		toRemove := []int64{}
 		for _, p := range ps {
-			if !slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
+			if !slices.ContainsFunc(jps, func(in *permissionspermissions.Permission) bool {
 				return in.GetId() == p.GetId() && in.GetVal()
 			}) {
 				toRemove = append(toRemove, p.GetId())
@@ -510,7 +512,7 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 func (p *Perms) applyJobPermissionsToAttrs(
 	ctx context.Context,
 	roles collections.Roles,
-	jps []*permissions.Permission,
+	jps []*permissionspermissions.Permission,
 ) error {
 	if len(roles) == 0 {
 		return nil
@@ -546,15 +548,15 @@ func (p *Perms) applyJobPermissionsToAttrs(
 			continue
 		}
 
-		toRemove := []*permissions.RoleAttribute{}
-		toUpdate := []*permissions.RoleAttribute{}
+		toRemove := []*permissionsattributes.RoleAttribute{}
+		toUpdate := []*permissionsattributes.RoleAttribute{}
 		for _, attr := range attrs {
 			maxValues, _ := p.GetJobAttributeValue(ctx, role.GetJob(), attr.GetAttrId())
 
-			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
+			if slices.ContainsFunc(jps, func(in *permissionspermissions.Permission) bool {
 				return in.GetId() == attr.GetPermissionId()
 			}) {
-				if _, changed := attr.GetValue().Check(permissions.AttributeTypes(attr.GetType()), attr.GetValidValues(), maxValues); changed {
+				if _, changed := attr.GetValue().Check(permissionsattributes.AttributeTypes(attr.GetType()), attr.GetValidValues(), maxValues); changed {
 					p.logger.Debug(
 						"attribute changed on role due to job perms change",
 						zap.String("job", role.GetJob()),

@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package resources.jobs.colleagues.activity;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "codegen/sanitizer/sanitizer.proto";
+import "resources/jobs/colleagues/colleagues.proto";
+import "resources/jobs/labels/labels.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity;colleaguesactivity";
+
+enum ColleagueActivityType {
+  COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  COLLEAGUE_ACTIVITY_TYPE_HIRED = 1;
+  COLLEAGUE_ACTIVITY_TYPE_FIRED = 2;
+  COLLEAGUE_ACTIVITY_TYPE_PROMOTED = 3;
+  COLLEAGUE_ACTIVITY_TYPE_DEMOTED = 4;
+  COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE = 5;
+  COLLEAGUE_ACTIVITY_TYPE_NOTE = 6;
+  COLLEAGUE_ACTIVITY_TYPE_LABELS = 7;
+  COLLEAGUE_ACTIVITY_TYPE_NAME = 8;
+}
+
+message ColleagueActivity {
+  int64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  optional resources.timestamp.Timestamp created_at = 2;
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional int32 source_user_id = 5 [(buf.validate.field).int32.gte = 0];
+  optional resources.jobs.colleagues.Colleague source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
+  int32 target_user_id = 7 [(buf.validate.field).int32.gte = 0];
+  resources.jobs.colleagues.Colleague target_user = 8 [(tagger.tags) = "alias:\"target_user\""];
+  ColleagueActivityType activity_type = 9;
+  string reason = 10 [
+    (buf.validate.field).string.max_len = 255,
+    (codegen.sanitizer.sanitizer) = {enabled: true}
+  ];
+  ColleagueActivityData data = 11;
+}
+
+message ColleagueActivityData {
+  option (codegen.dbscanner.dbscanner) = {enabled: true};
+
+  oneof data {
+    option (buf.validate.oneof).required = true;
+
+    AbsenceDateChange absence_date = 1;
+    GradeChange grade_change = 2;
+    LabelsChange labels_change = 3;
+    NameChange name_change = 4;
+  }
+}
+
+message AbsenceDateChange {
+  resources.timestamp.Timestamp absence_begin = 1;
+  resources.timestamp.Timestamp absence_end = 2;
+}
+
+message GradeChange {
+  int32 grade = 1;
+  string grade_label = 2;
+}
+
+message LabelsChange {
+  repeated resources.jobs.labels.Label added = 1;
+  repeated resources.jobs.labels.Label removed = 2;
+}
+
+message NameChange {
+  optional string prefix = 1;
+  optional string suffix = 2;
+}

@@ -6,7 +6,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/stores/clipboard';
 import type { ClassProp } from '~/utils/types';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
-import type { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
+import type { User } from '~~/gen/ts/resources/users/user';
 import EmailBlock from './EmailBlock.vue';
 
 const props = withDefaults(

@@ -7,7 +7,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2026/pkg/discord/embeds"
 )
 
 func (s *State) Calculate(

@@ -6,7 +6,7 @@ package qualifications
 import (
 	"database/sql/driver"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -23,27 +23,6 @@ func (x *QualificationDiscordSettings) Scan(value any) error {
 
 // Value marshals the QualificationDiscordSettings value into driver.Valuer.
 func (x *QualificationDiscordSettings) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.MarshalToJSON(x)
-	return string(out), err
-}
-
-// Scan implements driver.Valuer for protobuf QualificationExamSettings.
-func (x *QualificationExamSettings) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the QualificationExamSettings value into driver.Valuer.
-func (x *QualificationExamSettings) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

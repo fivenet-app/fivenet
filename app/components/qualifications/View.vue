@@ -12,8 +12,9 @@ import {
 import RequestUserModal from '~/components/qualifications/request/RequestUserModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
+import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';

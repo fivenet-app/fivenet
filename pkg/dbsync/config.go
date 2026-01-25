@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/creasty/defaults"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"

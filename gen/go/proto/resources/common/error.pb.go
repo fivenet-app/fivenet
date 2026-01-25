@@ -81,7 +81,7 @@ const file_resources_common_error_proto_rawDesc = "" +
 	"\x05Error\x125\n" +
 	"\x05title\x18\x01 \x01(\v2\x1a.resources.common.I18NItemH\x00R\x05title\x88\x01\x01\x124\n" +
 	"\acontent\x18\x02 \x01(\v2\x1a.resources.common.I18NItemR\acontentB\b\n" +
-	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_error_proto_rawDescOnce sync.Once

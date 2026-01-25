@@ -12,21 +12,21 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobDispatchers } from "../../resources/centrum/dispatchers";
+import { JobDispatchers } from "../../resources/centrum/dispatchers/dispatchers";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { TakeDispatchResp } from "../../resources/centrum/dispatches";
-import { DispatchStatus } from "../../resources/centrum/dispatches";
+import { TakeDispatchResp } from "../../resources/centrum/dispatches/dispatches";
+import { DispatchStatus } from "../../resources/centrum/dispatches/dispatches";
 import { Job } from "../../resources/jobs/jobs";
-import { Dispatch } from "../../resources/centrum/dispatches";
-import { StatusDispatch } from "../../resources/centrum/dispatches";
-import { UnitStatus } from "../../resources/centrum/units";
+import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
+import { StatusDispatch } from "../../resources/centrum/dispatches/dispatches";
+import { UnitStatus } from "../../resources/centrum/units/units";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { Dispatchers } from "../../resources/centrum/dispatchers";
-import { HeatmapEntry } from "../../resources/livemap/heatmap";
-import { Unit } from "../../resources/centrum/units";
-import { StatusUnit } from "../../resources/centrum/units";
-import { EffectiveAccess } from "../../resources/centrum/settings";
-import { Settings } from "../../resources/centrum/settings";
+import { Dispatchers } from "../../resources/centrum/dispatchers/dispatchers";
+import { HeatmapEntry } from "../../resources/livemap/heatmap/heatmap";
+import { Unit } from "../../resources/centrum/units/units";
+import { StatusUnit } from "../../resources/centrum/units/units";
+import { EffectiveAccess } from "../../resources/centrum/settings/settings";
+import { Settings } from "../../resources/centrum/settings/settings";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Common
 
@@ -66,11 +66,11 @@ export interface GetSettingsRequest {
  */
 export interface GetSettingsResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 1
+     * @generated from protobuf field: resources.centrum.settings.Settings settings = 1
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: resources.centrum.EffectiveAccess effective_access = 2
+     * @generated from protobuf field: resources.centrum.settings.EffectiveAccess effective_access = 2
      */
     effectiveAccess?: EffectiveAccess;
 }
@@ -79,7 +79,7 @@ export interface GetSettingsResponse {
  */
 export interface UpdateSettingsRequest {
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 1
+     * @generated from protobuf field: resources.centrum.settings.Settings settings = 1
      */
     settings?: Settings;
 }
@@ -88,7 +88,7 @@ export interface UpdateSettingsRequest {
  */
 export interface UpdateSettingsResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 1
+     * @generated from protobuf field: resources.centrum.settings.Settings settings = 1
      */
     settings?: Settings;
 }
@@ -99,7 +99,7 @@ export interface UpdateSettingsResponse {
  */
 export interface ListUnitsRequest {
     /**
-     * @generated from protobuf field: repeated resources.centrum.StatusUnit status = 1
+     * @generated from protobuf field: repeated resources.centrum.units.StatusUnit status = 1
      */
     status: StatusUnit[];
 }
@@ -108,7 +108,7 @@ export interface ListUnitsRequest {
  */
 export interface ListUnitsResponse {
     /**
-     * @generated from protobuf field: repeated resources.centrum.Unit units = 1
+     * @generated from protobuf field: repeated resources.centrum.units.Unit units = 1
      */
     units: Unit[];
 }
@@ -117,7 +117,7 @@ export interface ListUnitsResponse {
  */
 export interface CreateOrUpdateUnitRequest {
     /**
-     * @generated from protobuf field: resources.centrum.Unit unit = 1
+     * @generated from protobuf field: resources.centrum.units.Unit unit = 1
      */
     unit?: Unit;
 }
@@ -126,7 +126,7 @@ export interface CreateOrUpdateUnitRequest {
  */
 export interface CreateOrUpdateUnitResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Unit unit = 1
+     * @generated from protobuf field: resources.centrum.units.Unit unit = 1
      */
     unit?: Unit;
 }
@@ -153,7 +153,7 @@ export interface UpdateUnitStatusRequest {
      */
     unitId: number;
     /**
-     * @generated from protobuf field: resources.centrum.StatusUnit status = 2
+     * @generated from protobuf field: resources.centrum.units.StatusUnit status = 2
      */
     status: StatusUnit;
     /**
@@ -206,7 +206,7 @@ export interface GetDispatchHeatmapResponse {
      */
     maxEntries: number;
     /**
-     * @generated from protobuf field: repeated resources.livemap.HeatmapEntry entries = 2
+     * @generated from protobuf field: repeated resources.livemap.heatmap.HeatmapEntry entries = 2
      */
     entries: HeatmapEntry[];
 }
@@ -224,7 +224,7 @@ export interface UpdateDispatchersRequest {
  */
 export interface UpdateDispatchersResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 1
+     * @generated from protobuf field: resources.centrum.dispatchers.Dispatchers dispatchers = 1
      */
     dispatchers?: Dispatchers;
 }
@@ -237,7 +237,7 @@ export interface ListUnitActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.centrum.UnitStatus activity = 2
+     * @generated from protobuf field: repeated resources.centrum.units.UnitStatus activity = 2
      */
     activity: UnitStatus[];
 }
@@ -266,11 +266,11 @@ export interface ListDispatchesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated resources.centrum.StatusDispatch status = 2
+     * @generated from protobuf field: repeated resources.centrum.dispatches.StatusDispatch status = 2
      */
     status: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated resources.centrum.StatusDispatch not_status = 3
+     * @generated from protobuf field: repeated resources.centrum.dispatches.StatusDispatch not_status = 3
      */
     notStatus: StatusDispatch[];
     /**
@@ -291,7 +291,7 @@ export interface ListDispatchesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 2
+     * @generated from protobuf field: repeated resources.centrum.dispatches.Dispatch dispatches = 2
      */
     dispatches: Dispatch[];
 }
@@ -309,7 +309,7 @@ export interface GetDispatchRequest {
  */
 export interface GetDispatchResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
      */
     dispatch?: Dispatch;
 }
@@ -318,7 +318,7 @@ export interface GetDispatchResponse {
  */
 export interface CreateDispatchRequest {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
      */
     dispatch?: Dispatch;
 }
@@ -327,7 +327,7 @@ export interface CreateDispatchRequest {
  */
 export interface CreateDispatchResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
      */
     dispatch?: Dispatch;
 }
@@ -336,7 +336,7 @@ export interface CreateDispatchResponse {
  */
 export interface UpdateDispatchRequest {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
      */
     dispatch?: Dispatch;
 }
@@ -345,7 +345,7 @@ export interface UpdateDispatchRequest {
  */
 export interface UpdateDispatchResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 1
      */
     dispatch?: Dispatch;
 }
@@ -386,7 +386,7 @@ export interface UpdateDispatchStatusRequest {
      */
     dispatchId: number;
     /**
-     * @generated from protobuf field: resources.centrum.StatusDispatch status = 2
+     * @generated from protobuf field: resources.centrum.dispatches.StatusDispatch status = 2
      */
     status: StatusDispatch;
     /**
@@ -438,7 +438,7 @@ export interface ListDispatchActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.centrum.DispatchStatus activity = 2
+     * @generated from protobuf field: repeated resources.centrum.dispatches.DispatchStatus activity = 2
      */
     activity: DispatchStatus[];
 }
@@ -456,7 +456,7 @@ export interface JoinUnitRequest {
  */
 export interface JoinUnitResponse {
     /**
-     * @generated from protobuf field: resources.centrum.Unit unit = 1
+     * @generated from protobuf field: resources.centrum.units.Unit unit = 1
      */
     unit?: Unit;
 }
@@ -469,7 +469,7 @@ export interface TakeDispatchRequest {
      */
     dispatchIds: number[];
     /**
-     * @generated from protobuf field: resources.centrum.TakeDispatchResp resp = 2
+     * @generated from protobuf field: resources.centrum.dispatches.TakeDispatchResp resp = 2
      */
     resp: TakeDispatchResp;
     /**
@@ -491,11 +491,11 @@ export interface StreamHandshake {
      */
     serverTime?: Timestamp;
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 2
+     * @generated from protobuf field: resources.centrum.settings.Settings settings = 2
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: resources.centrum.EffectiveAccess access = 3
+     * @generated from protobuf field: resources.centrum.settings.EffectiveAccess access = 3
      */
     access?: EffectiveAccess;
 }
@@ -504,7 +504,7 @@ export interface StreamHandshake {
  */
 export interface LatestState {
     /**
-     * @generated from protobuf field: resources.centrum.JobDispatchers dispatchers = 1
+     * @generated from protobuf field: resources.centrum.dispatchers.JobDispatchers dispatchers = 1
      */
     dispatchers?: JobDispatchers;
     /**
@@ -514,11 +514,11 @@ export interface LatestState {
     /**
      * Send the current units and dispatches
      *
-     * @generated from protobuf field: repeated resources.centrum.Unit units = 3
+     * @generated from protobuf field: repeated resources.centrum.units.Unit units = 3
      */
     units: Unit[];
     /**
-     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 4
+     * @generated from protobuf field: repeated resources.centrum.dispatches.Dispatch dispatches = 4
      */
     dispatches: Dispatch[];
 }
@@ -549,19 +549,19 @@ export interface StreamResponse {
     } | {
         oneofKind: "settings";
         /**
-         * @generated from protobuf field: resources.centrum.Settings settings = 3
+         * @generated from protobuf field: resources.centrum.settings.Settings settings = 3
          */
         settings: Settings;
     } | {
         oneofKind: "access";
         /**
-         * @generated from protobuf field: resources.centrum.EffectiveAccess access = 4
+         * @generated from protobuf field: resources.centrum.settings.EffectiveAccess access = 4
          */
         access: EffectiveAccess;
     } | {
         oneofKind: "dispatchers";
         /**
-         * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 5
+         * @generated from protobuf field: resources.centrum.dispatchers.Dispatchers dispatchers = 5
          */
         dispatchers: Dispatchers;
     } | {
@@ -573,13 +573,13 @@ export interface StreamResponse {
     } | {
         oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.centrum.Unit unit_updated = 7
+         * @generated from protobuf field: resources.centrum.units.Unit unit_updated = 7
          */
         unitUpdated: Unit;
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 8
+         * @generated from protobuf field: resources.centrum.units.UnitStatus unit_status = 8
          */
         unitStatus: UnitStatus;
     } | {
@@ -591,13 +591,13 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 10
+         * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch_updated = 10
          */
         dispatchUpdated: Dispatch;
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 11
+         * @generated from protobuf field: resources.centrum.dispatches.DispatchStatus dispatch_status = 11
          */
         dispatchStatus: DispatchStatus;
     } | {
@@ -769,10 +769,10 @@ class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Settings settings */ 1:
+                case /* resources.centrum.settings.Settings settings */ 1:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* resources.centrum.EffectiveAccess effective_access */ 2:
+                case /* resources.centrum.settings.EffectiveAccess effective_access */ 2:
                     message.effectiveAccess = EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, message.effectiveAccess);
                     break;
                 default:
@@ -787,10 +787,10 @@ class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
         return message;
     }
     internalBinaryWrite(message: GetSettingsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Settings settings = 1; */
+        /* resources.centrum.settings.Settings settings = 1; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.EffectiveAccess effective_access = 2; */
+        /* resources.centrum.settings.EffectiveAccess effective_access = 2; */
         if (message.effectiveAccess)
             EffectiveAccess.internalBinaryWrite(message.effectiveAccess, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -821,7 +821,7 @@ class UpdateSettingsRequest$Type extends MessageType<UpdateSettingsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Settings settings */ 1:
+                case /* resources.centrum.settings.Settings settings */ 1:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -836,7 +836,7 @@ class UpdateSettingsRequest$Type extends MessageType<UpdateSettingsRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateSettingsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Settings settings = 1; */
+        /* resources.centrum.settings.Settings settings = 1; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -867,7 +867,7 @@ class UpdateSettingsResponse$Type extends MessageType<UpdateSettingsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Settings settings */ 1:
+                case /* resources.centrum.settings.Settings settings */ 1:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -882,7 +882,7 @@ class UpdateSettingsResponse$Type extends MessageType<UpdateSettingsResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateSettingsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Settings settings = 1; */
+        /* resources.centrum.settings.Settings settings = 1; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -899,7 +899,7 @@ export const UpdateSettingsResponse = new UpdateSettingsResponse$Type();
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListUnitsRequest>): ListUnitsRequest {
@@ -914,7 +914,7 @@ class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.centrum.StatusUnit status */ 1:
+                case /* repeated resources.centrum.units.StatusUnit status */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.status.push(reader.int32());
@@ -933,7 +933,7 @@ class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
         return message;
     }
     internalBinaryWrite(message: ListUnitsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.centrum.StatusUnit status = 1; */
+        /* repeated resources.centrum.units.StatusUnit status = 1; */
         if (message.status.length) {
             writer.tag(1, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.status.length; i++)
@@ -969,7 +969,7 @@ class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.centrum.Unit units */ 1:
+                case /* repeated resources.centrum.units.Unit units */ 1:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -984,7 +984,7 @@ class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListUnitsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.centrum.Unit units = 1; */
+        /* repeated resources.centrum.units.Unit units = 1; */
         for (let i = 0; i < message.units.length; i++)
             Unit.internalBinaryWrite(message.units[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1015,7 +1015,7 @@ class CreateOrUpdateUnitRequest$Type extends MessageType<CreateOrUpdateUnitReque
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Unit unit */ 1:
+                case /* resources.centrum.units.Unit unit */ 1:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
                 default:
@@ -1030,7 +1030,7 @@ class CreateOrUpdateUnitRequest$Type extends MessageType<CreateOrUpdateUnitReque
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Unit unit = 1; */
+        /* resources.centrum.units.Unit unit = 1; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1061,7 +1061,7 @@ class CreateOrUpdateUnitResponse$Type extends MessageType<CreateOrUpdateUnitResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Unit unit */ 1:
+                case /* resources.centrum.units.Unit unit */ 1:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
                 default:
@@ -1076,7 +1076,7 @@ class CreateOrUpdateUnitResponse$Type extends MessageType<CreateOrUpdateUnitResp
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateUnitResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Unit unit = 1; */
+        /* resources.centrum.units.Unit unit = 1; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1179,7 +1179,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.units.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
@@ -1200,7 +1200,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
                 case /* int64 unit_id */ 1:
                     message.unitId = reader.int64().toNumber();
                     break;
-                case /* resources.centrum.StatusUnit status */ 2:
+                case /* resources.centrum.units.StatusUnit status */ 2:
                     message.status = reader.int32();
                     break;
                 case /* optional string reason */ 3:
@@ -1224,7 +1224,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         /* int64 unit_id = 1; */
         if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).int64(message.unitId);
-        /* resources.centrum.StatusUnit status = 2; */
+        /* resources.centrum.units.StatusUnit status = 2; */
         if (message.status !== 0)
             writer.tag(2, WireType.Varint).int32(message.status);
         /* optional string reason = 3; */
@@ -1460,7 +1460,7 @@ class GetDispatchHeatmapResponse$Type extends MessageType<GetDispatchHeatmapResp
                 case /* int32 max_entries */ 1:
                     message.maxEntries = reader.int32();
                     break;
-                case /* repeated resources.livemap.HeatmapEntry entries */ 2:
+                case /* repeated resources.livemap.heatmap.HeatmapEntry entries */ 2:
                     message.entries.push(HeatmapEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1478,7 +1478,7 @@ class GetDispatchHeatmapResponse$Type extends MessageType<GetDispatchHeatmapResp
         /* int32 max_entries = 1; */
         if (message.maxEntries !== 0)
             writer.tag(1, WireType.Varint).int32(message.maxEntries);
-        /* repeated resources.livemap.HeatmapEntry entries = 2; */
+        /* repeated resources.livemap.heatmap.HeatmapEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             HeatmapEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1564,7 +1564,7 @@ class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatchers dispatchers */ 1:
+                case /* resources.centrum.dispatchers.Dispatchers dispatchers */ 1:
                     message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
                 default:
@@ -1579,7 +1579,7 @@ class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersRespon
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatchers dispatchers = 1; */
+        /* resources.centrum.dispatchers.Dispatchers dispatchers = 1; */
         if (message.dispatchers)
             Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1615,7 +1615,7 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.centrum.UnitStatus activity */ 2:
+                case /* repeated resources.centrum.units.UnitStatus activity */ 2:
                     message.activity.push(UnitStatus.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1633,7 +1633,7 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.UnitStatus activity = 2; */
+        /* repeated resources.centrum.units.UnitStatus activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             UnitStatus.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1736,8 +1736,8 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
-            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { maxItems: "10" } } } },
             { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "12" } } } }
         ]);
@@ -1759,14 +1759,14 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.centrum.StatusDispatch status */ 2:
+                case /* repeated resources.centrum.dispatches.StatusDispatch status */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.status.push(reader.int32());
                     else
                         message.status.push(reader.int32());
                     break;
-                case /* repeated resources.centrum.StatusDispatch not_status */ 3:
+                case /* repeated resources.centrum.dispatches.StatusDispatch not_status */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.notStatus.push(reader.int32());
@@ -1798,14 +1798,14 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.StatusDispatch status = 2; */
+        /* repeated resources.centrum.dispatches.StatusDispatch status = 2; */
         if (message.status.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.status.length; i++)
                 writer.int32(message.status[i]);
             writer.join();
         }
-        /* repeated resources.centrum.StatusDispatch not_status = 3; */
+        /* repeated resources.centrum.dispatches.StatusDispatch not_status = 3; */
         if (message.notStatus.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.notStatus.length; i++)
@@ -1855,7 +1855,7 @@ class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.centrum.Dispatch dispatches */ 2:
+                case /* repeated resources.centrum.dispatches.Dispatch dispatches */ 2:
                     message.dispatches.push(Dispatch.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1873,7 +1873,7 @@ class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.Dispatch dispatches = 2; */
+        /* repeated resources.centrum.dispatches.Dispatch dispatches = 2; */
         for (let i = 0; i < message.dispatches.length; i++)
             Dispatch.internalBinaryWrite(message.dispatches[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1951,7 +1951,7 @@ class GetDispatchResponse$Type extends MessageType<GetDispatchResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatch dispatch */ 1:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
                     message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
                     break;
                 default:
@@ -1966,7 +1966,7 @@ class GetDispatchResponse$Type extends MessageType<GetDispatchResponse> {
         return message;
     }
     internalBinaryWrite(message: GetDispatchResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatch dispatch = 1; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
         if (message.dispatch)
             Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1997,7 +1997,7 @@ class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatch dispatch */ 1:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
                     message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
                     break;
                 default:
@@ -2012,7 +2012,7 @@ class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: CreateDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatch dispatch = 1; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
         if (message.dispatch)
             Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2043,7 +2043,7 @@ class CreateDispatchResponse$Type extends MessageType<CreateDispatchResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatch dispatch */ 1:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
                     message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
                     break;
                 default:
@@ -2058,7 +2058,7 @@ class CreateDispatchResponse$Type extends MessageType<CreateDispatchResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateDispatchResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatch dispatch = 1; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
         if (message.dispatch)
             Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2089,7 +2089,7 @@ class UpdateDispatchRequest$Type extends MessageType<UpdateDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatch dispatch */ 1:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
                     message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
                     break;
                 default:
@@ -2104,7 +2104,7 @@ class UpdateDispatchRequest$Type extends MessageType<UpdateDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatch dispatch = 1; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
         if (message.dispatch)
             Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2135,7 +2135,7 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Dispatch dispatch */ 1:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 1:
                     message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
                     break;
                 default:
@@ -2150,7 +2150,7 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Dispatch dispatch = 1; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 1; */
         if (message.dispatch)
             Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2338,7 +2338,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.dispatches.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "24" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
@@ -2359,7 +2359,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
                 case /* int64 dispatch_id */ 1:
                     message.dispatchId = reader.int64().toNumber();
                     break;
-                case /* resources.centrum.StatusDispatch status */ 2:
+                case /* resources.centrum.dispatches.StatusDispatch status */ 2:
                     message.status = reader.int32();
                     break;
                 case /* optional string reason */ 3:
@@ -2383,7 +2383,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         /* int64 dispatch_id = 1; */
         if (message.dispatchId !== 0)
             writer.tag(1, WireType.Varint).int64(message.dispatchId);
-        /* resources.centrum.StatusDispatch status = 2; */
+        /* resources.centrum.dispatches.StatusDispatch status = 2; */
         if (message.status !== 0)
             writer.tag(2, WireType.Varint).int32(message.status);
         /* optional string reason = 3; */
@@ -2587,7 +2587,7 @@ class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivity
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.centrum.DispatchStatus activity */ 2:
+                case /* repeated resources.centrum.dispatches.DispatchStatus activity */ 2:
                     message.activity.push(DispatchStatus.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2605,7 +2605,7 @@ class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivity
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.DispatchStatus activity = 2; */
+        /* repeated resources.centrum.dispatches.DispatchStatus activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
             DispatchStatus.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2682,7 +2682,7 @@ class JoinUnitResponse$Type extends MessageType<JoinUnitResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Unit unit */ 1:
+                case /* resources.centrum.units.Unit unit */ 1:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
                 default:
@@ -2697,7 +2697,7 @@ class JoinUnitResponse$Type extends MessageType<JoinUnitResponse> {
         return message;
     }
     internalBinaryWrite(message: JoinUnitResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Unit unit = 1; */
+        /* resources.centrum.units.Unit unit = 1; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2715,7 +2715,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
             { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { repeated: { minItems: "1" } } } },
-            { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
+            { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.dispatches.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } }, "codegen.sanitizer.sanitizer": { enabled: true } } }
         ]);
     }
@@ -2739,7 +2739,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
                     else
                         message.dispatchIds.push(reader.int64().toNumber());
                     break;
-                case /* resources.centrum.TakeDispatchResp resp */ 2:
+                case /* resources.centrum.dispatches.TakeDispatchResp resp */ 2:
                     message.resp = reader.int32();
                     break;
                 case /* optional string reason */ 3:
@@ -2764,7 +2764,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
                 writer.int64(message.dispatchIds[i]);
             writer.join();
         }
-        /* resources.centrum.TakeDispatchResp resp = 2; */
+        /* resources.centrum.dispatches.TakeDispatchResp resp = 2; */
         if (message.resp !== 0)
             writer.tag(2, WireType.Varint).int32(message.resp);
         /* optional string reason = 3; */
@@ -2841,10 +2841,10 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
                 case /* resources.timestamp.Timestamp server_time */ 1:
                     message.serverTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.serverTime);
                     break;
-                case /* resources.centrum.Settings settings */ 2:
+                case /* resources.centrum.settings.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* resources.centrum.EffectiveAccess access */ 3:
+                case /* resources.centrum.settings.EffectiveAccess access */ 3:
                     message.access = EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -2862,10 +2862,10 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         /* resources.timestamp.Timestamp server_time = 1; */
         if (message.serverTime)
             Timestamp.internalBinaryWrite(message.serverTime, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Settings settings = 2; */
+        /* resources.centrum.settings.Settings settings = 2; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.EffectiveAccess access = 3; */
+        /* resources.centrum.settings.EffectiveAccess access = 3; */
         if (message.access)
             EffectiveAccess.internalBinaryWrite(message.access, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2901,16 +2901,16 @@ class LatestState$Type extends MessageType<LatestState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.JobDispatchers dispatchers */ 1:
+                case /* resources.centrum.dispatchers.JobDispatchers dispatchers */ 1:
                     message.dispatchers = JobDispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
                 case /* optional int64 own_unit_id */ 2:
                     message.ownUnitId = reader.int64().toNumber();
                     break;
-                case /* repeated resources.centrum.Unit units */ 3:
+                case /* repeated resources.centrum.units.Unit units */ 3:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.centrum.Dispatch dispatches */ 4:
+                case /* repeated resources.centrum.dispatches.Dispatch dispatches */ 4:
                     message.dispatches.push(Dispatch.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2925,16 +2925,16 @@ class LatestState$Type extends MessageType<LatestState> {
         return message;
     }
     internalBinaryWrite(message: LatestState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.JobDispatchers dispatchers = 1; */
+        /* resources.centrum.dispatchers.JobDispatchers dispatchers = 1; */
         if (message.dispatchers)
             JobDispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* optional int64 own_unit_id = 2; */
         if (message.ownUnitId !== undefined)
             writer.tag(2, WireType.Varint).int64(message.ownUnitId);
-        /* repeated resources.centrum.Unit units = 3; */
+        /* repeated resources.centrum.units.Unit units = 3; */
         for (let i = 0; i < message.units.length; i++)
             Unit.internalBinaryWrite(message.units[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.Dispatch dispatches = 4; */
+        /* repeated resources.centrum.dispatches.Dispatch dispatches = 4; */
         for (let i = 0; i < message.dispatches.length; i++)
             Dispatch.internalBinaryWrite(message.dispatches[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -3026,19 +3026,19 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         latestState: LatestState.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).latestState)
                     };
                     break;
-                case /* resources.centrum.Settings settings */ 3:
+                case /* resources.centrum.settings.Settings settings */ 3:
                     message.change = {
                         oneofKind: "settings",
                         settings: Settings.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).settings)
                     };
                     break;
-                case /* resources.centrum.EffectiveAccess access */ 4:
+                case /* resources.centrum.settings.EffectiveAccess access */ 4:
                     message.change = {
                         oneofKind: "access",
                         access: EffectiveAccess.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).access)
                     };
                     break;
-                case /* resources.centrum.Dispatchers dispatchers */ 5:
+                case /* resources.centrum.dispatchers.Dispatchers dispatchers */ 5:
                     message.change = {
                         oneofKind: "dispatchers",
                         dispatchers: Dispatchers.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchers)
@@ -3050,13 +3050,13 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         unitDeleted: reader.int64().toNumber()
                     };
                     break;
-                case /* resources.centrum.Unit unit_updated */ 7:
+                case /* resources.centrum.units.Unit unit_updated */ 7:
                     message.change = {
                         oneofKind: "unitUpdated",
                         unitUpdated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitUpdated)
                     };
                     break;
-                case /* resources.centrum.UnitStatus unit_status */ 8:
+                case /* resources.centrum.units.UnitStatus unit_status */ 8:
                     message.change = {
                         oneofKind: "unitStatus",
                         unitStatus: UnitStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitStatus)
@@ -3068,13 +3068,13 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         dispatchDeleted: reader.int64().toNumber()
                     };
                     break;
-                case /* resources.centrum.Dispatch dispatch_updated */ 10:
+                case /* resources.centrum.dispatches.Dispatch dispatch_updated */ 10:
                     message.change = {
                         oneofKind: "dispatchUpdated",
                         dispatchUpdated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchUpdated)
                     };
                     break;
-                case /* resources.centrum.DispatchStatus dispatch_status */ 11:
+                case /* resources.centrum.dispatches.DispatchStatus dispatch_status */ 11:
                     message.change = {
                         oneofKind: "dispatchStatus",
                         dispatchStatus: DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchStatus)
@@ -3098,31 +3098,31 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* services.centrum.LatestState latest_state = 2; */
         if (message.change.oneofKind === "latestState")
             LatestState.internalBinaryWrite(message.change.latestState, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Settings settings = 3; */
+        /* resources.centrum.settings.Settings settings = 3; */
         if (message.change.oneofKind === "settings")
             Settings.internalBinaryWrite(message.change.settings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.EffectiveAccess access = 4; */
+        /* resources.centrum.settings.EffectiveAccess access = 4; */
         if (message.change.oneofKind === "access")
             EffectiveAccess.internalBinaryWrite(message.change.access, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatchers dispatchers = 5; */
+        /* resources.centrum.dispatchers.Dispatchers dispatchers = 5; */
         if (message.change.oneofKind === "dispatchers")
             Dispatchers.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* int64 unit_deleted = 6; */
         if (message.change.oneofKind === "unitDeleted")
             writer.tag(6, WireType.Varint).int64(message.change.unitDeleted);
-        /* resources.centrum.Unit unit_updated = 7; */
+        /* resources.centrum.units.Unit unit_updated = 7; */
         if (message.change.oneofKind === "unitUpdated")
             Unit.internalBinaryWrite(message.change.unitUpdated, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.UnitStatus unit_status = 8; */
+        /* resources.centrum.units.UnitStatus unit_status = 8; */
         if (message.change.oneofKind === "unitStatus")
             UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         /* int64 dispatch_deleted = 9; */
         if (message.change.oneofKind === "dispatchDeleted")
             writer.tag(9, WireType.Varint).int64(message.change.dispatchDeleted);
-        /* resources.centrum.Dispatch dispatch_updated = 10; */
+        /* resources.centrum.dispatches.Dispatch dispatch_updated = 10; */
         if (message.change.oneofKind === "dispatchUpdated")
             Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.DispatchStatus dispatch_status = 11; */
+        /* resources.centrum.dispatches.DispatchStatus dispatch_status = 11; */
         if (message.change.oneofKind === "dispatchStatus")
             DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

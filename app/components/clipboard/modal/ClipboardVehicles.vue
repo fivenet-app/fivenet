@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { TableColumn } from '@nuxt/ui';
 import { type ClipboardVehicle, useClipboardStore } from '~/stores/clipboard';
-import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

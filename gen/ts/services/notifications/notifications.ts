@@ -12,13 +12,13 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { ObjectEvent } from "../../resources/notifications/client_view";
-import { MailerEvent } from "../../resources/mailer/events";
-import { SystemEvent } from "../../resources/notifications/events";
-import { JobGradeEvent } from "../../resources/notifications/events";
-import { JobEvent } from "../../resources/notifications/events";
-import { UserEvent } from "../../resources/notifications/events";
-import { ClientView } from "../../resources/notifications/client_view";
+import { ObjectEvent } from "../../resources/notifications/clientview/clientview";
+import { MailerEvent } from "../../resources/mailer/events/events";
+import { SystemEvent } from "../../resources/notifications/events/events";
+import { JobGradeEvent } from "../../resources/notifications/events/events";
+import { JobEvent } from "../../resources/notifications/events/events";
+import { UserEvent } from "../../resources/notifications/events/events";
+import { ClientView } from "../../resources/notifications/clientview/clientview";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { NotificationCategory } from "../../resources/notifications/notifications";
@@ -87,11 +87,11 @@ export interface StreamRequest {
      * @generated from protobuf oneof: data
      */
     data: {
-        oneofKind: "clientView";
+        oneofKind: "clientview";
         /**
-         * @generated from protobuf field: resources.notifications.ClientView client_view = 1
+         * @generated from protobuf field: resources.notifications.clientview.ClientView clientview = 1
          */
-        clientView: ClientView;
+        clientview: ClientView;
     } | {
         oneofKind: undefined;
     };
@@ -114,37 +114,37 @@ export interface StreamResponse {
     data: {
         oneofKind: "userEvent";
         /**
-         * @generated from protobuf field: resources.notifications.UserEvent user_event = 3
+         * @generated from protobuf field: resources.notifications.events.UserEvent user_event = 3
          */
         userEvent: UserEvent;
     } | {
         oneofKind: "jobEvent";
         /**
-         * @generated from protobuf field: resources.notifications.JobEvent job_event = 4
+         * @generated from protobuf field: resources.notifications.events.JobEvent job_event = 4
          */
         jobEvent: JobEvent;
     } | {
         oneofKind: "jobGradeEvent";
         /**
-         * @generated from protobuf field: resources.notifications.JobGradeEvent job_grade_event = 5
+         * @generated from protobuf field: resources.notifications.events.JobGradeEvent job_grade_event = 5
          */
         jobGradeEvent: JobGradeEvent;
     } | {
         oneofKind: "systemEvent";
         /**
-         * @generated from protobuf field: resources.notifications.SystemEvent system_event = 6
+         * @generated from protobuf field: resources.notifications.events.SystemEvent system_event = 6
          */
         systemEvent: SystemEvent;
     } | {
         oneofKind: "mailerEvent";
         /**
-         * @generated from protobuf field: resources.mailer.MailerEvent mailer_event = 7
+         * @generated from protobuf field: resources.mailer.events.MailerEvent mailer_event = 7
          */
         mailerEvent: MailerEvent;
     } | {
         oneofKind: "objectEvent";
         /**
-         * @generated from protobuf field: resources.notifications.ObjectEvent object_event = 8
+         * @generated from protobuf field: resources.notifications.clientview.ObjectEvent object_event = 8
          */
         objectEvent: ObjectEvent;
     } | {
@@ -395,7 +395,7 @@ export const MarkNotificationsResponse = new MarkNotificationsResponse$Type();
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
         super("services.notifications.StreamRequest", [
-            { no: 1, name: "client_view", kind: "message", oneof: "data", T: () => ClientView }
+            { no: 1, name: "clientview", kind: "message", oneof: "data", T: () => ClientView }
         ]);
     }
     create(value?: PartialMessage<StreamRequest>): StreamRequest {
@@ -410,10 +410,10 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.notifications.ClientView client_view */ 1:
+                case /* resources.notifications.clientview.ClientView clientview */ 1:
                     message.data = {
-                        oneofKind: "clientView",
-                        clientView: ClientView.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).clientView)
+                        oneofKind: "clientview",
+                        clientview: ClientView.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).clientview)
                     };
                     break;
                 default:
@@ -428,9 +428,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         return message;
     }
     internalBinaryWrite(message: StreamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.notifications.ClientView client_view = 1; */
-        if (message.data.oneofKind === "clientView")
-            ClientView.internalBinaryWrite(message.data.clientView, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.notifications.clientview.ClientView clientview = 1; */
+        if (message.data.oneofKind === "clientview")
+            ClientView.internalBinaryWrite(message.data.clientview, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -474,37 +474,37 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                 case /* optional bool restart */ 2:
                     message.restart = reader.bool();
                     break;
-                case /* resources.notifications.UserEvent user_event */ 3:
+                case /* resources.notifications.events.UserEvent user_event */ 3:
                     message.data = {
                         oneofKind: "userEvent",
                         userEvent: UserEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userEvent)
                     };
                     break;
-                case /* resources.notifications.JobEvent job_event */ 4:
+                case /* resources.notifications.events.JobEvent job_event */ 4:
                     message.data = {
                         oneofKind: "jobEvent",
                         jobEvent: JobEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobEvent)
                     };
                     break;
-                case /* resources.notifications.JobGradeEvent job_grade_event */ 5:
+                case /* resources.notifications.events.JobGradeEvent job_grade_event */ 5:
                     message.data = {
                         oneofKind: "jobGradeEvent",
                         jobGradeEvent: JobGradeEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobGradeEvent)
                     };
                     break;
-                case /* resources.notifications.SystemEvent system_event */ 6:
+                case /* resources.notifications.events.SystemEvent system_event */ 6:
                     message.data = {
                         oneofKind: "systemEvent",
                         systemEvent: SystemEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).systemEvent)
                     };
                     break;
-                case /* resources.mailer.MailerEvent mailer_event */ 7:
+                case /* resources.mailer.events.MailerEvent mailer_event */ 7:
                     message.data = {
                         oneofKind: "mailerEvent",
                         mailerEvent: MailerEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).mailerEvent)
                     };
                     break;
-                case /* resources.notifications.ObjectEvent object_event */ 8:
+                case /* resources.notifications.clientview.ObjectEvent object_event */ 8:
                     message.data = {
                         oneofKind: "objectEvent",
                         objectEvent: ObjectEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).objectEvent)
@@ -528,22 +528,22 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* optional bool restart = 2; */
         if (message.restart !== undefined)
             writer.tag(2, WireType.Varint).bool(message.restart);
-        /* resources.notifications.UserEvent user_event = 3; */
+        /* resources.notifications.events.UserEvent user_event = 3; */
         if (message.data.oneofKind === "userEvent")
             UserEvent.internalBinaryWrite(message.data.userEvent, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.notifications.JobEvent job_event = 4; */
+        /* resources.notifications.events.JobEvent job_event = 4; */
         if (message.data.oneofKind === "jobEvent")
             JobEvent.internalBinaryWrite(message.data.jobEvent, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.notifications.JobGradeEvent job_grade_event = 5; */
+        /* resources.notifications.events.JobGradeEvent job_grade_event = 5; */
         if (message.data.oneofKind === "jobGradeEvent")
             JobGradeEvent.internalBinaryWrite(message.data.jobGradeEvent, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.notifications.SystemEvent system_event = 6; */
+        /* resources.notifications.events.SystemEvent system_event = 6; */
         if (message.data.oneofKind === "systemEvent")
             SystemEvent.internalBinaryWrite(message.data.systemEvent, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.MailerEvent mailer_event = 7; */
+        /* resources.mailer.events.MailerEvent mailer_event = 7; */
         if (message.data.oneofKind === "mailerEvent")
             MailerEvent.internalBinaryWrite(message.data.mailerEvent, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.notifications.ObjectEvent object_event = 8; */
+        /* resources.notifications.clientview.ObjectEvent object_event = 8; */
         if (message.data.oneofKind === "objectEvent")
             ObjectEvent.internalBinaryWrite(message.data.objectEvent, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

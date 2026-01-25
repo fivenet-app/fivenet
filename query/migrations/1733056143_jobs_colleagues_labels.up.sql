@@ -1,6 +1,6 @@
 BEGIN;
 
-CREATE TABLE `fivenet_jobs_labels` (
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_labels` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `job` varchar(20) NOT NULL,
   `name` varchar(32) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `fivenet_jobs_labels` (
   KEY `idx_fivenet_jobs_labels_order` (`order`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE `fivenet_jobs_labels_users` (
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_labels_users` (
   `user_id` int NOT NULL,
   `job` varchar(20) NOT NULL,
   `label_id` bigint unsigned NOT NULL,

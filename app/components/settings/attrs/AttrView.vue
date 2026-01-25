@@ -8,8 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
 import { getSettingsSystemClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/resources/settings/perms';
 import type { GetJobLimitsResponse } from '~~/gen/ts/services/settings/system';
 

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

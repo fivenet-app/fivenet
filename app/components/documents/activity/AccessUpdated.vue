@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AccessBadges from '~/components/partials/access/AccessBadges.vue';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import type { DocAccessUpdated } from '~~/gen/ts/resources/documents/activity';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
+import type { DocAccessUpdated } from '~~/gen/ts/resources/documents/activity/activity';
 
 defineProps<{
     data: DocAccessUpdated;

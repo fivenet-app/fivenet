@@ -5,8 +5,8 @@ import { useCompletorStore } from '~/stores/completor';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserProps } from '~~/gen/ts/resources/users/props';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { UserProps } from '~~/gen/ts/resources/users/props/props';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const props = defineProps<{
     user: User;

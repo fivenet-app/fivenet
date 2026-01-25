@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

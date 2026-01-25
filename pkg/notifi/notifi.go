@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -19,11 +21,11 @@ type INotifi interface {
 	// NotifyUser inserts a notification for a user and publishes it asynchronously.
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
 	// SendObjectEvent publishes an object event notification to the event system.
-	SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error
+	SendObjectEvent(ctx context.Context, event *notificationsclientview.ObjectEvent) error
 	// SendUserEvent publishes a user event notification to the event system.
-	SendUserEvent(ctx context.Context, userId int32, event *notifications.UserEvent) error
+	SendUserEvent(ctx context.Context, userId int32, event *notificationsevents.UserEvent) error
 	// SendSystemEvent publishes a system-wide event notification to the event system.
-	SendSystemEvent(ctx context.Context, event *notifications.SystemEvent) error
+	SendSystemEvent(ctx context.Context, event *notificationsevents.SystemEvent) error
 }
 
 // Notifi implements the INotifi interface for managing user notifications.
@@ -74,8 +76,8 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 	}
 
 	not.Id = nId
-	data, err := proto.Marshal(&notifications.UserEvent{
-		Data: &notifications.UserEvent_Notification{
+	data, err := proto.Marshal(&notificationsevents.UserEvent{
+		Data: &notificationsevents.UserEvent_Notification{
 			Notification: not,
 		},
 	})
@@ -128,7 +130,10 @@ func (n *Notifi) insertNotification(
 	return id, nil
 }
 
-func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error {
+func (n *Notifi) SendObjectEvent(
+	ctx context.Context,
+	event *notificationsclientview.ObjectEvent,
+) error {
 	if event.Id == nil {
 		return errors.New("object event ID is required")
 	}
@@ -147,7 +152,7 @@ func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.Objec
 func (n *Notifi) SendUserEvent(
 	ctx context.Context,
 	userId int32,
-	event *notifications.UserEvent,
+	event *notificationsevents.UserEvent,
 ) error {
 	if event == nil || event.Data == nil {
 		return errors.New("user event data is required")
@@ -160,7 +165,10 @@ func (n *Notifi) SendUserEvent(
 	return nil
 }
 
-func (n *Notifi) SendSystemEvent(ctx context.Context, event *notifications.SystemEvent) error {
+func (n *Notifi) SendSystemEvent(
+	ctx context.Context,
+	event *notificationsevents.SystemEvent,
+) error {
 	if event == nil || event.Data == nil {
 		return errors.New("system event data is required")
 	}

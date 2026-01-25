@@ -15,7 +15,7 @@ import { getJobsConductClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
-import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 import { conductTypesToBadgeColor } from './helpers';

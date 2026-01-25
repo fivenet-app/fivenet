@@ -13,12 +13,12 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { EmailSettings } from "../../resources/mailer/settings";
-import { ThreadState } from "../../resources/mailer/thread";
-import { Message } from "../../resources/mailer/message";
-import { Thread } from "../../resources/mailer/thread";
-import { Template } from "../../resources/mailer/template";
-import { Email } from "../../resources/mailer/email";
+import { EmailSettings } from "../../resources/mailer/settings/settings";
+import { ThreadState } from "../../resources/mailer/threads/thread";
+import { Message } from "../../resources/mailer/messages/message";
+import { Thread } from "../../resources/mailer/threads/thread";
+import { Template } from "../../resources/mailer/templates/template";
+import { Email } from "../../resources/mailer/emails/email";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Emails
@@ -47,7 +47,7 @@ export interface ListEmailsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.mailer.Email emails = 2
+     * @generated from protobuf field: repeated resources.mailer.emails.Email emails = 2
      */
     emails: Email[];
 }
@@ -65,7 +65,7 @@ export interface GetEmailRequest {
  */
 export interface GetEmailResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Email email = 1
+     * @generated from protobuf field: resources.mailer.emails.Email email = 1
      */
     email?: Email;
 }
@@ -74,7 +74,7 @@ export interface GetEmailResponse {
  */
 export interface CreateOrUpdateEmailRequest {
     /**
-     * @generated from protobuf field: resources.mailer.Email email = 1
+     * @generated from protobuf field: resources.mailer.emails.Email email = 1
      */
     email?: Email;
 }
@@ -83,7 +83,7 @@ export interface CreateOrUpdateEmailRequest {
  */
 export interface CreateOrUpdateEmailResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Email email = 1
+     * @generated from protobuf field: resources.mailer.emails.Email email = 1
      */
     email?: Email;
 }
@@ -147,7 +147,7 @@ export interface ListTemplatesRequest {
  */
 export interface ListTemplatesResponse {
     /**
-     * @generated from protobuf field: repeated resources.mailer.Template templates = 1
+     * @generated from protobuf field: repeated resources.mailer.templates.Template templates = 1
      */
     templates: Template[];
 }
@@ -169,7 +169,7 @@ export interface GetTemplateRequest {
  */
 export interface GetTemplateResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Template template = 1
+     * @generated from protobuf field: resources.mailer.templates.Template template = 1
      */
     template?: Template;
 }
@@ -178,7 +178,7 @@ export interface GetTemplateResponse {
  */
 export interface CreateOrUpdateTemplateRequest {
     /**
-     * @generated from protobuf field: resources.mailer.Template template = 1
+     * @generated from protobuf field: resources.mailer.templates.Template template = 1
      */
     template?: Template;
 }
@@ -187,7 +187,7 @@ export interface CreateOrUpdateTemplateRequest {
  */
 export interface CreateOrUpdateTemplateResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Template template = 1
+     * @generated from protobuf field: resources.mailer.templates.Template template = 1
      */
     template?: Template;
 }
@@ -243,7 +243,7 @@ export interface ListThreadsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.mailer.Thread threads = 2
+     * @generated from protobuf field: repeated resources.mailer.threads.Thread threads = 2
      */
     threads: Thread[];
 }
@@ -265,7 +265,7 @@ export interface GetThreadRequest {
  */
 export interface GetThreadResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Thread thread = 1
+     * @generated from protobuf field: resources.mailer.threads.Thread thread = 1
      */
     thread?: Thread;
 }
@@ -274,11 +274,11 @@ export interface GetThreadResponse {
  */
 export interface CreateThreadRequest {
     /**
-     * @generated from protobuf field: resources.mailer.Thread thread = 1
+     * @generated from protobuf field: resources.mailer.threads.Thread thread = 1
      */
     thread?: Thread;
     /**
-     * @generated from protobuf field: resources.mailer.Message message = 2
+     * @generated from protobuf field: resources.mailer.messages.Message message = 2
      */
     message?: Message;
     /**
@@ -291,7 +291,7 @@ export interface CreateThreadRequest {
  */
 export interface CreateThreadResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Thread thread = 1
+     * @generated from protobuf field: resources.mailer.threads.Thread thread = 1
      */
     thread?: Thread;
 }
@@ -331,7 +331,7 @@ export interface GetThreadStateRequest {
  */
 export interface GetThreadStateResponse {
     /**
-     * @generated from protobuf field: resources.mailer.ThreadState state = 1
+     * @generated from protobuf field: resources.mailer.threads.ThreadState state = 1
      */
     state?: ThreadState;
 }
@@ -340,7 +340,7 @@ export interface GetThreadStateResponse {
  */
 export interface SetThreadStateRequest {
     /**
-     * @generated from protobuf field: resources.mailer.ThreadState state = 1
+     * @generated from protobuf field: resources.mailer.threads.ThreadState state = 1
      */
     state?: ThreadState;
 }
@@ -349,7 +349,7 @@ export interface SetThreadStateRequest {
  */
 export interface SetThreadStateResponse {
     /**
-     * @generated from protobuf field: resources.mailer.ThreadState state = 1
+     * @generated from protobuf field: resources.mailer.threads.ThreadState state = 1
      */
     state?: ThreadState;
 }
@@ -367,7 +367,7 @@ export interface GetEmailSettingsRequest {
  */
 export interface GetEmailSettingsResponse {
     /**
-     * @generated from protobuf field: resources.mailer.EmailSettings settings = 1
+     * @generated from protobuf field: resources.mailer.settings.EmailSettings settings = 1
      */
     settings?: EmailSettings;
 }
@@ -376,7 +376,7 @@ export interface GetEmailSettingsResponse {
  */
 export interface SetEmailSettingsRequest {
     /**
-     * @generated from protobuf field: resources.mailer.EmailSettings settings = 1
+     * @generated from protobuf field: resources.mailer.settings.EmailSettings settings = 1
      */
     settings?: EmailSettings;
 }
@@ -385,7 +385,7 @@ export interface SetEmailSettingsRequest {
  */
 export interface SetEmailSettingsResponse {
     /**
-     * @generated from protobuf field: resources.mailer.EmailSettings settings = 1
+     * @generated from protobuf field: resources.mailer.settings.EmailSettings settings = 1
      */
     settings?: EmailSettings;
 }
@@ -415,7 +415,7 @@ export interface SearchThreadsResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.mailer.Message messages = 2
+     * @generated from protobuf field: repeated resources.mailer.messages.Message messages = 2
      */
     messages: Message[];
 }
@@ -449,7 +449,7 @@ export interface ListThreadMessagesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.mailer.Message messages = 2
+     * @generated from protobuf field: repeated resources.mailer.messages.Message messages = 2
      */
     messages: Message[];
 }
@@ -458,7 +458,7 @@ export interface ListThreadMessagesResponse {
  */
 export interface PostMessageRequest {
     /**
-     * @generated from protobuf field: resources.mailer.Message message = 1
+     * @generated from protobuf field: resources.mailer.messages.Message message = 1
      */
     message?: Message;
     /**
@@ -471,7 +471,7 @@ export interface PostMessageRequest {
  */
 export interface PostMessageResponse {
     /**
-     * @generated from protobuf field: resources.mailer.Message message = 1
+     * @generated from protobuf field: resources.mailer.messages.Message message = 1
      */
     message?: Message;
 }
@@ -573,7 +573,7 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.mailer.Email emails */ 2:
+                case /* repeated resources.mailer.emails.Email emails */ 2:
                     message.emails.push(Email.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -591,7 +591,7 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.Email emails = 2; */
+        /* repeated resources.mailer.emails.Email emails = 2; */
         for (let i = 0; i < message.emails.length; i++)
             Email.internalBinaryWrite(message.emails[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -669,7 +669,7 @@ class GetEmailResponse$Type extends MessageType<GetEmailResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Email email */ 1:
+                case /* resources.mailer.emails.Email email */ 1:
                     message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
                     break;
                 default:
@@ -684,7 +684,7 @@ class GetEmailResponse$Type extends MessageType<GetEmailResponse> {
         return message;
     }
     internalBinaryWrite(message: GetEmailResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Email email = 1; */
+        /* resources.mailer.emails.Email email = 1; */
         if (message.email)
             Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -715,7 +715,7 @@ class CreateOrUpdateEmailRequest$Type extends MessageType<CreateOrUpdateEmailReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Email email */ 1:
+                case /* resources.mailer.emails.Email email */ 1:
                     message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
                     break;
                 default:
@@ -730,7 +730,7 @@ class CreateOrUpdateEmailRequest$Type extends MessageType<CreateOrUpdateEmailReq
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Email email = 1; */
+        /* resources.mailer.emails.Email email = 1; */
         if (message.email)
             Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -761,7 +761,7 @@ class CreateOrUpdateEmailResponse$Type extends MessageType<CreateOrUpdateEmailRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Email email */ 1:
+                case /* resources.mailer.emails.Email email */ 1:
                     message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
                     break;
                 default:
@@ -776,7 +776,7 @@ class CreateOrUpdateEmailResponse$Type extends MessageType<CreateOrUpdateEmailRe
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateEmailResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Email email = 1; */
+        /* resources.mailer.emails.Email email = 1; */
         if (message.email)
             Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1056,7 +1056,7 @@ class ListTemplatesResponse$Type extends MessageType<ListTemplatesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.mailer.Template templates */ 1:
+                case /* repeated resources.mailer.templates.Template templates */ 1:
                     message.templates.push(Template.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1071,7 +1071,7 @@ class ListTemplatesResponse$Type extends MessageType<ListTemplatesResponse> {
         return message;
     }
     internalBinaryWrite(message: ListTemplatesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.mailer.Template templates = 1; */
+        /* repeated resources.mailer.templates.Template templates = 1; */
         for (let i = 0; i < message.templates.length; i++)
             Template.internalBinaryWrite(message.templates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1157,7 +1157,7 @@ class GetTemplateResponse$Type extends MessageType<GetTemplateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Template template */ 1:
+                case /* resources.mailer.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1172,7 +1172,7 @@ class GetTemplateResponse$Type extends MessageType<GetTemplateResponse> {
         return message;
     }
     internalBinaryWrite(message: GetTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Template template = 1; */
+        /* resources.mailer.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1203,7 +1203,7 @@ class CreateOrUpdateTemplateRequest$Type extends MessageType<CreateOrUpdateTempl
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Template template */ 1:
+                case /* resources.mailer.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1218,7 +1218,7 @@ class CreateOrUpdateTemplateRequest$Type extends MessageType<CreateOrUpdateTempl
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Template template = 1; */
+        /* resources.mailer.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1249,7 +1249,7 @@ class CreateOrUpdateTemplateResponse$Type extends MessageType<CreateOrUpdateTemp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Template template */ 1:
+                case /* resources.mailer.templates.Template template */ 1:
                     message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
                     break;
                 default:
@@ -1264,7 +1264,7 @@ class CreateOrUpdateTemplateResponse$Type extends MessageType<CreateOrUpdateTemp
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Template template = 1; */
+        /* resources.mailer.templates.Template template = 1; */
         if (message.template)
             Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1469,7 +1469,7 @@ class ListThreadsResponse$Type extends MessageType<ListThreadsResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.mailer.Thread threads */ 2:
+                case /* repeated resources.mailer.threads.Thread threads */ 2:
                     message.threads.push(Thread.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1487,7 +1487,7 @@ class ListThreadsResponse$Type extends MessageType<ListThreadsResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.Thread threads = 2; */
+        /* repeated resources.mailer.threads.Thread threads = 2; */
         for (let i = 0; i < message.threads.length; i++)
             Thread.internalBinaryWrite(message.threads[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1573,7 +1573,7 @@ class GetThreadResponse$Type extends MessageType<GetThreadResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Thread thread */ 1:
+                case /* resources.mailer.threads.Thread thread */ 1:
                     message.thread = Thread.internalBinaryRead(reader, reader.uint32(), options, message.thread);
                     break;
                 default:
@@ -1588,7 +1588,7 @@ class GetThreadResponse$Type extends MessageType<GetThreadResponse> {
         return message;
     }
     internalBinaryWrite(message: GetThreadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Thread thread = 1; */
+        /* resources.mailer.threads.Thread thread = 1; */
         if (message.thread)
             Thread.internalBinaryWrite(message.thread, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1622,10 +1622,10 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Thread thread */ 1:
+                case /* resources.mailer.threads.Thread thread */ 1:
                     message.thread = Thread.internalBinaryRead(reader, reader.uint32(), options, message.thread);
                     break;
-                case /* resources.mailer.Message message */ 2:
+                case /* resources.mailer.messages.Message message */ 2:
                     message.message = Message.internalBinaryRead(reader, reader.uint32(), options, message.message);
                     break;
                 case /* repeated string recipients */ 3:
@@ -1643,10 +1643,10 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         return message;
     }
     internalBinaryWrite(message: CreateThreadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Thread thread = 1; */
+        /* resources.mailer.threads.Thread thread = 1; */
         if (message.thread)
             Thread.internalBinaryWrite(message.thread, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.Message message = 2; */
+        /* resources.mailer.messages.Message message = 2; */
         if (message.message)
             Message.internalBinaryWrite(message.message, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* repeated string recipients = 3; */
@@ -1680,7 +1680,7 @@ class CreateThreadResponse$Type extends MessageType<CreateThreadResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Thread thread */ 1:
+                case /* resources.mailer.threads.Thread thread */ 1:
                     message.thread = Thread.internalBinaryRead(reader, reader.uint32(), options, message.thread);
                     break;
                 default:
@@ -1695,7 +1695,7 @@ class CreateThreadResponse$Type extends MessageType<CreateThreadResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateThreadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Thread thread = 1; */
+        /* resources.mailer.threads.Thread thread = 1; */
         if (message.thread)
             Thread.internalBinaryWrite(message.thread, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1874,7 +1874,7 @@ class GetThreadStateResponse$Type extends MessageType<GetThreadStateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.ThreadState state */ 1:
+                case /* resources.mailer.threads.ThreadState state */ 1:
                     message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
                     break;
                 default:
@@ -1889,7 +1889,7 @@ class GetThreadStateResponse$Type extends MessageType<GetThreadStateResponse> {
         return message;
     }
     internalBinaryWrite(message: GetThreadStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.ThreadState state = 1; */
+        /* resources.mailer.threads.ThreadState state = 1; */
         if (message.state)
             ThreadState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1920,7 +1920,7 @@ class SetThreadStateRequest$Type extends MessageType<SetThreadStateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.ThreadState state */ 1:
+                case /* resources.mailer.threads.ThreadState state */ 1:
                     message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
                     break;
                 default:
@@ -1935,7 +1935,7 @@ class SetThreadStateRequest$Type extends MessageType<SetThreadStateRequest> {
         return message;
     }
     internalBinaryWrite(message: SetThreadStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.ThreadState state = 1; */
+        /* resources.mailer.threads.ThreadState state = 1; */
         if (message.state)
             ThreadState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1966,7 +1966,7 @@ class SetThreadStateResponse$Type extends MessageType<SetThreadStateResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.ThreadState state */ 1:
+                case /* resources.mailer.threads.ThreadState state */ 1:
                     message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
                     break;
                 default:
@@ -1981,7 +1981,7 @@ class SetThreadStateResponse$Type extends MessageType<SetThreadStateResponse> {
         return message;
     }
     internalBinaryWrite(message: SetThreadStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.ThreadState state = 1; */
+        /* resources.mailer.threads.ThreadState state = 1; */
         if (message.state)
             ThreadState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2059,7 +2059,7 @@ class GetEmailSettingsResponse$Type extends MessageType<GetEmailSettingsResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.EmailSettings settings */ 1:
+                case /* resources.mailer.settings.EmailSettings settings */ 1:
                     message.settings = EmailSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -2074,7 +2074,7 @@ class GetEmailSettingsResponse$Type extends MessageType<GetEmailSettingsResponse
         return message;
     }
     internalBinaryWrite(message: GetEmailSettingsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.EmailSettings settings = 1; */
+        /* resources.mailer.settings.EmailSettings settings = 1; */
         if (message.settings)
             EmailSettings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2105,7 +2105,7 @@ class SetEmailSettingsRequest$Type extends MessageType<SetEmailSettingsRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.EmailSettings settings */ 1:
+                case /* resources.mailer.settings.EmailSettings settings */ 1:
                     message.settings = EmailSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -2120,7 +2120,7 @@ class SetEmailSettingsRequest$Type extends MessageType<SetEmailSettingsRequest> 
         return message;
     }
     internalBinaryWrite(message: SetEmailSettingsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.EmailSettings settings = 1; */
+        /* resources.mailer.settings.EmailSettings settings = 1; */
         if (message.settings)
             EmailSettings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2151,7 +2151,7 @@ class SetEmailSettingsResponse$Type extends MessageType<SetEmailSettingsResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.EmailSettings settings */ 1:
+                case /* resources.mailer.settings.EmailSettings settings */ 1:
                     message.settings = EmailSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -2166,7 +2166,7 @@ class SetEmailSettingsResponse$Type extends MessageType<SetEmailSettingsResponse
         return message;
     }
     internalBinaryWrite(message: SetEmailSettingsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.EmailSettings settings = 1; */
+        /* resources.mailer.settings.EmailSettings settings = 1; */
         if (message.settings)
             EmailSettings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2256,7 +2256,7 @@ class SearchThreadsResponse$Type extends MessageType<SearchThreadsResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.mailer.Message messages */ 2:
+                case /* repeated resources.mailer.messages.Message messages */ 2:
                     message.messages.push(Message.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2274,7 +2274,7 @@ class SearchThreadsResponse$Type extends MessageType<SearchThreadsResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.Message messages = 2; */
+        /* repeated resources.mailer.messages.Message messages = 2; */
         for (let i = 0; i < message.messages.length; i++)
             Message.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2379,7 +2379,7 @@ class ListThreadMessagesResponse$Type extends MessageType<ListThreadMessagesResp
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.mailer.Message messages */ 2:
+                case /* repeated resources.mailer.messages.Message messages */ 2:
                     message.messages.push(Message.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2397,7 +2397,7 @@ class ListThreadMessagesResponse$Type extends MessageType<ListThreadMessagesResp
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.Message messages = 2; */
+        /* repeated resources.mailer.messages.Message messages = 2; */
         for (let i = 0; i < message.messages.length; i++)
             Message.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2430,7 +2430,7 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Message message */ 1:
+                case /* resources.mailer.messages.Message message */ 1:
                     message.message = Message.internalBinaryRead(reader, reader.uint32(), options, message.message);
                     break;
                 case /* repeated string recipients */ 2:
@@ -2448,7 +2448,7 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
         return message;
     }
     internalBinaryWrite(message: PostMessageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Message message = 1; */
+        /* resources.mailer.messages.Message message = 1; */
         if (message.message)
             Message.internalBinaryWrite(message.message, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated string recipients = 2; */
@@ -2482,7 +2482,7 @@ class PostMessageResponse$Type extends MessageType<PostMessageResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Message message */ 1:
+                case /* resources.mailer.messages.Message message */ 1:
                     message.message = Message.internalBinaryRead(reader, reader.uint32(), options, message.message);
                     break;
                 default:
@@ -2497,7 +2497,7 @@ class PostMessageResponse$Type extends MessageType<PostMessageResponse> {
         return message;
     }
     internalBinaryWrite(message: PostMessageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Message message = 1; */
+        /* resources.mailer.messages.Message message = 1; */
         if (message.message)
             Message.internalBinaryWrite(message.message, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

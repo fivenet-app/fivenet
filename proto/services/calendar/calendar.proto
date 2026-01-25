@@ -5,19 +5,20 @@ package services.calendar;
 import "buf/validate/validate.proto";
 import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
-import "resources/calendar/access.proto";
+import "resources/calendar/access/access.proto";
 import "resources/calendar/calendar.proto";
+import "resources/calendar/entries/entries.proto";
 import "resources/common/database/database.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendar";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendar";
 
 // Calendar
 
 message ListCalendarsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   bool only_public = 2;
-  optional resources.calendar.AccessLevel min_access_level = 3;
+  optional resources.calendar.access.AccessLevel min_access_level = 3;
   optional resources.timestamp.Timestamp after = 4;
 }
 
@@ -70,7 +71,7 @@ message ListCalendarEntriesRequest {
 }
 
 message ListCalendarEntriesResponse {
-  repeated resources.calendar.CalendarEntry entries = 1;
+  repeated resources.calendar.entries.CalendarEntry entries = 1;
 }
 
 message GetUpcomingEntriesRequest {
@@ -78,7 +79,7 @@ message GetUpcomingEntriesRequest {
 }
 
 message GetUpcomingEntriesResponse {
-  repeated resources.calendar.CalendarEntry entries = 1;
+  repeated resources.calendar.entries.CalendarEntry entries = 1;
 }
 
 message GetCalendarEntryRequest {
@@ -86,16 +87,16 @@ message GetCalendarEntryRequest {
 }
 
 message GetCalendarEntryResponse {
-  resources.calendar.CalendarEntry entry = 1;
+  resources.calendar.entries.CalendarEntry entry = 1;
 }
 
 message CreateOrUpdateCalendarEntryRequest {
-  resources.calendar.CalendarEntry entry = 1 [(buf.validate.field).required = true];
+  resources.calendar.entries.CalendarEntry entry = 1 [(buf.validate.field).required = true];
   repeated int32 user_ids = 2;
 }
 
 message CreateOrUpdateCalendarEntryResponse {
-  resources.calendar.CalendarEntry entry = 1;
+  resources.calendar.entries.CalendarEntry entry = 1;
 }
 
 message DeleteCalendarEntryRequest {
@@ -120,17 +121,17 @@ message ListCalendarEntryRSVPRequest {
 
 message ListCalendarEntryRSVPResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.calendar.CalendarEntryRSVP entries = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.calendar.entries.CalendarEntryRSVP entries = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message RSVPCalendarEntryRequest {
-  resources.calendar.CalendarEntryRSVP entry = 1;
+  resources.calendar.entries.CalendarEntryRSVP entry = 1;
   bool subscribe = 2;
   optional bool remove = 3;
 }
 
 message RSVPCalendarEntryResponse {
-  optional resources.calendar.CalendarEntryRSVP entry = 1;
+  optional resources.calendar.entries.CalendarEntryRSVP entry = 1;
 }
 
 // Subs

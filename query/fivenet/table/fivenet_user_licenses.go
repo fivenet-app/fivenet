@@ -17,8 +17,8 @@ type fivenetUserLicensesTable struct {
 	mysql.Table
 
 	// Columns
-	Type  mysql.ColumnString
-	Owner mysql.ColumnString
+	UserID mysql.ColumnInteger
+	Type   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -60,9 +60,9 @@ func newFivenetUserLicensesTable(schemaName, tableName, alias string) *FivenetUs
 
 func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivenetUserLicensesTable {
 	var (
+		UserIDColumn   = mysql.IntegerColumn("user_id")
 		TypeColumn     = mysql.StringColumn("type")
-		OwnerColumn    = mysql.StringColumn("owner")
-		allColumns     = mysql.ColumnList{TypeColumn, OwnerColumn}
+		allColumns     = mysql.ColumnList{UserIDColumn, TypeColumn}
 		mutableColumns = mysql.ColumnList{}
 		defaultColumns = mysql.ColumnList{}
 	)
@@ -71,8 +71,8 @@ func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivene
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Type:  TypeColumn,
-		Owner: OwnerColumn,
+		UserID: UserIDColumn,
+		Type:   TypeColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

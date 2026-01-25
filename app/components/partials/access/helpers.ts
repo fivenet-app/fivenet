@@ -1,6 +1,6 @@
 import { listEnumValues } from '@protobuf-ts/runtime';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export type JobAccessEntry = {
     id: number;

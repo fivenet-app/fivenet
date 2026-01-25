@@ -8,7 +8,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { UserActivityType } from '~~/gen/ts/resources/users/activity';
+import { UserActivityType } from '~~/gen/ts/resources/users/activity/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 
 const props = defineProps<{

@@ -4,16 +4,18 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	mailerevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/events"
+	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbmailer "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -39,7 +41,7 @@ func (s *Server) ListThreads(
 	emailIds, err := s.access.CanUserAccessTargetIDs(
 		ctx,
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_READ,
+		maileraccess.AccessLevel_ACCESS_LEVEL_READ,
 		req.GetEmailIds()...)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -206,7 +208,7 @@ func (s *Server) getThread(
 	threadId int64,
 	emailId int64,
 	userInfo *userinfo.UserInfo,
-) (*mailer.Thread, error) {
+) (*mailerthreads.Thread, error) {
 	stmt := tThreads.
 		SELECT(
 			tThreads.ID,
@@ -241,7 +243,7 @@ func (s *Server) getThread(
 		)).
 		LIMIT(1)
 
-	var thread mailer.Thread
+	var thread mailerthreads.Thread
 	if err := stmt.QueryContext(ctx, s.db, &thread); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -271,7 +273,7 @@ func (s *Server) GetThread(
 ) (*pbmailer.GetThreadResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.GetThreadId(), req.GetEmailId(), maileraccess.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
@@ -297,7 +299,7 @@ func (s *Server) CreateThread(
 		ctx,
 		req.GetThread().GetCreatorEmailId(),
 		userInfo,
-		mailer.AccessLevel_ACCESS_LEVEL_WRITE,
+		maileraccess.AccessLevel_ACCESS_LEVEL_WRITE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -365,7 +367,7 @@ func (s *Server) CreateThread(
 	}
 
 	// Add creator of email to recipients
-	emails = append(emails, &mailer.ThreadRecipientEmail{
+	emails = append(emails, &mailerthreads.ThreadRecipientEmail{
 		EmailId: senderEmail.GetId(),
 		Email:   senderEmail,
 	})
@@ -400,15 +402,15 @@ func (s *Server) CreateThread(
 
 	// Set dummy thread state to make client-side handling easier
 	boolTrue := true
-	thread.State = &mailer.ThreadState{
+	thread.State = &mailerthreads.ThreadState{
 		ThreadId: thread.GetId(),
 		Unread:   &boolTrue,
 	}
 
 	if len(thread.GetRecipients()) > 0 {
 		if thread != nil && thread.CreatorId != nil {
-			s.sendUpdate(ctx, &mailer.MailerEvent{
-				Data: &mailer.MailerEvent_ThreadUpdate{
+			s.sendUpdate(ctx, &mailerevents.MailerEvent{
+				Data: &mailerevents.MailerEvent_ThreadUpdate{
 					ThreadUpdate: thread,
 				},
 			}, thread.GetCreatorEmailId())
@@ -419,8 +421,8 @@ func (s *Server) CreateThread(
 			emailIds = append(emailIds, ua.GetEmailId())
 		}
 
-		s.sendUpdate(ctx, &mailer.MailerEvent{
-			Data: &mailer.MailerEvent_ThreadUpdate{
+		s.sendUpdate(ctx, &mailerevents.MailerEvent{
+			Data: &mailerevents.MailerEvent_ThreadUpdate{
 				ThreadUpdate: thread,
 			},
 		}, emailIds...)
@@ -497,8 +499,8 @@ func (s *Server) DeleteThread(
 			emailIds = append(emailIds, ua.GetEmailId())
 		}
 
-		s.sendUpdate(ctx, &mailer.MailerEvent{
-			Data: &mailer.MailerEvent_ThreadDelete{
+		s.sendUpdate(ctx, &mailerevents.MailerEvent{
+			Data: &mailerevents.MailerEvent_ThreadDelete{
 				ThreadDelete: req.GetThreadId(),
 			},
 		}, emailIds...)

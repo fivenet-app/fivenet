@@ -7,19 +7,21 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/users"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	centrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/users"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -252,7 +254,7 @@ func (s *Server) GetDispatch(
 		AND(mysql.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, mysql.StringExp(mysql.String(string(jobsOut))))))
 
 	resp := &pbcentrum.GetDispatchResponse{
-		Dispatch: &centrum.Dispatch{},
+		Dispatch: &centrumdispatches.Dispatch{},
 	}
 
 	tUsers := tables.User().AS("colleague")
@@ -454,7 +456,7 @@ func (s *Server) UpdateDispatchStatus(
 		statusUnitId = userMapping.UnitId
 	}
 
-	if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrum.DispatchStatus{
+	if _, err := s.dispatches.UpdateStatus(ctx, dsp.GetId(), &centrumdispatches.DispatchStatus{
 		CreatedAt:  timestamp.Now(),
 		DispatchId: dsp.GetId(),
 		UnitId:     statusUnitId,
@@ -467,17 +469,17 @@ func (s *Server) UpdateDispatchStatus(
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if (req.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
-		req.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
-		req.GetStatus() == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE) && statusUnitId != nil {
+	if (req.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
+		req.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
+		req.GetStatus() == centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE) && statusUnitId != nil {
 		if unit, err := s.units.Get(ctx, *statusUnitId); err == nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.GetStatus() == nil ||
-				unit.GetStatus().GetStatus() != centrum.StatusUnit_STATUS_UNIT_BUSY {
-				if _, err := s.units.UpdateStatus(ctx, *statusUnitId, &centrum.UnitStatus{
+				unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_BUSY {
+				if _, err := s.units.UpdateStatus(ctx, *statusUnitId, &centrumunits.UnitStatus{
 					CreatedAt:  timestamp.Now(),
 					UnitId:     unit.GetId(),
-					Status:     centrum.StatusUnit_STATUS_UNIT_BUSY,
+					Status:     centrumunits.StatusUnit_STATUS_UNIT_BUSY,
 					UserId:     &userInfo.UserId,
 					CreatorId:  &userInfo.UserId,
 					CreatorJob: &userInfo.Job,

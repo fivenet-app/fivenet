@@ -7,23 +7,25 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	permsauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	pbauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth"
+	permsauth "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -535,7 +537,7 @@ func BuildCharSearchIdentifier(license string) string {
 func (s *Server) getCharacter(
 	ctx context.Context,
 	charId int32,
-) (*users.User, *jobs.JobProps, string, error) {
+) (*users.User, *jobsprops.JobProps, string, error) {
 	tUsers := tables.User().AS("user")
 	tLogo := table.FivenetFiles.AS("logo_file")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
@@ -586,7 +588,7 @@ func (s *Server) getCharacter(
 		*users.User
 
 		Group    string
-		JobProps *jobs.JobProps
+		JobProps *jobsprops.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, nil, "", err
@@ -676,7 +678,7 @@ func (s *Server) ChooseCharacter(
 	}
 
 	if len(ps) == 0 ||
-		(!isSuperuser && !slices.ContainsFunc(ps, func(p *permissions.Permission) bool {
+		(!isSuperuser && !slices.ContainsFunc(ps, func(p *permissionspermissions.Permission) bool {
 			return p.GetCategory() == string(permsauth.AuthServicePerm) && p.GetName() == string(permsauth.AuthServiceChooseCharacterPerm)
 		})) {
 		return nil, errorsauth.ErrUnableToChooseChar
@@ -703,7 +705,7 @@ func (s *Server) listUserPerms(
 	account *model.FivenetAccounts,
 	char *users.User,
 	isSuperuser bool,
-) ([]*permissions.Permission, []*permissions.RoleAttribute, error) {
+) ([]*permissionspermissions.Permission, []*permissionsattributes.RoleAttribute, error) {
 	// Load permissions of user
 	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.GetUserId(),
@@ -774,9 +776,9 @@ func (s *Server) SetSuperuserMode(
 		)
 	}
 
-	var jobProps *jobs.JobProps
-	var ps []*permissions.Permission
-	var attrs []*permissions.RoleAttribute
+	var jobProps *jobsprops.JobProps
+	var ps []*permissionspermissions.Permission
+	var attrs []*permissionsattributes.RoleAttribute
 
 	// Reset override job when switching off superuser mode using centralized helper
 	if !req.GetSuperuser() {
@@ -830,7 +832,7 @@ func (s *Server) SetSuperuserMode(
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
-		ps = []*permissions.Permission{auth.PermCanBeSuperuser, auth.PermSuperuser}
+		ps = []*permissionspermissions.Permission{auth.PermCanBeSuperuser, auth.PermSuperuser}
 	}
 
 	//nolint:protogetter // The values are needed as pointers
@@ -877,7 +879,7 @@ func (s *Server) SetSuperuserMode(
 func (s *Server) getJobWithProps(
 	ctx context.Context,
 	jobName string,
-) (*jobs.Job, int32, *jobs.JobProps, error) {
+) (*jobs.Job, int32, *jobsprops.JobProps, error) {
 	tJobs := tables.Jobs().AS("job")
 	tJobsGrades := tables.JobsGrades()
 	tFiles := table.FivenetFiles.AS("logo_file")
@@ -917,7 +919,7 @@ func (s *Server) getJobWithProps(
 	var dest struct {
 		Job      *jobs.Job
 		JobGrade int32 `alias:"job_grade"`
-		JobProps *jobs.JobProps
+		JobProps *jobsprops.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, 0, nil, err

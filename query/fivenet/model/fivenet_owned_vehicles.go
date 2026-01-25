@@ -8,10 +8,10 @@
 package model
 
 type FivenetOwnedVehicles struct {
-	Owner *string `json:"owner"`
-	Job   *string `json:"job"`
-	Plate string  `sql:"primary_key" json:"plate"`
-	Model *string `json:"model"`
-	Type  string  `json:"type"`
-	Data  *string `json:"data"`
+	UserID *int32  `json:"user_id"`
+	Job    *string `json:"job"`
+	Plate  string  `sql:"primary_key" json:"plate"`
+	Model  *string `json:"model"`
+	Type   string  `json:"type"`
+	Data   *string `json:"data"`
 }

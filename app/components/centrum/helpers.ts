@@ -1,8 +1,9 @@
 import type { BadgeProps, ButtonProps } from '@nuxt/ui';
-import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
-import { type JobList, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
-import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
+import type { CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access/access';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { JobList } from '~~/gen/ts/resources/centrum/joblist';
+import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units/access/access';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 export const defaultUnitIcon = 'MapMarkerIcon';

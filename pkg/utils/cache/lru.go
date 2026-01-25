@@ -18,7 +18,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/puzpuzpuz/xsync/v4"
 )
 

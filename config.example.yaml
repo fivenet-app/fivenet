@@ -63,8 +63,8 @@ database:
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
   disableLocking: false
-  # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
-  esxCompat: true
+  # ESX Compat mode has been removed.
+  #
   # Indicates whether to skip database migrations on startup
   skipMigrations: false
   custom:

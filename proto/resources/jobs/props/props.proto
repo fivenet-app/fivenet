@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package resources.jobs.props;
+
+import "buf/validate/validate.proto";
+import "codegen/dbscanner/dbscanner.proto";
+import "resources/file/file.proto";
+import "resources/jobs/settings/settings.proto";
+import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props;jobsprops";
+
+message JobProps {
+  string job = 1 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 2 [(buf.validate.field).string.max_len = 50];
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  string livemap_marker_color = 4 [(buf.validate.field).string = {
+    len: 7
+    pattern: "^#[A-Fa-f0-9]{6}$"
+  }];
+  QuickButtons quick_buttons = 5;
+  optional string radio_frequency = 6 [(buf.validate.field).string.max_len = 24];
+  optional string discord_guild_id = 7;
+  optional resources.timestamp.Timestamp discord_last_sync = 8;
+  resources.jobs.settings.DiscordSyncSettings discord_sync_settings = 9;
+  optional resources.jobs.settings.DiscordSyncChanges discord_sync_changes = 10;
+  optional string motd = 11 [(buf.validate.field).string.max_len = 1024];
+  optional int64 logo_file_id = 12;
+  optional resources.file.File logo_file = 13 [(tagger.tags) = "alias:\"logo_file\""];
+  resources.jobs.settings.JobSettings settings = 14;
+}
+
+message QuickButtons {
+  option (codegen.dbscanner.dbscanner) = {
+    enabled: true
+    partial: true
+  };
+
+  reserved 2;
+
+  bool penalty_calculator = 1;
+  reserved 3; // Deprecated bool math_calculator = 3;
+}

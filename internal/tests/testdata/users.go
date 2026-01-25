@@ -1,6 +1,6 @@
 package testdata
 
-import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+import "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
 
 func ptr(s string) *string {
 	return &s

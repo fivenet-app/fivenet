@@ -4,7 +4,7 @@ package codegen.dbscanner;
 
 import "google/protobuf/descriptor.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner;dbscanner";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner;dbscanner";
 
 extend google.protobuf.MessageOptions {
   MessageOptions dbscanner = 51004;

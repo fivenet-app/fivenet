@@ -7,11 +7,12 @@
 package jobs
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	timeclock "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/timeclock"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -32,11 +33,11 @@ type ListTimeclockRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserMode      jobs.TimeclockViewMode `protobuf:"varint,3,opt,name=user_mode,json=userMode,proto3,enum=resources.jobs.TimeclockViewMode" json:"user_mode,omitempty"`
-	Mode          jobs.TimeclockMode     `protobuf:"varint,4,opt,name=mode,proto3,enum=resources.jobs.TimeclockMode" json:"mode,omitempty"`
-	Date          *database.DateRange    `protobuf:"bytes,5,opt,name=date,proto3,oneof" json:"date,omitempty"`
-	PerDay        bool                   `protobuf:"varint,6,opt,name=per_day,json=perDay,proto3" json:"per_day,omitempty"`
-	UserIds       []int32                `protobuf:"varint,7,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	UserMode      timeclock.TimeclockViewMode `protobuf:"varint,3,opt,name=user_mode,json=userMode,proto3,enum=resources.jobs.timeclock.TimeclockViewMode" json:"user_mode,omitempty"`
+	Mode          timeclock.TimeclockMode     `protobuf:"varint,4,opt,name=mode,proto3,enum=resources.jobs.timeclock.TimeclockMode" json:"mode,omitempty"`
+	Date          *database.DateRange         `protobuf:"bytes,5,opt,name=date,proto3,oneof" json:"date,omitempty"`
+	PerDay        bool                        `protobuf:"varint,6,opt,name=per_day,json=perDay,proto3" json:"per_day,omitempty"`
+	UserIds       []int32                     `protobuf:"varint,7,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -85,18 +86,18 @@ func (x *ListTimeclockRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListTimeclockRequest) GetUserMode() jobs.TimeclockViewMode {
+func (x *ListTimeclockRequest) GetUserMode() timeclock.TimeclockViewMode {
 	if x != nil {
 		return x.UserMode
 	}
-	return jobs.TimeclockViewMode(0)
+	return timeclock.TimeclockViewMode(0)
 }
 
-func (x *ListTimeclockRequest) GetMode() jobs.TimeclockMode {
+func (x *ListTimeclockRequest) GetMode() timeclock.TimeclockMode {
 	if x != nil {
 		return x.Mode
 	}
-	return jobs.TimeclockMode(0)
+	return timeclock.TimeclockMode(0)
 }
 
 func (x *ListTimeclockRequest) GetDate() *database.DateRange {
@@ -121,10 +122,10 @@ func (x *ListTimeclockRequest) GetUserIds() []int32 {
 }
 
 type ListTimeclockResponse struct {
-	state       protoimpl.MessageState       `protogen:"open.v1"`
-	Pagination  *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Stats       *jobs.TimeclockStats         `protobuf:"bytes,2,opt,name=stats,proto3" json:"stats,omitempty"`
-	StatsWeekly []*jobs.TimeclockWeeklyStats `protobuf:"bytes,3,rep,name=stats_weekly,json=statsWeekly,proto3" json:"stats_weekly,omitempty"`
+	state       protoimpl.MessageState            `protogen:"open.v1"`
+	Pagination  *database.PaginationResponse      `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Stats       *timeclock.TimeclockStats         `protobuf:"bytes,2,opt,name=stats,proto3" json:"stats,omitempty"`
+	StatsWeekly []*timeclock.TimeclockWeeklyStats `protobuf:"bytes,3,rep,name=stats_weekly,json=statsWeekly,proto3" json:"stats_weekly,omitempty"`
 	// Types that are valid to be assigned to Entries:
 	//
 	//	*ListTimeclockResponse_Daily
@@ -172,14 +173,14 @@ func (x *ListTimeclockResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *ListTimeclockResponse) GetStats() *jobs.TimeclockStats {
+func (x *ListTimeclockResponse) GetStats() *timeclock.TimeclockStats {
 	if x != nil {
 		return x.Stats
 	}
 	return nil
 }
 
-func (x *ListTimeclockResponse) GetStatsWeekly() []*jobs.TimeclockWeeklyStats {
+func (x *ListTimeclockResponse) GetStatsWeekly() []*timeclock.TimeclockWeeklyStats {
 	if x != nil {
 		return x.StatsWeekly
 	}
@@ -243,10 +244,10 @@ func (*ListTimeclockResponse_Weekly) isListTimeclockResponse_Entries() {}
 func (*ListTimeclockResponse_Range) isListTimeclockResponse_Entries() {}
 
 type TimeclockDay struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Date          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
-	Entries       []*jobs.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
-	Sum           int64                  `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
+	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -288,7 +289,7 @@ func (x *TimeclockDay) GetDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *TimeclockDay) GetEntries() []*jobs.TimeclockEntry {
+func (x *TimeclockDay) GetEntries() []*timeclock.TimeclockEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -303,10 +304,10 @@ func (x *TimeclockDay) GetSum() int64 {
 }
 
 type TimeclockWeekly struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Date          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
-	Entries       []*jobs.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
-	Sum           int64                  `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
+	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -348,7 +349,7 @@ func (x *TimeclockWeekly) GetDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *TimeclockWeekly) GetEntries() []*jobs.TimeclockEntry {
+func (x *TimeclockWeekly) GetEntries() []*timeclock.TimeclockEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -363,10 +364,10 @@ func (x *TimeclockWeekly) GetSum() int64 {
 }
 
 type TimeclockRange struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Date          *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
-	Entries       []*jobs.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
-	Sum           int64                  `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Date          *timestamp.Timestamp        `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty" sql:"primary_key"`
+	Entries       []*timeclock.TimeclockEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	Sum           int64                       `protobuf:"varint,3,opt,name=sum,proto3" json:"sum,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -408,7 +409,7 @@ func (x *TimeclockRange) GetDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *TimeclockRange) GetEntries() []*jobs.TimeclockEntry {
+func (x *TimeclockRange) GetEntries() []*timeclock.TimeclockEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -467,9 +468,9 @@ func (x *GetTimeclockStatsRequest) GetUserId() int32 {
 }
 
 type GetTimeclockStatsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Stats         *jobs.TimeclockStats         `protobuf:"bytes,1,opt,name=stats,proto3" json:"stats,omitempty"`
-	Weekly        []*jobs.TimeclockWeeklyStats `protobuf:"bytes,2,rep,name=weekly,proto3" json:"weekly,omitempty"`
+	state         protoimpl.MessageState            `protogen:"open.v1"`
+	Stats         *timeclock.TimeclockStats         `protobuf:"bytes,1,opt,name=stats,proto3" json:"stats,omitempty"`
+	Weekly        []*timeclock.TimeclockWeeklyStats `protobuf:"bytes,2,rep,name=weekly,proto3" json:"weekly,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -504,14 +505,14 @@ func (*GetTimeclockStatsResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_timeclock_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetTimeclockStatsResponse) GetStats() *jobs.TimeclockStats {
+func (x *GetTimeclockStatsResponse) GetStats() *timeclock.TimeclockStats {
 	if x != nil {
 		return x.Stats
 	}
 	return nil
 }
 
-func (x *GetTimeclockStatsResponse) GetWeekly() []*jobs.TimeclockWeeklyStats {
+func (x *GetTimeclockStatsResponse) GetWeekly() []*timeclock.TimeclockWeeklyStats {
 	if x != nil {
 		return x.Weekly
 	}
@@ -582,7 +583,7 @@ func (x *ListInactiveEmployeesRequest) GetDays() int32 {
 type ListInactiveEmployeesResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Colleagues    []*jobs.Colleague            `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
+	Colleagues    []*colleagues.Colleague      `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -624,7 +625,7 @@ func (x *ListInactiveEmployeesResponse) GetPagination() *database.PaginationResp
 	return nil
 }
 
-func (x *ListInactiveEmployeesResponse) GetColleagues() []*jobs.Colleague {
+func (x *ListInactiveEmployeesResponse) GetColleagues() []*colleagues.Colleague {
 	if x != nil {
 		return x.Colleagues
 	}
@@ -635,67 +636,67 @@ var File_services_jobs_timeclock_proto protoreflect.FileDescriptor
 
 const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\n" +
-	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1eresources/jobs/timeclock.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x96\x03\n" +
+	"\x1dservices/jobs/timeclock.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a(resources/jobs/timeclock/timeclock.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xaa\x03\n" +
 	"\x14ListTimeclockRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12>\n" +
-	"\tuser_mode\x18\x03 \x01(\x0e2!.resources.jobs.TimeclockViewModeR\buserMode\x121\n" +
-	"\x04mode\x18\x04 \x01(\x0e2\x1d.resources.jobs.TimeclockModeR\x04mode\x12=\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12H\n" +
+	"\tuser_mode\x18\x03 \x01(\x0e2+.resources.jobs.timeclock.TimeclockViewModeR\buserMode\x12;\n" +
+	"\x04mode\x18\x04 \x01(\x0e2'.resources.jobs.timeclock.TimeclockModeR\x04mode\x12=\n" +
 	"\x04date\x18\x05 \x01(\v2$.resources.common.database.DateRangeH\x01R\x04date\x88\x01\x01\x12\x17\n" +
 	"\aper_day\x18\x06 \x01(\bR\x06perDay\x12\x19\n" +
 	"\buser_ids\x18\a \x03(\x05R\auserIdsB\a\n" +
 	"\x05_sortB\a\n" +
-	"\x05_date\"\x96\x03\n" +
+	"\x05_date\"\xaa\x03\n" +
 	"\x15ListTimeclockResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x124\n" +
-	"\x05stats\x18\x02 \x01(\v2\x1e.resources.jobs.TimeclockStatsR\x05stats\x12G\n" +
-	"\fstats_weekly\x18\x03 \x03(\v2$.resources.jobs.TimeclockWeeklyStatsR\vstatsWeekly\x123\n" +
+	"pagination\x12>\n" +
+	"\x05stats\x18\x02 \x01(\v2(.resources.jobs.timeclock.TimeclockStatsR\x05stats\x12Q\n" +
+	"\fstats_weekly\x18\x03 \x03(\v2..resources.jobs.timeclock.TimeclockWeeklyStatsR\vstatsWeekly\x123\n" +
 	"\x05daily\x18\x04 \x01(\v2\x1b.services.jobs.TimeclockDayH\x00R\x05daily\x128\n" +
 	"\x06weekly\x18\x05 \x01(\v2\x1e.services.jobs.TimeclockWeeklyH\x00R\x06weekly\x125\n" +
 	"\x05range\x18\x06 \x01(\v2\x1d.services.jobs.TimeclockRangeH\x00R\x05rangeB\t\n" +
-	"\aentries\"\x8e\x01\n" +
+	"\aentries\"\x98\x01\n" +
 	"\fTimeclockDay\x122\n" +
-	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x04date\x128\n" +
-	"\aentries\x18\x02 \x03(\v2\x1e.resources.jobs.TimeclockEntryR\aentries\x12\x10\n" +
-	"\x03sum\x18\x03 \x01(\x03R\x03sum\"\xa9\x01\n" +
+	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\x04date\x12B\n" +
+	"\aentries\x18\x02 \x03(\v2(.resources.jobs.timeclock.TimeclockEntryR\aentries\x12\x10\n" +
+	"\x03sum\x18\x03 \x01(\x03R\x03sum\"\xb3\x01\n" +
 	"\x0fTimeclockWeekly\x12J\n" +
-	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x04date\x128\n" +
-	"\aentries\x18\x02 \x03(\v2\x1e.resources.jobs.TimeclockEntryR\aentries\x12\x10\n" +
-	"\x03sum\x18\x03 \x01(\x03R\x03sum\"\xa8\x01\n" +
+	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x04date\x12B\n" +
+	"\aentries\x18\x02 \x03(\v2(.resources.jobs.timeclock.TimeclockEntryR\aentries\x12\x10\n" +
+	"\x03sum\x18\x03 \x01(\x03R\x03sum\"\xb2\x01\n" +
 	"\x0eTimeclockRange\x12J\n" +
-	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x04date\x128\n" +
-	"\aentries\x18\x02 \x03(\v2\x1e.resources.jobs.TimeclockEntryR\aentries\x12\x10\n" +
+	"\x04date\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampB\x16\x9a\x84\x9e\x03\x11sql:\"primary_key\"R\x04date\x12B\n" +
+	"\aentries\x18\x02 \x03(\v2(.resources.jobs.timeclock.TimeclockEntryR\aentries\x12\x10\n" +
 	"\x03sum\x18\x03 \x01(\x03R\x03sum\"D\n" +
 	"\x18GetTimeclockStatsRequest\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\x05H\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
-	"\b_user_id\"\x8f\x01\n" +
-	"\x19GetTimeclockStatsResponse\x124\n" +
-	"\x05stats\x18\x01 \x01(\v2\x1e.resources.jobs.TimeclockStatsR\x05stats\x12<\n" +
-	"\x06weekly\x18\x02 \x03(\v2$.resources.jobs.TimeclockWeeklyStatsR\x06weekly\"\xc3\x01\n" +
+	"\b_user_id\"\xa3\x01\n" +
+	"\x19GetTimeclockStatsResponse\x12>\n" +
+	"\x05stats\x18\x01 \x01(\v2(.resources.jobs.timeclock.TimeclockStatsR\x05stats\x12F\n" +
+	"\x06weekly\x18\x02 \x03(\v2..resources.jobs.timeclock.TimeclockWeeklyStatsR\x06weekly\"\xc3\x01\n" +
 	"\x1cListInactiveEmployeesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x12\n" +
 	"\x04days\x18\x03 \x01(\x05R\x04daysB\a\n" +
-	"\x05_sort\"\xaf\x01\n" +
+	"\x05_sort\"\xba\x01\n" +
 	"\x1dListInactiveEmployeesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12?\n" +
+	"pagination\x12J\n" +
 	"\n" +
-	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
+	"colleagues\x18\x02 \x03(\v2$.resources.jobs.colleagues.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
 	"colleagues2\xa8\x03\n" +
 	"\x10TimeclockService\x12s\n" +
 	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\"\x17\xd2\xf3\x18\x13\b\x01*\x0f\n" +
 	"\x06Access\x18\x01\"\x03All\x12}\n" +
 	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\"\x15\xd2\xf3\x18\x11\b\x01\x1a\rListTimeclock\x12z\n" +
-	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a$\xea\xf3\x18 \b>\x12\x1ci-mdi-timeline-clock-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a$\xea\xf3\x18 \b>\x12\x1ci-mdi-timeline-clock-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_timeclock_proto_rawDescOnce sync.Once
@@ -711,51 +712,51 @@ func file_services_jobs_timeclock_proto_rawDescGZIP() []byte {
 
 var file_services_jobs_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_services_jobs_timeclock_proto_goTypes = []any{
-	(*ListTimeclockRequest)(nil),          // 0: services.jobs.ListTimeclockRequest
-	(*ListTimeclockResponse)(nil),         // 1: services.jobs.ListTimeclockResponse
-	(*TimeclockDay)(nil),                  // 2: services.jobs.TimeclockDay
-	(*TimeclockWeekly)(nil),               // 3: services.jobs.TimeclockWeekly
-	(*TimeclockRange)(nil),                // 4: services.jobs.TimeclockRange
-	(*GetTimeclockStatsRequest)(nil),      // 5: services.jobs.GetTimeclockStatsRequest
-	(*GetTimeclockStatsResponse)(nil),     // 6: services.jobs.GetTimeclockStatsResponse
-	(*ListInactiveEmployeesRequest)(nil),  // 7: services.jobs.ListInactiveEmployeesRequest
-	(*ListInactiveEmployeesResponse)(nil), // 8: services.jobs.ListInactiveEmployeesResponse
-	(*database.PaginationRequest)(nil),    // 9: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                 // 10: resources.common.database.Sort
-	(jobs.TimeclockViewMode)(0),           // 11: resources.jobs.TimeclockViewMode
-	(jobs.TimeclockMode)(0),               // 12: resources.jobs.TimeclockMode
-	(*database.DateRange)(nil),            // 13: resources.common.database.DateRange
-	(*database.PaginationResponse)(nil),   // 14: resources.common.database.PaginationResponse
-	(*jobs.TimeclockStats)(nil),           // 15: resources.jobs.TimeclockStats
-	(*jobs.TimeclockWeeklyStats)(nil),     // 16: resources.jobs.TimeclockWeeklyStats
-	(*timestamp.Timestamp)(nil),           // 17: resources.timestamp.Timestamp
-	(*jobs.TimeclockEntry)(nil),           // 18: resources.jobs.TimeclockEntry
-	(*jobs.Colleague)(nil),                // 19: resources.jobs.Colleague
+	(*ListTimeclockRequest)(nil),           // 0: services.jobs.ListTimeclockRequest
+	(*ListTimeclockResponse)(nil),          // 1: services.jobs.ListTimeclockResponse
+	(*TimeclockDay)(nil),                   // 2: services.jobs.TimeclockDay
+	(*TimeclockWeekly)(nil),                // 3: services.jobs.TimeclockWeekly
+	(*TimeclockRange)(nil),                 // 4: services.jobs.TimeclockRange
+	(*GetTimeclockStatsRequest)(nil),       // 5: services.jobs.GetTimeclockStatsRequest
+	(*GetTimeclockStatsResponse)(nil),      // 6: services.jobs.GetTimeclockStatsResponse
+	(*ListInactiveEmployeesRequest)(nil),   // 7: services.jobs.ListInactiveEmployeesRequest
+	(*ListInactiveEmployeesResponse)(nil),  // 8: services.jobs.ListInactiveEmployeesResponse
+	(*database.PaginationRequest)(nil),     // 9: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                  // 10: resources.common.database.Sort
+	(timeclock.TimeclockViewMode)(0),       // 11: resources.jobs.timeclock.TimeclockViewMode
+	(timeclock.TimeclockMode)(0),           // 12: resources.jobs.timeclock.TimeclockMode
+	(*database.DateRange)(nil),             // 13: resources.common.database.DateRange
+	(*database.PaginationResponse)(nil),    // 14: resources.common.database.PaginationResponse
+	(*timeclock.TimeclockStats)(nil),       // 15: resources.jobs.timeclock.TimeclockStats
+	(*timeclock.TimeclockWeeklyStats)(nil), // 16: resources.jobs.timeclock.TimeclockWeeklyStats
+	(*timestamp.Timestamp)(nil),            // 17: resources.timestamp.Timestamp
+	(*timeclock.TimeclockEntry)(nil),       // 18: resources.jobs.timeclock.TimeclockEntry
+	(*colleagues.Colleague)(nil),           // 19: resources.jobs.colleagues.Colleague
 }
 var file_services_jobs_timeclock_proto_depIdxs = []int32{
 	9,  // 0: services.jobs.ListTimeclockRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	10, // 1: services.jobs.ListTimeclockRequest.sort:type_name -> resources.common.database.Sort
-	11, // 2: services.jobs.ListTimeclockRequest.user_mode:type_name -> resources.jobs.TimeclockViewMode
-	12, // 3: services.jobs.ListTimeclockRequest.mode:type_name -> resources.jobs.TimeclockMode
+	11, // 2: services.jobs.ListTimeclockRequest.user_mode:type_name -> resources.jobs.timeclock.TimeclockViewMode
+	12, // 3: services.jobs.ListTimeclockRequest.mode:type_name -> resources.jobs.timeclock.TimeclockMode
 	13, // 4: services.jobs.ListTimeclockRequest.date:type_name -> resources.common.database.DateRange
 	14, // 5: services.jobs.ListTimeclockResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 6: services.jobs.ListTimeclockResponse.stats:type_name -> resources.jobs.TimeclockStats
-	16, // 7: services.jobs.ListTimeclockResponse.stats_weekly:type_name -> resources.jobs.TimeclockWeeklyStats
+	15, // 6: services.jobs.ListTimeclockResponse.stats:type_name -> resources.jobs.timeclock.TimeclockStats
+	16, // 7: services.jobs.ListTimeclockResponse.stats_weekly:type_name -> resources.jobs.timeclock.TimeclockWeeklyStats
 	2,  // 8: services.jobs.ListTimeclockResponse.daily:type_name -> services.jobs.TimeclockDay
 	3,  // 9: services.jobs.ListTimeclockResponse.weekly:type_name -> services.jobs.TimeclockWeekly
 	4,  // 10: services.jobs.ListTimeclockResponse.range:type_name -> services.jobs.TimeclockRange
 	17, // 11: services.jobs.TimeclockDay.date:type_name -> resources.timestamp.Timestamp
-	18, // 12: services.jobs.TimeclockDay.entries:type_name -> resources.jobs.TimeclockEntry
+	18, // 12: services.jobs.TimeclockDay.entries:type_name -> resources.jobs.timeclock.TimeclockEntry
 	17, // 13: services.jobs.TimeclockWeekly.date:type_name -> resources.timestamp.Timestamp
-	18, // 14: services.jobs.TimeclockWeekly.entries:type_name -> resources.jobs.TimeclockEntry
+	18, // 14: services.jobs.TimeclockWeekly.entries:type_name -> resources.jobs.timeclock.TimeclockEntry
 	17, // 15: services.jobs.TimeclockRange.date:type_name -> resources.timestamp.Timestamp
-	18, // 16: services.jobs.TimeclockRange.entries:type_name -> resources.jobs.TimeclockEntry
-	15, // 17: services.jobs.GetTimeclockStatsResponse.stats:type_name -> resources.jobs.TimeclockStats
-	16, // 18: services.jobs.GetTimeclockStatsResponse.weekly:type_name -> resources.jobs.TimeclockWeeklyStats
+	18, // 16: services.jobs.TimeclockRange.entries:type_name -> resources.jobs.timeclock.TimeclockEntry
+	15, // 17: services.jobs.GetTimeclockStatsResponse.stats:type_name -> resources.jobs.timeclock.TimeclockStats
+	16, // 18: services.jobs.GetTimeclockStatsResponse.weekly:type_name -> resources.jobs.timeclock.TimeclockWeeklyStats
 	9,  // 19: services.jobs.ListInactiveEmployeesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	10, // 20: services.jobs.ListInactiveEmployeesRequest.sort:type_name -> resources.common.database.Sort
 	14, // 21: services.jobs.ListInactiveEmployeesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	19, // 22: services.jobs.ListInactiveEmployeesResponse.colleagues:type_name -> resources.jobs.Colleague
+	19, // 22: services.jobs.ListInactiveEmployeesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
 	0,  // 23: services.jobs.TimeclockService.ListTimeclock:input_type -> services.jobs.ListTimeclockRequest
 	5,  // 24: services.jobs.TimeclockService.GetTimeclockStats:input_type -> services.jobs.GetTimeclockStatsRequest
 	7,  // 25: services.jobs.TimeclockService.ListInactiveEmployees:input_type -> services.jobs.ListInactiveEmployeesRequest

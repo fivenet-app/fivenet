@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SocialLogin from '~/components/auth/account/SocialLogin.vue';
-import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2/oauth2';
 
 const props = defineProps<{
     providers: OAuth2Provider[];

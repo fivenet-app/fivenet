@@ -23,12 +23,12 @@ import { EventAction } from "../../resources/audit/audit";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
-import { RoleAttribute } from "../../resources/permissions/attributes";
-import { Permission } from "../../resources/permissions/permissions";
+import { RoleAttribute } from "../../resources/permissions/attributes/attributes";
+import { Permission } from "../../resources/permissions/permissions/permissions";
 import { AttrsUpdate } from "../../resources/settings/perms";
 import { PermsUpdate } from "../../resources/settings/perms";
-import { Role } from "../../resources/permissions/permissions";
-import { JobProps } from "../../resources/jobs/job_props";
+import { Role } from "../../resources/permissions/permissions/permissions";
+import { JobProps } from "../../resources/jobs/props/props";
 /**
  * @generated from protobuf message services.settings.GetJobPropsRequest
  */
@@ -39,7 +39,7 @@ export interface GetJobPropsRequest {
  */
 export interface GetJobPropsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 1
+     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 1
      */
     jobProps?: JobProps;
 }
@@ -48,7 +48,7 @@ export interface GetJobPropsResponse {
  */
 export interface SetJobPropsRequest {
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 1
+     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 1
      */
     jobProps?: JobProps;
 }
@@ -57,7 +57,7 @@ export interface SetJobPropsRequest {
  */
 export interface SetJobPropsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 1
+     * @generated from protobuf field: resources.jobs.props.JobProps job_props = 1
      */
     jobProps?: JobProps;
 }
@@ -75,7 +75,7 @@ export interface GetRolesRequest {
  */
 export interface GetRolesResponse {
     /**
-     * @generated from protobuf field: repeated resources.permissions.Role roles = 1
+     * @generated from protobuf field: repeated resources.permissions.permissions.Role roles = 1
      */
     roles: Role[];
 }
@@ -93,7 +93,7 @@ export interface GetRoleRequest {
  */
 export interface GetRoleResponse {
     /**
-     * @generated from protobuf field: resources.permissions.Role role = 1
+     * @generated from protobuf field: resources.permissions.permissions.Role role = 1
      */
     role?: Role;
 }
@@ -115,7 +115,7 @@ export interface CreateRoleRequest {
  */
 export interface CreateRoleResponse {
     /**
-     * @generated from protobuf field: resources.permissions.Role role = 1
+     * @generated from protobuf field: resources.permissions.permissions.Role role = 1
      */
     role?: Role;
 }
@@ -169,11 +169,11 @@ export interface GetPermissionsRequest {
  */
 export interface GetPermissionsResponse {
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 1
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 1
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 2
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 2
      */
     attributes: RoleAttribute[];
 }
@@ -191,15 +191,15 @@ export interface GetEffectivePermissionsRequest {
  */
 export interface GetEffectivePermissionsResponse {
     /**
-     * @generated from protobuf field: resources.permissions.Role role = 1
+     * @generated from protobuf field: resources.permissions.permissions.Role role = 1
      */
     role?: Role;
     /**
-     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 2
+     * @generated from protobuf field: repeated resources.permissions.permissions.Permission permissions = 2
      */
     permissions: Permission[];
     /**
-     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 3
+     * @generated from protobuf field: repeated resources.permissions.attributes.RoleAttribute attributes = 3
      */
     attributes: RoleAttribute[];
 }
@@ -357,7 +357,7 @@ class GetJobPropsResponse$Type extends MessageType<GetJobPropsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.JobProps job_props */ 1:
+                case /* resources.jobs.props.JobProps job_props */ 1:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 default:
@@ -372,7 +372,7 @@ class GetJobPropsResponse$Type extends MessageType<GetJobPropsResponse> {
         return message;
     }
     internalBinaryWrite(message: GetJobPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobProps job_props = 1; */
+        /* resources.jobs.props.JobProps job_props = 1; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -403,7 +403,7 @@ class SetJobPropsRequest$Type extends MessageType<SetJobPropsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.JobProps job_props */ 1:
+                case /* resources.jobs.props.JobProps job_props */ 1:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 default:
@@ -418,7 +418,7 @@ class SetJobPropsRequest$Type extends MessageType<SetJobPropsRequest> {
         return message;
     }
     internalBinaryWrite(message: SetJobPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobProps job_props = 1; */
+        /* resources.jobs.props.JobProps job_props = 1; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -449,7 +449,7 @@ class SetJobPropsResponse$Type extends MessageType<SetJobPropsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.JobProps job_props */ 1:
+                case /* resources.jobs.props.JobProps job_props */ 1:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 default:
@@ -464,7 +464,7 @@ class SetJobPropsResponse$Type extends MessageType<SetJobPropsResponse> {
         return message;
     }
     internalBinaryWrite(message: SetJobPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobProps job_props = 1; */
+        /* resources.jobs.props.JobProps job_props = 1; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -542,7 +542,7 @@ class GetRolesResponse$Type extends MessageType<GetRolesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.permissions.Role roles */ 1:
+                case /* repeated resources.permissions.permissions.Role roles */ 1:
                     message.roles.push(Role.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -557,7 +557,7 @@ class GetRolesResponse$Type extends MessageType<GetRolesResponse> {
         return message;
     }
     internalBinaryWrite(message: GetRolesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.Role roles = 1; */
+        /* repeated resources.permissions.permissions.Role roles = 1; */
         for (let i = 0; i < message.roles.length; i++)
             Role.internalBinaryWrite(message.roles[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -635,7 +635,7 @@ class GetRoleResponse$Type extends MessageType<GetRoleResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.permissions.Role role */ 1:
+                case /* resources.permissions.permissions.Role role */ 1:
                     message.role = Role.internalBinaryRead(reader, reader.uint32(), options, message.role);
                     break;
                 default:
@@ -650,7 +650,7 @@ class GetRoleResponse$Type extends MessageType<GetRoleResponse> {
         return message;
     }
     internalBinaryWrite(message: GetRoleResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.permissions.Role role = 1; */
+        /* resources.permissions.permissions.Role role = 1; */
         if (message.role)
             Role.internalBinaryWrite(message.role, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -736,7 +736,7 @@ class CreateRoleResponse$Type extends MessageType<CreateRoleResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.permissions.Role role */ 1:
+                case /* resources.permissions.permissions.Role role */ 1:
                     message.role = Role.internalBinaryRead(reader, reader.uint32(), options, message.role);
                     break;
                 default:
@@ -751,7 +751,7 @@ class CreateRoleResponse$Type extends MessageType<CreateRoleResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateRoleResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.permissions.Role role = 1; */
+        /* resources.permissions.permissions.Role role = 1; */
         if (message.role)
             Role.internalBinaryWrite(message.role, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1016,10 +1016,10 @@ class GetPermissionsResponse$Type extends MessageType<GetPermissionsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.permissions.Permission permissions */ 1:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 1:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 2:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 2:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1034,10 +1034,10 @@ class GetPermissionsResponse$Type extends MessageType<GetPermissionsResponse> {
         return message;
     }
     internalBinaryWrite(message: GetPermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.permissions.Permission permissions = 1; */
+        /* repeated resources.permissions.permissions.Permission permissions = 1; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 2; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 2; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1119,13 +1119,13 @@ class GetEffectivePermissionsResponse$Type extends MessageType<GetEffectivePermi
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.permissions.Role role */ 1:
+                case /* resources.permissions.permissions.Role role */ 1:
                     message.role = Role.internalBinaryRead(reader, reader.uint32(), options, message.role);
                     break;
-                case /* repeated resources.permissions.Permission permissions */ 2:
+                case /* repeated resources.permissions.permissions.Permission permissions */ 2:
                     message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.permissions.RoleAttribute attributes */ 3:
+                case /* repeated resources.permissions.attributes.RoleAttribute attributes */ 3:
                     message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -1140,13 +1140,13 @@ class GetEffectivePermissionsResponse$Type extends MessageType<GetEffectivePermi
         return message;
     }
     internalBinaryWrite(message: GetEffectivePermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.permissions.Role role = 1; */
+        /* resources.permissions.permissions.Role role = 1; */
         if (message.role)
             Role.internalBinaryWrite(message.role, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.Permission permissions = 2; */
+        /* repeated resources.permissions.permissions.Permission permissions = 2; */
         for (let i = 0; i < message.permissions.length; i++)
             Permission.internalBinaryWrite(message.permissions[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.permissions.RoleAttribute attributes = 3; */
+        /* repeated resources.permissions.attributes.RoleAttribute attributes = 3; */
         for (let i = 0; i < message.attributes.length; i++)
             RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

@@ -7,7 +7,7 @@
 package collab
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -783,7 +783,7 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"ClientRole\x12\x1b\n" +
 	"\x17CLIENT_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12CLIENT_ROLE_READER\x10\x01\x12\x16\n" +
-	"\x12CLIENT_ROLE_WRITER\x10\x02BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab;collabb\x06proto3"
+	"\x12CLIENT_ROLE_WRITER\x10\x02BKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab;collabb\x06proto3"
 
 var (
 	file_resources_collab_collab_proto_rawDescOnce sync.Once

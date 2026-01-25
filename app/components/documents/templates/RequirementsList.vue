@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
     name: string;

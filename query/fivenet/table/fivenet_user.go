@@ -17,22 +17,25 @@ type fivenetUserTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
-	Identifier  mysql.ColumnString
-	Group       mysql.ColumnString
-	Job         mysql.ColumnString
-	JobGrade    mysql.ColumnInteger
-	Firstname   mysql.ColumnString
-	Lastname    mysql.ColumnString
-	Dateofbirth mysql.ColumnString
-	Sex         mysql.ColumnString
-	Height      mysql.ColumnString
-	PhoneNumber mysql.ColumnString
-	Disabled    mysql.ColumnBool
-	Visum       mysql.ColumnInteger
-	Playtime    mysql.ColumnInteger
-	CreatedAt   mysql.ColumnTimestamp
-	LastSeen    mysql.ColumnTimestamp
+	ID            mysql.ColumnInteger
+	AccountID     mysql.ColumnInteger
+	Identifier    mysql.ColumnString
+	Group         mysql.ColumnString
+	Job           mysql.ColumnString
+	JobGrade      mysql.ColumnInteger
+	Firstname     mysql.ColumnString
+	Lastname      mysql.ColumnString
+	Dateofbirth   mysql.ColumnString
+	Sex           mysql.ColumnString
+	Height        mysql.ColumnString
+	PhoneNumber   mysql.ColumnString
+	Disabled      mysql.ColumnBool
+	Visum         mysql.ColumnInteger
+	Playtime      mysql.ColumnInteger
+	CreatedAt     mysql.ColumnTimestamp
+	LastSeen      mysql.ColumnTimestamp
+	DeletedAt     mysql.ColumnTimestamp
+	DeletedReason mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -74,47 +77,53 @@ func newFivenetUserTable(schemaName, tableName, alias string) *FivenetUserTable 
 
 func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
-		IdentifierColumn  = mysql.StringColumn("identifier")
-		GroupColumn       = mysql.StringColumn("group")
-		JobColumn         = mysql.StringColumn("job")
-		JobGradeColumn    = mysql.IntegerColumn("job_grade")
-		FirstnameColumn   = mysql.StringColumn("firstname")
-		LastnameColumn    = mysql.StringColumn("lastname")
-		DateofbirthColumn = mysql.StringColumn("dateofbirth")
-		SexColumn         = mysql.StringColumn("sex")
-		HeightColumn      = mysql.StringColumn("height")
-		PhoneNumberColumn = mysql.StringColumn("phone_number")
-		DisabledColumn    = mysql.BoolColumn("disabled")
-		VisumColumn       = mysql.IntegerColumn("visum")
-		PlaytimeColumn    = mysql.IntegerColumn("playtime")
-		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		LastSeenColumn    = mysql.TimestampColumn("last_seen")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
-		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
-		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn}
+		IDColumn            = mysql.IntegerColumn("id")
+		AccountIDColumn     = mysql.IntegerColumn("account_id")
+		IdentifierColumn    = mysql.StringColumn("identifier")
+		GroupColumn         = mysql.StringColumn("group")
+		JobColumn           = mysql.StringColumn("job")
+		JobGradeColumn      = mysql.IntegerColumn("job_grade")
+		FirstnameColumn     = mysql.StringColumn("firstname")
+		LastnameColumn      = mysql.StringColumn("lastname")
+		DateofbirthColumn   = mysql.StringColumn("dateofbirth")
+		SexColumn           = mysql.StringColumn("sex")
+		HeightColumn        = mysql.StringColumn("height")
+		PhoneNumberColumn   = mysql.StringColumn("phone_number")
+		DisabledColumn      = mysql.BoolColumn("disabled")
+		VisumColumn         = mysql.IntegerColumn("visum")
+		PlaytimeColumn      = mysql.IntegerColumn("playtime")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		LastSeenColumn      = mysql.TimestampColumn("last_seen")
+		DeletedAtColumn     = mysql.TimestampColumn("deleted_at")
+		DeletedReasonColumn = mysql.StringColumn("deleted_reason")
+		allColumns          = mysql.ColumnList{IDColumn, AccountIDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn, DeletedAtColumn, DeletedReasonColumn}
+		mutableColumns      = mysql.ColumnList{AccountIDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn, DeletedAtColumn, DeletedReasonColumn}
+		defaultColumns      = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn}
 	)
 
 	return fivenetUserTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		Identifier:  IdentifierColumn,
-		Group:       GroupColumn,
-		Job:         JobColumn,
-		JobGrade:    JobGradeColumn,
-		Firstname:   FirstnameColumn,
-		Lastname:    LastnameColumn,
-		Dateofbirth: DateofbirthColumn,
-		Sex:         SexColumn,
-		Height:      HeightColumn,
-		PhoneNumber: PhoneNumberColumn,
-		Disabled:    DisabledColumn,
-		Visum:       VisumColumn,
-		Playtime:    PlaytimeColumn,
-		CreatedAt:   CreatedAtColumn,
-		LastSeen:    LastSeenColumn,
+		ID:            IDColumn,
+		AccountID:     AccountIDColumn,
+		Identifier:    IdentifierColumn,
+		Group:         GroupColumn,
+		Job:           JobColumn,
+		JobGrade:      JobGradeColumn,
+		Firstname:     FirstnameColumn,
+		Lastname:      LastnameColumn,
+		Dateofbirth:   DateofbirthColumn,
+		Sex:           SexColumn,
+		Height:        HeightColumn,
+		PhoneNumber:   PhoneNumberColumn,
+		Disabled:      DisabledColumn,
+		Visum:         VisumColumn,
+		Playtime:      PlaytimeColumn,
+		CreatedAt:     CreatedAtColumn,
+		LastSeen:      LastSeenColumn,
+		DeletedAt:     DeletedAtColumn,
+		DeletedReason: DeletedReasonColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

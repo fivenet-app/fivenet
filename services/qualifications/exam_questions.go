@@ -6,10 +6,10 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -19,7 +19,7 @@ func (s *Server) getExamQuestions(
 	tx qrm.DB,
 	qualificationId int64,
 	withAnswers bool,
-) (*qualifications.ExamQuestions, error) {
+) (*qualificationsexam.ExamQuestions, error) {
 	columns := mysql.ProjectionList{
 		tExamQuestions.QualificationID,
 		tExamQuestions.CreatedAt,
@@ -46,7 +46,7 @@ func (s *Server) getExamQuestions(
 		ORDER_BY(tExamQuestions.Order.ASC()).
 		LIMIT(100)
 
-	var dest qualifications.ExamQuestions
+	var dest qualificationsexam.ExamQuestions
 	if err := stmt.QueryContext(ctx, tx, &dest.Questions); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -78,7 +78,7 @@ func (s *Server) handleExamQuestionsChanges(
 	ctx context.Context,
 	tx *sql.Tx,
 	qualificationId int64,
-	questions *qualifications.ExamQuestions,
+	questions *qualificationsexam.ExamQuestions,
 ) ([]*file.File, error) {
 	files := []*file.File{}
 
@@ -113,7 +113,7 @@ func (s *Server) handleExamQuestionsChanges(
 		}
 
 		switch data := question.GetData().GetData().(type) {
-		case *qualifications.ExamQuestionData_Image:
+		case *qualificationsexam.ExamQuestionData_Image:
 			if data.Image.GetImage() == nil {
 				continue
 			}
@@ -149,7 +149,7 @@ func (s *Server) handleExamQuestionsChanges(
 	for _, question := range toUpdate {
 		if question.GetData() != nil {
 			switch data := question.GetData().GetData().(type) {
-			case *qualifications.ExamQuestionData_Image:
+			case *qualificationsexam.ExamQuestionData_Image:
 				if data.Image.GetImage() == nil {
 					continue
 				}
@@ -209,22 +209,22 @@ func (s *Server) handleExamQuestionsChanges(
 }
 
 func (s *Server) compareExamQuestions(
-	current, in []*qualifications.ExamQuestion,
-) ([]*qualifications.ExamQuestion, []*qualifications.ExamQuestion, []*qualifications.ExamQuestion) {
-	toCreate := []*qualifications.ExamQuestion{}
-	toUpdate := []*qualifications.ExamQuestion{}
-	toDelete := []*qualifications.ExamQuestion{}
+	current, in []*qualificationsexam.ExamQuestion,
+) ([]*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion, []*qualificationsexam.ExamQuestion) {
+	toCreate := []*qualificationsexam.ExamQuestion{}
+	toUpdate := []*qualificationsexam.ExamQuestion{}
+	toDelete := []*qualificationsexam.ExamQuestion{}
 	if len(current) == 0 {
 		return in, toUpdate, toDelete
 	}
 
-	slices.SortFunc(current, func(a, b *qualifications.ExamQuestion) int {
+	slices.SortFunc(current, func(a, b *qualificationsexam.ExamQuestion) int {
 		return int(a.GetId() - b.GetId())
 	})
 
 	foundTracker := []int{}
 	for _, cj := range current {
-		idx := slices.IndexFunc(in, func(a *qualifications.ExamQuestion) bool {
+		idx := slices.IndexFunc(in, func(a *qualificationsexam.ExamQuestion) bool {
 			return cj.GetId() == a.GetId()
 		})
 		// No match in incoming questions, needs to be deleted
@@ -248,15 +248,15 @@ func (s *Server) compareExamQuestions(
 }
 
 type examResponses struct {
-	ExamResponses *qualifications.ExamResponses `alias:"responses"`
-	ExamGrading   *qualifications.ExamGrading   `alias:"grading"`
+	ExamResponses *qualificationsexam.ExamResponses `alias:"responses"`
+	ExamGrading   *qualificationsexam.ExamGrading   `alias:"grading"`
 }
 
 func (s *Server) getExamResponses(
 	ctx context.Context,
 	qualificationId int64,
 	userId int32,
-) (*qualifications.ExamResponses, *qualifications.ExamGrading, error) {
+) (*qualificationsexam.ExamResponses, *qualificationsexam.ExamGrading, error) {
 	tExamResponses := tExamResponses.AS("examresponses")
 	stmt := tExamResponses.
 		SELECT(
@@ -273,8 +273,8 @@ func (s *Server) getExamResponses(
 		LIMIT(1)
 
 	dest := &examResponses{
-		ExamResponses: &qualifications.ExamResponses{},
-		ExamGrading:   &qualifications.ExamGrading{},
+		ExamResponses: &qualificationsexam.ExamResponses{},
+		ExamGrading:   &qualificationsexam.ExamGrading{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

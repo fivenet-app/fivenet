@@ -3,10 +3,10 @@ package vehicles
 import (
 	"database/sql"
 
-	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	pbvehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )

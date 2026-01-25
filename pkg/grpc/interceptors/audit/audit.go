@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	audit "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 )

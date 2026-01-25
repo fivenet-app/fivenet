@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { type DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
 import { dispatchStatusToBGColor } from '../helpers';
 
 const props = defineProps<{

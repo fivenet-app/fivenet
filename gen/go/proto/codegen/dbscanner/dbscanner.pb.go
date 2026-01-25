@@ -111,7 +111,7 @@ const file_codegen_dbscanner_dbscanner_proto_rawDesc = "" +
 	"\t_not_jsonB\n" +
 	"\n" +
 	"\b_partial:b\n" +
-	"\tdbscanner\x12\x1f.google.protobuf.MessageOptions\x18\xbc\x8e\x03 \x01(\v2!.codegen.dbscanner.MessageOptionsR\tdbscannerBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner;dbscannerb\x06proto3"
+	"\tdbscanner\x12\x1f.google.protobuf.MessageOptions\x18\xbc\x8e\x03 \x01(\v2!.codegen.dbscanner.MessageOptionsR\tdbscannerBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner;dbscannerb\x06proto3"
 
 var (
 	file_codegen_dbscanner_dbscanner_proto_rawDescOnce sync.Once

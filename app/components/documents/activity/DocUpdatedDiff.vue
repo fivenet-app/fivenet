@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TextDiff from '~/components/partials/content/TextDiff.vue';
 import DiffBlock from '~/components/partials/DiffBlock.vue';
-import type { DocUpdated } from '~~/gen/ts/resources/documents/activity';
+import type { DocUpdated } from '~~/gen/ts/resources/documents/activity/activity';
 
 defineProps<{
     update: DocUpdated;

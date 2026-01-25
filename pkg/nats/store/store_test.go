@@ -3,8 +3,8 @@ package store
 import (
 	"testing"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests"
-	"github.com/fivenet-app/fivenet/v2025/internal/tests/nats"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/tests"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests/nats"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zaptest"

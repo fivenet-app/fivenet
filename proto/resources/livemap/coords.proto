@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.livemap;
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemap";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap;livemap";
 
 message Coords {
   double x = 1;

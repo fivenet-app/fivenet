@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TimeclockStatsChart from '~/components/jobs/timeclock/TimeclockStatsChart.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import type { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
+import type { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 
 const props = withDefaults(
     defineProps<{

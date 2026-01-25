@@ -3,7 +3,7 @@ BEGIN;
 ALTER TABLE `fivenet_documents_templates` ADD COLUMN `workflow` mediumtext NULL AFTER `schema`;
 
 -- Table: fivenet_documents_workflow_state
-CREATE TABLE `fivenet_documents_workflow_state` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_workflow_state` (
   `document_id` bigint unsigned NOT NULL,
   `next_reminder_time` datetime(3) DEFAULT NULL,
   `next_reminder_count` int(5) DEFAULT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE `fivenet_documents_workflow_state` (
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_workflow_users
-CREATE TABLE `fivenet_documents_workflow_users` (
+CREATE TABLE IF NOT EXISTS `fivenet_documents_workflow_users` (
   `document_id` bigint unsigned NOT NULL,
   `user_id` int(11) NOT NULL,
   `manual_reminder_time` datetime(3) DEFAULT NULL,

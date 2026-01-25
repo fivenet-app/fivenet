@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	"github.com/google/uuid"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/types/known/structpb"

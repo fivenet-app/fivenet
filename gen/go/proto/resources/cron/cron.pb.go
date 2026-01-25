@@ -7,8 +7,8 @@
 package cron
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -553,7 +553,7 @@ const file_resources_cron_cron_proto_rawDesc = "" +
 	"\x19CRONJOB_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CRONJOB_STATE_WAITING\x10\x01\x12\x19\n" +
 	"\x15CRONJOB_STATE_PENDING\x10\x02\x12\x19\n" +
-	"\x15CRONJOB_STATE_RUNNING\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron;cronb\x06proto3"
+	"\x15CRONJOB_STATE_RUNNING\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron;cronb\x06proto3"
 
 var (
 	file_resources_cron_cron_proto_rawDescOnce sync.Once

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )
@@ -59,10 +59,10 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 				continue // Already handled elsewhere
 			}
 
-			if _, err := s.dispatches.UpdateStatus(ctx, id, &centrum.DispatchStatus{
+			if _, err := s.dispatches.UpdateStatus(ctx, id, &centrumdispatches.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: id,
-				Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+				Status:     centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			}); err != nil {
 				s.logger.Error(
 					"failed to update dispatch status to cancelled",
@@ -70,7 +70,7 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 					zap.Error(err),
 				)
 			}
-			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
+			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrumdispatches.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
 				s.logger.Error(
 					"failed to add too old attribute to cancelled dispatch",
 					zap.Int64("dispatch_id", id),

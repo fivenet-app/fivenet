@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import type { TemplateRequirements } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
     modelValue: TemplateRequirements;

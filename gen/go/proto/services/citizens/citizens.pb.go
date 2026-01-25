@@ -7,12 +7,15 @@
 package citizens
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/activity"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -281,8 +284,8 @@ type ListUserActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserId        int32                    `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Types         []users.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.UserActivityType" json:"types,omitempty"`
+	UserId        int32                       `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Types         []activity.UserActivityType `protobuf:"varint,4,rep,packed,name=types,proto3,enum=resources.users.activity.UserActivityType" json:"types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -338,7 +341,7 @@ func (x *ListUserActivityRequest) GetUserId() int32 {
 	return 0
 }
 
-func (x *ListUserActivityRequest) GetTypes() []users.UserActivityType {
+func (x *ListUserActivityRequest) GetTypes() []activity.UserActivityType {
 	if x != nil {
 		return x.Types
 	}
@@ -348,7 +351,7 @@ func (x *ListUserActivityRequest) GetTypes() []users.UserActivityType {
 type ListUserActivityResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*users.UserActivity        `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	Activity      []*activity.UserActivity     `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -390,7 +393,7 @@ func (x *ListUserActivityResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListUserActivityResponse) GetActivity() []*users.UserActivity {
+func (x *ListUserActivityResponse) GetActivity() []*activity.UserActivity {
 	if x != nil {
 		return x.Activity
 	}
@@ -399,7 +402,7 @@ func (x *ListUserActivityResponse) GetActivity() []*users.UserActivity {
 
 type SetUserPropsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *users.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -435,7 +438,7 @@ func (*SetUserPropsRequest) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *SetUserPropsRequest) GetProps() *users.UserProps {
+func (x *SetUserPropsRequest) GetProps() *props.UserProps {
 	if x != nil {
 		return x.Props
 	}
@@ -451,7 +454,7 @@ func (x *SetUserPropsRequest) GetReason() string {
 
 type SetUserPropsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *users.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *props.UserProps       `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -486,7 +489,7 @@ func (*SetUserPropsResponse) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *SetUserPropsResponse) GetProps() *users.UserProps {
+func (x *SetUserPropsResponse) GetProps() *props.UserProps {
 	if x != nil {
 		return x.Props
 	}
@@ -655,7 +658,7 @@ func (*DeleteMugshotResponse) Descriptor() ([]byte, []int) {
 
 type ManageLabelsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*users.Label         `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -690,7 +693,7 @@ func (*ManageLabelsRequest) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ManageLabelsRequest) GetLabels() []*users.Label {
+func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -699,7 +702,7 @@ func (x *ManageLabelsRequest) GetLabels() []*users.Label {
 
 type ManageLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*users.Label         `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -734,7 +737,7 @@ func (*ManageLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ManageLabelsResponse) GetLabels() []*users.Label {
+func (x *ManageLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -745,7 +748,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\"\xe8\x03\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a'resources/users/activity/activity.proto\x1a#resources/users/labels/labels.proto\x1a!resources/users/props/props.proto\x1a\x1aresources/users/user.proto\"\xe8\x03\n" +
 	"\x13ListCitizensRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -775,35 +778,35 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
 	"_info_only\"<\n" +
 	"\x0fGetUserResponse\x12)\n" +
-	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\xfc\x01\n" +
+	"\x04user\x18\x01 \x01(\v2\x15.resources.users.UserR\x04user\"\x85\x02\n" +
 	"\x17ListUserActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x127\n" +
-	"\x05types\x18\x04 \x03(\x0e2!.resources.users.UserActivityTypeR\x05typesB\a\n" +
-	"\x05_sort\"\xaa\x01\n" +
+	"\auser_id\x18\x03 \x01(\x05R\x06userId\x12@\n" +
+	"\x05types\x18\x04 \x03(\x0e2*.resources.users.activity.UserActivityTypeR\x05typesB\a\n" +
+	"\x05_sort\"\xb3\x01\n" +
 	"\x18ListUserActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12?\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1d.resources.users.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"g\n" +
-	"\x13SetUserPropsRequest\x120\n" +
-	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"H\n" +
-	"\x14SetUserPropsResponse\x120\n" +
-	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\"\x15\n" +
+	"pagination\x12H\n" +
+	"\bactivity\x18\x02 \x03(\v2&.resources.users.activity.UserActivityB\x04\xc8\xf3\x18\x01R\bactivity\"m\n" +
+	"\x13SetUserPropsRequest\x126\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\x12\x1e\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"N\n" +
+	"\x14SetUserPropsResponse\x126\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.users.props.UserPropsR\x05props\"\x15\n" +
 	"\x13DeleteAvatarRequest\"\x16\n" +
 	"\x14DeleteAvatarResponse\"O\n" +
 	"\x14DeleteMugshotRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\x17\n" +
-	"\x15DeleteMugshotResponse\"E\n" +
-	"\x13ManageLabelsRequest\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
-	"\x14ManageLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xb8\n" +
+	"\x15DeleteMugshotResponse\"L\n" +
+	"\x13ManageLabelsRequest\x125\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x06labels\"M\n" +
+	"\x14ManageLabelsResponse\x125\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1d.resources.users.labels.LabelR\x06labels2\xb8\n" +
 	"\n" +
 	"\x0fCitizensService\x12\xb1\x02\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\"\xcf\x01\xd2\xf3\x18\xca\x01\b\x01*\xc5\x01\n" +
@@ -819,7 +822,7 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12n\n" +
 	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps(\x01\x12x\n" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fSetUserProps\x12g\n" +
-	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
+	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a&\xea\xf3\x18\"\b\x1e\x12\x1ei-mdi-account-multiple-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var (
 	file_services_citizens_citizens_proto_rawDescOnce sync.Once
@@ -853,10 +856,10 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*database.Sort)(nil),               // 15: resources.common.database.Sort
 	(*database.PaginationResponse)(nil), // 16: resources.common.database.PaginationResponse
 	(*users.User)(nil),                  // 17: resources.users.User
-	(users.UserActivityType)(0),         // 18: resources.users.UserActivityType
-	(*users.UserActivity)(nil),          // 19: resources.users.UserActivity
-	(*users.UserProps)(nil),             // 20: resources.users.UserProps
-	(*users.Label)(nil),                 // 21: resources.users.Label
+	(activity.UserActivityType)(0),      // 18: resources.users.activity.UserActivityType
+	(*activity.UserActivity)(nil),       // 19: resources.users.activity.UserActivity
+	(*props.UserProps)(nil),             // 20: resources.users.props.UserProps
+	(*labels.Label)(nil),                // 21: resources.users.labels.Label
 	(*file.UploadFileRequest)(nil),      // 22: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),     // 23: resources.file.UploadFileResponse
 }
@@ -868,13 +871,13 @@ var file_services_citizens_citizens_proto_depIdxs = []int32{
 	17, // 4: services.citizens.GetUserResponse.user:type_name -> resources.users.User
 	14, // 5: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	15, // 6: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
-	18, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.UserActivityType
+	18, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.activity.UserActivityType
 	16, // 8: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	19, // 9: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.UserActivity
-	20, // 10: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.UserProps
-	20, // 11: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.UserProps
-	21, // 12: services.citizens.ManageLabelsRequest.labels:type_name -> resources.users.Label
-	21, // 13: services.citizens.ManageLabelsResponse.labels:type_name -> resources.users.Label
+	19, // 9: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.activity.UserActivity
+	20, // 10: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.props.UserProps
+	20, // 11: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.props.UserProps
+	21, // 12: services.citizens.ManageLabelsRequest.labels:type_name -> resources.users.labels.Label
+	21, // 13: services.citizens.ManageLabelsResponse.labels:type_name -> resources.users.labels.Label
 	0,  // 14: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
 	2,  // 15: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
 	4,  // 16: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest

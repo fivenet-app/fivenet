@@ -5,10 +5,11 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	maileremails "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/emails"
+	mailerthreads "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/threads"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -17,7 +18,7 @@ func (s *Server) handleRecipientsChanges(
 	ctx context.Context,
 	tx qrm.DB,
 	threadId int64,
-	recipients []*mailer.ThreadRecipientEmail,
+	recipients []*mailerthreads.ThreadRecipientEmail,
 ) error {
 	if len(recipients) == 0 {
 		return nil
@@ -50,7 +51,7 @@ func (s *Server) getThreadRecipients(
 	ctx context.Context,
 	tx qrm.DB,
 	threadId int64,
-) ([]*mailer.ThreadRecipientEmail, error) {
+) ([]*mailerthreads.ThreadRecipientEmail, error) {
 	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
 	stmt := tThreadsRecipients.
 		SELECT(
@@ -74,7 +75,7 @@ func (s *Server) getThreadRecipients(
 			tEmails.DeletedAt.IS_NULL(),
 		))
 
-	recipients := []*mailer.ThreadRecipientEmail{}
+	recipients := []*mailerthreads.ThreadRecipientEmail{}
 	if err := stmt.QueryContext(ctx, tx, &recipients); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -86,9 +87,9 @@ func (s *Server) getThreadRecipients(
 
 func (s *Server) retrieveRecipientsToEmails(
 	ctx context.Context,
-	senderEmail *mailer.Email,
+	senderEmail *maileremails.Email,
 	recipients []string,
-) ([]*mailer.ThreadRecipientEmail, error) {
+) ([]*mailerthreads.ThreadRecipientEmail, error) {
 	if len(recipients) == 0 {
 		return nil, errorsmailer.ErrRecipientMinium
 	}
@@ -111,7 +112,7 @@ func (s *Server) retrieveRecipientsToEmails(
 		)).
 		LIMIT(int64(len(recipients)))
 
-	dest := []*mailer.ThreadRecipientEmail{}
+	dest := []*mailerthreads.ThreadRecipientEmail{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -135,7 +136,7 @@ func (s *Server) retrieveRecipientsToEmails(
 			return nil, errorsmailer.ErrInvalidRecipients
 		}
 
-		recipient.Email = &mailer.Email{
+		recipient.Email = &maileremails.Email{
 			Id:    recipient.GetEmailId(),
 			Email: recipient.GetEmail().GetEmail(),
 		}

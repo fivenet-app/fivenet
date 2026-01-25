@@ -7,10 +7,10 @@
 package documents
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	stamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -81,7 +81,7 @@ func (x *ListUsableStampsRequest) GetDocumentId() int64 {
 type ListUsableStampsResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Stamps        []*documents.Stamp           `protobuf:"bytes,2,rep,name=stamps,proto3" json:"stamps,omitempty"`
+	Stamps        []*stamps.Stamp              `protobuf:"bytes,2,rep,name=stamps,proto3" json:"stamps,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -123,7 +123,7 @@ func (x *ListUsableStampsResponse) GetPagination() *database.PaginationResponse 
 	return nil
 }
 
-func (x *ListUsableStampsResponse) GetStamps() []*documents.Stamp {
+func (x *ListUsableStampsResponse) GetStamps() []*stamps.Stamp {
 	if x != nil {
 		return x.Stamps
 	}
@@ -132,7 +132,7 @@ func (x *ListUsableStampsResponse) GetStamps() []*documents.Stamp {
 
 type UpsertStampRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Stamp         *documents.Stamp       `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
+	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,7 +167,7 @@ func (*UpsertStampRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_stamps_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UpsertStampRequest) GetStamp() *documents.Stamp {
+func (x *UpsertStampRequest) GetStamp() *stamps.Stamp {
 	if x != nil {
 		return x.Stamp
 	}
@@ -176,7 +176,7 @@ func (x *UpsertStampRequest) GetStamp() *documents.Stamp {
 
 type UpsertStampResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Stamp         *documents.Stamp       `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
+	Stamp         *stamps.Stamp          `protobuf:"bytes,1,opt,name=stamp,proto3" json:"stamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -211,7 +211,7 @@ func (*UpsertStampResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_stamps_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpsertStampResponse) GetStamp() *documents.Stamp {
+func (x *UpsertStampResponse) GetStamp() *stamps.Stamp {
 	if x != nil {
 		return x.Stamp
 	}
@@ -302,30 +302,30 @@ var File_services_documents_stamps_proto protoreflect.FileDescriptor
 
 const file_services_documents_stamps_proto_rawDesc = "" +
 	"\n" +
-	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1fresources/documents/stamp.proto\"\x9d\x01\n" +
+	"\x1fservices/documents/stamps.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a&resources/documents/stamps/stamp.proto\"\x9d\x01\n" +
 	"\x17ListUsableStampsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12$\n" +
 	"\vdocument_id\x18\x02 \x01(\x03H\x00R\n" +
 	"documentId\x88\x01\x01B\x0e\n" +
-	"\f_document_id\"\xa3\x01\n" +
+	"\f_document_id\"\xaa\x01\n" +
 	"\x18ListUsableStampsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x128\n" +
-	"\x06stamps\x18\x02 \x03(\v2\x1a.resources.documents.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"F\n" +
-	"\x12UpsertStampRequest\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"G\n" +
-	"\x13UpsertStampResponse\x120\n" +
-	"\x05stamp\x18\x01 \x01(\v2\x1a.resources.documents.StampR\x05stamp\"/\n" +
+	"pagination\x12?\n" +
+	"\x06stamps\x18\x02 \x03(\v2!.resources.documents.stamps.StampB\x04\xc8\xf3\x18\x01R\x06stamps\"M\n" +
+	"\x12UpsertStampRequest\x127\n" +
+	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"N\n" +
+	"\x13UpsertStampResponse\x127\n" +
+	"\x05stamp\x18\x01 \x01(\v2!.resources.documents.stamps.StampR\x05stamp\"/\n" +
 	"\x12DeleteStampRequest\x12\x19\n" +
 	"\bstamp_id\x18\x01 \x01(\x03R\astampId\"\x15\n" +
 	"\x13DeleteStampResponse2\xed\x02\n" +
 	"\rStampsService\x12u\n" +
 	"\x10ListUsableStamps\x12+.services.documents.ListUsableStampsRequest\x1a,.services.documents.ListUsableStampsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
 	"\vUpsertStamp\x12&.services.documents.UpsertStampRequest\x1a'.services.documents.UpsertStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12f\n" +
-	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\vDeleteStamp\x12&.services.documents.DeleteStampRequest\x1a'.services.documents.DeleteStampResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x15\xea\xf3\x18\x11\b9\x12\ri-mdi-stamperBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_stamps_proto_rawDescOnce sync.Once
@@ -349,14 +349,14 @@ var file_services_documents_stamps_proto_goTypes = []any{
 	(*DeleteStampResponse)(nil),         // 5: services.documents.DeleteStampResponse
 	(*database.PaginationRequest)(nil),  // 6: resources.common.database.PaginationRequest
 	(*database.PaginationResponse)(nil), // 7: resources.common.database.PaginationResponse
-	(*documents.Stamp)(nil),             // 8: resources.documents.Stamp
+	(*stamps.Stamp)(nil),                // 8: resources.documents.stamps.Stamp
 }
 var file_services_documents_stamps_proto_depIdxs = []int32{
 	6, // 0: services.documents.ListUsableStampsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	7, // 1: services.documents.ListUsableStampsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	8, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.Stamp
-	8, // 3: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.Stamp
-	8, // 4: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.Stamp
+	8, // 2: services.documents.ListUsableStampsResponse.stamps:type_name -> resources.documents.stamps.Stamp
+	8, // 3: services.documents.UpsertStampRequest.stamp:type_name -> resources.documents.stamps.Stamp
+	8, // 4: services.documents.UpsertStampResponse.stamp:type_name -> resources.documents.stamps.Stamp
 	0, // 5: services.documents.StampsService.ListUsableStamps:input_type -> services.documents.ListUsableStampsRequest
 	2, // 6: services.documents.StampsService.UpsertStamp:input_type -> services.documents.UpsertStampRequest
 	4, // 7: services.documents.StampsService.DeleteStamp:input_type -> services.documents.DeleteStampRequest

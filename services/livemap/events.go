@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	livemapmarkers "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap/markers"
+	"github.com/fivenet-app/fivenet/v2026/pkg/events"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -101,7 +101,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 				return
 			}
 
-			marker := &livemap.MarkerMarker{}
+			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return
@@ -117,7 +117,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 				return
 			}
 
-			marker := &livemap.MarkerMarker{}
+			marker := &livemapmarkers.MarkerMarker{}
 			if err := protoutils.UnmarshalPartialJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return

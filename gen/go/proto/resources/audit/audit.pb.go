@@ -7,9 +7,9 @@
 package audit
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -136,10 +136,10 @@ type AuditEntry struct {
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *users.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	User          *short.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	UserJob       string                 `protobuf:"bytes,5,opt,name=user_job,json=userJob,proto3" json:"user_job,omitempty"`
 	TargetUserId  *int32                 `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty"`
-	TargetUser    *users.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
+	TargetUser    *short.UserShort       `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty"`
 	TargetUserJob *string                `protobuf:"bytes,8,opt,name=target_user_job,json=targetUserJob,proto3,oneof" json:"target_user_job,omitempty"`
 	// GRPC Service name
 	Service string `protobuf:"bytes,9,opt,name=service,proto3" json:"service,omitempty"`
@@ -204,7 +204,7 @@ func (x *AuditEntry) GetUserId() int32 {
 	return 0
 }
 
-func (x *AuditEntry) GetUser() *users.UserShort {
+func (x *AuditEntry) GetUser() *short.UserShort {
 	if x != nil {
 		return x.User
 	}
@@ -225,7 +225,7 @@ func (x *AuditEntry) GetTargetUserId() int32 {
 	return 0
 }
 
-func (x *AuditEntry) GetTargetUser() *users.UserShort {
+func (x *AuditEntry) GetTargetUser() *short.UserShort {
 	if x != nil {
 		return x.TargetUser
 	}
@@ -329,17 +329,17 @@ var File_resources_audit_audit_proto protoreflect.FileDescriptor
 
 const file_resources_audit_audit_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\xa1\x05\n" +
+	"\x1bresources/audit/audit.proto\x12\x0fresources.audit\x1a!codegen/dbscanner/dbscanner.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\xad\x05\n" +
 	"\n" +
 	"AuditEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x12\x19\n" +
+	"\auser_id\x18\x03 \x01(\x05R\x06userId\x129\n" +
+	"\x04user\x18\x04 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12\x19\n" +
 	"\buser_job\x18\x05 \x01(\tR\auserJob\x12)\n" +
-	"\x0etarget_user_id\x18\x06 \x01(\x05H\x01R\ftargetUserId\x88\x01\x01\x12@\n" +
-	"\vtarget_user\x18\a \x01(\v2\x1a.resources.users.UserShortH\x02R\n" +
+	"\x0etarget_user_id\x18\x06 \x01(\x05H\x01R\ftargetUserId\x88\x01\x01\x12F\n" +
+	"\vtarget_user\x18\a \x01(\v2 .resources.users.short.UserShortH\x02R\n" +
 	"targetUser\x88\x01\x01\x12+\n" +
 	"\x0ftarget_user_job\x18\b \x01(\tH\x03R\rtargetUserJob\x88\x01\x01\x12\x18\n" +
 	"\aservice\x18\t \x01(\tR\aservice\x12\x16\n" +
@@ -370,7 +370,7 @@ const file_resources_audit_audit_proto_rawDesc = "" +
 	"\x18EVENT_RESULT_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16EVENT_RESULT_SUCCEEDED\x10\x01\x12\x17\n" +
 	"\x13EVENT_RESULT_FAILED\x10\x02\x12\x18\n" +
-	"\x14EVENT_RESULT_ERRORED\x10\x03BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;auditb\x06proto3"
+	"\x14EVENT_RESULT_ERRORED\x10\x03BIZGgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit;auditb\x06proto3"
 
 var (
 	file_resources_audit_audit_proto_rawDescOnce sync.Once
@@ -393,12 +393,12 @@ var file_resources_audit_audit_proto_goTypes = []any{
 	(*AuditEntryMeta)(nil),      // 3: resources.audit.AuditEntryMeta
 	nil,                         // 4: resources.audit.AuditEntryMeta.MetaEntry
 	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 6: resources.users.UserShort
+	(*short.UserShort)(nil),     // 6: resources.users.short.UserShort
 }
 var file_resources_audit_audit_proto_depIdxs = []int32{
 	5, // 0: resources.audit.AuditEntry.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 1: resources.audit.AuditEntry.user:type_name -> resources.users.UserShort
-	6, // 2: resources.audit.AuditEntry.target_user:type_name -> resources.users.UserShort
+	6, // 1: resources.audit.AuditEntry.user:type_name -> resources.users.short.UserShort
+	6, // 2: resources.audit.AuditEntry.target_user:type_name -> resources.users.short.UserShort
 	0, // 3: resources.audit.AuditEntry.action:type_name -> resources.audit.EventAction
 	1, // 4: resources.audit.AuditEntry.result:type_name -> resources.audit.EventResult
 	3, // 5: resources.audit.AuditEntry.meta:type_name -> resources.audit.AuditEntryMeta

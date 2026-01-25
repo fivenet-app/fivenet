@@ -1,17 +1,15 @@
 package collections
 
-import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-)
+import permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 
 // Roles provides methods for you to manage array data more easily.
-type Roles []*permissions.Role
+type Roles []*permissionspermissions.Role
 
 // Origin convert the collection to role array.
 //
 //	@return	[]models.ArpanetRoles
-func (r Roles) Origin() []*permissions.Role {
-	return []*permissions.Role(r)
+func (r Roles) Origin() []*permissionspermissions.Role {
+	return []*permissionspermissions.Role(r)
 }
 
 // Len returns the number of elements of the array.

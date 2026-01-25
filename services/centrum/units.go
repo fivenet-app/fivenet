@@ -5,17 +5,18 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	unitsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units/access"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	pbcentrum "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscentrum "github.com/fivenet-app/fivenet/v2026/services/centrum/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -37,7 +38,7 @@ func (s *Server) ListUnits(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbcentrum.ListUnitsResponse{
-		Units: []*centrum.Unit{},
+		Units: []*centrumunits.Unit{},
 	}
 
 	resp.Units = s.units.Filter(ctx, []string{userInfo.GetJob()}, req.GetStatus(), nil, nil)
@@ -73,7 +74,7 @@ func (s *Server) CreateOrUpdateUnit(
 
 	req.Unit.Job = userInfo.GetJob()
 
-	var unit *centrum.Unit
+	var unit *centrumunits.Unit
 	var err error
 	// No unit id set
 	if req.GetUnit().GetId() <= 0 {
@@ -153,7 +154,7 @@ func (s *Server) UpdateUnitStatus(
 		// Make sure requestor is not a dispatcher
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 			check, err := s.units.GetAccess().
-				CanUserAccessTarget(ctx, unit.GetId(), userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				CanUserAccessTarget(ctx, unit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
@@ -169,7 +170,7 @@ func (s *Server) UpdateUnitStatus(
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrum.UnitStatus{
+	if _, err := s.units.UpdateStatus(ctx, unit.GetId(), &centrumunits.UnitStatus{
 		CreatedAt:  timestamp.Now(),
 		UnitId:     unit.GetId(),
 		Unit:       unit,
@@ -213,7 +214,7 @@ func (s *Server) AssignUnit(
 		// Make sure requestor is not a dispatcher
 		if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 			check, err := s.units.GetAccess().
-				CanUserAccessTarget(ctx, unit.GetId(), userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				CanUserAccessTarget(ctx, unit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
@@ -256,7 +257,7 @@ func (s *Server) JoinUnit(
 
 	currentUnitMapping, _ := s.tracker.GetUserMapping(userInfo.GetUserId())
 
-	var currentUnit *centrum.Unit
+	var currentUnit *centrumunits.Unit
 	if currentUnitMapping != nil && currentUnitMapping.UnitId != nil &&
 		currentUnitMapping.GetUnitId() > 0 {
 		var err error
@@ -305,7 +306,7 @@ func (s *Server) JoinUnit(
 			// Make sure requestor is not a dispatcher
 			if !s.helpers.CheckIfUserIsDispatcher(ctx, userInfo.GetJob(), userInfo.GetUserId()) {
 				check, err := s.units.GetAccess().
-					CanUserAccessTarget(ctx, newUnit.GetId(), userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+					CanUserAccessTarget(ctx, newUnit.GetId(), userInfo, unitsaccess.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 				if err != nil {
 					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}

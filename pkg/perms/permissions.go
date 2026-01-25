@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
@@ -69,7 +69,7 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 	ctx context.Context,
 	category Category,
 	name Name,
-) (*permissions.Permission, error) {
+) (*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
@@ -89,7 +89,7 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(
 		)).
 		LIMIT(1)
 
-	dest := &permissions.Permission{}
+	dest := &permissionspermissions.Permission{}
 	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permission by guard. %w", err)
@@ -147,7 +147,9 @@ func (p *Perms) UpdatePermission(
 	return nil
 }
 
-func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error) {
+func (p *Perms) GetAllPermissions(
+	ctx context.Context,
+) ([]*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
@@ -165,7 +167,7 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 			tPerms.GuardName.ASC(),
 		)
 
-	var dest []*permissions.Permission
+	var dest []*permissionspermissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query all permissions. %w", err)
@@ -202,7 +204,7 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...int64) error 
 func (p *Perms) GetPermissionsByIDs(
 	ctx context.Context,
 	ids ...int64,
-) ([]*permissions.Permission, error) {
+) ([]*permissionspermissions.Permission, error) {
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -232,7 +234,7 @@ func (p *Perms) GetPermissionsByIDs(
 			tPerms.GuardName.ASC(),
 		)
 
-	var dest []*permissions.Permission
+	var dest []*permissionspermissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
@@ -246,7 +248,7 @@ func (p *Perms) GetPermission(
 	ctx context.Context,
 	category Category,
 	name Name,
-) (*permissions.Permission, error) {
+) (*permissionspermissions.Permission, error) {
 	tPerms := tPerms.AS("permission")
 
 	stmt := tPerms.
@@ -265,7 +267,7 @@ func (p *Perms) GetPermission(
 		)).
 		LIMIT(1)
 
-	var dest permissions.Permission
+	var dest permissionspermissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query permission by category and name. %w", err)

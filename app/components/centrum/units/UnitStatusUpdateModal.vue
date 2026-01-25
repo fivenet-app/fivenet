@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { unitStatusToBadgeColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Coordinate } from '~~/shared/types/types';
 

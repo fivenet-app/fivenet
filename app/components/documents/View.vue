@@ -18,7 +18,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';

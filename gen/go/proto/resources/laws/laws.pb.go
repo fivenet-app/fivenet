@@ -7,8 +7,8 @@
 package laws
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -263,7 +263,7 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\x05_hintB\a\n" +
 	"\x05_fineB\x11\n" +
 	"\x0f_detention_timeB\x0e\n" +
-	"\f_stvo_pointsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;lawsb\x06proto3"
+	"\f_stvo_pointsBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/laws;lawsb\x06proto3"
 
 var (
 	file_resources_laws_laws_proto_rawDescOnce sync.Once

@@ -7,25 +7,29 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
-	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	jobscolleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	colleaguesactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	jobslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	permsjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/timeutils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
+	colleaguesstore "github.com/fivenet-app/fivenet/v2026/stores/jobs/colleagues"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -277,7 +281,7 @@ func (s *Server) ListColleagues(
 
 		labels := []*struct {
 			UserId int32 `alias:"userId" sql:"primary_key"`
-			Labels *jobs.Labels
+			Labels *jobslabels.Labels
 		}{}
 		if err := labelsStmt.QueryContext(ctx, s.db, &labels); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
@@ -286,7 +290,7 @@ func (s *Server) ListColleagues(
 		}
 
 		for _, props := range labels {
-			idx := slices.IndexFunc(resp.GetColleagues(), func(c *jobs.Colleague) bool {
+			idx := slices.IndexFunc(resp.GetColleagues(), func(c *jobscolleagues.Colleague) bool {
 				return c.GetUserId() == props.UserId
 			})
 			if idx == -1 {
@@ -295,7 +299,7 @@ func (s *Server) ListColleagues(
 
 			colleague := resp.GetColleagues()[idx]
 			if colleague.GetProps() == nil {
-				colleague.Props = &jobs.ColleagueProps{
+				colleague.Props = &jobscolleagues.ColleagueProps{
 					UserId: colleague.GetUserId(),
 					Job:    userInfo.GetJob(),
 				}
@@ -318,7 +322,7 @@ func (s *Server) getColleague(
 	job string,
 	userId int32,
 	withColumns mysql.ProjectionList,
-) (*jobs.Colleague, error) {
+) (*jobscolleagues.Colleague, error) {
 	tColleague := tables.User().AS("colleague")
 
 	columns := mysql.ProjectionList{
@@ -365,7 +369,7 @@ func (s *Server) getColleague(
 		).
 		LIMIT(1)
 
-	dest := &jobs.Colleague{}
+	dest := &jobscolleagues.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -377,7 +381,7 @@ func (s *Server) getColleague(
 	}
 
 	if dest.GetProps() == nil {
-		dest.Props = &jobs.ColleagueProps{
+		dest.Props = &jobscolleagues.ColleagueProps{
 			UserId: dest.GetUserId(),
 			Job:    userInfo.GetJob(),
 		}
@@ -427,7 +431,7 @@ func (s *Server) GetColleague(
 		colleagueAccess,
 		userInfo,
 		targetUser.GetJob(),
-		&users.UserShort{
+		&usershort.UserShort{
 			UserId:   targetUser.GetUserId(),
 			Job:      targetUser.GetJob(),
 			JobGrade: targetUser.GetJobGrade(),
@@ -440,7 +444,7 @@ func (s *Server) GetColleague(
 	}
 
 	// Field Permission Check
-	fields := &permissions.StringList{}
+	fields := &permissionsattributes.StringList{}
 	if !infoOnly {
 		fields, err = s.ps.AttrStringList(
 			userInfo,
@@ -570,7 +574,7 @@ func (s *Server) SetColleagueProps(
 		colleagueAccess,
 		userInfo,
 		targetUser.GetJob(),
-		&users.UserShort{
+		&usershort.UserShort{
 			UserId:   targetUser.GetUserId(),
 			Job:      targetUser.GetJob(),
 			JobGrade: targetUser.GetJobGrade(),
@@ -593,7 +597,7 @@ func (s *Server) SetColleagueProps(
 		types.Strings = []string{"AbsenceDate", "Note", "Labels", "Name"}
 	}
 
-	props, err := jobs.GetColleagueProps(
+	props, err := colleaguesstore.GetColleagueProps(
 		ctx,
 		s.db,
 		targetUser.GetJob(),
@@ -613,7 +617,7 @@ func (s *Server) SetColleagueProps(
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		jobProps, err := jobs.GetJobProps(ctx, s.db, userInfo.GetJob())
+		jobProps, err := jobsprops.GetJobProps(ctx, s.db, userInfo.GetJob())
 		if err != nil {
 			return nil, err
 		}
@@ -651,7 +655,7 @@ func (s *Server) SetColleagueProps(
 		added, _ := utils.SlicesDifferenceFunc(
 			props.GetLabels().GetList(),
 			reqProps.GetLabels().GetList(),
-			func(in *jobs.Label) int64 {
+			func(in *jobslabels.Label) int64 {
 				return in.GetId()
 			},
 		)
@@ -679,9 +683,10 @@ func (s *Server) SetColleagueProps(
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	activities, err := props.HandleChanges(
+	activities, err := colleaguesstore.HandleColleaguesPropsChanges(
 		ctx,
 		tx,
+		props,
 		reqProps,
 		targetUser.GetJob(),
 		&userInfo.UserId,
@@ -691,7 +696,7 @@ func (s *Server) SetColleagueProps(
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if err := jobs.CreateColleagueActivity(ctx, tx, activities...); err != nil {
+	if err := colleaguesactivity.CreateColleagueActivity(ctx, tx, activities...); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
@@ -702,7 +707,7 @@ func (s *Server) SetColleagueProps(
 
 	grpc_audit.SetAction(ctx, audit.EventAction_EVENT_ACTION_UPDATED)
 
-	props, err = jobs.GetColleagueProps(
+	props, err = colleaguesstore.GetColleagueProps(
 		ctx,
 		s.db,
 		targetUser.GetJob(),
@@ -714,10 +719,10 @@ func (s *Server) SetColleagueProps(
 	}
 
 	userId := int64(targetUser.GetUserId())
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE,
 		Id:        &userId,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,
@@ -827,7 +832,7 @@ func (s *Server) ListColleagueActivity(
 			return nil, errorsjobs.ErrNotFoundOrNoPerms
 		}
 
-		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.GetJob(), &users.UserShort{
+		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.GetJob(), &usershort.UserShort{
 			UserId:   targetUser.GetUserId(),
 			Job:      targetUser.GetJob(),
 			JobGrade: targetUser.GetJobGrade(),
@@ -859,7 +864,7 @@ func (s *Server) ListColleagueActivity(
 	if len(req.GetActivityTypes()) > 0 {
 		req.ActivityTypes = slices.DeleteFunc(
 			req.GetActivityTypes(),
-			func(t jobs.ColleagueActivityType) bool {
+			func(t colleaguesactivity.ColleagueActivityType) bool {
 				return !slices.ContainsFunc(types.GetStrings(), func(s string) bool {
 					return strings.Contains(t.String(), "COLLEAGUE_ACTIVITY_TYPE_"+s)
 				})

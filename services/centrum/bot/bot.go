@@ -6,13 +6,15 @@ import (
 	"sort"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
-	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
+	centrumutils "github.com/fivenet-app/fivenet/v2026/services/centrum/utils"
 	"go.uber.org/zap"
 )
 
@@ -77,19 +79,24 @@ func (b *Bot) Run() {
 		case <-time.After(4 * time.Second):
 		}
 
-		dispatches := b.dispatches.Filter(b.ctx, []string{b.job}, nil, []centrum.StatusDispatch{
-			// Dispatch status that mean it is being worked on
-			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-			centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
-			centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
-			centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
-			centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
-			// "Completed" states
-			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
-		})
+		dispatches := b.dispatches.Filter(
+			b.ctx,
+			[]string{b.job},
+			nil,
+			[]centrumdispatches.StatusDispatch{
+				// Dispatch status that mean it is being worked on
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
+				// "Completed" states
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+				centrumdispatches.StatusDispatch_STATUS_DISPATCH_DELETED,
+			},
+		)
 
 		b.logger.Debug(
 			"trying to auto assign dispatches",
@@ -139,16 +146,19 @@ func (b *Bot) Stop() {
 	<-b.ctx.Done()
 }
 
-func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*centrum.Unit, bool) {
+func (b *Bot) getAvailableUnit(
+	ctx context.Context,
+	jobs *centrum.JobList,
+) (*centrumunits.Unit, bool) {
 	units := b.units.Filter(
 		ctx,
 		jobs.GetJobStrings(),
-		[]centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE},
+		[]centrumunits.StatusUnit{centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE},
 		nil,
-		func(unit *centrum.Unit) bool {
+		func(unit *centrumunits.Unit) bool {
 			return unit.GetAttributes() == nil ||
 				!unit.GetAttributes().
-					Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN)
+					Has(centrumunits.UnitAttribute_UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN)
 		},
 	)
 
@@ -164,13 +174,13 @@ func (b *Bot) getAvailableUnit(ctx context.Context, jobs *centrum.JobList) (*cen
 		units[i], units[j] = units[j], units[i]
 	}
 
-	var selectedUnit *centrum.Unit
+	var selectedUnit *centrumunits.Unit
 	for _, unit := range units {
 		t, ok := b.lastAssignedUnits[unit.GetId()]
 		if !ok || time.Now().After(t) {
 			// Double check if unit is still available
 			if unit.GetStatus() == nil ||
-				unit.GetStatus().GetStatus() != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+				unit.GetStatus().GetStatus() != centrumunits.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 

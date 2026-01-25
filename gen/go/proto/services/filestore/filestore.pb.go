@@ -7,10 +7,10 @@
 package filestore
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -233,7 +233,7 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12f\n" +
 	"\n" +
 	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12\x80\x01\n" +
-	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/filestore;filestoreb\x06proto3"
+	"\x10DeleteFileByPath\x12+.services.filestore.DeleteFileByPathRequest\x1a,.services.filestore.DeleteFileByPathResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/filestore;filestoreb\x06proto3"
 
 var (
 	file_services_filestore_filestore_proto_rawDescOnce sync.Once

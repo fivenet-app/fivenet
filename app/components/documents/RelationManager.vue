@@ -7,8 +7,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getUser, useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
-import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/documents';
-import type { User } from '~~/gen/ts/resources/users/users';
+import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const props = defineProps<{
     documentId?: number;

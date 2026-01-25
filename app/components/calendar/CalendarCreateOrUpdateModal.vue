@@ -8,7 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 

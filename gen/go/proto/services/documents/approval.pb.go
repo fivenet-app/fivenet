@@ -7,12 +7,13 @@
 package documents
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	approval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -28,9 +29,9 @@ const (
 )
 
 type ListApprovalTasksInboxRequest struct {
-	state      protoimpl.MessageState         `protogen:"open.v1"`
-	Pagination *database.PaginationRequest    `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Statuses   []documents.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
+	state      protoimpl.MessageState        `protogen:"open.v1"`
+	Pagination *database.PaginationRequest   `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Statuses   []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"statuses,omitempty"`
 	// Controls inclusion of drafts in the result:
 	// - unset/null: include all documents (drafts and non-drafts)
 	// - false: only non-draft documents
@@ -77,7 +78,7 @@ func (x *ListApprovalTasksInboxRequest) GetPagination() *database.PaginationRequ
 	return nil
 }
 
-func (x *ListApprovalTasksInboxRequest) GetStatuses() []documents.ApprovalTaskStatus {
+func (x *ListApprovalTasksInboxRequest) GetStatuses() []approval.ApprovalTaskStatus {
 	if x != nil {
 		return x.Statuses
 	}
@@ -94,7 +95,7 @@ func (x *ListApprovalTasksInboxRequest) GetOnlyDrafts() bool {
 type ListApprovalTasksInboxResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Tasks         []*documents.ApprovalTask    `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	Tasks         []*approval.ApprovalTask     `protobuf:"bytes,2,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -136,7 +137,7 @@ func (x *ListApprovalTasksInboxResponse) GetPagination() *database.PaginationRes
 	return nil
 }
 
-func (x *ListApprovalTasksInboxResponse) GetTasks() []*documents.ApprovalTask {
+func (x *ListApprovalTasksInboxResponse) GetTasks() []*approval.ApprovalTask {
 	if x != nil {
 		return x.Tasks
 	}
@@ -189,9 +190,9 @@ func (x *ListApprovalPoliciesRequest) GetDocumentId() int64 {
 
 // Only one policy per document is supported currently.
 type ListApprovalPoliciesResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
-	DocMeta       *documents.DocumentMeta   `protobuf:"bytes,2,opt,name=doc_meta,json=docMeta,proto3" json:"doc_meta,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	DocMeta       *documents.DocumentMeta  `protobuf:"bytes,2,opt,name=doc_meta,json=docMeta,proto3" json:"doc_meta,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -226,7 +227,7 @@ func (*ListApprovalPoliciesResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListApprovalPoliciesResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *ListApprovalPoliciesResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -241,8 +242,8 @@ func (x *ListApprovalPoliciesResponse) GetDocMeta() *documents.DocumentMeta {
 }
 
 type UpsertApprovalPolicyRequest struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -277,7 +278,7 @@ func (*UpsertApprovalPolicyRequest) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpsertApprovalPolicyRequest) GetPolicy() *documents.ApprovalPolicy {
+func (x *UpsertApprovalPolicyRequest) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -285,8 +286,8 @@ func (x *UpsertApprovalPolicyRequest) GetPolicy() *documents.ApprovalPolicy {
 }
 
 type UpsertApprovalPolicyResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -321,7 +322,7 @@ func (*UpsertApprovalPolicyResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpsertApprovalPolicyResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *UpsertApprovalPolicyResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -329,9 +330,9 @@ func (x *UpsertApprovalPolicyResponse) GetPolicy() *documents.ApprovalPolicy {
 }
 
 type ListApprovalTasksRequest struct {
-	state         protoimpl.MessageState         `protogen:"open.v1"`
-	DocumentId    int64                          `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Statuses      []documents.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.ApprovalTaskStatus" json:"statuses,omitempty"`
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	DocumentId    int64                         `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Statuses      []approval.ApprovalTaskStatus `protobuf:"varint,2,rep,packed,name=statuses,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"statuses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -373,7 +374,7 @@ func (x *ListApprovalTasksRequest) GetDocumentId() int64 {
 	return 0
 }
 
-func (x *ListApprovalTasksRequest) GetStatuses() []documents.ApprovalTaskStatus {
+func (x *ListApprovalTasksRequest) GetStatuses() []approval.ApprovalTaskStatus {
 	if x != nil {
 		return x.Statuses
 	}
@@ -381,8 +382,8 @@ func (x *ListApprovalTasksRequest) GetStatuses() []documents.ApprovalTaskStatus 
 }
 
 type ListApprovalTasksResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Tasks         []*documents.ApprovalTask `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Tasks         []*approval.ApprovalTask `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -417,7 +418,7 @@ func (*ListApprovalTasksResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListApprovalTasksResponse) GetTasks() []*documents.ApprovalTask {
+func (x *ListApprovalTasksResponse) GetTasks() []*approval.ApprovalTask {
 	if x != nil {
 		return x.Tasks
 	}
@@ -606,7 +607,7 @@ type UpsertApprovalTasksResponse struct {
 	// Number of requested targets already satisfied (no-op)
 	TasksEnsured int32 `protobuf:"varint,2,opt,name=tasks_ensured,json=tasksEnsured,proto3" json:"tasks_ensured,omitempty"`
 	// Echo (optional convenience)
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -655,7 +656,7 @@ func (x *UpsertApprovalTasksResponse) GetTasksEnsured() int32 {
 	return 0
 }
 
-func (x *UpsertApprovalTasksResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *UpsertApprovalTasksResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -767,7 +768,7 @@ type ListApprovalsRequest struct {
 	TaskId       *int64                 `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
 	SnapshotDate *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=snapshot_date,json=snapshotDate,proto3,oneof" json:"snapshot_date,omitempty"`
 	// Optional filters
-	Status *documents.ApprovalStatus `protobuf:"varint,4,opt,name=status,proto3,enum=resources.documents.ApprovalStatus,oneof" json:"status,omitempty"`
+	Status *approval.ApprovalStatus `protobuf:"varint,4,opt,name=status,proto3,enum=resources.documents.approval.ApprovalStatus,oneof" json:"status,omitempty"`
 	// Filter by signer
 	UserId        *int32 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -825,11 +826,11 @@ func (x *ListApprovalsRequest) GetSnapshotDate() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ListApprovalsRequest) GetStatus() documents.ApprovalStatus {
+func (x *ListApprovalsRequest) GetStatus() approval.ApprovalStatus {
 	if x != nil && x.Status != nil {
 		return *x.Status
 	}
-	return documents.ApprovalStatus(0)
+	return approval.ApprovalStatus(0)
 }
 
 func (x *ListApprovalsRequest) GetUserId() int32 {
@@ -841,7 +842,7 @@ func (x *ListApprovalsRequest) GetUserId() int32 {
 
 type ListApprovalsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Approvals     []*documents.Approval  `protobuf:"bytes,3,rep,name=approvals,proto3" json:"approvals,omitempty"`
+	Approvals     []*approval.Approval   `protobuf:"bytes,3,rep,name=approvals,proto3" json:"approvals,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -876,7 +877,7 @@ func (*ListApprovalsResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ListApprovalsResponse) GetApprovals() []*documents.Approval {
+func (x *ListApprovalsResponse) GetApprovals() []*approval.Approval {
 	if x != nil {
 		return x.Approvals
 	}
@@ -937,7 +938,7 @@ func (x *RevokeApprovalRequest) GetComment() string {
 
 type RevokeApprovalResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Approval      *documents.Approval    `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
+	Approval      *approval.Approval     `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -972,7 +973,7 @@ func (*RevokeApprovalResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
+func (x *RevokeApprovalResponse) GetApproval() *approval.Approval {
 	if x != nil {
 		return x.Approval
 	}
@@ -980,12 +981,12 @@ func (x *RevokeApprovalResponse) GetApproval() *documents.Approval {
 }
 
 type DecideApprovalRequest struct {
-	state      protoimpl.MessageState       `protogen:"open.v1"`
-	DocumentId int64                        `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	TaskId     *int64                       `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	NewStatus  documents.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
-	Comment    string                       `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
-	PayloadSvg *string                      `protobuf:"bytes,5,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
+	state      protoimpl.MessageState      `protogen:"open.v1"`
+	DocumentId int64                       `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	TaskId     *int64                      `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
+	NewStatus  approval.ApprovalTaskStatus `protobuf:"varint,3,opt,name=new_status,json=newStatus,proto3,enum=resources.documents.approval.ApprovalTaskStatus" json:"new_status,omitempty"` // APPROVED or DECLINED
+	Comment    string                      `protobuf:"bytes,4,opt,name=comment,proto3" json:"comment,omitempty"`
+	PayloadSvg *string                     `protobuf:"bytes,5,opt,name=payload_svg,json=payloadSvg,proto3,oneof" json:"payload_svg,omitempty"`
 	// When type=STAMP
 	StampId       *int64 `protobuf:"varint,6,opt,name=stamp_id,json=stampId,proto3,oneof" json:"stamp_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -1036,11 +1037,11 @@ func (x *DecideApprovalRequest) GetTaskId() int64 {
 	return 0
 }
 
-func (x *DecideApprovalRequest) GetNewStatus() documents.ApprovalTaskStatus {
+func (x *DecideApprovalRequest) GetNewStatus() approval.ApprovalTaskStatus {
 	if x != nil {
 		return x.NewStatus
 	}
-	return documents.ApprovalTaskStatus(0)
+	return approval.ApprovalTaskStatus(0)
 }
 
 func (x *DecideApprovalRequest) GetComment() string {
@@ -1065,10 +1066,10 @@ func (x *DecideApprovalRequest) GetStampId() int64 {
 }
 
 type DecideApprovalResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Approval      *documents.Approval       `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
-	Task          *documents.ApprovalTask   `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Approval      *approval.Approval       `protobuf:"bytes,1,opt,name=approval,proto3" json:"approval,omitempty"`
+	Task          *approval.ApprovalTask   `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,3,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1103,21 +1104,21 @@ func (*DecideApprovalResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *DecideApprovalResponse) GetApproval() *documents.Approval {
+func (x *DecideApprovalResponse) GetApproval() *approval.Approval {
 	if x != nil {
 		return x.Approval
 	}
 	return nil
 }
 
-func (x *DecideApprovalResponse) GetTask() *documents.ApprovalTask {
+func (x *DecideApprovalResponse) GetTask() *approval.ApprovalTask {
 	if x != nil {
 		return x.Task
 	}
 	return nil
 }
 
-func (x *DecideApprovalResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *DecideApprovalResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -1177,9 +1178,9 @@ func (x *ReopenApprovalTaskRequest) GetComment() string {
 }
 
 type ReopenApprovalTaskResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Task          *documents.ApprovalTask   `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Task          *approval.ApprovalTask   `protobuf:"bytes,1,opt,name=task,proto3" json:"task,omitempty"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1214,14 +1215,14 @@ func (*ReopenApprovalTaskResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *ReopenApprovalTaskResponse) GetTask() *documents.ApprovalTask {
+func (x *ReopenApprovalTaskResponse) GetTask() *approval.ApprovalTask {
 	if x != nil {
 		return x.Task
 	}
 	return nil
 }
 
-func (x *ReopenApprovalTaskResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *ReopenApprovalTaskResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -1273,8 +1274,8 @@ func (x *RecomputeApprovalPolicyCountersRequest) GetDocumentId() int64 {
 }
 
 type RecomputeApprovalPolicyCountersResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Policy        *documents.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Policy        *approval.ApprovalPolicy `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1309,7 +1310,7 @@ func (*RecomputeApprovalPolicyCountersResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_approval_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *RecomputeApprovalPolicyCountersResponse) GetPolicy() *documents.ApprovalPolicy {
+func (x *RecomputeApprovalPolicyCountersResponse) GetPolicy() *approval.ApprovalPolicy {
 	if x != nil {
 		return x.Policy
 	}
@@ -1320,36 +1321,36 @@ var File_services_documents_approval_proto protoreflect.FileDescriptor
 
 const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
-	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\"resources/documents/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xe8\x01\n" +
+	"!services/documents/approval.proto\x12\x12services.documents\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a+resources/documents/approval/approval.proto\x1a#resources/documents/documents.proto\x1a#resources/timestamp/timestamp.proto\"\xf1\x01\n" +
 	"\x1dListApprovalTasksInboxRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
-	"pagination\x12C\n" +
-	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\x12$\n" +
+	"pagination\x12L\n" +
+	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\x12$\n" +
 	"\vonly_drafts\x18\x03 \x01(\bH\x00R\n" +
 	"onlyDrafts\x88\x01\x01B\x0e\n" +
-	"\f_only_drafts\"\xae\x01\n" +
+	"\f_only_drafts\"\xb7\x01\n" +
 	"\x1eListApprovalTasksInboxResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12=\n" +
-	"\x05tasks\x18\x02 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\">\n" +
+	"pagination\x12F\n" +
+	"\x05tasks\x18\x02 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\">\n" +
 	"\x1bListApprovalPoliciesRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"\x99\x01\n" +
-	"\x1cListApprovalPoliciesResponse\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\x12<\n" +
-	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"Z\n" +
-	"\x1bUpsertApprovalPolicyRequest\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"[\n" +
-	"\x1cUpsertApprovalPolicyResponse\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"\x80\x01\n" +
+	"documentId\"\xa2\x01\n" +
+	"\x1cListApprovalPoliciesResponse\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\x12<\n" +
+	"\bdoc_meta\x18\x02 \x01(\v2!.resources.documents.DocumentMetaR\adocMeta\"c\n" +
+	"\x1bUpsertApprovalPolicyRequest\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"d\n" +
+	"\x1cUpsertApprovalPolicyResponse\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"\x89\x01\n" +
 	"\x18ListApprovalTasksRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\x12C\n" +
-	"\bstatuses\x18\x02 \x03(\x0e2'.resources.documents.ApprovalTaskStatusR\bstatuses\"Z\n" +
-	"\x19ListApprovalTasksResponse\x12=\n" +
-	"\x05tasks\x18\x01 \x03(\v2!.resources.documents.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xc8\x02\n" +
+	"documentId\x12L\n" +
+	"\bstatuses\x18\x02 \x03(\x0e20.resources.documents.approval.ApprovalTaskStatusR\bstatuses\"c\n" +
+	"\x19ListApprovalTasksResponse\x12F\n" +
+	"\x05tasks\x18\x01 \x03(\v2*.resources.documents.approval.ApprovalTaskB\x04\xc8\xf3\x18\x01R\x05tasks\"\xc8\x02\n" +
 	"\x10ApprovalTaskSeed\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12\x10\n" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12#\n" +
@@ -1368,44 +1369,44 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"documentId\x12H\n" +
 	"\rsnapshot_date\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fsnapshotDate\x88\x01\x01\x12:\n" +
 	"\x05seeds\x18\x03 \x03(\v2$.services.documents.ApprovalTaskSeedR\x05seedsB\x10\n" +
-	"\x0e_snapshot_date\"\xa4\x01\n" +
+	"\x0e_snapshot_date\"\xad\x01\n" +
 	"\x1bUpsertApprovalTasksResponse\x12#\n" +
 	"\rtasks_created\x18\x01 \x01(\x05R\ftasksCreated\x12#\n" +
-	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12;\n" +
-	"\x06policy\x18\x03 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"\x86\x01\n" +
+	"\rtasks_ensured\x18\x02 \x01(\x05R\ftasksEnsured\x12D\n" +
+	"\x06policy\x18\x03 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"\x86\x01\n" +
 	"\x1aDeleteApprovalTasksRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x19\n" +
 	"\btask_ids\x18\x02 \x03(\x03R\ataskIds\x12,\n" +
 	"\x12delete_all_pending\x18\x03 \x01(\bR\x10deleteAllPending\"\x1d\n" +
-	"\x1bDeleteApprovalTasksResponse\"\xb4\x02\n" +
+	"\x1bDeleteApprovalTasksResponse\"\xbd\x02\n" +
 	"\x14ListApprovalsRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1c\n" +
 	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12H\n" +
-	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12@\n" +
-	"\x06status\x18\x04 \x01(\x0e2#.resources.documents.ApprovalStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
+	"\rsnapshot_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fsnapshotDate\x88\x01\x01\x12I\n" +
+	"\x06status\x18\x04 \x01(\x0e2,.resources.documents.approval.ApprovalStatusH\x02R\x06status\x88\x01\x01\x12\x1c\n" +
 	"\auser_id\x18\x05 \x01(\x05H\x03R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\b_task_idB\x10\n" +
 	"\x0e_snapshot_dateB\t\n" +
 	"\a_statusB\n" +
 	"\n" +
-	"\b_user_id\"T\n" +
-	"\x15ListApprovalsResponse\x12;\n" +
-	"\tapprovals\x18\x03 \x03(\v2\x1d.resources.documents.ApprovalR\tapprovals\"R\n" +
+	"\b_user_id\"]\n" +
+	"\x15ListApprovalsResponse\x12D\n" +
+	"\tapprovals\x18\x03 \x03(\v2&.resources.documents.approval.ApprovalR\tapprovals\"R\n" +
 	"\x15RevokeApprovalRequest\x12\x1f\n" +
 	"\vapproval_id\x18\x01 \x01(\x03R\n" +
 	"approvalId\x12\x18\n" +
-	"\acomment\x18\x02 \x01(\tR\acomment\"S\n" +
-	"\x16RevokeApprovalResponse\x129\n" +
-	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\"\xbc\x02\n" +
+	"\acomment\x18\x02 \x01(\tR\acomment\"\\\n" +
+	"\x16RevokeApprovalResponse\x12B\n" +
+	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\"\xc5\x02\n" +
 	"\x15DecideApprovalRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
 	"documentId\x12\x1c\n" +
-	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12F\n" +
+	"\atask_id\x18\x02 \x01(\x03H\x00R\x06taskId\x88\x01\x01\x12O\n" +
 	"\n" +
-	"new_status\x18\x03 \x01(\x0e2'.resources.documents.ApprovalTaskStatusR\tnewStatus\x12\x18\n" +
+	"new_status\x18\x03 \x01(\x0e20.resources.documents.approval.ApprovalTaskStatusR\tnewStatus\x12\x18\n" +
 	"\acomment\x18\x04 \x01(\tR\acomment\x129\n" +
 	"\vpayload_svg\x18\x05 \x01(\tB\x13\xda\xf3\x18\x0f\b\x01\x12\vSanitizeSVGH\x01R\n" +
 	"payloadSvg\x88\x01\x01\x12\x1e\n" +
@@ -1413,22 +1414,22 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\n" +
 	"\b_task_idB\x0e\n" +
 	"\f_payload_svgB\v\n" +
-	"\t_stamp_id\"\xc7\x01\n" +
-	"\x16DecideApprovalResponse\x129\n" +
-	"\bapproval\x18\x01 \x01(\v2\x1d.resources.documents.ApprovalR\bapproval\x125\n" +
-	"\x04task\x18\x02 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x03 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"N\n" +
+	"\t_stamp_id\"\xe2\x01\n" +
+	"\x16DecideApprovalResponse\x12B\n" +
+	"\bapproval\x18\x01 \x01(\v2&.resources.documents.approval.ApprovalR\bapproval\x12>\n" +
+	"\x04task\x18\x02 \x01(\v2*.resources.documents.approval.ApprovalTaskR\x04task\x12D\n" +
+	"\x06policy\x18\x03 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"N\n" +
 	"\x19ReopenApprovalTaskRequest\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x18\n" +
-	"\acomment\x18\x02 \x01(\tR\acomment\"\x90\x01\n" +
-	"\x1aReopenApprovalTaskResponse\x125\n" +
-	"\x04task\x18\x01 \x01(\v2!.resources.documents.ApprovalTaskR\x04task\x12;\n" +
-	"\x06policy\x18\x02 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy\"I\n" +
+	"\acomment\x18\x02 \x01(\tR\acomment\"\xa2\x01\n" +
+	"\x1aReopenApprovalTaskResponse\x12>\n" +
+	"\x04task\x18\x01 \x01(\v2*.resources.documents.approval.ApprovalTaskR\x04task\x12D\n" +
+	"\x06policy\x18\x02 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy\"I\n" +
 	"&RecomputeApprovalPolicyCountersRequest\x12\x1f\n" +
 	"\vdocument_id\x18\x01 \x01(\x03R\n" +
-	"documentId\"f\n" +
-	"'RecomputeApprovalPolicyCountersResponse\x12;\n" +
-	"\x06policy\x18\x01 \x01(\v2#.resources.documents.ApprovalPolicyR\x06policy2\xa2\r\n" +
+	"documentId\"o\n" +
+	"'RecomputeApprovalPolicyCountersResponse\x12D\n" +
+	"\x06policy\x18\x01 \x01(\v2,.resources.documents.approval.ApprovalPolicyR\x06policy2\xa2\r\n" +
 	"\x0fApprovalService\x12\xb2\x01\n" +
 	"\x16ListApprovalTasksInbox\x121.services.documents.ListApprovalTasksInboxRequest\x1a2.services.documents.ListApprovalTasksInboxResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\xac\x01\n" +
 	"\x14ListApprovalPolicies\x12/.services.documents.ListApprovalPoliciesRequest\x1a0.services.documents.ListApprovalPoliciesResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x81\x01\n" +
@@ -1440,7 +1441,7 @@ const file_services_documents_approval_proto_rawDesc = "" +
 	"\x0eRevokeApproval\x12).services.documents.RevokeApprovalRequest\x1a*.services.documents.RevokeApprovalResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x9a\x01\n" +
 	"\x0eDecideApproval\x12).services.documents.DecideApprovalRequest\x1a*.services.documents.DecideApprovalResponse\"1\xd2\xf3\x18-\b\x01\x12\x1adocuments.DocumentsService\x1a\rListDocuments\x12\x8b\x01\n" +
 	"\x12ReopenApprovalTask\x12-.services.documents.ReopenApprovalTaskRequest\x1a..services.documents.ReopenApprovalTaskResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x12\xb2\x01\n" +
-	"\x1fRecomputeApprovalPolicyCounters\x12:.services.documents.RecomputeApprovalPolicyCountersRequest\x1a;.services.documents.RecomputeApprovalPolicyCountersResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x1fRecomputeApprovalPolicyCounters\x12:.services.documents.RecomputeApprovalPolicyCountersRequest\x1a;.services.documents.RecomputeApprovalPolicyCountersResponse\"\x16\xd2\xf3\x18\x12\b\x01\x1a\x0eRevokeApproval\x1a\x16\xea\xf3\x18\x12\b4\x12\x0ei-mdi-approvalBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_approval_proto_rawDescOnce sync.Once
@@ -1480,41 +1481,41 @@ var file_services_documents_approval_proto_goTypes = []any{
 	(*RecomputeApprovalPolicyCountersRequest)(nil),  // 21: services.documents.RecomputeApprovalPolicyCountersRequest
 	(*RecomputeApprovalPolicyCountersResponse)(nil), // 22: services.documents.RecomputeApprovalPolicyCountersResponse
 	(*database.PaginationRequest)(nil),              // 23: resources.common.database.PaginationRequest
-	(documents.ApprovalTaskStatus)(0),               // 24: resources.documents.ApprovalTaskStatus
+	(approval.ApprovalTaskStatus)(0),                // 24: resources.documents.approval.ApprovalTaskStatus
 	(*database.PaginationResponse)(nil),             // 25: resources.common.database.PaginationResponse
-	(*documents.ApprovalTask)(nil),                  // 26: resources.documents.ApprovalTask
-	(*documents.ApprovalPolicy)(nil),                // 27: resources.documents.ApprovalPolicy
+	(*approval.ApprovalTask)(nil),                   // 26: resources.documents.approval.ApprovalTask
+	(*approval.ApprovalPolicy)(nil),                 // 27: resources.documents.approval.ApprovalPolicy
 	(*documents.DocumentMeta)(nil),                  // 28: resources.documents.DocumentMeta
 	(*timestamp.Timestamp)(nil),                     // 29: resources.timestamp.Timestamp
-	(documents.ApprovalStatus)(0),                   // 30: resources.documents.ApprovalStatus
-	(*documents.Approval)(nil),                      // 31: resources.documents.Approval
+	(approval.ApprovalStatus)(0),                    // 30: resources.documents.approval.ApprovalStatus
+	(*approval.Approval)(nil),                       // 31: resources.documents.approval.Approval
 }
 var file_services_documents_approval_proto_depIdxs = []int32{
 	23, // 0: services.documents.ListApprovalTasksInboxRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	24, // 1: services.documents.ListApprovalTasksInboxRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
+	24, // 1: services.documents.ListApprovalTasksInboxRequest.statuses:type_name -> resources.documents.approval.ApprovalTaskStatus
 	25, // 2: services.documents.ListApprovalTasksInboxResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	26, // 3: services.documents.ListApprovalTasksInboxResponse.tasks:type_name -> resources.documents.ApprovalTask
-	27, // 4: services.documents.ListApprovalPoliciesResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	26, // 3: services.documents.ListApprovalTasksInboxResponse.tasks:type_name -> resources.documents.approval.ApprovalTask
+	27, // 4: services.documents.ListApprovalPoliciesResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
 	28, // 5: services.documents.ListApprovalPoliciesResponse.doc_meta:type_name -> resources.documents.DocumentMeta
-	27, // 6: services.documents.UpsertApprovalPolicyRequest.policy:type_name -> resources.documents.ApprovalPolicy
-	27, // 7: services.documents.UpsertApprovalPolicyResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	24, // 8: services.documents.ListApprovalTasksRequest.statuses:type_name -> resources.documents.ApprovalTaskStatus
-	26, // 9: services.documents.ListApprovalTasksResponse.tasks:type_name -> resources.documents.ApprovalTask
+	27, // 6: services.documents.UpsertApprovalPolicyRequest.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	27, // 7: services.documents.UpsertApprovalPolicyResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	24, // 8: services.documents.ListApprovalTasksRequest.statuses:type_name -> resources.documents.approval.ApprovalTaskStatus
+	26, // 9: services.documents.ListApprovalTasksResponse.tasks:type_name -> resources.documents.approval.ApprovalTask
 	29, // 10: services.documents.ApprovalTaskSeed.due_at:type_name -> resources.timestamp.Timestamp
 	29, // 11: services.documents.UpsertApprovalTasksRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
 	8,  // 12: services.documents.UpsertApprovalTasksRequest.seeds:type_name -> services.documents.ApprovalTaskSeed
-	27, // 13: services.documents.UpsertApprovalTasksResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	27, // 13: services.documents.UpsertApprovalTasksResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
 	29, // 14: services.documents.ListApprovalsRequest.snapshot_date:type_name -> resources.timestamp.Timestamp
-	30, // 15: services.documents.ListApprovalsRequest.status:type_name -> resources.documents.ApprovalStatus
-	31, // 16: services.documents.ListApprovalsResponse.approvals:type_name -> resources.documents.Approval
-	31, // 17: services.documents.RevokeApprovalResponse.approval:type_name -> resources.documents.Approval
-	24, // 18: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.ApprovalTaskStatus
-	31, // 19: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.Approval
-	26, // 20: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.ApprovalTask
-	27, // 21: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	26, // 22: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.ApprovalTask
-	27, // 23: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.ApprovalPolicy
-	27, // 24: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.ApprovalPolicy
+	30, // 15: services.documents.ListApprovalsRequest.status:type_name -> resources.documents.approval.ApprovalStatus
+	31, // 16: services.documents.ListApprovalsResponse.approvals:type_name -> resources.documents.approval.Approval
+	31, // 17: services.documents.RevokeApprovalResponse.approval:type_name -> resources.documents.approval.Approval
+	24, // 18: services.documents.DecideApprovalRequest.new_status:type_name -> resources.documents.approval.ApprovalTaskStatus
+	31, // 19: services.documents.DecideApprovalResponse.approval:type_name -> resources.documents.approval.Approval
+	26, // 20: services.documents.DecideApprovalResponse.task:type_name -> resources.documents.approval.ApprovalTask
+	27, // 21: services.documents.DecideApprovalResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	26, // 22: services.documents.ReopenApprovalTaskResponse.task:type_name -> resources.documents.approval.ApprovalTask
+	27, // 23: services.documents.ReopenApprovalTaskResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
+	27, // 24: services.documents.RecomputeApprovalPolicyCountersResponse.policy:type_name -> resources.documents.approval.ApprovalPolicy
 	0,  // 25: services.documents.ApprovalService.ListApprovalTasksInbox:input_type -> services.documents.ListApprovalTasksInboxRequest
 	2,  // 26: services.documents.ApprovalService.ListApprovalPolicies:input_type -> services.documents.ListApprovalPoliciesRequest
 	4,  // 27: services.documents.ApprovalService.UpsertApprovalPolicy:input_type -> services.documents.UpsertApprovalPolicyRequest

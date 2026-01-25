@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/yosssi/gohtml"
 	"golang.org/x/net/html"
 )

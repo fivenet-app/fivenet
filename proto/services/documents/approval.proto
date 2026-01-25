@@ -7,15 +7,15 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
-import "resources/documents/approval.proto";
+import "resources/documents/approval/approval.proto";
 import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documents";
 
 message ListApprovalTasksInboxRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
   // Controls inclusion of drafts in the result:
   // - unset/null: include all documents (drafts and non-drafts)
   // - false: only non-draft documents
@@ -25,7 +25,7 @@ message ListApprovalTasksInboxRequest {
 
 message ListApprovalTasksInboxResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.documents.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.approval.ApprovalTask tasks = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListApprovalPoliciesRequest {
@@ -34,25 +34,25 @@ message ListApprovalPoliciesRequest {
 
 // Only one policy per document is supported currently.
 message ListApprovalPoliciesResponse {
-  resources.documents.ApprovalPolicy policy = 1;
+  resources.documents.approval.ApprovalPolicy policy = 1;
   resources.documents.DocumentMeta doc_meta = 2;
 }
 
 message UpsertApprovalPolicyRequest {
-  resources.documents.ApprovalPolicy policy = 1 [(buf.validate.field).required = true];
+  resources.documents.approval.ApprovalPolicy policy = 1 [(buf.validate.field).required = true];
 }
 
 message UpsertApprovalPolicyResponse {
-  resources.documents.ApprovalPolicy policy = 1;
+  resources.documents.approval.ApprovalPolicy policy = 1;
 }
 
 message ListApprovalTasksRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
-  repeated resources.documents.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
+  repeated resources.documents.approval.ApprovalTaskStatus statuses = 2 [(buf.validate.field).repeated.max_items = 4];
 }
 
 message ListApprovalTasksResponse {
-  repeated resources.documents.ApprovalTask tasks = 1 [(codegen.itemslen.enabled) = true];
+  repeated resources.documents.approval.ApprovalTask tasks = 1 [(codegen.itemslen.enabled) = true];
 }
 
 // A declarative "ensure" for tasks under one policy/snapshot.
@@ -103,7 +103,7 @@ message UpsertApprovalTasksResponse {
   // Number of requested targets already satisfied (no-op)
   int32 tasks_ensured = 2;
   // Echo (optional convenience)
-  resources.documents.ApprovalPolicy policy = 3;
+  resources.documents.approval.ApprovalPolicy policy = 3;
 }
 
 message DeleteApprovalTasksRequest {
@@ -122,13 +122,13 @@ message ListApprovalsRequest {
   optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
   optional resources.timestamp.Timestamp snapshot_date = 3;
   // Optional filters
-  optional resources.documents.ApprovalStatus status = 4;
+  optional resources.documents.approval.ApprovalStatus status = 4;
   // Filter by signer
   optional int32 user_id = 5;
 }
 
 message ListApprovalsResponse {
-  repeated resources.documents.Approval approvals = 3;
+  repeated resources.documents.approval.Approval approvals = 3;
 }
 
 message RevokeApprovalRequest {
@@ -137,14 +137,14 @@ message RevokeApprovalRequest {
 }
 
 message RevokeApprovalResponse {
-  resources.documents.Approval approval = 1;
+  resources.documents.approval.Approval approval = 1;
 }
 
 message DecideApprovalRequest {
   int64 document_id = 1 [(buf.validate.field).int64.gt = 0];
   optional int64 task_id = 2 [(buf.validate.field).int64.gt = 0];
 
-  resources.documents.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
+  resources.documents.approval.ApprovalTaskStatus new_status = 3 [(buf.validate.field).enum.defined_only = true]; // APPROVED or DECLINED
   string comment = 4 [(buf.validate.field).string.max_len = 500];
   optional string payload_svg = 5 [(codegen.sanitizer.sanitizer) = {
     enabled: true
@@ -155,9 +155,9 @@ message DecideApprovalRequest {
 }
 
 message DecideApprovalResponse {
-  resources.documents.Approval approval = 1;
-  resources.documents.ApprovalTask task = 2;
-  resources.documents.ApprovalPolicy policy = 3;
+  resources.documents.approval.Approval approval = 1;
+  resources.documents.approval.ApprovalTask task = 2;
+  resources.documents.approval.ApprovalPolicy policy = 3;
 }
 
 message ReopenApprovalTaskRequest {
@@ -166,8 +166,8 @@ message ReopenApprovalTaskRequest {
 }
 
 message ReopenApprovalTaskResponse {
-  resources.documents.ApprovalTask task = 1;
-  resources.documents.ApprovalPolicy policy = 2;
+  resources.documents.approval.ApprovalTask task = 1;
+  resources.documents.approval.ApprovalPolicy policy = 2;
 }
 
 message RecomputeApprovalPolicyCountersRequest {
@@ -175,7 +175,7 @@ message RecomputeApprovalPolicyCountersRequest {
 }
 
 message RecomputeApprovalPolicyCountersResponse {
-  resources.documents.ApprovalPolicy policy = 1;
+  resources.documents.approval.ApprovalPolicy policy = 1;
 }
 
 service ApprovalService {

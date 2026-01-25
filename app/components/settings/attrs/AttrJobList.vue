@@ -9,7 +9,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getSettingsSettingsClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Role } from '~~/gen/ts/resources/permissions/permissions';
+import type { Role } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 const { t } = useI18n();
 

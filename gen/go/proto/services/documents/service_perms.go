@@ -8,9 +8,9 @@
 package documents
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -67,7 +67,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceChangeDocumentOwnerAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -80,7 +80,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceCreateDocumentReqTypesPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
 				},
 			},
@@ -114,7 +114,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceDeleteCommentAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -127,7 +127,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceDeleteDocumentAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -203,7 +203,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceToggleDocumentAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
@@ -216,7 +216,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceToggleDocumentPinTypesPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"JobWide"},
 				},
 			},
@@ -229,7 +229,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.DocumentsServiceUpdateDocumentAccessPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},

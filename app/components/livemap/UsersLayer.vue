@@ -2,7 +2,7 @@
 import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 
 withDefaults(
     defineProps<{

@@ -12,7 +12,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jsonNodeToTocLinks } from '~/utils/content';
 import { getWikiWikiClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
+import { AccessLevel } from '~~/gen/ts/resources/wiki/access/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import CustomContentRenderer from '../partials/content/CustomContentRenderer.vue';
 import DraftBadge from '../partials/DraftBadge.vue';

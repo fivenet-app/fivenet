@@ -7,14 +7,14 @@ import "codegen/itemslen/itemslen.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
-import "resources/mailer/email.proto";
-import "resources/mailer/message.proto";
-import "resources/mailer/settings.proto";
-import "resources/mailer/template.proto";
-import "resources/mailer/thread.proto";
+import "resources/mailer/emails/email.proto";
+import "resources/mailer/messages/message.proto";
+import "resources/mailer/settings/settings.proto";
+import "resources/mailer/templates/template.proto";
+import "resources/mailer/threads/thread.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailer";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer;mailer";
 
 // Emails
 
@@ -26,7 +26,7 @@ message ListEmailsRequest {
 
 message ListEmailsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Email emails = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.mailer.emails.Email emails = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetEmailRequest {
@@ -34,15 +34,15 @@ message GetEmailRequest {
 }
 
 message GetEmailResponse {
-  resources.mailer.Email email = 1 [(buf.validate.field).required = true];
+  resources.mailer.emails.Email email = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateEmailRequest {
-  resources.mailer.Email email = 1 [(buf.validate.field).required = true];
+  resources.mailer.emails.Email email = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateEmailResponse {
-  resources.mailer.Email email = 1;
+  resources.mailer.emails.Email email = 1;
 }
 
 message DeleteEmailRequest {
@@ -69,7 +69,7 @@ message ListTemplatesRequest {
 }
 
 message ListTemplatesResponse {
-  repeated resources.mailer.Template templates = 1;
+  repeated resources.mailer.templates.Template templates = 1;
 }
 
 message GetTemplateRequest {
@@ -78,15 +78,15 @@ message GetTemplateRequest {
 }
 
 message GetTemplateResponse {
-  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateTemplateRequest {
-  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateTemplateResponse {
-  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
+  resources.mailer.templates.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteTemplateRequest {
@@ -114,7 +114,7 @@ message ListThreadsRequest {
 
 message ListThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Thread threads = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.mailer.threads.Thread threads = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message GetThreadRequest {
@@ -123,12 +123,12 @@ message GetThreadRequest {
 }
 
 message GetThreadResponse {
-  resources.mailer.Thread thread = 1;
+  resources.mailer.threads.Thread thread = 1;
 }
 
 message CreateThreadRequest {
-  resources.mailer.Thread thread = 1 [(buf.validate.field).required = true];
-  resources.mailer.Message message = 2 [(buf.validate.field).required = true];
+  resources.mailer.threads.Thread thread = 1 [(buf.validate.field).required = true];
+  resources.mailer.messages.Message message = 2 [(buf.validate.field).required = true];
   repeated string recipients = 3 [
     (buf.validate.field).repeated = {
       min_items: 1
@@ -148,7 +148,7 @@ message CreateThreadRequest {
 }
 
 message CreateThreadResponse {
-  resources.mailer.Thread thread = 1;
+  resources.mailer.threads.Thread thread = 1;
 }
 
 message DeleteThreadRequest {
@@ -164,15 +164,15 @@ message GetThreadStateRequest {
 }
 
 message GetThreadStateResponse {
-  resources.mailer.ThreadState state = 1;
+  resources.mailer.threads.ThreadState state = 1;
 }
 
 message SetThreadStateRequest {
-  resources.mailer.ThreadState state = 1 [(buf.validate.field).required = true];
+  resources.mailer.threads.ThreadState state = 1 [(buf.validate.field).required = true];
 }
 
 message SetThreadStateResponse {
-  resources.mailer.ThreadState state = 1;
+  resources.mailer.threads.ThreadState state = 1;
 }
 
 message GetEmailSettingsRequest {
@@ -180,15 +180,15 @@ message GetEmailSettingsRequest {
 }
 
 message GetEmailSettingsResponse {
-  resources.mailer.EmailSettings settings = 1;
+  resources.mailer.settings.EmailSettings settings = 1;
 }
 
 message SetEmailSettingsRequest {
-  resources.mailer.EmailSettings settings = 1 [(buf.validate.field).required = true];
+  resources.mailer.settings.EmailSettings settings = 1 [(buf.validate.field).required = true];
 }
 
 message SetEmailSettingsResponse {
-  resources.mailer.EmailSettings settings = 1;
+  resources.mailer.settings.EmailSettings settings = 1;
 }
 
 // Messages
@@ -201,7 +201,7 @@ message SearchThreadsRequest {
 
 message SearchThreadsResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.mailer.messages.Message messages = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message ListThreadMessagesRequest {
@@ -213,11 +213,11 @@ message ListThreadMessagesRequest {
 
 message ListThreadMessagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.mailer.Message messages = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.mailer.messages.Message messages = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message PostMessageRequest {
-  resources.mailer.Message message = 1 [(buf.validate.field).required = true];
+  resources.mailer.messages.Message message = 1 [(buf.validate.field).required = true];
   repeated string recipients = 2 [
     (buf.validate.field).repeated = {
       max_items: 10
@@ -236,7 +236,7 @@ message PostMessageRequest {
 }
 
 message PostMessageResponse {
-  resources.mailer.Message message = 1;
+  resources.mailer.messages.Message message = 1;
 }
 
 message DeleteMessageRequest {

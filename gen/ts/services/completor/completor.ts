@@ -12,11 +12,11 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Label } from "../../resources/users/labels";
+import { Label } from "../../resources/users/labels/labels";
 import { LawBook } from "../../resources/laws/laws";
-import { Category } from "../../resources/documents/category";
+import { Category } from "../../resources/documents/category/category";
 import { Job } from "../../resources/jobs/jobs";
-import { UserShort } from "../../resources/users/users";
+import { UserShort } from "../../resources/users/short/user";
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRequest
  */
@@ -47,7 +47,7 @@ export interface CompleteCitizensRequest {
  */
 export interface CompleteCitizensResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort users = 1
+     * @generated from protobuf field: repeated resources.users.short.UserShort users = 1
      */
     users: UserShort[];
 }
@@ -91,7 +91,7 @@ export interface CompleteDocumentCategoriesRequest {
  */
 export interface CompleteDocumentCategoriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Category categories = 1
+     * @generated from protobuf field: repeated resources.documents.category.Category categories = 1
      */
     categories: Category[];
 }
@@ -123,7 +123,7 @@ export interface CompleteCitizenLabelsRequest {
  */
 export interface CompleteCitizenLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.Label labels = 1
+     * @generated from protobuf field: repeated resources.users.labels.Label labels = 1
      */
     labels: Label[];
 }
@@ -230,7 +230,7 @@ class CompleteCitizensResponse$Type extends MessageType<CompleteCitizensResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.UserShort users */ 1:
+                case /* repeated resources.users.short.UserShort users */ 1:
                     message.users.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -245,7 +245,7 @@ class CompleteCitizensResponse$Type extends MessageType<CompleteCitizensResponse
         return message;
     }
     internalBinaryWrite(message: CompleteCitizensResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.UserShort users = 1; */
+        /* repeated resources.users.short.UserShort users = 1; */
         for (let i = 0; i < message.users.length; i++)
             UserShort.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -431,7 +431,7 @@ class CompleteDocumentCategoriesResponse$Type extends MessageType<CompleteDocume
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Category categories */ 1:
+                case /* repeated resources.documents.category.Category categories */ 1:
                     message.categories.push(Category.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -446,7 +446,7 @@ class CompleteDocumentCategoriesResponse$Type extends MessageType<CompleteDocume
         return message;
     }
     internalBinaryWrite(message: CompleteDocumentCategoriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Category categories = 1; */
+        /* repeated resources.documents.category.Category categories = 1; */
         for (let i = 0; i < message.categories.length; i++)
             Category.internalBinaryWrite(message.categories[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -610,7 +610,7 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.Label labels */ 1:
+                case /* repeated resources.users.labels.Label labels */ 1:
                     message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -625,7 +625,7 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         return message;
     }
     internalBinaryWrite(message: CompleteCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Label labels = 1; */
+        /* repeated resources.users.labels.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

@@ -7,7 +7,7 @@
 package discord
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -183,7 +183,7 @@ const file_resources_discord_discord_proto_rawDesc = "" +
 	"\x04icon\x18\x03 \x01(\tR\x04icon\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01B\r\n" +
-	"\v_created_atBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord;discordb\x06proto3"
+	"\v_created_atBMZKgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/discord;discordb\x06proto3"
 
 var (
 	file_resources_discord_discord_proto_rawDescOnce sync.Once

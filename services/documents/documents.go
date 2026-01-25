@@ -5,24 +5,30 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	documentsapproval "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/approval"
+	documentsreferences "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/references"
+	documentsrelations "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/relations"
+	documentstemplates "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/templates"
+	notificationsclientview "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/clientview"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	usershort "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -194,7 +200,7 @@ func (s *Server) GetDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -297,11 +303,11 @@ func (s *Server) CreateDocument(
 	var docTitle string
 	var docState string
 	var categoryId *int64
-	docAccess := &documents.DocumentAccess{}
-	docReferences := []*documents.DocumentReference{}
-	docRelations := []*documents.DocumentRelation{}
+	docAccess := &documentsaccess.DocumentAccess{}
+	docReferences := []*documentsreferences.DocumentReference{}
+	docRelations := []*documentsrelations.DocumentRelation{}
 
-	var tmpl *documents.Template
+	var tmpl *documentstemplates.Template
 	if req.GetTemplateId() > 0 {
 		var err error
 		tmpl, err = s.getTemplate(ctx, req.GetTemplateId())
@@ -327,7 +333,7 @@ func (s *Server) CreateDocument(
 		}
 
 		// Set access based on template
-		docAccess = &documents.DocumentAccess{
+		docAccess = &documentsaccess.DocumentAccess{
 			Jobs:  tmpl.GetContentAccess().GetJobs(),
 			Users: tmpl.GetContentAccess().GetUsers(),
 		}
@@ -349,15 +355,18 @@ func (s *Server) CreateDocument(
 					}
 
 					if !exists {
-						docReferences = append(docReferences, &documents.DocumentReference{
-							// Id will be assigned by backend or can be zero for new
-							SourceDocumentId: 0, // will be set after insert
-							TargetDocumentId: doc.GetId(),
-							// TargetDocument can be set if needed, or left nil
-							CreatorId: &userInfo.UserId,
-							// Creator can be set if needed, or left nil
-							Reference: documents.DocReference_DOC_REFERENCE_SOLVES,
-						})
+						docReferences = append(
+							docReferences,
+							&documentsreferences.DocumentReference{
+								// Id will be assigned by backend or can be zero for new
+								SourceDocumentId: 0, // will be set after insert
+								TargetDocumentId: doc.GetId(),
+								// TargetDocument can be set if needed, or left nil
+								CreatorId: &userInfo.UserId,
+								// Creator can be set if needed, or left nil
+								Reference: documentsreferences.DocReference_DOC_REFERENCE_SOLVES,
+							},
+						)
 					}
 				}
 			}
@@ -374,14 +383,14 @@ func (s *Server) CreateDocument(
 					}
 
 					if !exists {
-						docRelations = append(docRelations, &documents.DocumentRelation{
+						docRelations = append(docRelations, &documentsrelations.DocumentRelation{
 							// Id will be assigned by backend or can be zero for new
 							DocumentId:   0, // will be set after insert
 							TargetUserId: user.GetUserId(),
 							// TargetUser can be set if needed, or left nil
 							SourceUserId: userInfo.GetUserId(),
 							// SourceUser can be set if needed, or left nil
-							Relation: documents.DocRelation_DOC_RELATION_CAUSED,
+							Relation: documentsrelations.DocRelation_DOC_RELATION_CAUSED,
 						})
 					}
 				}
@@ -389,10 +398,10 @@ func (s *Server) CreateDocument(
 		}
 	} else {
 		// Add minimum access for the creator's job
-		docAccess.Jobs = append(docAccess.Jobs, &documents.DocumentJobAccess{
+		docAccess.Jobs = append(docAccess.Jobs, &documentsaccess.DocumentJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       documents.AccessLevel_ACCESS_LEVEL_EDIT,
+			Access:       documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
 
@@ -449,9 +458,9 @@ func (s *Server) CreateDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   lastId,
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 	}); err != nil {
@@ -505,7 +514,7 @@ func (s *Server) UpdateDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -517,7 +526,7 @@ func (s *Server) UpdateDocument(
 			ctx,
 			req.GetDocumentId(),
 			userInfo,
-			documents.AccessLevel_ACCESS_LEVEL_ACCESS,
+			documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
 		)
 		if err != nil {
 			return nil, errorsdocuments.ErrPermissionDenied
@@ -566,7 +575,7 @@ func (s *Server) UpdateDocument(
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
-	var tmpl *documents.Template
+	var tmpl *documentstemplates.Template
 	if oldDoc.GetTemplateId() > 0 {
 		var err error
 		tmpl, err = s.getTemplate(ctx, oldDoc.GetTemplateId())
@@ -649,7 +658,7 @@ func (s *Server) UpdateDocument(
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 		if added > 0 || deleted > 0 {
-			diff.FilesChange = &documents.DocFilesChange{
+			diff.FilesChange = &documentsactivity.DocFilesChange{
 				Added:   added,
 				Deleted: deleted,
 			}
@@ -657,13 +666,13 @@ func (s *Server) UpdateDocument(
 
 		// Only store activity if there are actual changes
 		if diff.HasChanges() {
-			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+			if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 				DocumentId:   oldDoc.GetId(),
-				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
+				ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 				CreatorId:    &userInfo.UserId,
 				CreatorJob:   userInfo.GetJob(),
-				Data: &documents.DocActivityData{
-					Data: &documents.DocActivityData_Updated{
+				Data: &documentsactivity.DocActivityData{
+					Data: &documentsactivity.DocActivityData_Updated{
 						Updated: diff,
 					},
 				},
@@ -685,9 +694,9 @@ func (s *Server) UpdateDocument(
 
 	if !onlyUpdateAccess {
 		if oldDoc.GetMeta().GetDraft() != req.GetMeta().GetDraft() {
-			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+			if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 				DocumentId:   oldDoc.GetId(),
-				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED,
+				ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED,
 				CreatorId:    &userInfo.UserId,
 				CreatorJob:   userInfo.GetJob(),
 			}); err != nil {
@@ -722,10 +731,10 @@ func (s *Server) UpdateDocument(
 
 	s.collabServer.SendTargetSaved(ctx, doc.GetId())
 
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_DOCUMENT,
 		Id:        &doc.Id,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,
@@ -741,7 +750,7 @@ func (s *Server) handleDocumentPublish(
 	tx qrm.DB,
 	userInfo *userinfo.UserInfo,
 	doc *documents.Document,
-	tmpl *documents.Template,
+	tmpl *documentstemplates.Template,
 ) error {
 	apr := tmpl.GetApproval()
 	if apr == nil || !apr.GetEnabled() {
@@ -768,7 +777,7 @@ func (s *Server) handleDocumentPublish(
 	now := time.Now()
 
 	// Fill in and create new approval policy
-	newPol := &documents.ApprovalPolicy{
+	newPol := &documentsapproval.ApprovalPolicy{
 		SnapshotDate: timestamp.New(now),
 	}
 	if apr.GetPolicy() != nil {
@@ -777,9 +786,9 @@ func (s *Server) handleDocumentPublish(
 		requiredCount := apr.GetPolicy().GetRequiredCount()
 
 		switch newPol.RuleKind {
-		case documents.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL:
+		case documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_REQUIRE_ALL:
 			requiredCount = 0
-		case documents.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY:
+		case documentsapproval.ApprovalRuleKind_APPROVAL_RULE_KIND_QUORUM_ANY:
 			if requiredCount <= 0 {
 				requiredCount = int32(len(apr.GetTasks()))
 				if requiredCount == 0 {
@@ -851,7 +860,7 @@ func (s *Server) DeleteDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -911,9 +920,9 @@ func (s *Server) DeleteDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documentsactivity.DocActivity{
 		DocumentId:   req.GetDocumentId(),
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.GetJob(),
 		Reason:       req.Reason,
@@ -938,7 +947,7 @@ func (s *Server) ToggleDocument(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_STATUS,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_STATUS,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -959,7 +968,7 @@ func (s *Server) ToggleDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	var tmpl *documents.Template
+	var tmpl *documentstemplates.Template
 	if !req.GetClosed() && doc.GetTemplateId() > 0 {
 		// If the document is opened, get template so we can update the reminder/auto close times
 		tmpl, err = s.getTemplate(ctx, doc.GetTemplateId())
@@ -982,9 +991,9 @@ func (s *Server) ToggleDocument(
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
-	activityType := documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
+	activityType := documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED
 	if !req.GetClosed() {
-		activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
+		activityType = documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 	}
 
 	// Begin transaction
@@ -1008,7 +1017,7 @@ func (s *Server) ToggleDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
 		DocumentId:   doc.GetId(),
 		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,
@@ -1028,10 +1037,10 @@ func (s *Server) ToggleDocument(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_DOCUMENT,
 		Id:        &doc.Id,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,
@@ -1054,7 +1063,7 @@ func (s *Server) ChangeDocumentOwner(
 		ctx,
 		req.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
@@ -1111,7 +1120,7 @@ func (s *Server) ChangeDocumentOwner(
 		WHERE(tUsers.ID.EQ(mysql.Int32(req.GetNewUserId()))).
 		LIMIT(1)
 
-	var newOwner users.UserShort
+	var newOwner usershort.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &newOwner); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -1148,10 +1157,10 @@ func (s *Server) ChangeDocumentOwner(
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
-		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+	s.notifi.SendObjectEvent(ctx, &notificationsclientview.ObjectEvent{
+		Type:      notificationsclientview.ObjectType_OBJECT_TYPE_DOCUMENT,
 		Id:        &doc.Id,
-		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+		EventType: notificationsclientview.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
 
 		UserId: &userInfo.UserId,
 		Job:    &userInfo.Job,

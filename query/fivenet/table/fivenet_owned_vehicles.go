@@ -17,12 +17,12 @@ type fivenetOwnedVehiclesTable struct {
 	mysql.Table
 
 	// Columns
-	Owner mysql.ColumnString
-	Job   mysql.ColumnString
-	Plate mysql.ColumnString
-	Model mysql.ColumnString
-	Type  mysql.ColumnString
-	Data  mysql.ColumnString
+	UserID mysql.ColumnInteger
+	Job    mysql.ColumnString
+	Plate  mysql.ColumnString
+	Model  mysql.ColumnString
+	Type   mysql.ColumnString
+	Data   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,14 +64,14 @@ func newFivenetOwnedVehiclesTable(schemaName, tableName, alias string) *FivenetO
 
 func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fivenetOwnedVehiclesTable {
 	var (
-		OwnerColumn    = mysql.StringColumn("owner")
+		UserIDColumn   = mysql.IntegerColumn("user_id")
 		JobColumn      = mysql.StringColumn("job")
 		PlateColumn    = mysql.StringColumn("plate")
 		ModelColumn    = mysql.StringColumn("model")
 		TypeColumn     = mysql.StringColumn("type")
 		DataColumn     = mysql.StringColumn("data")
-		allColumns     = mysql.ColumnList{OwnerColumn, JobColumn, PlateColumn, ModelColumn, TypeColumn, DataColumn}
-		mutableColumns = mysql.ColumnList{OwnerColumn, JobColumn, ModelColumn, TypeColumn, DataColumn}
+		allColumns     = mysql.ColumnList{UserIDColumn, JobColumn, PlateColumn, ModelColumn, TypeColumn, DataColumn}
+		mutableColumns = mysql.ColumnList{UserIDColumn, JobColumn, ModelColumn, TypeColumn, DataColumn}
 		defaultColumns = mysql.ColumnList{}
 	)
 
@@ -79,12 +79,12 @@ func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fiven
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Owner: OwnerColumn,
-		Job:   JobColumn,
-		Plate: PlateColumn,
-		Model: ModelColumn,
-		Type:  TypeColumn,
-		Data:  DataColumn,
+		UserID: UserIDColumn,
+		Job:    JobColumn,
+		Plate:  PlateColumn,
+		Model:  ModelColumn,
+		Type:   TypeColumn,
+		Data:   DataColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

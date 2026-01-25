@@ -5,8 +5,8 @@ import (
 	"context"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
 )
 
 func (s *Server) ListCronjobs(

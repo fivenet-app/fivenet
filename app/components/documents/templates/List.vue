@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { CardElements } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
+import type { TemplateShort } from '~~/gen/ts/resources/documents/templates/templates';
 
 const props = defineProps<{
     link?: boolean;

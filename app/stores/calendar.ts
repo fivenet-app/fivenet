@@ -2,8 +2,9 @@ import { format } from 'date-fns';
 import { defineStore } from 'pinia';
 import { checkCalendarAccess } from '~/components/calendar/helpers';
 import { getCalendarCalendarClient } from '~~/gen/ts/clients';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
-import { type Calendar, type CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
+import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import { type CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/entries/entries';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
     CreateCalendarResponse,

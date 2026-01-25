@@ -132,7 +132,7 @@ const file_codegen_sanitizer_sanitizer_proto_rawDesc = "" +
 	"\f_tiptap_jsonB\f\n" +
 	"\n" +
 	"_max_bytes:^\n" +
-	"\tsanitizer\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\v2\x1f.codegen.sanitizer.FieldOptionsR\tsanitizerBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer;sanitizerb\x06proto3"
+	"\tsanitizer\x12\x1d.google.protobuf.FieldOptions\x18\xbb\x8e\x03 \x01(\v2\x1f.codegen.sanitizer.FieldOptionsR\tsanitizerBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer;sanitizerb\x06proto3"
 
 var (
 	file_codegen_sanitizer_sanitizer_proto_rawDescOnce sync.Once

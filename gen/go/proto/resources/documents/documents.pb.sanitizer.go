@@ -4,7 +4,7 @@
 package documents
 
 import (
-	htmlsanitizer "github.com/fivenet-app/fivenet/v2025/pkg/sanitizer/html"
+	htmlsanitizer "github.com/fivenet-app/fivenet/v2026/pkg/sanitizer/html"
 )
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
@@ -164,98 +164,6 @@ func (m *DocumentMeta) Sanitize() error {
 
 // Sanitize sanitizes the message's fields, in case of complex types it calls
 // their Sanitize() method recursively.
-func (m *DocumentReference) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Creator
-	if m.Creator != nil {
-		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: SourceDocument
-	if m.SourceDocument != nil {
-		if v, ok := any(m.GetSourceDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: TargetDocument
-	if m.TargetDocument != nil {
-		if v, ok := any(m.GetTargetDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *DocumentRelation) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Document
-	if m.Document != nil {
-		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: SourceUser
-	if m.SourceUser != nil {
-		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: TargetUser
-	if m.TargetUser != nil {
-		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
 func (m *DocumentShort) Sanitize() error {
 	if m == nil {
 		return nil
@@ -361,94 +269,6 @@ func (m *DocumentShort) Sanitize() error {
 	// Field: WorkflowUser
 	if m.WorkflowUser != nil {
 		if v, ok := any(m.GetWorkflowUser()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *WorkflowState) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: AutoCloseTime
-	if m.AutoCloseTime != nil {
-		if v, ok := any(m.GetAutoCloseTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Document
-	if m.Document != nil {
-		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: NextReminderTime
-	if m.NextReminderTime != nil {
-		if v, ok := any(m.GetNextReminderTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Workflow
-	if m.Workflow != nil {
-		if v, ok := any(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-// Sanitize sanitizes the message's fields, in case of complex types it calls
-// their Sanitize() method recursively.
-func (m *WorkflowUserState) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Document
-	if m.Document != nil {
-		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: ManualReminderMessage
-	if m.ManualReminderMessage != nil {
-		*m.ManualReminderMessage = htmlsanitizer.Sanitize(*m.ManualReminderMessage)
-	}
-
-	// Field: ManualReminderTime
-	if m.ManualReminderTime != nil {
-		if v, ok := any(m.GetManualReminderTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Workflow
-	if m.Workflow != nil {
-		if v, ok := any(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

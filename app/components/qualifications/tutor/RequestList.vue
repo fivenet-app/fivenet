@@ -12,10 +12,10 @@ import RequestTutorModal from '~/components/qualifications/tutor/RequestTutorMod
 import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
 import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access/access';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/exam/exam';
 import {
     type Qualification,
-    QualificationExamMode,
     type QualificationRequest,
     RequestStatus,
 } from '~~/gen/ts/resources/qualifications/qualifications';

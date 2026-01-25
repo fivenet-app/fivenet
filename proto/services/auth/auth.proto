@@ -7,15 +7,15 @@ import "codegen/audit/redacted.proto";
 import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/accounts/accounts.proto";
-import "resources/accounts/oauth2.proto";
-import "resources/jobs/job_props.proto";
-import "resources/permissions/attributes.proto";
-import "resources/permissions/permissions.proto";
+import "resources/accounts/oauth2/oauth2.proto";
+import "resources/jobs/props/props.proto";
+import "resources/permissions/attributes/attributes.proto";
+import "resources/permissions/permissions/permissions.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/user.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;auth";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/auth;auth";
 
 message CreateAccountRequest {
   string reg_token = 1 [
@@ -141,8 +141,8 @@ message GetAccountInfoRequest {}
 
 message GetAccountInfoResponse {
   resources.accounts.Account account = 1;
-  repeated resources.accounts.OAuth2Provider oauth2_providers = 2;
-  repeated resources.accounts.OAuth2Account oauth2_connections = 3;
+  repeated resources.accounts.oauth2.OAuth2Provider oauth2_providers = 2;
+  repeated resources.accounts.oauth2.OAuth2Account oauth2_connections = 3;
 }
 
 message GetCharactersRequest {}
@@ -158,10 +158,10 @@ message ChooseCharacterRequest {
 message ChooseCharacterResponse {
   string username = 1;
   resources.timestamp.Timestamp expires = 2;
-  resources.jobs.JobProps job_props = 3;
+  resources.jobs.props.JobProps job_props = 3;
   resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
-  repeated resources.permissions.Permission permissions = 5;
-  repeated resources.permissions.RoleAttribute attributes = 6;
+  repeated resources.permissions.permissions.Permission permissions = 5;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 6;
 }
 
 message DeleteSocialLoginRequest {
@@ -185,10 +185,10 @@ message SetSuperuserModeRequest {
 
 message SetSuperuserModeResponse {
   resources.timestamp.Timestamp expires = 2;
-  optional resources.jobs.JobProps job_props = 3;
+  optional resources.jobs.props.JobProps job_props = 3;
   resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
-  repeated resources.permissions.Permission permissions = 5;
-  repeated resources.permissions.RoleAttribute attributes = 6;
+  repeated resources.permissions.permissions.Permission permissions = 5;
+  repeated resources.permissions.attributes.RoleAttribute attributes = 6;
 }
 
 // Auth Service handles user authentication, character selection and oauth2 connections

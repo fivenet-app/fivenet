@@ -1,14 +1,14 @@
 package qualifications
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	grpc "google.golang.org/grpc"
 )
@@ -33,7 +33,7 @@ func (s *Server) UploadFile(
 		ctx,
 		meta.GetParentId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_EDIT,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorsqualifications.ErrQualiViewDenied)

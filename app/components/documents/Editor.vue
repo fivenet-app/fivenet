@@ -3,7 +3,7 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import type { JSONContent } from '@tiptap/core';
 import { z } from 'zod';
-import { checkDocAccess, logger } from '~/components/documents/helpers';
+import { checkDocAccess } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
@@ -13,11 +13,12 @@ import type { HistoryContent } from '~/types/history';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
-import type { Category } from '~~/gen/ts/resources/documents/category';
-import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { AccessLevel, type DocumentJobAccess, type DocumentUserAccess } from '~~/gen/ts/resources/documents/access/access';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
+import type { DocumentReference } from '~~/gen/ts/resources/documents/references/references';
+import type { DocumentRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import type { File } from '~~/gen/ts/resources/file/file';
-import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -48,6 +49,8 @@ const notifications = useNotificationsStore();
 const historyStore = useHistoryStore();
 
 const { maxAccessEntries, maxContentLength } = useAppConfig();
+
+const logger = useLogger('📃 Doc Editor');
 
 const documentsDocuments = await useDocumentsDocuments();
 
@@ -379,8 +382,8 @@ const canDo = computed(() => ({
 // Handle the client update event
 const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
     notifications.add({
-        title: { key: 'notifications.documents.client_view_update.title', parameters: {} },
-        description: { key: 'notifications.documents.client_view_update.content', parameters: {} },
+        title: { key: 'notifications.documents.clientview_update.title', parameters: {} },
+        description: { key: 'notifications.documents.clientview_update.content', parameters: {} },
         duration: 7500,
         type: NotificationType.INFO,
         actions: [

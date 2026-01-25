@@ -1,6 +1,6 @@
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { writeUInt32BE } from '~/utils/array';
-import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
+import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal } from '../../errors';
 import type { Metadata } from '../../metadata';

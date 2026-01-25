@@ -7,7 +7,7 @@
 package documents
 
 import (
-	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	forms "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/forms"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -68,7 +68,7 @@ func (x *GetFormRequest) GetFormId() int64 {
 
 type GetFormResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Form          *documents.Form        `protobuf:"bytes,1,opt,name=form,proto3" json:"form,omitempty"`
+	Form          *forms.Form            `protobuf:"bytes,1,opt,name=form,proto3" json:"form,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,7 +103,7 @@ func (*GetFormResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_forms_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetFormResponse) GetForm() *documents.Form {
+func (x *GetFormResponse) GetForm() *forms.Form {
 	if x != nil {
 		return x.Form
 	}
@@ -148,7 +148,7 @@ func (*ListFormsRequest) Descriptor() ([]byte, []int) {
 
 type ListFormsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Forms         []*documents.Form      `protobuf:"bytes,1,rep,name=forms,proto3" json:"forms,omitempty"`
+	Forms         []*forms.Form          `protobuf:"bytes,1,rep,name=forms,proto3" json:"forms,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -183,7 +183,7 @@ func (*ListFormsResponse) Descriptor() ([]byte, []int) {
 	return file_services_documents_forms_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListFormsResponse) GetForms() []*documents.Form {
+func (x *ListFormsResponse) GetForms() []*forms.Form {
 	if x != nil {
 		return x.Forms
 	}
@@ -194,17 +194,17 @@ var File_services_documents_forms_proto protoreflect.FileDescriptor
 
 const file_services_documents_forms_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/documents/forms.proto\x12\x12services.documents\x1a\x1fresources/documents/forms.proto\")\n" +
+	"\x1eservices/documents/forms.proto\x12\x12services.documents\x1a%resources/documents/forms/forms.proto\")\n" +
 	"\x0eGetFormRequest\x12\x17\n" +
-	"\aform_id\x18\x01 \x01(\x03R\x06formId\"@\n" +
-	"\x0fGetFormResponse\x12-\n" +
-	"\x04form\x18\x01 \x01(\v2\x19.resources.documents.FormR\x04form\"\x12\n" +
-	"\x10ListFormsRequest\"D\n" +
-	"\x11ListFormsResponse\x12/\n" +
-	"\x05forms\x18\x01 \x03(\v2\x19.resources.documents.FormR\x05forms2\xbc\x01\n" +
+	"\aform_id\x18\x01 \x01(\x03R\x06formId\"F\n" +
+	"\x0fGetFormResponse\x123\n" +
+	"\x04form\x18\x01 \x01(\v2\x1f.resources.documents.forms.FormR\x04form\"\x12\n" +
+	"\x10ListFormsRequest\"J\n" +
+	"\x11ListFormsResponse\x125\n" +
+	"\x05forms\x18\x01 \x03(\v2\x1f.resources.documents.forms.FormR\x05forms2\xbc\x01\n" +
 	"\fFormsService\x12R\n" +
 	"\aGetForm\x12\".services.documents.GetFormRequest\x1a#.services.documents.GetFormResponse\x12X\n" +
-	"\tListForms\x12$.services.documents.ListFormsRequest\x1a%.services.documents.ListFormsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\tListForms\x12$.services.documents.ListFormsRequest\x1a%.services.documents.ListFormsResponseBPZNgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_forms_proto_rawDescOnce sync.Once
@@ -224,11 +224,11 @@ var file_services_documents_forms_proto_goTypes = []any{
 	(*GetFormResponse)(nil),   // 1: services.documents.GetFormResponse
 	(*ListFormsRequest)(nil),  // 2: services.documents.ListFormsRequest
 	(*ListFormsResponse)(nil), // 3: services.documents.ListFormsResponse
-	(*documents.Form)(nil),    // 4: resources.documents.Form
+	(*forms.Form)(nil),        // 4: resources.documents.forms.Form
 }
 var file_services_documents_forms_proto_depIdxs = []int32{
-	4, // 0: services.documents.GetFormResponse.form:type_name -> resources.documents.Form
-	4, // 1: services.documents.ListFormsResponse.forms:type_name -> resources.documents.Form
+	4, // 0: services.documents.GetFormResponse.form:type_name -> resources.documents.forms.Form
+	4, // 1: services.documents.ListFormsResponse.forms:type_name -> resources.documents.forms.Form
 	0, // 2: services.documents.FormsService.GetForm:input_type -> services.documents.GetFormRequest
 	2, // 3: services.documents.FormsService.ListForms:input_type -> services.documents.ListFormsRequest
 	1, // 4: services.documents.FormsService.GetForm:output_type -> services.documents.GetFormResponse

@@ -5,16 +5,18 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications"
+	qualificationsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/access"
+	qualificationsexam "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/qualifications/exam"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbqualifications "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2026/services/qualifications/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	logging "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -39,7 +41,7 @@ func (s *Server) GetExamInfo(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_TAKE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -88,9 +90,9 @@ func (s *Server) checkIfUserCanTakeExam(
 	quali *qualifications.QualificationShort,
 	userInfo *userinfo.UserInfo,
 ) (bool, error) {
-	if quali.GetExamMode() <= qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED {
+	if quali.GetExamMode() <= qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED {
 		return false, errorsqualifications.ErrExamDisabled
-	} else if quali.GetExamMode() == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_REQUEST_NEEDED {
+	} else if quali.GetExamMode() == qualificationsexam.QualificationExamMode_QUALIFICATION_EXAM_MODE_REQUEST_NEEDED {
 		request, err := s.getQualificationRequest(ctx, quali.GetId(), userInfo.GetUserId(), userInfo)
 		if err != nil {
 			return false, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -108,7 +110,7 @@ func (s *Server) getExamUser(
 	ctx context.Context,
 	qualificationId int64,
 	userId int32,
-) (*qualifications.ExamUser, error) {
+) (*qualificationsexam.ExamUser, error) {
 	stmt := tExamUser.
 		SELECT(
 			tExamUser.QualificationID,
@@ -125,7 +127,7 @@ func (s *Server) getExamUser(
 		)).
 		LIMIT(1)
 
-	var dest qualifications.ExamUser
+	var dest qualificationsexam.ExamUser
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -151,7 +153,7 @@ func (s *Server) TakeExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_TAKE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -183,7 +185,7 @@ func (s *Server) TakeExam(
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	var exam *qualifications.ExamQuestions
+	var exam *qualificationsexam.ExamQuestions
 	if examUser == nil ||
 		(examUser.GetEndsAt() != nil && time.Since(examUser.GetEndsAt().AsTime()) < quali.GetExamSettings().GetTime().AsDuration()) {
 		exam, err = s.getExamQuestions(ctx, s.db, req.GetQualificationId(), false)
@@ -249,7 +251,7 @@ func (s *Server) SubmitExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_TAKE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_TAKE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -391,7 +393,7 @@ func (s *Server) GetUserExam(
 		ctx,
 		req.GetQualificationId(),
 		userInfo,
-		qualifications.AccessLevel_ACCESS_LEVEL_GRADE,
+		qualificationsaccess.AccessLevel_ACCESS_LEVEL_GRADE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

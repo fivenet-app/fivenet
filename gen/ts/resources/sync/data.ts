@@ -12,9 +12,9 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Coords } from "../livemap/coords";
-import { License } from "../users/licenses";
+import { License } from "../users/licenses/licenses";
 import { Vehicle } from "../vehicles/vehicles";
-import { User } from "../users/users";
+import { User } from "../users/user";
 import { Job } from "../jobs/jobs";
 /**
  * @generated from protobuf message resources.sync.DataStatus
@@ -57,7 +57,7 @@ export interface DataVehicles {
  */
 export interface DataLicenses {
     /**
-     * @generated from protobuf field: repeated resources.users.License licenses = 1
+     * @generated from protobuf field: repeated resources.users.licenses.License licenses = 1
      */
     licenses: License[];
 }
@@ -341,7 +341,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.License licenses */ 1:
+                case /* repeated resources.users.licenses.License licenses */ 1:
                     message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -356,7 +356,7 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
         return message;
     }
     internalBinaryWrite(message: DataLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.License licenses = 1; */
+        /* repeated resources.users.licenses.License licenses = 1; */
         for (let i = 0; i < message.licenses.length; i++)
             License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

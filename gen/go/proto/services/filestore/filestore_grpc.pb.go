@@ -8,7 +8,7 @@ package filestore
 
 import (
 	context "context"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

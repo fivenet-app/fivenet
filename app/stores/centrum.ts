@@ -3,15 +3,20 @@ import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/types/notifications';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
-import { type Dispatch, type DispatchStatus, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
-import { type Unit, type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers/dispatchers';
+import {
+    type Dispatch,
+    type DispatchStatus,
+    StatusDispatch,
+    TakeDispatchResp,
+} from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { type EffectiveAccess, type Settings, CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings/settings';
+import { type Unit, type UnitStatus, StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
-export const logger = useLogger('⛑️ Centrum');
+const logger = useLogger('⛑️ Centrum');
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours

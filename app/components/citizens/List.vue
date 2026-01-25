@@ -13,7 +13,7 @@ import { useClipboardStore } from '~/stores/clipboard';
 import { getCitizensCitizensClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/user';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
 import LabelModal from './LabelModal.vue';
 

@@ -7,8 +7,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access';
-import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access/access';
+import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const emit = defineEmits<{

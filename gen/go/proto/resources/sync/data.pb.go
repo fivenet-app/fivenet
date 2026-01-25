@@ -7,10 +7,11 @@
 package sync
 
 import (
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
+	jobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs"
+	livemap "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/livemap"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	licenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -203,7 +204,7 @@ func (x *DataVehicles) GetVehicles() []*vehicles.Vehicle {
 
 type DataLicenses struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Licenses      []*users.License       `protobuf:"bytes,1,rep,name=licenses,proto3" json:"licenses,omitempty"`
+	Licenses      []*licenses.License    `protobuf:"bytes,1,rep,name=licenses,proto3" json:"licenses,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -238,7 +239,7 @@ func (*DataLicenses) Descriptor() ([]byte, []int) {
 	return file_resources_sync_data_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DataLicenses) GetLicenses() []*users.License {
+func (x *DataLicenses) GetLicenses() []*licenses.License {
 	if x != nil {
 		return x.Licenses
 	}
@@ -525,7 +526,7 @@ var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\"\"\n" +
+	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/livemap/coords.proto\x1a'resources/users/licenses/licenses.proto\x1a\x1aresources/users/user.proto\x1a!resources/vehicles/vehicles.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\"3\n" +
@@ -534,9 +535,9 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"\tDataUsers\x12+\n" +
 	"\x05users\x18\x01 \x03(\v2\x15.resources.users.UserR\x05users\"G\n" +
 	"\fDataVehicles\x127\n" +
-	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"D\n" +
-	"\fDataLicenses\x124\n" +
-	"\blicenses\x18\x01 \x03(\v2\x18.resources.users.LicenseR\blicenses\"{\n" +
+	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"M\n" +
+	"\fDataLicenses\x12=\n" +
+	"\blicenses\x18\x01 \x03(\v2!.resources.users.licenses.LicenseR\blicenses\"{\n" +
 	"\x11DataUserLocations\x126\n" +
 	"\x05users\x18\x01 \x03(\v2 .resources.sync.CitizenLocationsR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
@@ -564,7 +565,7 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"identifier\x12%\n" +
 	"\flast_char_id\x18\x02 \x01(\x05H\x00R\n" +
 	"lastCharId\x88\x01\x01B\x0f\n" +
-	"\r_last_char_idBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\r_last_char_idBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_data_proto_rawDescOnce sync.Once
@@ -593,14 +594,14 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*jobs.Job)(nil),          // 10: resources.jobs.Job
 	(*users.User)(nil),        // 11: resources.users.User
 	(*vehicles.Vehicle)(nil),  // 12: resources.vehicles.Vehicle
-	(*users.License)(nil),     // 13: resources.users.License
+	(*licenses.License)(nil),  // 13: resources.users.licenses.License
 	(*livemap.Coords)(nil),    // 14: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
 	10, // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
 	11, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
 	12, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	13, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
+	13, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.licenses.License
 	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.CitizenLocations
 	14, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
 	6,  // [6:6] is the sub-list for method output_type

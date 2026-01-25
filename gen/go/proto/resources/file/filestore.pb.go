@@ -7,8 +7,8 @@
 package file
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/audit"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/audit"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -362,7 +362,7 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\x11DeleteFileRequest\x12\x1b\n" +
 	"\tparent_id\x18\x01 \x01(\x03R\bparentId\x12\x17\n" +
 	"\afile_id\x18\x02 \x01(\x03R\x06fileId\"\x14\n" +
-	"\x12DeleteFileResponseBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;fileb\x06proto3"
+	"\x12DeleteFileResponseBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file;fileb\x06proto3"
 
 var (
 	file_resources_file_filestore_proto_rawDescOnce sync.Once

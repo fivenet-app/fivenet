@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SelectMenu from '~/components/partials/SelectMenu.vue';
-import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { ApprovalAssigneeKind } from '~~/gen/ts/resources/documents/approval/approval';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 const props = defineProps<{
     disabled?: boolean;

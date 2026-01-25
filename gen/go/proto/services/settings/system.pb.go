@@ -7,9 +7,10 @@
 package settings
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -69,9 +70,9 @@ func (x *GetAllPermissionsRequest) GetJob() string {
 }
 
 type GetAllPermissionsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -113,7 +114,7 @@ func (x *GetAllPermissionsResponse) GetPermissions() []*permissions.Permission {
 	return nil
 }
 
-func (x *GetAllPermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *GetAllPermissionsResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
@@ -165,11 +166,11 @@ func (x *GetJobLimitsRequest) GetJob() string {
 }
 
 type GetJobLimitsResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Job           string                       `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      *string                      `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Permissions   []*permissions.Permission    `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,4,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Job           string                      `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                     `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Permissions   []*permissions.Permission   `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*attributes.RoleAttribute `protobuf:"bytes,4,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -225,7 +226,7 @@ func (x *GetJobLimitsResponse) GetPermissions() []*permissions.Permission {
 	return nil
 }
 
-func (x *GetJobLimitsResponse) GetAttributes() []*permissions.RoleAttribute {
+func (x *GetJobLimitsResponse) GetAttributes() []*attributes.RoleAttribute {
 	if x != nil {
 		return x.Attributes
 	}
@@ -492,22 +493,22 @@ var File_services_settings_system_proto protoreflect.FileDescriptor
 
 const file_services_settings_system_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a\x1fresources/settings/status.proto\",\n" +
+	"\x1eservices/settings/system.proto\x12\x11services.settings\x1a\x19codegen/perms/perms.proto\x1a1resources/permissions/attributes/attributes.proto\x1a3resources/permissions/permissions/permissions.proto\x1a\x1eresources/settings/perms.proto\x1a\x1fresources/settings/status.proto\",\n" +
 	"\x18GetAllPermissionsRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\"\xa6\x01\n" +
-	"\x19GetAllPermissionsResponse\x12C\n" +
-	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\x03job\x18\x01 \x01(\tR\x03job\"\xbd\x01\n" +
+	"\x19GetAllPermissionsResponse\x12O\n" +
+	"\vpermissions\x18\x01 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\x18\x02 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributes\"'\n" +
 	"\x13GetJobLimitsRequest\x12\x10\n" +
-	"\x03job\x18\x01 \x01(\tR\x03job\"\xe3\x01\n" +
+	"\x03job\x18\x01 \x01(\tR\x03job\"\xfa\x01\n" +
 	"\x14GetJobLimitsResponse\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12 \n" +
-	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12C\n" +
-	"\vpermissions\x18\x03 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12O\n" +
+	"\vpermissions\x18\x03 \x03(\v2-.resources.permissions.permissions.PermissionR\vpermissions\x12O\n" +
 	"\n" +
-	"attributes\x18\x04 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\x18\x04 \x03(\v2/.resources.permissions.attributes.RoleAttributeR\n" +
 	"attributesB\f\n" +
 	"\n" +
 	"_job_label\"\xb6\x01\n" +
@@ -529,7 +530,7 @@ const file_services_settings_system_proto_rawDesc = "" +
 	"\x11GetAllPermissions\x12+.services.settings.GetAllPermissionsRequest\x1a,.services.settings.GetAllPermissionsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12r\n" +
 	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12{\n" +
 	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuser\x12u\n" +
-	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
+	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\"\x11\xd2\xf3\x18\r\b\x01\x1a\tSuperuserBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
 	file_services_settings_system_proto_rawDescOnce sync.Once
@@ -555,17 +556,17 @@ var file_services_settings_system_proto_goTypes = []any{
 	(*DeleteFactionResponse)(nil),     // 7: services.settings.DeleteFactionResponse
 	(*GetStatusRequest)(nil),          // 8: services.settings.GetStatusRequest
 	(*GetStatusResponse)(nil),         // 9: services.settings.GetStatusResponse
-	(*permissions.Permission)(nil),    // 10: resources.permissions.Permission
-	(*permissions.RoleAttribute)(nil), // 11: resources.permissions.RoleAttribute
+	(*permissions.Permission)(nil),    // 10: resources.permissions.permissions.Permission
+	(*attributes.RoleAttribute)(nil),  // 11: resources.permissions.attributes.RoleAttribute
 	(*settings.PermsUpdate)(nil),      // 12: resources.settings.PermsUpdate
 	(*settings.AttrsUpdate)(nil),      // 13: resources.settings.AttrsUpdate
 	(*settings.SystemStatus)(nil),     // 14: resources.settings.SystemStatus
 }
 var file_services_settings_system_proto_depIdxs = []int32{
-	10, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	11, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	10, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
-	11, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	10, // 0: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	11, // 1: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
+	10, // 2: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.permissions.Permission
+	11, // 3: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.attributes.RoleAttribute
 	12, // 4: services.settings.UpdateJobLimitsRequest.perms:type_name -> resources.settings.PermsUpdate
 	13, // 5: services.settings.UpdateJobLimitsRequest.attrs:type_name -> resources.settings.AttrsUpdate
 	14, // 6: services.settings.GetStatusResponse.status:type_name -> resources.settings.SystemStatus

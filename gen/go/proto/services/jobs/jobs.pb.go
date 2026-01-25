@@ -7,11 +7,13 @@
 package jobs
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	activity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues/activity"
+	labels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/labels"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -138,7 +140,7 @@ func (x *ListColleaguesRequest) GetNameSuffix() string {
 type ListColleaguesResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Colleagues    []*jobs.Colleague            `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
+	Colleagues    []*colleagues.Colleague      `protobuf:"bytes,2,rep,name=colleagues,proto3" json:"colleagues,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -180,7 +182,7 @@ func (x *ListColleaguesResponse) GetPagination() *database.PaginationResponse {
 	return nil
 }
 
-func (x *ListColleaguesResponse) GetColleagues() []*jobs.Colleague {
+func (x *ListColleaguesResponse) GetColleagues() []*colleagues.Colleague {
 	if x != nil {
 		return x.Colleagues
 	}
@@ -225,7 +227,7 @@ func (*GetSelfRequest) Descriptor() ([]byte, []int) {
 
 type GetSelfResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Colleague     *jobs.Colleague        `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
+	Colleague     *colleagues.Colleague  `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -260,7 +262,7 @@ func (*GetSelfResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetSelfResponse) GetColleague() *jobs.Colleague {
+func (x *GetSelfResponse) GetColleague() *colleagues.Colleague {
 	if x != nil {
 		return x.Colleague
 	}
@@ -321,7 +323,7 @@ func (x *GetColleagueRequest) GetInfoOnly() bool {
 
 type GetColleagueResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Colleague     *jobs.Colleague        `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
+	Colleague     *colleagues.Colleague  `protobuf:"bytes,1,opt,name=colleague,proto3" json:"colleague,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -356,7 +358,7 @@ func (*GetColleagueResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetColleagueResponse) GetColleague() *jobs.Colleague {
+func (x *GetColleagueResponse) GetColleague() *colleagues.Colleague {
 	if x != nil {
 		return x.Colleague
 	}
@@ -368,8 +370,8 @@ type ListColleagueActivityRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserIds       []int32                      `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	ActivityTypes []jobs.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.ColleagueActivityType" json:"activity_types,omitempty"`
+	UserIds       []int32                          `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	ActivityTypes []activity.ColleagueActivityType `protobuf:"varint,4,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.jobs.colleagues.activity.ColleagueActivityType" json:"activity_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -425,7 +427,7 @@ func (x *ListColleagueActivityRequest) GetUserIds() []int32 {
 	return nil
 }
 
-func (x *ListColleagueActivityRequest) GetActivityTypes() []jobs.ColleagueActivityType {
+func (x *ListColleagueActivityRequest) GetActivityTypes() []activity.ColleagueActivityType {
 	if x != nil {
 		return x.ActivityTypes
 	}
@@ -433,9 +435,9 @@ func (x *ListColleagueActivityRequest) GetActivityTypes() []jobs.ColleagueActivi
 }
 
 type ListColleagueActivityResponse struct {
-	state         protoimpl.MessageState       `protogen:"open.v1"`
-	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Activity      []*jobs.ColleagueActivity    `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
+	state         protoimpl.MessageState        `protogen:"open.v1"`
+	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Activity      []*activity.ColleagueActivity `protobuf:"bytes,2,rep,name=activity,proto3" json:"activity,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -477,7 +479,7 @@ func (x *ListColleagueActivityResponse) GetPagination() *database.PaginationResp
 	return nil
 }
 
-func (x *ListColleagueActivityResponse) GetActivity() []*jobs.ColleagueActivity {
+func (x *ListColleagueActivityResponse) GetActivity() []*activity.ColleagueActivity {
 	if x != nil {
 		return x.Activity
 	}
@@ -485,9 +487,9 @@ func (x *ListColleagueActivityResponse) GetActivity() []*jobs.ColleagueActivity 
 }
 
 type SetColleaguePropsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Props         *colleagues.ColleagueProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Reason        string                     `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -522,7 +524,7 @@ func (*SetColleaguePropsRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SetColleaguePropsRequest) GetProps() *jobs.ColleagueProps {
+func (x *SetColleaguePropsRequest) GetProps() *colleagues.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -537,8 +539,8 @@ func (x *SetColleaguePropsRequest) GetReason() string {
 }
 
 type SetColleaguePropsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *jobs.ColleagueProps   `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Props         *colleagues.ColleagueProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -573,7 +575,7 @@ func (*SetColleaguePropsResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SetColleaguePropsResponse) GetProps() *jobs.ColleagueProps {
+func (x *SetColleaguePropsResponse) GetProps() *colleagues.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -626,7 +628,7 @@ func (x *GetColleagueLabelsRequest) GetSearch() string {
 
 type GetColleagueLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -661,7 +663,7 @@ func (*GetColleagueLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetColleagueLabelsResponse) GetLabels() []*jobs.Label {
+func (x *GetColleagueLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -670,7 +672,7 @@ func (x *GetColleagueLabelsResponse) GetLabels() []*jobs.Label {
 
 type ManageLabelsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -705,7 +707,7 @@ func (*ManageLabelsRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ManageLabelsRequest) GetLabels() []*jobs.Label {
+func (x *ManageLabelsRequest) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -714,7 +716,7 @@ func (x *ManageLabelsRequest) GetLabels() []*jobs.Label {
 
 type ManageLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*jobs.Label          `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*labels.Label        `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -749,7 +751,7 @@ func (*ManageLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *ManageLabelsResponse) GetLabels() []*jobs.Label {
+func (x *ManageLabelsResponse) GetLabels() []*labels.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -802,7 +804,7 @@ func (x *GetColleagueLabelsStatsRequest) GetLabelIds() []int64 {
 
 type GetColleagueLabelsStatsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         []*jobs.LabelCount     `protobuf:"bytes,1,rep,name=count,proto3" json:"count,omitempty"`
+	Count         []*labels.LabelCount   `protobuf:"bytes,1,rep,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -837,7 +839,7 @@ func (*GetColleagueLabelsStatsResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_jobs_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *GetColleagueLabelsStatsResponse) GetCount() []*jobs.LabelCount {
+func (x *GetColleagueLabelsStatsResponse) GetCount() []*labels.LabelCount {
 	if x != nil {
 		return x.Count
 	}
@@ -1016,7 +1018,7 @@ var File_services_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\"\xbc\x03\n" +
+	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a1resources/jobs/colleagues/activity/activity.proto\x1a*resources/jobs/colleagues/colleagues.proto\x1a\"resources/jobs/labels/labels.proto\"\xbc\x03\n" +
 	"\x15ListColleaguesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -1036,55 +1038,55 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"_user_onlyB\t\n" +
 	"\a_absentB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
-	"\f_name_suffix\"\xa8\x01\n" +
+	"\f_name_suffix\"\xb3\x01\n" +
 	"\x16ListColleaguesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12?\n" +
+	"pagination\x12J\n" +
 	"\n" +
-	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
+	"colleagues\x18\x02 \x03(\v2$.resources.jobs.colleagues.ColleagueB\x04\xc8\xf3\x18\x01R\n" +
 	"colleagues\"\x10\n" +
-	"\x0eGetSelfRequest\"J\n" +
-	"\x0fGetSelfResponse\x127\n" +
-	"\tcolleague\x18\x01 \x01(\v2\x19.resources.jobs.ColleagueR\tcolleague\"^\n" +
+	"\x0eGetSelfRequest\"U\n" +
+	"\x0fGetSelfResponse\x12B\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"^\n" +
 	"\x13GetColleagueRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x05R\x06userId\x12 \n" +
 	"\tinfo_only\x18\x02 \x01(\bH\x00R\binfoOnly\x88\x01\x01B\f\n" +
 	"\n" +
-	"_info_only\"O\n" +
-	"\x14GetColleagueResponse\x127\n" +
-	"\tcolleague\x18\x01 \x01(\v2\x19.resources.jobs.ColleagueR\tcolleague\"\x98\x02\n" +
+	"_info_only\"Z\n" +
+	"\x14GetColleagueResponse\x12B\n" +
+	"\tcolleague\x18\x01 \x01(\v2$.resources.jobs.colleagues.ColleagueR\tcolleague\"\xac\x02\n" +
 	"\x1cListColleagueActivityRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x19\n" +
-	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12L\n" +
-	"\x0eactivity_types\x18\x04 \x03(\x0e2%.resources.jobs.ColleagueActivityTypeR\ractivityTypesB\a\n" +
-	"\x05_sort\"\xb3\x01\n" +
+	"\buser_ids\x18\x03 \x03(\x05R\auserIds\x12`\n" +
+	"\x0eactivity_types\x18\x04 \x03(\x0e29.resources.jobs.colleagues.activity.ColleagueActivityTypeR\ractivityTypesB\a\n" +
+	"\x05_sort\"\xc7\x01\n" +
 	"\x1dListColleagueActivityResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12C\n" +
-	"\bactivity\x18\x02 \x03(\v2!.resources.jobs.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"p\n" +
-	"\x18SetColleaguePropsRequest\x124\n" +
-	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12\x1e\n" +
-	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"Q\n" +
-	"\x19SetColleaguePropsResponse\x124\n" +
-	"\x05props\x18\x01 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\"C\n" +
+	"pagination\x12W\n" +
+	"\bactivity\x18\x02 \x03(\v25.resources.jobs.colleagues.activity.ColleagueActivityB\x04\xc8\xf3\x18\x01R\bactivity\"{\n" +
+	"\x18SetColleaguePropsRequest\x12?\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\x12\x1e\n" +
+	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason\"\\\n" +
+	"\x19SetColleaguePropsResponse\x12?\n" +
+	"\x05props\x18\x01 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05props\"C\n" +
 	"\x19GetColleagueLabelsRequest\x12\x1b\n" +
 	"\x06search\x18\x01 \x01(\tH\x00R\x06search\x88\x01\x01B\t\n" +
-	"\a_search\"K\n" +
-	"\x1aGetColleagueLabelsResponse\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"D\n" +
-	"\x13ManageLabelsRequest\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"E\n" +
-	"\x14ManageLabelsResponse\x12-\n" +
-	"\x06labels\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x06labels\"=\n" +
+	"\a_search\"R\n" +
+	"\x1aGetColleagueLabelsResponse\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"K\n" +
+	"\x13ManageLabelsRequest\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"L\n" +
+	"\x14ManageLabelsResponse\x124\n" +
+	"\x06labels\x18\x01 \x03(\v2\x1c.resources.jobs.labels.LabelR\x06labels\"=\n" +
 	"\x1eGetColleagueLabelsStatsRequest\x12\x1b\n" +
-	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"S\n" +
-	"\x1fGetColleagueLabelsStatsResponse\x120\n" +
-	"\x05count\x18\x01 \x03(\v2\x1a.resources.jobs.LabelCountR\x05count\"\x10\n" +
+	"\tlabel_ids\x18\x01 \x03(\x03R\blabelIds\"Z\n" +
+	"\x1fGetColleagueLabelsStatsResponse\x127\n" +
+	"\x05count\x18\x01 \x03(\v2!.resources.jobs.labels.LabelCountR\x05count\"\x10\n" +
 	"\x0eGetMOTDRequest\"%\n" +
 	"\x0fGetMOTDResponse\x12\x12\n" +
 	"\x04motd\x18\x01 \x01(\tR\x04motd\".\n" +
@@ -1110,7 +1112,7 @@ const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\fManageLabels\x12\".services.jobs.ManageLabelsRequest\x1a#.services.jobs.ManageLabelsResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x8e\x01\n" +
 	"\x17GetColleagueLabelsStats\x12-.services.jobs.GetColleagueLabelsStatsRequest\x1a..services.jobs.GetColleagueLabelsStatsResponse\"\x14\xd2\xf3\x18\x10\b\x01\x1a\fGetColleague\x12U\n" +
 	"\aGetMOTD\x12\x1d.services.jobs.GetMOTDRequest\x1a\x1e.services.jobs.GetMOTDResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12P\n" +
-	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\aSetMOTD\x12\x1d.services.jobs.SetMOTDRequest\x1a\x1e.services.jobs.SetMOTDResponse\"\x06\xd2\xf3\x18\x02\b\x01\x1a\x1f\xea\xf3\x18\x1b\b<\x12\x17i-mdi-briefcase-outlineBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_jobs_proto_rawDescOnce sync.Once
@@ -1149,31 +1151,31 @@ var file_services_jobs_jobs_proto_goTypes = []any{
 	(*database.PaginationRequest)(nil),      // 20: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                   // 21: resources.common.database.Sort
 	(*database.PaginationResponse)(nil),     // 22: resources.common.database.PaginationResponse
-	(*jobs.Colleague)(nil),                  // 23: resources.jobs.Colleague
-	(jobs.ColleagueActivityType)(0),         // 24: resources.jobs.ColleagueActivityType
-	(*jobs.ColleagueActivity)(nil),          // 25: resources.jobs.ColleagueActivity
-	(*jobs.ColleagueProps)(nil),             // 26: resources.jobs.ColleagueProps
-	(*jobs.Label)(nil),                      // 27: resources.jobs.Label
-	(*jobs.LabelCount)(nil),                 // 28: resources.jobs.LabelCount
+	(*colleagues.Colleague)(nil),            // 23: resources.jobs.colleagues.Colleague
+	(activity.ColleagueActivityType)(0),     // 24: resources.jobs.colleagues.activity.ColleagueActivityType
+	(*activity.ColleagueActivity)(nil),      // 25: resources.jobs.colleagues.activity.ColleagueActivity
+	(*colleagues.ColleagueProps)(nil),       // 26: resources.jobs.colleagues.ColleagueProps
+	(*labels.Label)(nil),                    // 27: resources.jobs.labels.Label
+	(*labels.LabelCount)(nil),               // 28: resources.jobs.labels.LabelCount
 }
 var file_services_jobs_jobs_proto_depIdxs = []int32{
 	20, // 0: services.jobs.ListColleaguesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	21, // 1: services.jobs.ListColleaguesRequest.sort:type_name -> resources.common.database.Sort
 	22, // 2: services.jobs.ListColleaguesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.Colleague
-	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.Colleague
-	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.Colleague
+	23, // 3: services.jobs.ListColleaguesResponse.colleagues:type_name -> resources.jobs.colleagues.Colleague
+	23, // 4: services.jobs.GetSelfResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
+	23, // 5: services.jobs.GetColleagueResponse.colleague:type_name -> resources.jobs.colleagues.Colleague
 	20, // 6: services.jobs.ListColleagueActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	21, // 7: services.jobs.ListColleagueActivityRequest.sort:type_name -> resources.common.database.Sort
-	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.ColleagueActivityType
+	24, // 8: services.jobs.ListColleagueActivityRequest.activity_types:type_name -> resources.jobs.colleagues.activity.ColleagueActivityType
 	22, // 9: services.jobs.ListColleagueActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.ColleagueActivity
-	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.ColleagueProps
-	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.ColleagueProps
-	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.Label
-	27, // 14: services.jobs.ManageLabelsRequest.labels:type_name -> resources.jobs.Label
-	27, // 15: services.jobs.ManageLabelsResponse.labels:type_name -> resources.jobs.Label
-	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.LabelCount
+	25, // 10: services.jobs.ListColleagueActivityResponse.activity:type_name -> resources.jobs.colleagues.activity.ColleagueActivity
+	26, // 11: services.jobs.SetColleaguePropsRequest.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	26, // 12: services.jobs.SetColleaguePropsResponse.props:type_name -> resources.jobs.colleagues.ColleagueProps
+	27, // 13: services.jobs.GetColleagueLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	27, // 14: services.jobs.ManageLabelsRequest.labels:type_name -> resources.jobs.labels.Label
+	27, // 15: services.jobs.ManageLabelsResponse.labels:type_name -> resources.jobs.labels.Label
+	28, // 16: services.jobs.GetColleagueLabelsStatsResponse.count:type_name -> resources.jobs.labels.LabelCount
 	0,  // 17: services.jobs.JobsService.ListColleagues:input_type -> services.jobs.ListColleaguesRequest
 	2,  // 18: services.jobs.JobsService.GetSelf:input_type -> services.jobs.GetSelfRequest
 	4,  // 19: services.jobs.JobsService.GetColleague:input_type -> services.jobs.GetColleagueRequest

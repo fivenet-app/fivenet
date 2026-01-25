@@ -12,10 +12,10 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ContentType } from "../common/content/content";
-import { UserShort } from "../users/users";
+import { UserShort } from "../users/short/user";
 import { Timestamp } from "../timestamp/timestamp";
 import { File } from "../file/file";
-import { PageAccess } from "./access";
+import { PageAccess } from "./access/access";
 import { Content } from "../common/content/content";
 /**
  * @generated from protobuf message resources.wiki.Page
@@ -46,7 +46,7 @@ export interface Page {
      */
     content?: Content;
     /**
-     * @generated from protobuf field: resources.wiki.PageAccess access = 7
+     * @generated from protobuf field: resources.wiki.access.PageAccess access = 7
      */
     access?: PageAccess;
     /**
@@ -87,7 +87,7 @@ export interface PageMeta {
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 8
+     * @generated from protobuf field: optional resources.users.short.UserShort creator = 8
      */
     creator?: UserShort;
     /**
@@ -231,7 +231,7 @@ class Page$Type extends MessageType<Page> {
                 case /* resources.common.content.Content content */ 6:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
-                case /* resources.wiki.PageAccess access */ 7:
+                case /* resources.wiki.access.PageAccess access */ 7:
                     message.access = PageAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 case /* repeated resources.file.File files */ 8:
@@ -267,7 +267,7 @@ class Page$Type extends MessageType<Page> {
         /* resources.common.content.Content content = 6; */
         if (message.content)
             Content.internalBinaryWrite(message.content, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.wiki.PageAccess access = 7; */
+        /* resources.wiki.access.PageAccess access = 7; */
         if (message.access)
             PageAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.file.File files = 8; */
@@ -342,7 +342,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
                 case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 8:
+                case /* optional resources.users.short.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 case /* resources.common.content.ContentType content_type */ 9:
@@ -396,7 +396,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
         /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
             writer.tag(7, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 8; */
+        /* optional resources.users.short.UserShort creator = 8; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         /* resources.common.content.ContentType content_type = 9; */

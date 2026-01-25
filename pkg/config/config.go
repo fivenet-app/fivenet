@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/zaputils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/zaputils"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap/zapcore"
 )

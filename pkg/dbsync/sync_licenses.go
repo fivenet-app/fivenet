@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync"
+	userslicenses "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/licenses"
+	pbsync "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
@@ -34,7 +34,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	q := s.cfg.Tables.Licenses.GetQuery(s.state, 0, limit)
 	s.logger.Debug("licenses sync query", zap.String("query", q))
 
-	licenses := []*users.License{}
+	licenses := []*userslicenses.License{}
 	if _, err := qrm.Query(ctx, s.db, q, []any{}, &licenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err

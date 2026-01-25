@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils/instance"
 	"github.com/kardianos/service"
 	"go.uber.org/fx"
 )

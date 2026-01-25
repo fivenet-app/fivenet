@@ -5,15 +5,15 @@ package resources.documents;
 import "buf/validate/validate.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/content/content.proto";
-import "resources/documents/category.proto";
-import "resources/documents/pins.proto";
-import "resources/documents/workflow.proto";
+import "resources/documents/category/category.proto";
+import "resources/documents/pins/pins.proto";
+import "resources/documents/workflow/workflow.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
+import "resources/users/short/user.proto";
 import "tagger/tagger.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents;documents";
 
 message Document {
   int64 id = 1;
@@ -21,7 +21,7 @@ message Document {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   optional int64 category_id = 5;
-  optional resources.documents.Category category = 6 [(tagger.tags) = "alias:\"category\""];
+  optional resources.documents.category.Category category = 6 [(tagger.tags) = "alias:\"category\""];
   string title = 7 [
     (buf.validate.field).string = {
       min_len: 3
@@ -44,14 +44,14 @@ message Document {
     (tagger.tags) = "alias:\"data\""
   ];
   optional int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
   DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
   optional int64 template_id = 16;
-  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 18;
-  optional WorkflowUserState workflow_user = 19;
+  optional resources.documents.pins.DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional resources.documents.workflow.WorkflowState workflow_state = 18;
+  optional resources.documents.workflow.WorkflowUserState workflow_user = 19;
   repeated resources.file.File files = 20 [(tagger.tags) = "alias:\"files\""];
 }
 
@@ -61,7 +61,7 @@ message DocumentShort {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   optional int64 category_id = 5;
-  optional resources.documents.Category category = 6 [(tagger.tags) = "alias:\"category\""];
+  optional resources.documents.category.Category category = 6 [(tagger.tags) = "alias:\"category\""];
   string title = 7 [
     (buf.validate.field).string = {
       min_len: 3
@@ -79,13 +79,13 @@ message DocumentShort {
   resources.common.content.ContentType content_type = 8 [(buf.validate.field).enum.defined_only = true];
   resources.common.content.Content content = 9;
   optional int32 creator_id = 11 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
+  optional resources.users.short.UserShort creator = 12 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 13 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 14 [(buf.validate.field).string.max_len = 50];
   DocumentMeta meta = 15 [(tagger.tags) = "alias:\"meta\""];
-  optional DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
-  optional WorkflowState workflow_state = 18;
-  optional WorkflowUserState workflow_user = 19;
+  optional resources.documents.pins.DocumentPin pin = 17 [(tagger.tags) = "alias:\"pin\""];
+  optional resources.documents.workflow.WorkflowState workflow_state = 18;
+  optional resources.documents.workflow.WorkflowUserState workflow_user = 19;
 }
 
 message DocumentMeta {
@@ -119,87 +119,4 @@ message DocumentMeta {
   optional bool ap_any_declined = 21;
   // Number of active approval policies
   optional int32 ap_policies_active = 22;
-}
-
-enum DocReference {
-  DOC_REFERENCE_UNSPECIFIED = 0;
-  DOC_REFERENCE_LINKED = 1;
-  DOC_REFERENCE_SOLVES = 2;
-  DOC_REFERENCE_CLOSES = 3;
-  DOC_REFERENCE_DEPRECATES = 4;
-}
-
-message DocumentReference {
-  optional int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 source_document_id = 3 [(tagger.tags) = "alias:\"source_document_id\""];
-  optional resources.documents.DocumentShort source_document = 4 [(tagger.tags) = "alias:\"source_document\""];
-  DocReference reference = 5 [
-    (buf.validate.field).enum.defined_only = true,
-    (tagger.tags) = "alias:\"reference\""
-  ];
-  int64 target_document_id = 6 [(tagger.tags) = "alias:\"target_document_id\""];
-  optional resources.documents.DocumentShort target_document = 7 [(tagger.tags) = "alias:\"target_document\""];
-  optional int32 creator_id = 8 [(buf.validate.field).int32.gt = 0];
-  optional resources.users.UserShort creator = 9 [(tagger.tags) = "alias:\"ref_creator\""];
-}
-
-enum DocRelation {
-  DOC_RELATION_UNSPECIFIED = 0;
-  DOC_RELATION_MENTIONED = 1;
-  DOC_RELATION_TARGETS = 2;
-  DOC_RELATION_CAUSED = 3;
-}
-
-message DocumentRelation {
-  optional int64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  int64 document_id = 3;
-  optional resources.documents.DocumentShort document = 4 [(tagger.tags) = "alias:\"document\""];
-  int32 source_user_id = 5 [
-    (buf.validate.field).int32.gt = 0,
-    (tagger.tags) = "alias:\"source_user_id\""
-  ];
-  optional resources.users.UserShort source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
-  DocRelation relation = 7 [
-    (buf.validate.field).enum.defined_only = true,
-    (tagger.tags) = "alias:\"relation\""
-  ];
-  int32 target_user_id = 8 [
-    (buf.validate.field).int32.gt = 0,
-    (tagger.tags) = "alias:\"target_user_id\""
-  ];
-  optional resources.users.UserShort target_user = 9 [(tagger.tags) = "alias:\"target_user\""];
-}
-
-message WorkflowState {
-  int64 document_id = 1;
-  optional resources.timestamp.Timestamp next_reminder_time = 2;
-  optional int32 next_reminder_count = 3;
-  int32 reminder_count = 5 [(buf.validate.field).int32 = {
-    gte: 1
-    lte: 10
-  }];
-  optional resources.timestamp.Timestamp auto_close_time = 4;
-
-  optional resources.documents.Workflow workflow = 6 [(tagger.tags) = "alias:\"workflow\""];
-  optional resources.documents.DocumentShort document = 7;
-}
-
-message WorkflowUserState {
-  int64 document_id = 1;
-  int32 user_id = 2 [(buf.validate.field).int32.gt = 0];
-  optional resources.timestamp.Timestamp manual_reminder_time = 3;
-  optional string manual_reminder_message = 4 [(buf.validate.field).string.max_len = 255];
-  int32 reminder_count = 5 [(buf.validate.field).int32 = {
-    gte: 1
-    lte: 10
-  }];
-  int32 max_reminder_count = 6 [(buf.validate.field).int32 = {
-    gte: 1
-    lte: 10
-  }];
-
-  optional resources.documents.Workflow workflow = 7 [(tagger.tags) = "alias:\"workflow\""];
-  optional resources.documents.DocumentShort document = 8;
 }

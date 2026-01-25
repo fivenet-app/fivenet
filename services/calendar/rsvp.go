@@ -4,17 +4,18 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -38,7 +39,7 @@ func (s *Server) ListCalendarEntryRSVP(
 		entry.GetCalendarId(),
 		entry.GetId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		true,
 	)
 	if err != nil {
@@ -53,7 +54,9 @@ func (s *Server) ListCalendarEntryRSVP(
 
 	condition := mysql.AND(
 		tCalendarRSVP.EntryID.EQ(mysql.Int64(entry.GetId())),
-		tCalendarRSVP.Response.GT(mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))),
+		tCalendarRSVP.Response.GT(
+			mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN)),
+		),
 	)
 
 	countStmt := tCalendarRSVP.
@@ -154,7 +157,7 @@ func (s *Server) RSVPCalendarEntry(
 		entry.GetCalendarId(),
 		entry.GetId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		true,
 	)
 	if err != nil {
@@ -169,7 +172,7 @@ func (s *Server) RSVPCalendarEntry(
 	}
 
 	if req.Remove != nil && req.GetRemove() {
-		req.Entry.Response = calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN
+		req.Entry.Response = calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN
 	}
 
 	tCalendarRSVP := table.FivenetCalendarRsvp
@@ -214,7 +217,7 @@ func (s *Server) getRSVPCalendarEntry(
 	ctx context.Context,
 	entryId int64,
 	userId int32,
-) (*calendar.CalendarEntryRSVP, error) {
+) (*calendarentries.CalendarEntryRSVP, error) {
 	tUser := tables.User().AS("user_short")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -251,7 +254,7 @@ func (s *Server) getRSVPCalendarEntry(
 		)).
 		LIMIT(1)
 
-	var dest calendar.CalendarEntryRSVP
+	var dest calendarentries.CalendarEntryRSVP
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

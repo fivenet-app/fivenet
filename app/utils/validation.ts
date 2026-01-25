@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export const pageNumberSchema = z.coerce.number().int().nonnegative().min(1).max(999_999_999).prefault(1);
 

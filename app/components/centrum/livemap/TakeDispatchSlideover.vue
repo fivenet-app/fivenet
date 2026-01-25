@@ -4,8 +4,8 @@ import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vu
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { type Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
 
 const emit = defineEmits<{
     close: [boolean];

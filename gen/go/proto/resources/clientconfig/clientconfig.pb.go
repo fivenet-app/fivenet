@@ -7,7 +7,7 @@
 package clientconfig
 
 import (
-	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
+	settings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -745,7 +745,7 @@ const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\vintl_locale\x18\x01 \x01(\tB\x16\x9a\x84\x9e\x03\x11json:\"intlLocale\"H\x00R\n" +
 	"intlLocale\x88\x01\x01\x12=\n" +
 	"\rcurrency_name\x18\x02 \x01(\tB\x18\x9a\x84\x9e\x03\x13json:\"currencyName\"R\fcurrencyNameB\x0e\n" +
-	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
+	"\f_intl_localeBWZUgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/clientconfig;clientconfigb\x06proto3"
 
 var (
 	file_resources_clientconfig_clientconfig_proto_rawDescOnce sync.Once

@@ -5,19 +5,19 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	errorssettings "github.com/fivenet-app/fivenet/v2025/services/settings/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	notificationsevents "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications/events"
+	permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms/collections"
+	errorssettings "github.com/fivenet-app/fivenet/v2026/services/settings/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -29,7 +29,7 @@ var ignoredGuardPermissions = []string{}
 func (s *Server) ensureUserCanAccessRole(
 	ctx context.Context,
 	roleId int64,
-) (*permissions.Role, bool, error) {
+) (*permissionspermissions.Role, bool, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	role, err := s.ps.GetRole(ctx, roleId)
@@ -60,9 +60,9 @@ func (s *Server) ensureUserCanAccessRole(
 func (s *Server) filterPermissions(
 	ctx context.Context,
 	job string,
-	ps []*permissions.Permission,
-) ([]*permissions.Permission, error) {
-	filtered := []*permissions.Permission{}
+	ps []*permissionspermissions.Permission,
+) ([]*permissionspermissions.Permission, error) {
+	filtered := []*permissionspermissions.Permission{}
 
 	filters, err := s.ps.GetJobPermissions(ctx, job)
 	if err != nil {
@@ -137,7 +137,7 @@ func (s *Server) GetRoles(
 			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 		}
 
-		collectedRoles := map[string]*permissions.Role{}
+		collectedRoles := map[string]*permissionspermissions.Role{}
 		for _, role := range roles {
 			if _, ok := collectedRoles[role.GetJob()]; !ok {
 				collectedRoles[role.GetJob()] = role
@@ -158,12 +158,12 @@ func (s *Server) GetRoles(
 
 	resp := &pbsettings.GetRolesResponse{}
 	for _, r := range roles {
-		role := &permissions.Role{
+		role := &permissionspermissions.Role{
 			Id:          r.GetId(),
 			CreatedAt:   r.GetCreatedAt(),
 			Job:         r.GetJob(),
 			Grade:       r.GetGrade(),
-			Permissions: []*permissions.Permission{},
+			Permissions: []*permissionspermissions.Permission{},
 		}
 
 		s.enricher.EnrichJobInfoNoFallback(role)
@@ -199,7 +199,7 @@ func (s *Server) GetRole(
 	}
 
 	resp := &pbsettings.GetRoleResponse{
-		Role: &permissions.Role{
+		Role: &permissionspermissions.Role{
 			Id:        role.GetId(),
 			CreatedAt: role.GetCreatedAt(),
 			Job:       role.GetJob(),
@@ -336,8 +336,8 @@ func (s *Server) UpdateRolePerms(
 	// Send event to job grade employees
 	if _, err := s.js.PublishAsyncProto(ctx,
 		fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.JobGradeTopic, role.GetJob(), role.GetGrade()),
-		&notifications.JobGradeEvent{
-			Data: &notifications.JobGradeEvent_RefreshToken{
+		&notificationsevents.JobGradeEvent{
+			Data: &notificationsevents.JobGradeEvent_RefreshToken{
 				RefreshToken: true,
 			},
 		}); err != nil {
@@ -351,7 +351,7 @@ func (s *Server) UpdateRolePerms(
 
 func (s *Server) handlPermissionsUpdate(
 	ctx context.Context,
-	role *permissions.Role,
+	role *permissionspermissions.Role,
 	permsUpdate *settings.PermsUpdate,
 ) error {
 	updatePermIds := make([]int64, len(permsUpdate.GetToUpdate()))
@@ -416,7 +416,7 @@ func (s *Server) handlPermissionsUpdate(
 func (s *Server) handleAttributeUpdate(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	role *permissions.Role,
+	role *permissionspermissions.Role,
 	attrUpdates *settings.AttrsUpdate,
 ) error {
 	if len(attrUpdates.GetToUpdate()) > 0 {
@@ -499,7 +499,7 @@ func (s *Server) GetEffectivePermissions(
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	r := &permissions.Role{
+	r := &permissionspermissions.Role{
 		Id:    role.GetId(),
 		Job:   role.GetJob(),
 		Grade: role.GetGrade(),

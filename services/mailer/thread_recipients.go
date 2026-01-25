@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
+	maileraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/mailer/access"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	errorsmailer "github.com/fivenet-app/fivenet/v2026/services/mailer/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -21,7 +21,7 @@ func (s *Server) checkIfEmailPartOfThread(
 	userInfo *userinfo.UserInfo,
 	threadId int64,
 	emailId int64,
-	accessLevel mailer.AccessLevel,
+	accessLevel maileraccess.AccessLevel,
 ) error {
 	check, err := s.access.CanUserAccessTarget(ctx, emailId, userInfo, accessLevel)
 	if err != nil {

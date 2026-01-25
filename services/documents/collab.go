@@ -1,16 +1,16 @@
 package documents
 
 import (
-	pbcollab "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	pbcollab "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	permsdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/grpcws"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
@@ -37,7 +37,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 		ctx,
 		docId,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_ACCESS,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_ACCESS,
 	)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)

@@ -6,7 +6,7 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { getMailerMailerClient } from '~~/gen/ts/clients';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetEmailProposalsResponse } from '~~/gen/ts/services/mailer/mailer';

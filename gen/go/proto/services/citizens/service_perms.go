@@ -4,9 +4,9 @@
 package citizens
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  permkeys.CitizensServiceGetUserJobsPermField,
-					Type: permissions.JobGradeListAttributeType,
+					Type: permissionsattributes.JobGradeListAttributeType,
 				},
 			},
 			Order: 3000,
@@ -31,7 +31,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceListCitizensFieldsPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"},
 				},
 			},
@@ -44,7 +44,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceListUserActivityFieldsPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"SourceUser", "Own"},
 				},
 			},
@@ -64,7 +64,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.CitizensServiceSetUserPropsFieldsPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"},
 				},
 			},

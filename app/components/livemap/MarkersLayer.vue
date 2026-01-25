@@ -2,7 +2,7 @@
 import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
 
 defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;

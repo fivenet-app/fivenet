@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 

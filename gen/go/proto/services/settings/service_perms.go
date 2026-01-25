@@ -9,8 +9,8 @@
 package settings
 
 import (
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/settings/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {

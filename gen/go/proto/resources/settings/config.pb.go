@@ -7,8 +7,8 @@
 package settings
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -1237,7 +1237,7 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
 	"#DISCORD_BOT_PRESENCE_TYPE_LISTENING\x10\x02\x12'\n" +
 	"#DISCORD_BOT_PRESENCE_TYPE_STREAMING\x10\x03\x12#\n" +
-	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"
+	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var (
 	file_resources_settings_config_proto_rawDescOnce sync.Once

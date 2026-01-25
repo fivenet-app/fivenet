@@ -14,7 +14,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { PageActivity } from "../../resources/wiki/activity";
+import { PageActivity } from "../../resources/wiki/activity/activity";
 import { ContentType } from "../../resources/common/content/content";
 import { Page } from "../../resources/wiki/page";
 import { PageShort } from "../../resources/wiki/page";

@@ -1,5 +1,5 @@
-import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access/access';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 export function checkCalendarAccess(
     access: CalendarAccess | undefined,

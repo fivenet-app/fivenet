@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
 )
 
 type GroupedAccess interface {

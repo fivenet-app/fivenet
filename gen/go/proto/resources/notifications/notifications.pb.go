@@ -7,11 +7,11 @@
 package notifications
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	common "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	common "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -252,7 +252,7 @@ func (x *Notification) GetStarred() bool {
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Link          *Link                  `protobuf:"bytes,1,opt,name=link,proto3,oneof" json:"link,omitempty"`
-	CausedBy      *users.UserShort       `protobuf:"bytes,2,opt,name=caused_by,json=causedBy,proto3,oneof" json:"caused_by,omitempty"`
+	CausedBy      *short.UserShort       `protobuf:"bytes,2,opt,name=caused_by,json=causedBy,proto3,oneof" json:"caused_by,omitempty"`
 	Calendar      *CalendarData          `protobuf:"bytes,3,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -295,7 +295,7 @@ func (x *Data) GetLink() *Link {
 	return nil
 }
 
-func (x *Data) GetCausedBy() *users.UserShort {
+func (x *Data) GetCausedBy() *short.UserShort {
 	if x != nil {
 		return x.CausedBy
 	}
@@ -425,7 +425,7 @@ var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\"\x9d\x04\n" +
+	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\"\x9d\x04\n" +
 	"\fNotification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12=\n" +
 	"\n" +
@@ -441,10 +441,10 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	" \x01(\bH\x01R\astarred\x88\x01\x01B\a\n" +
 	"\x05_dataB\n" +
 	"\n" +
-	"\b_starred\"\xf0\x01\n" +
+	"\b_starred\"\xf6\x01\n" +
 	"\x04Data\x126\n" +
-	"\x04link\x18\x01 \x01(\v2\x1d.resources.notifications.LinkH\x00R\x04link\x88\x01\x01\x12<\n" +
-	"\tcaused_by\x18\x02 \x01(\v2\x1a.resources.users.UserShortH\x01R\bcausedBy\x88\x01\x01\x12F\n" +
+	"\x04link\x18\x01 \x01(\v2\x1d.resources.notifications.LinkH\x00R\x04link\x88\x01\x01\x12B\n" +
+	"\tcaused_by\x18\x02 \x01(\v2 .resources.users.short.UserShortH\x01R\bcausedBy\x88\x01\x01\x12F\n" +
 	"\bcalendar\x18\x03 \x01(\v2%.resources.notifications.CalendarDataH\x02R\bcalendar\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\a\n" +
 	"\x05_linkB\f\n" +
 	"\n" +
@@ -472,7 +472,7 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"!NOTIFICATION_CATEGORY_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dNOTIFICATION_CATEGORY_GENERAL\x10\x01\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_DOCUMENT\x10\x02\x12\"\n" +
-	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_notifications_proto_rawDescOnce sync.Once
@@ -497,7 +497,7 @@ var file_resources_notifications_notifications_proto_goTypes = []any{
 	(*CalendarData)(nil),        // 5: resources.notifications.CalendarData
 	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
 	(*common.I18NItem)(nil),     // 7: resources.common.I18NItem
-	(*users.UserShort)(nil),     // 8: resources.users.UserShort
+	(*short.UserShort)(nil),     // 8: resources.users.short.UserShort
 }
 var file_resources_notifications_notifications_proto_depIdxs = []int32{
 	6,  // 0: resources.notifications.Notification.created_at:type_name -> resources.timestamp.Timestamp
@@ -508,7 +508,7 @@ var file_resources_notifications_notifications_proto_depIdxs = []int32{
 	1,  // 5: resources.notifications.Notification.category:type_name -> resources.notifications.NotificationCategory
 	3,  // 6: resources.notifications.Notification.data:type_name -> resources.notifications.Data
 	4,  // 7: resources.notifications.Data.link:type_name -> resources.notifications.Link
-	8,  // 8: resources.notifications.Data.caused_by:type_name -> resources.users.UserShort
+	8,  // 8: resources.notifications.Data.caused_by:type_name -> resources.users.short.UserShort
 	5,  // 9: resources.notifications.Data.calendar:type_name -> resources.notifications.CalendarData
 	10, // [10:10] is the sub-list for method output_type
 	10, // [10:10] is the sub-list for method input_type

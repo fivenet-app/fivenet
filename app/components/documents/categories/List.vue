@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { CardElements } from '~/utils/types';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { Category } from '~~/gen/ts/resources/documents/category/category';
 
 const { can } = useAuth();
 

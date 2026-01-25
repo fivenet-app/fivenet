@@ -7,11 +7,13 @@
 package calendar
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	entries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -30,7 +32,7 @@ type ListCalendarsRequest struct {
 	state          protoimpl.MessageState      `protogen:"open.v1"`
 	Pagination     *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	OnlyPublic     bool                        `protobuf:"varint,2,opt,name=only_public,json=onlyPublic,proto3" json:"only_public,omitempty"`
-	MinAccessLevel *calendar.AccessLevel       `protobuf:"varint,3,opt,name=min_access_level,json=minAccessLevel,proto3,enum=resources.calendar.AccessLevel,oneof" json:"min_access_level,omitempty"`
+	MinAccessLevel *access.AccessLevel         `protobuf:"varint,3,opt,name=min_access_level,json=minAccessLevel,proto3,enum=resources.calendar.access.AccessLevel,oneof" json:"min_access_level,omitempty"`
 	After          *timestamp.Timestamp        `protobuf:"bytes,4,opt,name=after,proto3,oneof" json:"after,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
@@ -80,11 +82,11 @@ func (x *ListCalendarsRequest) GetOnlyPublic() bool {
 	return false
 }
 
-func (x *ListCalendarsRequest) GetMinAccessLevel() calendar.AccessLevel {
+func (x *ListCalendarsRequest) GetMinAccessLevel() access.AccessLevel {
 	if x != nil && x.MinAccessLevel != nil {
 		return *x.MinAccessLevel
 	}
-	return calendar.AccessLevel(0)
+	return access.AccessLevel(0)
 }
 
 func (x *ListCalendarsRequest) GetAfter() *timestamp.Timestamp {
@@ -567,8 +569,8 @@ func (x *ListCalendarEntriesRequest) GetAfter() *timestamp.Timestamp {
 }
 
 type ListCalendarEntriesResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Entries       []*calendar.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Entries       []*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -603,7 +605,7 @@ func (*ListCalendarEntriesResponse) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListCalendarEntriesResponse) GetEntries() []*calendar.CalendarEntry {
+func (x *ListCalendarEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -655,8 +657,8 @@ func (x *GetUpcomingEntriesRequest) GetSeconds() int32 {
 }
 
 type GetUpcomingEntriesResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Entries       []*calendar.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Entries       []*entries.CalendarEntry `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -691,7 +693,7 @@ func (*GetUpcomingEntriesResponse) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *GetUpcomingEntriesResponse) GetEntries() []*calendar.CalendarEntry {
+func (x *GetUpcomingEntriesResponse) GetEntries() []*entries.CalendarEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -743,8 +745,8 @@ func (x *GetCalendarEntryRequest) GetEntryId() int64 {
 }
 
 type GetCalendarEntryResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Entry         *calendar.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -779,7 +781,7 @@ func (*GetCalendarEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *GetCalendarEntryResponse) GetEntry() *calendar.CalendarEntry {
+func (x *GetCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -787,9 +789,9 @@ func (x *GetCalendarEntryResponse) GetEntry() *calendar.CalendarEntry {
 }
 
 type CreateOrUpdateCalendarEntryRequest struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Entry         *calendar.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
-	UserIds       []int32                 `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	UserIds       []int32                `protobuf:"varint,2,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -824,7 +826,7 @@ func (*CreateOrUpdateCalendarEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *CreateOrUpdateCalendarEntryRequest) GetEntry() *calendar.CalendarEntry {
+func (x *CreateOrUpdateCalendarEntryRequest) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -839,8 +841,8 @@ func (x *CreateOrUpdateCalendarEntryRequest) GetUserIds() []int32 {
 }
 
 type CreateOrUpdateCalendarEntryResponse struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Entry         *calendar.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Entry         *entries.CalendarEntry `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -875,7 +877,7 @@ func (*CreateOrUpdateCalendarEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *calendar.CalendarEntry {
+func (x *CreateOrUpdateCalendarEntryResponse) GetEntry() *entries.CalendarEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -1103,9 +1105,9 @@ func (x *ListCalendarEntryRSVPRequest) GetEntryId() int64 {
 }
 
 type ListCalendarEntryRSVPResponse struct {
-	state         protoimpl.MessageState        `protogen:"open.v1"`
-	Pagination    *database.PaginationResponse  `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Entries       []*calendar.CalendarEntryRSVP `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	Entries       []*entries.CalendarEntryRSVP `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1147,7 +1149,7 @@ func (x *ListCalendarEntryRSVPResponse) GetPagination() *database.PaginationResp
 	return nil
 }
 
-func (x *ListCalendarEntryRSVPResponse) GetEntries() []*calendar.CalendarEntryRSVP {
+func (x *ListCalendarEntryRSVPResponse) GetEntries() []*entries.CalendarEntryRSVP {
 	if x != nil {
 		return x.Entries
 	}
@@ -1155,10 +1157,10 @@ func (x *ListCalendarEntryRSVPResponse) GetEntries() []*calendar.CalendarEntryRS
 }
 
 type RSVPCalendarEntryRequest struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	Entry         *calendar.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
-	Subscribe     bool                        `protobuf:"varint,2,opt,name=subscribe,proto3" json:"subscribe,omitempty"`
-	Remove        *bool                       `protobuf:"varint,3,opt,name=remove,proto3,oneof" json:"remove,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Entry         *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Subscribe     bool                       `protobuf:"varint,2,opt,name=subscribe,proto3" json:"subscribe,omitempty"`
+	Remove        *bool                      `protobuf:"varint,3,opt,name=remove,proto3,oneof" json:"remove,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1193,7 +1195,7 @@ func (*RSVPCalendarEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{24}
 }
 
-func (x *RSVPCalendarEntryRequest) GetEntry() *calendar.CalendarEntryRSVP {
+func (x *RSVPCalendarEntryRequest) GetEntry() *entries.CalendarEntryRSVP {
 	if x != nil {
 		return x.Entry
 	}
@@ -1215,8 +1217,8 @@ func (x *RSVPCalendarEntryRequest) GetRemove() bool {
 }
 
 type RSVPCalendarEntryResponse struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
-	Entry         *calendar.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3,oneof" json:"entry,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Entry         *entries.CalendarEntryRSVP `protobuf:"bytes,1,opt,name=entry,proto3,oneof" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1251,7 +1253,7 @@ func (*RSVPCalendarEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_calendar_calendar_proto_rawDescGZIP(), []int{25}
 }
 
-func (x *RSVPCalendarEntryResponse) GetEntry() *calendar.CalendarEntryRSVP {
+func (x *RSVPCalendarEntryResponse) GetEntry() *entries.CalendarEntryRSVP {
 	if x != nil {
 		return x.Entry
 	}
@@ -1454,14 +1456,14 @@ var File_services_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a\x1fresources/calendar/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xaf\x02\n" +
+	" services/calendar/calendar.proto\x12\x11services.calendar\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a&resources/calendar/access/access.proto\x1a!resources/calendar/calendar.proto\x1a(resources/calendar/entries/entries.proto\x1a(resources/common/database/database.proto\x1a#resources/timestamp/timestamp.proto\"\xb6\x02\n" +
 	"\x14ListCalendarsRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x1f\n" +
 	"\vonly_public\x18\x02 \x01(\bR\n" +
-	"onlyPublic\x12N\n" +
-	"\x10min_access_level\x18\x03 \x01(\x0e2\x1f.resources.calendar.AccessLevelH\x00R\x0eminAccessLevel\x88\x01\x01\x129\n" +
+	"onlyPublic\x12U\n" +
+	"\x10min_access_level\x18\x03 \x01(\x0e2&.resources.calendar.access.AccessLevelH\x00R\x0eminAccessLevel\x88\x01\x01\x129\n" +
 	"\x05after\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x13\n" +
 	"\x11_min_access_levelB\b\n" +
 	"\x06_after\"\xa8\x01\n" +
@@ -1495,22 +1497,22 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"showHidden\x88\x01\x01\x129\n" +
 	"\x05after\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x05after\x88\x01\x01B\x0e\n" +
 	"\f_show_hiddenB\b\n" +
-	"\x06_after\"Z\n" +
-	"\x1bListCalendarEntriesResponse\x12;\n" +
-	"\aentries\x18\x01 \x03(\v2!.resources.calendar.CalendarEntryR\aentries\"5\n" +
+	"\x06_after\"b\n" +
+	"\x1bListCalendarEntriesResponse\x12C\n" +
+	"\aentries\x18\x01 \x03(\v2).resources.calendar.entries.CalendarEntryR\aentries\"5\n" +
 	"\x19GetUpcomingEntriesRequest\x12\x18\n" +
-	"\aseconds\x18\x01 \x01(\x05R\aseconds\"Y\n" +
-	"\x1aGetUpcomingEntriesResponse\x12;\n" +
-	"\aentries\x18\x01 \x03(\v2!.resources.calendar.CalendarEntryR\aentries\"4\n" +
+	"\aseconds\x18\x01 \x01(\x05R\aseconds\"a\n" +
+	"\x1aGetUpcomingEntriesResponse\x12C\n" +
+	"\aentries\x18\x01 \x03(\v2).resources.calendar.entries.CalendarEntryR\aentries\"4\n" +
 	"\x17GetCalendarEntryRequest\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"S\n" +
-	"\x18GetCalendarEntryResponse\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"x\n" +
-	"\"CreateOrUpdateCalendarEntryRequest\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\x12\x19\n" +
-	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"^\n" +
-	"#CreateOrUpdateCalendarEntryResponse\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.resources.calendar.CalendarEntryR\x05entry\"7\n" +
+	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"[\n" +
+	"\x18GetCalendarEntryResponse\x12?\n" +
+	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\"\x80\x01\n" +
+	"\"CreateOrUpdateCalendarEntryRequest\x12?\n" +
+	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\x12\x19\n" +
+	"\buser_ids\x18\x02 \x03(\x05R\auserIds\"f\n" +
+	"#CreateOrUpdateCalendarEntryResponse\x12?\n" +
+	"\x05entry\x18\x01 \x01(\v2).resources.calendar.entries.CalendarEntryR\x05entry\"7\n" +
 	"\x1aDeleteCalendarEntryRequest\x12\x19\n" +
 	"\bentry_id\x18\x01 \x01(\x03R\aentryId\"\x1d\n" +
 	"\x1bDeleteCalendarEntryResponse\"Q\n" +
@@ -1522,19 +1524,19 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xb5\x01\n" +
+	"\bentry_id\x18\x02 \x01(\x03R\aentryId\"\xbd\x01\n" +
 	"\x1dListCalendarEntryRSVPResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12E\n" +
-	"\aentries\x18\x02 \x03(\v2%.resources.calendar.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\x9d\x01\n" +
-	"\x18RSVPCalendarEntryRequest\x12;\n" +
-	"\x05entry\x18\x01 \x01(\v2%.resources.calendar.CalendarEntryRSVPR\x05entry\x12\x1c\n" +
+	"pagination\x12M\n" +
+	"\aentries\x18\x02 \x03(\v2-.resources.calendar.entries.CalendarEntryRSVPB\x04\xc8\xf3\x18\x01R\aentries\"\xa5\x01\n" +
+	"\x18RSVPCalendarEntryRequest\x12C\n" +
+	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPR\x05entry\x12\x1c\n" +
 	"\tsubscribe\x18\x02 \x01(\bR\tsubscribe\x12\x1b\n" +
 	"\x06remove\x18\x03 \x01(\bH\x00R\x06remove\x88\x01\x01B\t\n" +
-	"\a_remove\"g\n" +
-	"\x19RSVPCalendarEntryResponse\x12@\n" +
-	"\x05entry\x18\x01 \x01(\v2%.resources.calendar.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
+	"\a_remove\"o\n" +
+	"\x19RSVPCalendarEntryResponse\x12H\n" +
+	"\x05entry\x18\x01 \x01(\v2-.resources.calendar.entries.CalendarEntryRSVPH\x00R\x05entry\x88\x01\x01B\b\n" +
 	"\x06_entry\"h\n" +
 	"\x18ListSubscriptionsRequest\x12L\n" +
 	"\n" +
@@ -1566,7 +1568,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12{\n" +
 	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x12\x81\x01\n" +
-	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendarb\x06proto3"
+	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponse\"\v\xd2\xf3\x18\a\b\x01\x1a\x03Any\x1a\x1e\xea\xf3\x18\x1a\bF\x12\x16i-mdi-calendar-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar;calendarb\x06proto3"
 
 var (
 	file_services_calendar_calendar_proto_rawDescOnce sync.Once
@@ -1613,17 +1615,17 @@ var file_services_calendar_calendar_proto_goTypes = []any{
 	(*SubscribeToCalendarRequest)(nil),          // 28: services.calendar.SubscribeToCalendarRequest
 	(*SubscribeToCalendarResponse)(nil),         // 29: services.calendar.SubscribeToCalendarResponse
 	(*database.PaginationRequest)(nil),          // 30: resources.common.database.PaginationRequest
-	(calendar.AccessLevel)(0),                   // 31: resources.calendar.AccessLevel
+	(access.AccessLevel)(0),                     // 31: resources.calendar.access.AccessLevel
 	(*timestamp.Timestamp)(nil),                 // 32: resources.timestamp.Timestamp
 	(*database.PaginationResponse)(nil),         // 33: resources.common.database.PaginationResponse
 	(*calendar.Calendar)(nil),                   // 34: resources.calendar.Calendar
-	(*calendar.CalendarEntry)(nil),              // 35: resources.calendar.CalendarEntry
-	(*calendar.CalendarEntryRSVP)(nil),          // 36: resources.calendar.CalendarEntryRSVP
+	(*entries.CalendarEntry)(nil),               // 35: resources.calendar.entries.CalendarEntry
+	(*entries.CalendarEntryRSVP)(nil),           // 36: resources.calendar.entries.CalendarEntryRSVP
 	(*calendar.CalendarSub)(nil),                // 37: resources.calendar.CalendarSub
 }
 var file_services_calendar_calendar_proto_depIdxs = []int32{
 	30, // 0: services.calendar.ListCalendarsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	31, // 1: services.calendar.ListCalendarsRequest.min_access_level:type_name -> resources.calendar.AccessLevel
+	31, // 1: services.calendar.ListCalendarsRequest.min_access_level:type_name -> resources.calendar.access.AccessLevel
 	32, // 2: services.calendar.ListCalendarsRequest.after:type_name -> resources.timestamp.Timestamp
 	33, // 3: services.calendar.ListCalendarsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	34, // 4: services.calendar.ListCalendarsResponse.calendars:type_name -> resources.calendar.Calendar
@@ -1633,16 +1635,16 @@ var file_services_calendar_calendar_proto_depIdxs = []int32{
 	34, // 8: services.calendar.UpdateCalendarRequest.calendar:type_name -> resources.calendar.Calendar
 	34, // 9: services.calendar.UpdateCalendarResponse.calendar:type_name -> resources.calendar.Calendar
 	32, // 10: services.calendar.ListCalendarEntriesRequest.after:type_name -> resources.timestamp.Timestamp
-	35, // 11: services.calendar.ListCalendarEntriesResponse.entries:type_name -> resources.calendar.CalendarEntry
-	35, // 12: services.calendar.GetUpcomingEntriesResponse.entries:type_name -> resources.calendar.CalendarEntry
-	35, // 13: services.calendar.GetCalendarEntryResponse.entry:type_name -> resources.calendar.CalendarEntry
-	35, // 14: services.calendar.CreateOrUpdateCalendarEntryRequest.entry:type_name -> resources.calendar.CalendarEntry
-	35, // 15: services.calendar.CreateOrUpdateCalendarEntryResponse.entry:type_name -> resources.calendar.CalendarEntry
+	35, // 11: services.calendar.ListCalendarEntriesResponse.entries:type_name -> resources.calendar.entries.CalendarEntry
+	35, // 12: services.calendar.GetUpcomingEntriesResponse.entries:type_name -> resources.calendar.entries.CalendarEntry
+	35, // 13: services.calendar.GetCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntry
+	35, // 14: services.calendar.CreateOrUpdateCalendarEntryRequest.entry:type_name -> resources.calendar.entries.CalendarEntry
+	35, // 15: services.calendar.CreateOrUpdateCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntry
 	30, // 16: services.calendar.ListCalendarEntryRSVPRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	33, // 17: services.calendar.ListCalendarEntryRSVPResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	36, // 18: services.calendar.ListCalendarEntryRSVPResponse.entries:type_name -> resources.calendar.CalendarEntryRSVP
-	36, // 19: services.calendar.RSVPCalendarEntryRequest.entry:type_name -> resources.calendar.CalendarEntryRSVP
-	36, // 20: services.calendar.RSVPCalendarEntryResponse.entry:type_name -> resources.calendar.CalendarEntryRSVP
+	36, // 18: services.calendar.ListCalendarEntryRSVPResponse.entries:type_name -> resources.calendar.entries.CalendarEntryRSVP
+	36, // 19: services.calendar.RSVPCalendarEntryRequest.entry:type_name -> resources.calendar.entries.CalendarEntryRSVP
+	36, // 20: services.calendar.RSVPCalendarEntryResponse.entry:type_name -> resources.calendar.entries.CalendarEntryRSVP
 	30, // 21: services.calendar.ListSubscriptionsRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	33, // 22: services.calendar.ListSubscriptionsResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	37, // 23: services.calendar.ListSubscriptionsResponse.subs:type_name -> resources.calendar.CalendarSub

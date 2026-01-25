@@ -14,9 +14,9 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { ConductEntry } from "../../resources/jobs/conduct";
+import { ConductEntry } from "../../resources/jobs/conduct/conduct";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { ConductType } from "../../resources/jobs/conduct";
+import { ConductType } from "../../resources/jobs/conduct/conduct";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Conduct Register
@@ -36,7 +36,7 @@ export interface ListConductEntriesRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated resources.jobs.ConductType types = 3
+     * @generated from protobuf field: repeated resources.jobs.conduct.ConductType types = 3
      */
     types: ConductType[];
     /**
@@ -65,7 +65,7 @@ export interface ListConductEntriesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.ConductEntry entries = 2
+     * @generated from protobuf field: repeated resources.jobs.conduct.ConductEntry entries = 2
      */
     entries: ConductEntry[];
 }
@@ -83,7 +83,7 @@ export interface GetConductEntryRequest {
  */
 export interface GetConductEntryResponse {
     /**
-     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     * @generated from protobuf field: resources.jobs.conduct.ConductEntry entry = 1
      */
     entry?: ConductEntry;
 }
@@ -92,7 +92,7 @@ export interface GetConductEntryResponse {
  */
 export interface CreateConductEntryRequest {
     /**
-     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     * @generated from protobuf field: resources.jobs.conduct.ConductEntry entry = 1
      */
     entry?: ConductEntry;
 }
@@ -101,7 +101,7 @@ export interface CreateConductEntryRequest {
  */
 export interface CreateConductEntryResponse {
     /**
-     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     * @generated from protobuf field: resources.jobs.conduct.ConductEntry entry = 1
      */
     entry?: ConductEntry;
 }
@@ -110,7 +110,7 @@ export interface CreateConductEntryResponse {
  */
 export interface UpdateConductEntryRequest {
     /**
-     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     * @generated from protobuf field: resources.jobs.conduct.ConductEntry entry = 1
      */
     entry?: ConductEntry;
 }
@@ -119,7 +119,7 @@ export interface UpdateConductEntryRequest {
  */
 export interface UpdateConductEntryResponse {
     /**
-     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1
+     * @generated from protobuf field: resources.jobs.conduct.ConductEntry entry = 1
      */
     entry?: ConductEntry;
 }
@@ -143,7 +143,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         super("services.jobs.ListConductEntriesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
+            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.conduct.ConductType", ConductType, "CONDUCT_TYPE_"] },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "show_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
@@ -170,7 +170,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* repeated resources.jobs.ConductType types */ 3:
+                case /* repeated resources.jobs.conduct.ConductType types */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.types.push(reader.int32());
@@ -215,7 +215,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.ConductType types = 3; */
+        /* repeated resources.jobs.conduct.ConductType types = 3; */
         if (message.types.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.types.length; i++)
@@ -275,7 +275,7 @@ class ListConductEntriesResponse$Type extends MessageType<ListConductEntriesResp
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.ConductEntry entries */ 2:
+                case /* repeated resources.jobs.conduct.ConductEntry entries */ 2:
                     message.entries.push(ConductEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -293,7 +293,7 @@ class ListConductEntriesResponse$Type extends MessageType<ListConductEntriesResp
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.ConductEntry entries = 2; */
+        /* repeated resources.jobs.conduct.ConductEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             ConductEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -371,7 +371,7 @@ class GetConductEntryResponse$Type extends MessageType<GetConductEntryResponse> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ConductEntry entry */ 1:
+                case /* resources.jobs.conduct.ConductEntry entry */ 1:
                     message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -386,7 +386,7 @@ class GetConductEntryResponse$Type extends MessageType<GetConductEntryResponse> 
         return message;
     }
     internalBinaryWrite(message: GetConductEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ConductEntry entry = 1; */
+        /* resources.jobs.conduct.ConductEntry entry = 1; */
         if (message.entry)
             ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -417,7 +417,7 @@ class CreateConductEntryRequest$Type extends MessageType<CreateConductEntryReque
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ConductEntry entry */ 1:
+                case /* resources.jobs.conduct.ConductEntry entry */ 1:
                     message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -432,7 +432,7 @@ class CreateConductEntryRequest$Type extends MessageType<CreateConductEntryReque
         return message;
     }
     internalBinaryWrite(message: CreateConductEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ConductEntry entry = 1; */
+        /* resources.jobs.conduct.ConductEntry entry = 1; */
         if (message.entry)
             ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -463,7 +463,7 @@ class CreateConductEntryResponse$Type extends MessageType<CreateConductEntryResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ConductEntry entry */ 1:
+                case /* resources.jobs.conduct.ConductEntry entry */ 1:
                     message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -478,7 +478,7 @@ class CreateConductEntryResponse$Type extends MessageType<CreateConductEntryResp
         return message;
     }
     internalBinaryWrite(message: CreateConductEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ConductEntry entry = 1; */
+        /* resources.jobs.conduct.ConductEntry entry = 1; */
         if (message.entry)
             ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -509,7 +509,7 @@ class UpdateConductEntryRequest$Type extends MessageType<UpdateConductEntryReque
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ConductEntry entry */ 1:
+                case /* resources.jobs.conduct.ConductEntry entry */ 1:
                     message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -524,7 +524,7 @@ class UpdateConductEntryRequest$Type extends MessageType<UpdateConductEntryReque
         return message;
     }
     internalBinaryWrite(message: UpdateConductEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ConductEntry entry = 1; */
+        /* resources.jobs.conduct.ConductEntry entry = 1; */
         if (message.entry)
             ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -555,7 +555,7 @@ class UpdateConductEntryResponse$Type extends MessageType<UpdateConductEntryResp
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ConductEntry entry */ 1:
+                case /* resources.jobs.conduct.ConductEntry entry */ 1:
                     message.entry = ConductEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
                     break;
                 default:
@@ -570,7 +570,7 @@ class UpdateConductEntryResponse$Type extends MessageType<UpdateConductEntryResp
         return message;
     }
     internalBinaryWrite(message: UpdateConductEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ConductEntry entry = 1; */
+        /* resources.jobs.conduct.ConductEntry entry = 1; */
         if (message.entry)
             ConductEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

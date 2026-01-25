@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/collab"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"

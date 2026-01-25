@@ -1,7 +1,7 @@
 import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
 import type { Perms } from '~~/gen/ts/perms';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
 
 export type canMode = 'oneof' | 'all';
 
@@ -87,7 +87,7 @@ const _useAuth = () => {
         });
 
     const attrStringList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<string[]>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'stringList') {
@@ -97,7 +97,7 @@ const _useAuth = () => {
         });
 
     const attrJobList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<string[]>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobList') {
@@ -107,7 +107,7 @@ const _useAuth = () => {
         });
 
     const attrJobGradeList = (perm: Perms, key: string) =>
-        computed(() => {
+        computed<{ fineGrained: boolean; jobs: Record<string, boolean>; grades: Record<string, boolean> }>(() => {
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'jobGradeList') {

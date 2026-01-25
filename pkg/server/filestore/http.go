@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/h2non/filetype"
 	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"

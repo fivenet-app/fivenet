@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws"
 )
 
 var (

@@ -7,8 +7,8 @@
 package sync
 
 import (
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	colleagues "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/colleagues"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -96,7 +96,7 @@ func (x *UserOAuth2Conn) GetUsername() string {
 type UserProps struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Reason        *string                `protobuf:"bytes,1,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Props         *users.UserProps       `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *props.UserProps       `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -138,7 +138,7 @@ func (x *UserProps) GetReason() string {
 	return ""
 }
 
-func (x *UserProps) GetProps() *users.UserProps {
+func (x *UserProps) GetProps() *props.UserProps {
 	if x != nil {
 		return x.Props
 	}
@@ -146,9 +146,9 @@ func (x *UserProps) GetProps() *users.UserProps {
 }
 
 type ColleagueProps struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Reason        *string                `protobuf:"bytes,1,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Props         *jobs.ColleagueProps   `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Reason        *string                    `protobuf:"bytes,1,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Props         *colleagues.ColleagueProps `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -190,7 +190,7 @@ func (x *ColleagueProps) GetReason() string {
 	return ""
 }
 
-func (x *ColleagueProps) GetProps() *jobs.ColleagueProps {
+func (x *ColleagueProps) GetProps() *colleagues.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -346,7 +346,7 @@ var File_resources_sync_activity_proto protoreflect.FileDescriptor
 
 const file_resources_sync_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/sync/activity.proto\x12\x0eresources.sync\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/users/props.proto\"\x92\x01\n" +
+	"\x1dresources/sync/activity.proto\x12\x0eresources.sync\x1a*resources/jobs/colleagues/colleagues.proto\x1a!resources/users/props/props.proto\"\x92\x01\n" +
 	"\x0eUserOAuth2Conn\x12#\n" +
 	"\rprovider_name\x18\x01 \x01(\tR\fproviderName\x12\x1e\n" +
 	"\n" +
@@ -354,14 +354,14 @@ const file_resources_sync_activity_proto_rawDesc = "" +
 	"identifier\x12\x1f\n" +
 	"\vexternal_id\x18\x03 \x01(\tR\n" +
 	"externalId\x12\x1a\n" +
-	"\busername\x18\x04 \x01(\tR\busername\"e\n" +
+	"\busername\x18\x04 \x01(\tR\busername\"k\n" +
 	"\tUserProps\x12\x1b\n" +
-	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x120\n" +
-	"\x05props\x18\x02 \x01(\v2\x1a.resources.users.UserPropsR\x05propsB\t\n" +
-	"\a_reason\"n\n" +
+	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x126\n" +
+	"\x05props\x18\x02 \x01(\v2 .resources.users.props.UserPropsR\x05propsB\t\n" +
+	"\a_reason\"y\n" +
 	"\x0eColleagueProps\x12\x1b\n" +
-	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x124\n" +
-	"\x05props\x18\x02 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05propsB\t\n" +
+	"\x06reason\x18\x01 \x01(\tH\x00R\x06reason\x88\x01\x01\x12?\n" +
+	"\x05props\x18\x02 \x01(\v2).resources.jobs.colleagues.ColleaguePropsR\x05propsB\t\n" +
 	"\a_reason\"\xf8\x01\n" +
 	"\n" +
 	"UserUpdate\x12\x17\n" +
@@ -381,7 +381,7 @@ const file_resources_sync_activity_proto_rawDesc = "" +
 	"\x0fTimeclockUpdate\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x14\n" +
-	"\x05start\x18\x03 \x01(\bR\x05startBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\x05start\x18\x03 \x01(\bR\x05startBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_activity_proto_rawDescOnce sync.Once
@@ -397,17 +397,17 @@ func file_resources_sync_activity_proto_rawDescGZIP() []byte {
 
 var file_resources_sync_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_sync_activity_proto_goTypes = []any{
-	(*UserOAuth2Conn)(nil),      // 0: resources.sync.UserOAuth2Conn
-	(*UserProps)(nil),           // 1: resources.sync.UserProps
-	(*ColleagueProps)(nil),      // 2: resources.sync.ColleagueProps
-	(*UserUpdate)(nil),          // 3: resources.sync.UserUpdate
-	(*TimeclockUpdate)(nil),     // 4: resources.sync.TimeclockUpdate
-	(*users.UserProps)(nil),     // 5: resources.users.UserProps
-	(*jobs.ColleagueProps)(nil), // 6: resources.jobs.ColleagueProps
+	(*UserOAuth2Conn)(nil),            // 0: resources.sync.UserOAuth2Conn
+	(*UserProps)(nil),                 // 1: resources.sync.UserProps
+	(*ColleagueProps)(nil),            // 2: resources.sync.ColleagueProps
+	(*UserUpdate)(nil),                // 3: resources.sync.UserUpdate
+	(*TimeclockUpdate)(nil),           // 4: resources.sync.TimeclockUpdate
+	(*props.UserProps)(nil),           // 5: resources.users.props.UserProps
+	(*colleagues.ColleagueProps)(nil), // 6: resources.jobs.colleagues.ColleagueProps
 }
 var file_resources_sync_activity_proto_depIdxs = []int32{
-	5, // 0: resources.sync.UserProps.props:type_name -> resources.users.UserProps
-	6, // 1: resources.sync.ColleagueProps.props:type_name -> resources.jobs.ColleagueProps
+	5, // 0: resources.sync.UserProps.props:type_name -> resources.users.props.UserProps
+	6, // 1: resources.sync.ColleagueProps.props:type_name -> resources.jobs.colleagues.ColleagueProps
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

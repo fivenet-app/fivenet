@@ -23,10 +23,10 @@ import { DataJobs } from "../../resources/sync/data";
 import { UserUpdate } from "../../resources/sync/activity";
 import { TimeclockUpdate } from "../../resources/sync/activity";
 import { ColleagueProps } from "../../resources/sync/activity";
-import { ColleagueActivity } from "../../resources/jobs/activity";
+import { ColleagueActivity } from "../../resources/jobs/colleagues/activity/activity";
 import { UserProps } from "../../resources/sync/activity";
-import { UserActivity } from "../../resources/users/activity";
-import { Dispatch } from "../../resources/centrum/dispatches";
+import { UserActivity } from "../../resources/users/activity/activity";
+import { Dispatch } from "../../resources/centrum/dispatches/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity";
 import { DataStatus } from "../../resources/sync/data";
 /**
@@ -71,7 +71,7 @@ export interface AddActivityRequest {
     } | {
         oneofKind: "dispatch";
         /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch = 2
+         * @generated from protobuf field: resources.centrum.dispatches.Dispatch dispatch = 2
          */
         dispatch: Dispatch;
     } | {
@@ -79,7 +79,7 @@ export interface AddActivityRequest {
         /**
          * User activity
          *
-         * @generated from protobuf field: resources.users.UserActivity user_activity = 3
+         * @generated from protobuf field: resources.users.activity.UserActivity user_activity = 3
          */
         userActivity: UserActivity;
     } | {
@@ -95,7 +95,7 @@ export interface AddActivityRequest {
         /**
          * Jobs user activity
          *
-         * @generated from protobuf field: resources.jobs.ColleagueActivity colleague_activity = 5
+         * @generated from protobuf field: resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5
          */
         colleagueActivity: ColleagueActivity;
     } | {
@@ -426,13 +426,13 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userOauth2: UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userOauth2)
                     };
                     break;
-                case /* resources.centrum.Dispatch dispatch */ 2:
+                case /* resources.centrum.dispatches.Dispatch dispatch */ 2:
                     message.activity = {
                         oneofKind: "dispatch",
                         dispatch: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).dispatch)
                     };
                     break;
-                case /* resources.users.UserActivity user_activity */ 3:
+                case /* resources.users.activity.UserActivity user_activity */ 3:
                     message.activity = {
                         oneofKind: "userActivity",
                         userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
@@ -444,7 +444,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
                     };
                     break;
-                case /* resources.jobs.ColleagueActivity colleague_activity */ 5:
+                case /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity */ 5:
                     message.activity = {
                         oneofKind: "colleagueActivity",
                         colleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueActivity)
@@ -483,16 +483,16 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.sync.UserOAuth2Conn user_oauth2 = 1; */
         if (message.activity.oneofKind === "userOauth2")
             UserOAuth2Conn.internalBinaryWrite(message.activity.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatch dispatch = 2; */
+        /* resources.centrum.dispatches.Dispatch dispatch = 2; */
         if (message.activity.oneofKind === "dispatch")
             Dispatch.internalBinaryWrite(message.activity.dispatch, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserActivity user_activity = 3; */
+        /* resources.users.activity.UserActivity user_activity = 3; */
         if (message.activity.oneofKind === "userActivity")
             UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.sync.UserProps user_props = 4; */
         if (message.activity.oneofKind === "userProps")
             UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.ColleagueActivity colleague_activity = 5; */
+        /* resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5; */
         if (message.activity.oneofKind === "colleagueActivity")
             ColleagueActivity.internalBinaryWrite(message.activity.colleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* resources.sync.ColleagueProps colleague_props = 6; */

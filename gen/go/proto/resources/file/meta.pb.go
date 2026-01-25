@@ -7,7 +7,7 @@
 package file
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/dbscanner"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -150,7 +150,7 @@ const file_resources_file_meta_proto_rawDesc = "" +
 	"\x04meta\"9\n" +
 	"\tImageMeta\x12\x14\n" +
 	"\x05width\x18\x01 \x01(\x03R\x05width\x12\x16\n" +
-	"\x06height\x18\x02 \x01(\x03R\x06heightBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;fileb\x06proto3"
+	"\x06height\x18\x02 \x01(\x03R\x06heightBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file;fileb\x06proto3"
 
 var (
 	file_resources_file_meta_proto_rawDescOnce sync.Once

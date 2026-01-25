@@ -7,7 +7,7 @@ import { getQualificationsQualificationsClient } from '~~/gen/ts/clients';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { resultStatusToBadgeColor } from '../helpers';
 

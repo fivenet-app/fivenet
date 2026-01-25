@@ -3,8 +3,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity';
+import { DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
+import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity/activity';
 
 const props = defineProps<{
     activity: UserActivity;

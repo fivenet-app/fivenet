@@ -8,12 +8,12 @@ import "codegen/perms/perms.proto";
 import "codegen/sanitizer/sanitizer.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
-import "resources/users/activity.proto";
-import "resources/users/labels.proto";
-import "resources/users/props.proto";
-import "resources/users/users.proto";
+import "resources/users/activity/activity.proto";
+import "resources/users/labels/labels.proto";
+import "resources/users/props/props.proto";
+import "resources/users/user.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizens";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens;citizens";
 
 message ListCitizensRequest {
   resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
@@ -46,16 +46,16 @@ message ListUserActivityRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
-  repeated resources.users.UserActivityType types = 4 [(buf.validate.field).repeated.max_items = 20];
+  repeated resources.users.activity.UserActivityType types = 4 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message ListUserActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
-  repeated resources.users.UserActivity activity = 2 [(codegen.itemslen.enabled) = true];
+  repeated resources.users.activity.UserActivity activity = 2 [(codegen.itemslen.enabled) = true];
 }
 
 message SetUserPropsRequest {
-  resources.users.UserProps props = 1 [(buf.validate.field).required = true];
+  resources.users.props.UserProps props = 1 [(buf.validate.field).required = true];
   string reason = 2 [
     (buf.validate.field).string = {
       min_len: 3
@@ -67,7 +67,7 @@ message SetUserPropsRequest {
 }
 
 message SetUserPropsResponse {
-  resources.users.UserProps props = 1;
+  resources.users.props.UserProps props = 1;
 }
 
 message DeleteAvatarRequest {}
@@ -89,11 +89,11 @@ message DeleteMugshotRequest {
 message DeleteMugshotResponse {}
 
 message ManageLabelsRequest {
-  repeated resources.users.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
+  repeated resources.users.labels.Label labels = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ManageLabelsResponse {
-  repeated resources.users.Label labels = 1;
+  repeated resources.users.labels.Label labels = 1;
 }
 
 service CitizensService {

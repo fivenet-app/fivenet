@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 
-	goproto "github.com/fivenet-app/fivenet/v2025/gen/go/proto"
-	errorsgrpcauth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/errors"
-	pkgperms "github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	goproto "github.com/fivenet-app/fivenet/v2026/gen/go/proto"
+	errorsgrpcauth "github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth/errors"
+	pkgperms "github.com/fivenet-app/fivenet/v2026/pkg/perms"
 	"google.golang.org/grpc"
 )
 

@@ -1,11 +1,9 @@
 package collections
 
-import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-)
+import permissionspermissions "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/permissions"
 
 // Permissions provides methods for you to manage array data more easily.
-type Permissions []*permissions.Permission
+type Permissions []*permissionspermissions.Permission
 
 // Len returns the number of elements of the array.
 //

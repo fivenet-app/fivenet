@@ -12,8 +12,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserMarker } from "../../resources/livemap/user_marker";
-import { MarkerMarker } from "../../resources/livemap/marker_marker";
+import { UserMarker } from "../../resources/livemap/markers/user_marker";
+import { MarkerMarker } from "../../resources/livemap/markers/marker_marker";
 import { Job } from "../../resources/jobs/jobs";
 /**
  * @generated from protobuf message services.livemap.StreamRequest
@@ -83,7 +83,7 @@ export interface JobsList {
  */
 export interface MarkerMarkersUpdates {
     /**
-     * @generated from protobuf field: repeated resources.livemap.MarkerMarker updated = 1
+     * @generated from protobuf field: repeated resources.livemap.markers.MarkerMarker updated = 1
      */
     updated: MarkerMarker[];
     /**
@@ -113,7 +113,7 @@ export interface Snapshot {
      * All currently-known user markers, already filtered for
      * obsolete PURGE/DELETE events.
      *
-     * @generated from protobuf field: repeated resources.livemap.UserMarker markers = 1
+     * @generated from protobuf field: repeated resources.livemap.markers.UserMarker markers = 1
      */
     markers: UserMarker[];
 }
@@ -122,7 +122,7 @@ export interface Snapshot {
  */
 export interface UserUpdates {
     /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker updates = 1
+     * @generated from protobuf field: repeated resources.livemap.markers.UserMarker updates = 1
      */
     updates: UserMarker[];
 }
@@ -157,7 +157,7 @@ export interface UserDelete {
  */
 export interface CreateOrUpdateMarkerRequest {
     /**
-     * @generated from protobuf field: resources.livemap.MarkerMarker marker = 1
+     * @generated from protobuf field: resources.livemap.markers.MarkerMarker marker = 1
      */
     marker?: MarkerMarker;
 }
@@ -166,7 +166,7 @@ export interface CreateOrUpdateMarkerRequest {
  */
 export interface CreateOrUpdateMarkerResponse {
     /**
-     * @generated from protobuf field: resources.livemap.MarkerMarker marker = 1
+     * @generated from protobuf field: resources.livemap.markers.MarkerMarker marker = 1
      */
     marker?: MarkerMarker;
 }
@@ -399,7 +399,7 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.MarkerMarker updated */ 1:
+                case /* repeated resources.livemap.markers.MarkerMarker updated */ 1:
                     message.updated.push(MarkerMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* repeated int64 deleted */ 2:
@@ -427,7 +427,7 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         return message;
     }
     internalBinaryWrite(message: MarkerMarkersUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.MarkerMarker updated = 1; */
+        /* repeated resources.livemap.markers.MarkerMarker updated = 1; */
         for (let i = 0; i < message.updated.length; i++)
             MarkerMarker.internalBinaryWrite(message.updated[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated int64 deleted = 2; */
@@ -472,7 +472,7 @@ class Snapshot$Type extends MessageType<Snapshot> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.UserMarker markers */ 1:
+                case /* repeated resources.livemap.markers.UserMarker markers */ 1:
                     message.markers.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -487,7 +487,7 @@ class Snapshot$Type extends MessageType<Snapshot> {
         return message;
     }
     internalBinaryWrite(message: Snapshot, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.UserMarker markers = 1; */
+        /* repeated resources.livemap.markers.UserMarker markers = 1; */
         for (let i = 0; i < message.markers.length; i++)
             UserMarker.internalBinaryWrite(message.markers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -519,7 +519,7 @@ class UserUpdates$Type extends MessageType<UserUpdates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.UserMarker updates */ 1:
+                case /* repeated resources.livemap.markers.UserMarker updates */ 1:
                     message.updates.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -534,7 +534,7 @@ class UserUpdates$Type extends MessageType<UserUpdates> {
         return message;
     }
     internalBinaryWrite(message: UserUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.UserMarker updates = 1; */
+        /* repeated resources.livemap.markers.UserMarker updates = 1; */
         for (let i = 0; i < message.updates.length; i++)
             UserMarker.internalBinaryWrite(message.updates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -667,7 +667,7 @@ class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.livemap.MarkerMarker marker */ 1:
+                case /* resources.livemap.markers.MarkerMarker marker */ 1:
                     message.marker = MarkerMarker.internalBinaryRead(reader, reader.uint32(), options, message.marker);
                     break;
                 default:
@@ -682,7 +682,7 @@ class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerR
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.livemap.MarkerMarker marker = 1; */
+        /* resources.livemap.markers.MarkerMarker marker = 1; */
         if (message.marker)
             MarkerMarker.internalBinaryWrite(message.marker, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -713,7 +713,7 @@ class CreateOrUpdateMarkerResponse$Type extends MessageType<CreateOrUpdateMarker
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.livemap.MarkerMarker marker */ 1:
+                case /* resources.livemap.markers.MarkerMarker marker */ 1:
                     message.marker = MarkerMarker.internalBinaryRead(reader, reader.uint32(), options, message.marker);
                     break;
                 default:
@@ -728,7 +728,7 @@ class CreateOrUpdateMarkerResponse$Type extends MessageType<CreateOrUpdateMarker
         return message;
     }
     internalBinaryWrite(message: CreateOrUpdateMarkerResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.livemap.MarkerMarker marker = 1; */
+        /* resources.livemap.markers.MarkerMarker marker = 1; */
         if (message.marker)
             MarkerMarker.internalBinaryWrite(message.marker, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

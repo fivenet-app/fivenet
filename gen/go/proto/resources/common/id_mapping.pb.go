@@ -71,7 +71,7 @@ const file_resources_common_id_mapping_proto_rawDesc = "" +
 	"\n" +
 	"!resources/common/id_mapping.proto\x12\x10resources.common\"\x1b\n" +
 	"\tIDMapping\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02idBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x02id\x18\x01 \x01(\x03R\x02idBKZIgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_id_mapping_proto_rawDescOnce sync.Once

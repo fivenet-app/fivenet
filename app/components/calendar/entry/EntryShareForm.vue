@@ -6,7 +6,7 @@ import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { getCalendarCalendarClient } from '~~/gen/ts/clients';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{

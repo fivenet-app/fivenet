@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/internal/tests"
-	"github.com/fivenet-app/fivenet/v2025/query"
+	"github.com/fivenet-app/fivenet/v2026/internal/tests"
+	"github.com/fivenet-app/fivenet/v2026/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"

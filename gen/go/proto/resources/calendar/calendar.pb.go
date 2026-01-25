@@ -7,11 +7,10 @@
 package calendar
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/dbscanner"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -27,64 +26,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type RsvpResponses int32
-
-const (
-	RsvpResponses_RSVP_RESPONSES_UNSPECIFIED RsvpResponses = 0
-	RsvpResponses_RSVP_RESPONSES_HIDDEN      RsvpResponses = 1
-	RsvpResponses_RSVP_RESPONSES_INVITED     RsvpResponses = 2
-	RsvpResponses_RSVP_RESPONSES_NO          RsvpResponses = 3
-	RsvpResponses_RSVP_RESPONSES_MAYBE       RsvpResponses = 4
-	RsvpResponses_RSVP_RESPONSES_YES         RsvpResponses = 5
-)
-
-// Enum value maps for RsvpResponses.
-var (
-	RsvpResponses_name = map[int32]string{
-		0: "RSVP_RESPONSES_UNSPECIFIED",
-		1: "RSVP_RESPONSES_HIDDEN",
-		2: "RSVP_RESPONSES_INVITED",
-		3: "RSVP_RESPONSES_NO",
-		4: "RSVP_RESPONSES_MAYBE",
-		5: "RSVP_RESPONSES_YES",
-	}
-	RsvpResponses_value = map[string]int32{
-		"RSVP_RESPONSES_UNSPECIFIED": 0,
-		"RSVP_RESPONSES_HIDDEN":      1,
-		"RSVP_RESPONSES_INVITED":     2,
-		"RSVP_RESPONSES_NO":          3,
-		"RSVP_RESPONSES_MAYBE":       4,
-		"RSVP_RESPONSES_YES":         5,
-	}
-)
-
-func (x RsvpResponses) Enum() *RsvpResponses {
-	p := new(RsvpResponses)
-	*p = x
-	return p
-}
-
-func (x RsvpResponses) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (RsvpResponses) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_calendar_calendar_proto_enumTypes[0].Descriptor()
-}
-
-func (RsvpResponses) Type() protoreflect.EnumType {
-	return &file_resources_calendar_calendar_proto_enumTypes[0]
-}
-
-func (x RsvpResponses) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use RsvpResponses.Descriptor instead.
-func (RsvpResponses) EnumDescriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{0}
-}
-
 type Calendar struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
@@ -98,10 +39,10 @@ type Calendar struct {
 	Closed        bool                   `protobuf:"varint,9,opt,name=closed,proto3" json:"closed,omitempty"`
 	Color         string                 `protobuf:"bytes,10,opt,name=color,proto3" json:"color,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator       *short.UserShort       `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob    string                 `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	Subscription  *CalendarSub           `protobuf:"bytes,14,opt,name=subscription,proto3,oneof" json:"subscription,omitempty"`
-	Access        *CalendarAccess        `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
+	Access        *access.CalendarAccess `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -213,7 +154,7 @@ func (x *Calendar) GetCreatorId() int32 {
 	return 0
 }
 
-func (x *Calendar) GetCreator() *users.UserShort {
+func (x *Calendar) GetCreator() *short.UserShort {
 	if x != nil {
 		return x.Creator
 	}
@@ -234,7 +175,7 @@ func (x *Calendar) GetSubscription() *CalendarSub {
 	return nil
 }
 
-func (x *Calendar) GetAccess() *CalendarAccess {
+func (x *Calendar) GetAccess() *access.CalendarAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -353,7 +294,7 @@ type CalendarSub struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CalendarId    int64                  `protobuf:"varint,1,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
 	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *users.UserShort       `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	User          *short.UserShort       `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Confirmed     bool                   `protobuf:"varint,5,opt,name=confirmed,proto3" json:"confirmed,omitempty"`
 	Muted         bool                   `protobuf:"varint,6,opt,name=muted,proto3" json:"muted,omitempty"`
@@ -405,7 +346,7 @@ func (x *CalendarSub) GetUserId() int32 {
 	return 0
 }
 
-func (x *CalendarSub) GetUser() *users.UserShort {
+func (x *CalendarSub) GetUser() *short.UserShort {
 	if x != nil {
 		return x.User
 	}
@@ -433,327 +374,11 @@ func (x *CalendarSub) GetMuted() bool {
 	return false
 }
 
-type CalendarEntry struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Id            int64                   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id" sql:"primary_key"`
-	CreatedAt     *timestamp.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt     *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	CalendarId    int64                   `protobuf:"varint,5,opt,name=calendar_id,json=calendarId,proto3" json:"calendar_id,omitempty"`
-	Calendar      *Calendar               `protobuf:"bytes,6,opt,name=calendar,proto3,oneof" json:"calendar,omitempty"`
-	Job           *string                 `protobuf:"bytes,7,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	StartTime     *timestamp.Timestamp    `protobuf:"bytes,8,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime       *timestamp.Timestamp    `protobuf:"bytes,9,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
-	Title         string                  `protobuf:"bytes,10,opt,name=title,proto3" json:"title,omitempty"`
-	Content       *content.Content        `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
-	Closed        bool                    `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty"`
-	RsvpOpen      *bool                   `protobuf:"varint,13,opt,name=rsvp_open,json=rsvpOpen,proto3,oneof" json:"rsvp_open,omitempty"`
-	CreatorId     *int32                  `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort        `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
-	CreatorJob    string                  `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Recurring     *CalendarEntryRecurring `protobuf:"bytes,17,opt,name=recurring,proto3,oneof" json:"recurring,omitempty"`
-	Rsvp          *CalendarEntryRSVP      `protobuf:"bytes,18,opt,name=rsvp,proto3,oneof" json:"rsvp,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CalendarEntry) Reset() {
-	*x = CalendarEntry{}
-	mi := &file_resources_calendar_calendar_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CalendarEntry) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CalendarEntry) ProtoMessage() {}
-
-func (x *CalendarEntry) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_calendar_calendar_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarEntry.ProtoReflect.Descriptor instead.
-func (*CalendarEntry) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *CalendarEntry) GetId() int64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *CalendarEntry) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetUpdatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetDeletedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.DeletedAt
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetCalendarId() int64 {
-	if x != nil {
-		return x.CalendarId
-	}
-	return 0
-}
-
-func (x *CalendarEntry) GetCalendar() *Calendar {
-	if x != nil {
-		return x.Calendar
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetJob() string {
-	if x != nil && x.Job != nil {
-		return *x.Job
-	}
-	return ""
-}
-
-func (x *CalendarEntry) GetStartTime() *timestamp.Timestamp {
-	if x != nil {
-		return x.StartTime
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetEndTime() *timestamp.Timestamp {
-	if x != nil {
-		return x.EndTime
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetTitle() string {
-	if x != nil {
-		return x.Title
-	}
-	return ""
-}
-
-func (x *CalendarEntry) GetContent() *content.Content {
-	if x != nil {
-		return x.Content
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetClosed() bool {
-	if x != nil {
-		return x.Closed
-	}
-	return false
-}
-
-func (x *CalendarEntry) GetRsvpOpen() bool {
-	if x != nil && x.RsvpOpen != nil {
-		return *x.RsvpOpen
-	}
-	return false
-}
-
-func (x *CalendarEntry) GetCreatorId() int32 {
-	if x != nil && x.CreatorId != nil {
-		return *x.CreatorId
-	}
-	return 0
-}
-
-func (x *CalendarEntry) GetCreator() *users.UserShort {
-	if x != nil {
-		return x.Creator
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetCreatorJob() string {
-	if x != nil {
-		return x.CreatorJob
-	}
-	return ""
-}
-
-func (x *CalendarEntry) GetRecurring() *CalendarEntryRecurring {
-	if x != nil {
-		return x.Recurring
-	}
-	return nil
-}
-
-func (x *CalendarEntry) GetRsvp() *CalendarEntryRSVP {
-	if x != nil {
-		return x.Rsvp
-	}
-	return nil
-}
-
-type CalendarEntryRecurring struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Every         string                 `protobuf:"bytes,1,opt,name=every,proto3" json:"every,omitempty"`
-	Count         int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
-	Until         *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=until,proto3,oneof" json:"until,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CalendarEntryRecurring) Reset() {
-	*x = CalendarEntryRecurring{}
-	mi := &file_resources_calendar_calendar_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CalendarEntryRecurring) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CalendarEntryRecurring) ProtoMessage() {}
-
-func (x *CalendarEntryRecurring) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_calendar_calendar_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarEntryRecurring.ProtoReflect.Descriptor instead.
-func (*CalendarEntryRecurring) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CalendarEntryRecurring) GetEvery() string {
-	if x != nil {
-		return x.Every
-	}
-	return ""
-}
-
-func (x *CalendarEntryRecurring) GetCount() int32 {
-	if x != nil {
-		return x.Count
-	}
-	return 0
-}
-
-func (x *CalendarEntryRecurring) GetUntil() *timestamp.Timestamp {
-	if x != nil {
-		return x.Until
-	}
-	return nil
-}
-
-type CalendarEntryRSVP struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	EntryId       int64                  `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User          *users.UserShort       `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Response      RsvpResponses          `protobuf:"varint,5,opt,name=response,proto3,enum=resources.calendar.RsvpResponses" json:"response,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CalendarEntryRSVP) Reset() {
-	*x = CalendarEntryRSVP{}
-	mi := &file_resources_calendar_calendar_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CalendarEntryRSVP) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CalendarEntryRSVP) ProtoMessage() {}
-
-func (x *CalendarEntryRSVP) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_calendar_calendar_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CalendarEntryRSVP.ProtoReflect.Descriptor instead.
-func (*CalendarEntryRSVP) Descriptor() ([]byte, []int) {
-	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *CalendarEntryRSVP) GetEntryId() int64 {
-	if x != nil {
-		return x.EntryId
-	}
-	return 0
-}
-
-func (x *CalendarEntryRSVP) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *CalendarEntryRSVP) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *CalendarEntryRSVP) GetUser() *users.UserShort {
-	if x != nil {
-		return x.User
-	}
-	return nil
-}
-
-func (x *CalendarEntryRSVP) GetResponse() RsvpResponses {
-	if x != nil {
-		return x.Response
-	}
-	return RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
-}
-
 var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\n" +
-	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/dbscanner/dbscanner.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a\x1fresources/calendar/access.proto\x1a&resources/common/content/content.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x13tagger/tagger.proto\"\xcc\x06\n" +
+	"!resources/calendar/calendar.proto\x12\x12resources.calendar\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/calendar/access/access.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\x13tagger/tagger.proto\"\xd9\x06\n" +
 	"\bCalendar\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -770,12 +395,12 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x05color\x18\n" +
 	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05color\x12\"\n" +
 	"\n" +
-	"creator_id\x18\v \x01(\x05H\x05R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12\x1f\n" +
+	"creator_id\x18\v \x01(\x05H\x05R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\f \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x06R\acreator\x88\x01\x01\x12\x1f\n" +
 	"\vcreator_job\x18\r \x01(\tR\n" +
 	"creatorJob\x12H\n" +
-	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\aR\fsubscription\x88\x01\x01\x12:\n" +
-	"\x06access\x18\x0f \x01(\v2\".resources.calendar.CalendarAccessR\x06accessB\r\n" +
+	"\fsubscription\x18\x0e \x01(\v2\x1f.resources.calendar.CalendarSubH\aR\fsubscription\x88\x01\x01\x12A\n" +
+	"\x06access\x18\x0f \x01(\v2).resources.calendar.access.CalendarAccessR\x06accessB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
@@ -800,81 +425,18 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\v_created_atB\x06\n" +
 	"\x04_jobB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
-	"\r_subscription\"\x8c\x02\n" +
+	"\r_subscription\"\x92\x02\n" +
 	"\vCalendarSub\x12\x1f\n" +
 	"\vcalendar_id\x18\x01 \x01(\x03R\n" +
 	"calendarId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x03 \x01(\v2\x1a.resources.users.UserShortH\x00R\x04user\x88\x01\x01\x12B\n" +
+	"\auser_id\x18\x02 \x01(\x05R\x06userId\x129\n" +
+	"\x04user\x18\x03 \x01(\v2 .resources.users.short.UserShortH\x00R\x04user\x88\x01\x01\x12B\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tcreatedAt\x88\x01\x01\x12\x1c\n" +
 	"\tconfirmed\x18\x05 \x01(\bR\tconfirmed\x12\x14\n" +
 	"\x05muted\x18\x06 \x01(\bR\x05mutedB\a\n" +
 	"\x05_userB\r\n" +
-	"\v_created_at\"\xcf\b\n" +
-	"\rCalendarEntry\x121\n" +
-	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
-	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
-	"\n" +
-	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x1f\n" +
-	"\vcalendar_id\x18\x05 \x01(\x03R\n" +
-	"calendarId\x12=\n" +
-	"\bcalendar\x18\x06 \x01(\v2\x1c.resources.calendar.CalendarH\x03R\bcalendar\x88\x01\x01\x12\x15\n" +
-	"\x03job\x18\a \x01(\tH\x04R\x03job\x88\x01\x01\x12=\n" +
-	"\n" +
-	"start_time\x18\b \x01(\v2\x1e.resources.timestamp.TimestampR\tstartTime\x12>\n" +
-	"\bend_time\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\aendTime\x88\x01\x01\x12\x1e\n" +
-	"\x05title\x18\n" +
-	" \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x05title\x12;\n" +
-	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12\x16\n" +
-	"\x06closed\x18\f \x01(\bR\x06closed\x12 \n" +
-	"\trsvp_open\x18\r \x01(\bH\x06R\brsvpOpen\x88\x01\x01\x12\"\n" +
-	"\n" +
-	"creator_id\x18\x0e \x01(\x05H\aR\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\x0f \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\bR\acreator\x88\x01\x01\x12\x1f\n" +
-	"\vcreator_job\x18\x10 \x01(\tR\n" +
-	"creatorJob\x12M\n" +
-	"\trecurring\x18\x11 \x01(\v2*.resources.calendar.CalendarEntryRecurringH\tR\trecurring\x88\x01\x01\x12>\n" +
-	"\x04rsvp\x18\x12 \x01(\v2%.resources.calendar.CalendarEntryRSVPH\n" +
-	"R\x04rsvp\x88\x01\x01B\r\n" +
-	"\v_created_atB\r\n" +
-	"\v_updated_atB\r\n" +
-	"\v_deleted_atB\v\n" +
-	"\t_calendarB\x06\n" +
-	"\x04_jobB\v\n" +
-	"\t_end_timeB\f\n" +
-	"\n" +
-	"_rsvp_openB\r\n" +
-	"\v_creator_idB\n" +
-	"\n" +
-	"\b_creatorB\f\n" +
-	"\n" +
-	"_recurringB\a\n" +
-	"\x05_rsvp\"\x91\x01\n" +
-	"\x16CalendarEntryRecurring\x12\x14\n" +
-	"\x05every\x18\x01 \x01(\tR\x05every\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\x05R\x05count\x129\n" +
-	"\x05until\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x05until\x88\x01\x01:\x06\xe2\xf3\x18\x02\b\x01B\b\n" +
-	"\x06_until\"\x97\x02\n" +
-	"\x11CalendarEntryRSVP\x12\x19\n" +
-	"\bentry_id\x18\x01 \x01(\x03R\aentryId\x12B\n" +
-	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x17\n" +
-	"\auser_id\x18\x03 \x01(\x05R\x06userId\x123\n" +
-	"\x04user\x18\x04 \x01(\v2\x1a.resources.users.UserShortH\x01R\x04user\x88\x01\x01\x12=\n" +
-	"\bresponse\x18\x05 \x01(\x0e2!.resources.calendar.RsvpResponsesR\bresponseB\r\n" +
-	"\v_created_atB\a\n" +
-	"\x05_user*\xaf\x01\n" +
-	"\rRsvpResponses\x12\x1e\n" +
-	"\x1aRSVP_RESPONSES_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15RSVP_RESPONSES_HIDDEN\x10\x01\x12\x1a\n" +
-	"\x16RSVP_RESPONSES_INVITED\x10\x02\x12\x15\n" +
-	"\x11RSVP_RESPONSES_NO\x10\x03\x12\x18\n" +
-	"\x14RSVP_RESPONSES_MAYBE\x10\x04\x12\x16\n" +
-	"\x12RSVP_RESPONSES_YES\x10\x05BOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar;calendarb\x06proto3"
+	"\v_created_atBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar;calendarb\x06proto3"
 
 var (
 	file_resources_calendar_calendar_proto_rawDescOnce sync.Once
@@ -888,51 +450,31 @@ func file_resources_calendar_calendar_proto_rawDescGZIP() []byte {
 	return file_resources_calendar_calendar_proto_rawDescData
 }
 
-var file_resources_calendar_calendar_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_calendar_calendar_proto_goTypes = []any{
-	(RsvpResponses)(0),             // 0: resources.calendar.RsvpResponses
-	(*Calendar)(nil),               // 1: resources.calendar.Calendar
-	(*CalendarShort)(nil),          // 2: resources.calendar.CalendarShort
-	(*CalendarSub)(nil),            // 3: resources.calendar.CalendarSub
-	(*CalendarEntry)(nil),          // 4: resources.calendar.CalendarEntry
-	(*CalendarEntryRecurring)(nil), // 5: resources.calendar.CalendarEntryRecurring
-	(*CalendarEntryRSVP)(nil),      // 6: resources.calendar.CalendarEntryRSVP
-	(*timestamp.Timestamp)(nil),    // 7: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),        // 8: resources.users.UserShort
-	(*CalendarAccess)(nil),         // 9: resources.calendar.CalendarAccess
-	(*content.Content)(nil),        // 10: resources.common.content.Content
+	(*Calendar)(nil),              // 0: resources.calendar.Calendar
+	(*CalendarShort)(nil),         // 1: resources.calendar.CalendarShort
+	(*CalendarSub)(nil),           // 2: resources.calendar.CalendarSub
+	(*timestamp.Timestamp)(nil),   // 3: resources.timestamp.Timestamp
+	(*short.UserShort)(nil),       // 4: resources.users.short.UserShort
+	(*access.CalendarAccess)(nil), // 5: resources.calendar.access.CalendarAccess
 }
 var file_resources_calendar_calendar_proto_depIdxs = []int32{
-	7,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
-	7,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
-	8,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.UserShort
-	3,  // 4: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
-	9,  // 5: resources.calendar.Calendar.access:type_name -> resources.calendar.CalendarAccess
-	7,  // 6: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 7: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
-	8,  // 8: resources.calendar.CalendarSub.user:type_name -> resources.users.UserShort
-	7,  // 9: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 10: resources.calendar.CalendarEntry.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 11: resources.calendar.CalendarEntry.updated_at:type_name -> resources.timestamp.Timestamp
-	7,  // 12: resources.calendar.CalendarEntry.deleted_at:type_name -> resources.timestamp.Timestamp
-	1,  // 13: resources.calendar.CalendarEntry.calendar:type_name -> resources.calendar.Calendar
-	7,  // 14: resources.calendar.CalendarEntry.start_time:type_name -> resources.timestamp.Timestamp
-	7,  // 15: resources.calendar.CalendarEntry.end_time:type_name -> resources.timestamp.Timestamp
-	10, // 16: resources.calendar.CalendarEntry.content:type_name -> resources.common.content.Content
-	8,  // 17: resources.calendar.CalendarEntry.creator:type_name -> resources.users.UserShort
-	5,  // 18: resources.calendar.CalendarEntry.recurring:type_name -> resources.calendar.CalendarEntryRecurring
-	6,  // 19: resources.calendar.CalendarEntry.rsvp:type_name -> resources.calendar.CalendarEntryRSVP
-	7,  // 20: resources.calendar.CalendarEntryRecurring.until:type_name -> resources.timestamp.Timestamp
-	7,  // 21: resources.calendar.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 22: resources.calendar.CalendarEntryRSVP.user:type_name -> resources.users.UserShort
-	0,  // 23: resources.calendar.CalendarEntryRSVP.response:type_name -> resources.calendar.RsvpResponses
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	3,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
+	3,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
+	4,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.short.UserShort
+	2,  // 4: resources.calendar.Calendar.subscription:type_name -> resources.calendar.CalendarSub
+	5,  // 5: resources.calendar.Calendar.access:type_name -> resources.calendar.access.CalendarAccess
+	3,  // 6: resources.calendar.CalendarShort.created_at:type_name -> resources.timestamp.Timestamp
+	2,  // 7: resources.calendar.CalendarShort.subscription:type_name -> resources.calendar.CalendarSub
+	4,  // 8: resources.calendar.CalendarSub.user:type_name -> resources.users.short.UserShort
+	3,  // 9: resources.calendar.CalendarSub.created_at:type_name -> resources.timestamp.Timestamp
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_calendar_proto_init() }
@@ -940,26 +482,21 @@ func file_resources_calendar_calendar_proto_init() {
 	if File_resources_calendar_calendar_proto != nil {
 		return
 	}
-	file_resources_calendar_access_proto_init()
 	file_resources_calendar_calendar_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_calendar_calendar_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_calendar_calendar_proto_msgTypes[2].OneofWrappers = []any{}
-	file_resources_calendar_calendar_proto_msgTypes[3].OneofWrappers = []any{}
-	file_resources_calendar_calendar_proto_msgTypes[4].OneofWrappers = []any{}
-	file_resources_calendar_calendar_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_calendar_calendar_proto_rawDesc), len(file_resources_calendar_calendar_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   6,
+			NumEnums:      0,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_calendar_calendar_proto_goTypes,
 		DependencyIndexes: file_resources_calendar_calendar_proto_depIdxs,
-		EnumInfos:         file_resources_calendar_calendar_proto_enumTypes,
 		MessageInfos:      file_resources_calendar_calendar_proto_msgTypes,
 	}.Build()
 	File_resources_calendar_calendar_proto = out.File

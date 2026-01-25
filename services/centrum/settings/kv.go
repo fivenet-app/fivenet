@@ -5,12 +5,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	centrumaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/access"
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
 	"github.com/nats-io/nats.go/jetstream"
 )
 
-func (s *SettingsDB) updateInKV(ctx context.Context, job string, in *centrum.Settings) error {
+func (s *SettingsDB) updateInKV(
+	ctx context.Context,
+	job string,
+	in *centrumsettings.Settings,
+) error {
 	if err := s.store.Put(ctx, job, in); err != nil {
 		return err
 	}
@@ -18,14 +23,14 @@ func (s *SettingsDB) updateInKV(ctx context.Context, job string, in *centrum.Set
 	return nil
 }
 
-func (s *SettingsDB) Get(ctx context.Context, job string) (*centrum.Settings, error) {
+func (s *SettingsDB) Get(ctx context.Context, job string) (*centrumsettings.Settings, error) {
 	settings, err := s.store.GetOrLoad(ctx, job)
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return nil, err
 		}
 
-		settings = &centrum.Settings{
+		settings = &centrumsettings.Settings{
 			Job: job,
 		}
 	}
@@ -34,14 +39,14 @@ func (s *SettingsDB) Get(ctx context.Context, job string) (*centrum.Settings, er
 	return settings, nil
 }
 
-func (s *SettingsDB) List(_ context.Context) []*centrum.Settings {
+func (s *SettingsDB) List(_ context.Context) []*centrumsettings.Settings {
 	return s.store.List()
 }
 
 func (s *SettingsDB) ListFunc(
 	_ context.Context,
-	fn func(key string, val *centrum.Settings) bool,
-) []*centrum.Settings {
+	fn func(key string, val *centrumsettings.Settings) bool,
+) []*centrumsettings.Settings {
 	return s.store.ListFiltered("", fn)
 }
 
@@ -49,22 +54,22 @@ func (s *SettingsDB) GetAccessList(
 	ctx context.Context,
 	userJob string,
 	_ int32,
-) ([]string, *centrum.EffectiveAccess, error) {
+) ([]string, *centrumsettings.EffectiveAccess, error) {
 	settings, err := s.Get(ctx, userJob)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get settings for job %s. %w", userJob, err)
 	}
 
 	if settings.GetEffectiveAccess() == nil {
-		settings.EffectiveAccess = &centrum.EffectiveAccess{
-			Dispatches: &centrum.EffectiveDispatchAccess{
-				Jobs: []*centrum.JobAccessEntry{},
+		settings.EffectiveAccess = &centrumsettings.EffectiveAccess{
+			Dispatches: &centrumsettings.EffectiveDispatchAccess{
+				Jobs: []*centrumsettings.JobAccessEntry{},
 			},
 		}
 	}
 	if settings.GetEffectiveAccess().GetDispatches() == nil {
-		settings.EffectiveAccess.Dispatches = &centrum.EffectiveDispatchAccess{
-			Jobs: []*centrum.JobAccessEntry{},
+		settings.EffectiveAccess.Dispatches = &centrumsettings.EffectiveDispatchAccess{
+			Jobs: []*centrumsettings.JobAccessEntry{},
 		}
 	}
 
@@ -78,15 +83,15 @@ func (s *SettingsDB) GetAccessList(
 		access = settings.EffectiveAccess
 	}
 	if access.Dispatches == nil {
-		access.Dispatches = &centrum.EffectiveDispatchAccess{
-			Jobs: []*centrum.JobAccessEntry{},
+		access.Dispatches = &centrumsettings.EffectiveDispatchAccess{
+			Jobs: []*centrumsettings.JobAccessEntry{},
 		}
 	}
 
 	// Add the user's own job to the access list
-	jae := &centrum.JobAccessEntry{
+	jae := &centrumsettings.JobAccessEntry{
 		Job:    userJob,
-		Access: centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
+		Access: centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH,
 	}
 	s.enricher.EnrichJobName(jae)
 
@@ -118,7 +123,7 @@ func (s *SettingsDB) HasAccessToJob(
 	userJob string,
 	userGrade int32,
 	targetJob string,
-	level centrum.CentrumAccessLevel,
+	level centrumaccess.CentrumAccessLevel,
 ) (bool, error) {
 	// Same job, no need to check access
 	if userJob == targetJob {
@@ -142,7 +147,7 @@ func (s *SettingsDB) HasAccessToJob(
 				continue
 			}
 
-			if ja.GetAccess() > centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED &&
+			if ja.GetAccess() > centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED &&
 				ja.GetAccess() >= level {
 				return true, nil
 			}

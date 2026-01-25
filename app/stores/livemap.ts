@@ -2,9 +2,9 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { getLivemapLivemapClient } from '~~/gen/ts/clients';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 import type { StreamRequest } from '~~/gen/ts/services/centrum/centrum';
 import type {
     JobsList,

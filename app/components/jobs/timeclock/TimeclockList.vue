@@ -14,7 +14,7 @@ import { useCompletorStore } from '~/stores/completor';
 import { getJobsTimeclockClient } from '~~/gen/ts/clients';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
+import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';

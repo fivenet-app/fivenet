@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/markers/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/markers/user_marker';
 
 const props = withDefaults(
     defineProps<{

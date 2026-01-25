@@ -9,16 +9,19 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/pkg/access"
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/cron"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsactivity "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/activity"
+	documentsworkflow "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/workflow"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2026/pkg/access"
+	"github.com/fivenet-app/fivenet/v2026/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2026/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2026/pkg/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -44,7 +47,7 @@ type Workflow struct {
 	ui    userinfo.UserInfoRetriever
 	notif notifi.INotifi
 
-	access *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+	access *access.Grouped[documentsaccess.DocumentJobAccess, *documentsaccess.DocumentJobAccess, documentsaccess.DocumentUserAccess, *documentsaccess.DocumentUserAccess, access.DummyQualificationAccess[documentsaccess.AccessLevel], *access.DummyQualificationAccess[documentsaccess.AccessLevel], documentsaccess.AccessLevel]
 }
 
 type WorkflowParams struct {
@@ -106,7 +109,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := w.tracer.Start(ctx, "documents.workflow_run")
 		defer span.End()
 
-		dest := &documents.WorkflowCronData{
+		dest := &documentsworkflow.WorkflowCronData{
 			LastDocId: 0,
 		}
 		if err := data.Unmarshal(dest); err != nil {
@@ -129,7 +132,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		ctx, span := w.tracer.Start(ctx, "documents.workflow_users_run")
 		defer span.End()
 
-		dest := &documents.WorkflowCronData{
+		dest := &documentsworkflow.WorkflowCronData{
 			LastDocId: 0,
 		}
 		if err := data.Unmarshal(dest); err != nil {
@@ -151,15 +154,25 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
-func (w *Workflow) handleDocuments(ctx context.Context, data *documents.WorkflowCronData) error {
+type workflowState struct {
+	DocumentId int64                            `alias:"document_id"`
+	State      *documentsworkflow.WorkflowState `alias:"workflow_state"`
+	Document   *documents.DocumentShort         `alias:"document_short"`
+}
+
+func (w *Workflow) handleDocuments(
+	ctx context.Context,
+	data *documentsworkflow.WorkflowCronData,
+) error {
 	nowTs := mysql.TimestampT(time.Now())
 
 	tDTemplates := table.FivenetDocumentsTemplates.AS("template")
 
-	var dest []*documents.WorkflowState
+	dest := []*workflowState{}
 	for {
 		stmt := tDWorkflow.
 			SELECT(
+				tDWorkflow.DocumentID.AS("document_id"),
 				tDWorkflow.DocumentID,
 				tDWorkflow.NextReminderTime,
 				tDWorkflow.NextReminderCount,
@@ -224,7 +237,7 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 	var wg sync.WaitGroup
 
 	// Run at max 3 handlers at once
-	workChannel := make(chan *documents.WorkflowState, 3)
+	workChannel := make(chan *workflowState, 3)
 
 	wg.Add(1)
 	go func() {
@@ -235,9 +248,13 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 			go func() {
 				defer wg.Done()
 
+				if state == nil || state.State == nil {
+					return
+				}
+
 				if err := w.handleWorkflowState(ctx, state); err != nil {
 					w.logger.Error("error during workflow state handling",
-						zap.Int64("document_id", state.GetDocumentId()), zap.Error(err))
+						zap.Int64("document_id", state.DocumentId), zap.Error(err))
 				}
 			}()
 		}
@@ -254,13 +271,19 @@ func (w *Workflow) handleDocuments(ctx context.Context, data *documents.Workflow
 	return nil
 }
 
-func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
+func (w *Workflow) handleWorkflowState(
+	ctx context.Context,
+	st *workflowState,
+) error {
+	state := st.State
+	doc := st.Document
+
 	if state.GetAutoCloseTime() != nil && time.Since(state.GetAutoCloseTime().AsTime()) > 0 {
 		if state.GetWorkflow() != nil && state.GetWorkflow().GetAutoCloseSettings() != nil &&
 			state.GetWorkflow().GetAutoClose() &&
 			state.GetWorkflow().GetAutoCloseSettings().GetMessage() != "" {
 			// Auto close document and null "next reminder time"
-			if err := w.autoCloseDocument(ctx, state, state.GetWorkflow().GetAutoCloseSettings().GetMessage()); err != nil {
+			if err := w.autoCloseDocument(ctx, st, state.GetWorkflow().GetAutoCloseSettings().GetMessage()); err != nil {
 				return fmt.Errorf("failed to auto close document. %w", err)
 			}
 		}
@@ -268,14 +291,14 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 		// Delete document workflow state, auto reminders are not sent for a closed document
 		return w.deleteWorkflowState(ctx, state)
 	} else if state.GetNextReminderTime() != nil && time.Since(state.GetNextReminderTime().AsTime()) > 0 {
-		if state.GetDocument() != nil && state.Document.CreatorId != nil {
+		if doc != nil && doc.GetCreatorId() != 0 {
 			var reminderMessage string
 			if reminder := w.getAutoReminder(state); reminder != nil && reminder.GetMessage() != "" {
 				reminderMessage = reminder.GetMessage()
 			}
 
 			// Send notification when the document has a creator that is still part of the document's job
-			if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), state.GetDocument().GetCreatorId(), state.GetDocument(), reminderMessage, false); err != nil {
+			if err := w.sendDocumentReminder(ctx, state.GetDocumentId(), doc.GetCreatorId(), doc, reminderMessage, false); err != nil {
 				return fmt.Errorf("failed to send document reminder. %w", err)
 			}
 
@@ -292,9 +315,9 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 	// * document doesn't exist anymore
 	// * if we don't have a doc creator anymore
 	// * reached the max reminder count
-	if state.GetDocument() == nil ||
-		state.GetDocument().GetCreatorId() == 0 ||
-		state.GetReminderCount() >= documents.MaxReminderCount {
+	if doc == nil ||
+		doc.GetCreatorId() == 0 ||
+		state.GetReminderCount() >= documentsworkflow.MaxReminderCount {
 		return w.deleteWorkflowState(ctx, state)
 	}
 
@@ -305,7 +328,9 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 	return nil
 }
 
-func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Reminder {
+func (w *Workflow) getAutoReminder(
+	state *documentsworkflow.WorkflowState,
+) *documentsworkflow.Reminder {
 	count := int32(0)
 	if state.GetNextReminderCount() > 0 {
 		count = state.GetNextReminderCount()
@@ -319,7 +344,7 @@ func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Re
 	return state.GetWorkflow().GetReminderSettings().GetReminders()[count]
 }
 
-func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
+func (w *Workflow) updateAutoReminderTime(state *documentsworkflow.WorkflowState) {
 	if state.GetWorkflow() == nil || state.GetWorkflow().GetReminderSettings() == nil ||
 		!state.GetWorkflow().GetReminder() ||
 		len(state.GetWorkflow().GetReminderSettings().GetReminders()) == 0 {
@@ -355,7 +380,10 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 	state.NextReminderTime = timestamp.New(time.Now().Add(reminder.GetDuration().AsDuration()))
 }
 
-func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
+func (w *Workflow) updateWorkflowState(
+	ctx context.Context,
+	state *documentsworkflow.WorkflowState,
+) error {
 	tWorkflow := table.FivenetDocumentsWorkflowState
 
 	stmt := tWorkflow.
@@ -381,7 +409,10 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 	return nil
 }
 
-func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
+func (w *Workflow) deleteWorkflowState(
+	ctx context.Context,
+	state *documentsworkflow.WorkflowState,
+) error {
 	tWorkflow := table.FivenetDocumentsWorkflowState
 
 	stmt := tWorkflow.
@@ -398,9 +429,12 @@ func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.Wor
 
 func (w *Workflow) autoCloseDocument(
 	ctx context.Context,
-	state *documents.WorkflowState,
+	st *workflowState,
 	message string,
 ) error {
+	state := st.State
+	doc := st.Document
+
 	// Begin transaction
 	tx, err := w.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -416,19 +450,19 @@ func (w *Workflow) autoCloseDocument(
 			tDocument.Closed.SET(mysql.Bool(true)),
 		).
 		WHERE(mysql.AND(
-			tDocument.ID.EQ(mysql.Int64(state.GetDocumentId())),
+			tDocument.ID.EQ(mysql.Int64(state.DocumentId)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
-	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-		DocumentId:   state.GetDocumentId(),
-		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED,
+	if _, err := addDocumentActivity(ctx, tx, &documentsactivity.DocActivity{
+		DocumentId:   state.DocumentId,
+		ActivityType: documentsactivity.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED,
 		Reason:       &message,
-		CreatorId:    state.GetDocument().CreatorId,
-		CreatorJob:   state.GetDocument().GetCreatorJob(),
+		CreatorId:    doc.CreatorId,
+		CreatorJob:   doc.GetCreatorJob(),
 	}); err != nil {
 		return err
 	}
@@ -438,18 +472,18 @@ func (w *Workflow) autoCloseDocument(
 		return err
 	}
 
-	if state.GetDocument() == nil || state.Document.CreatorId == nil {
+	if doc == nil || doc.GetCreatorId() == 0 {
 		return nil
 	}
 
 	// Make sure user has access to document
-	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, state.GetDocument().GetCreatorId())
+	userInfo, err := w.ui.GetUserInfoWithoutAccountId(ctx, doc.GetCreatorId())
 	if err != nil {
 		return err
 	}
 
 	// Don't send "auto reminders" if job doesn't match document
-	if state.GetDocument().GetCreatorJob() != userInfo.GetJob() {
+	if doc.GetCreatorJob() != userInfo.GetJob() {
 		return nil
 	}
 
@@ -457,7 +491,7 @@ func (w *Workflow) autoCloseDocument(
 		ctx,
 		state.GetDocumentId(),
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return err
@@ -476,7 +510,7 @@ func (w *Workflow) autoCloseDocument(
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
 				"id":      strconv.FormatInt(state.GetDocumentId(), 10),
-				"title":   state.GetDocument().GetTitle(),
+				"title":   doc.GetTitle(),
 				"message": message,
 			},
 		},
@@ -500,7 +534,7 @@ func (w *Workflow) sendDocumentReminder(
 	ctx context.Context,
 	documentId int64,
 	userId int32,
-	document *documents.DocumentShort,
+	doc *documents.DocumentShort,
 	message string,
 	singleReminder bool,
 ) error {
@@ -511,7 +545,7 @@ func (w *Workflow) sendDocumentReminder(
 	}
 
 	// Don't send "auto reminders" if job doesn't match document
-	if !singleReminder && document.GetCreatorJob() != userInfo.GetJob() {
+	if !singleReminder && doc.GetCreatorJob() != userInfo.GetJob() {
 		return nil
 	}
 
@@ -519,7 +553,7 @@ func (w *Workflow) sendDocumentReminder(
 		ctx,
 		documentId,
 		userInfo,
-		documents.AccessLevel_ACCESS_LEVEL_VIEW,
+		documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW,
 	)
 	if err != nil {
 		return err
@@ -538,7 +572,7 @@ func (w *Workflow) sendDocumentReminder(
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
 				"id":    strconv.FormatInt(documentId, 10),
-				"title": document.GetTitle(),
+				"title": doc.GetTitle(),
 			},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,

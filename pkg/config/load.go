@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/creasty/defaults"
-	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"

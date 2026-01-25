@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 import { z } from 'zod';
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
-import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
-import type { Labels } from '~~/gen/ts/resources/jobs/labels';
+import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
+import type { Labels } from '~~/gen/ts/resources/jobs/labels/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 

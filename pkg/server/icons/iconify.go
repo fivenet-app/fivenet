@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2026/pkg/config"
 	iconifygo "github.com/galexrt/iconify-go"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"

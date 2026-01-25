@@ -7,11 +7,12 @@
 package wiki
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	content "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/content"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
+	short "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/short"
+	access "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki/access"
 	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -35,7 +36,7 @@ type Page struct {
 	ParentId      *int64                 `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
 	Meta          *PageMeta              `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
 	Content       *content.Content       `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
-	Access        *PageAccess            `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	Access        *access.PageAccess     `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
 	Files         []*file.File           `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty" alias:"files"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -113,7 +114,7 @@ func (x *Page) GetContent() *content.Content {
 	return nil
 }
 
-func (x *Page) GetAccess() *PageAccess {
+func (x *Page) GetAccess() *access.PageAccess {
 	if x != nil {
 		return x.Access
 	}
@@ -136,7 +137,7 @@ type PageMeta struct {
 	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
 	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
 	CreatorId     *int32                 `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
+	Creator       *short.UserShort       `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	ContentType   content.ContentType    `protobuf:"varint,9,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Tags          []string               `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
 	Toc           *bool                  `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
@@ -226,7 +227,7 @@ func (x *PageMeta) GetCreatorId() int32 {
 	return 0
 }
 
-func (x *PageMeta) GetCreator() *users.UserShort {
+func (x *PageMeta) GetCreator() *short.UserShort {
 	if x != nil {
 		return x.Creator
 	}
@@ -471,20 +472,20 @@ var File_resources_wiki_page_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/wiki/access.proto\x1a\x13tagger/tagger.proto\"\x94\x03\n" +
+	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a!codegen/sanitizer/sanitizer.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a resources/users/short/user.proto\x1a\"resources/wiki/access/access.proto\x1a\x13tagger/tagger.proto\"\x9b\x03\n" +
 	"\x04Page\x121\n" +
 	"\x02id\x18\x01 \x01(\x03B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12\x1a\n" +
 	"\x03job\x18\x02 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x03job\x12 \n" +
 	"\tjob_label\x18\x03 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12 \n" +
 	"\tparent_id\x18\x04 \x01(\x03H\x01R\bparentId\x88\x01\x01\x12,\n" +
 	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaR\x04meta\x12;\n" +
-	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x122\n" +
-	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessR\x06access\x12>\n" +
+	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x129\n" +
+	"\x06access\x18\a \x01(\v2!.resources.wiki.access.PageAccessR\x06access\x12>\n" +
 	"\x05files\x18\b \x03(\v2\x14.resources.file.FileB\x12\x9a\x84\x9e\x03\ralias:\"files\"R\x05filesB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
-	"_parent_id\"\xc8\x05\n" +
+	"_parent_id\"\xce\x05\n" +
 	"\bPageMeta\x12=\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
@@ -496,8 +497,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\x05title\x18\x05 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x05title\x12*\n" +
 	"\vdescription\x18\x06 \x01(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\vdescription\x12\"\n" +
 	"\n" +
-	"creator_id\x18\a \x01(\x05H\x03R\tcreatorId\x88\x01\x01\x12O\n" +
-	"\acreator\x18\b \x01(\v2\x1a.resources.users.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12H\n" +
+	"creator_id\x18\a \x01(\x05H\x03R\tcreatorId\x88\x01\x01\x12U\n" +
+	"\acreator\x18\b \x01(\v2 .resources.users.short.UserShortB\x14\x9a\x84\x9e\x03\x0falias:\"creator\"H\x04R\acreator\x88\x01\x01\x12H\n" +
 	"\fcontent_type\x18\t \x01(\x0e2%.resources.common.content.ContentTypeR\vcontentType\x12\x1c\n" +
 	"\x04tags\x18\n" +
 	" \x03(\tB\b\xda\xf3\x18\x04\b\x01\x18\x01R\x04tags\x12\x15\n" +
@@ -542,7 +543,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"logoFileId\x88\x01\x01\x12@\n" +
 	"\x04logo\x18\x02 \x01(\v2\x14.resources.file.FileB\x11\x9a\x84\x9e\x03\falias:\"logo\"H\x01R\x04logo\x88\x01\x01B\x0f\n" +
 	"\r_logo_file_idB\a\n" +
-	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
+	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
 	file_resources_wiki_page_proto_rawDescOnce sync.Once
@@ -563,21 +564,21 @@ var file_resources_wiki_page_proto_goTypes = []any{
 	(*PageShort)(nil),           // 2: resources.wiki.PageShort
 	(*PageRootInfo)(nil),        // 3: resources.wiki.PageRootInfo
 	(*content.Content)(nil),     // 4: resources.common.content.Content
-	(*PageAccess)(nil),          // 5: resources.wiki.PageAccess
+	(*access.PageAccess)(nil),   // 5: resources.wiki.access.PageAccess
 	(*file.File)(nil),           // 6: resources.file.File
 	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 8: resources.users.UserShort
+	(*short.UserShort)(nil),     // 8: resources.users.short.UserShort
 	(content.ContentType)(0),    // 9: resources.common.content.ContentType
 }
 var file_resources_wiki_page_proto_depIdxs = []int32{
 	1,  // 0: resources.wiki.Page.meta:type_name -> resources.wiki.PageMeta
 	4,  // 1: resources.wiki.Page.content:type_name -> resources.common.content.Content
-	5,  // 2: resources.wiki.Page.access:type_name -> resources.wiki.PageAccess
+	5,  // 2: resources.wiki.Page.access:type_name -> resources.wiki.access.PageAccess
 	6,  // 3: resources.wiki.Page.files:type_name -> resources.file.File
 	7,  // 4: resources.wiki.PageMeta.created_at:type_name -> resources.timestamp.Timestamp
 	7,  // 5: resources.wiki.PageMeta.updated_at:type_name -> resources.timestamp.Timestamp
 	7,  // 6: resources.wiki.PageMeta.deleted_at:type_name -> resources.timestamp.Timestamp
-	8,  // 7: resources.wiki.PageMeta.creator:type_name -> resources.users.UserShort
+	8,  // 7: resources.wiki.PageMeta.creator:type_name -> resources.users.short.UserShort
 	9,  // 8: resources.wiki.PageMeta.content_type:type_name -> resources.common.content.ContentType
 	7,  // 9: resources.wiki.PageShort.deleted_at:type_name -> resources.timestamp.Timestamp
 	2,  // 10: resources.wiki.PageShort.children:type_name -> resources.wiki.PageShort
@@ -595,7 +596,6 @@ func file_resources_wiki_page_proto_init() {
 	if File_resources_wiki_page_proto != nil {
 		return
 	}
-	file_resources_wiki_access_proto_init()
 	file_resources_wiki_page_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_wiki_page_proto_msgTypes[1].OneofWrappers = []any{}
 	file_resources_wiki_page_proto_msgTypes[2].OneofWrappers = []any{}

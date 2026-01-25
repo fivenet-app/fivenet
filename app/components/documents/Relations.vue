@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import CategoryBadge from '~/components/partials/documents/CategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { getDocumentsDocumentsClient } from '~~/gen/ts/clients';
-import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/documents';
+import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/relations/relations';
 import { docRelationToBadge } from './helpers';
 
 const props = withDefaults(

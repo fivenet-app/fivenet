@@ -12,7 +12,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Form } from "../../resources/documents/forms";
+import { Form } from "../../resources/documents/forms/forms";
 /**
  * @generated from protobuf message services.documents.GetFormRequest
  */
@@ -27,7 +27,7 @@ export interface GetFormRequest {
  */
 export interface GetFormResponse {
     /**
-     * @generated from protobuf field: resources.documents.Form form = 1
+     * @generated from protobuf field: resources.documents.forms.Form form = 1
      */
     form?: Form;
 }
@@ -41,7 +41,7 @@ export interface ListFormsRequest {
  */
 export interface ListFormsResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Form forms = 1
+     * @generated from protobuf field: repeated resources.documents.forms.Form forms = 1
      */
     forms: Form[];
 }
@@ -110,7 +110,7 @@ class GetFormResponse$Type extends MessageType<GetFormResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.documents.Form form */ 1:
+                case /* resources.documents.forms.Form form */ 1:
                     message.form = Form.internalBinaryRead(reader, reader.uint32(), options, message.form);
                     break;
                 default:
@@ -125,7 +125,7 @@ class GetFormResponse$Type extends MessageType<GetFormResponse> {
         return message;
     }
     internalBinaryWrite(message: GetFormResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Form form = 1; */
+        /* resources.documents.forms.Form form = 1; */
         if (message.form)
             Form.internalBinaryWrite(message.form, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -195,7 +195,7 @@ class ListFormsResponse$Type extends MessageType<ListFormsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Form forms */ 1:
+                case /* repeated resources.documents.forms.Form forms */ 1:
                     message.forms.push(Form.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -210,7 +210,7 @@ class ListFormsResponse$Type extends MessageType<ListFormsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListFormsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Form forms = 1; */
+        /* repeated resources.documents.forms.Form forms = 1; */
         for (let i = 0; i < message.forms.length; i++)
             Form.internalBinaryWrite(message.forms[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

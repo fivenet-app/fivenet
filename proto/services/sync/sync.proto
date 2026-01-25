@@ -3,13 +3,13 @@ syntax = "proto3";
 package services.sync;
 
 import "buf/validate/validate.proto";
-import "resources/centrum/dispatches.proto";
-import "resources/jobs/activity.proto";
+import "resources/centrum/dispatches/dispatches.proto";
+import "resources/jobs/colleagues/activity/activity.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
-import "resources/users/activity.proto";
+import "resources/users/activity/activity.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;sync";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/sync;sync";
 
 message GetStatusRequest {}
 
@@ -27,15 +27,15 @@ message AddActivityRequest {
 
     resources.sync.UserOAuth2Conn user_oauth2 = 1;
 
-    resources.centrum.Dispatch dispatch = 2;
+    resources.centrum.dispatches.Dispatch dispatch = 2;
 
     // User activity
-    resources.users.UserActivity user_activity = 3;
+    resources.users.activity.UserActivity user_activity = 3;
     // Setting props will cause activity to be created automtically
     resources.sync.UserProps user_props = 4;
 
     // Jobs user activity
-    resources.jobs.ColleagueActivity colleague_activity = 5;
+    resources.jobs.colleagues.activity.ColleagueActivity colleague_activity = 5;
     // Setting props will cause activity to be created automtically
     resources.sync.ColleagueProps colleague_props = 6;
     // Timeclock user entry

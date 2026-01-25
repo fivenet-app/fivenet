@@ -7,7 +7,7 @@
 package settings
 
 import (
-	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -453,7 +453,7 @@ const file_resources_settings_status_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\tR\aversion\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12F\n" +
 	"\frelease_date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\vreleaseDate\x88\x01\x01B\x0f\n" +
-	"\r_release_dateBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"
+	"\r_release_dateBOZMgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/settings;settingsb\x06proto3"
 
 var (
 	file_resources_settings_status_proto_rawDescOnce sync.Once

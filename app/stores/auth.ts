@@ -4,12 +4,12 @@ import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { webSocket } from '~/composables/grpc/grpcws/bridge';
 import { getAuthAuthClient } from '~~/gen/ts/clients';
-import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
+import type { JobProps } from '~~/gen/ts/resources/jobs/props/props';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
-import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
-import type { User } from '~~/gen/ts/resources/users/users';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/permissions/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions/permissions';
+import type { User } from '~~/gen/ts/resources/users/user';
 
 const logger = useLogger('🔑 Auth');
 

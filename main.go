@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/v2025/cmd"
-	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/version"
+	"github.com/fivenet-app/fivenet/v2026/cmd"
+	"github.com/fivenet-app/fivenet/v2026/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/version"
 )
 
 func main() {

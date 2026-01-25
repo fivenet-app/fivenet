@@ -1,6 +1,6 @@
 import type { BadgeProps } from '@nuxt/ui';
 import { z } from 'zod';
-import { ApprovalAssigneeKind, ApprovalStatus, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalAssigneeKind, ApprovalStatus, ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
 
 export function approvalTaskStatusToColor(status: ApprovalTaskStatus): BadgeProps['color'] {
     switch (status) {

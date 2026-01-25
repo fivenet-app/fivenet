@@ -5,7 +5,7 @@ package resources.tracker;
 import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker;tracker";
+option go_package = "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/tracker;tracker";
 
 message UserMapping {
   int32 user_id = 1 [(buf.validate.field).int32.gte = 0];

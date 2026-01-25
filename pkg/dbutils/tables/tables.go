@@ -26,15 +26,7 @@ func IsESXCompatEnabled() bool {
 }
 
 func setESXTableNames() {
-	esxCompatEnabled = true
-
-	jobs = newFivenetJobsTable("", "jobs", "")
-	jobGrades = newFivenetJobsGradesTable("", "job_grades", "")
-	licenses = newFivenetLicensesTable("", "licenses", "")
-
-	user = newFivenetUserTable("", "users", "")
-	userLicenses = newFivenetUserLicensesTable("", "user_licenses", "")
-	ownedVehicles = newFivenetOwnedVehiclesTable("", "owned_vehicles", "")
+	panic("ESX compat mode has been removed and is no longer supported.")
 }
 
 func Jobs() *FivenetJobsTable {

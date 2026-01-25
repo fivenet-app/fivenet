@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	itemslenpb "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
+	itemslenpb "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )

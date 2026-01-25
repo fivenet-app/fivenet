@@ -11,8 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { User } from "../users/users";
-import { OAuth2Account } from "./oauth2";
+import { User } from "../users/user";
+import { OAuth2Account } from "./oauth2/oauth2";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.accounts.Account
@@ -47,7 +47,7 @@ export interface Account {
      */
     lastChar?: number;
     /**
-     * @generated from protobuf field: repeated resources.accounts.OAuth2Account oauth2_accounts = 8
+     * @generated from protobuf field: repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 8
      */
     oauth2Accounts: OAuth2Account[];
 }
@@ -119,7 +119,7 @@ class Account$Type extends MessageType<Account> {
                 case /* optional int32 last_char */ 7:
                     message.lastChar = reader.int32();
                     break;
-                case /* repeated resources.accounts.OAuth2Account oauth2_accounts */ 8:
+                case /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts */ 8:
                     message.oauth2Accounts.push(OAuth2Account.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -155,7 +155,7 @@ class Account$Type extends MessageType<Account> {
         /* optional int32 last_char = 7; */
         if (message.lastChar !== undefined)
             writer.tag(7, WireType.Varint).int32(message.lastChar);
-        /* repeated resources.accounts.OAuth2Account oauth2_accounts = 8; */
+        /* repeated resources.accounts.oauth2.OAuth2Account oauth2_accounts = 8; */
         for (let i = 0; i < message.oauth2Accounts.length; i++)
             OAuth2Account.internalBinaryWrite(message.oauth2Accounts[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

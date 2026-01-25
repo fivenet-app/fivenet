@@ -4,8 +4,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import SelectMenu from '~/components/partials/SelectMenu.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Unit } from '~~/gen/ts/resources/centrum/units/units';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 const props = defineProps<{
     unit: Unit;

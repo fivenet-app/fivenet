@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
 import { getSettingsAccountsClient } from '~~/gen/ts/clients';
-import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2';
+import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

@@ -12,7 +12,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
 

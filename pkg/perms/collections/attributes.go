@@ -1,11 +1,11 @@
 package collections
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 )
 
 // Attributes provides methods for you to manage array data more easily.
-type Attributes []*permissions.RoleAttribute
+type Attributes []*permissionsattributes.RoleAttribute
 
 // Len returns the number of elements of the array.
 //

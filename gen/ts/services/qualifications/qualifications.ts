@@ -15,16 +15,16 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
-import { ExamResponses } from "../../resources/qualifications/exam";
-import { ExamQuestions } from "../../resources/qualifications/exam";
-import { ExamUser } from "../../resources/qualifications/exam";
+import { ExamResponses } from "../../resources/qualifications/exam/exam";
+import { ExamQuestions } from "../../resources/qualifications/exam/exam";
+import { ExamUser } from "../../resources/qualifications/exam/exam";
 import { QualificationShort } from "../../resources/qualifications/qualifications";
-import { ExamGrading } from "../../resources/qualifications/exam";
+import { ExamGrading } from "../../resources/qualifications/exam/exam";
 import { QualificationResult } from "../../resources/qualifications/qualifications";
 import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
-import { QualificationAccess } from "../../resources/qualifications/access";
+import { QualificationAccess } from "../../resources/qualifications/access/access";
 import { ContentType } from "../../resources/common/content/content";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -154,7 +154,7 @@ export interface GetQualificationAccessRequest {
  */
 export interface GetQualificationAccessResponse {
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 1
+     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 1
      */
     access?: QualificationAccess;
 }
@@ -167,7 +167,7 @@ export interface SetQualificationAccessRequest {
      */
     qualificationId: number;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 2
+     * @generated from protobuf field: resources.qualifications.access.QualificationAccess access = 2
      */
     access?: QualificationAccess;
 }
@@ -305,7 +305,7 @@ export interface CreateOrUpdateQualificationResultRequest {
      */
     result?: QualificationResult;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamGrading grading = 2
+     * @generated from protobuf field: optional resources.qualifications.exam.ExamGrading grading = 2
      */
     grading?: ExamGrading;
 }
@@ -356,7 +356,7 @@ export interface GetExamInfoResponse {
      */
     questionCount: number;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamUser exam_user = 3
+     * @generated from protobuf field: optional resources.qualifications.exam.ExamUser exam_user = 3
      */
     examUser?: ExamUser;
 }
@@ -378,11 +378,11 @@ export interface TakeExamRequest {
  */
 export interface TakeExamResponse {
     /**
-     * @generated from protobuf field: resources.qualifications.ExamQuestions exam = 1
+     * @generated from protobuf field: resources.qualifications.exam.ExamQuestions exam = 1
      */
     exam?: ExamQuestions;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamUser exam_user = 2
+     * @generated from protobuf field: resources.qualifications.exam.ExamUser exam_user = 2
      */
     examUser?: ExamUser;
 }
@@ -395,7 +395,7 @@ export interface SubmitExamRequest {
      */
     qualificationId: number;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamResponses responses = 2
+     * @generated from protobuf field: resources.qualifications.exam.ExamResponses responses = 2
      */
     responses?: ExamResponses;
 }
@@ -426,19 +426,19 @@ export interface GetUserExamRequest {
  */
 export interface GetUserExamResponse {
     /**
-     * @generated from protobuf field: resources.qualifications.ExamQuestions exam = 1
+     * @generated from protobuf field: resources.qualifications.exam.ExamQuestions exam = 1
      */
     exam?: ExamQuestions;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamUser exam_user = 2
+     * @generated from protobuf field: resources.qualifications.exam.ExamUser exam_user = 2
      */
     examUser?: ExamUser;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamResponses responses = 3
+     * @generated from protobuf field: resources.qualifications.exam.ExamResponses responses = 3
      */
     responses?: ExamResponses;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamGrading grading = 4
+     * @generated from protobuf field: resources.qualifications.exam.ExamGrading grading = 4
      */
     grading?: ExamGrading;
 }
@@ -1000,7 +1000,7 @@ class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAc
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.QualificationAccess access */ 1:
+                case /* resources.qualifications.access.QualificationAccess access */ 1:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -1015,7 +1015,7 @@ class GetQualificationAccessResponse$Type extends MessageType<GetQualificationAc
         return message;
     }
     internalBinaryWrite(message: GetQualificationAccessResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.QualificationAccess access = 1; */
+        /* resources.qualifications.access.QualificationAccess access = 1; */
         if (message.access)
             QualificationAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1051,7 +1051,7 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
                 case /* int64 qualification_id */ 1:
                     message.qualificationId = reader.int64().toNumber();
                     break;
-                case /* resources.qualifications.QualificationAccess access */ 2:
+                case /* resources.qualifications.access.QualificationAccess access */ 2:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -1069,7 +1069,7 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
         /* int64 qualification_id = 1; */
         if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).int64(message.qualificationId);
-        /* resources.qualifications.QualificationAccess access = 2; */
+        /* resources.qualifications.access.QualificationAccess access = 2; */
         if (message.access)
             QualificationAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1601,7 +1601,7 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
                 case /* resources.qualifications.QualificationResult result */ 1:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
-                case /* optional resources.qualifications.ExamGrading grading */ 2:
+                case /* optional resources.qualifications.exam.ExamGrading grading */ 2:
                     message.grading = ExamGrading.internalBinaryRead(reader, reader.uint32(), options, message.grading);
                     break;
                 default:
@@ -1619,7 +1619,7 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
         /* resources.qualifications.QualificationResult result = 1; */
         if (message.result)
             QualificationResult.internalBinaryWrite(message.result, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.ExamGrading grading = 2; */
+        /* optional resources.qualifications.exam.ExamGrading grading = 2; */
         if (message.grading)
             ExamGrading.internalBinaryWrite(message.grading, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1837,7 +1837,7 @@ class GetExamInfoResponse$Type extends MessageType<GetExamInfoResponse> {
                 case /* int64 question_count */ 2:
                     message.questionCount = reader.int64().toNumber();
                     break;
-                case /* optional resources.qualifications.ExamUser exam_user */ 3:
+                case /* optional resources.qualifications.exam.ExamUser exam_user */ 3:
                     message.examUser = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.examUser);
                     break;
                 default:
@@ -1858,7 +1858,7 @@ class GetExamInfoResponse$Type extends MessageType<GetExamInfoResponse> {
         /* int64 question_count = 2; */
         if (message.questionCount !== 0)
             writer.tag(2, WireType.Varint).int64(message.questionCount);
-        /* optional resources.qualifications.ExamUser exam_user = 3; */
+        /* optional resources.qualifications.exam.ExamUser exam_user = 3; */
         if (message.examUser)
             ExamUser.internalBinaryWrite(message.examUser, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -1944,10 +1944,10 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.ExamQuestions exam */ 1:
+                case /* resources.qualifications.exam.ExamQuestions exam */ 1:
                     message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
-                case /* resources.qualifications.ExamUser exam_user */ 2:
+                case /* resources.qualifications.exam.ExamUser exam_user */ 2:
                     message.examUser = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.examUser);
                     break;
                 default:
@@ -1962,10 +1962,10 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
         return message;
     }
     internalBinaryWrite(message: TakeExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.ExamQuestions exam = 1; */
+        /* resources.qualifications.exam.ExamQuestions exam = 1; */
         if (message.exam)
             ExamQuestions.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamUser exam_user = 2; */
+        /* resources.qualifications.exam.ExamUser exam_user = 2; */
         if (message.examUser)
             ExamUser.internalBinaryWrite(message.examUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2001,7 +2001,7 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
                 case /* int64 qualification_id */ 1:
                     message.qualificationId = reader.int64().toNumber();
                     break;
-                case /* resources.qualifications.ExamResponses responses */ 2:
+                case /* resources.qualifications.exam.ExamResponses responses */ 2:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
                     break;
                 default:
@@ -2019,7 +2019,7 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
         /* int64 qualification_id = 1; */
         if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).int64(message.qualificationId);
-        /* resources.qualifications.ExamResponses responses = 2; */
+        /* resources.qualifications.exam.ExamResponses responses = 2; */
         if (message.responses)
             ExamResponses.internalBinaryWrite(message.responses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2154,16 +2154,16 @@ class GetUserExamResponse$Type extends MessageType<GetUserExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.ExamQuestions exam */ 1:
+                case /* resources.qualifications.exam.ExamQuestions exam */ 1:
                     message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
-                case /* resources.qualifications.ExamUser exam_user */ 2:
+                case /* resources.qualifications.exam.ExamUser exam_user */ 2:
                     message.examUser = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.examUser);
                     break;
-                case /* resources.qualifications.ExamResponses responses */ 3:
+                case /* resources.qualifications.exam.ExamResponses responses */ 3:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
                     break;
-                case /* resources.qualifications.ExamGrading grading */ 4:
+                case /* resources.qualifications.exam.ExamGrading grading */ 4:
                     message.grading = ExamGrading.internalBinaryRead(reader, reader.uint32(), options, message.grading);
                     break;
                 default:
@@ -2178,16 +2178,16 @@ class GetUserExamResponse$Type extends MessageType<GetUserExamResponse> {
         return message;
     }
     internalBinaryWrite(message: GetUserExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.ExamQuestions exam = 1; */
+        /* resources.qualifications.exam.ExamQuestions exam = 1; */
         if (message.exam)
             ExamQuestions.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamUser exam_user = 2; */
+        /* resources.qualifications.exam.ExamUser exam_user = 2; */
         if (message.examUser)
             ExamUser.internalBinaryWrite(message.examUser, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamResponses responses = 3; */
+        /* resources.qualifications.exam.ExamResponses responses = 3; */
         if (message.responses)
             ExamResponses.internalBinaryWrite(message.responses, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamGrading grading = 4; */
+        /* resources.qualifications.exam.ExamGrading grading = 4; */
         if (message.grading)
             ExamGrading.internalBinaryWrite(message.grading, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

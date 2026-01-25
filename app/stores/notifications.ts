@@ -4,7 +4,7 @@ import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { notificationsEvents } from '~/composables/useClientUpdate';
 import type { Notification } from '~/types/notifications';
 import { getNotificationsNotificationsClient } from '~~/gen/ts/clients';
-import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/clientview/clientview';
 import {
     NotificationCategory,
     NotificationType,
@@ -376,8 +376,8 @@ export const useNotificationsStore = defineStore(
             try {
                 await currentStream?.requests.send({
                     data: {
-                        oneofKind: 'clientView',
-                        clientView: {
+                        oneofKind: 'clientview',
+                        clientview: {
                             type: viewType,
                             id: id,
                         },

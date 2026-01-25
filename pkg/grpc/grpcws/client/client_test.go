@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 
 	"github.com/coder/websocket"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/grpcws"
 	"google.golang.org/protobuf/proto"
 )
 

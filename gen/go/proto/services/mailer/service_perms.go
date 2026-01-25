@@ -4,9 +4,9 @@
 package mailer
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	permissionsattributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
+	permkeys "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/mailer/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/perms"
 )
 
 func init() {
@@ -19,7 +19,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         permkeys.MailerServiceCreateOrUpdateEmailFieldsPermField,
-					Type:        permissions.StringListAttributeType,
+					Type:        permissionsattributes.StringListAttributeType,
 					ValidValues: []string{"Job"},
 				},
 			},

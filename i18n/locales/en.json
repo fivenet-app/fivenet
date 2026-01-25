@@ -2126,7 +2126,7 @@
                     "content": "Document has been closed."
                 }
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Document updated",
                 "content": "Document has been updated by another user. Click here to reload the document."
             }
@@ -2144,26 +2144,26 @@
                 "title": "Citizen ID copied",
                 "content": "Citizen ID copied to clipboard."
             },
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Citizen updated",
                 "content": "Citizen has been updated by another user. Click here to reload the citizen's data."
             }
         },
         "wiki": {
-            "client_view_update": {
+            "clientview_update": {
                 "title": "Page updated",
                 "content": "Page has been updated by another user. Click here to reload the page."
             }
         },
         "jobs": {
             "colleague": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Colleague updated",
                     "content": "Colleague has been updated by another user. Click here to reload the colleague's data."
                 }
             },
             "conduct": {
-                "client_view_update": {
+                "clientview_update": {
                     "title": "Conduct entry updated",
                     "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
                 }

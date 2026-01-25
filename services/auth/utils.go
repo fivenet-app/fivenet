@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
+	jobsprops "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/props"
+	users "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/model"
+	errorsauth "github.com/fivenet-app/fivenet/v2026/services/auth/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"golang.org/x/crypto/bcrypt"
 	grpc "google.golang.org/grpc"
@@ -95,8 +95,8 @@ func (s *Server) handleSuperuserOverride(
 	char *users.User,
 	claims *auth.CitizenInfoClaims,
 	isSuperuser bool,
-) (*jobs.JobProps, error) {
-	var jProps *jobs.JobProps
+) (*jobsprops.JobProps, error) {
+	var jProps *jobsprops.JobProps
 
 	if !isSuperuser &&
 		((account.Superuser != nil && *account.Superuser) || account.OverrideJob != nil) {

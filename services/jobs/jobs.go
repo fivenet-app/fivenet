@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 
-	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
+	pbjobs "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsjobs "github.com/fivenet-app/fivenet/v2026/services/jobs/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

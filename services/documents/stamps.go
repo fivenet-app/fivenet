@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	documentsaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/access"
+	documentsstamps "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/documents/stamps"
+	pbdocuments "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorsdocuments "github.com/fivenet-app/fivenet/v2026/services/documents/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -45,7 +46,7 @@ func (s *Server) ListUsableStamps(
 						tStampAccess.MinimumGrade.LT_EQ(mysql.Int32(userInfo.GetJobGrade())),
 					),
 					tStampAccess.Access.GT_EQ(
-						mysql.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)),
+						mysql.Int32(int32(documentsaccess.AccessLevel_ACCESS_LEVEL_VIEW)),
 					),
 				)),
 		)
@@ -100,7 +101,7 @@ func (s *Server) ListUsableStamps(
 	return resp, nil
 }
 
-func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp, error) {
+func (s *Server) getStamp(ctx context.Context, stampID int64) (*documentsstamps.Stamp, error) {
 	tStamp := table.FivenetDocumentsStamps.AS("stamp")
 
 	stmt := mysql.
@@ -117,7 +118,7 @@ func (s *Server) getStamp(ctx context.Context, stampID int64) (*documents.Stamp,
 		)).
 		LIMIT(1)
 
-	var stamp documents.Stamp
+	var stamp documentsstamps.Stamp
 	if err := stmt.QueryContext(ctx, s.db, &stamp); err != nil {
 		return nil, err
 	}
@@ -161,14 +162,14 @@ func (s *Server) UpsertStamp(
 
 	// Stamps are job only and are currently limited to 5!
 	if st.Access == nil {
-		st.Access = &documents.StampAccess{}
+		st.Access = &documentsstamps.StampAccess{}
 	}
 	if len(st.Access.Jobs) == 0 {
 		// Add minimum access for the creator's job
-		st.Access.Jobs = append(st.Access.Jobs, &documents.StampJobAccess{
+		st.Access.Jobs = append(st.Access.Jobs, &documentsstamps.StampJobAccess{
 			Job:          userInfo.GetJob(),
 			MinimumGrade: userInfo.GetJobGrade(),
-			Access:       documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+			Access:       documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
 		})
 	}
 
@@ -190,7 +191,7 @@ func (s *Server) UpsertStamp(
 			ctx,
 			st.GetId(),
 			userInfo,
-			documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+			documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
 		)
 		if err != nil {
 			return nil, err
@@ -267,7 +268,7 @@ func (s *Server) DeleteStamp(
 		ctx,
 		req.GetStampId(),
 		userInfo,
-		documents.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
+		documentsstamps.StampAccessLevel_STAMP_ACCESS_LEVEL_MANAGE,
 	)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)

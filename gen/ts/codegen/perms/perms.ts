@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { AttributeType } from "../../resources/permissions/attributes";
+import { AttributeType } from "../../resources/permissions/attributes/attributes";
 /**
  * @generated from protobuf message codegen.perms.PermsOptions
  */
@@ -54,7 +54,7 @@ export interface Attr {
      */
     value: string;
     /**
-     * @generated from protobuf field: resources.permissions.AttributeType type = 3
+     * @generated from protobuf field: resources.permissions.attributes.AttributeType type = 3
      */
     type: AttributeType;
     /**
@@ -166,7 +166,7 @@ class Attr$Type extends MessageType<Attr> {
         super("codegen.perms.Attr", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "type", kind: "enum", T: () => ["resources.permissions.AttributeType", AttributeType, "ATTRIBUTE_TYPE_"] },
+            { no: 3, name: "type", kind: "enum", T: () => ["resources.permissions.attributes.AttributeType", AttributeType, "ATTRIBUTE_TYPE_"] },
             { no: 4, name: "valid_string_list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
@@ -191,7 +191,7 @@ class Attr$Type extends MessageType<Attr> {
                 case /* string value */ 2:
                     message.value = reader.string();
                     break;
-                case /* resources.permissions.AttributeType type */ 3:
+                case /* resources.permissions.attributes.AttributeType type */ 3:
                     message.type = reader.int32();
                     break;
                 case /* repeated string valid_string_list */ 4:
@@ -215,7 +215,7 @@ class Attr$Type extends MessageType<Attr> {
         /* string value = 2; */
         if (message.value !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.value);
-        /* resources.permissions.AttributeType type = 3; */
+        /* resources.permissions.attributes.AttributeType type = 3; */
         if (message.type !== 0)
             writer.tag(3, WireType.Varint).int32(message.type);
         /* repeated string valid_string_list = 4; */

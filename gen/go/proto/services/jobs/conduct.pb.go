@@ -7,11 +7,11 @@
 package jobs
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/file"
+	conduct "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs/conduct"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -31,11 +31,11 @@ type ListConductEntriesRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	Types         []jobs.ConductType `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.ConductType" json:"types,omitempty"`
-	ShowExpired   *bool              `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof" json:"show_expired,omitempty"`
-	ShowDrafts    *bool              `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof" json:"show_drafts,omitempty"`
-	UserIds       []int32            `protobuf:"varint,6,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	Ids           []int64            `protobuf:"varint,7,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Types         []conduct.ConductType `protobuf:"varint,3,rep,packed,name=types,proto3,enum=resources.jobs.conduct.ConductType" json:"types,omitempty"`
+	ShowExpired   *bool                 `protobuf:"varint,4,opt,name=show_expired,json=showExpired,proto3,oneof" json:"show_expired,omitempty"`
+	ShowDrafts    *bool                 `protobuf:"varint,5,opt,name=show_drafts,json=showDrafts,proto3,oneof" json:"show_drafts,omitempty"`
+	UserIds       []int32               `protobuf:"varint,6,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	Ids           []int64               `protobuf:"varint,7,rep,packed,name=ids,proto3" json:"ids,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -84,7 +84,7 @@ func (x *ListConductEntriesRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListConductEntriesRequest) GetTypes() []jobs.ConductType {
+func (x *ListConductEntriesRequest) GetTypes() []conduct.ConductType {
 	if x != nil {
 		return x.Types
 	}
@@ -122,7 +122,7 @@ func (x *ListConductEntriesRequest) GetIds() []int64 {
 type ListConductEntriesResponse struct {
 	state         protoimpl.MessageState       `protogen:"open.v1"`
 	Pagination    *database.PaginationResponse `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	Entries       []*jobs.ConductEntry         `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	Entries       []*conduct.ConductEntry      `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -164,7 +164,7 @@ func (x *ListConductEntriesResponse) GetPagination() *database.PaginationRespons
 	return nil
 }
 
-func (x *ListConductEntriesResponse) GetEntries() []*jobs.ConductEntry {
+func (x *ListConductEntriesResponse) GetEntries() []*conduct.ConductEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -217,7 +217,7 @@ func (x *GetConductEntryRequest) GetId() int64 {
 
 type GetConductEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *conduct.ConductEntry  `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,7 +252,7 @@ func (*GetConductEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetConductEntryResponse) GetEntry() *jobs.ConductEntry {
+func (x *GetConductEntryResponse) GetEntry() *conduct.ConductEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -261,7 +261,7 @@ func (x *GetConductEntryResponse) GetEntry() *jobs.ConductEntry {
 
 type CreateConductEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *conduct.ConductEntry  `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -296,7 +296,7 @@ func (*CreateConductEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CreateConductEntryRequest) GetEntry() *jobs.ConductEntry {
+func (x *CreateConductEntryRequest) GetEntry() *conduct.ConductEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -305,7 +305,7 @@ func (x *CreateConductEntryRequest) GetEntry() *jobs.ConductEntry {
 
 type CreateConductEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *conduct.ConductEntry  `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -340,7 +340,7 @@ func (*CreateConductEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateConductEntryResponse) GetEntry() *jobs.ConductEntry {
+func (x *CreateConductEntryResponse) GetEntry() *conduct.ConductEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -349,7 +349,7 @@ func (x *CreateConductEntryResponse) GetEntry() *jobs.ConductEntry {
 
 type UpdateConductEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *conduct.ConductEntry  `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -384,7 +384,7 @@ func (*UpdateConductEntryRequest) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateConductEntryRequest) GetEntry() *jobs.ConductEntry {
+func (x *UpdateConductEntryRequest) GetEntry() *conduct.ConductEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -393,7 +393,7 @@ func (x *UpdateConductEntryRequest) GetEntry() *jobs.ConductEntry {
 
 type UpdateConductEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *jobs.ConductEntry     `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *conduct.ConductEntry  `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -428,7 +428,7 @@ func (*UpdateConductEntryResponse) Descriptor() ([]byte, []int) {
 	return file_services_jobs_conduct_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateConductEntryResponse) GetEntry() *jobs.ConductEntry {
+func (x *UpdateConductEntryResponse) GetEntry() *conduct.ConductEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -519,13 +519,13 @@ var File_services_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1cresources/jobs/conduct.proto\"\xfb\x02\n" +
+	"\x1bservices/jobs/conduct.proto\x12\rservices.jobs\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a$resources/jobs/conduct/conduct.proto\"\x83\x03\n" +
 	"\x19ListConductEntriesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
 	"pagination\x128\n" +
-	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x121\n" +
-	"\x05types\x18\x03 \x03(\x0e2\x1b.resources.jobs.ConductTypeR\x05types\x12&\n" +
+	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x129\n" +
+	"\x05types\x18\x03 \x03(\x0e2#.resources.jobs.conduct.ConductTypeR\x05types\x12&\n" +
 	"\fshow_expired\x18\x04 \x01(\bH\x01R\vshowExpired\x88\x01\x01\x12$\n" +
 	"\vshow_drafts\x18\x05 \x01(\bH\x02R\n" +
 	"showDrafts\x88\x01\x01\x12\x19\n" +
@@ -533,24 +533,24 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x03ids\x18\a \x03(\x03R\x03idsB\a\n" +
 	"\x05_sortB\x0f\n" +
 	"\r_show_expiredB\x0e\n" +
-	"\f_show_drafts\"\xa9\x01\n" +
+	"\f_show_drafts\"\xb1\x01\n" +
 	"\x1aListConductEntriesResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
-	"pagination\x12<\n" +
-	"\aentries\x18\x02 \x03(\v2\x1c.resources.jobs.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"(\n" +
+	"pagination\x12D\n" +
+	"\aentries\x18\x02 \x03(\v2$.resources.jobs.conduct.ConductEntryB\x04\xc8\xf3\x18\x01R\aentries\"(\n" +
 	"\x16GetConductEntryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
-	"\x17GetConductEntryResponse\x122\n" +
-	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryR\x05entry\"O\n" +
-	"\x19CreateConductEntryRequest\x122\n" +
-	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryR\x05entry\"P\n" +
-	"\x1aCreateConductEntryResponse\x122\n" +
-	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryR\x05entry\"O\n" +
-	"\x19UpdateConductEntryRequest\x122\n" +
-	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryR\x05entry\"P\n" +
-	"\x1aUpdateConductEntryResponse\x122\n" +
-	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryR\x05entry\"+\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"U\n" +
+	"\x17GetConductEntryResponse\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"W\n" +
+	"\x19CreateConductEntryRequest\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"X\n" +
+	"\x1aCreateConductEntryResponse\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"W\n" +
+	"\x19UpdateConductEntryRequest\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"X\n" +
+	"\x1aUpdateConductEntryResponse\x12:\n" +
+	"\x05entry\x18\x01 \x01(\v2$.resources.jobs.conduct.ConductEntryR\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1c\n" +
 	"\x1aDeleteConductEntryResponse2\x94\x06\n" +
@@ -562,7 +562,7 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12q\n" +
 	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponse\"\x06\xd2\xf3\x18\x02\b\x01\x12\x85\x01\n" +
 	"\n" +
-	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x012\x12CreateConductEntry2\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse\".\xd2\xf3\x18*\b\x012\x12CreateConductEntry2\x12UpdateConductEntry(\x01\x1a\x19\xea\xf3\x18\x15\bC\x12\x11i-mdi-list-statusBFZDgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_conduct_proto_rawDescOnce sync.Once
@@ -590,23 +590,23 @@ var file_services_jobs_conduct_proto_goTypes = []any{
 	(*DeleteConductEntryResponse)(nil),  // 9: services.jobs.DeleteConductEntryResponse
 	(*database.PaginationRequest)(nil),  // 10: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),               // 11: resources.common.database.Sort
-	(jobs.ConductType)(0),               // 12: resources.jobs.ConductType
+	(conduct.ConductType)(0),            // 12: resources.jobs.conduct.ConductType
 	(*database.PaginationResponse)(nil), // 13: resources.common.database.PaginationResponse
-	(*jobs.ConductEntry)(nil),           // 14: resources.jobs.ConductEntry
+	(*conduct.ConductEntry)(nil),        // 14: resources.jobs.conduct.ConductEntry
 	(*file.UploadFileRequest)(nil),      // 15: resources.file.UploadFileRequest
 	(*file.UploadFileResponse)(nil),     // 16: resources.file.UploadFileResponse
 }
 var file_services_jobs_conduct_proto_depIdxs = []int32{
 	10, // 0: services.jobs.ListConductEntriesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	11, // 1: services.jobs.ListConductEntriesRequest.sort:type_name -> resources.common.database.Sort
-	12, // 2: services.jobs.ListConductEntriesRequest.types:type_name -> resources.jobs.ConductType
+	12, // 2: services.jobs.ListConductEntriesRequest.types:type_name -> resources.jobs.conduct.ConductType
 	13, // 3: services.jobs.ListConductEntriesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	14, // 4: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.ConductEntry
-	14, // 5: services.jobs.GetConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
-	14, // 6: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
-	14, // 7: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
-	14, // 8: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
-	14, // 9: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
+	14, // 4: services.jobs.ListConductEntriesResponse.entries:type_name -> resources.jobs.conduct.ConductEntry
+	14, // 5: services.jobs.GetConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
+	14, // 6: services.jobs.CreateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
+	14, // 7: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
+	14, // 8: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.conduct.ConductEntry
+	14, // 9: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.conduct.ConductEntry
 	0,  // 10: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
 	2,  // 11: services.jobs.ConductService.GetConductEntry:input_type -> services.jobs.GetConductEntryRequest
 	4,  // 12: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest

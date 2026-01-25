@@ -7,7 +7,7 @@
 package perms
 
 import (
-	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	attributes "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/permissions/attributes"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	descriptorpb "google.golang.org/protobuf/types/descriptorpb"
@@ -108,11 +108,11 @@ func (x *PermsOptions) GetAttrs() []*Attr {
 }
 
 type Attr struct {
-	state           protoimpl.MessageState    `protogen:"open.v1"`
-	Key             string                    `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value           string                    `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	Type            permissions.AttributeType `protobuf:"varint,3,opt,name=type,proto3,enum=resources.permissions.AttributeType" json:"type,omitempty"`
-	ValidStringList []string                  `protobuf:"bytes,4,rep,name=valid_string_list,json=validStringList,proto3" json:"valid_string_list,omitempty"`
+	state           protoimpl.MessageState   `protogen:"open.v1"`
+	Key             string                   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Value           string                   `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Type            attributes.AttributeType `protobuf:"varint,3,opt,name=type,proto3,enum=resources.permissions.attributes.AttributeType" json:"type,omitempty"`
+	ValidStringList []string                 `protobuf:"bytes,4,rep,name=valid_string_list,json=validStringList,proto3" json:"valid_string_list,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -161,11 +161,11 @@ func (x *Attr) GetValue() string {
 	return ""
 }
 
-func (x *Attr) GetType() permissions.AttributeType {
+func (x *Attr) GetType() attributes.AttributeType {
 	if x != nil {
 		return x.Type
 	}
-	return permissions.AttributeType(0)
+	return attributes.AttributeType(0)
 }
 
 func (x *Attr) GetValidStringList() []string {
@@ -262,7 +262,7 @@ var File_codegen_perms_perms_proto protoreflect.FileDescriptor
 
 const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\n" +
-	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a&resources/permissions/attributes.proto\"\xcc\x01\n" +
+	"\x19codegen/perms/perms.proto\x12\rcodegen.perms\x1a google/protobuf/descriptor.proto\x1a1resources/permissions/attributes/attributes.proto\"\xcc\x01\n" +
 	"\fPermsOptions\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
 	"\aservice\x18\x02 \x01(\tH\x00R\aservice\x88\x01\x01\x12\x17\n" +
@@ -272,18 +272,18 @@ const file_codegen_perms_perms_proto_rawDesc = "" +
 	"\x05attrs\x18\x05 \x03(\v2\x13.codegen.perms.AttrR\x05attrsB\n" +
 	"\n" +
 	"\b_serviceB\a\n" +
-	"\x05_name\"\x94\x01\n" +
+	"\x05_name\"\x9f\x01\n" +
 	"\x04Attr\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\x128\n" +
-	"\x04type\x18\x03 \x01(\x0e2$.resources.permissions.AttributeTypeR\x04type\x12*\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value\x12C\n" +
+	"\x04type\x18\x03 \x01(\x0e2/.resources.permissions.attributes.AttributeTypeR\x04type\x12*\n" +
 	"\x11valid_string_list\x18\x04 \x03(\tR\x0fvalidStringList\"H\n" +
 	"\x0eServiceOptions\x12\x14\n" +
 	"\x05order\x18\x01 \x01(\x05R\x05order\x12\x17\n" +
 	"\x04icon\x18\x02 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
 	"\x05_icon:S\n" +
 	"\x05perms\x12\x1e.google.protobuf.MethodOptions\x18\xba\x8e\x03 \x01(\v2\x1b.codegen.perms.PermsOptionsR\x05perms:]\n" +
-	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms;permsb\x06proto3"
+	"\tperms_svc\x12\x1f.google.protobuf.ServiceOptions\x18\xbd\x8e\x03 \x01(\v2\x1d.codegen.perms.ServiceOptionsR\bpermsSvcBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms;permsb\x06proto3"
 
 var (
 	file_codegen_perms_perms_proto_rawDescOnce sync.Once
@@ -302,13 +302,13 @@ var file_codegen_perms_perms_proto_goTypes = []any{
 	(*PermsOptions)(nil),                // 0: codegen.perms.PermsOptions
 	(*Attr)(nil),                        // 1: codegen.perms.Attr
 	(*ServiceOptions)(nil),              // 2: codegen.perms.ServiceOptions
-	(permissions.AttributeType)(0),      // 3: resources.permissions.AttributeType
+	(attributes.AttributeType)(0),       // 3: resources.permissions.attributes.AttributeType
 	(*descriptorpb.MethodOptions)(nil),  // 4: google.protobuf.MethodOptions
 	(*descriptorpb.ServiceOptions)(nil), // 5: google.protobuf.ServiceOptions
 }
 var file_codegen_perms_perms_proto_depIdxs = []int32{
 	1, // 0: codegen.perms.PermsOptions.attrs:type_name -> codegen.perms.Attr
-	3, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.AttributeType
+	3, // 1: codegen.perms.Attr.type:type_name -> resources.permissions.attributes.AttributeType
 	4, // 2: codegen.perms.perms:extendee -> google.protobuf.MethodOptions
 	5, // 3: codegen.perms.perms_svc:extendee -> google.protobuf.ServiceOptions
 	0, // 4: codegen.perms.perms:type_name -> codegen.perms.PermsOptions

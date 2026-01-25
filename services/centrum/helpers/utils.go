@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
+	centrumaccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/access"
+	centrumdispatches "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/dispatches"
+	centrumsettings "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/settings"
+	centrumunits "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/centrum/units"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2026/services/centrum/units"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -57,7 +60,7 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 		return false
 	}
 
-	if settings.GetMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+	if settings.GetMode() == centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
 	}
 
@@ -67,7 +70,7 @@ func (s *Helpers) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	}
 
 	if dispatchers.IsEmpty() &&
-		settings.GetFallbackMode() == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+		settings.GetFallbackMode() == centrumsettings.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
 	}
 
@@ -95,7 +98,7 @@ func (s *Helpers) CheckIfUserIsDispatcher(ctx context.Context, job string, userI
 func (s *Helpers) CheckIfUserIsPartOfDispatch(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	dsp *centrum.Dispatch,
+	dsp *centrumdispatches.Dispatch,
 	dispatcherOkay bool,
 ) bool {
 	// Check if user is allowed to access the dispatch if the job is not the same as the user's job, need to check the
@@ -106,7 +109,7 @@ func (s *Helpers) CheckIfUserIsPartOfDispatch(
 			userInfo.GetJob(),
 			userInfo.GetJobGrade(),
 			dsp.GetJobs().GetJobs()[0].GetName(),
-			centrum.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_PARTICIPATE,
+			centrumaccess.CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_PARTICIPATE,
 		)
 		if err != nil {
 			s.logger.Error(
@@ -151,7 +154,7 @@ func (s *Helpers) CheckIfUserPartOfUnit(
 	ctx context.Context,
 	job string,
 	userId int32,
-	unit *centrum.Unit,
+	unit *centrumunits.Unit,
 	dispatcherOkay bool,
 ) bool {
 	// Check if user is a dispatcher

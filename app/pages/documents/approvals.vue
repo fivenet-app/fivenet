@@ -14,7 +14,7 @@ import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { getDocumentsApprovalClient } from '~~/gen/ts/clients';
 import type { SortByColumn } from '~~/gen/ts/resources/common/database/database';
-import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval';
+import { ApprovalTaskStatus } from '~~/gen/ts/resources/documents/approval/approval';
 import type { ListApprovalTasksInboxResponse } from '~~/gen/ts/services/documents/approval';
 
 useHead({

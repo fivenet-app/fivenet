@@ -155,7 +155,7 @@ const file_resources_jobs_jobs_proto_rawDesc = "" +
 	"\bjob_name\x18\x01 \x01(\tH\x00R\ajobName\x88\x01\x01\x12\x14\n" +
 	"\x05grade\x18\x02 \x01(\x05R\x05grade\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05labelB\v\n" +
-	"\t_job_nameBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\t_job_nameBGZEgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_jobs_proto_rawDescOnce sync.Once

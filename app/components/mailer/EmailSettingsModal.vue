@@ -6,7 +6,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
 import { Struct } from '~~/gen/ts/google/protobuf/struct';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access/access';
 import { canAccess } from './helpers';
 
 withDefaults(

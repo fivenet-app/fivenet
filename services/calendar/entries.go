@@ -5,16 +5,17 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	calendarentries "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/entries"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/jinzhu/now"
@@ -26,9 +27,9 @@ func (s *Server) ListCalendarEntries(
 ) (*pbcalendar.ListCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	rsvpResponse := calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN
+	rsvpResponse := calendarentries.RsvpResponses_RSVP_RESPONSES_HIDDEN
 	if req.ShowHidden != nil && req.GetShowHidden() {
-		rsvpResponse = calendar.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
+		rsvpResponse = calendarentries.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
 	}
 
 	condition := mysql.AND(
@@ -91,7 +92,11 @@ func (s *Server) ListCalendarEntries(
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
 	}
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	stmt := s.listCalendarEntriesQuery(
+		condition,
+		userInfo,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 
 	if req.GetAfter() != nil {
 		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(mysql.TimestampT(req.GetAfter().AsTime())))
@@ -120,7 +125,7 @@ func (s *Server) GetUpcomingEntries(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbcalendar.GetUpcomingEntriesResponse{
-		Entries: []*calendar.CalendarEntry{},
+		Entries: []*calendarentries.CalendarEntry{},
 	}
 
 	condition := mysql.AND(
@@ -136,7 +141,7 @@ func (s *Server) GetUpcomingEntries(
 						tCalendarRSVP.UserID.EQ(mysql.Int32(userInfo.GetUserId())),
 						// RSVP responses: Maybe and Yes
 						tCalendarRSVP.Response.GT(
-							mysql.Int32(int32(calendar.RsvpResponses_RSVP_RESPONSES_NO)),
+							mysql.Int32(int32(calendarentries.RsvpResponses_RSVP_RESPONSES_NO)),
 						),
 					)),
 			),
@@ -153,7 +158,11 @@ func (s *Server) GetUpcomingEntries(
 		),
 	)
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	stmt := s.listCalendarEntriesQuery(
+		condition,
+		userInfo,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
+	)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -184,7 +193,7 @@ func (s *Server) GetCalendarEntry(
 		entry.GetCalendarId(),
 		req.GetEntryId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		true,
 	)
 	if err != nil {
@@ -215,7 +224,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(
 		ctx,
 		req.GetEntry().GetCalendarId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_EDIT,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_EDIT,
 		false,
 	)
 	if err != nil {
@@ -382,7 +391,7 @@ func (s *Server) DeleteCalendarEntry(
 		ctx,
 		entry.GetCalendarId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_MANAGE,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 		false,
 	)
 	if err != nil {
@@ -422,7 +431,7 @@ func (s *Server) getEntry(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	condition mysql.BoolExpression,
-) (*calendar.CalendarEntry, error) {
+) (*calendarentries.CalendarEntry, error) {
 	tCreator := tables.User().AS("creator")
 	tAvatar := table.FivenetFiles.AS("profile_picture")
 
@@ -490,7 +499,7 @@ func (s *Server) getEntry(
 		WHERE(condition).
 		LIMIT(1)
 
-	dest := &calendar.CalendarEntry{}
+	dest := &calendarentries.CalendarEntry{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

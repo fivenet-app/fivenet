@@ -6,7 +6,7 @@ import ResultList from '~/components/qualifications/tutor/ResultList.vue';
 import ResultTutorModal from '~/components/qualifications/tutor/ResultTutorModal.vue';
 import { useCompletorStore } from '~/stores/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/short/user';
 
 const props = defineProps<{
     qualification: Qualification;

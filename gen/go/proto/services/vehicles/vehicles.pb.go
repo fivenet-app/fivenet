@@ -7,11 +7,12 @@
 package vehicles
 
 import (
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/itemslen"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/perms"
-	_ "github.com/fivenet-app/fivenet/v2025/gen/go/proto/codegen/sanitizer"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/itemslen"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/perms"
+	_ "github.com/fivenet-app/fivenet/v2026/gen/go/proto/codegen/sanitizer"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	vehicles "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles"
+	props "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/vehicles/props"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -173,7 +174,7 @@ func (x *ListVehiclesResponse) GetVehicles() []*vehicles.Vehicle {
 
 type SetVehiclePropsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -208,7 +209,7 @@ func (*SetVehiclePropsRequest) Descriptor() ([]byte, []int) {
 	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
+func (x *SetVehiclePropsRequest) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
 	}
@@ -217,7 +218,7 @@ func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
 
 type SetVehiclePropsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *props.VehicleProps    `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -253,7 +254,7 @@ func (*SetVehiclePropsResponse) Descriptor() ([]byte, []int) {
 	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *SetVehiclePropsResponse) GetProps() *vehicles.VehicleProps {
+func (x *SetVehiclePropsResponse) GetProps() *props.VehicleProps {
 	if x != nil {
 		return x.Props
 	}
@@ -271,7 +272,7 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/vehicles/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a\x1fcodegen/itemslen/itemslen.proto\x1a\x19codegen/perms/perms.proto\x1a!codegen/sanitizer/sanitizer.proto\x1a(resources/common/database/database.proto\x1a$resources/vehicles/props/props.proto\x1a!resources/vehicles/vehicles.proto\"\xe9\x02\n" +
 	"\x13ListVehiclesRequest\x12L\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestR\n" +
@@ -291,17 +292,17 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x12=\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"P\n" +
-	"\x16SetVehiclePropsRequest\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\"q\n" +
-	"\x17SetVehiclePropsResponse\x126\n" +
-	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props\x12\x1e\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleB\x04\xc8\xf3\x18\x01R\bvehicles\"V\n" +
+	"\x16SetVehiclePropsRequest\x12<\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\"w\n" +
+	"\x17SetVehiclePropsResponse\x12<\n" +
+	"\x05props\x18\x01 \x01(\v2&.resources.vehicles.props.VehiclePropsR\x05props\x12\x1e\n" +
 	"\x06reason\x18\x02 \x01(\tB\x06\xda\xf3\x18\x02\b\x01R\x06reason2\xb0\x02\n" +
 	"\x0fVehiclesService\x12{\n" +
 	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
 	"\x06Fields\x18\x01\"\x06Wanted\x12\x84\x01\n" +
 	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponse\"\x1a\xd2\xf3\x18\x16\b\x01*\x12\n" +
-	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\x06Fields\x18\x01\"\x06Wanted\x1a\x19\xea\xf3\x18\x15\b(\x12\x11i-mdi-car-outlineBNZLgithub.com/fivenet-app/fivenet/v2026/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_services_vehicles_vehicles_proto_rawDescOnce sync.Once
@@ -325,15 +326,15 @@ var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*database.Sort)(nil),               // 5: resources.common.database.Sort
 	(*database.PaginationResponse)(nil), // 6: resources.common.database.PaginationResponse
 	(*vehicles.Vehicle)(nil),            // 7: resources.vehicles.Vehicle
-	(*vehicles.VehicleProps)(nil),       // 8: resources.vehicles.VehicleProps
+	(*props.VehicleProps)(nil),          // 8: resources.vehicles.props.VehicleProps
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
 	4, // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	5, // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
 	6, // 2: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	7, // 3: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
-	8, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.VehicleProps
-	8, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.VehicleProps
+	8, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.props.VehicleProps
+	8, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.props.VehicleProps
 	0, // 6: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
 	2, // 7: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
 	1, // 8: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse

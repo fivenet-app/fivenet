@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/utils/types';
 import { getJobsJobsClient } from '~~/gen/ts/clients';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues/colleagues';
 import ColleagueName from './ColleagueName.vue';
 
 const props = withDefaults(

@@ -4,18 +4,19 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
-	permscalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	calendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar"
+	calendaraccess "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/calendar/access"
+	database "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	pbcalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar"
+	permscalendar "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/calendar/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscalendar "github.com/fivenet-app/fivenet/v2026/services/calendar/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -39,7 +40,7 @@ func (s *Server) ListCalendars(
 		)),
 	)
 
-	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_VIEW
+	minAccessLevel := calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW
 	if req.MinAccessLevel != nil {
 		minAccessLevel = req.GetMinAccessLevel()
 
@@ -197,7 +198,7 @@ func (s *Server) GetCalendar(
 		ctx,
 		req.GetCalendarId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_VIEW,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_VIEW,
 		true,
 	)
 	if err != nil {
@@ -241,7 +242,7 @@ func (s *Server) GetCalendar(
 func (s *Server) getAccess(
 	ctx context.Context,
 	calendarId int64,
-) (*calendar.CalendarAccess, error) {
+) (*calendaraccess.CalendarAccess, error) {
 	jobAccess, err := s.access.Jobs.List(ctx, s.db, calendarId)
 	if err != nil {
 		return nil, err
@@ -252,7 +253,7 @@ func (s *Server) getAccess(
 		return nil, err
 	}
 
-	return &calendar.CalendarAccess{
+	return &calendaraccess.CalendarAccess{
 		Jobs:  jobAccess,
 		Users: userAccess,
 	}, nil
@@ -412,7 +413,7 @@ func (s *Server) UpdateCalendar(
 		ctx,
 		req.GetCalendar().GetId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_MANAGE,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 		false,
 	)
 	if err != nil {
@@ -508,7 +509,7 @@ func (s *Server) DeleteCalendar(
 		ctx,
 		req.GetCalendarId(),
 		userInfo,
-		calendar.AccessLevel_ACCESS_LEVEL_MANAGE,
+		calendaraccess.AccessLevel_ACCESS_LEVEL_MANAGE,
 		false,
 	)
 	if err != nil {

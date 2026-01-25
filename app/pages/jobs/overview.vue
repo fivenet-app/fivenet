@@ -12,6 +12,7 @@ useHead({
 definePageMeta({
     title: 'common.overview',
     requiresAuth: true,
+    permission: 'jobs.JobsService/ListColleagues',
 });
 
 const { can, activeChar, jobProps } = useAuth();

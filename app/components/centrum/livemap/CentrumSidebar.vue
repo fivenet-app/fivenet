@@ -22,9 +22,9 @@ import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
 import { getCentrumCentrumClient } from '~~/gen/ts/clients';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings/settings';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { can, jobProps } = useAuth();

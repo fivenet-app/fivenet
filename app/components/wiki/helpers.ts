@@ -1,7 +1,7 @@
 // Pageument Activity
 
-import type { AccessLevel, PageAccess } from '~~/gen/ts/resources/wiki/access';
-import { PageActivityType } from '~~/gen/ts/resources/wiki/activity';
+import type { AccessLevel, PageAccess } from '~~/gen/ts/resources/wiki/access/access';
+import { PageActivityType } from '~~/gen/ts/resources/wiki/activity/activity';
 import { type Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
 export function getPageAtivityIcon(activityType: PageActivityType): string {

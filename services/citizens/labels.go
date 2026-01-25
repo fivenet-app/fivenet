@@ -4,18 +4,18 @@ import (
 	context "context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
-	permscompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	grpc_audit "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/audit"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/userinfo"
+	userslabels "github.com/fivenet-app/fivenet/v2026/gen/go/proto/resources/users/labels"
+	pbcitizens "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/citizens"
+	permscompletor "github.com/fivenet-app/fivenet/v2026/gen/go/proto/services/completor/perms"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2026/pkg/grpc/errswrap"
+	grpc_audit "github.com/fivenet-app/fivenet/v2026/pkg/grpc/interceptors/audit"
+	"github.com/fivenet-app/fivenet/v2026/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2026/query/fivenet/table"
+	errorscitizens "github.com/fivenet-app/fivenet/v2026/services/citizens/errors"
 	"github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -32,7 +32,7 @@ func (s *Server) ManageLabels(
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	resp := &pbcitizens.ManageLabelsResponse{
-		Labels: []*users.Label{},
+		Labels: []*userslabels.Label{},
 	}
 
 	stmt := tCitizensLabelsJob.
@@ -54,7 +54,7 @@ func (s *Server) ManageLabels(
 	}
 
 	_, removed := utils.SlicesDifferenceFunc(resp.GetLabels(), req.GetLabels(),
-		func(in *users.Label) string {
+		func(in *userslabels.Label) string {
 			return in.GetName()
 		})
 
@@ -65,8 +65,8 @@ func (s *Server) ManageLabels(
 	tCitizensLabelsJob := table.FivenetUserLabelsJob
 
 	if len(req.GetLabels()) > 0 {
-		toCreate := []*users.Label{}
-		toUpdate := []*users.Label{}
+		toCreate := []*userslabels.Label{}
+		toUpdate := []*userslabels.Label{}
 
 		for _, attribute := range req.GetLabels() {
 			if attribute.GetId() == 0 {
@@ -137,7 +137,7 @@ func (s *Server) ManageLabels(
 		}
 	}
 
-	resp.Labels = []*users.Label{}
+	resp.Labels = []*userslabels.Label{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
@@ -152,7 +152,7 @@ func (s *Server) ManageLabels(
 func (s *Server) validateLabels(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
-	attributes []*users.Label,
+	attributes []*userslabels.Label,
 ) (bool, error) {
 	if len(attributes) == 0 {
 		return true, nil
@@ -207,7 +207,7 @@ func (s *Server) getUserLabels(
 	ctx context.Context,
 	userInfo *userinfo.UserInfo,
 	userId int32,
-) (*users.Labels, error) {
+) (*userslabels.Labels, error) {
 	jobs, err := s.ps.AttrStringList(
 		userInfo,
 		permscompletor.CompletorServicePerm,
@@ -246,8 +246,8 @@ func (s *Server) getUserLabels(
 		)).
 		ORDER_BY(tCitizensLabelsJob.SortKey.ASC())
 
-	list := &users.Labels{
-		List: []*users.Label{},
+	list := &userslabels.Labels{
+		List: []*userslabels.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

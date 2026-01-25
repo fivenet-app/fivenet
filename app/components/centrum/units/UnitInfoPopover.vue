@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
+import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches/dispatches';
+import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units/units';
 import { defaultUnitIcon, unitStatusToBGColor, unitStatusToIcon } from '../helpers';
 
 const centrumStore = useCentrumStore();
