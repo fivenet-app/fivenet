@@ -48,10 +48,10 @@ func TestBuildQueryFromColumns(t *testing.T) {
 				"license.name": "name_but_different",
 			},
 			conditions:    []string{},
-			orderBy:       []string{"license.type"},
+			orderBy:       []string{"license.type", "license.name"},
 			offset:        10,
 			limit:         25,
-			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nLIMIT 25 OFFSET 10;",
+			expectedQuery: "SELECT `name_but_different` AS `license.name`, `type` AS `license.type`\nFROM `user_licenses`\nORDER BY license.type, license.name\nLIMIT 25 OFFSET 10;",
 		},
 		{
 			tableName: "vehicles",
@@ -63,7 +63,7 @@ func TestBuildQueryFromColumns(t *testing.T) {
 			orderBy:       []string{"plate"},
 			offset:        10,
 			limit:         50,
-			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nORDER BY plate\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nLIMIT 50 OFFSET 10;",
+			expectedQuery: "SELECT `plate` AS `plate`\nFROM `vehicles`\nWHERE `updated_at` >= '2023-01-01 00:00:00'\nORDER BY plate\nLIMIT 50 OFFSET 10;",
 		},
 	}
 

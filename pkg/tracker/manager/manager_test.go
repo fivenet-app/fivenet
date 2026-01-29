@@ -95,7 +95,7 @@ func TestRefreshUserLocations(t *testing.T) {
 		insertCitizenLocations(
 			ctx,
 			db,
-			"char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
+			1,
 			"ambulance",
 			3,
 			1.0,
@@ -108,7 +108,7 @@ func TestRefreshUserLocations(t *testing.T) {
 		insertCitizenLocations(
 			ctx,
 			db,
-			"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
+			2,
 			"ambulance",
 			3,
 			1.0,
@@ -162,7 +162,7 @@ func TestRefreshUserLocations(t *testing.T) {
 		insertCitizenLocations(
 			ctx,
 			db,
-			"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
+			2,
 			"ambulance",
 			3,
 			5.0,

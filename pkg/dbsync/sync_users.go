@@ -197,16 +197,11 @@ func (s *usersSync) retrieveAndAttachLicenses(ctx context.Context, us []*syncdat
 
 	errs := multierr.Combine()
 	for k := range us {
-		identifier := ""
-		if us[k].Identifier != nil {
-			identifier = us[k].GetIdentifier()
-		}
-
-		licenses, err := s.retrieveLicenses(ctx, us[k].GetUserId(), identifier)
+		licenses, err := s.retrieveLicenses(ctx, us[k].GetUserId(), us[k].GetIdentifier())
 		if err != nil {
 			errs = multierr.Append(
 				errs,
-				fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err),
+				fmt.Errorf("failed to retrieve users %s licenses. %w", us[k].GetIdentifier(), err),
 			)
 		}
 		us[k].Licenses = licenses
@@ -256,13 +251,8 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 
 	if s.cfg.Tables.CitizensLicenses.Enabled {
 		// Retrieve user's licenses
-		identifier := ""
-		if user.Identifier != nil {
-			identifier = user.GetIdentifier()
-		}
-
 		var err error
-		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), identifier)
+		user.Licenses, err = s.retrieveLicenses(ctx, user.GetUserId(), user.GetIdentifier())
 		if err != nil {
 			return err
 		}
